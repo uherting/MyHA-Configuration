@@ -1,0 +1,23 @@
+secrets: /config/secrets.yaml
+
+appdaemon:
+  latitude: !secret HA_LOCATION_LATITUDE
+  longitude: !secret HA_LOCATION_LONGITUDE
+  elevation: !secret HA_LOCATION_ELEVATION
+  time_zone: !secret HA_LOCATION_TIME_ZONE
+  plugins:
+    HASS:
+      type: hass
+      ha_url: !secret APPDAEMON_HA_URL
+      token: !secret APPDAEMON_HA_TOKEN
+
+http:
+  url: !secret APPDAEMON_ADMIN_INTERFACE
+
+admin:
+
+api:
+
+hadashboard:
+  dash_url: !secret APPDAEMON_DASH_URL_01
+  dash_dir: !secret APPDAEMON_DASH_DIR_01

@@ -1,0 +1,33 @@
+##
+## Main arguments, all optional
+##
+title: HADashboard - Main
+widget_dimensions: [120, 120]
+widget_size: [1, 1]
+widget_margins: [5, 5]
+columns: 8
+global_parameters:
+    use_comma: 0
+    precision: 1
+    use_hass_icon: 1
+    namespace: default
+
+#
+# customisations for the layout
+#
+
+# switches
+l2_kitchen01_ssr_01:
+    widget_type: switch
+    entity: switch.l2_kitchen01_ssr_01
+    title: Kitchen
+l2_storage01_ssr_01:
+    widget_type: switch
+    entity: switch.l2_storage01_ssr_01
+    title: Storage
+
+# layout
+layout:
+    - include: nav/top
+    - l2_kitchen01_ssr_01, l2_storage01_ssr_01
+    - include: nav/bottom

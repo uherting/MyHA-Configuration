@@ -1,0 +1,93 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l9camttgo02
+#
+####################################################################
+####################################################################
+
+######################### DESCRIPTION #########################
+#
+# Purpose:
+#   - act as a notification device based on PIR sensor located on the module
+#
+# Hardware:
+#   - TTGO-cam
+#
+# Automation:
+#   - yes, HA internal only so far
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 1 button
+#   - future plan:
+#     - 1 PIR sensor via I2C / MCP23017
+# Output
+#   - none
+#
+
+####################################################################
+# SUBSTITUTIONS
+substitutions: !include conf/substitutions/l9camttgo02.yaml
+
+####################################################################
+# DEVICE
+esphome:
+  name: $devicename
+  platform: ESP32
+  board: esp-wrover-kit
+
+####################################################################
+# WIFI
+wifi: !include conf/common/wifi.yaml
+
+####################################################################
+# LOGGING
+logger: !include conf/common/logger_debug.yaml
+
+####################################################################
+# HOME ASSISTANT API
+api: !include conf/common/api.yaml
+
+####################################################################
+# OTA
+ota: !include conf/common/ota.yaml
+
+####################################################################
+# TIME
+time: !include conf/common/time.yaml
+
+####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+####################################################################
+# I2C
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+####################################################################
+# ESP32_CAMERA / FONTS / DISPLAY
+esp32_camera: !include conf/esp32_camera/l9camttgo02.yaml
+font: !include conf/font/l9camttgo02.yaml
+display: !include conf/display/l9camttgo02.yaml
+interval: !include conf/display_interval/l9camttgo02.yaml
+
+####################################################################
+# BINARY SENSORS
+binary_sensor: !include conf/binary_sensor/l9camttgo02.yaml
+
+####################################################################
+# SENSORS
+sensor: !include conf/sensor/l9camttgo02.yaml
+
+####################################################################
+# TEXT_SENSORS
+text_sensor: !include conf/common/text_sensor.yaml
+
+####################################################################
+# EOF
+####################################################################

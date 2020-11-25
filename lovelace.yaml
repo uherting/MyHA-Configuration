@@ -1,0 +1,78 @@
+############################################################
+#
+# lovelace configuration - to be included in configuration.yaml
+#
+############################################################
+
+  mode: yaml
+
+  # external resources
+  resources:
+    # card-tools is a prerequisite for ???
+    - url: /hacsfiles/lovelace-card-tools/card-tools.js
+      type: module
+    # card-mod is a prerequisite for search card (probably !?!?)
+    - url: /hacsfiles/lovelace-card-mod/card-mod.js
+      type: module
+    - url: /hacsfiles/search-card/search-card.js
+      type: module
+    - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
+      type: module
+    - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
+      type: module
+    - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+      type: module
+    - url: /hacsfiles/hass-shutter-card/hass-shutter-card.js
+      type: module
+    - url: /hacsfiles/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
+      type: module
+    - url: /hacsfiles/select-list-card/select-list-card.js
+      type: module
+    - url: /hacsfiles/lovelace-badge-card/badge-card.js
+      type: module
+    - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
+      type: module
+    - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
+      type: module
+
+# Add more dashboards
+  dashboards:
+
+    # the name of the dashboard needs to contain a hyphen (-)
+    uilovelace-admin:
+      mode: yaml
+      filename: ui-lovelace-admin.yaml
+      title: Overview Admin
+      icon: mdi:tools
+      show_in_sidebar: true
+      require_admin: true
+
+    # the name of the dashboard needs to contain a hyphen (-)
+    uilovelace-esp-admin:
+      mode: yaml
+      filename: ui-lovelace-admin_esp8266.yaml
+      title: Overview Admin ESP
+      icon: mdi:devices
+      show_in_sidebar: true
+      require_admin: true
+
+    # the name of the dashboard needs to contain a hyphen (-)
+#    uilovelace-user:
+#      mode: yaml
+#      filename: uilovelace-user.yaml
+#      title: Overview User
+#      # icon: mdi:tools
+#      show_in_sidebar: true
+#      require_admin: false
+
+    # just an example...:
+#    uilovelace-hidden:
+#      mode: yaml
+#      title: hidden
+#      show_in_sidebar: false
+#      filename: uilovelace-hidden.yaml
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

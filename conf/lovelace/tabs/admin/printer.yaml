@@ -1,0 +1,26 @@
+####################################################################
+####################################################################
+#
+# printer tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:printer
+title: Printer Info
+path: printer
+cards:
+  - type: entities
+    title: Printer Info
+    show_header_toggle: false
+    entities:
+      - sensor.ecosys_p5026cdw
+      - sensor.ecosys_p5026cdw_black_tk_5240k
+      - sensor.ecosys_p5026cdw_cyan_tk_5240cs
+      - sensor.ecosys_p5026cdw_magenta_tk_5240ms
+      - sensor.ecosys_p5026cdw_yellow_tk_5240ys
+      - sensor.ecosys_p5026cdw_waste_toner_box
+
+####################################################################
+# EOF
+####################################################################

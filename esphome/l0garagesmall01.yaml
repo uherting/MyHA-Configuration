@@ -1,0 +1,84 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l0garagesmall01
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - Based on a PIR/RCWL sensor ...
+#       - a LED strip (indirect light, outside wall) shall be
+#         switched on using a SSR
+#   - Two temperature sensors to control the temperature in the
+#     case and of the environment
+#
+# Future feature:
+#   - The IKEA remote shall be triggered via opto couplers to switch on
+#     the light above the kitchen sink
+#
+# Hardware:
+#   - 1 ESP8266
+#   - 1 MCP23017 modul
+#   - 2 Dallas 18B20 sensor
+#   - 1 SSR module with 1 SSR
+#   - 1 PIR/RCWL
+#   - 1 TP223 touch button
+#   - steel housing for external Dallas 18B20 sensors
+#   - heat shrink tube, misc diameter
+#   - case for the hardware
+#   - PCB
+#   - wire
+#   - for future feature: opto coupler PC817 => IKEA remote
+#
+# Automation:
+#   - partially, see binary sensors definition file
+#   - for future feature: setup with opto coupler to be developed
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 2 temperatur sensors (for the case / environment)
+#   - 1 PIR/RCWL sensor via I2C / MCP23017
+#   - 1 TP223 touch button for ???
+#
+# Output
+#   - 1 SSR via I2C / MCP23017
+#
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: !include conf/substitutions/l0garagesmall01.yaml
+
+###################### SETTING UP THE DEVICE ######################
+
+esphome:
+  name: $devicename
+  platform: ESP8266
+  board: nodemcuv2
+
+###################### GENERIC CONFIGURATION ######################
+
+wifi: !include conf/common/wifi.yaml
+logger: !include conf/logger/l0garagesmall01.yaml
+api: !include conf/common/api.yaml
+ota: !include conf/common/ota.yaml
+i2c: !include conf/common/i2c.yaml
+dallas: !include conf/common/dallas.yaml
+mcp23017: !include conf/common/mcp23017.yaml
+text_sensor: !include conf/common/text_sensor.yaml
+
+###################### DETAILED CONFIGURATION ######################
+
+binary_sensor: !include conf/binary_sensor/l0garagesmall01.yaml
+sensor: !include conf/sensor/l0garagesmall01.yaml
+# switch: !include conf/switch/l0garagesmall01.yaml
+
+####################################################################
+# EOF
+####################################################################

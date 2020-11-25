@@ -1,0 +1,14 @@
+.storage/*
+hacs_token.txt
+home-assistant_v2.db
+home-assistant.log
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+var/opt/tg/*/*.jpg
+.google.token
+.HA_VERSION
+secrets.yaml
+
+# all __pycache__ dirs
+__pycache__
+

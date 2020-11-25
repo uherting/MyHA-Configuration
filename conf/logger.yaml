@@ -1,0 +1,94 @@
+############################################################
+#
+# Logger  You can filter anything betwen the []'s in the logger.
+#
+############################################################
+
+# Log Severities: notset, debug, info, warn, warning, error, fatal, critical
+
+default: info
+logs:
+  aiohttp.access: critical
+  aiohttp.server: critical
+  backup.drive.driverequests: INFO
+  backup.drive.drivesource: INFO
+  backup.ha.harequests: INFO
+  backup.ha.hasource: INFO
+  backup.model.coordinator: INFO
+  backup.model.syncer: INFO
+  backup.worker.watcher: WARN
+  custom_components.dwd_weather.connector: WARN
+  custom_components.hacs.repository.integration.hacs.integration: WARN
+  custom_components.hacs: WARN
+  custom_components.hacs.data: WARN
+  custom_components.media_player.floorplan_speaker: error
+  custom_components.media_player.living_room: info
+  custom_components.ics: WARN
+  googleapiclient.discovery: WARN
+  hacs: WARN
+  hacs.data: WARN
+  hacs.factory: WARN
+  hacs.repository.integration.hacs.integration: WARN
+  hassio.addons.addon: WARN
+  hassio.api.security: WARN
+  hassio.api.snapshots: WARN
+  hassio.docker.interface: WARN
+  hassio.homeassistant: WARN
+  hassio.snapshots.snapshot: WARN
+  hassio.store.git: WARN
+  hole: WARN
+  homeassistant.bootstrap: WARN
+  homeassistant.components.automation: WARN
+  homeassistant.components.binary_sensor: ERROR
+  homeassistant.components.climate.nest: WARN
+  homeassistant.components.command_line.switch: WARN
+  homeassistant.components.device_tracker: ERROR
+  homeassistant.components.discovery: WARN
+  homeassistant.components.esphome: WARN
+  homeassistant.components.feedreader: WARN
+  homeassistant.components.frontend: WARN
+  homeassistant.components.http: WARN
+  homeassistant.components: CRITICAL
+  homeassistant.components.media_player: INFO
+  homeassistant.components.notify: WARN
+  homeassistant.components.pyscript: WARN
+  homeassistant.components.pyscript.func.hello_world_basic: DEBUG
+  homeassistant.components.pyscript.func.hello_world_adv: DEBUG
+  homeassistant.components.recorder: ERROR
+  homeassistant.components.sensor: WARN
+  homeassistant.components.sensor.darksky: WARN
+  homeassistant.components.sensor.pi_hole: CRITICAL
+  homeassistant.components.sensor.rest: CRITICAL
+  homeassistant.components.switch: WARN
+  homeassistant.components.telegram_bot: WARN
+  homeassistant.components.weather: WARN
+  homeassistant.components.zeroconf: WARN
+#  homeassistant.components.zwave: WARN
+#  homeassistant.config_entries.ipp: ERROR
+  homeassistant.config_entries: CRITICAL
+  homeassistant.core: WARN
+  homeassistant.exceptions: INFO
+  homeassistant.helpers.script: WARN
+  homeassistant.helpers.entity: CRITICAL
+  homeassistant.loader: ERROR
+  homeassistant.setup: WARN
+  homeassistant.util.package: WARN
+  oauth2client.client: WARN
+  oauth2client.transport: WARN
+  pubnub: CRITICAL
+  py.warnings: WARN
+  requests.packages.urllib3.connectionpool: CRITICAL
+  urllib3.connectionpool: ERROR
+  root: WARN
+  skybellpy: WARN
+  sensor.ecosys_p5026cdw: CRITICAL
+  sensor.ecosys_p5026cdw_black_tk_5240k: CRITICAL
+  sensor.ecosys_p5026cdw_cyan_tk_5240cs: CRITICAL
+  sensor.ecosys_p5026cdw_magenta_tk_5240ms: CRITICAL
+  sensor.ecosys_p5026cdw_waste_toner_box: CRITICAL
+  sensor.ecosys_p5026cdw_yellow_tk_5240ys: CRITICAL
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

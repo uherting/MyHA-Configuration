@@ -1,0 +1,52 @@
+####################################################################
+# SUBSTITUTIONS
+
+  devicename: l1thehut01
+  friendly_name: L1 TheHut01
+  friendly_id: L1TheHut01
+
+  wifi_status_name: ${friendly_name} Status
+  wifi_status_id: ${friendly_id}Status
+  wifi_uptime_name: ${friendly_name} Uptime
+  wifi_wifi_signal_name: ${friendly_name} WiFi Signal
+  wifi_connection_ip_address_name: ${friendly_name} Connection IP address
+  wifi_connection_ssid_name: ${friendly_name} Connection SSID
+  wifi_connection_bssid_name: ${friendly_name} Connection BSSID
+
+  # details for DALLAS sensors connected to device l1thehut01
+  dallas_01c01_name: $friendly_name TempCase 01
+  dallas_01c01_address: !secret DALLAS_01_L1THEHUT01_CASESENSOR_01_ADDRESS
+  dallas_01e01_name: $friendly_name TempEnv 01
+  dallas_01e01_address: !secret DALLAS_01_L1THEHUT01_ENVSENSOR_01_ADDRESS
+
+  # details (do _not_ edit the following substitutions)
+  pir01_name: $friendly_name PIR 01
+  pir01_id: ${friendly_id}_PIR_01
+  pir02_name: $friendly_name PIR 02
+  pir02_id: ${friendly_id}_PIR_02
+  touchbutton01_name: $friendly_name TB 01
+  touchbutton01_id: ${friendly_id}_TB_01
+  touchbutton02_name: $friendly_name TB 02
+  touchbutton02_id: ${friendly_id}_TB_02
+  mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
+  ssr01_name: $friendly_name SSR 01
+  ssr01_id: ${friendly_id}_SSR01
+  ssr02_name: $friendly_name SSR 02
+  ssr02_id: ${friendly_id}_SSR02
+  opto_cpl01_name: ${friendly_name} OptoCoupler 01
+  opto_cpl01_id: ${friendly_id}_OC01
+
+  servo01_name: ${friendly_id}_SERVO_NAME_01
+  servo01_id: ${friendly_id}_SERVO_ID_01
+  servo01_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
+  servo02_name: ${friendly_id}_SERVO_NAME_01
+  servo02_id: ${friendly_id}_SERVO_ID_01
+  servo02_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
+
+  pca9685_output1_id: ${friendly_id}_PCA9685_ID_01
+  pca9685_output2_id: ${friendly_id}_PCA9685_ID_02
+
+####################################################################
+# EOF
+####################################################################
+

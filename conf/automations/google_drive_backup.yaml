@@ -1,0 +1,28 @@
+# ############################################################
+#
+#  Google Drive Backup: stale backup info
+#
+# ############################################################
+
+
+# ############################################################
+# snapshots went stale
+# ############################################################
+- alias: Snapshots went stale
+  id: 'snapshots_went_stale'
+  initial_state: true
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.snapshots_stale
+    to: 'on'
+  condition: []
+  action:
+    - service: notify.google_drive_backup_stale_backup_info
+      data_template:
+        message: >
+          Snapshots of Google Drive Backup are stale. Please visit the <a href="/cebe7a76_hassio_google_drive_backup">Hass.io Google Drive Backup</a> add-on status page for details.
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

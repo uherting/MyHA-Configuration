@@ -1,0 +1,33 @@
+####################################################################
+####################################################################
+#
+# weather tab --- lovelace configuration
+# (weather info from windy.com)
+#
+####################################################################
+####################################################################
+
+icon: mdi:weather-sunny
+title: weather
+path: weather
+cards:
+  # Norwegian Meteorological Institute
+  - type: weather-forecast
+    entity: weather.home431
+
+# AccuWeather
+  - type: weather-forecast
+    entity: weather.home431_2
+
+#  # Deutscher Wetterdienst (DWD)
+#  - type: weather-forecast
+#    entity: weather.dwd_weather_h431
+
+  # Windy.Com
+  - type: iframe
+    url: https://embed.windy.com/embed2.html?lat=51.649&lon=10.422&zoom=11&level=surface&overlay=temp&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=51.649&detailLon=10.422&metricWind=default&metricTemp=default&radarRange=-1
+    aspect_ratio: 75%
+
+####################################################################
+# EOF
+####################################################################

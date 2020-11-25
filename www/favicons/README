@@ -1,0 +1,6 @@
+source: https://github.com/home-assistant/home-assistant-assets/tree/master/Alternates
+
+used in HACS integration 'Favicon changer'.
+
+The subdirectories and the contents of them is created by 
+the script pgn2ico.sh and png2dir.sh (sym link to png2ico.sh).

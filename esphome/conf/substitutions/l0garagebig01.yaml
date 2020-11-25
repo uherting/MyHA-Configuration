@@ -1,0 +1,70 @@
+####################################################################
+# SUBSTITUTIONS
+
+  # substitutions unique to the device
+  devicename: l0garagebig01
+  friendly_name: L0 GarageBig01
+  friendly_id: L0GarageBig01
+
+  # substitutions for a sensor located in another area but connected to this device
+  devicename_l0corridor01: l0corridor01
+  friendly_name_l0corridor01: L0 Corridor01
+  friendly_id_l0corridor01: L0Corridor01
+
+  # WiFi related stuff
+  wifi_status_name: ${friendly_name} Status
+  wifi_status_id: ${friendly_id}Status
+  wifi_uptime_name: ${friendly_name} Uptime
+  wifi_wifi_signal_name: ${friendly_name} WiFi Signal
+  wifi_connection_ip_address_name: ${friendly_name} Connection IP address
+  wifi_connection_ssid_name: ${friendly_name} Connection SSID
+  wifi_connection_bssid_name: ${friendly_name} Connection BSSID
+
+  # details for DALLAS sensors connected to device l0garagebig01
+  dallas_01c01_name: $friendly_name TempCase 01
+  dallas_01c01_address: !secret DALLAS_01_L0GARAGEBIG01_CASESENSOR_01_ADDRESS
+  dallas_01e01_name: $friendly_name TempEnv 01
+  dallas_01e01_address: !secret DALLAS_01_L0GARAGEBIG01_ENVSENSOR_01_ADDRESS
+
+  #
+  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
+  #
+
+  # connected sensors / interfaces
+  # MCP23017 hub ids
+  mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
+  # opto couplers
+  opto_cpl01_name: ${friendly_name} OptoCoupler 01
+  opto_cpl01_id: ${friendly_id}_OC01
+  # PIRs
+  pir01_name: $friendly_name PIR 01
+  pir01_id: ${friendly_id}_PIR_01
+  pir02_name: $friendly_name PIR 02
+  pir02_id: ${friendly_id}_PIR_02
+  # local reed relays
+  reed_contact01_name: $friendly_name REED 01
+  reed_contact01_id: ${friendly_id}_REED_01
+  reed_contact02_name: $friendly_name REED 02
+  reed_contact02_id: ${friendly_id}_REED_02
+  reed_contact03_name: $friendly_name REED 03
+  reed_contact03_id: ${friendly_id}_REED_03
+  reed_contact04_name: $friendly_name REED 04
+  reed_contact04_id: ${friendly_id}_REED_04
+  # remote reed relays
+  reed_contact90_name: $friendly_name_l0corridor01 REED 90
+  reed_contact90_id: ${friendly_id_l0corridor01}_REED_90
+  # SSRs
+  ssr01_name: $friendly_name SSR 01
+  ssr01_id: ${friendly_id}_SSR01
+  ssr02_name: $friendly_name SSR 02
+  ssr02_id: ${friendly_id}_SSR02
+  # touch buttons
+  touchbutton01_name: $friendly_name TB 01
+  touchbutton01_id: ${friendly_id}_TB_01
+  touchbutton02_name: $friendly_name TB 02
+  touchbutton02_id: ${friendly_id}_TB_02
+
+####################################################################
+# EOF
+####################################################################
+

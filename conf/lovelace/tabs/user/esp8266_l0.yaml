@@ -1,0 +1,64 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l0 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l0
+path: esp8266_l0
+badges: [ ]
+cards:
+
+  - type: entities
+    title: L0 Corridor 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0_corridor01_tempcase_01
+#      - sensor.l0_corridor01_tempenv_01
+      - binary_sensor.l0_corridor01_pir_01
+      - binary_sensor.l0_corridor01_pir_02
+      - binary_sensor.l0_corridor01_door
+      - switch.l0_corridor01_ssr_01
+      - switch.l0_corridor01_ssr_02
+
+  - type: entities
+    title: L0 Corridor 02
+    show_header_toggle: false
+    entities:
+      - sensor.l0_corridor02_tempcase_01
+#      - sensor.l0_corridor02_tempenv_01
+      - binary_sensor.l0_corridor02_pir_01
+      - binary_sensor.l0_corridor02_pir_02
+      - binary_sensor.l0_corridor02_door
+      - switch.l0_corridor02_ssr_01
+      - switch.l0_corridor02_ssr_02
+
+  - type: entities
+    title: L0 GarageBig 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0_garagebig01_tempcase_01
+#      - sensor.l0_garagebig01_tempenv_01
+      - binary_sensor.l0_garagebig01_pir_01
+      - binary_sensor.l0_garagebig01_pir_02
+      - binary_sensor.l0_garagebig01_door
+      - switch.l0_garagebig01_ssr_01
+      - switch.l0_garagebig01_ssr_02
+
+  - type: entities
+    title: L0 GarageSmall 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0_garagesmall01_tempcase_01
+#      - sensor.l0_garagesmall01_tempenv_01
+      - binary_sensor.l0_garagesmall01_pir_01
+      - binary_sensor.l0_garagesmall01_pir_02
+      - binary_sensor.l0_garagesmall01_door
+      - switch.l0_garagesmall01_ssr_01
+      - switch.l0_garagesmall01_ssr_02
+
+####################################################################
+# EOF
+####################################################################

@@ -1,0 +1,29 @@
+##
+## Main arguments, all optional
+##
+title: HADashboard - Temperatures L0
+widget_dimensions: [120, 120]
+widget_size: [1, 1]
+widget_margins: [5, 5]
+columns: 8
+global_parameters:
+    use_comma: 0
+    precision: 1
+    use_hass_icon: 1
+    namespace: default
+
+#
+# customisations for the layout
+#
+
+# temperature
+l0_corridor01_tempcase_01:
+    widget_type: sensor
+    entity: sensor.l0_corridor01_tempcase_01
+    title: Corridor 01
+
+# layout
+layout:
+    - include: nav/top
+    - l0_corridor01_tempcase_01
+    - include: nav/bottom

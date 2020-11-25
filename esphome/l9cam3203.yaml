@@ -1,0 +1,70 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l9cam3203
+#
+####################################################################
+####################################################################
+
+######################### DESCRIPTION #########################
+#
+# Purpose:
+#   - just an ordinary cam triggered by a PIR connected to another device
+#   no longer: - act as a notification device based on PIR sensor attached to the module
+#
+# Hardware:
+#   - ESP32-cam
+#
+# Automation:
+#   - yes, HA internal only
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 1 button
+#   - future plan:
+#     - 1 PIR sensor via I2C / MCP23017
+# Output
+#   - none
+#
+
+substitutions: !include conf/substitutions/l9cam3203.yaml
+
+esphome:
+  name: $devicename
+  platform: ESP32
+
+# from the french guy @ 20190712
+# - https://www.youtube.com/watch?v=fHgqFuGaTGE)
+  board: nodemcu-32s
+
+# from airi @ 201490429:
+# - https://www.youtube.com/watch?v=-towjof_ixU
+# - https://github.com/airijia/esphome-config/blob/master/ESP32/ESP32-CAM.yaml
+#  board: esp32dev
+
+wifi: !include conf/common/wifi.yaml
+logger: !include conf/common/logger_debug.yaml
+api: !include conf/common/api.yaml
+ota: !include conf/common/ota.yaml
+text_sensor: !include conf/common/text_sensor.yaml
+
+esp32_camera: !include conf/esp32_camera/l9cam3203.yaml
+
+# Flashlight
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: gpio_4
+light:
+  - platform: binary
+    output: gpio_4
+    name: $cam_light_name
+
+binary_sensor: !include conf/binary_sensor/l9cam3203.yaml
+sensor: !include conf/sensor/l9cam3203.yaml
+
+####################################################################
+# EOF
+####################################################################

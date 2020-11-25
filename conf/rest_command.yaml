@@ -1,0 +1,11 @@
+  # creating an issue on Github for new notifications
+  # - HA update
+  # seen on https://github.com/CCOSTAN/Home-AssistantConfig/issues/606
+  - github_create_issue_on_new_ha_version:
+      url: https://api.github.com/repos/uherting/MyHA-Configuration/issues
+      method: POST
+      headers:
+        Authorization: !secret GITHUB_TOKEN
+      payload: '{"title":"Home-Assistant {{ version }} available","body":"Home-Assistant {{ version }} is now available."}'
+
+#  See <a href="http://{{!secret HA_INTERNAL_URL}}/hacs">here</a>

@@ -1,0 +1,22 @@
+####################################################################
+####################################################################
+#
+# information tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:temperature-celsius
+title: Temperatures
+path: temperatures
+badges: [ ]
+cards:
+  # all temperatures in HA in one display
+  - type: iframe
+    title: All temperatures in HA
+    url: http://localhost/z.html
+    aspect_ratio: 85%
+
+####################################################################
+# EOF
+####################################################################

@@ -1,0 +1,136 @@
+###########################################################################
+# Group for ESPHome devices
+###########################################################################
+
+# ====================
+# ESPHome Devices Status
+# ====================
+  esphome_dev_stat:
+    name: ESPHome devices status
+    entities:
+      # ESP8266
+      - binary_sensor.l0_corridor01_status
+      - binary_sensor.l2_kitchen01_status
+      - binary_sensor.l2_storage01_status
+#      - binary_sensor.l9_test_01_status
+      # ESP32 cams
+      - binary_sensor.l9_cam32_01_status
+      - binary_sensor.l9_cam32_02_status
+      - binary_sensor.l9_cam32_03_status
+      # TTGO cams
+      - binary_sensor.l9_cam_ttgo_01_status
+      - binary_sensor.l9_cam_ttgo_02_status
+    all: false
+
+# ====================
+# ESPHome SSR
+# ====================
+  esphome_dev_ssr:
+    name: ESPHome devices SSR
+    entities:
+      # ESP8266
+      - switch.l0_corridor01_ssr_01
+      - switch.l0_corridor01_ssr_02
+      - switch.l2_kitchen01_ssr_01
+      - switch.l2_storage01_ssr_01
+#      - switch.l2_kitchen01_ssr_02
+#      - switch.l9_test_01_ssr_01
+#      - switch.l9_test_01_ssr_02
+    all: true
+
+# ====================
+# ESPHome PIR
+# ====================
+  esphome_dev_pir:
+    name: ESPHome devices PIR
+    entities:
+      # ESP8266
+      - binary_sensor.l0_corridor01_pir_01
+      - binary_sensor.l0_corridor01_pir_01
+      - binary_sensor.l2_kitchen01_pir_01
+      - binary_sensor.l2_storage01_pir_01
+#      - binary_sensor.l2_kitchen01_pir_01
+#      - binary_sensor.l9_test_01_pir_01
+      # ESP32 cams
+#      - binary_sensor.l9_cam32_01_pir_01
+#      - binary_sensor.l9_cam32_02_pir_01
+#      - binary_sensor.l9_cam32_03_pir_01
+      # TTGO cams
+      - binary_sensor.l9_cam_ttgo_01_pir_01
+      - binary_sensor.l9_cam_ttgo_02_pir_01
+    all: false
+
+# ====================
+# ESPHome button
+# ====================
+  esphome_dev_button:
+    name: ESPHome devices button
+    entities:
+      # ESP8266
+#      - binary_sensor.l0_corridor01_button
+#      - binary_sensor.l2_kitchen01_button
+#      - binary_sensor.l9_test_01_button
+      # ESP32 cams
+#      - binary_sensor.l9_cam32_01_button
+#      - binary_sensor.l9_cam32_02_button
+#      - binary_sensor.l9_cam32_03_button
+      # TTGO cams
+      - binary_sensor.l9_cam_ttgo_01_button
+      - binary_sensor.l9_cam_ttgo_02_button
+    all: true
+
+# ========================
+# ESPHome temperature case
+# ========================
+  esphome_dev_temperature_case:
+    name: ESPHome devices temperature case
+    entities:
+      # ESP8266
+      - sensor.l0_corridor01_temperature_case
+      - sensor.l2_kitchen01_temperature_case
+      - sensor.l2_storage01_temperature_case
+#      - sensor.l9_test_01_temperature_case
+
+# ========================
+# ESPHome temperature env
+# ========================
+  esphome_dev_temperature_env:
+    name: ESPHome devices temperature env
+    entities:
+      # ESP8266
+      - sensor.l0_corridor01_temperature_env
+      - sensor.l2_kitchen01_temperature_env
+      - sensor.l2_storage01_temperature_env
+#      - sensor.l9_test_01_temperature_env
+
+# ====================
+# ESPHome uptime
+# ====================
+  esphome_dev_uptime:
+    name: ESPHome devices uptime
+    entities:
+      # ESP8266
+      - sensor.l0_corridor01_uptime
+      - sensor.l2_kitchen01_uptime
+      - sensor.l9_test_01_uptime
+      # ESP32 cams
+      - sensor.l9_cam32_01_uptime
+      - sensor.l9_cam32_02_uptime
+      - sensor.l9_cam32_03_uptime
+      # TTGO cams
+      - sensor.l9_cam_ttgo_01_uptime
+      - sensor.l9_cam_ttgo_02_uptime
+    all: false
+
+# ====================
+# ESPHome wifi_signal
+# ====================
+  esphome_dev_wifi_signal:
+    name: ESPHome devices wifi_signal
+    entities:
+      - sensor.l0_corridor01_wifi_signal
+      - sensor.l0_esp3201_wifi_signal
+      - sensor.l9_esp3201_wifi_signal
+    all: false
+
+

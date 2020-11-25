@@ -1,0 +1,25 @@
+####################################################################
+# WIFI
+####################################################################
+
+# wifi:
+  networks:
+  - ssid: !secret WIFI_L0_SSID
+    password: !secret WIFI_L0_PW
+  - ssid: !secret WIFI_L2_SSID
+    password: !secret WIFI_L2_PW
+  - ssid: !secret WIFI_L9_SSID
+    password: !secret WIFI_L9_PW
+  domain: !secret WIFI_DOMAIN
+
+  # now defaults (just to mention them)
+#  reboot_timeout: !secret WIFI_REBOOT_TIMEOUT
+#  output_power: !secret WIFI_OUTPUT_POWER_STD
+#  fast_connect: !secret WIFI_FAST_CONNECT
+#  id: !secret WIFI_ID (rather not use this without susbstitution in place!)
+
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

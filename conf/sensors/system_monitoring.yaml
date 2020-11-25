@@ -1,0 +1,38 @@
+##########################################################################################
+# Sensors
+##########################################################################################
+
+##########################################################################################
+# system monitoring
+# as we run as hass.io there is only the root "partition" of docker
+  - platform: systemmonitor
+    resources:
+      - type: disk_use
+        arg: /
+      - type: disk_use_percent
+        arg: /
+      - type: disk_free
+        arg: /
+      - type: memory_free
+      - type: memory_use
+      - type: memory_use_percent
+      - type: swap_free
+      - type: swap_use
+      - type: swap_use_percent
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+      - type: last_boot
+      - type: processor_use
+      - type: network_in
+        arg: hassio
+      - type: network_out
+        arg: hassio
+      - type: throughput_network_in
+        arg: hassio
+      - type: throughput_network_out
+        arg: hassio
+
+####################################################################
+# EOF
+####################################################################

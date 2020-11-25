@@ -1,0 +1,124 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l9 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l9
+path: esp8266_l9
+badges: [ ]
+cards:
+
+  - type: entities
+    title: L9 Cam32 01
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_01_tempcase_01
+#      - sensor.l9_cam32_01_tempenv_01
+      - binary_sensor.l9_cam32_01_pir_01
+      - binary_sensor.l9_cam32_01_pir_02
+      - binary_sensor.l9_cam32_01_door
+      - switch.l9_cam32_01_ssr_01
+      - switch.l9_cam32_01_ssr_02
+
+  - type: entities
+    title: L9 Cam32 02
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_02_tempcase_01
+#      - sensor.l9_cam32_02_tempenv_01
+      - binary_sensor.l9_cam32_02_pir_01
+      - binary_sensor.l9_cam32_02_pir_02
+      - binary_sensor.l9_cam32_02_door
+      - switch.l9_cam32_02_ssr_01
+      - switch.l9_cam32_02_ssr_02
+
+  - type: entities
+    title: L9 Cam32 03
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_03_tempcase_01
+#      - sensor.l9_cam32_03_tempenv_01
+      - binary_sensor.l9_cam32_03_pir_01
+      - binary_sensor.l9_cam32_03_pir_02
+      - binary_sensor.l9_cam32_03_door
+      - switch.l9_cam32_03_ssr_01
+      - switch.l9_cam32_03_ssr_02
+
+  - type: entities
+    title: L9 Cam32 04
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_04_tempcase_01
+#      - sensor.l9_cam32_04_tempenv_01
+      - binary_sensor.l9_cam32_04_pir_01
+      - binary_sensor.l9_cam32_04_pir_02
+      - binary_sensor.l9_cam32_04_door
+      - switch.l9_cam32_04_ssr_01
+      - switch.l9_cam32_04_ssr_02
+
+  - type: entities
+    title: L9 Cam32 05
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_05_tempcase_01
+#      - sensor.l9_cam32_05_tempenv_01
+      - binary_sensor.l9_cam32_05_pir_01
+      - binary_sensor.l9_cam32_05_pir_02
+      - binary_sensor.l9_cam32_05_door
+      - switch.l9_cam32_05_ssr_01
+      - switch.l9_cam32_05_ssr_02
+
+  - type: entities
+    title: L9 Cam32 06
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_06_tempcase_01
+#      - sensor.l9_cam32_06_tempenv_01
+      - binary_sensor.l9_cam32_06_pir_01
+      - binary_sensor.l9_cam32_06_pir_02
+      - binary_sensor.l9_cam32_06_door
+      - switch.l9_cam32_06_ssr_01
+      - switch.l9_cam32_06_ssr_02
+
+  - type: entities
+    title: L9 Cam32 07
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_07_tempcase_01
+#      - sensor.l9_cam32_07_tempenv_01
+      - binary_sensor.l9_cam32_07_pir_01
+      - binary_sensor.l9_cam32_07_pir_02
+      - binary_sensor.l9_cam32_07_door
+      - switch.l9_cam32_07_ssr_01
+      - switch.l9_cam32_07_ssr_02
+
+  - type: entities
+    title: L9 Cam Ttgo 01
+    show_header_toggle: false
+    entities:
+      - sensor.l9_camttgo_01_tempcase_01
+#      - sensor.l9_camttgo_01_tempenv_01
+      - binary_sensor.l9_camttgo_01_pir_01
+      - binary_sensor.l9_camttgo_01_pir_02
+      - binary_sensor.l9_camttgo_01_door
+      - switch.l9_camttgo_01_ssr_01
+      - switch.l9_camttgo_01_ssr_02
+
+  - type: entities
+    title: L9 Cam Ttgo 02
+    show_header_toggle: false
+    entities:
+      - sensor.l9_camttgo_02_tempcase_01
+#      - sensor.l9_camttgo_02_tempenv_01
+      - binary_sensor.l9_camttgo_02_pir_01
+      - binary_sensor.l9_camttgo_02_pir_02
+      - binary_sensor.l9_camttgo_02_door
+      - switch.l9_camttgo_02_ssr_01
+      - switch.l9_camttgo_02_ssr_02
+
+####################################################################
+# EOF
+####################################################################

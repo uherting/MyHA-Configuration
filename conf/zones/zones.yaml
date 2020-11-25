@@ -1,0 +1,49 @@
+# ############################################################
+#
+#  zone setup
+#
+# ############################################################
+
+#  - name: WorkGH
+#    latitude: 51.633863
+#    longitude: 10.488339
+#    radius: 200
+#    icon: mdi:domain
+#
+#  - name: SchoolGH
+#    latitude: 51.717860
+#    longitude: 10.274886
+#    radius: 160
+#    icon: mdi:school
+#
+#  - name: WorkUH
+#    latitude: 51.633863
+#    longitude: 10.488339
+#    radius: 200
+#    icon: mdi:domain
+#
+#  - name: SchoolUH
+#    latitude: 51.717860
+#    longitude: 10.274886
+#    radius: 160
+#    icon: mdi:school
+
+  # This will override the default home zone
+  - name: Home
+    latitude: 51.6340233
+    longitude: 10.4765048
+    radius: 50
+    icon: mdi:home
+
+  - name: HomeRoad
+#    latitude: 51.633832
+#    longitude: 10.476560
+    latitude: 51.633750
+    longitude: 10.476590
+    radius: 200
+    icon: mdi:highway
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

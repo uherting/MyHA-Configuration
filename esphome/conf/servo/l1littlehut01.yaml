@@ -1,0 +1,20 @@
+####################################################################
+# SERVOS
+
+servo:
+  - id: ${servo01_id}
+    output: ${servo01_pwm_output_id}
+
+output:
+  - platform: esp8266_pwm
+    id: ${servo01_pwm_output_id}
+    pin: !secret SERVO01_PIN
+    frequency: !secret SERVO_FREQUENCY_VALUE
+#  - platform: esp8266_pwm
+#    id: ${servo01_pwm_output_id}
+#    pin: !secret SERVO02_PIN
+#    frequency: !secret SERVO_FREQUENCY_VALUE
+
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -1,0 +1,16 @@
+###########################################################################
+# Group for device trackers
+###########################################################################
+
+# inactive!!!
+
+#  device_trackers:
+#    name: Device Trackers
+#    entities:
+#      # nmap
+#      - device_tracker.sp_ghredmi4x
+#      - device_tracker.sp_uhhw9l
+#      # life360
+#      - device_tracker.life360_uwe_h
+#      - device_tracker.life360_gillian_h
+

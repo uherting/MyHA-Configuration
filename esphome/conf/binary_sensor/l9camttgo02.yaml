@@ -1,0 +1,46 @@
+####################################################################
+# BINARY SENSORS
+
+
+####################################################################
+# standards first
+
+  - platform: status
+    name: ${wifi_status_name}
+    id: ${wifi_status_id}
+
+####################################################################
+# PIR
+
+  - platform: gpio
+    pin: GPIO33
+    name: $friendly_name PIR
+    device_class: motion
+
+    # if motion is detected
+    on_press:
+      then:
+        - display.page.show: page2
+        - delay: !secret DELAY_15SEC
+        - display.page.show: page1
+    # if no more motion is detected
+#    on_release:
+#      then:
+#        - delay: !secret DELAY_15SEC
+#        - display.page.show: page2
+
+####################################################################
+# button
+
+  - platform: gpio
+    pin:
+      number: GPIO34
+      mode: INPUT_PULLUP
+      inverted: True
+    name: $friendly_name Button
+    device_class: light
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

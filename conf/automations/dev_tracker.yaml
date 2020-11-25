@@ -1,0 +1,146 @@
+# ############################################################
+#
+#  Device tracking
+#
+# ############################################################
+
+- alias: ZZZ Example Device tracking
+  id: 'ZZZ Example Device tracking'
+  initial_state: false
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l9_cam_ttgo_01_status
+      from: 'off'
+      to: 'on'
+# --------------------- ACTIONS ---------------------
+  action:
+# ------------------- SEND NOTIFICATION -------------------
+    - service: script.send_msg_txt_via_tg
+      data_template:
+        msg_message: >
+          TTGO cam L9 01 online again
+          The cam became online at {{ states('sensor.date_time') }}
+
+## ############################################################
+##   Life360 Overdue Update
+## ############################################################
+#- alias: Life360 Overdue Update
+#  trigger:
+#    platform: event
+#    event_type: life360_update_overdue
+#  action:
+#    service: notify.life360_info
+#    data_template:
+#      title: Life360 update overdue
+#      message: >
+#        Update for
+#        {{
+#          state_attr(trigger.event.data.entity_id, 'friendly_name') or
+#          trigger.event.data.entity_id
+#        }} is overdue.
+
+## ############################################################
+##   Life360 Update Restored
+## ############################################################
+#- alias: Life360 Update Restored
+#  trigger:
+#    platform: event
+#    event_type: life360_update_restored
+#  action:
+#    service: notify.life360_info
+#    data_template:
+#      title: Life360 update restored
+#      message: >
+#        Update for
+#        {{
+#          state_attr(trigger.event.data.entity_id, 'friendly_name') or
+#          trigger.event.data.entity_id
+#        }} restored after {{ trigger.event.data.wait }}.
+
+## ############################################################
+##   loc_gh_away
+## ############################################################
+#- alias: loc_gh_away
+## --------------------- TRIGGER ---------------------
+#  trigger:
+#    - platform: zone
+#      entity_id: device_tracker.life360_gillian_h
+#      zone: zone.Home
+#      # Event is either enter or leave
+#      event: leave  # "enter" or "leave"
+#    - platform: zone
+#      entity_id: device_tracker.life360_gillian_h
+#      zone: zone.SchoolGH
+#      # Event is either enter or leave
+#      event: leave  # "enter" or "leave"
+#    - platform: zone
+#      entity_id: device_tracker.life360_gillian_h
+#      zone: zone.WorkGH
+#      # Event is either enter or leave
+#      event: leave  # "enter" or "leave"
+## --------------------- ACTIONS ---------------------
+#  action:
+## --------------------- NOTIFY ---------------------
+#    - service: notify.dev_tracker_gh
+#      data:
+#        message: "Gillian is away."
+
+## ############################################################
+##   loc_gh_arriving_school
+## ############################################################
+#- alias: loc_gh_arriving_school
+## --------------------- TRIGGER ---------------------
+#  trigger:
+#    platform: zone
+#    entity_id: device_tracker.life360_gillian_h
+#    zone: zone.SchoolGH
+#    # Event is either enter or leave
+#    event: enter  # or "leave"
+## --------------------- ACTIONS ---------------------
+#  action:
+## --------------------- NOTIFY ---------------------
+#    - service: notify.dev_tracker_gh
+#      data:
+#        message: "Gillian entered the GH_School zone."
+
+## ############################################################
+##   loc_gh_arriving_office
+## ############################################################
+#- alias: loc_gh_arriving_office
+## --------------------- TRIGGER ---------------------
+#  trigger:
+#    platform: zone
+#    entity_id: device_tracker.life360_gillian_h
+#    zone: zone.WorkGH
+#    # Event is either enter or leave
+#    event: enter  # or "leave"
+## --------------------- ACTIONS ---------------------
+#  action:
+## --------------------- NOTIFY ---------------------
+#    - service: notify.dev_tracker_gh
+#      data:
+#        message: "Gillian entered the GH_Work zone."
+
+## ############################################################
+##   loc_gh_arriving_home
+## ############################################################
+#- alias: loc_gh_arriving_home
+## --------------------- TRIGGER ---------------------
+#  trigger:
+#    platform: zone
+#    entity_id: device_tracker.life360_gillian_h
+#    zone: zone.Home
+#    # Event is either enter or leave
+#    event: enter  # or "leave"
+## --------------------- ACTIONS ---------------------
+#  action:
+## --------------------- NOTIFY ---------------------
+#    - service: notify.dev_tracker_gh
+#      data:
+#        message: "Gillian entered the home zone."
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

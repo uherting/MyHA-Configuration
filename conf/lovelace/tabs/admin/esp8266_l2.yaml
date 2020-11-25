@@ -1,0 +1,36 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l2 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l2
+path: esp8266_l2
+badges: [ ]
+cards:
+
+  - type: entities
+    title: L2 Kitchen 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2_kitchen01_connection_ip_address
+      - sensor.l2_kitchen01_wifi_signal
+      - sensor.l2_kitchen01_uptime
+      - sensor.l2_kitchen01_connection_ssid
+      - sensor.l2_kitchen01_connection_bssid
+      - sensor.l2_kitchen01_esphome_version
+  - type: entities
+    title: L2 Storage 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2_storage01_connection_ip_address
+      - sensor.l2_storage01_wifi_signal
+      - sensor.l2_storage01_uptime
+      - sensor.l2_storage01_connection_ssid
+      - sensor.l2_storage01_connection_bssid
+      - sensor.l2_storage01_esphome_version
+####################################################################
+# EOF
+####################################################################

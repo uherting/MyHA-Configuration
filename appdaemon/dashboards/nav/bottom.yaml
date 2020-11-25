@@ -1,0 +1,18 @@
+# navigation
+navMain:
+    widget_type: navigate
+    title: Main
+    dashboard: main
+navL0T:
+    widget_type: navigate
+    title: L0 T
+    dashboard: temperatures_L0
+navL2T:
+    widget_type: navigate
+    title: L2 T
+    dashboard: temperatures_L2
+
+# layout
+layout:
+    -
+    - navMain(2x1), navL0T(2x1), navL2T(2x1)

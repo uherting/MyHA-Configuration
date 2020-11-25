@@ -1,0 +1,52 @@
+# ############################################################
+#
+#  Device tracking
+#
+# ############################################################
+
+
+# ############################################################
+# Life360 Overdue Update
+# ############################################################
+- alias: Life360 Overdue Update
+  initial_state: false
+# --------------------- TRIGGER ---------------------
+  trigger:
+    platform: event
+    event_type: life360_update_overdue
+# --------------------- ACTIONS ---------------------
+  action:
+# --------------------- NOTIFY ---------------------
+    service: notify.device_tracker_life360_info
+    data:
+      title: Life360 update overdue
+      message: >
+        Update for {{
+          state_attr(trigger.event.data.entity_id, 'friendly_name') or
+          trigger.event.data.entity_id
+        }} is overdue.
+
+# ############################################################
+# Life360 Update Restored
+# ############################################################
+- alias: Life360 Update Restored
+  initial_state: false
+# --------------------- TRIGGER ---------------------
+  trigger:
+    platform: event
+    event_type: life360_update_restored
+# --------------------- ACTIONS ---------------------
+  action:
+# --------------------- NOTIFY ---------------------
+    service: notify.device_tracker_life360_info
+    data:
+      title: Life360 update restored
+      message: >
+        Update for {{
+          state_attr(trigger.event.data.entity_id, 'friendly_name') or
+          trigger.event.data.entity_id
+        }} restored after {{ trigger.event.data.wait }}.
+
+# ############################################################
+#  END OF FILE
+# ############################################################

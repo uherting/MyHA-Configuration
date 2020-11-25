@@ -1,0 +1,36 @@
+##########################################################################################
+# Sensors
+##########################################################################################
+
+##########################################################################################
+# This is the configuration for the HACS integration named ICS
+#
+# ics calendar for adding a sensor to Home Assistant that displays the date and number of
+# days to the next event. E.g. 5 days until the trash will be picked up. The information
+# will be read from a user definded ics file.
+
+  - platform: ics
+    url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
+    name: Abfall
+    startswith: Abfall
+    lookahead: 31
+    id: 1
+
+    # Sommerzeit (Anfang/Ende)
+#  - platform: ics
+#    url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
+#    name: Sommerzeit
+#    contains: Sommerzeit
+#    lookahead: 90
+#    id: 2
+
+#  - platform: ics
+#    url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
+#    name: Advent
+#    contains: Advent
+#    lookahead: 7
+#    id: 3
+
+####################################################################
+# EOF
+####################################################################

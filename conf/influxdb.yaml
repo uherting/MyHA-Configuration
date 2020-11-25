@@ -1,0 +1,16 @@
+############################################################
+# influxdb
+############################################################
+
+  host: !secret INFLUXDB_HOST
+  port: !secret INFLUXDB_PORT
+  database: !secret INFLUXDB_DATABASE
+  username: !secret INFLUXDB_USERNAME
+  password: !secret INFLUXDB_PASSWORD
+  max_retries: 9
+  default_measurement: state
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

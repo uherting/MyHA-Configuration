@@ -1,0 +1,27 @@
+#!/bin/bash
+
+BNAME=`basename $0`
+
+if [ "${BNAME}" == "gey" ]; then
+  FIND="find . -maxdepth 1 -type f"
+else
+  FIND="find . -type f"
+fi
+
+if [ $# -lt 1 ] ;then
+  # edit all YAML and text files
+  gedit `${FIND} -name \*.yaml | sort` `find . -maxdepth 1 -type f -name \*.txt | sort` 2>/dev/null&
+else
+  PARM=$1
+
+  # edit lovelace
+  if [ "${PARM}" == "ui" ] ;then
+    if [ -f ui-lovelace.yaml ]; then 
+      gedit ui-lovelace.yaml 2> /dev/null& 
+    fi
+  else
+    # edit other YAML files with pattern $PARM in the file name
+    gedit `${FIND} -name \*${PARM}\*.yaml | sort` 2>/dev/null&
+  fi
+fi
+

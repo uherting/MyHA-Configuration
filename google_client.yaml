@@ -1,0 +1,5 @@
+# Google platform
+# see https://www.home-assistant.io/integrations/calendar.google/
+  client_id: !secret GOOGLEOAUTHCLIENTID
+  client_secret: !secret GOOGLEOAUTHCLIENTSECRET
+  track_new_calendar: true

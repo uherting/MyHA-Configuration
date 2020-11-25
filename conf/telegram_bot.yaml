@@ -1,0 +1,16 @@
+############################################################
+#
+# telegram integration
+#
+############################################################
+# for docu see https://www.home-assistant.io/integrations/telegram
+- platform: polling
+  api_key: !secret TELEGRAM_TOKEN
+  allowed_chat_ids:
+    - !secret TELEGRAM_GRP_NOTIFY_CHAT_ID
+    - !secret TELEGRAM_HA_USER_H431_CHAT_ID
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

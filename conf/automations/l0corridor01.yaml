@@ -1,0 +1,32 @@
+# ############################################################
+#
+#  automation for l0corridor01
+#
+# ############################################################
+
+# ############################################################
+# l0corridor01 is going somewhere
+# ############################################################
+- alias: ZZZ Example l0corridor01
+  id: 'ZZZ Example l0corridor01'
+  initial_state: false
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l9_cam_ttgo_01_status
+      from: 'off'
+      to: 'on'
+# --------------------- ACTIONS ---------------------
+  action:
+# ------------------- SEND NOTIFICATION -------------------
+    - service: script.send_msg_txt_via_tg
+      data_template:
+        msg_message: >
+          TTGO cam L9 01 online again
+          The cam became online at {{ states('sensor.date_time') }}
+# ---------------------------------------------------------------
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

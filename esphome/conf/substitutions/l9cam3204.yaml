@@ -1,0 +1,25 @@
+####################################################################
+# SUBSTITUTIONS
+
+  # substitutions unique to the device
+  devicename: l9cam3204
+  friendly_name: L9 Cam32 01
+  friendly_id: L9Cam3201
+
+  # WiFi related stuff
+  wifi_status_name: ${friendly_name} Status
+  wifi_status_id: ${friendly_id}Status
+  wifi_uptime_name: ${friendly_name} Uptime
+  wifi_wifi_signal_name: ${friendly_name} WiFi Signal
+  wifi_connection_ip_address_name: ${friendly_name} Connection IP address
+  wifi_connection_ssid_name: ${friendly_name} Connection SSID
+  wifi_connection_bssid_name: ${friendly_name} Connection BSSID
+
+  # misc substitutions
+  pir01_name: $friendly_name PIR 01
+  pir01_id: ${friendly_id}_PIR_01
+  cam_light_name: $friendly_name CamLight
+
+####################################################################
+# EOF
+####################################################################

@@ -1,0 +1,35 @@
+####################################################################
+# SWITCHES
+
+#############################
+# SSR
+  - platform: gpio
+    name: ${ssr01_name}
+    id: ${ssr01_id}
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B0
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+#      inverted: false
+      inverted: true
+    restore_mode: ALWAYS_OFF
+    icon: mdi:lamp
+
+#############################
+# opto coupler
+#  - platform: gpio
+#    name: ${opto_cpl01_name}
+#    id: ${opto_cpl01_id}
+#    pin:
+#      mcp23017: ${mcp23017_hub01_id}
+#      number: !secret MCP23017_PIN_B7
+#      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+#      mode: OUTPUT
+#      inverted: false
+#    restore_mode: ALWAYS_OFF
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

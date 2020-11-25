@@ -1,0 +1,18 @@
+####################################################################
+# ESP32_CAMERA
+
+  - platform: status
+    name: $friendly_name Status
+    id: ${wifi_status_id}
+
+# no PIR at the moment
+#  # PIR sensor
+#  - platform: gpio
+#    name: $pir01_name
+#    id: ${pir01_id}
+#    pin: GPIO14
+#    device_class: motion
+
+####################################################################
+# EOF
+####################################################################

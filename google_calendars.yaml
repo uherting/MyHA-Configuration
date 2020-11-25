@@ -1,0 +1,28 @@
+
+- cal_id: uherting-b@gmx.de
+  entities:
+  - device_id: allgemein
+    ignore_availability: true
+    name: Allgemein
+    track: true
+
+- cal_id: addressbook#contacts@group.v.calendar.google.com
+  entities:
+  - device_id: contacts
+    ignore_availability: true
+    name: Contacts
+    track: true
+
+- cal_id: de.german#holiday@group.v.calendar.google.com
+  entities:
+  - device_id: feiertage_in_deutschland
+    ignore_availability: true
+    name: Feiertage in Deutschland
+    track: true
+
+- cal_id: e2hiiif152p7v7oe1kcd61hjc4@group.calendar.google.com
+  entities:
+  - device_id: movements_basement
+    ignore_availability: true
+    name: Movements-Basement
+    track: true

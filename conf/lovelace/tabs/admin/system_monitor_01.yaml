@@ -1,0 +1,107 @@
+####################################################################
+####################################################################
+#
+# system monitor tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:speedometer
+title: system monitor
+path: system_monitor
+cards:
+
+#  - type: button
+#    icon: mdi:speedometer
+#    name: Run speedtest
+#    tap-action:
+#      action: call_service
+#      service: speedtestdotnet.speedtest
+#    show_icon: true
+#    show_name: true
+
+  - type: entities
+    title: Motherboard
+    show_header_toggle: false
+    entities:
+      - entity: sensor.processor_use
+      - type: divider
+      - entity: sensor.memory_use
+      - entity: sensor.memory_free
+      - entity: sensor.memory_use_percent
+      - type: divider
+      - entity: sensor.load_1m
+      - entity: sensor.load_5m
+      - entity: sensor.load_15m
+  - type: entities
+    title: Harddisk
+    show_header_toggle: false
+    entities:
+      - entity: sensor.disk_use
+      - entity: sensor.disk_free
+      - entity: sensor.disk_use_percent
+      - type: divider
+      - entity: sensor.swap_use
+      - entity: sensor.swap_free
+      - entity: sensor.swap_use_percent
+
+  - type: entities
+    title: Network
+    show_header_toggle: false
+    entities:
+      - entity: sensor.speedtest_download
+      - entity: sensor.speedtest_upload
+      - entity: sensor.speedtest_ping
+      - entity: sensor.network_in_hassio
+      - entity: sensor.network_out_hassio
+      - entity: sensor.network_throughput_in_hassio
+      - entity: sensor.network_throughput_out_hassio
+
+  - type: gauge
+    name: CPU use
+    unit: '%'
+    entity: sensor.processor_use
+    min: 0
+    max: 100
+    severity:
+      green: 0
+      yellow: 75
+      red: 90
+
+  - type: gauge
+    name: Memory use
+    unit: '%'
+    entity: sensor.memory_use_percent
+    min: 0
+    max: 100
+    severity:
+      green: 0
+      yellow: 75
+      red: 90
+
+  - type: gauge
+    name: Disc use
+    unit: '%'
+    entity: sensor.disk_use_percent
+    min: 0
+    max: 100
+    severity:
+      green: 0
+      yellow: 75
+      red: 90
+
+  - type: gauge
+    name: Swap use
+    unit: '%'
+    entity: sensor.swap_use_percent
+    min: 0
+    max: 100
+    severity:
+      green: 0
+      yellow: 33
+      red: 80
+
+
+####################################################################
+# EOF
+####################################################################

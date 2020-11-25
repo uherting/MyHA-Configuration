@@ -1,0 +1,16 @@
+##########################################################################################
+# Switches
+##########################################################################################
+
+  - platform: command_line
+    switches:
+      pihole_switch:
+        friendly_name: PiHole
+        command_on: "curl -X GET 'http://192.168.178.132/admin/api.php?enable&auth='"
+        command_off: "curl -X GET 'http://192.168.178.132/admin/api.php?disable=3600&auth='"
+        command_state: "curl -X GET 'http://192.168.178.132/admin/api.php?status'"
+        value_template: "{{ value_json.status == 'enabled' }}"
+
+####################################################################
+# EOF
+####################################################################

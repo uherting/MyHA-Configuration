@@ -1,0 +1,76 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l1thehut01
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - Based on a PIR/RCWL sensor ...
+#       - a lamp shall be switched on/off using a SSR
+#   - Two temperature sensors to control the temperature in the
+#     case and of the environment
+#
+# Hardware:
+#   - 1 ESP8266
+#   - 1 MCP23017 modul
+#   - 2 Dallas 18B20 sensor
+#   - 1 SSR module with 1 SSR
+#   - 1 PIR/RCWL
+#   - steel housing for external Dallas 18B20 sensors
+#   - heat shrink tube, misc diameter
+#   - case for the hardware
+#   - PCB
+#   - wire
+#
+# Automation:
+#   - partially, see binary sensors definition file
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 2 temperatur sensors (for the case / environment)
+#   - 1 PIR/RCWL sensor via I2C / MCP23017
+#   - 1 TP223 touch button for ???
+#
+# Output
+#   - 1 SSR via I2C / MCP23017
+#
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: !include conf/substitutions/l1thehut01.yaml
+
+###################### SETTING UP THE DEVICE ######################
+
+esphome:
+  name: $devicename
+  platform: ESP8266
+  board: nodemcuv2
+
+###################### GENERIC CONFIGURATION ######################
+
+wifi: !include conf/common/wifi.yaml
+logger: !include conf/logger/l1thehut01.yaml
+api: !include conf/common/api.yaml
+ota: !include conf/common/ota.yaml
+i2c: !include conf/common/i2c.yaml
+dallas: !include conf/common/dallas.yaml
+mcp23017: !include conf/common/mcp23017.yaml
+text_sensor: !include conf/common/text_sensor.yaml
+
+###################### DETAILED CONFIGURATION ######################
+
+binary_sensor: !include conf/binary_sensor/l1thehut01.yaml
+sensor: !include conf/sensor/l1thehut01.yaml
+switch: !include conf/switch/l1thehut01.yaml
+
+####################################################################
+# EOF
+####################################################################

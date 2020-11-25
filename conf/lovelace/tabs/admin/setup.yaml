@@ -1,0 +1,26 @@
+####################################################################
+####################################################################
+#
+# setup tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:cog
+title: settings
+path: settings
+cards:
+  - type: custom:search-card
+    title: Search entities
+    max_results: 15
+  - type: entities
+    title: Set themes sunrise / sunset
+    show_header_toggle: false
+    entities:
+      - input_select.set_sunrise_theme
+      - input_select.set_sunset_theme
+      - input_select.theme
+
+####################################################################
+# EOF
+####################################################################

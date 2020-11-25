@@ -1,0 +1,7 @@
+# navigation
+clock:
+  widget_type: clock
+
+# layout
+layout:
+    - clock(2x1)

@@ -1,0 +1,14 @@
+###########################################################################
+# Group for themes
+###########################################################################
+
+  theme_selector:
+    name: Theme selector
+    icon: mdi:palette
+    entities:
+      - input_select.set_sunrise_theme
+      - input_select.set_sunset_theme
+      - sensor.sun_based_theme
+      - automation.sun_based_theme_change
+      - input_select.theme
+      

@@ -1,0 +1,33 @@
+####################################################################
+####################################################################
+#
+# information tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:script
+title: Information
+path: information
+badges: [
+  person.uwe, person.gillian,
+  sun.sun,
+  binary_sensor.workday_sensor
+  ]
+cards:
+  # misc information (user targeted)
+  - type: entities
+    title: Misc Information
+    show_header_toggle: false
+    entities:
+      # Muellabfuhr
+      - sensor.ics_1
+      # Sommerzeit (Anfang/Ende)
+      #- sensor.ics_2
+      # Advent
+      #- sensor.ics_3
+
+
+####################################################################
+# EOF
+####################################################################

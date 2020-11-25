@@ -1,0 +1,23 @@
+To disable GUI from Ubuntu:
+
+    Open terminal by Ctrl.+Alt+T
+    Then enter following command
+
+    sudo systemctl set-default multi-user.target
+
+    Finally enter user password and proceed.
+
+To enable GUI again in Ubuntu:
+
+    Open terminal
+    Then enter following command in terminal
+
+    sudo systemctl set-default graphical.target
+
+    Finally enter user password
+
+To start new GUI session use following command
+
+    sudo systemctl start gdm3.service
+
+

@@ -1,0 +1,32 @@
+name: Home431
+
+latitude: !secret HA_LOCATION_LATITUDE
+longitude: !secret HA_LOCATION_LONGITUDE
+elevation: !secret HA_LOCATION_ELEVATION
+
+unit_system: metric
+time_zone: !secret HA_LOCATION_TIME_ZONE
+
+external_url: !secret HA_EXTERNAL_URL
+internal_url: !secret HA_INTERNAL_URL
+
+allowlist_external_dirs:
+  - /config/var/opt/tg/l9esp32cam01
+  - /config/var/opt/tg/l9esp32cam02
+  - /config/var/opt/tg/l9esp32cam03
+  - /config/var/opt/tg/l9ttgocam01
+  - /config/var/opt/tg/l9ttgocam02
+
+#  customize:
+#    sensor.holiday:
+#      hidden: false
+#      icon: mdi:beach
+#      friendly_name: Feiertag in DE
+#    sensor.flag:
+#      hidden: false
+#      icon: mdi:flag
+#      friendly_name: Flaggentag in DE
+#    sensor.goodtoknow:
+#      hidden: false
+#      icon: mdi:exclamation
+#      friendly_name: Gut zu wissen

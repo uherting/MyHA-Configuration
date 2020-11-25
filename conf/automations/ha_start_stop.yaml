@@ -1,0 +1,53 @@
+# ############################################################
+#
+#  Home assistant start / stop info
+#
+# ############################################################
+
+
+# ############################################################
+# ha_startup_notification
+# ############################################################
+- alias: HA startup notification
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+  - platform: homeassistant
+    event: start
+# --------------------- ACTIONS ---------------------
+  action:
+# --------------------- NOTIFY ---------------------
+    - service: notify.ha_status_info
+      data_template:
+        message: >
+          Home Assistant is up and running
+          Date / time: {{ states('sensor.date_time') }}
+    - service: automation.turn_off
+      data:
+        entity_id: automation.ha_startup_notification
+
+# ############################################################
+# ha_shutdown_notification
+# ############################################################
+- alias: HA shutdown notification
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+  - platform: homeassistant
+    event: shutdown
+# --------------------- ACTIONS ---------------------
+  action:
+# --------------------- NOTIFY ---------------------
+    - service: notify.ha_status_info
+      data_template:
+        message: >
+          Home Assistant is shutting down.
+          Date / time: {{ states('sensor.date_time') }}
+    - service: automation.turn_off
+      data:
+        entity_id: automation.ha_shutdown_notification
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+STAT_MODIFIED="modified"
+STAT_DELETED="deleted"
+
+FILES_MODIFIED="`git status | grep ${STAT_MODIFIED} | sed -e "s/\t//g" | tr -s " " | cut -f 2 -d " "`"
+FILES_DELETED="`git status | grep ${STAT_DELETED} | sed -e "s/\t//g" | tr -s " " | cut -f 2 -d " "`"
+if [ $# -lt 1 ] ;then
+  echo "NO PARM GIVEN"
+else
+  PARM=$1
+  if [ "${PARM}" == "mod" ] ;then
+    echo "MODIFIED:"
+    echo "${FILES_MODIFIED}"
+    git add ${FILES_MODIFIED}
+  fi
+  if [ "${PARM}" == "del" ] ;then
+    echo "DELETED:"
+    echo "${FILES_DELETED}"
+  fi
+fi

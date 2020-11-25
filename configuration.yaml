@@ -1,0 +1,103 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+homeassistant: !include conf/homeassistant.yaml
+
+updater:
+
+cloud:
+
+logger: !include conf/logger.yaml
+recorder: !include conf/recorder.yaml
+history: !include conf/history.yaml
+influxdb: !include conf/influxdb.yaml
+
+#mqtt: !include conf/mqtt.yaml
+
+lovelace: !include lovelace.yaml
+
+frontend:
+  # no longer supported:
+  # javascript_version: latest
+
+  # themes installed via HACS
+  themes: !include_dir_merge_named themes
+
+input_boolean: !include conf/input_booleans/input_boolean_test.yaml
+input_datetime: !include conf/input_datetime/time_stamps_esp.yaml
+
+# input_select: !include_dir_merge_list conf/input_selects
+input_select: !include conf/input_select/theme_select.yaml
+
+# outdated iframe for mdi icons
+# current mdi icons can be obtained within the VS code editor (menu -> mdi explorer)
+# to reenable the panel_iframe uncomment the following lines
+#panel_iframe:
+#  # Index of MDI Icons that are suitable for Home Assistant
+#  # outdated, forked by UH w/o changing to
+#  # https://github.com/uherting/home-assistant-mdi
+#  mdiindex:
+#    title: MDI Icon Index
+#    icon: mdi:vector-square
+#    # actually this url, but FF prevents it: url: https://raw.githubusercontent.com/james-fry/home-assistant-mdi/master/home-assistant-mdi.html
+#    url: https://cdn.rawgit.com/james-fry/home-assistant-mdi/efd95d7a/home-assistant-mdi.html
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+#http: !include conf/http.yaml
+
+
+# Text to speech
+#tts:
+#  - platform: google_translate
+
+zone: !include conf/zones/zones.yaml
+
+script: !include conf/scripts/scripts.yaml
+
+# not required as the add-on is installed
+# see https://www.home-assistant.io/integrations/duckdns/
+#duckdns: !include conf/duckdns.yaml
+
+# device tracking
+device_tracker: !include_dir_merge_list conf/device_trackers
+# life360: !include conf/life360.yaml
+# owntracks: !include conf/owntracks.yaml
+
+group: !include_dir_merge_list conf/groups
+
+telegram_bot: !include conf/telegram_bot.yaml
+
+speedtestdotnet: !include  conf/speedtestdotnet.yaml
+
+pi_hole: !include conf/pi_holes/pi_holes.yaml
+
+rest_command:
+  github_create_issue_on_new_ha_version:
+    url: https://api.github.com/repos/uherting/MyHA-Configuration/issues
+    method: POST
+    headers:
+      Authorization: !secret GITHUB_TOKEN
+    payload: '{"title":"Home-Assistant {{ version }} available","body":"Home-Assistant {{ version }} is now available."}'
+
+#rest_command: !include conf/rest_command.yaml
+
+notify: !include conf/notify.yaml
+
+automation: !include_dir_merge_list conf/automations
+
+binary_sensor: !include_dir_merge_list conf/binary_sensors
+sensor: !include_dir_merge_list conf/sensors
+
+google: !include google_client.yaml
+
+pyscript:
+
+python_script:
+
+switch: !include_dir_merge_list conf/switches
+
+####################################################################
+# EOF
+####################################################################
