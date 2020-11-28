@@ -13,27 +13,7 @@
 secrets_real.yaml
 
 
-# ESPHome device directories (used for compiling, etc)
+# ESPHome device directory (used for compiling, etc)
 # The content of the directories below and their
 # subdirectories will be ignored.
-l0corridor01
-l0corridor02
-l0garagebig01
-l0garagesmall01
-
-l1thehut01
-
-l2bedroom01
-l2kitchen01
-l2storage01
-
-l9cam3201
-l9cam3202
-l9cam3203
-l9cam3204
-l9cam3205
-l9cam3206
-l9cam3207
-
-l9camttgo01
-l9camttgo02
+build
