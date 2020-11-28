@@ -67,12 +67,12 @@
       number: !secret MCP23017_PIN_A2
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: INPUT_PULLUP
-      inverted: true
+      inverted: false
     # debouncing
     filters:
       - delayed_on: 100ms
       - delayed_off: 100ms
-    device_class: motion
+    device_class: door
 
 ####################################################################
 # TOUCH BUTTON
