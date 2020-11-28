@@ -4,6 +4,7 @@
   devicename: l2kitchen01
   friendly_name: L2 Kitchen01
   friendly_id: L2Kitchen01
+  build_path_dir: ./build/${devicename}
 
   wifi_status_name: ${friendly_name} Status
   wifi_status_id: ${friendly_id}Status

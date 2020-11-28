@@ -53,6 +53,7 @@ esphome:
   name: $devicename
   platform: ESP8266
   board: nodemcuv2
+  build_path: $build_path_dir
 
 ###################### GENERIC CONFIGURATION ######################
 
