@@ -70,7 +70,7 @@ text_sensor: !include conf/common/text_sensor.yaml
 
 # needed for execution
 globals: !include conf/globals/l2storage01.yaml
-#interval: !include conf/interval/l2storage01.yaml
+interval: !include conf/interval/l2storage01.yaml
 script: !include conf/script/l2storage01.yaml
 
 # sensors, switches, etc.

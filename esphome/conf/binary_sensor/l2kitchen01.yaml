@@ -11,18 +11,19 @@
 
 ####################################################################
 # Template Binary Sensor
+# this is outdated and replaced by globals and scripts
 # see https://esphome.io/components/binary_sensor/template.html
 # value TRUE => fallback automation is active
 
 # sensor for fallback automation of PIR01
-  - platform: template
-    name: ${binary_template_sensor_01_name}
-    id: ${binary_template_sensor_01_id}
+#  - platform: template
+#    name: ${binary_template_sensor_01_name}
+#    id: ${binary_template_sensor_01_id}
 
 # sensor for fallback automation of PIR02
-  - platform: template
-    name: ${binary_template_sensor_02_name}
-    id: ${binary_template_sensor_02_id}
+#  - platform: template
+#    name: ${binary_template_sensor_02_name}
+#    id: ${binary_template_sensor_02_id}
 
 ####################################################################
 # PIR
@@ -39,31 +40,9 @@
     device_class: motion
 
     # fallback automation while the device is offline:
-    #  - the impuls from the PIR is short
-    #  - race condition seem to occur:
-    #    - to be observed weird behaviour when motion appears seemingly repeatedly during the delay
     on_press:
       then:
         - script.execute: ssr_script_01
-
-  - platform: gpio
-    name: $pir02_name
-    id: ${pir02_id}
-    pin:
-      mcp23017: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_A1
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: INPUT
-      inverted: false
-    device_class: motion
-
-    # fallback automation while the device is offline:
-    #  - the impuls from the PIR is short
-    #  - race condition seem to occur:
-    #    - to be observed weird behaviour when motion appears seemingly repeatedly during the delay
-    on_press:
-      then:
-        - script.execute: ssr_script_02
 
 ####################################################################
 # REED CONTACTS

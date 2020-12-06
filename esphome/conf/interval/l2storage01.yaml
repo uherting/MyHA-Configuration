@@ -1,11 +1,11 @@
 ####################################################################
 # INTERVAL
 
-#  - interval: 1min
-#    then:
-#      - globals.set:
-#          id: isWifiOn
-#          value: id(${wifi_status_id}).state
+  - interval: 1min
+    then:
+      - globals.set:
+          id: isWifiOn
+          value: id(${wifi_status_id}).state
 
 # just debugging:
 #      - lambda: |-

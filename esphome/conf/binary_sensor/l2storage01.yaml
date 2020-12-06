@@ -11,18 +11,19 @@
 
 ####################################################################
 # Template Binary Sensor
+# this is outdated and replaced by globals and scripts
 # see https://esphome.io/components/binary_sensor/template.html
 # value TRUE => fallback automation is active
 
 # sensor for fallback automation of PIR01
-  - platform: template
-    name: ${binary_template_sensor_01_name}
-    id: ${binary_template_sensor_01_id}
+#  - platform: template
+#    name: ${binary_template_sensor_01_name}
+#    id: ${binary_template_sensor_01_id}
 
 # sensor for fallback automation of PIR02
-  - platform: template
-    name: ${binary_template_sensor_02_name}
-    id: ${binary_template_sensor_02_id}
+#  - platform: template
+#    name: ${binary_template_sensor_02_name}
+#    id: ${binary_template_sensor_02_id}
 
 ####################################################################
 # PIR
@@ -39,22 +40,9 @@
     device_class: motion
 
     # fallback automation while the device is offline:
-    #  - the impuls from the PIR is short
-    #  - race condition seem to occur:
-    #    - to be observed weird behaviour when motion appears seemingly repeatedly during the delay
     on_press:
       then:
-        - lambda: |-
-            if (!id(${wifi_status_id}).state) {
-              id(${binary_template_sensor_01_id}).publish_state(true);
-              id(${ssr01_id}).turn_on();
-            }
-        - delay: !secret DELAY_01MIN
-        - lambda: |-
-            if (id(${binary_template_sensor_01_id}).state) {
-              id(${ssr01_id}).turn_off();
-              id(${binary_template_sensor_01_id}).publish_state(false);
-            }
+        - script.execute: ssr_script_01
 
 ####################################################################
 # REED CONTACTS

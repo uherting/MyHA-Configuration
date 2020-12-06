@@ -8,25 +8,14 @@
                       # the latest time the script is executed
     then:
       - lambda: |-
-          if (!id(${wifi_status_id}).state) {
-            if (!id(${ssr01_id}).state) {
-              // id(${binary_template_sensor_01_id}).publish_state(true);
-              id(${ssr01_id}).turn_on();
-            }
+          if (!isWifiOn) {
+            id(${ssr01_id}).turn_on();
           }
       - delay: !secret DELAY_01MIN
       - lambda: |-
-          if (id(${binary_template_sensor_01_id}).state) {
+          if (!isWifiOn) {
             id(${ssr01_id}).turn_off();
-            // id(${binary_template_sensor_01_id}).publish_state(false);
           }
-
-  # on_press action of PIR #02 (currently no difference to script ssr_script_01)
-  - id: ssr_script_02
-    mode: restart     # Light will be kept on during 1 minute since
-                      # the latest time the script is executed
-    then:
-      - script.execute: ssr_script_01
 
 ####################################################################
 # EOF

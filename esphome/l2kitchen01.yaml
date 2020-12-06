@@ -78,7 +78,7 @@ text_sensor: !include conf/common/text_sensor.yaml
 
 # needed for execution
 globals: !include conf/globals/l2kitchen01.yaml
-#interval: !include conf/interval/l2kitchen01.yaml
+interval: !include conf/interval/l2kitchen01.yaml
 script: !include conf/script/l2kitchen01.yaml
 
 # sensors, switches, etc.
