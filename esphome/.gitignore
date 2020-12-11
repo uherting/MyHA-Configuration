@@ -10,8 +10,6 @@
 **/platformio.ini
 **/partitions.csv
 
-old_structure/
-
 secrets_real.yaml
 
 # ESPHome device directory (used for compiling, etc)
