@@ -18,4 +18,3 @@ secrets_real.yaml
 # The content of the directories below and their
 # subdirectories will be ignored.
 build/
-
