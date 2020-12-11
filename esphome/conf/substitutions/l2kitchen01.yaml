@@ -6,7 +6,7 @@
   device_comment: Level 2 Kitchen device 01
   device_platform: ESP8266
   device_board: nodemcuv2
-  device_buildpathdir: ./build/${devicename}
+  device_buildpathdir: ./build/${device_name}
 
   # the friendly name and id
   friendly_name: L2 Kitchen01

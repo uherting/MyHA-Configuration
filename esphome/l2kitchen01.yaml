@@ -57,16 +57,17 @@ substitutions: !include conf/substitutions/l2kitchen01.yaml
 
 ###################### GENERAL CONFIGURATION ######################
 
-esphome:
-  name: $device_name
-  comment: $device_comment
-  platform: $device_platform
-  board: $device_board
-  build_path: $device_buildpathdir
-wifi: !include conf/common/wifi.yaml
-logger: !include conf/logger/l2kitchen01.yaml
-ota: !include conf/common/ota.yaml
-text_sensor: !include conf/common/text_sensor.yaml
+packages:
+  device_base: !include conf/packages/device_base.yaml
+
+# bypass central configuration temporarily (uncomment of the following lines)
+# logger: !secret LOGGER_LEVEL_NONE
+# logger: !secret LOGGER_LEVEL_ERROR
+# logger: !secret LOGGER_LEVEL_WARN
+# logger: !secret LOGGER_LEVEL_INFO
+# logger: !secret LOGGER_LEVEL_DEBUG
+# logger: !secret LOGGER_LEVEL_VERBOSE
+# logger: !secret LOGGER_LEVEL_VERY_VERBOSE
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
