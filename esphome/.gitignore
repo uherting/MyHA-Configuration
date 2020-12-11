@@ -10,10 +10,12 @@
 **/platformio.ini
 **/partitions.csv
 
-secrets_real.yaml
+old_structure/
 
+secrets_real.yaml
 
 # ESPHome device directory (used for compiling, etc)
 # The content of the directories below and their
 # subdirectories will be ignored.
-build
+build/
+
