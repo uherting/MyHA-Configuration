@@ -90,13 +90,17 @@ mcp23017: !include conf/common/mcp23017.yaml
 
 ###################### DETAILED CONFIGURATION ######################
 
-# needed for execution of offline functionality
+# div stuff needed for execution of offline functionality
 globals: !include conf/globals/l2kitchen01.yaml
 interval: !include conf/interval/l2kitchen01.yaml
 script: !include conf/script/common/pir1_to_ssr1.yaml
 
-# sensors, switches, etc.
+#-------------------------------------------------------------------
+# BINARY SENSORS
 binary_sensor: !include conf/binary_sensor/l2kitchen01.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
 sensor:
   # common sensors
   - <<: !include conf/common/sensor_wifisignal.yaml
@@ -104,12 +108,18 @@ sensor:
   # device related
   - <<: !include conf/sensor/l2kitchen01.yaml
 
+#-------------------------------------------------------------------
+# SWITCHES
 switch: !include conf/switch/l2kitchen01.yaml
 
-# common text sensors
+#-------------------------------------------------------------------
+# TEXT SENSORS
 text_sensor:
+  # common text sensors
   - <<: !include conf/common/text_sensor_esphomeversion.yaml
   - <<: !include conf/common/text_sensor_wifiinfo.yaml
+  # device related
+  # none so far
 
 ####################################################################
 # EOF
