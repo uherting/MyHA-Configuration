@@ -1,8 +1,6 @@
 ####################################################################
 # PACKAGES --- GENERAL CONFIGURATION FOR ALL DEVICES
 
-####################################################################
-# DEVICE DEFINITION
 esphome:
   name: $device_name
   comment: $device_comment
@@ -17,10 +15,32 @@ esphome:
 #  - https://esphome.io/components/logger.html?highlight=logger#log-levels
 #  - see secrets.yaml for definitions
 logger:
-  level: ${log_level}
+  level: !secret LOGGER_LEVEL_NONE
 
 ####################################################################
-# TEXT SENSORS
+# WiFi sensors
+sensor:
+  - platform: wifi_signal
+    name: ${wifi_signal_name}
+    update_interval: !secret WIFI_SIGNAL_UPDATE_INTERVAL
+  - platform: uptime
+    name: ${wifi_uptime_name}
+
+####################################################################
+# TEXT_SENSORS
+text_sensor:
+  # the ESPHome version
+  - platform: version
+    name: ${friendly_name} ESPHome Version
+
+  # WiFi information
+  - platform: wifi_info
+    ip_address:
+      name: ${wifi_connection_ip_addr_name}
+    ssid:
+      name: ${wifi_connection_ssid_name}
+    bssid:
+      name: ${wifi_connection_bssid_name}
 
 ####################################################################
 # EOF

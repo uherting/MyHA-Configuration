@@ -1,11 +1,10 @@
 ####################################################################
-# DALLAS 18B20 SENSORS
-####################################################################
+# TEXT_SENSOR - ESPHome version
 
-#dallas:
-  - pin: !secret DALLAS_PIN_01
-    update_interval: !secret DALLAS_UPDATE_INTERVAL_015
-
+#text_sensor:
+  # the ESPHome version
+  - platform: version
+    name: ${friendly_name} ESPHome Version
 
 # ############################################################
 #  END OF FILE

@@ -1,11 +1,8 @@
 ####################################################################
-# DALLAS 18B20 SENSORS
-####################################################################
+# OTA
 
-#dallas:
-  - pin: !secret DALLAS_PIN_01
-    update_interval: !secret DALLAS_UPDATE_INTERVAL_015
-
+#ota:
+  password: !secret HA_OTA_PW
 
 # ############################################################
 #  END OF FILE

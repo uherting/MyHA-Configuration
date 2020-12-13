@@ -1,0 +1,27 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01
+  - id: ssr_script_01
+    mode: restart
+    then:
+      - lambda: |-
+          if (!id(${wifi_status_id}).state) {
+            if (!id(${ssr01_id}).state) {
+              // publish take place in the interval (just debugging)
+              // id(${binary_template_sensor_01_id}).publish_state(true);
+              id(${ssr01_id}).turn_on();
+            }
+          }
+      - delay: !secret DELAY_01MIN
+      - lambda: |-
+          if (id(${binary_template_sensor_01_id}).state) {
+            id(${ssr01_id}).turn_off();
+            // publish take place in the interval (just debugging)
+            //id(${binary_template_sensor_01_id}).publish_state(false);
+          }
+
+####################################################################
+# EOF
+####################################################################

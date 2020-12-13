@@ -1,0 +1,16 @@
+####################################################################
+# TEXT_SENSOR - WiFi information
+
+#text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: $wifi_connection_ip_addr_name
+    ssid:
+      name: $wifi_connection_ssid_name
+    bssid:
+      name: $wifi_connection_bssid_name
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

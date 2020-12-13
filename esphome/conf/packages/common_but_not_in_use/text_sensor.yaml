@@ -1,14 +1,15 @@
 ####################################################################
 # TEXT_SENSORS
-####################################################################
 
-# publish the ESPHome version
+#text_sensor:
+  # the ESPHome version
   - platform: version
     name: ${friendly_name} ESPHome Version
 
+  # WiFi information
   - platform: wifi_info
     ip_address:
-      name: ${wifi_connection_ip_address_name}
+      name: ${wifi_connection_ip_addr_name}
     ssid:
       name: ${wifi_connection_ssid_name}
     bssid:

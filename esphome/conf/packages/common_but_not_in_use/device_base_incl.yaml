@@ -1,0 +1,21 @@
+####################################################################
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL DEVICES
+
+esphome:
+  name: $device_name
+  comment: $device_comment
+  platform: $device_platform
+  board: $device_board
+  build_path: ./build/${device_name}
+
+logger: !include common/logger.yaml
+
+ota: !include common/ota.yaml
+
+sensor: !include common/sensor.yaml
+
+text_sensor: !include common/text_sensor.yaml
+
+####################################################################
+# EOF
+####################################################################

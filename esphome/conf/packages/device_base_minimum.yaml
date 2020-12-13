@@ -1,8 +1,6 @@
 ####################################################################
 # PACKAGES --- GENERAL CONFIGURATION FOR ALL DEVICES
 
-####################################################################
-# DEVICE DEFINITION
 esphome:
   name: $device_name
   comment: $device_comment
@@ -17,10 +15,7 @@ esphome:
 #  - https://esphome.io/components/logger.html?highlight=logger#log-levels
 #  - see secrets.yaml for definitions
 logger:
-  level: ${log_level}
-
-####################################################################
-# TEXT SENSORS
+  level: !secret LOGGER_LEVEL_NONE
 
 ####################################################################
 # EOF

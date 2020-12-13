@@ -57,17 +57,29 @@ substitutions: !include conf/substitutions/l2kitchen01.yaml
 
 ###################### GENERAL CONFIGURATION ######################
 
+
+#packages:
+#  wifi: !include conf/packages/common/wifi.yaml
+#  ota: !include conf/packages/common/ota.yaml
 packages:
   device_base: !include conf/packages/device_base.yaml
 
-# bypass central configuration temporarily (uncomment of the following lines)
-# logger: !secret LOGGER_LEVEL_NONE
-# logger: !secret LOGGER_LEVEL_ERROR
-# logger: !secret LOGGER_LEVEL_WARN
-# logger: !secret LOGGER_LEVEL_INFO
-# logger: !secret LOGGER_LEVEL_DEBUG
-# logger: !secret LOGGER_LEVEL_VERBOSE
-# logger: !secret LOGGER_LEVEL_VERY_VERBOSE
+wifi: !include conf/common/wifi.yaml
+ota: !include conf/common/ota.yaml
+
+#logger:
+#  level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+# as !secret available log levels
+# LOG_LEVEL_NONE
+# LOG_LEVEL_ERROR
+# LOG_LEVEL_WARN
+# LOG_LEVEL_INFO
+# LOG_LEVEL_DEBUG
+# LOG_LEVEL_VERBOSE
+# LOG_LEVEL_VERY_VERBOSE
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
@@ -78,15 +90,26 @@ mcp23017: !include conf/common/mcp23017.yaml
 
 ###################### DETAILED CONFIGURATION ######################
 
-# needed for execution
+# needed for execution of offline functionality
 globals: !include conf/globals/l2kitchen01.yaml
 interval: !include conf/interval/l2kitchen01.yaml
-script: !include conf/script/l2kitchen01.yaml
+script: !include conf/script/common/pir1_to_ssr1.yaml
 
 # sensors, switches, etc.
 binary_sensor: !include conf/binary_sensor/l2kitchen01.yaml
-sensor: !include conf/sensor/l2kitchen01.yaml
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor_wifisignal.yaml
+  - <<: !include conf/common/sensor_uptime.yaml
+  # device related
+  - <<: !include conf/sensor/l2kitchen01.yaml
+
 switch: !include conf/switch/l2kitchen01.yaml
+
+# common text sensors
+text_sensor:
+  - <<: !include conf/common/text_sensor_esphomeversion.yaml
+  - <<: !include conf/common/text_sensor_wifiinfo.yaml
 
 ####################################################################
 # EOF
