@@ -14,5 +14,5 @@ fi
 
 
 TS=`date +%Y%m%d_%H%M%S`
-scp secrets_real.yaml uwe@beta:/home/uwe/Desktop/secrets_${TS}.yaml
+scp secrets.yaml uwe@beta:/home/uwe/Desktop/HA/secrets_${TS}.yaml
 
