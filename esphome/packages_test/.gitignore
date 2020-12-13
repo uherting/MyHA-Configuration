@@ -11,11 +11,8 @@
 **/partitions.csv
 
 secrets.yaml
-secrets_travis.yaml
-secrets_real.yaml
 
 # ESPHome device directory (used for compiling, etc)
 # The content of the directories below and their
 # subdirectories will be ignored.
 build/
-
