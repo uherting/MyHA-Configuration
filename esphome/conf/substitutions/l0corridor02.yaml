@@ -1,8 +1,13 @@
 ####################################################################
 # SUBSTITUTIONS
 
-  # substitutions unique to the device
-  devicename: l0corridor02
+  # device definitions
+  device_name: l0corridor02
+  device_comment: Level 0 Corridor device 02
+  device_platform: ESP8266
+  device_board: nodemcuv2
+
+  # the friendly name and id
   friendly_name: L0 Corridor02
   friendly_id: L0Corridor02
 

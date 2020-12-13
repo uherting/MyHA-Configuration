@@ -49,11 +49,7 @@ substitutions: !include conf/substitutions/l2storage01.yaml
 
 ###################### SETTING UP THE DEVICE ######################
 
-esphome:
-  name: $devicename
-  platform: ESP8266
-  board: nodemcuv2
-  build_path: $build_path_dir
+esphome: !include conf/common/esphome.yaml
 
 ###################### GENERIC CONFIGURATION ######################
 

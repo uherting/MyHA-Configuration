@@ -1,10 +1,15 @@
 ####################################################################
 # SUBSTITUTIONS
 
-  devicename: l2storage01
+  # device definitions
+  device_name: l2storage01
+  device_comment: Level 2 Storage device 01
+  device_platform: ESP8266
+  device_board: nodemcuv2
+
+  # the friendly name and id
   friendly_name: L2 Storage01
   friendly_id: L2Storage01
-  build_path_dir: ./build/${devicename}
 
   wifi_status_name: ${friendly_name} Status
   wifi_status_id: ${friendly_id}Status

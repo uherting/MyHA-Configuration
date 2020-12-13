@@ -1,8 +1,13 @@
 ####################################################################
 # SUBSTITUTIONS
 
-  # substitutions unique to the device
-  devicename: l0garagesmall01
+  # device definitions
+  device_name: l0garagesmall01
+  device_comment: Level 0 GarageSmall device 01
+  device_platform: ESP8266
+  device_board: nodemcuv2
+
+  # the friendly name and id
   friendly_name: L0 GarageSmall01
   friendly_id: L0GarageSmall01
 
