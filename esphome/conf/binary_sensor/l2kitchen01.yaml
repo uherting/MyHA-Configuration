@@ -16,14 +16,14 @@
 # value TRUE => fallback automation is active
 
 # sensor for fallback automation of PIR01
-  - platform: template
-    name: ${binary_template_sensor_01_name}
-    id: ${binary_template_sensor_01_id}
+#  - platform: template
+#    name: ${binary_template_sensor_01_name}
+#    id: ${binary_template_sensor_01_id}
 
 # sensor for fallback automation of PIR02
-  - platform: template
-    name: ${binary_template_sensor_02_name}
-    id: ${binary_template_sensor_02_id}
+#  - platform: template
+#    name: ${binary_template_sensor_02_name}
+#    id: ${binary_template_sensor_02_id}
 
 ####################################################################
 # PIR
