@@ -1,9 +1,16 @@
 ####################################################################
-# ESP32_CAMERA
+# BINARY SENSORS
+
+
+####################################################################
+# WiFi status
 
   - platform: status
     name: $friendly_name Status
     id: ${wifi_status_id}
+
+####################################################################
+# PIR
 
 # no PIR at the moment
 #  # PIR sensor

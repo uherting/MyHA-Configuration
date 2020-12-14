@@ -3,7 +3,7 @@
 
 
 ####################################################################
-# standards first
+# WiFi status
 
   - platform: status
     name: ${wifi_status_name}
