@@ -10,8 +10,8 @@
   wifi_status_name: ${friendly_name} Status
   wifi_status_id: ${friendly_id}Status
   wifi_uptime_name: ${friendly_name} Uptime
-  wifi_wifi_signal_name: ${friendly_name} WiFi Signal
-  wifi_connection_ip_address_name: ${friendly_name} Connection IP address
+  wifi_signal_name: ${friendly_name} WiFi Signal
+  wifi_connection_ip_addr_name: ${friendly_name} Connection IP address
   wifi_connection_ssid_name: ${friendly_name} Connection SSID
   wifi_connection_bssid_name: ${friendly_name} Connection BSSID
 

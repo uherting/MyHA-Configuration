@@ -1,12 +1,7 @@
 ####################################################################
-# ESP32_CAMERA
+# SENSORS
 
-  - platform: wifi_signal
-    name: $friendly_name WiFi Signal
-    update_interval: !secret WIFI_SIGNAL_UPDATE_INTERVAL
-
-  - platform: uptime
-    name: $friendly_name Uptime
+#sensor:
 
 ####################################################################
 # EOF

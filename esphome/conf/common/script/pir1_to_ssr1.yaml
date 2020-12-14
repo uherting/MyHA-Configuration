@@ -1,0 +1,21 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01
+  - id: ssr_script_01
+    mode: restart
+    then:
+      - lambda: |-
+          if (!isWifiOn) {
+            id(${ssr01_id}).turn_on();
+          }
+      - delay: !secret DELAY_01MIN
+      - lambda: |-
+          if (!isWifiOn) {
+            id(${ssr01_id}).turn_off();
+          }
+
+####################################################################
+# EOF
+####################################################################

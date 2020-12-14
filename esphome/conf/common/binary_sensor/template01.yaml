@@ -1,0 +1,23 @@
+####################################################################
+# BINARY SENSORS
+
+#
+# ATTENTION: NO LONGER IN USE!!!
+#
+
+#binary_sensor:
+
+####################################################################
+# Template Binary Sensor
+# this is outdated and replaced by globals and scripts
+# see https://esphome.io/components/binary_sensor/template.html
+# value TRUE => fallback automation is active
+
+# sensor for fallback automation of PIR01
+  - platform: template
+    name: ${binary_template_sensor_01_name}
+    id: ${binary_template_sensor_01_id}
+
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -1,12 +1,15 @@
 ####################################################################
-# LOGGING
+# LOGGING (central setup)
+#
+# according to:
+#  - https://esphome.io/components/logger.html?highlight=logger#log-levels
+#  - see secrets.yaml for definitions
+#
 ####################################################################
 
-  # until configuration is finished
-  level: DEBUG
-  # level: WARN
+#logger:
+  level: !secret LOG_LEVEL_DEBUG
 
 # ############################################################
 #  END OF FILE
 # ############################################################
-

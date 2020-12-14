@@ -18,27 +18,19 @@
   wifi_status_id: ${friendly_id}Status
   wifi_uptime_name: ${friendly_name} Uptime
   wifi_signal_name: ${friendly_name} WiFi Signal
-  wifi_connection_ip_addr_name: ${friendly_name} Connection IP address
-  wifi_connection_ssid_name: ${friendly_name} Connection SSID
-  wifi_connection_bssid_name: ${friendly_name} Connection BSSID
+  wifi_connection_ip_addr_name: ${friendly_name} IP addr
+  wifi_connection_ssid_name: ${friendly_name} SSID
+  wifi_connection_bssid_name: ${friendly_name} BSSID
 
-  # details for DALLAS sensors connected to the device
+  # details for DALLAS sensors connected to device l2kitchen01
   dallas_01c01_name: $friendly_name TempCase 01
   dallas_01c01_address: !secret DALLAS_01_L2KITCHEN01_CASESENSOR_01_ADDRESS
   dallas_01e01_name: $friendly_name TempEnv 01
   dallas_01e01_address: !secret DALLAS_01_L2KITCHEN01_ENVSENSOR_01_ADDRESS
 
   #
-  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
+  # DO __NOT__ EDIT THE FOLLOWING SUBSTITUTIONS!!!
   #
-
-  # ------------------------------------------------------------------
-  # non standard substitutions
-
-  # none so far
-
-  # ------------------------------------------------------------------
-  # standard substitutions follow
 
   # connected sensors / interfaces
   # offline sensors

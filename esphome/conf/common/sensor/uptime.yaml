@@ -1,11 +1,11 @@
 ####################################################################
-# DEVICE DEFINITION
+# SENSORS
 
-  name: $device_name
-  comment: $device_comment
-  platform: $device_platform
-  board: $device_board
-  build_path: ./build/${device_name}
+####################################################################
+# WiFi sensors
+#sensor:
+  - platform: uptime
+    name: ${wifi_uptime_name}
 
 ####################################################################
 # EOF

@@ -1,5 +1,5 @@
 ####################################################################
-# SCRIPTS
+# GLOBAL VARIABLES
 
 #globals:
    - id: isWifiOn

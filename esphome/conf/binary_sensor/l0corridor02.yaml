@@ -26,17 +26,7 @@
     # fallback automation while the device is offline:
     on_press:
       then:
-        - lambda: |-
-            if (!id(${wifi_status_id}).state) {
-              id(${binary_template_sensor_01_id}).publish_state(true);
-              id(${ssr01_id}).turn_on();
-            }
-        - delay: !secret DELAY_01MIN
-        - lambda: |-
-            if (id(${binary_template_sensor_01_id}).state) {
-              id(${ssr01_id}).turn_off();
-              id(${binary_template_sensor_01_id}).publish_state(false);
-            }
+        - script.execute: ssr_script_01
 
   - platform: gpio
     name: $pir02_name
@@ -52,17 +42,7 @@
     # fallback automation while the device is offline:
     on_press:
       then:
-        - lambda: |-
-            if (!id(${wifi_status_id}).state) {
-              id(${binary_template_sensor_02_id}).publish_state(true);
-              id(${ssr02_id}).turn_on();
-            }
-        - delay: !secret DELAY_01MIN
-        - lambda: |-
-            if (id(${binary_template_sensor_02_id}).state) {
-              id(${ssr02_id}).turn_off();
-              id(${binary_template_sensor_02_id}).publish_state(false);
-            }
+        - script.execute: ssr_script_02
 
 ####################################################################
 # TOUCH BUTTON

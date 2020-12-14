@@ -38,7 +38,6 @@
       mode: INPUT
       inverted: false
     device_class: motion
-
     # fallback automation while the device is offline:
     on_press:
       then:

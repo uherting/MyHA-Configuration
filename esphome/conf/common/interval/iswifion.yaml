@@ -1,15 +1,18 @@
 ####################################################################
 # INTERVAL
 
+#interval:
   - interval: 1min
     then:
       - globals.set:
           id: isWifiOn
           value: id(${wifi_status_id}).state
-      # just debugging:
+#      # just debugging:
 #      - lambda: |-
-#          id(${binary_template_sensor_01_id}).publish_state(isWifiOn);
-#        id(${binary_template_sensor_01_id}).publish_state(id(${wifi_status_id}).state);
+#          ESP_LOGD(DEBUG, "wifi_status_id d: %d", id(id(${wifi_status_id}).state));
+#          ESP_LOGD(DEBUG, "wifi_status_id s: %s", id(id(${wifi_status_id}).state));
+#      - lambda: |-
+#          id(${binary_template_sensor_01_id}).publish_state(iswifiOn).state);
 
 ####################################################################
 # EOF

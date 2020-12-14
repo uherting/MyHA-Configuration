@@ -11,16 +11,18 @@
   friendly_name: L0 Corridor01
   friendly_id: L0Corridor01
 
-  # WiFi related stuff
+  log_level: !secret LOG_LEVEL_INFO
+
+  # wifi settings
   wifi_status_name: ${friendly_name} Status
   wifi_status_id: ${friendly_id}Status
   wifi_uptime_name: ${friendly_name} Uptime
-  wifi_wifi_signal_name: ${friendly_name} WiFi Signal
-  wifi_connection_ip_address_name: ${friendly_name} Connection IP address
+  wifi_signal_name: ${friendly_name} WiFi Signal
+  wifi_connection_ip_addr_name: ${friendly_name} Connection IP address
   wifi_connection_ssid_name: ${friendly_name} Connection SSID
   wifi_connection_bssid_name: ${friendly_name} Connection BSSID
 
-  # details for DALLAS sensors connected to device l0corridor01
+  # details for DALLAS sensors connected to the device
   dallas_01c01_name: $friendly_name TempCase 01
   dallas_01c01_address: !secret DALLAS_01_L0CORRIDOR01_CASESENSOR_01_ADDRESS
   dallas_01e01_name: $friendly_name TempEnv 01
@@ -29,6 +31,14 @@
   #
   # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
   #
+
+  # ------------------------------------------------------------------
+  # non standard substitutions
+
+  # none so far
+
+  # ------------------------------------------------------------------
+  # standard substitutions follow
 
   # connected sensors / interfaces
   # offline sensors
@@ -46,6 +56,8 @@
   pir01_id: ${friendly_id}_PIR_01
   pir02_name: $friendly_name PIR 02
   pir02_id: ${friendly_id}_PIR_02
+  pir03_name: $friendly_name PIR 03
+  pir03_id: ${friendly_id}_PIR_03
   # local reed relays
   reed_contact01_name: $friendly_name Door Sml
   reed_contact01_id: ${friendly_id}_REED_01

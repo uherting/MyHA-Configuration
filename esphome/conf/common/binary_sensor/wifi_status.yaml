@@ -1,11 +1,15 @@
 ####################################################################
-# SCRIPTS
+# BINARY SENSORS
 
-#globals:
-   - id: isWifiOn
-     type: boolean
-     restore_value: no
-     initial_value: 'false'
+
+#binary_sensor:
+
+####################################################################
+# WiFi status
+
+  - platform: status
+    name: ${wifi_status_name}
+    id: ${wifi_status_id}
 
 ####################################################################
 # EOF

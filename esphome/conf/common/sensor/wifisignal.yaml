@@ -3,19 +3,11 @@
 
 ####################################################################
 # WiFi sensors
-
+#sensor:
   - platform: wifi_signal
-    name: ${wifi_wifi_signal_name}
+    name: $wifi_signal_name
     update_interval: !secret WIFI_SIGNAL_UPDATE_INTERVAL
-  - platform: uptime
-    name: ${wifi_uptime_name}
 
 ####################################################################
-#
-
-# no otther stuff so far
-
-# ############################################################
-#  END OF FILE
-# ############################################################
-
+# EOF
+####################################################################

@@ -2,22 +2,17 @@
 # BINARY SENSORS
 
 
-####################################################################
-# WiFi status
-
-  - platform: status
-    name: ${wifi_status_name}
-    id: ${wifi_status_id}
+#binary_sensor:
 
 ####################################################################
 # PIR
 
   - platform: gpio
-    name: $pir01_name
-    id: ${pir01_id}
+    name: $pir02_name
+    id: ${pir02_id}
     pin:
       mcp23017: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_A0
+      number: !secret MCP23017_PIN_A1
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: INPUT
       inverted: false
@@ -25,15 +20,8 @@
     # fallback automation while the device is offline:
     on_press:
       then:
-        - script.execute: ssr_script_01
-
-####################################################################
-# TOUCH BUTTON
-
-# yet to be defined!
-# see: a_template_for_TB_config.yaml
+        - script.execute: ssr_script_02
 
 # ############################################################
 #  END OF FILE
 # ############################################################
-

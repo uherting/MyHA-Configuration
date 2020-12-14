@@ -60,28 +60,67 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l0corridor01.yaml
+substitutions: !include conf/substitutions/l0corridor01.yaml.yaml
 
-###################### SETTING UP THE DEVICE ######################
+###################### PACKAGES CONFIGURATION ######################
 
-esphome: !include conf/common/esphome.yaml
+packages:
+  # esphome: and logger:
+  device_base: !include conf/common/packages/device_base.yaml
 
-###################### GENERIC CONFIGURATION ######################
+################# CUSTOMISED LOGGING (if necessary) ################
 
-wifi: !include conf/common/wifi.yaml
-logger: !include conf/logger/l0corridor01.yaml
-api: !include conf/common/api.yaml
-ota: !include conf/common/ota.yaml
-i2c: !include conf/common/i2c.yaml
-dallas: !include conf/common/dallas.yaml
-mcp23017: !include conf/common/mcp23017.yaml
-text_sensor: !include conf/common/text_sensor.yaml
+# change the log level temporary for this very device
+#logger:
+#  # see secrets.yaml for log level definitions
+#  level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+wifi: !include conf/common/basic/wifi.yaml
+ota: !include conf/common/basic/ota.yaml
+api: !include conf/common/basic/api.yaml
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+i2c: !include conf/common/device/i2c.yaml
+dallas: !include conf/common/device/dallas.yaml
+mcp23017: !include conf/common/device/mcp23017.yaml
 
 ###################### DETAILED CONFIGURATION ######################
 
-binary_sensor: !include conf/binary_sensor/l0corridor01.yaml
-sensor: !include conf/sensor/l0corridor01.yaml
-switch: !include conf/switch/l0corridor01.yaml
+# div stuff needed for execution of offline functionality
+globals: !include conf/common/globals/iswifion.yaml
+interval: !include conf/common/interval/iswifion.yaml
+script: !include conf/common/script/pir1_to_ssr1.yaml
+
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor: !include conf/binary_sensor/l0corridor01.yaml.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  - <<: !include conf/sensor/l0corridor01.yaml.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+switch: !include conf/switch/l0corridor01.yaml.yaml
+
+#-------------------------------------------------------------------
+# TEXT SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  # device related
+  # none so far
 
 ####################################################################
 # EOF

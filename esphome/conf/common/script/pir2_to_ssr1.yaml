@@ -4,8 +4,7 @@
 #script:
   # on_press action of PIR #01
   - id: ssr_script_01
-    mode: restart     # Light will be kept on during 1 minute since
-                      # the latest time the script is executed
+    mode: restart
     then:
       - lambda: |-
           if (!isWifiOn) {
@@ -16,6 +15,12 @@
           if (!isWifiOn) {
             id(${ssr01_id}).turn_off();
           }
+
+  # on_press action of PIR #02 (currently no difference to script ssr_script_01)
+  - id: ssr_script_02
+    mode: restart
+    then:
+      - script.execute: ssr_script_01
 
 ####################################################################
 # EOF
