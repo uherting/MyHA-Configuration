@@ -2,8 +2,8 @@
 # SCRIPTS
 
 #script:
-  # on_press action of PIR #01
-  - id: ssr_script_pir_01
+  # on_press action of TB #01
+  - id: ssr_script_tb_01
     mode: restart
     then:
       - lambda: |-
@@ -15,12 +15,6 @@
           if (!isWifiOn) {
             id(${ssr01_id}).turn_off();
           }
-
-  # on_press action of PIR #02 (currently no difference to script ssr_script_01)
-  - id: ssr_script_02
-    mode: restart
-    then:
-      - script.execute: ssr_script_pir_01
 
 ####################################################################
 # EOF

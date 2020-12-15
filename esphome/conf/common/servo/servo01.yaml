@@ -1,0 +1,13 @@
+####################################################################
+# This defines the servo
+#
+# For the complete setup of a servo there hast to be an output:
+# declaration, too.
+
+#servo:
+  - id: ${servo01_id}
+    output: ${servo01_pwm_output_id}
+
+# ############################################################
+#  END OF FILE
+# ############################################################

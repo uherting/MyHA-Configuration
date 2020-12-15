@@ -3,7 +3,7 @@
 
 #script:
   # on_press action of PIR #01
-  - id: ssr_script_01
+  - id: ssr_script_pir_01
     mode: restart
     then:
       - lambda: |-

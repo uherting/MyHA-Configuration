@@ -72,9 +72,9 @@ packages:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
-wifi: !include conf/common/basic/wifi.yaml
-ota: !include conf/common/basic/ota.yaml
-api: !include conf/common/basic/api.yaml
+wifi: !include conf/common/networking/wifi.yaml
+ota: !include conf/common/networking/ota.yaml
+api: !include conf/common/networking/api.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
@@ -110,9 +110,17 @@ sensor:
   - <<: !include conf/sensor/l2kitchen01.yaml
 
 #-------------------------------------------------------------------
+# SERVOS
+# servo:
+#   - <<: !include conf/common/servo/servo01.yaml
+# output:
+#   - <<: !include conf/common/output/output01.yaml
+
+#-------------------------------------------------------------------
 # SWITCHES
 switch:
   - <<: !include conf/common/switch/ssr01.yaml
+#  - <<: !include conf/common/switch/ssr02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

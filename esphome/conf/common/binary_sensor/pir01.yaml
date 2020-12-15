@@ -20,7 +20,7 @@
     # fallback automation while the device is offline:
     on_press:
       then:
-        - script.execute: ssr_script_01
+        - script.execute: ssr_script_pir_01
 
 # ############################################################
 #  END OF FILE
