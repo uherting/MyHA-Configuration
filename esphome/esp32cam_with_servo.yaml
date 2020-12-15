@@ -1,0 +1,94 @@
+# source: https://pastebin.com/pPHYwznh
+
+#
+# esp32cam with servo
+#
+
+esphome:
+  name: hallway_camera
+  platform: ESP32
+  board: esp32cam
+  on_boot:
+    priority: -100
+    then:
+      - servo.write:
+          id: camera_servo
+          level: -0.65
+
+wifi:
+  ssid: "xxx"
+  password: "xxxx"
+  manual_ip:
+    static_ip: 192.168.1.24
+    gateway: 192.168.1.1
+    subnet: 192.168.1.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Hallway Camera"
+    password: !secret esphome_password
+    ap_timeout: 1min
+  reboot_timeout: 2min
+  use_address: 192.168.1.24
+
+captive_portal:
+
+# web_server:
+#   port: 80
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_password
+  services:
+    - service: control_servo
+      variables:
+        level: float
+      then:
+        - servo.write:
+            id: camera_servo
+            level: !lambda 'return level / 100.0;'
+
+ota:
+  password: !secret esphome_password
+
+esp32_camera:
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  vertical_flip: false
+  horizontal_mirror: false
+  brightness: 1
+  saturation: -2
+  name: Hallway Camera
+  max_framerate: 20 fps
+  idle_framerate: 0.1 fps
+  resolution: 640x480
+  jpeg_quality: 10 # 10 best, 63 worst
+
+switch:
+  - platform: gpio
+    name: Hallway Camera Flash
+    pin: 4
+    restore_mode: ALWAYS_OFF
+
+output:
+  - platform: ledc
+    id: pwm_output
+    pin: 12
+    frequency: 50 Hz
+    channel: 2
+
+servo:
+  - id: camera_servo
+    output: pwm_output
