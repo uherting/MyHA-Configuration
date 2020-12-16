@@ -1,0 +1,6 @@
+# In wifi.yaml
+wifi:
+  ssid: !secret WIFI_L0_SSID
+  password: !secret WIFI_L0_PW
+  domain: .yourdomain.lan
+  fast_connect: true
