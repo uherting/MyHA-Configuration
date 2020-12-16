@@ -58,6 +58,8 @@ substitutions: !include conf/substitutions/l2kitchen01.yaml
 ###################### PACKAGES CONFIGURATION ######################
 
 packages:
+  wifi: !include conf/common/networking/wifi.yaml
+  ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
   device_base: !include conf/common/packages/device_base.yaml
 
@@ -72,8 +74,6 @@ packages:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
-wifi: !include conf/common/networking/wifi.yaml
-ota: !include conf/common/networking/ota.yaml
 api: !include conf/common/networking/api.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
@@ -94,11 +94,11 @@ script: !include conf/common/script/pir1_to_ssr1.yaml
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir01.yaml
-#  - <<: !include conf/common/binary_sensor/pir02.yaml
-#  - <<: !include conf/common/binary_sensor/reed01.yaml
-#  - <<: !include conf/common/binary_sensor/reed02.yaml
-#  - <<: !include conf/common/binary_sensor/touch_button01.yaml
-#  - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01.yaml
+  # - <<: !include conf/common/binary_sensor/reed02.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
