@@ -5,10 +5,9 @@
     model: "SSD1306 128x64"
     address: 0x3C
     id: ${display_id}
-#    rotation: 180°
+    # rotation: 180°
     rotation: 0°
-# using pages:
-# see https://esphome.io/components/display/index.html#display-pages
+    # for usage of pages see https://esphome.io/components/display/index.html#display-pages
     pages:
       - id: page1
         lambda: |-

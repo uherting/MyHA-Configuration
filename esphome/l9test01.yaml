@@ -1,0 +1,138 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l9test1
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#
+# Future feature:
+#
+# Hardware:
+#   - 1 ESP8266
+#   - 1 MCP23017 modul
+#   - 2 Dallas 18B20 sensor
+#   - 1 PIR/RCWL
+#   - steel housing for external Dallas 18B20 sensors
+#   - heat shrink tube, misc diameter
+#   - case for the hardware
+#   - PCB
+#   - wire
+#
+# Automation:
+#   - partially, see binary sensors definition file
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 2 temperatur sensors (for the case / environment)
+#   - 1 PIR/RCWL sensor via I2C / MCP23017
+#
+# Output
+#   - 1 pin: Thermostat Boost Button
+#   - 2 pins: Thermostat Rotary encoder via Opto Couplers
+#
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: !include conf/substitutions/l9test01.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+
+packages:
+  wifi: !include conf/common/networking/wifi.yaml
+  ota: !include conf/common/networking/ota.yaml
+  # esphome: and logger:
+  device_base: !include conf/common/packages/device_base.yaml
+
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+#logger:
+#  # see secrets.yaml for log level definitions
+#  level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+i2c: !include conf/common/device/i2c.yaml
+dallas: !include conf/common/device/dallas.yaml
+mcp23017: !include conf/common/device/mcp23017.yaml
+
+###################### DETAILED CONFIGURATION ######################
+
+# div stuff needed for execution of offline functionality
+globals: !include conf/common/globals/iswifion.yaml
+interval: !include conf/common/interval/iswifion.yaml
+#script: !include conf/common/script/pir1_to_ssr1.yaml
+
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor:
+  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  # - <<: !include conf/common/binary_sensor/pir01.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed01.yaml
+  # - <<: !include conf/common/binary_sensor/reed02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  # - <<: !include conf/sensor/l9test01_case.yaml
+  # - <<: !include conf/sensor/l9test01_env01.yaml
+
+#-------------------------------------------------------------------
+# SERVOS
+# servo:
+#   - <<: !include conf/common/servo/servo01.yaml
+# output:
+#   - <<: !include conf/common/output/output01.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+switch:
+  # - <<: !include conf/common/switch/ssr01.yaml
+  # - <<: !include conf/common/switch/ssr02.yaml
+
+#-------------------------------------------------------------------
+# TEXT SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  # device related
+  # none so far
+
+#-------------------------------------------------------------------
+# THERMOSTAT_DE
+thermostat_de: !include conf/common/switch/thermostat_de01.yaml
+
+####################################################################
+# TIME
+time: !include conf/common/time.yaml
+
+####################################################################
+# EOF
+####################################################################

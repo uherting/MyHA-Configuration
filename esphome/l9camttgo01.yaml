@@ -72,9 +72,9 @@ i2c:
 ####################################################################
 # ESP32_CAMERA / FONTS / DISPLAY
 esp32_camera: !include conf/esp32_camera/l9camttgo01.yaml
-font: !include conf/font/l9camttgo01.yaml
-display: !include conf/display/l9camttgo01.yaml
-interval: !include conf/display_interval/l9camttgo01.yaml
+font: !include conf/common/font/ttgo_cam_01.yaml
+display: !include conf/display/ttgo_cam_01.yaml
+interval: !include conf/interval/l9camttgo01.yaml
 
 ####################################################################
 # BINARY SENSORS
