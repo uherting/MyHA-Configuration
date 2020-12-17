@@ -1,0 +1,23 @@
+####################################################################
+# OUTPUT
+
+#output:
+
+#############################
+# THERMOSTAT_DE
+
+# Thermostat Rotary encoder #1
+#   (output), to be connected to thhermostat via Opto Couplers
+  - platform: gpio
+    id: ${thermostat_de01_re1_id}
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B6
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      inverted: false
+      # inverted: true
+
+# ############################################################
+#  END OF FILE
+# ############################################################

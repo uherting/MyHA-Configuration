@@ -27,6 +27,7 @@
   pir01_name: $friendly_name PIR 01
   pir01_id: ${friendly_id}_PIR_01
   cam_light_name: $friendly_name CamLight
+  cam_light_id: ${friendly_name}CamLight
 
 ####################################################################
 # EOF

@@ -1,0 +1,14 @@
+####################################################################
+# THERMOSTAT_DE
+
+#th_de_std
+
+  - platform: thermostat_de
+    boost_button_id: $thermostat_de01_bb_id
+    rotary_encoder01_id: $thermostat_de01_re1_id
+    rotary_encoder02_id: $thermostat_de01_re2_id
+    # optional parameters
+
+####################################################################
+# EOF
+####################################################################

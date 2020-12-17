@@ -1,0 +1,22 @@
+####################################################################
+# OUTPUT
+
+#output:
+
+#############################
+# THERMOSTAT_DE
+
+# Thermostat Boost Button (output)
+  - platform: gpio
+    id: ${thermostat_de01_bb_id}
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B5
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      inverted: false
+      # inverted: true
+
+# ############################################################
+#  END OF FILE
+# ############################################################

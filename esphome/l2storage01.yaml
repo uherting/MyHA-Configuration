@@ -109,7 +109,7 @@ sensor:
 # servo:
 #   - <<: !include conf/common/servo/servo01.yaml
 # output:
-#   - <<: !include conf/common/output/output01.yaml
+#   - <<: !include conf/common/output/servo01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES

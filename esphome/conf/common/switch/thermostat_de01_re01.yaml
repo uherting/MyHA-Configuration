@@ -1,0 +1,20 @@
+####################################################################
+# SWITCH
+
+#switch:
+
+#############################
+# THERMOSTAT_DE
+
+# Thermostat Rotary encoder #1
+#   (output), to be connected to thhermostat via Opto Couplers
+  - platform: output
+    name: $thermostat_de01_re1_name
+    output: $thermostat_de01_re1_id
+    # restore_mode: ALWAYS_OFF
+    # # for AppDaemon
+    # icon: mdi:lamp
+
+# ############################################################
+#  END OF FILE
+# ############################################################

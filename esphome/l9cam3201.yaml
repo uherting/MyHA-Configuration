@@ -96,7 +96,7 @@ sensor:
 # servo:
 #   - <<: !include conf/common/servo/servo01.yaml
 # output:
-#   - <<: !include conf/common/output/output01.yaml
+#   - <<: !include conf/common/output/servo01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
@@ -122,10 +122,10 @@ esp32_camera: !include conf/esp32_camera/l9cam3201.yaml
 output:
   - platform: gpio
     pin: GPIO4
-    id: gpio_4
+    id: $cam_light_id
 light:
   - platform: binary
-    output: gpio_4
+    output: $cam_light_id
     name: $cam_light_name
 
 ####################################################################
