@@ -45,11 +45,13 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l2storage01.yaml.yaml
+substitutions: !include conf/substitutions/l2storage01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
 packages:
+  wifi: !include conf/common/networking/wifi.yaml
+  ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
   device_base: !include conf/common/packages/device_base.yaml
 
@@ -64,8 +66,6 @@ packages:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
-wifi: !include conf/common/networking/wifi.yaml
-ota: !include conf/common/networking/ota.yaml
 api: !include conf/common/networking/api.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
@@ -86,11 +86,14 @@ script: !include conf/common/script/pir1_to_ssr1.yaml
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir01.yaml
-#  - <<: !include conf/common/binary_sensor/pir02.yaml
-  - <<: !include conf/common/binary_sensor/reed01.yaml
-#  - <<: !include conf/common/binary_sensor/reed02.yaml
-#  - <<: !include conf/common/binary_sensor/touch_button01.yaml
-#  - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
+  - <<: !include conf/common/binary_sensor/reed02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -99,7 +102,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/sensor/l2kitchen01.yaml
+  - <<: !include conf/sensor/l2storage01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -112,7 +115,7 @@ sensor:
 # SWITCHES
 switch:
   - <<: !include conf/common/switch/ssr01.yaml
-#  - <<: !include conf/common/switch/ssr02.yaml
+  # - <<: !include conf/common/switch/ssr02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

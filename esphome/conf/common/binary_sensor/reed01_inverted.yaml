@@ -1,0 +1,27 @@
+####################################################################
+# BINARY SENSORS
+
+
+#binary_sensor:
+
+####################################################################
+# REED CONTACTS
+
+  - platform: gpio
+    name: $reed_contact01_name
+    id: ${reed_contact01_id}
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_A2
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: INPUT_PULLUP
+      inverted: true
+    # debouncing
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+    device_class: door
+
+# ############################################################
+#  END OF FILE
+# ############################################################

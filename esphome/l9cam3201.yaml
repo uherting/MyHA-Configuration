@@ -36,6 +36,8 @@ substitutions: !include conf/substitutions/l2kitchen01.yaml
 ###################### PACKAGES CONFIGURATION ######################
 
 packages:
+  wifi: !include conf/common/networking/wifi.yaml
+  ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
   device_base: !include conf/common/packages/device_base.yaml
 
@@ -50,9 +52,7 @@ packages:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
-wifi: !include conf/common/basic/wifi.yaml
-ota: !include conf/common/basic/ota.yaml
-api: !include conf/common/basic/api.yaml
+api: !include conf/common/networking/api.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
@@ -71,7 +71,16 @@ script: !include conf/common/script/pir1_to_ssr1.yaml
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/binary_sensor/l2kitchen01.yaml
+  - <<: !include conf/common/binary_sensor/pir01.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed01.yaml
+  # - <<: !include conf/common/binary_sensor/reed02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -80,11 +89,20 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/sensor/l2kitchen01.yaml
+  # - <<: !include conf/sensor/l2kitchen01.yaml
+
+#-------------------------------------------------------------------
+# SERVOS
+# servo:
+#   - <<: !include conf/common/servo/servo01.yaml
+# output:
+#   - <<: !include conf/common/output/output01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
-switch: !include conf/switch/l2kitchen01.yaml
+switch:
+  # - <<: !include conf/common/switch/ssr01.yaml
+  # - <<: !include conf/common/switch/ssr02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -95,11 +113,7 @@ text_sensor:
   # device related
   # none so far
 
-####################################################################
-# EOF
-####################################################################
-
-###################### DETAILED CONFIGURATION ######################
+#################### DETAILED CONFIGURATION CAM ######################
 
 # cam
 esp32_camera: !include conf/esp32_camera/l9cam3201.yaml
@@ -113,8 +127,6 @@ light:
   - platform: binary
     output: gpio_4
     name: $cam_light_name
-
-#sensor: !include conf/sensor/l9cam3201.yaml
 
 ####################################################################
 # EOF

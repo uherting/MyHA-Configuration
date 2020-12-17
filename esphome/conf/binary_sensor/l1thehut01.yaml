@@ -1,0 +1,32 @@
+####################################################################
+# BINARY SENSORS
+
+
+####################################################################
+# PIR
+
+  - platform: gpio
+    name: $pir01_name
+    id: ${pir01_id}
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_A0
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: INPUT
+      inverted: false
+    device_class: motion
+    # fallback automation while the device is offline:
+    on_press:
+      then:
+        - script.execute: ssr_script_01
+
+####################################################################
+# TOUCH BUTTON
+
+# yet to be defined!
+# see: a_template_for_TB_config.yaml
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+
