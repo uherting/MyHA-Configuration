@@ -29,7 +29,7 @@ if [ ! -d ${SRC_PATH} ];then
 fi
 
 cd ${SRC_PATH}
-pwd
+#pwd
 
 # does the source file exist? yes == great
 if [ ! -e ${CLONE_SRC_FILE} ]; then
