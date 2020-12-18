@@ -64,6 +64,7 @@ packages:
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
+time: !include conf/common/time.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
@@ -71,9 +72,13 @@ i2c: !include conf/common/device/i2c.yaml
 dallas: !include conf/common/device/dallas.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
+####################################################################
 ###################### DETAILED CONFIGURATION ######################
+####################################################################
 
-# div stuff needed for execution of offline functionality
+####################################################################
+# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+
 globals: !include conf/common/globals/iswifion.yaml
 interval: !include conf/common/interval/iswifion.yaml
 script:
@@ -138,11 +143,7 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # THERMOSTAT_DE --- see also OUTPUTsection!
-th_de_std: !include conf/common/thermostat_de/thermostat_de01.yaml
-
-####################################################################
-# TIME
-time: !include conf/common/time.yaml
+# th_de_std: !include conf/common/thermostat_de/thermostat_de01.yaml
 
 ####################################################################
 # EOF

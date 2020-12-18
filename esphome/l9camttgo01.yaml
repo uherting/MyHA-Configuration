@@ -36,55 +36,56 @@ substitutions: !include conf/substitutions/l9camttgo01.yaml
 # DEVICE
 esphome:
   name: $devicename
-  platform: ESP32
-  board: esp-wrover-kit
 
-####################################################################
-# WIFI
-wifi: !include conf/common/wifi.yaml
+###################### PACKAGES CONFIGURATION ######################
 
-####################################################################
-# LOGGING
-logger: !include conf/common/logger_debug.yaml
+packages:
+  wifi: !include conf/common/networking/wifi.yaml
+  ota: !include conf/common/networking/ota.yaml
+  # esphome: and logger:
+  device_base: !include conf/common/packages/device_base.yaml
 
-####################################################################
-# HOME ASSISTANT API
-api: !include conf/common/api.yaml
+################# CUSTOMISED LOGGING (if necessary) ################
 
-####################################################################
-# OTA
-ota: !include conf/common/ota.yaml
+# change the log level temporary for this very device
+#logger:
+#  # see secrets.yaml for log level definitions
+#  level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
 
-####################################################################
-# TIME
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
 time: !include conf/common/time.yaml
 
-####################################################################
-###################### DETAILED CONFIGURATION ######################
-####################################################################
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
-####################################################################
-# I2C
 i2c:
   sda: GPIO21
   scl: GPIO22
 
 ####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+#-------------------------------------------------------------------
 # ESP32_CAMERA / FONTS / DISPLAY
+
 esp32_camera: !include conf/esp32_camera/l9camttgo01.yaml
 font: !include conf/common/font/ttgo_cam_01.yaml
 display: !include conf/display/ttgo_cam_01.yaml
 interval: !include conf/interval/l9camttgo01.yaml
 
-####################################################################
+#-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor: !include conf/binary_sensor/l9camttgo01.yaml
 
-####################################################################
+#-------------------------------------------------------------------
 # SENSORS
 sensor: !include conf/sensor/l9camttgo01.yaml
 
-####################################################################
+#-------------------------------------------------------------------
 # TEXT_SENSORS
 text_sensor: !include conf/common/text_sensor.yaml
 

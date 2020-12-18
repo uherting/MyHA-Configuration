@@ -22,6 +22,10 @@
   wifi_connection_ssid_name: ${friendly_name} Connection SSID
   wifi_connection_bssid_name: ${friendly_name} Connection BSSID
 
+  # mqtt user / password
+  mqtt_user: mqtt_${device_name}
+  mqtt_pw: mqtt_${device_name}
+
   # details for DALLAS sensors connected to the device
   dallas_01c01_name: $friendly_name TempCase 01
   dallas_01c01_address: !secret DALLAS_01_L2KITCHEN01_CASESENSOR_01_ADDRESS

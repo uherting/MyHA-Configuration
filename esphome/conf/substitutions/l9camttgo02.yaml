@@ -3,6 +3,10 @@
 
   # substitutions unique to the device
   devicename: l9camttgo02
+  device_platform: ESP32
+  device_board: esp-wrover-kit
+
+  # the friendly name / id
   friendly_name: L9 Cam Ttgo 02
   friendly_id: L9CamTtgo02
 
@@ -14,6 +18,10 @@
   wifi_connection_ip_addr_name: ${friendly_name} Connection IP address
   wifi_connection_ssid_name: ${friendly_name} Connection SSID
   wifi_connection_bssid_name: ${friendly_name} Connection BSSID
+
+  # mqtt user / password
+  mqtt_user: mqtt_${device_name}
+  mqtt_pw: mqtt_${device_name}
 
   # misc substitutions
   font_times_new_roman_ttf: "fonts/times-new-roman.ttf"

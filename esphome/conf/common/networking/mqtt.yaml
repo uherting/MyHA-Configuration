@@ -1,10 +1,10 @@
 ####################################################################
 # TIME
 
-#time:
-  - platform: homeassistant
-    id: homeassistant_time
-    timezone: "Europe/Berlin"
+#mqtt:
+  broker: !secret MQTT_BROKER_ALPHA
+  username: ${mqtt_user}
+  password: ${mqtt_pw}
 
 ####################################################################
 # EOF
