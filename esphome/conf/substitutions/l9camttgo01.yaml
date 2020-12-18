@@ -15,9 +15,9 @@
   wifi_status_id: ${friendly_id}Status
   wifi_uptime_name: ${friendly_name} Uptime
   wifi_signal_name: ${friendly_name} WiFi Signal
-  wifi_connection_ip_addr_name: ${friendly_name} Connection IP address
-  wifi_connection_ssid_name: ${friendly_name} Connection SSID
-  wifi_connection_bssid_name: ${friendly_name} Connection BSSID
+  wifi_conn_ip_addr_name: ${friendly_name} Conn IP address
+  wifi_conn_ssid_name: ${friendly_name} Conn SSID
+  wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 
   # mqtt user / password
   mqtt_user: mqtt_${device_name}

@@ -15,41 +15,41 @@ cards:
     title: L0 Corridor 01
     show_header_toggle: false
     entities:
-      - sensor.l0_corridor01_connection_ip_address
+      - sensor.l0_corridor01_conn_ip_address
       - sensor.l0_corridor01_wifi_signal
       - sensor.l0_corridor01_uptime
-      - sensor.l0_corridor01_connection_ssid
-      - sensor.l0_corridor01_connection_bssid
+      - sensor.l0_corridor01_conn_ssid
+      - sensor.l0_corridor01_conn_bssid
       - sensor.l0_corridor01_esphome_version
   - type: entities
     title: L0 Corridor 02
     show_header_toggle: false
     entities:
-      - sensor.l0_corridor02_connection_ip_address
+      - sensor.l0_corridor02_conn_ip_address
       - sensor.l0_corridor02_wifi_signal
       - sensor.l0_corridor02_uptime
-      - sensor.l0_corridor02_connection_ssid
-      - sensor.l0_corridor02_connection_bssid
+      - sensor.l0_corridor02_conn_ssid
+      - sensor.l0_corridor02_conn_bssid
       - sensor.l0_corridor02_esphome_version
   - type: entities
     title: L0 GarageBig 01
     show_header_toggle: false
     entities:
-      - sensor.l0_garagebig01_connection_ip_address
+      - sensor.l0_garagebig01_conn_ip_address
       - sensor.l0_garagebig01_wifi_signal
       - sensor.l0_garagebig01_uptime
-      - sensor.l0_garagebig01_connection_ssid
-      - sensor.l0_garagebig01_connection_bssid
+      - sensor.l0_garagebig01_conn_ssid
+      - sensor.l0_garagebig01_conn_bssid
       - sensor.l0_garagebig01_esphome_version
   - type: entities
     title: L0 GarageSmall 01
     show_header_toggle: false
     entities:
-      - sensor.l0_garagesmall01_connection_ip_address
+      - sensor.l0_garagesmall01_conn_ip_address
       - sensor.l0_garagesmall01_wifi_signal
       - sensor.l0_garagesmall01_uptime
-      - sensor.l0_garagesmall01_connection_ssid
-      - sensor.l0_garagesmall01_connection_bssid
+      - sensor.l0_garagesmall01_conn_ssid
+      - sensor.l0_garagesmall01_conn_bssid
       - sensor.l0_garagesmall01_esphome_version
 ####################################################################
 # EOF

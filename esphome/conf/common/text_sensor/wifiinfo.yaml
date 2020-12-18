@@ -4,11 +4,11 @@
 #text_sensor:
   - platform: wifi_info
     ip_address:
-      name: ${wifi_connection_ip_addr_name}
+      name: ${wifi_conn_ip_addr_name}
     ssid:
-      name: ${wifi_connection_ssid_name}
+      name: ${wifi_conn_ssid_name}
     bssid:
-      name: ${wifi_connection_bssid_name}
+      name: ${wifi_conn_bssid_name}
 
 # ############################################################
 #  END OF FILE

@@ -15,21 +15,21 @@ cards:
     title: L2 Kitchen 01
     show_header_toggle: false
     entities:
-      - sensor.l2_kitchen01_ip_addr
+      - sensor.l2_kitchen01_conn_ip_addr
       - sensor.l2_kitchen01_wifi_signal
       - sensor.l2_kitchen01_uptime
-      - sensor.l2_kitchen01_ssid
-      - sensor.l2_kitchen01_bssid
+      - sensor.l2_kitchen01_conn_ssid
+      - sensor.l2_kitchen01_conn_bssid
       - sensor.l2_kitchen01_esphome_version
   - type: entities
     title: L2 Storage 01
     show_header_toggle: false
     entities:
-      - sensor.l2_storage01_ip_addr
+      - sensor.l2_storage01_conn_ip_addr
       - sensor.l2_storage01_wifi_signal
       - sensor.l2_storage01_uptime
-      - sensor.l2_storage01_ssid
-      - sensor.l2_storage01_bssid
+      - sensor.l2_storage01_conn_ssid
+      - sensor.l2_storage01_conn_bssid
       - sensor.l2_storage01_esphome_version
 ####################################################################
 # EOF

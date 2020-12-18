@@ -15,11 +15,11 @@ cards:
     title: L1 TheHut 01
     show_header_toggle: false
     entities:
-      - sensor.l1thehut01_connection_ip_address
+      - sensor.l1thehut01_conn_ip_address
       - sensor.l1thehut01_wifi_signal
       - sensor.l1thehut01_uptime
-      - sensor.l1thehut01_connection_ssid
-      - sensor.l1thehut01_connection_bssid
+      - sensor.l1thehut01_conn_ssid
+      - sensor.l1thehut01_conn_bssid
       - sensor.l1thehut01_esphome_version
 ####################################################################
 # EOF

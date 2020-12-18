@@ -2,9 +2,9 @@
     title: TITLE
     show_header_toggle: false
     entities:
-      - sensor.DEVICE_connection_ip_address
+      - sensor.DEVICE_conn_ip_address
       - sensor.DEVICE_wifi_signal
       - sensor.DEVICE_uptime
-      - sensor.DEVICE_connection_ssid
-      - sensor.DEVICE_connection_bssid
+      - sensor.DEVICE_conn_ssid
+      - sensor.DEVICE_conn_bssid
       - sensor.DEVICE_esphome_version
