@@ -82,6 +82,10 @@
   touchbutton02_name: $friendly_name TB 02
   touchbutton02_id: ${friendly_id}_TB_02
 
+  # LED strip
+  fastled_01_name: $friendly_name fastled 01
+  fastled_01_id: ${friendly_id}_fastled_01
+
 ####################################################################
 # EOF
 ####################################################################
