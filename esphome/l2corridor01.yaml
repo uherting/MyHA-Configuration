@@ -66,9 +66,9 @@ packages:
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-#logger:
+logger:
 #  # see secrets.yaml for log level definitions
-#  level: !secret LOG_LEVEL_DEBUG
+  level: !secret LOG_LEVEL_DEBUG
 #  # uncomment the following line for custom component logging
 #   esp8266_store_log_strings_in_flash: False
 
@@ -80,7 +80,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 i2c: !include conf/common/device/i2c.yaml
-dallas: !include conf/common/device/dallas.yaml
+#dallas: !include conf/common/device/dallas.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################

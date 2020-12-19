@@ -4,9 +4,9 @@
 #light:
   - platform: fastled_clockless
     chipset: WS2812B
-    pin: D5
-    num_leds: 60
-    rgb_order: BRG
+    pin: D4
+    num_leds: 300
+    rgb_order: GRB
     name: ${fastled_01_name}
     id: ${fastled_01_id}
     restore_mode: ALWAYS_OFF
