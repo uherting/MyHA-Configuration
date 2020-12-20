@@ -1,10 +1,12 @@
 ####################################################################
-# TIME
+# SCRIPTS
 
-#time:
-  - platform: homeassistant
-    id: esphome_time
-    timezone: "Europe/Berlin"
+#script:
+  # on_press action of PIR #02 (currently no difference to script ssr_script_pir_01)
+  - id: ssr_script_pir_02
+    mode: restart
+    then:
+      - script.execute: ssr_script_pir_01
 
 ####################################################################
 # EOF

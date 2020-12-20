@@ -1,10 +1,9 @@
 ####################################################################
 # TIME
 
-#time:
-  - platform: homeassistant
-    id: esphome_time
-    timezone: "Europe/Berlin"
+#sun:
+  latitude: !secret HA_LOCATION_LATITUDE
+  longitude: !secret HA_LOCATION_LONGITUDE
 
 ####################################################################
 # EOF

@@ -1,0 +1,37 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01
+  - id: ssr_script_pir_01
+    mode: restart
+    then:
+      - if:
+          condition:
+            - sun.is_above_horizon:
+          then:
+            - light.turn_on:
+                id: ${fastled_01_id}
+                brightness: 80%
+                red: 9%
+                green: 22%
+                blue: 22%
+                transition_length: 500ms
+            - delay: !secret DELAY_02MIN
+            - lambda: |-
+                id(${ssr01_id}).turn_off();
+      - if:
+          condition:
+            - sun.is_below_horizon:
+          then:
+            - light.turn_on:
+                id: ${fastled_01_id}
+                brightness: 20%
+                red: 60%
+                green: 35%
+                blue: 3%
+                transition_length: 500ms
+
+####################################################################
+# EOF
+####################################################################

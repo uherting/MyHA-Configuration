@@ -2,34 +2,6 @@
 # SCRIPTS
 
 #script:
-  # on_press action of PIR #01
-  - id: ssr_script_pir_01
-    mode: restart
-    then:
-      - lambda: |-
-          if (!isWifiOn) {
-            id(${ssr01_id}).turn_on();
-          }
-      - delay: !secret DELAY_01MIN
-      - lambda: |-
-          if (!isWifiOn) {
-            id(${ssr01_id}).turn_off();
-          }
-
-  # on_press action of PIR #02
-  - id: ssr_script_pir_02
-    mode: restart
-    then:
-      - lambda: |-
-          if (!isWifiOn) {
-            id(${ssr02_id}).turn_on();
-          }
-      - delay: !secret DELAY_01MIN
-      - lambda: |-
-          if (!isWifiOn) {
-            id(${ssr02_id}).turn_off();
-          }
-
   # on_press action of PIR #03
   - id: ssr_script_pir_03
     mode: restart
