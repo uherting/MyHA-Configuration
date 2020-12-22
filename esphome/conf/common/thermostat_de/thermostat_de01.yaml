@@ -7,7 +7,22 @@
     boost_button_id: $thermostat_de01_bb_id
     rotary_encoder01_id: $thermostat_de01_re1_id
     rotary_encoder02_id: $thermostat_de01_re2_id
+
     # optional parameters
+
+    # # the standard "heating schedule"
+    # time_01: "00:00"
+    # temperature_01: "17.0"
+    # time_02: "08:00"
+    # temperature_02: "21.0"
+    # time_03: "09:00"
+    # temperature_03: "18.5"
+    # time_04: "17:00"
+    # temperature_04: "21.0"
+    # time_05: "19:30"
+    # temperature_05: "18.5"
+    # time_06: "22:00"
+    # temperature_06: "17.0"
 
 ####################################################################
 # EOF
