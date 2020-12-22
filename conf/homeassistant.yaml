@@ -17,7 +17,8 @@ allowlist_external_dirs:
   - /config/var/opt/tg/l9ttgocam01
   - /config/var/opt/tg/l9ttgocam02
 
-#  customize:
+customize: !include customize/person.yaml
+  # !include_dir_merge_named /config/conf/customize
 #    sensor.holiday:
 #      hidden: false
 #      icon: mdi:beach

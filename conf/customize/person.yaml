@@ -1,0 +1,17 @@
+###########################################################################
+# customizing person's entities
+###########################################################################
+
+  person.uwe:
+    entity_picture: "/local/avatars/uh.jpg"
+    device_trackers:
+      # - device_tracker.huawei_p9_lite_fritz_box
+  person.gillian:
+    entity_picture: "/local/avatars/gh.jpg"
+    device_trackers:
+      # - device_tracker.redminote8pro_min8_fritz_box
+      # - device_tracker.redminote8pro_min8_fritz_box_2
+
+# ############################################################
+#  END OF FILE
+# ############################################################

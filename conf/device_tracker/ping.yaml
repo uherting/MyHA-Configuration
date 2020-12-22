@@ -5,11 +5,13 @@
 # ############################################################
 
   - platform: ping
-    interval_seconds: 120
-    consider_home: 1200
+    interval_seconds: 150
+    consider_home: 300
     hosts:
       ping_uh: 192.168.178.51
-      ping_gh: 192.168.178.58
+      ping_gh: 192.168.178.52
+      ping_gh_mi4: 192.168.178.59
+      ping_tabby: 192.168.178.69
 
 # ############################################################
 #  END OF FILE

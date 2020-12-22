@@ -7,10 +7,10 @@
   - platform: nmap_tracker
     # home_interval: The number of minutes Nmap will not scan this device,
     #                assuming it is home, in order to preserve the device battery.
-    home_interval: 10
+    home_interval: 6
     # seemingly no longer a valid option:
     # consider_home: 120
-    #scan_options: -F –host-timeout 5s
+    scan_options: -F –host-timeout 5s
     hosts:
       # UH
       - 192.168.178.51
@@ -24,7 +24,8 @@
       # - 192.168.178.55
       # DH97
       # - 192.168.178.56
-
+    new_device_defaults:
+      track_new_devices: true
 # ############################################################
 #  END OF FILE
 # ############################################################

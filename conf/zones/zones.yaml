@@ -40,7 +40,7 @@
 #    longitude: 10.476560
     latitude: 51.633750
     longitude: 10.476590
-    radius: 200
+    radius: 100
     icon: mdi:highway
 
 # ############################################################
