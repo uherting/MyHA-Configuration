@@ -60,9 +60,11 @@ script: !include conf/scripts/scripts.yaml
 # see https://www.home-assistant.io/integrations/duckdns/
 #duckdns: !include conf/duckdns.yaml
 
-# device tracking
+# device tracking and presence detection
 device_tracker: !include conf/device_tracker/ping.yaml
+
 # life360: !include conf/life360.yaml
+
 # owntracks: !include conf/owntracks.yaml
 
 group: !include_dir_merge_list conf/groups

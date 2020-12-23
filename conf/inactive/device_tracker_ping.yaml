@@ -1,12 +1,9 @@
 # ############################################################
-#
-#  Device tracking with ping
-#
-# ############################################################
+#  DEVICE TRACKING (ping)
 
   - platform: ping
-    interval_seconds: 150
-    consider_home: 300
+    # interval_seconds: 150
+    # consider_home: 300
     hosts:
       ping_uh: 192.168.178.51
       ping_gh: 192.168.178.52

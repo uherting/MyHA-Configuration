@@ -20,19 +20,26 @@ redminote8pro_min8_fritz_box_2:
   picture:
   track: true
 
-# ping_uh:
-#   name: ping_uh
-#   mac: 8C:EB:C6:7A:BB:66
-#   icon: mdi:account
-#   picture:
-#   track: true
+ping_tabby:
+  name: ping_tabby
+  mac:
+  icon:
+  picture:
+  track: true
 
-# ping_gh:
-#   name: ping_gh
-#   mac: 2C:D0:66:E1:F0:98
-#   icon: mdi:account
-#   picture:
-#   track: true
+ping_uh:
+  name: ping_uh
+  mac: 8C:EB:C6:7A:BB:66
+  icon: mdi:account
+  picture:
+  track: true
+
+ping_gh:
+  name: ping_gh
+  mac: 2C:D0:66:E1:F0:98
+  icon: mdi:account
+  picture:
+  track: true
 
 # life360_gillian_h:
 #   name: life360_gillian_h

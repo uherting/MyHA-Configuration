@@ -1,16 +1,18 @@
 # ############################################################
-#
-#  Device tracking with nmap
-#
-# ############################################################
+#  DEVICE TRACKING (nmap)
 
   - platform: nmap_tracker
     # home_interval: The number of minutes Nmap will not scan this device,
     #                assuming it is home, in order to preserve the device battery.
-    home_interval: 6
-    # seemingly no longer a valid option:
-    # consider_home: 120
-    scan_options: -F –host-timeout 5s
+    # home_interval: 3
+
+    # not documentated, outdated???
+    # consider_home: 2
+
+    # Configurable scan options for Nmap, defaults to -F –host-timeout 5s
+    # -F: Fast mode - Scan fewer ports than the default scan
+    # --host-timeout <time>: Give up on target after this long
+    # scan_options: -F --host-timeout 5s
     hosts:
       # UH
       - 192.168.178.51
@@ -24,6 +26,8 @@
       # - 192.168.178.55
       # DH97
       # - 192.168.178.56
+      # GH (redmi4)
+      - 192.168.178.59
     new_device_defaults:
       track_new_devices: true
 # ############################################################
