@@ -61,7 +61,7 @@ script: !include conf/scripts/scripts.yaml
 #duckdns: !include conf/duckdns.yaml
 
 # device tracking and presence detection
-device_tracker: !include conf/device_tracker/ping.yaml
+device_tracker: !include conf/device_tracker/device_tracker_nmap.yaml
 
 # life360: !include conf/life360.yaml
 
