@@ -11,6 +11,28 @@ path: covid19
 #type: vertical-stack
 cards:
   - type: entities
+    title: Coronavirus Goe
+    show_header_toggle: false
+    entities:
+      - sensor.lk_gottingen_casesper100k
+      - sensor.lk_gottingen_casesperpopulation
+      - sensor.lk_gottingen_count
+      - sensor.lk_gottingen_deaths
+      - sensor.lk_gottingen_weekincidence
+      - type: divider
+      - sensor.lk_goslar_casesper100k
+      - sensor.lk_goslar_casesperpopulation
+      - sensor.lk_goslar_count
+      - sensor.lk_goslar_deaths
+      - sensor.lk_goslar_weekincidence
+      - type: divider
+      - sensor.lk_nordhausen_casesper100k
+      - sensor.lk_nordhausen_casesperpopulation
+      - sensor.lk_nordhausen_count
+      - sensor.lk_nordhausen_deaths
+      - sensor.lk_nordhausen_weekincidence
+
+  - type: entities
     title: Coronavirus CN
     show_header_toggle: false
     entities:
