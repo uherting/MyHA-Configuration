@@ -31,6 +31,12 @@ cards:
       - sensor.lk_nordhausen_count
       - sensor.lk_nordhausen_deaths
       - sensor.lk_nordhausen_weekincidence
+      - type: divider
+      - sensor.lk_eichsfeld_casesper100k
+      - sensor.lk_eichsfeld_casesperpopulation
+      - sensor.lk_eichsfeld_count
+      - sensor.lk_eichsfeld_deaths
+      - sensor.lk_eichsfeld_weekincidence
 
   - type: entities
     title: Coronavirus CN
