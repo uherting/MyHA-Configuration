@@ -18,8 +18,8 @@
                 blue: 22%
                 transition_length: 500ms
             - delay: !secret DELAY_02MIN
-            - lambda: |-
-                id(${ssr01_id}).turn_off();
+            - light.turn_off:
+                id: ${fastled_01_id}
       - if:
           condition:
             - sun.is_below_horizon:

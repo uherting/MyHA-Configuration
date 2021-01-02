@@ -85,6 +85,12 @@
   # LED strip
   fastled_01_name: $friendly_name fastled 01
   fastled_01_id: ${friendly_id}_fastled_01
+  fastled_01_pin: !secret FASTLED_01_PIN
+  fastled_01_num_leds: !secret FASTLED_01_NUM_LEDS
+
+  # Power Supply Component
+  power_supply_id: "PSU_1"
+  power_supply_pin: D5
 
 ####################################################################
 # EOF

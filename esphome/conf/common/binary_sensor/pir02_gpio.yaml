@@ -1,0 +1,26 @@
+####################################################################
+# BINARY SENSORS
+
+
+#binary_sensor:
+
+####################################################################
+# PIR
+
+  - platform: gpio
+    name: $pir02_name
+    id: ${pir02_id}
+    pin:
+      number: !secret GPIO_PIN_D3
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: INPUT
+      inverted: false
+    device_class: motion
+    # fallback automation while the device is offline:
+    on_press:
+      then:
+        - script.execute: ssr_script_pir_02
+
+# ############################################################
+#  END OF FILE
+# ############################################################

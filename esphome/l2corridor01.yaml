@@ -11,33 +11,33 @@
 ####################################################################
 #
 # Purpose:
-#   - Based on a PIR/RCWL sensor ...
-#       - a LED strip (indirect light, outside wall) shall be
-#         switched on using a SSR
-#   - Two temperature sensors to control the temperature in the
-#     case and of the environment
+#   - General Function:
+#     - LED strip WS2812 will be switched on (day / night brightness)
+#       location: middle of te corridor)
+#     - two PIR trigger scripts
+#     - scripts switch on the light component
+#     - the power supply component is set up as part of the light and
+#       is used to switch on the PSU using a SSR
+#   - Two temperature sensors to control the temperature
+#     (case / environment)
 #
 # Future feature:
-#   - The IKEA remote shall be triggered via opto couplers to switch on
-#     the light above the kitchen sink
+#   - a touch button is used to toggle the light on / off
 #
 # Hardware:
 #   - 1 ESP8266
-#   - 1 MCP23017 modul
 #   - 2 Dallas 18B20 sensor
 #   - 1 SSR module with 1 SSR
-#   - 2 PIR/RCWL
-#   - 1 TP223 touch button
+#   - 2 PIR
+#   - 1 TP223 touch button (future feature)
 #   - steel housing for external Dallas 18B20 sensors
 #   - heat shrink tube, misc diameter
 #   - case for the hardware
 #   - PCB
 #   - wire
-#   - for future feature: opto coupler PC817 => IKEA remote
 #
 # Automation:
 #   - partially, see binary sensors definition file
-#   - for future feature: setup with opto coupler to be developed
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
@@ -80,9 +80,9 @@ sun: !include conf/common/sun.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
-i2c: !include conf/common/device/i2c.yaml
-#dallas: !include conf/common/device/dallas.yaml
-mcp23017: !include conf/common/device/mcp23017.yaml
+# i2c: !include conf/common/device/i2c.yaml
+# dallas: !include conf/common/device/dallas.yaml
+# mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -101,10 +101,12 @@ script:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir01.yaml
-  - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/pir01.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
   # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
+  - <<: !include conf/common/binary_sensor/pir01_gpio.yaml
+  - <<: !include conf/common/binary_sensor/pir02_gpio.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
   # - <<: !include conf/common/binary_sensor/reed02.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
@@ -130,9 +132,15 @@ sensor:
 
 #-------------------------------------------------------------------
 # SWITCHES
-switch:
-  - <<: !include conf/common/switch/ssr01.yaml
+# switch:
+  # - <<: !include conf/common/switch/ssr01.yaml
   # - <<: !include conf/common/switch/ssr02.yaml
+
+#-------------------------------------------------------------------
+# POWER SUPPLY
+power_supply:
+  - id: $power_supply_id
+    pin: $power_supply_pin
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
