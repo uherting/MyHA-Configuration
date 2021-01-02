@@ -72,6 +72,7 @@ group: !include_dir_merge_list conf/groups
 telegram_bot: !include conf/telegram_bot.yaml
 
 speedtestdotnet: !include  conf/speedtestdotnet.yaml
+tankerkoenig: !include  conf/tankerkoenig.yaml
 
 pi_hole: !include conf/pi_holes/pi_holes.yaml
 

@@ -1,0 +1,33 @@
+####################################################################
+####################################################################
+#
+# tankerkoenig tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:gas-station
+title: Fuel prices
+path: fuel_prices
+# badges: [
+#   person.uwe, person.gillian,
+#   sun.sun,
+#   binary_sensor.workday_sensor
+#   ]
+cards:
+  # fuel prices
+  - type: entities
+    title: Fuel prices
+    show_header_toggle: false
+    entities:
+      - sensor.tankerkoenig_gulf_bad_lauterberg_diesel
+      - sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel
+      - sensor.tankerkoenig_star_tankstelle_diesel
+      - sensor.tankerkoenig_pfeffer_tankstelle_1_diesel
+      - sensor.tankerkoenig_herzberg_diesel
+      - sensor.tankerkoenig_raiffeisen_warenhandel_gmbh_diesel
+
+
+####################################################################
+# EOF
+####################################################################

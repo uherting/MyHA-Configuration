@@ -1,0 +1,37 @@
+##########################################################################################
+# tankerkoenig integration
+##########################################################################################
+
+# for
+# - integration: https://www.home-assistant.io/integrations/tankerkoenig
+# - station ids: https://creativecommons.tankerkoenig.de/TankstellenFinder/index.html
+
+# tankerkoenig:
+  api_key: "e28a942d-4686-f5f1-38c8-5e95e3d1ad12"
+  # dummy radius as we use the id of the stations
+  radius: 1
+  fuel_types:
+    - "diesel"
+  latitude: !secret TK_LOCATION_LATITUDE
+  longitude: !secret TK_LOCATION_LONGITUDE
+  show_on_map: true
+  scan_interval: !secret TK_INTERVAL_10MIN
+  stations:
+    # Gulf
+    - 47cb85c6-6eed-4c91-bd7d-d5f9efe3a49c
+    # HEM
+    - e1a15081-24c0-9107-e040-0b0a3dfe563c
+    # star Barbis
+    - 005056ba-7cb6-1ed2-bceb-947b2a024d38
+    # Pfeffer, Hzbg., Hebbelstr. 2
+    - 00061409-0001-4444-8888-acdc00000001
+    # bft, Hzbg., Osteroder Str. 6
+    - 7cda80ad-45d5-4f46-bcd6-268d7e70c90e
+    # classic, Hzbg., Osteroder Str. 27
+    - f569cfc5-6763-41c4-8716-f2dee896175c
+    # Raiffeisen Warenhandel, Hoerden, Raiffeisenplatz
+    - d2ec1f9f-a632-4bfb-9b90-1e672223b0a4
+
+# ############################################################
+#  END OF FILE
+# ############################################################
