@@ -12,8 +12,9 @@
 #
 # Purpose:
 #   - General Function:
-#     - LED strip WS2812 will be switched on (day / night brightness)
-#       location: middle of te corridor)
+#     - LED strip WS2812B will be switched on
+#       brightness: depending on day / night
+#       location: middle of te corridor
 #     - two PIR trigger scripts
 #     - scripts switch on the light component
 #     - the power supply component is set up as part of the light and
