@@ -89,7 +89,7 @@
   fastled_01_num_leds: !secret FASTLED_01_NUM_LEDS
 
   # Power Supply Component
-  power_supply_id: ${friendly_name} PSU_1
+  power_supply_id: ${friendly_id}_PSU_1
   power_supply_pin: !secret GPIO_PIN_D5
 
 ####################################################################
