@@ -12,9 +12,9 @@
 #
 # Purpose:
 #   - General Function:
-#     - LED strip WS2812B will be switched on
+#     - LED strip WS2812B will be switched on,
 #       brightness: depending on day / night
-#       location: middle of te corridor
+#       location: middle of the corridor
 #     - two PIR trigger scripts
 #     - scripts switch on the light component
 #     - the power supply component is set up as part of the light and
@@ -31,6 +31,7 @@
 #   - 1 SSR module with 1 SSR
 #   - 2 PIR
 #   - 1 TP223 touch button (future feature)
+#   - 1 level shifter (4x I/O for WS2812B)
 #   - steel housing for external Dallas 18B20 sensors
 #   - heat shrink tube, misc diameter
 #   - case for the hardware
