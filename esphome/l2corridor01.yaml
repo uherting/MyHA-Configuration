@@ -37,6 +37,12 @@
 #   - PCB
 #   - wire
 #
+# GPIO (as taken from configuration @ 20210103_151500):
+#   - D2: PIR1
+#   - D3: PIR2
+#   - D4: TB1
+#   - D5: PSU1
+#
 # Automation:
 #   - partially, see binary sensors definition file
 #
@@ -68,7 +74,7 @@ packages:
 
 # change the log level temporary for this very device
 logger:
-#  # see secrets.yaml for log level definitions
+  # see secrets.yaml for log level definitions
   level: !secret LOG_LEVEL_DEBUG
 #  # uncomment the following line for custom component logging
 #   esp8266_store_log_strings_in_flash: False
@@ -114,6 +120,7 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/touch_button01.yaml
   # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  - <<: !include conf/common/binary_sensor/touch_button01_gpio.yaml
 
 #-------------------------------------------------------------------
 # SENSORS

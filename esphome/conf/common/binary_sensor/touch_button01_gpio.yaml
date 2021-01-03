@@ -1,0 +1,53 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# TOUCH BUTTON
+
+  - platform: gpio
+    name: $touchbutton01_name
+    id: ${touchbutton01_id}
+    pin:
+      number: !secret GPIO_PIN_D4
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: INPUT
+      inverted: false
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        then:
+          - logger.log: "Double clicked, no action."
+      - timing:
+          - ON for 1s to 2s
+          - OFF for at least 0.5s
+        then:
+          - logger.log: "Single long clicked, no action."
+          # - logger.log: "Single long clicked, automation off."
+          # - service: automation.turn_off
+          #   data:
+          #     entity_id: automation.<nameOfAutomation>
+          # - switch.turn_off: ${ssr01_id}
+          # - delay: !secret DELAY_01SEC
+          # - switch.turn_on: ${ssr01_id}
+          # - delay: !secret DELAY_01SEC
+          # - switch.turn_off: ${ssr01_id}
+          # - delay: !secret DELAY_01SEC
+          # - switch.turn_on: ${ssr01_id}
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - logger.log: "Single short clicked, no action."
+          # - logger.log: "Single short clicked, automation on."
+          # - service: automation.turn_on
+          #   data:
+          #     entity_id: automation.<nameOfAutomation>
+
+# ############################################################
+#  END OF FILE
+# ############################################################
