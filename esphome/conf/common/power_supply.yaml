@@ -1,9 +1,9 @@
 ####################################################################
-# SUN
+# POWER_SUPPLY
 
-#sun:
-  latitude: !secret HA_LOCATION_LATITUDE
-  longitude: !secret HA_LOCATION_LONGITUDE
+#power_supply:
+  - id: $power_supply_id
+    pin: $power_supply_pin
 
 ####################################################################
 # EOF
