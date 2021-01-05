@@ -12,6 +12,21 @@ badges: [ ]
 cards:
 
   - type: entities
+    title: L2 Thermo 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2_thermo01_tempcase_01
+      # - sensor.l2_thermo01_tempenv_01
+      # - binary_sensor.l2_thermo01_pir_01
+      # - binary_sensor.l2_thermo01_pir_02
+      # - binary_sensor.l2_thermo01_door
+      # - switch.l2_thermo01_ssr_01
+      # - switch.l2_thermo01_ssr_02
+      - switch.l2_thermo01_tde_boost_01
+      - switch.l2_thermo01_tde_re_01
+      - switch.l2_thermo01_tde_re_02
+
+  - type: entities
     title: L2 Kitchen 01
     show_header_toggle: false
     entities:
