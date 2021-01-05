@@ -1,7 +1,17 @@
 ####################################################################
-# This defines a servo output
+# OUTPUT
+
 #
-# The servo is declared separately with a servo: declaration.
+# attention:
+#   output components are not switches and will not(!!!) show up in Home Assistant.
+#
+
+# ------------------------------------------------------------------
+# This defines a servo output
+#   The servo is declared separately with a servo: declaration.
+#
+# ------------------------------------------------------------------
+
 
 #output:
   - platform: esp8266_pwm
