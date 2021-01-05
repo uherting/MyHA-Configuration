@@ -2,8 +2,8 @@
 # I2C
 ####################################################################
 
-  scl: !secret I2C_SCL_PIN_01
-  sda: !secret I2C_SDA_PIN_01
+  scl: !secret I2C_SCL_PIN_D2
+  sda: !secret I2C_SDA_PIN_D3
   scan: true
 
   # default values
