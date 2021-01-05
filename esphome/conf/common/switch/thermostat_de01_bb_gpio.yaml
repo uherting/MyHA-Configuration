@@ -1,13 +1,15 @@
 ####################################################################
-# OUTPUT
+# SWITCH
 
-#output:
+#switch:
 
 #############################
 # THERMOSTAT_DE
 
-# Thermostat Boost Button (output)
+# Thermostat Boost Button
+#   (output), to be connected to thhermostat via Opto Couplers
   - platform: gpio
+    # name: $thermostat_de01_bb_name
     id: ${thermostat_de01_bb_id}
     pin:
       mcp23017: ${mcp23017_hub01_id}

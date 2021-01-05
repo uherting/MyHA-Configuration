@@ -7,12 +7,17 @@
 # THERMOSTAT_DE
 
 # Thermostat Boost Button
-  - platform: output
+#   (output), to be connected to thhermostat via Opto Couplers
+  - platform: template
     name: $thermostat_de01_bb_name
-    output: $thermostat_de01_bb_id
-    # restore_mode: ALWAYS_OFF
+    # make the output a momentary switch
+    # for details: https://esphome.io/components/switch/gpio.html#momentary-switch
+    turn_on_action:
+    - switch.turn_on: $thermostat_de01_bb_id
+    - delay: 200ms
+    - switch.turn_off: $thermostat_de01_bb_id
     # # for AppDaemon
-    # icon: mdi:lamp
+    icon: mdi:power
 
 # ############################################################
 #  END OF FILE

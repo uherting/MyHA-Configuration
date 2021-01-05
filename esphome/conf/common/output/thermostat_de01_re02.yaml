@@ -1,13 +1,18 @@
 ####################################################################
 # OUTPUT
 
+#
+# attention:
+#   output components are not switches and will not(!!!) show up in Home Assistant.
+#
+
 #output:
 
 #############################
 # THERMOSTAT_DE
 
 # Thermostat Rotary encoder #2
-#   (output), to be connected to thhermostat via Opto Couplers
+#   (output), to be connected to thermostat via Opto Couplers
   - platform: gpio
     id: ${thermostat_de01_re2_id}
     pin:
