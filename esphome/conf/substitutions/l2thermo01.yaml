@@ -2,14 +2,14 @@
 # SUBSTITUTIONS
 
   # device definitions
-  device_name: t9test01
-  device_comment: Level 9 Test Thermostat 01
+  device_name: l2thermo01
+  device_comment: Level 2 Thermo device 01
   device_platform: ESP8266
   device_board: nodemcuv2
 
-  # the friendly name / id
-  friendly_name: L9 Test Thermostat 01
-  friendly_id: L2Test01
+  # the friendly name and id
+  friendly_name: L2 Thermo01
+  friendly_id: L2Thermo01
 
   log_level: !secret LOG_LEVEL_INFO
 
@@ -21,16 +21,17 @@
   wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
   wifi_conn_ssid_name: ${friendly_name} Conn SSID
   wifi_conn_bssid_name: ${friendly_name} Conn BSSID
+  # wifi_static_ip: 192.168.178.999
 
   # mqtt user / password
-  mqtt_user: mqtt_${device_name}pw
-  mqtt_pw: mqtt_${device_name}usr
+  mqtt_user: mqtt_${device_name}
+  mqtt_pw: mqtt_${device_name}
 
   # details for DALLAS sensors connected to the device
   dallas_01c01_name: $friendly_name TempCase 01
-  dallas_01c01_address: !secret DALLAS_01_L2KITCHEN01_CASESENSOR_01_ADDRESS
+  dallas_01c01_address: !secret DALLAS_01_L2THERMO01_CASESENSOR_01_ADDRESS
   dallas_01e01_name: $friendly_name TempEnv 01
-  dallas_01e01_address: !secret DALLAS_01_L2KITCHEN01_ENVSENSOR_01_ADDRESS
+  dallas_01e01_address: !secret DALLAS_01_L2THERMO01_ENVSENSOR_01_ADDRESS
 
   #
   # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
@@ -92,3 +93,4 @@
 ####################################################################
 # EOF
 ####################################################################
+
