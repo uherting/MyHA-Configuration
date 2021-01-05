@@ -10,6 +10,8 @@
   friendly_name: L9 Cam Ttgo 02
   friendly_id: L9CamTtgo02
 
+  log_level: !secret LOG_LEVEL_INFO
+
   # WiFi related stuff
   wifi_status_name: ${friendly_name} Status
   wifi_status_id: ${friendly_id}Status
