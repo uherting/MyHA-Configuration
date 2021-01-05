@@ -21,6 +21,7 @@
   wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
   wifi_conn_ssid_name: ${friendly_name} Conn SSID
   wifi_conn_bssid_name: ${friendly_name} Conn BSSID
+  # wifi_static_ip: 192.168.178.999
 
   # mqtt user / password
   mqtt_user: mqtt_${device_name}

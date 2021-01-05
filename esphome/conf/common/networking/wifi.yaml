@@ -12,6 +12,16 @@ wifi:
     password: !secret WIFI_L9_PW
   domain: !secret WIFI_DOMAIN
 
+  # # Optional manual IP
+  # manual_ip:
+  #   static_ip: $wifi_static_ip
+  #   gateway: !secret WIFI_GATEWAY
+  #   subnet: !secret WIFI_SUBNET
+  #   dns1: !secret WIFI_DNS1
+  #   dns2: !secret WIFI_DNS2
+  # # fast_connect: not possible with multiple networks!
+  # fast_connect: !secret WIFI_FAST_CONNECT
+
 # renaming a device which is online
 # see https://esphome.io/components/esphome.html?highlight=restore_from#changing-esphome-node-name
 # put the current device name in the next line and uncomment, compile/upload and comment the next line again
@@ -23,8 +33,6 @@ wifi:
 #  fast_connect: !secret WIFI_FAST_CONNECT
 #  id: !secret WIFI_ID (rather not use this without susbstitution in place!)
 
-
 # ############################################################
 #  END OF FILE
 # ############################################################
-
