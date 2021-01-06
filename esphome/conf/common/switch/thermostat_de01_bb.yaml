@@ -3,13 +3,13 @@
 
 #switch:
 
-#############################
+# ------------------------------------------------------------------
 # THERMOSTAT_DE
 
 # Thermostat Boost Button
 #   (output), to be connected to thhermostat via Opto Couplers
   - platform: gpio
-    # name: $thermostat_de01_bb_name
+    name: $thermostat_de01_bb_name
     id: ${thermostat_de01_bb_id}
     pin:
       mcp23017: ${mcp23017_hub01_id}
@@ -18,6 +18,12 @@
       mode: OUTPUT
       inverted: false
       # inverted: true
+    on_turn_on:
+      then:
+        - delay: !secret DELAY_300MS
+        - switch.turn_off: ${thermostat_de01_bb_id}
+    # for AppDaemon
+    icon: mdi:power
 
 # ############################################################
 #  END OF FILE

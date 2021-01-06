@@ -22,7 +22,8 @@ cards:
       # - binary_sensor.l2_thermo01_door
       # - switch.l2_thermo01_ssr_01
       # - switch.l2_thermo01_ssr_02
-      - switch.l2_thermo01_tde_boost_01
+      - switch.l2_thermo01_tde_boostbutton_01
+      # - switch.l2thermo01_tde_bb_01
       - switch.l2_thermo01_tde_re_01
       - switch.l2_thermo01_tde_re_02
 

@@ -104,8 +104,7 @@ binary_sensor:
 #-------------------------------------------------------------------
 # OUTPUT
 output:
-#   - <<: !include conf/common/output/servo01.yaml
-  # - <<: !include conf/common/output/thermostat_de01_bb.yaml
+  # - <<: !include conf/common/output/servo01.yaml
   - <<: !include conf/common/output/thermostat_de01_re01.yaml
   - <<: !include conf/common/output/thermostat_de01_re02.yaml
 
@@ -131,8 +130,7 @@ sensor:
 switch:
   # - <<: !include conf/common/switch/ssr01.yaml
   # - <<: !include conf/common/switch/ssr02.yaml
-  - <<: !include conf/common/switch/thermostat_de01_bb_gpio.yaml
-  - <<: !include conf/common/switch/thermostat_de01_bb_template.yaml
+  - <<: !include conf/common/switch/thermostat_de01_bb.yaml
   # the next two lines expose the rotary encoder for test purposes to home assistant
   - <<: !include conf/common/switch/thermostat_de01_re01.yaml
   - <<: !include conf/common/switch/thermostat_de01_re02.yaml

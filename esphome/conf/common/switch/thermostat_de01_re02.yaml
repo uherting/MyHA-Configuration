@@ -9,7 +9,7 @@
 # Thermostat Rotary encoder #2
 #   (output), to be connected to thhermostat via Opto Couplers
 #
-#   This declaration exposes the $thermostat_de01_bb_id (output
+#   This declaration exposes the $thermostat_de01_re2_id (output
 #   component) to home assistant. Otherwise it would not show
 #   up in home assistant. See output: declaration directory for
 #   details.

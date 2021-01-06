@@ -83,11 +83,11 @@
   touchbutton02_name: $friendly_name TB 02
   touchbutton02_id: ${friendly_id}_TB_02
   # thermostat_de
-  thermostat_de01_bb_name: $friendly_name TDE Boost 01
-  thermostat_de01_bb_id: ${friendly_id}_TDE_Boost_01
-  thermostat_de01_re1_name: $friendly_name TDE RE 01
+  thermostat_de01_bb_name: $friendly_name TDE BoostButton 01
+  thermostat_de01_bb_id: ${friendly_id}_TDE_BB_01
+  thermostat_de01_re1_name: $friendly_name TDE RotaryEncoder 01
   thermostat_de01_re1_id: ${friendly_id}_TDE_RE_01
-  thermostat_de01_re2_name: $friendly_name TDE RE 02
+  thermostat_de01_re2_name: $friendly_name TDE RotaryEncoder 02
   thermostat_de01_re2_id: ${friendly_id}_TDE_RE_02
 
 ####################################################################
