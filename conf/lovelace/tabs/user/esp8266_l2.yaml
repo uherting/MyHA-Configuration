@@ -23,9 +23,8 @@ cards:
       # - switch.l2_thermo01_ssr_01
       # - switch.l2_thermo01_ssr_02
       - switch.l2_thermo01_tde_boostbutton_01
-      # - switch.l2thermo01_tde_bb_01
-      - switch.l2_thermo01_tde_re_01
-      - switch.l2_thermo01_tde_re_02
+      - switch.l2_thermo01_tde_rotaryencoder_01
+      - switch.l2_thermo01_tde_rotaryencoder_02
 
   - type: entities
     title: L2 Kitchen 01
