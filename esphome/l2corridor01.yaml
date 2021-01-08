@@ -89,7 +89,7 @@ sun: !include conf/common/sun.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # i2c: !include conf/common/device/i2c.yaml
-# dallas: !include conf/common/device/dallas.yaml
+dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
