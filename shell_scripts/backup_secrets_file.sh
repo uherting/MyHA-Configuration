@@ -14,5 +14,5 @@ fi
 
 
 TS=`date +%Y%m%d_%H%M%S`
-scp secrets.yaml uwe@beta:/home/uwe/Desktop/HA/secrets_${TS}.yaml
+scp /usr/share/hassio/homeassistant/esphome/secrets.yaml uwe@beta:/home/uwe/Desktop/HA/secrets_${TS}.yaml
 
