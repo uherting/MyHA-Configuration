@@ -19,6 +19,9 @@ views:
   - !include /config/conf/lovelace/tabs/user/weather.yaml
   - !include /config/conf/lovelace/tabs/user/covid-19.yaml
 
+  # HA app entities
+  - !include /config/conf/lovelace/tabs/user/smartphones.yaml
+
   # now the ESP devices
   - !include /config/conf/lovelace/tabs/user/esp8266_l2.yaml
   - !include /config/conf/lovelace/tabs/user/esp8266_l0.yaml
