@@ -16,6 +16,9 @@
   wifi_status_name: ${friendly_name} Status
   wifi_status_id: ${friendly_id}Status
   wifi_uptime_name: ${friendly_name} Uptime
+  wifi_uptime_id: ${friendly_id}Uptime
+  wifi_uptime_human_name: ${friendly_name} Uptime human readable
+  wifi_uptime_human_id: ${friendly_id}UptimeHumanReadable
   wifi_signal_name: ${friendly_name} WiFi Signal
   wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
   wifi_conn_ssid_name: ${friendly_name} Conn SSID

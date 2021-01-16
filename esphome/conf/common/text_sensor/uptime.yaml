@@ -1,0 +1,15 @@
+####################################################################
+# TEXT_SENSOR - ESPHome device uptime human readable
+# -> updated by sensor (platform: uptime)
+#
+# for details see https://esphome.io/components/sensor/uptime.html
+
+#text_sensor:
+  - platform: template
+    name: ${wifi_uptime_human_name}
+    id: ${wifi_uptime_human_id}
+    icon: mdi:clock-start
+
+# ############################################################
+#  END OF FILE
+# ############################################################
