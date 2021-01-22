@@ -33,6 +33,17 @@ cards:
       - binary_sensor.redmi_note_8_pro_ladt_derzeit
       - sensor.redmi_note_8_pro_typ_des_ladegerats
 
+  - type: entities
+    title: Tabby
+    show_header_toggle: false
+    entities:
+      - device_tracker.bdf_x20
+      - sensor.bdf_x20_akkufullstand
+      - sensor.bdf_x20_akkustatus
+      - sensor.bdf_x20_akkuzustand
+      - binary_sensor.bdf_x20_ladt_derzeit
+      - sensor.bdf_x20_typ_des_ladegerats
+
 ####################################################################
 # EOF
 ####################################################################

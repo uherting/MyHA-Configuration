@@ -66,14 +66,12 @@ cards:
       - switch.l2_thermo01_tde_rotaryencoder_01
       - switch.l2_thermo01_tde_rotaryencoder_02
 
-  # l2wled01 (nightlight, estiamted current)
+  # l2wled01 (nightlight, estimated current)
   - type: entities
     title: L2 WLED 01
     entities:
       - switch.l2wled01_nightlight
       - sensor.l2wled01_estimated_current
-      # - switch.l2wled01_sync_receive
-      # - switch.l2wled01_sync_send
 
   # l2wled01 on/off, colour
   - type: light
