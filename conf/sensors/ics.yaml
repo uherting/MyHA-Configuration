@@ -17,20 +17,20 @@
     force_update: 3600
     id: 1
 
-    # Sommerzeit (Anfang/Ende)
-#  - platform: ics
-#    url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
-#    name: Sommerzeit
-#    contains: Sommerzeit
-#    lookahead: 90
-#    id: 2
+  # # Sommerzeit (Anfang/Ende)
+  # - platform: ics
+  #   url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
+  #   name: Sommerzeit
+  #   contains: Sommerzeit
+  #   lookahead: 90
+  #   id: 2
 
-#  - platform: ics
-#    url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
-#    name: Advent
-#    contains: Advent
-#    lookahead: 7
-#    id: 3
+  # - platform: ics
+  #   url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
+  #   name: Advent
+  #   contains: Advent
+  #   lookahead: 7
+  #   id: 3
 
 ####################################################################
 # EOF
