@@ -23,7 +23,7 @@ frontend:
   # themes installed via HACS
   themes: !include_dir_merge_named themes
 
-input_boolean: !include conf/input_booleans/input_boolean_test.yaml
+input_boolean: !include conf/input_booleans/input_boolean.yaml
 input_datetime: !include conf/input_datetime/time_stamps_esp.yaml
 
 # input_select: !include_dir_merge_list conf/input_selects

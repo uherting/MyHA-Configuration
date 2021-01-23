@@ -2,8 +2,10 @@
 # speedtestdotnet integration
 ##########################################################################################
 
-  # server_id: 34613
-  scan_interval: '04:00:00'
+#speedtestdotnet:
+  server_id: 23610
+  scan_interval: '01:00'
+  manual: false
 
 # ############################################################
 #  END OF FILE

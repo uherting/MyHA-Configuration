@@ -4,10 +4,16 @@
 #
 # ############################################################
 
+#input_boolean:
   testinbb:
     name: Name of testinbb
     initial: off
     icon: mdi:car
+
+  speedtestdotnet:
+    name: Start speedtestdotnet integration manual test
+    initial: off
+    icon: mdi:speedometer
 
 # ############################################################
 #  END OF FILE

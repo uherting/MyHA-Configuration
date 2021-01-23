@@ -11,15 +11,6 @@ title: system monitor
 path: system_monitor
 cards:
 
-#  - type: button
-#    icon: mdi:speedometer
-#    name: Run speedtest
-#    tap-action:
-#      action: call_service
-#      service: speedtestdotnet.speedtest
-#    show_icon: true
-#    show_name: true
-
   - type: entities
     title: Motherboard
     show_header_toggle: false
@@ -33,6 +24,7 @@ cards:
       - entity: sensor.load_1m
       - entity: sensor.load_5m
       - entity: sensor.load_15m
+
   - type: entities
     title: Harddisk
     show_header_toggle: false
@@ -45,10 +37,20 @@ cards:
       - entity: sensor.swap_free
       - entity: sensor.swap_use_percent
 
+  # - type: button
+  #   icon: mdi:speedometer
+  #   name: Run speedtest
+  #   tap-action:
+  #     action: call_service
+  #     service: speedtestdotnet.speedtest
+  #   show_icon: true
+  #   show_name: true
+
   - type: entities
     title: Network
     show_header_toggle: false
     entities:
+      - entity: input_boolean.speedtestdotnet
       - entity: sensor.speedtest_download
       - entity: sensor.speedtest_upload
       - entity: sensor.speedtest_ping
