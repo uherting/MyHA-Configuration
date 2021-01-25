@@ -14,7 +14,7 @@ influxdb: !include conf/influxdb.yaml
 
 #mqtt: !include conf/mqtt.yaml
 
-lovelace: !include lovelace.yaml
+lovelace: !include lovelace_configuration.yaml
 
 frontend:
   # no longer supported:
@@ -71,7 +71,6 @@ group: !include_dir_merge_list conf/groups
 
 telegram_bot: !include conf/telegram_bot.yaml
 
-speedtestdotnet: !include  conf/speedtestdotnet.yaml
 tankerkoenig: !include  conf/tankerkoenig.yaml
 
 pi_hole: !include conf/pi_holes/pi_holes.yaml

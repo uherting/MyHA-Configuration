@@ -1,0 +1,46 @@
+###########################################################################
+# customizing person's entities
+###########################################################################
+
+  person.uwe:
+    entity_picture: "/local/avatars/uh.jpg"
+    device_trackers:
+      # - device_tracker.huawei_p9_lite_fritz_box
+  person.gillian:
+    entity_picture: "/local/avatars/gh.jpg"
+    device_trackers:
+      # - device_tracker.redminote8pro_min8_fritz_box
+      # - device_tracker.redminote8pro_min8_fritz_box_2
+  sensor.fritz_box_6490_cable_kdg_b_received:
+    name: FritzB rcv
+  sensor.fritz_box_6490_cable_kdg_b_sent:
+    name: FritzB sent
+  sensor.fritz_box_6490_cable_kdg_kib_s_received:
+    name: FritzB rcv kB per sec
+  sensor.fritz_box_6490_cable_kdg_kib_s_sent:
+    name: FritzB sent kB per sec
+  sensor.fritz_box_6490_cable_kdg_packets_received:
+    name: FritzB rcv packets
+  sensor.fritz_box_6490_cable_kdg_packets_sent:
+    name: FritzB sent packets
+  sensor.fritz_box_6490_cable_kdg_packets_s_received:
+    name: FritzB rcv packets per sec
+  sensor.fritz_box_6490_cable_kdg_packets_s_sent:
+    name: FritzB sent packets per sec
+
+  # sensor.holiday:
+  #   hidden: false
+  #   icon: mdi:beach
+  #   friendly_name: Feiertag in DE
+  # sensor.flag:
+  #   hidden: false
+  #   icon: mdi:flag
+  #   friendly_name: Flaggentag in DE
+  # sensor.goodtoknow:
+  #   hidden: false
+  #   icon: mdi:exclamation
+  #   friendly_name: Gut zu wissen
+
+# ############################################################
+#  END OF FILE
+# ############################################################

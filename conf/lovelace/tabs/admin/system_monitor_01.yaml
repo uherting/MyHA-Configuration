@@ -46,18 +46,29 @@ cards:
   #   show_icon: true
   #   show_name: true
 
+  # - type: entities
+  #   title: Network
+  #   show_header_toggle: false
+  #   entities:
+  #     - entity: input_boolean.speedtestdotnet
+  #     - entity: sensor.speedtest_download
+  #     - entity: sensor.speedtest_upload
+  #     - entity: sensor.speedtest_ping
+  #     - entity: sensor.network_in_hassio
+  #     - entity: sensor.network_out_hassio
+  #     - entity: sensor.network_throughput_in_hassio
+  #     - entity: sensor.network_throughput_out_hassio
+
   - type: entities
-    title: Network
-    show_header_toggle: false
     entities:
-      - entity: input_boolean.speedtestdotnet
-      - entity: sensor.speedtest_download
-      - entity: sensor.speedtest_upload
-      - entity: sensor.speedtest_ping
-      - entity: sensor.network_in_hassio
-      - entity: sensor.network_out_hassio
-      - entity: sensor.network_throughput_in_hassio
-      - entity: sensor.network_throughput_out_hassio
+      - sensor.fritz_box_6490_cable_kdg_b_received
+      - sensor.fritz_box_6490_cable_kdg_b_sent
+      - sensor.fritz_box_6490_cable_kdg_kib_s_received
+      - sensor.fritz_box_6490_cable_kdg_kib_s_sent
+      - sensor.fritz_box_6490_cable_kdg_packets_received
+      - sensor.fritz_box_6490_cable_kdg_packets_sent
+      - sensor.fritz_box_6490_cable_kdg_packets_s_received
+      - sensor.fritz_box_6490_cable_kdg_packets_s_sent
 
   - type: gauge
     name: CPU use

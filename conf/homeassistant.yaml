@@ -17,17 +17,4 @@ allowlist_external_dirs:
   - /config/var/opt/tg/l9ttgocam01
   - /config/var/opt/tg/l9ttgocam02
 
-customize: !include customize/person.yaml
-  # !include_dir_merge_named /config/conf/customize
-#    sensor.holiday:
-#      hidden: false
-#      icon: mdi:beach
-#      friendly_name: Feiertag in DE
-#    sensor.flag:
-#      hidden: false
-#      icon: mdi:flag
-#      friendly_name: Flaggentag in DE
-#    sensor.goodtoknow:
-#      hidden: false
-#      icon: mdi:exclamation
-#      friendly_name: Gut zu wissen
+customize: !include customization.yaml
