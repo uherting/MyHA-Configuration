@@ -11,22 +11,6 @@
     device_trackers:
       # - device_tracker.redminote8pro_min8_fritz_box
       # - device_tracker.redminote8pro_min8_fritz_box_2
-  sensor.fritz_box_6490_cable_kdg_b_received:
-    name: FritzB rcv
-  sensor.fritz_box_6490_cable_kdg_b_sent:
-    name: FritzB sent
-  sensor.fritz_box_6490_cable_kdg_kib_s_received:
-    name: FritzB rcv kB per sec
-  sensor.fritz_box_6490_cable_kdg_kib_s_sent:
-    name: FritzB sent kB per sec
-  sensor.fritz_box_6490_cable_kdg_packets_received:
-    name: FritzB rcv packets
-  sensor.fritz_box_6490_cable_kdg_packets_sent:
-    name: FritzB sent packets
-  sensor.fritz_box_6490_cable_kdg_packets_s_received:
-    name: FritzB rcv packets per sec
-  sensor.fritz_box_6490_cable_kdg_packets_s_sent:
-    name: FritzB sent packets per sec
 
   # sensor.holiday:
   #   hidden: false

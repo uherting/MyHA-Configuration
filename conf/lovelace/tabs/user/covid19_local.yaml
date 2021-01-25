@@ -1,0 +1,69 @@
+####################################################################
+####################################################################
+#
+# covid-19 local tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:virus-outline
+title: COVID-19
+path: covid19_local
+#type: vertical-stack
+cards:
+
+  - type: entities
+    title: RKI Covid Data Goe
+    show_header_toggle: false
+    entities:
+      - sensor.lk_gottingen_casesper100k
+      - sensor.lk_gottingen_weekincidence
+      - sensor.lk_gottingen_count
+      - sensor.lk_gottingen_deaths
+      - sensor.lk_gottingen_recovered
+      - sensor.lk_gottingen_newcases
+      - sensor.lk_gottingen_newdeaths
+      - sensor.lk_gottingen_newrecovered
+
+  - type: entities
+    title: RKI Covid Data GS
+    show_header_toggle: false
+    entities:
+      - sensor.lk_goslar_casesper100k
+      - sensor.lk_goslar_weekincidence
+      - sensor.lk_goslar_count
+      - sensor.lk_goslar_deaths
+      - sensor.lk_goslar_recovered
+      - sensor.lk_goslar_newcases
+      - sensor.lk_goslar_newdeaths
+      - sensor.lk_goslar_newrecovered
+
+  - type: entities
+    title: RKI Covid Data NDH
+    show_header_toggle: false
+    entities:
+      - sensor.lk_nordhausen_casesper100k
+      - sensor.lk_nordhausen_weekincidence
+      - sensor.lk_nordhausen_count
+      - sensor.lk_nordhausen_deaths
+      - sensor.lk_nordhausen_recovered
+      - sensor.lk_nordhausen_newcases
+      - sensor.lk_nordhausen_newdeaths
+      - sensor.lk_nordhausen_newrecovered
+
+  - type: entities
+    title: RKI Covid Data Eichsfeld
+    show_header_toggle: false
+    entities:
+      - sensor.lk_eichsfeld_casesper100k
+      - sensor.lk_eichsfeld_weekincidence
+      - sensor.lk_eichsfeld_count
+      - sensor.lk_eichsfeld_deaths
+      - sensor.lk_eichsfeld_recovered
+      - sensor.lk_eichsfeld_newcases
+      - sensor.lk_eichsfeld_newdeaths
+      - sensor.lk_eichsfeld_newrecovered
+
+####################################################################
+# EOF
+####################################################################

@@ -17,7 +17,8 @@ views:
 #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
   - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
   - !include /config/conf/lovelace/tabs/user/weather.yaml
-  - !include /config/conf/lovelace/tabs/user/covid-19.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_local.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_world.yaml
 
   # HA app entities
   - !include /config/conf/lovelace/tabs/user/smartphones.yaml
