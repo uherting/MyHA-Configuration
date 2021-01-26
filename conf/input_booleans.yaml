@@ -5,13 +5,13 @@
 # ############################################################
 
 #input_boolean:
-  testinbb:
-    name: Name of testinbb
-    initial: off
-    icon: mdi:car
+  # testinbb:
+  #   name: Name of testinbb
+  #   initial: off
+  #   icon: mdi:car
 
   speedtestdotnet:
-    name: Start speedtestdotnet integration manual test
+    name: Start speedtest manually
     initial: off
     icon: mdi:speedometer
 

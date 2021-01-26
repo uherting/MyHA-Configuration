@@ -18,7 +18,6 @@ views:
 #  - !include /config/conf/lovelace/tabs/admin/esp8266.yaml
   - !include /config/conf/lovelace/tabs/admin/esphome-unplugged-devices.yaml
   - !include /config/conf/lovelace/tabs/admin/printer.yaml
-#  - !include /config/conf/lovelace/tabs/admin/test.yaml
   - !include /config/conf/lovelace/tabs/admin/system_monitor_01.yaml
   - !include /config/conf/lovelace/tabs/admin/setup.yaml
 

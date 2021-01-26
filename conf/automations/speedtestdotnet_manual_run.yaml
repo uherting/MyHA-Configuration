@@ -10,6 +10,8 @@
 # ############################################################
 - alias: speedtestdotnet manual run
   initial_state: true
+  mode: single
+  max_exceeded: silent
 # --------------------- TRIGGER ---------------------
   trigger:
     platform: state
@@ -18,10 +20,10 @@
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------
+    - service: speedtestdotnet.speedtest
     - service: input_boolean.turn_off
       data:
         entity_id: input_boolean.speedtestdotnet
-    - service: speedtestdotnet.speedtest
 
 # ############################################################
 #  END OF FILE
