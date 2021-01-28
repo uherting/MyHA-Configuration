@@ -10,6 +10,11 @@
   #   initial: off
   #   icon: mdi:car
 
+  notify_system:
+    name: Allow System notifications
+    initial: off
+    icon: mdi:bell
+
   speedtestdotnet:
     name: Start speedtest manually
     initial: off

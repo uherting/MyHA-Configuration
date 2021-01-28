@@ -13,6 +13,13 @@ cards:
   - type: custom:search-card
     title: Search entities
     max_results: 15
+
+  - type: entities
+    title: General Notifications
+    show_header_toggle: false
+    entities:
+      - input_boolean.notify_system
+
   - type: entities
     title: Set themes sunrise / sunset
     show_header_toggle: false

@@ -65,13 +65,6 @@
 #      show_in_sidebar: true
 #      require_admin: false
 
-    # just an example...:
-#    uilovelace-hidden:
-#      mode: yaml
-#      title: hidden
-#      show_in_sidebar: false
-#      filename: uilovelace-hidden.yaml
-
 # ############################################################
 #  END OF FILE
 # ############################################################

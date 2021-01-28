@@ -54,7 +54,7 @@ input_select: !include conf/input_select/theme_select.yaml
 
 zone: !include conf/zones/zones.yaml
 
-script: !include conf/scripts/scripts.yaml
+script: !include conf/scripts.yaml
 
 # not required as the add-on is installed
 # see https://www.home-assistant.io/integrations/duckdns/

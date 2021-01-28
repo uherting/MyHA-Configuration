@@ -11,17 +11,17 @@ icon: mdi:weather-sunny
 title: weather
 path: weather
 cards:
-  # Norwegian Meteorological Institute
-  - type: weather-forecast
-    entity: weather.home431
+  # # Norwegian Meteorological Institute
+  # - type: weather-forecast
+  #   entity: weather.home431
 
-# AccuWeather
-  - type: weather-forecast
-    entity: weather.home431_2
+  # # AccuWeather
+  # - type: weather-forecast
+  #   entity: weather.home431_2
 
-#  # Deutscher Wetterdienst (DWD)
-#  - type: weather-forecast
-#    entity: weather.dwd_weather_h431
+  # # Deutscher Wetterdienst (DWD)
+  # - type: weather-forecast
+  #   entity: weather.dwd_weather_h431
 
   # Windy.Com
   - type: iframe

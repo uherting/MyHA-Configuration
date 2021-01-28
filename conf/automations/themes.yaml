@@ -41,12 +41,17 @@
     action:
 #      - delay:
 #          seconds: 3
+
+# TODO: debug service_template
+#         for details see:
+#           https://www.home-assistant.io/docs/scripts/service-calls/#use-templates-to-decide-which-service-to-call
+      # - service: >
       - service_template: frontend.set_theme
         data_template:
           name: >
             {{ states('sensor.sun_based_theme') }}
 #            {% if trigger.platform == 'sun' %}
-#              {{states('input_select.set_sunset_theme') if trigger.event == 'sunset' else 
+#              {{states('input_select.set_sunset_theme') if trigger.event == 'sunset' else
 #                states('input_select.set_sunrise_theme') }}
 #            {% else %}
 #              {{ states('sensor.sun_based_theme') }}
@@ -59,7 +64,7 @@
           title: >
             Ha Main: Sun set Theme
           message: >
-            {{ as_timestamp(now()) | timestamp_custom("%X") }}: 
+            {{ as_timestamp(now()) | timestamp_custom("%X") }}:
             Sun is {{states('sun.sun')}} and Frontend is set to '{{ states('sensor.sun_based_theme') }}'
 
 
