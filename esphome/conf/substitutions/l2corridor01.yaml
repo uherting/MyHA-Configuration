@@ -86,15 +86,16 @@
   touchbutton02_name: $friendly_name TB 02
   touchbutton02_id: ${friendly_id}_TB_02
 
-  # LED strip
-  fastled_01_name: $friendly_name fastled 01
-  fastled_01_id: ${friendly_id}_fastled_01
-  fastled_01_pin: !secret FASTLED_01_PIN
-  fastled_01_num_leds: !secret FASTLED_01_NUM_LEDS
+  # outdated as https://github.com/Aircoookie/WLED on another ESP device is used
+  # # LED strip
+  # fastled_01_name: $friendly_name fastled 01
+  # fastled_01_id: ${friendly_id}_fastled_01
+  # fastled_01_pin: !secret FASTLED_01_PIN
+  # fastled_01_num_leds: !secret FASTLED_01_NUM_LEDS
 
   # Power Supply Component
-  power_supply_id: ${friendly_id}_PSU_1
-  power_supply_pin: !secret GPIO_PIN_D5
+  # power_supply_id: ${friendly_id}_PSU_1
+  # power_supply_pin: !secret GPIO_PIN_D5
 
 ####################################################################
 # EOF

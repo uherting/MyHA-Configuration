@@ -88,9 +88,9 @@ sun: !include conf/common/sun.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
-# i2c: !include conf/common/device/i2c.yaml
+i2c: !include conf/common/device/i2c.yaml
 dallas: !include conf/common/device/dallas.yaml
-# mcp23017: !include conf/common/device/mcp23017.yaml
+mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -102,26 +102,26 @@ dallas: !include conf/common/device/dallas.yaml
 globals: !include conf/common/globals/iswifion.yaml
 interval: !include conf/common/interval/iswifion.yaml
 script:
-  - <<: !include conf/common/script/pir2_to_light1_01.yaml
-  - <<: !include conf/common/script/pir2_to_light1_02.yaml
+  - <<: !include conf/common/script/pir2_noaction_01.yaml
+  - <<: !include conf/common/script/pir2_noaction_02.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  # - <<: !include conf/common/binary_sensor/pir01.yaml
-  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  - <<: !include conf/common/binary_sensor/pir01.yaml
+  - <<: !include conf/common/binary_sensor/pir02.yaml
   # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
-  - <<: !include conf/common/binary_sensor/pir01_gpio.yaml
-  - <<: !include conf/common/binary_sensor/pir02_gpio.yaml
+  # - <<: !include conf/common/binary_sensor/pir01_gpio.yaml
+  # - <<: !include conf/common/binary_sensor/pir02_gpio.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
   # - <<: !include conf/common/binary_sensor/reed02.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/touch_button01.yaml
   # - <<: !include conf/common/binary_sensor/touch_button02.yaml
-  - <<: !include conf/common/binary_sensor/touch_button01_gpio.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01_gpio.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -148,8 +148,8 @@ sensor:
 
 #-------------------------------------------------------------------
 # POWER SUPPLY
-power_supply:
-  - <<: !include conf/common/power_supply.yaml
+# power_supply:
+#   - <<: !include conf/common/power_supply.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -161,8 +161,8 @@ text_sensor:
   # none so far
 
 #-------------------------------------------------------------------
-# LED STRIP
-light: !include conf/light/l2corridor01.yaml
+# LED STRIP (replaced by ESP device w/ WLED)
+# light: !include conf/light/l2corridor01.yaml
 
 ####################################################################
 # EOF
