@@ -1,0 +1,27 @@
+####################################################################
+# BINARY SENSORS
+
+
+#binary_sensor:
+
+####################################################################
+# PIR
+
+  - platform: gpio
+    name: $pir03_name
+    id: ${pir03_id}
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_A2
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: INPUT
+      inverted: false
+    device_class: motion
+    # fallback automation while the device is offline:
+    on_press:
+      then:
+        - script.execute: ssr_script_pir_03
+
+# ############################################################
+#  END OF FILE
+# ############################################################

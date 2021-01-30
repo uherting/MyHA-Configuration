@@ -102,7 +102,8 @@ script:
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir01.yaml
-  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  - <<: !include conf/common/binary_sensor/pir02.yaml
+  - <<: !include conf/common/binary_sensor/pir03.yaml
   # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
@@ -132,7 +133,8 @@ sensor:
 # SWITCHES
 switch:
   - <<: !include conf/common/switch/ssr01.yaml
-  # - <<: !include conf/common/switch/ssr02.yaml
+  - <<: !include conf/common/switch/ssr02.yaml
+  - <<: !include conf/common/switch/ssr03.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
