@@ -117,6 +117,7 @@ text_sensor:
   # common text sensors
   - <<: !include conf/common/text_sensor/esphomeversion.yaml
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
 

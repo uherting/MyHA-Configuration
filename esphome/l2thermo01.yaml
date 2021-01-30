@@ -115,7 +115,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l2thermo01_case.yaml
+  - <<: !include conf/sensor/l2thermo01_case.yaml
   # - <<: !include conf/sensor/l2thermo01_env01.yaml
 
 #-------------------------------------------------------------------
@@ -141,6 +141,7 @@ text_sensor:
   # common text sensors
   - <<: !include conf/common/text_sensor/esphomeversion.yaml
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
 

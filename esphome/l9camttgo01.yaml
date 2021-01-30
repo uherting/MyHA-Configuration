@@ -87,7 +87,13 @@ sensor: !include conf/sensor/l9camttgo01.yaml
 
 #-------------------------------------------------------------------
 # TEXT_SENSORS
-text_sensor: !include conf/common/text_sensor.yaml
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
+  # device related
+  # none so far
 
 ####################################################################
 # EOF
