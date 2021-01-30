@@ -2,15 +2,21 @@
 # SUBSTITUTIONS
 
 #light:
-  - platform: fastled_clockless
-    name: ${fastled_01_name}
-    id: ${fastled_01_id}
-    chipset: WS2812B
-    pin: $fastled_01_pin
-    num_leds: $fastled_01_num_leds
-    rgb_order: GRB
-    power_supply: $power_supply_id
-    restore_mode: ALWAYS_OFF
+  - platform: binary
+    name: $light_virtual_01_name
+    id: $light_virtual_01_id
+    output: $power_supply_id
+
+  # outdated therefore void!
+  # - platform: fastled_clockless
+  #   name: ${fastled_01_name}
+  #   id: ${fastled_01_id}
+  #   chipset: WS2812B
+  #   pin: $fastled_01_pin
+  #   num_leds: $fastled_01_num_leds
+  #   rgb_order: GRB
+  #   power_supply: $power_supply_id
+  #   restore_mode: ALWAYS_OFF
 
 ####################################################################
 # EOF

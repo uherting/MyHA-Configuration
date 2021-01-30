@@ -93,8 +93,13 @@
   # fastled_01_pin: !secret FASTLED_01_PIN
   # fastled_01_num_leds: !secret FASTLED_01_NUM_LEDS
 
+  # virtual light (used to trigger device l2wled01)
+  light_virtual_01_name: $friendly_name lightvirt 01
+  light_virtual_01_id: ${friendly_id}_lightvirt_01
+
   # Power Supply Component
-  # power_supply_id: ${friendly_id}_PSU_1
+  power_supply_name: $friendly_name_PSU_1
+  power_supply_id: ${friendly_id}_PSU_1
   # power_supply_pin: !secret GPIO_PIN_D5
 
 ####################################################################

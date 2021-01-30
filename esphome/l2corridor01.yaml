@@ -130,7 +130,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l2corridor01_case.yaml
+  - <<: !include conf/sensor/l2corridor01_case.yaml
   # - <<: !include conf/sensor/l2corridor01_env01.yaml
 
 #-------------------------------------------------------------------
@@ -148,8 +148,8 @@ sensor:
 
 #-------------------------------------------------------------------
 # POWER SUPPLY
-# power_supply:
-#   - <<: !include conf/common/power_supply.yaml
+power_supply:
+  - <<: !include conf/common/power_supply.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -157,12 +157,13 @@ text_sensor:
   # common text sensors
   - <<: !include conf/common/text_sensor/esphomeversion.yaml
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
 
 #-------------------------------------------------------------------
-# LED STRIP (replaced by ESP device w/ WLED)
-# light: !include conf/light/l2corridor01.yaml
+# BINARY LIGHT (virtual switch acting as a trigger for device l2wled01)
+light: !include conf/light/l2corridor01.yaml
 
 ####################################################################
 # EOF

@@ -3,7 +3,16 @@
 
 #power_supply:
   - id: $power_supply_id
-    pin: $power_supply_pin
+    pin:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B7
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      # high triggered SSR
+      # inverted: false
+      # ---
+      # low triggered SSR
+      inverted: true
 
 ####################################################################
 # EOF
