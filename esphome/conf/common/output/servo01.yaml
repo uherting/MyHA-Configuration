@@ -16,7 +16,7 @@
 #output:
   - platform: esp8266_pwm
     id: ${servo01_pwm_output_id}
-    pin: !secret SERVO01_PIN
+    pin: !secret L1THEHUT01_SERVO01_PIN
     frequency: !secret SERVO_FREQUENCY_VALUE
 
 # ############################################################

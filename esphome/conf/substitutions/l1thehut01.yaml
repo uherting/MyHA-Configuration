@@ -10,6 +10,11 @@
   friendly_name: L1 TheHut01
   friendly_id: L1TheHut01
 
+  # substitutions for a sensor located in another area but connected to this device
+  # devicename_l0corridor01: l0corridor01
+  # friendly_name_l0corridor01: L0 Corridor01
+  # friendly_id_l0corridor01: L0Corridor01
+
   log_level: !secret LOG_LEVEL_INFO
 
   # wifi settings
@@ -78,8 +83,8 @@
   reed_contact04_name: $friendly_name REED 04
   reed_contact04_id: ${friendly_id}_REED_04
   # remote reed relays
-  reed_contact90_name: $friendly_name_l0corridor01 REED 90
-  reed_contact90_id: ${friendly_id_l0corridor01}_REED_90
+  # reed_contact90_name: $friendly_name_l0corridor01 REED 90
+  # reed_contact90_id: ${friendly_id_l0corridor01}_REED_90
   # SSRs
   ssr01_name: $friendly_name SSR 01
   ssr01_id: ${friendly_id}_SSR01
