@@ -83,6 +83,8 @@
   ssr01_id: ${friendly_id}_SSR01
   ssr02_name: $friendly_name SSR 02
   ssr02_id: ${friendly_id}_SSR02
+  ssr03_name: $friendly_name SSR 03
+  ssr03_id: ${friendly_id}_SSR03
   # touch buttons
   touchbutton01_name: $friendly_name TB 01
   touchbutton01_id: ${friendly_id}_TB_01
