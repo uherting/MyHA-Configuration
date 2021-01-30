@@ -58,6 +58,15 @@ exclude:
     - sensor.date_time
     - sensor.date_time_iso
     - sensor.ha_uptime
+    - sensor.l0_corridor01_uptime
+    - sensor.l0_corridor02_uptime
+    - sensor.l0_garagebig01_uptime
+    - sensor.l0_garagebig02_uptime
+    - sensor.l1_thehut01_uptime
+    - sensor.l2_corridor01_uptime
+    - sensor.l2_kitchen01_uptime
+    - sensor.l2_storage01_uptime
+    - sensor.l2_thermo01_uptime
     - sensor.l0_corridor01_uptime_human_readable
     - sensor.l0_corridor02_uptime_human_readable
     - sensor.l0_garagebig01_uptime_human_readable
