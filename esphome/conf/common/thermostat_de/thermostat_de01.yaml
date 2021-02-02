@@ -1,12 +1,39 @@
 ####################################################################
 # THERMOSTAT_DE
 
-#th_de_std
+# for glueing ESPHome and HA together for this configuration
+# see https://esphome.io/components/stepper/#home-assistant-configuration
 
+
+#th_de_std
   - platform: thermostat_de
-    boost_button_id: $thermostat_de01_bb_id
-    rotary_encoder01_id: $thermostat_de01_re1_id
-    rotary_encoder02_id: $thermostat_de01_re2_id
+    name: $thermostat_de01_name
+    id: $thermostat_de01_id
+    pin_boost_button:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B5
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      inverted: false
+      # inverted: true
+      on_turn_on:
+      then:
+        - delay: !secret DELAY_300MS
+        - switch.turn_off: ${thermostat_de01_bb_id}
+    pin_rotary_encoder01:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B6
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      inverted: false
+      # inverted: true
+    pin_rotary_encoder02:
+      mcp23017: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B7
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      inverted: false
+      # inverted: true
 
     # optional parameters
 

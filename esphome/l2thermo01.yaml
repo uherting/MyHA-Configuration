@@ -84,7 +84,6 @@ globals: !include conf/common/globals/iswifion.yaml
 interval: !include conf/common/interval/iswifion.yaml
 # script:
   # - <<: !include conf/common/script/pir1_to_ssr1.yaml
-  # - <<: !include conf/common/script/thermostat_de01_bb.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -105,8 +104,6 @@ binary_sensor:
 # OUTPUT
 output:
   # - <<: !include conf/common/output/servo01.yaml
-  - <<: !include conf/common/output/thermostat_de01_re01.yaml
-  - <<: !include conf/common/output/thermostat_de01_re02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -130,10 +127,6 @@ sensor:
 switch:
   # - <<: !include conf/common/switch/ssr01.yaml
   # - <<: !include conf/common/switch/ssr02.yaml
-  - <<: !include conf/common/switch/thermostat_de01_bb.yaml
-  # the next two lines expose the rotary encoder for test purposes to home assistant
-  - <<: !include conf/common/switch/thermostat_de01_re01.yaml
-  - <<: !include conf/common/switch/thermostat_de01_re02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -147,7 +140,7 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # THERMOSTAT_DE --- see also OUTPUTsection!
-# th_de_std: !include conf/common/thermostat_de/thermostat_de01.yaml
+th_de_std: !include conf/common/thermostat_de/thermostat_de01.yaml
 
 ####################################################################
 # EOF
