@@ -5,9 +5,8 @@
 # see https://esphome.io/components/stepper/#home-assistant-configuration
 
 
-#th_de_std
-  - platform: thermostat_de
-    name: $thermostat_de01_name
+#thermostat_de:
+  - platform: thde_e3n1
     id: $thermostat_de01_id
     pin_boost_button:
       mcp23017: ${mcp23017_hub01_id}
