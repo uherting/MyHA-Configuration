@@ -5,17 +5,6 @@ from esphome.components import stepper
 from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_D, \
     CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
 
-# the constants from esphome.const are as follows:
-# CONF_PIN_A = 'pin_a'
-# CONF_PIN_B = 'pin_b'
-# CONF_PIN_C = 'pin_c'
-# CONF_PIN_D = 'pin_d'
-
-# intriguing information
-# UNIT_CELSIUS = '°C'
-# UNIT_DEGREES = '°'
-# UNIT_EMPTY = ''
-
 uln2003_ns = cg.esphome_ns.namespace('uln2003')
 ULN2003StepMode = uln2003_ns.enum('ULN2003StepMode')
 
