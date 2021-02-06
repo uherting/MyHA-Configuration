@@ -1,14 +1,14 @@
 ((LitElement) => {
 
-console.info('NUMBERBOX_CARD 2.0');
+console.info('NUMBERBOX_CARD 2.2');
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
-
 class NumberBox extends LitElement {
 
 constructor() {
 	super();
-	this.rolling = 0;
+	this.bounce = false;
+	this.pending = false;
 }
 
 static get properties() {
@@ -16,7 +16,8 @@ static get properties() {
 		_hass: {},
 		config: {},
 		stateObj: {},
-		rolling: {},
+		bounce: {},
+		pending: {},
 	}
 }
 
@@ -41,6 +42,7 @@ static get styles() {
 		line-height:var(--paper-font-subhead_-_line-height);
 		font-weight:normal;margin:0}
 	.cur-unit{font-size:80%;opacity:0.5}
+	.upd{color:#f00}
 	.padr,.padl{padding:8px;cursor:pointer}
 	.grid {
 	  display: grid;
@@ -70,9 +72,10 @@ static get styles() {
 }
 
 shouldUpdate(changedProps) {
-	if (changedProps.has('stateObj')) {return true;}
+	if( changedProps.has('stateObj') || changedProps.has('pending') ){return true;}
 }
 
+  
 render() {
 	if(!this.stateObj){return html`<ha-card>Missing:'${this.config.entity}'</ha-card>`;}
 	const vars={};
@@ -108,6 +111,7 @@ render() {
 			vars['name']=null;
 		}
 	}
+
 	return this.renderMain(vars);
 }
 
@@ -128,31 +132,20 @@ renderMain(vars) {
 }
 
 renderNum(vars){
-	return html`<section class="body">
-			<div class="main">
-				<div class="cur-box">
-				<ha-icon class="padl" icon="${vars.icon_plus}"
-					@click="${() => this.incVal(this)}"
-					@mousedown="${() => this.onMouseDown(1)}"
-					@mouseup="${() => this.onMouseUp()}"
-					@touchstart="${() => this.onMouseDown(1)}"
-					@touchend="${() => this.onMouseUp()}"
-				>
-				</ha-icon>
-				<div class="cur-num-box" @click="${() => this.moreInfo('hass-more-info')}" >
-					<h3 class="cur-num" > ${this.niceNum(vars)} </h3>
-				</div>
-				<ha-icon class="padr" icon="${vars.icon_minus}"
-					@click="${() => this.decVal(this)}"
-					@mousedown="${() => this.onMouseDown(0)}"
-					@mouseup="${() => this.onMouseUp()}"
-					@touchstart="${() => this.onMouseDown(0)}"
-					@touchend="${() => this.onMouseUp()}"
-				>
-				</ha-icon>
-				</div>
-			</div>
-			</section>`;
+	return html`
+	<section class="body">
+	<div class="main">
+		<div class="cur-box">
+		<ha-icon class="padl" icon="${vars.icon_plus}" @click="${() => this.setNumb(1)}" >
+		</ha-icon>
+		<div class="cur-num-box" @click="${() => this.moreInfo('hass-more-info')}" >
+			<h3 class="cur-num ${(this.pending===false)? null:'upd'}" > ${this.niceNum(vars)} </h3>
+		</div>
+		<ha-icon class="padr" icon="${vars.icon_minus}" @click="${() => this.setNumb(0)}" >
+		</ha-icon>
+		</div>
+	</div>
+	</section>`;
 }
 
 getCardSize() {
@@ -161,14 +154,15 @@ getCardSize() {
 
 setConfig(config) {
 	if (!config.entity) throw new Error('Please define an entity.');
-	if (config.entity.split('.')[0] !== 'input_number')
-		{throw new Error('Please define a input_number entity.');}
+	let c=config.entity.split('.')[0];
+	if (!(c == 'input_number' || c == 'number' )){
+		throw new Error('Please define a number entity.');
+	}
 	this.config = {
 		name: config.name,
 		entity: config.entity,
 		icon: config.icon,
 		border: config.border,
-		speed: config.speed,
 		unit: config.unit,
 		icon_plus: config.icon_plus,
 		icon_minus: config.icon_minus,
@@ -182,17 +176,22 @@ set hass(hass) {
 	this._hass = hass;
 }
 
-callService(service, data = {entity_id: this.stateObj.entity_id}) {
-	const [domain, name] = service.split('.');
-	this._hass.callService(domain, name, data);
+setNumb(c){
+	let v=this.pending;
+	const step=Number(this.stateObj.attributes.step);
+	if( v===false ){ v=Number(this.stateObj.state); }
+	const adval=c?(v + step):(v - step);
+	if( adval <=  Number(this.stateObj.attributes.max) && adval >= Number(this.stateObj.attributes.min)){
+		this.pending=(adval);
+		clearTimeout(this.bounce);
+		this.bounce = setTimeout(this.publishNum, 1000, this);
+	}
 }
 
-incVal(dhis){
-	dhis._hass.callService("input_number", 'increment', { entity_id: dhis.stateObj.entity_id });
-}
-
-decVal(dhis){
-	dhis._hass.callService("input_number", 'decrement', { entity_id: dhis.stateObj.entity_id });
+publishNum(dhis){
+	const v=dhis.pending;
+	dhis.pending=false;
+	dhis._hass.callService(dhis.stateObj.entity_id.split('.')[0], "set_value", { entity_id: dhis.stateObj.entity_id, value: v });
 }
 
 zeroFill(number, width){
@@ -204,10 +203,11 @@ zeroFill(number, width){
 }
 
 niceNum(vars){
-	let fix=0;
+	let fix=0; let v=this.pending;
+	if( v === false ){ v=Number(this.stateObj.state); }
 	const stp=Number(this.stateObj.attributes.step);
 	if( Math.round(stp) != stp ){ fix=stp.toString().split(".")[1].length || 1;}
-	fix = Number(this.stateObj.state).toFixed(fix);
+	fix = v.toFixed(fix);
 	if( vars.unit=="time" ){
 		return html`${this.zeroFill(Math.floor(fix/3600), 2)}:${this.zeroFill(Math.floor(fix/60), 2)}:${this.zeroFill(fix%60, 2)}`
 	}
@@ -225,25 +225,6 @@ moreInfo(type, options = {}) {
 	return e;
 }
 
-onMouseDown(v) {
-	if( this.config.speed === undefined ){ this.config.speed=0;}
-	if( this.config.speed > 0 ){
-		this.onMouseUp();
-		if(v){
-			this.rolling = setInterval(this.incVal, this.config.speed, this);
-		}else{
-			this.rolling = setInterval(this.decVal, this.config.speed, this);
-		}
-	}
-}
-
-onMouseUp() {
-	if( this.config.speed === undefined ){ this.config.speed=0;}
-	if( this.config.speed > 0 ){
-		clearInterval(this.rolling);
-	}
-}
-
 static getConfigElement() {
     return document.createElement("numberbox-card-editor");
 }
@@ -255,7 +236,7 @@ static getStubConfig() {
 } customElements.define('numberbox-card', NumberBox);
 
 //Editor
-const includeDomains = ['input_number'];
+const includeDomains = ['input_number','number'];
 const fireEvent = (node, type, detail = {}, options = {}) => {
 	const event = new Event(type, {
 		bubbles: options.bubbles === undefined ? true : options.bubbles,
@@ -352,12 +333,6 @@ render() {
 		.configValue=${'unit'}
 		@value-changed=${this.updVal}
 	></ha-icon-input>
-	<ha-icon-input
-		label="Speed [0] ms"
-		.value="${this.config.speed}"
-		.configValue=${'speed'}
-		@value-changed=${this.updVal}
-	></ha-icon-input>
 </div>
 `;
 }
@@ -393,6 +368,6 @@ window.customCards.push({
 	type: 'numberbox-card',
 	name: 'Numberbox Card',
 	preview: false,
-	description: 'Replace input_number sliders with plus and minus buttons'
+	description: 'Replace number/input_number sliders with plus and minus buttons'
 });
 
