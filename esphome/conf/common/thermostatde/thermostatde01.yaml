@@ -5,30 +5,30 @@
 # see https://esphome.io/components/stepper/#home-assistant-configuration
 
 
-#thermostat_de:
+#thermostatde:
   - platform: thde_e3n1
     id: $thermostat_de01_id
     pin_boost_button:
       mcp23017: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_B5
+      number: $thermostat_de01_pin_bb
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: OUTPUT
       inverted: false
       # inverted: true
       on_turn_on:
       then:
-        - delay: !secret DELAY_300MS
+        - delay: !secret DELAY_200MS
         - switch.turn_off: ${thermostat_de01_bb_id}
     pin_rotary_encoder01:
       mcp23017: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_B6
+      number: thermostat_de01_pin_a
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: OUTPUT
       inverted: false
       # inverted: true
     pin_rotary_encoder02:
       mcp23017: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_B7
+      number: thermostat_de01_pin_b
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: OUTPUT
       inverted: false

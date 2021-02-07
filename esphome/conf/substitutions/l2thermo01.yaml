@@ -96,8 +96,10 @@
   thermostat_de01_re1_id: ${friendly_id}_TDE_RE_01
   thermostat_de01_re2_name: $friendly_name TDE RotaryEncoder 02
   thermostat_de01_re2_id: ${friendly_id}_TDE_RE_02
+  thermostat_de01_pin_bb: !secret MCP23017_PIN_B5
+  thermostat_de01_pin_a: !secret MCP23017_PIN_B6
+  thermostat_de01_pin_b: !secret MCP23017_PIN_B7
 
 ####################################################################
 # EOF
 ####################################################################
-

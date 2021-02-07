@@ -140,7 +140,7 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # THERMOSTAT_DE --- see also OUTPUTsection!
-thermostat_de: !include conf/common/thermostat_de/thermostat_de01.yaml
+thermostat_de: !include conf/common/thermostatde/thermostatde01.yaml
 
 ####################################################################
 # EOF
