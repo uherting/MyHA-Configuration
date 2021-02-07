@@ -8,12 +8,12 @@ from esphome.core import CORE, coroutine, coroutine_with_priority
 IS_PLATFORM_COMPONENT = True
 
 # pylint: disable=invalid-name
-thermostatde_ns = cg.esphome_ns.namespace('thermostat_de')
-Thermostatde = thermostatde_ns.class_('Thermostatde')
+stepper_ns = cg.esphome_ns.namespace('stepper')
+Stepper = stepper_ns.class_('Stepper')
 
-SetTargetAction = thermostatde_ns.class_('SetTargetAction', automation.Action)
-ReportPositionAction = thermostatde_ns.class_('ReportPositionAction', automation.Action)
-SetSpeedAction = thermostatde_ns.class_('SetSpeedAction', automation.Action)
+SetTargetAction = stepper_ns.class_('SetTargetAction', automation.Action)
+ReportPositionAction = stepper_ns.class_('ReportPositionAction', automation.Action)
+SetSpeedAction = stepper_ns.class_('SetSpeedAction', automation.Action)
 
 
 def validate_acceleration(value):
@@ -66,27 +66,27 @@ STEPPER_SCHEMA = cv.Schema({
 
 
 @coroutine
-def setup_thermostatde_core_(thermostatde_var, config):
+def setup_stepper_core_(stepper_var, config):
     if CONF_ACCELERATION in config:
-        cg.add(thermostatde_var.set_acceleration(config[CONF_ACCELERATION]))
+        cg.add(stepper_var.set_acceleration(config[CONF_ACCELERATION]))
     if CONF_DECELERATION in config:
-        cg.add(thermostatde_var.set_deceleration(config[CONF_DECELERATION]))
+        cg.add(stepper_var.set_deceleration(config[CONF_DECELERATION]))
     if CONF_MAX_SPEED in config:
-        cg.add(thermostatde_var.set_max_speed(config[CONF_MAX_SPEED]))
+        cg.add(stepper_var.set_max_speed(config[CONF_MAX_SPEED]))
 
 
 @coroutine
-def register_thermostatde(var, config):
+def register_stepper(var, config):
     if not CORE.has_id(config[CONF_ID]):
         var = cg.Pvariable(config[CONF_ID], var)
-    yield setup_thermostatde_core_(var, config)
+    yield setup_stepper_core_(var, config)
 
 
-@automation.register_action('thermostat_de.set_target', SetTargetAction, cv.Schema({
-    cv.Required(CONF_ID): cv.use_id(Thermostatde),
+@automation.register_action('stepper.set_target', SetTargetAction, cv.Schema({
+    cv.Required(CONF_ID): cv.use_id(Stepper),
     cv.Required(CONF_TARGET): cv.templatable(cv.int_),
 }))
-def thermostatde_set_target_to_code(config, action_id, template_arg, args):
+def stepper_set_target_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     template_ = yield cg.templatable(config[CONF_TARGET], args, cg.int32)
@@ -94,11 +94,11 @@ def thermostatde_set_target_to_code(config, action_id, template_arg, args):
     yield var
 
 
-@automation.register_action('thermostat_de.report_position', ReportPositionAction, cv.Schema({
-    cv.Required(CONF_ID): cv.use_id(Thermostatde),
+@automation.register_action('stepper.report_position', ReportPositionAction, cv.Schema({
+    cv.Required(CONF_ID): cv.use_id(Stepper),
     cv.Required(CONF_POSITION): cv.templatable(cv.int_),
 }))
-def thermostatde_report_position_to_code(config, action_id, template_arg, args):
+def stepper_report_position_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     template_ = yield cg.templatable(config[CONF_POSITION], args, cg.int32)
@@ -106,11 +106,11 @@ def thermostatde_report_position_to_code(config, action_id, template_arg, args):
     yield var
 
 
-@automation.register_action('thermostat_de.set_speed', SetSpeedAction, cv.Schema({
-    cv.Required(CONF_ID): cv.use_id(Thermostatde),
+@automation.register_action('stepper.set_speed', SetSpeedAction, cv.Schema({
+    cv.Required(CONF_ID): cv.use_id(Stepper),
     cv.Required(CONF_SPEED): cv.templatable(validate_speed),
 }))
-def thermostatde_set_speed_to_code(config, action_id, template_arg, args):
+def stepper_set_speed_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     template_ = yield cg.templatable(config[CONF_SPEED], args, cg.int32)
@@ -120,4 +120,4 @@ def thermostatde_set_speed_to_code(config, action_id, template_arg, args):
 
 @coroutine_with_priority(100.0)
 def to_code(config):
-    cg.add_global(thermostatde_ns.using)
+    cg.add_global(stepper_ns.using)

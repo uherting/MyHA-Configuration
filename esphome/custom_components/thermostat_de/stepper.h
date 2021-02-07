@@ -2,17 +2,17 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/automation.h"
-#include "esphome/components/thermostatde/thermostatde.h"
+#include "esphome/components/stepper/stepper.h"
 
 namespace esphome {
-namespace thermostatde {
+namespace stepper {
 
 #define LOG_STEPPER(this) \
   ESP_LOGCONFIG(TAG, "  Acceleration: %.0f steps/s^2", this->acceleration_); \
   ESP_LOGCONFIG(TAG, "  Deceleration: %.0f steps/s^2", this->deceleration_); \
   ESP_LOGCONFIG(TAG, "  Max Speed: %.0f steps/s", this->max_speed_);
 
-class Thermostatde {
+class Stepper {
  public:
   void set_target(int32_t steps) { this->target_position = steps; }
   void report_position(int32_t steps) { this->current_position = steps; }
@@ -39,31 +39,31 @@ class Thermostatde {
 
 template<typename... Ts> class SetTargetAction : public Action<Ts...> {
  public:
-  explicit SetTargetAction(Thermostatde *parent) : parent_(parent) {}
+  explicit SetTargetAction(Stepper *parent) : parent_(parent) {}
 
   TEMPLATABLE_VALUE(int32_t, target)
 
   void play(Ts... x) override { this->parent_->set_target(this->target_.value(x...)); }
 
  protected:
-  Thermostatde *parent_;
+  Stepper *parent_;
 };
 
 template<typename... Ts> class ReportPositionAction : public Action<Ts...> {
  public:
-  explicit ReportPositionAction(Thermostatde *parent) : parent_(parent) {}
+  explicit ReportPositionAction(Stepper *parent) : parent_(parent) {}
 
   TEMPLATABLE_VALUE(int32_t, position)
 
   void play(Ts... x) override { this->parent_->report_position(this->position_.value(x...)); }
 
  protected:
-  Thermostatde *parent_;
+  Stepper *parent_;
 };
 
 template<typename... Ts> class SetSpeedAction : public Action<Ts...> {
  public:
-  explicit SetSpeedAction(Thermostatde *parent) : parent_(parent) {}
+  explicit SetSpeedAction(Stepper *parent) : parent_(parent) {}
 
   TEMPLATABLE_VALUE(float, speed);
 
@@ -74,8 +74,8 @@ template<typename... Ts> class SetSpeedAction : public Action<Ts...> {
   }
 
  protected:
-  Thermostatde *parent_;
+  Stepper *parent_;
 };
 
-}  // namespace thermostatde
+}  // namespace stepper
 }  // namespace esphome

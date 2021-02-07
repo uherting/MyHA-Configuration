@@ -1,12 +1,12 @@
-#include "thermostatde.h"
+#include "stepper.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace thermostatde {
+namespace stepper {
 
-static const char *TAG = "thermostatde";
+static const char *TAG = "stepper";
 
-void Thermostatde::calculate_speed_(uint32_t now) {
+void Stepper::calculate_speed_(uint32_t now) {
   // delta t since last calculation in seconds
   float dt = (now - this->last_calculation_) * 1e-6f;
   this->last_calculation_ = now;
@@ -28,7 +28,7 @@ void Thermostatde::calculate_speed_(uint32_t now) {
   }
   this->current_speed_ = clamp(this->current_speed_, 0.0f, this->max_speed_);
 }
-int32_t Thermostatde::should_step_() {
+int32_t Stepper::should_step_() {
   uint32_t now = micros();
   this->calculate_speed_(now);
   if (this->current_speed_ == 0.0f)
@@ -46,5 +46,5 @@ int32_t Thermostatde::should_step_() {
   return 0;
 }
 
-}  // namespace thermostatde
+}  // namespace stepper
 }  // namespace esphome
