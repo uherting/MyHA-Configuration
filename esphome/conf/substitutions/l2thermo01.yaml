@@ -6,6 +6,7 @@
   device_comment: Level 2 Thermo device 01
   device_platform: ESP8266
   device_board: nodemcuv2
+  wifi_static_ip: 192.168.178.228
 
   # the friendly name and id
   friendly_name: L2 Thermo01
@@ -24,7 +25,6 @@
   wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
   wifi_conn_ssid_name: ${friendly_name} Conn SSID
   wifi_conn_bssid_name: ${friendly_name} Conn BSSID
-  # wifi_static_ip: 192.168.178.999
 
   # mqtt user / password
   mqtt_user: mqtt_${device_name}

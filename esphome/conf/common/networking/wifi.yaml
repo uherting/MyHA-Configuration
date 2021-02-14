@@ -4,10 +4,16 @@
 
 wifi:
   networks:
+  # - ssid: !secret WIFI_L0_SSID
+  #   password: !secret WIFI_L0_PW
+  # - ssid: !secret WIFI_L2_SSID
+  #   password: !secret WIFI_L2_PW
+  # - ssid: !secret WIFI_L9_SSID
+  #   password: !secret WIFI_L9_PW
   - ssid: !secret WIFI_L0_SSID
-    password: !secret WIFI_L0_PW
+    password: !secret WIFI_L9_PW
   - ssid: !secret WIFI_L2_SSID
-    password: !secret WIFI_L2_PW
+    password: !secret WIFI_L9_PW
   - ssid: !secret WIFI_L9_SSID
     password: !secret WIFI_L9_PW
   domain: !secret WIFI_DOMAIN

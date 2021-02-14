@@ -10,7 +10,17 @@
           if (!isWifiOn) {
             id(${ssr01_id}).turn_on();
           }
-      - delay: !secret DELAY_01MIN
+      - delay: !secret DELAY_02SEC
+      - lambda: |-
+          if (!isWifiOn) {
+            id(${ssr01_id}).turn_off();
+          }
+      - delay: !secret DELAY_02SEC
+      - lambda: |-
+          if (!isWifiOn) {
+            id(${ssr01_id}).turn_on();
+          }
+      - delay: !secret DELAY_02SEC
       - lambda: |-
           if (!isWifiOn) {
             id(${ssr01_id}).turn_off();
