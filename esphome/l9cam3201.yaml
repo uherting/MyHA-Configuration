@@ -68,8 +68,8 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 #-------------------------------------------------------------------
 # MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
 
-# globals: !include conf/common/globals/iswifion.yaml
-# interval: !include conf/common/interval/iswifion.yaml
+# globals: !include conf/common/globals/connectivity.yaml
+# interval: !include conf/common/interval/connectivity.yaml
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1.yaml
 

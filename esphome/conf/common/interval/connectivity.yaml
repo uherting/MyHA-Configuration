@@ -7,6 +7,11 @@
       - globals.set:
           id: isWifiOn
           value: id(${wifi_status_id}).state
+      - globals.set:
+          id: isDeviceConnected
+          value: 'on'
+#          value: { is_connected(); }
+
 #      # just debugging:
 #      - lambda: |-
 #          ESP_LOGD(DEBUG, "wifi_status_id d: %d", id(id(${wifi_status_id}).state));

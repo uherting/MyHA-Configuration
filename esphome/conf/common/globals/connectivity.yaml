@@ -1,0 +1,22 @@
+####################################################################
+# GLOBAL VARIABLES
+
+#globals:
+  - id: isWifiOn
+    type: boolean
+    restore_value: no
+    initial_value: 'false'
+
+  - id: isDeviceConnected
+    type: boolean
+    restore_value: no
+    initial_value: 'false'
+
+  - id: doNotExecuteLocalAutomation
+    type: boolean
+    restore_value: no
+    initial_value: 'false'
+
+####################################################################
+# EOF
+####################################################################
