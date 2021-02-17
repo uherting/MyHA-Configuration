@@ -7,10 +7,10 @@ namespace thde_e3n1 {
 static const char *TAG = "thde_e3n1.thermostat_de";
 
 void THDE_E3N1::setup() {
-  this->pin_a_->setup();
-  this->pin_b_->setup();
-  this->pin_c_->setup();
-  this->pin_d_->setup();
+  this->pin_boost_button_->setup();
+  this->pin_rotary_encoder01_->setup();
+  this->pin_rotary_encoder02_->setup();
+  // this->pin_d_->setup();
   this->loop();
 }
 void THDE_E3N1::loop() {
@@ -19,10 +19,10 @@ void THDE_E3N1::loop() {
     this->high_freq_.stop();
 
     if (this->sleep_when_done_) {
-      this->pin_a_->digital_write(false);
-      this->pin_b_->digital_write(false);
-      this->pin_c_->digital_write(false);
-      this->pin_d_->digital_write(false);
+      this->pin_boost_button_->digital_write(false);
+      this->pin_rotary_encoder01_->digital_write(false);
+      this->pin_rotary_encoder02_->digital_write(false);
+      // this->pin_d_->digital_write(false);
       // do not write pos
       return;
     }
@@ -37,10 +37,10 @@ void THDE_E3N1::loop() {
 }
 void THDE_E3N1::dump_config() {
   ESP_LOGCONFIG(TAG, "THDE_E3N1:");
-  LOG_PIN("  Pin A: ", this->pin_a_);
-  LOG_PIN("  Pin B: ", this->pin_b_);
-  LOG_PIN("  Pin C: ", this->pin_c_);
-  LOG_PIN("  Pin D: ", this->pin_d_);
+  LOG_PIN("  Pin BoostButton: ", this->pin_boost_button_);
+  LOG_PIN("  Pin RotaryEncoder01: ", this->pin_rotary_encoder01_);
+  LOG_PIN("  Pin RotaryEncoder02: ", this->pin_rotary_encoder02_);
+  // LOG_PIN("  Pin D: ", this->pin_d_);
   ESP_LOGCONFIG(TAG, "  Sleep when done: %s", YESNO(this->sleep_when_done_));
   const char *step_mode_s = "";
   switch (this->step_mode_) {
@@ -81,10 +81,10 @@ void THDE_E3N1::write_step_(int32_t step) {
     }
   }
 
-  this->pin_a_->digital_write((res >> 0) & 1);
-  this->pin_b_->digital_write((res >> 1) & 1);
-  this->pin_c_->digital_write((res >> 2) & 1);
-  this->pin_d_->digital_write((res >> 3) & 1);
+  this->pin_boost_button_->digital_write((res >> 0) & 1);
+  this->pin_rotary_encoder01_->digital_write((res >> 1) & 1);
+  this->pin_rotary_encoder02_->digital_write((res >> 2) & 1);
+  // this->pin_d_->digital_write((res >> 3) & 1);
 }
 
 }  // namespace thde_e3n1
