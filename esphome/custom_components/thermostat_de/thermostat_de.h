@@ -7,10 +7,15 @@
 namespace esphome {
 namespace stepper {
 
+/*
 #define LOG_STEPPER(this) \
   ESP_LOGCONFIG(TAG, "  Acceleration: %.0f steps/s^2", this->acceleration_); \
   ESP_LOGCONFIG(TAG, "  Deceleration: %.0f steps/s^2", this->deceleration_); \
   ESP_LOGCONFIG(TAG, "  Max Speed: %.0f steps/s", this->max_speed_);
+*/
+#define LOG_STEPPER(this) \
+  ESP_LOGCONFIG(TAG, "  Acceleration: %.0f steps/s^2", this->acceleration_); \
+  ESP_LOGCONFIG(TAG, "  Deceleration: %.0f steps/s^2", this->deceleration_);
 
 class Stepper {
  public:
@@ -18,7 +23,7 @@ class Stepper {
   void report_position(int32_t steps) { this->current_position = steps; }
   void set_acceleration(float acceleration) { this->acceleration_ = acceleration; }
   void set_deceleration(float deceleration) { this->deceleration_ = deceleration; }
-  void set_max_speed(float max_speed) { this->max_speed_ = max_speed; }
+  // void set_max_speed(float max_speed) { this->max_speed_ = max_speed; }
   virtual void on_update_speed() {}
   bool has_reached_target() { return this->current_position == this->target_position; }
 
@@ -32,7 +37,7 @@ class Stepper {
   float acceleration_{1e6f};
   float deceleration_{1e6f};
   float current_speed_{0.0f};
-  float max_speed_{1e6f};
+  // float max_speed_{1e6f};
   uint32_t last_calculation_{0};
   uint32_t last_step_{0};
 };
@@ -69,7 +74,7 @@ template<typename... Ts> class SetSpeedAction : public Action<Ts...> {
 
   void play(Ts... x) override {
     float speed = this->speed_.value(x...);
-    this->parent_->set_max_speed(speed);
+    // this->parent_->set_max_speed(speed);
     this->parent_->on_update_speed();
   }
 

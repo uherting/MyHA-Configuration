@@ -6,6 +6,7 @@ namespace stepper {
 
 static const char *TAG = "stepper";
 
+/*
 void Stepper::calculate_speed_(uint32_t now) {
   // delta t since last calculation in seconds
   float dt = (now - this->last_calculation_) * 1e-6f;
@@ -45,6 +46,7 @@ int32_t Stepper::should_step_() {
 
   return 0;
 }
+*/
 
 }  // namespace stepper
 }  // namespace esphome
