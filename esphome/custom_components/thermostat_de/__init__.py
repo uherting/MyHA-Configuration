@@ -9,12 +9,12 @@ from esphome.core import CORE, coroutine, coroutine_with_priority
 IS_PLATFORM_COMPONENT = True
 
 # pylint: disable=invalid-name
-stepper_ns = cg.esphome_ns.namespace('stepper')
-Stepper = stepper_ns.class_('Stepper')
+thermostat_de_ns = cg.esphome_ns.namespace('thermostat_de')
+Thermostat_de = thermostat_de_ns.class_('Thermostat_de')
 
-SetTargetAction = stepper_ns.class_('SetTargetAction', automation.Action)
-ReportPositionAction = stepper_ns.class_('ReportPositionAction', automation.Action)
-SetSpeedAction = stepper_ns.class_('SetSpeedAction', automation.Action)
+SetTargetAction = thermostat_de_ns.class_('SetTargetAction', automation.Action)
+ReportPositionAction = thermostat_de_ns.class_('ReportPositionAction', automation.Action)
+SetSpeedAction = thermostat_de_ns.class_('SetSpeedAction', automation.Action)
 
 
 # def validate_acceleration(value):
@@ -59,43 +59,43 @@ SetSpeedAction = stepper_ns.class_('SetSpeedAction', automation.Action)
 #     return value
 
 
-# STEPPER_SCHEMA = cv.Schema({
+# THERMOSTAT_DE_SCHEMA = cv.Schema({
 #     cv.Required(CONF_MAX_SPEED): validate_speed,
 #     cv.Optional(CONF_ACCELERATION, default='inf'): validate_acceleration,
 #     cv.Optional(CONF_DECELERATION, default='inf'): validate_acceleration,
 # })
-STEPPER_SCHEMA = cv.Schema({
+THERMOSTAT_DE_SCHEMA = cv.Schema({
     
 })
 
 
 @coroutine
-def setup_stepper_core_(stepper_var, config):
+def setup_thermostat_de_core_(thermostat_de_var, config):
     if CONF_ACCELERATION in config:
-        cg.add(stepper_var.set_acceleration(config[CONF_ACCELERATION]))
+        cg.add(thermostat_de_var.set_acceleration(config[CONF_ACCELERATION]))
     if CONF_DECELERATION in config:
-        cg.add(stepper_var.set_deceleration(config[CONF_DECELERATION]))
-# def setup_stepper_core_(stepper_var, config):
+        cg.add(thermostat_de_var.set_deceleration(config[CONF_DECELERATION]))
+# def setup_thermostat_de_core_(thermostat_de_var, config):
 #     if CONF_ACCELERATION in config:
-#         cg.add(stepper_var.set_acceleration(config[CONF_ACCELERATION]))
+#         cg.add(thermostat_de_var.set_acceleration(config[CONF_ACCELERATION]))
 #     if CONF_DECELERATION in config:
-#         cg.add(stepper_var.set_deceleration(config[CONF_DECELERATION]))
+#         cg.add(thermostat_de_var.set_deceleration(config[CONF_DECELERATION]))
 #     if CONF_MAX_SPEED in config:
-#         cg.add(stepper_var.set_max_speed(config[CONF_MAX_SPEED]))
+#         cg.add(thermostat_de_var.set_max_speed(config[CONF_MAX_SPEED]))
 
 
 @coroutine
-def register_stepper(var, config):
+def register_thermostat_de(var, config):
     if not CORE.has_id(config[CONF_ID]):
         var = cg.Pvariable(config[CONF_ID], var)
-    yield setup_stepper_core_(var, config)
+    yield setup_thermostat_de_core_(var, config)
 
 
-# @automation.register_action('stepper.set_target', SetTargetAction, cv.Schema({
-#     cv.Required(CONF_ID): cv.use_id(Stepper),
+# @automation.register_action('thermostat_de.set_target', SetTargetAction, cv.Schema({
+#     cv.Required(CONF_ID): cv.use_id(Thermostat_de),
 #     cv.Required(CONF_TARGET): cv.templatable(cv.int_),
 # }))
-# def stepper_set_target_to_code(config, action_id, template_arg, args):
+# def thermostat_de_set_target_to_code(config, action_id, template_arg, args):
 #     paren = yield cg.get_variable(config[CONF_ID])
 #     var = cg.new_Pvariable(action_id, template_arg, paren)
 #     template_ = yield cg.templatable(config[CONF_TARGET], args, cg.int32)
@@ -103,11 +103,11 @@ def register_stepper(var, config):
 #     yield var
 
 
-# @automation.register_action('stepper.report_position', ReportPositionAction, cv.Schema({
-#     cv.Required(CONF_ID): cv.use_id(Stepper),
+# @automation.register_action('thermostat_de.report_position', ReportPositionAction, cv.Schema({
+#     cv.Required(CONF_ID): cv.use_id(Thermostat_de),
 #     cv.Required(CONF_POSITION): cv.templatable(cv.int_),
 # }))
-# def stepper_report_position_to_code(config, action_id, template_arg, args):
+# def thermostat_de_report_position_to_code(config, action_id, template_arg, args):
 #     paren = yield cg.get_variable(config[CONF_ID])
 #     var = cg.new_Pvariable(action_id, template_arg, paren)
 #     template_ = yield cg.templatable(config[CONF_POSITION], args, cg.int32)
@@ -115,11 +115,11 @@ def register_stepper(var, config):
 #     yield var
 
 
-# @automation.register_action('stepper.set_speed', SetSpeedAction, cv.Schema({
-#     cv.Required(CONF_ID): cv.use_id(Stepper),
+# @automation.register_action('thermostat_de.set_speed', SetSpeedAction, cv.Schema({
+#     cv.Required(CONF_ID): cv.use_id(Thermostat_de),
 #     cv.Required(CONF_SPEED): cv.templatable(validate_speed),
 # }))
-# def stepper_set_speed_to_code(config, action_id, template_arg, args):
+# def thermostat_de_set_speed_to_code(config, action_id, template_arg, args):
 #     paren = yield cg.get_variable(config[CONF_ID])
 #     var = cg.new_Pvariable(action_id, template_arg, paren)
 #     template_ = yield cg.templatable(config[CONF_SPEED], args, cg.int32)
@@ -129,4 +129,4 @@ def register_stepper(var, config):
 
 @coroutine_with_priority(100.0)
 def to_code(config):
-    cg.add_global(stepper_ns.using)
+    cg.add_global(thermostat_de_ns.using)

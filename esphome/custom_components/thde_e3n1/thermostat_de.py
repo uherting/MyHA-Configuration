@@ -1,23 +1,23 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome import pins
-from esphome.components import stepper
+from esphome.components import thermostat_de
 from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_D, \
     CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
 
-uln2003_ns = cg.esphome_ns.namespace('uln2003')
-ULN2003StepMode = uln2003_ns.enum('ULN2003StepMode')
+thde_e3n1_ns = cg.esphome_ns.namespace('thde_e3n1')
+THDE_E3N1StepMode = thde_e3n1_ns.enum('THDE_E3N1StepMode')
 
 STEP_MODES = {
-    'FULL_STEP': ULN2003StepMode.ULN2003_STEP_MODE_FULL_STEP,
-    'HALF_STEP': ULN2003StepMode.ULN2003_STEP_MODE_HALF_STEP,
-    'WAVE_DRIVE': ULN2003StepMode.ULN2003_STEP_MODE_WAVE_DRIVE,
+    'FULL_STEP': THDE_E3N1StepMode.THDE_E3N1_STEP_MODE_FULL_STEP,
+    'HALF_STEP': THDE_E3N1StepMode.THDE_E3N1_STEP_MODE_HALF_STEP,
+    'WAVE_DRIVE': THDE_E3N1StepMode.THDE_E3N1_STEP_MODE_WAVE_DRIVE,
 }
 
-ULN2003 = uln2003_ns.class_('ULN2003', stepper.Stepper, cg.Component)
+THDE_E3N1 = thde_e3n1_ns.class_('THDE_E3N1', thermostat_de.Thermostat_de, cg.Component)
 
-CONFIG_SCHEMA = stepper.STEPPER_SCHEMA.extend({
-    cv.Required(CONF_ID): cv.declare_id(ULN2003),
+CONFIG_SCHEMA = thermostat_de.THERMOSTAT_DE_SCHEMA.extend({
+    cv.Required(CONF_ID): cv.declare_id(THDE_E3N1),
     cv.Required(CONF_PIN_A): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_B): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_C): pins.gpio_output_pin_schema,
@@ -30,7 +30,7 @@ CONFIG_SCHEMA = stepper.STEPPER_SCHEMA.extend({
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(var, config)
-    yield stepper.register_stepper(var, config)
+    yield thermostat_de.register_thermostat_de(var, config)
 
     pin_a = yield cg.gpio_pin_expression(config[CONF_PIN_A])
     cg.add(var.set_pin_a(pin_a))
