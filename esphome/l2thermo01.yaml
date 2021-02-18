@@ -139,32 +139,35 @@ text_sensor:
   # none so far
 
 #-------------------------------------------------------------------
-# THERMOSTAT_DE --- see also OUTPUTsection!
-#thermostat_de: !include conf/common/thermostat_de/thermostat_de01.yaml
-uhbase:
-  - platform: uhext
-    id: $thermostat_de01_id
-    pin_boost_button:
-      mcp23017: ${mcp23017_hub01_id}
-      number: $thermostat_de01_pin_bb
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: OUTPUT
-      inverted: false
-      # inverted: true
-    pin_rotary_encoder01:
-      mcp23017: ${mcp23017_hub01_id}
-      number: thermostat_de01_pin_a
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: OUTPUT
-      inverted: false
-      # inverted: true
-    pin_rotary_encoder02:
-      mcp23017: ${mcp23017_hub01_id}
-      number: thermostat_de01_pin_b
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: OUTPUT
-      inverted: false
-      # inverted: true
+# THERMOSTAT by UH
+uhtest:
+
+# thermostat_de: !include conf/common/thermostat_de/thermostat_de01.yaml
+
+# uhbase:
+#   - platform: uhext
+#     id: $thermostat_de01_id
+#     pin_boost_button:
+#       mcp23017: ${mcp23017_hub01_id}
+#       number: $thermostat_de01_pin_bb
+#       # mode can be INPUT, INPUT_PULLUP or OUTPUT
+#       mode: OUTPUT
+#       inverted: false
+#       # inverted: true
+#     pin_rotary_encoder01:
+#       mcp23017: ${mcp23017_hub01_id}
+#       number: thermostat_de01_pin_a
+#       # mode can be INPUT, INPUT_PULLUP or OUTPUT
+#       mode: OUTPUT
+#       inverted: false
+#       # inverted: true
+#     pin_rotary_encoder02:
+#       mcp23017: ${mcp23017_hub01_id}
+#       number: thermostat_de01_pin_b
+#       # mode can be INPUT, INPUT_PULLUP or OUTPUT
+#       mode: OUTPUT
+#       inverted: false
+#       # inverted: true
 
 ####################################################################
 # EOF
