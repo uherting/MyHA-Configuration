@@ -17,3 +17,6 @@ ESPHOME_ENTITIES_SWITCHES_PATH="${ESPHOME_CONF_PATH}/switch"
 
 # for local standalone ESPHome dashboard on other machine than HA server
 BUILD_DIR_FOR_DOCKER="/home/uwe/Git/UH/MyHAConfig/esphome"
+
+# for linting with docker
+ESPHOMELOCATION_FOR_DOCKER="/home/uwe/Git/UH/esphome"
