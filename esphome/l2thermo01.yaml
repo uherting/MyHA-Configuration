@@ -153,10 +153,17 @@ text_sensor:
 # =========================================================
 uh_thermostat:
   - platform: uh_e3n1
-    id: $thermostat_de01_id
-    pin_boost_button: D4
-    pin_rotary_encoder01: D5
-    pin_rotary_encoder02: D6
+  #   id: $thermostat_de01_id
+  #   pin_boost_button: D4
+  #   pin_rotary_encoder01: D5
+  #   pin_rotary_encoder02: D6
+# =========================================================
+# uh_thermostat:
+#   - platform: ulna2003
+  #   id: $thermostat_de01_id
+  #   pin_boost_button: D4
+  #   pin_rotary_encoder01: D5
+  #   pin_rotary_encoder02: D6
 # =========================================================
 # uhbase:
 #   - platform: uhext

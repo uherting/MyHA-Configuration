@@ -9,12 +9,13 @@ for i in `find . -type f \
 do
     echo "FILE: $i"
     sed -i \
-        -e "s/ULN2003/UH_E3N1/g" \
-        -e "s/Uln2003/Uh_e3n1/g" \
-        -e "s/uln2003/uh_e3n1/g" \
+        -e "s/ULN2003/ULNA2003/g" \
+        -e "s/Uln2003/Ulna2003/g" \
+        -e "s/uln2003/ulna2003/g" \
         -e "s/STEPPER/UH_THERMOSTAT/g" \
         -e "s/Stepper/Uh_thermostat/g" \
-        -e "s/stepper/uh_thermostat/g"
+        -e "s/stepper/uh_thermostat/g" \
+        $i
 done
 
-    # | grep -v -e ULN2003 -e STEPPER -e uln2003 -e stepper -e Stepper
+# EOF
