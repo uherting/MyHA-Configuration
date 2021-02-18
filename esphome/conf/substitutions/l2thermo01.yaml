@@ -6,6 +6,12 @@
   device_comment: Level 2 Thermo device 01
   device_platform: ESP8266
   device_board: nodemcuv2
+
+  # device_platform: ESP32
+  # # from the french guy @ 20190712
+  # # - https://www.youtube.com/watch?v=fHgqFuGaTGE)
+  # device_board: nodemcu-32s
+
   wifi_static_ip: 192.168.178.228
 
   # the friendly name and id
