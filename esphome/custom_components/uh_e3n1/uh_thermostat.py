@@ -3,7 +3,9 @@ import esphome.config_validation as cv
 from esphome import pins
 from esphome.components import uh_thermostat
 from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_D, \
-    CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
+    CONF_SLEEP_WHEN_DONE
+# from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_D, \
+#     CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
 
 CONF_UHPARM = "uhparm"
 
