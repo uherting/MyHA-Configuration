@@ -8,12 +8,12 @@ from esphome.core import CORE, coroutine, coroutine_with_priority
 IS_PLATFORM_COMPONENT = True
 
 # pylint: disable=invalid-name
-uh_thermostat_ns = cg.esphome_ns.namespace('uh_thermostat')
-Uh_thermostat = uh_thermostat_ns.class_('Uh_thermostat')
+uhthermostat_ns = cg.esphome_ns.namespace('uhthermostat')
+Uhthermostat = uhthermostat_ns.class_('Uhthermostat')
 
-SetTargetAction = uh_thermostat_ns.class_('SetTargetAction', automation.Action)
-ReportPositionAction = uh_thermostat_ns.class_('ReportPositionAction', automation.Action)
-SetSpeedAction = uh_thermostat_ns.class_('SetSpeedAction', automation.Action)
+SetTargetAction = uhthermostat_ns.class_('SetTargetAction', automation.Action)
+ReportPositionAction = uhthermostat_ns.class_('ReportPositionAction', automation.Action)
+SetSpeedAction = uhthermostat_ns.class_('SetSpeedAction', automation.Action)
 
 
 def validate_acceleration(value):
@@ -58,7 +58,7 @@ def validate_speed(value):
     return value
 
 
-UH_THERMOSTAT_SCHEMA = cv.Schema({
+UHTHERMOSTAT_SCHEMA = cv.Schema({
     cv.Required(CONF_MAX_SPEED): validate_speed,
     cv.Optional(CONF_ACCELERATION, default='inf'): validate_acceleration,
     cv.Optional(CONF_DECELERATION, default='inf'): validate_acceleration,
@@ -66,27 +66,27 @@ UH_THERMOSTAT_SCHEMA = cv.Schema({
 
 
 @coroutine
-def setup_uh_thermostat_core_(uh_thermostat_var, config):
+def setup_uhthermostat_core_(uhthermostat_var, config):
     if CONF_ACCELERATION in config:
-        cg.add(uh_thermostat_var.set_acceleration(config[CONF_ACCELERATION]))
+        cg.add(uhthermostat_var.set_acceleration(config[CONF_ACCELERATION]))
     if CONF_DECELERATION in config:
-        cg.add(uh_thermostat_var.set_deceleration(config[CONF_DECELERATION]))
+        cg.add(uhthermostat_var.set_deceleration(config[CONF_DECELERATION]))
     if CONF_MAX_SPEED in config:
-        cg.add(uh_thermostat_var.set_max_speed(config[CONF_MAX_SPEED]))
+        cg.add(uhthermostat_var.set_max_speed(config[CONF_MAX_SPEED]))
 
 
 @coroutine
-def register_uh_thermostat(var, config):
+def register_uhthermostat(var, config):
     if not CORE.has_id(config[CONF_ID]):
         var = cg.Pvariable(config[CONF_ID], var)
-    yield setup_uh_thermostat_core_(var, config)
+    yield setup_uhthermostat_core_(var, config)
 
 
-@automation.register_action('uh_thermostat.set_target', SetTargetAction, cv.Schema({
-    cv.Required(CONF_ID): cv.use_id(Uh_thermostat),
+@automation.register_action('uhthermostat.set_target', SetTargetAction, cv.Schema({
+    cv.Required(CONF_ID): cv.use_id(Uhthermostat),
     cv.Required(CONF_TARGET): cv.templatable(cv.int_),
 }))
-def uh_thermostat_set_target_to_code(config, action_id, template_arg, args):
+def uhthermostat_set_target_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     template_ = yield cg.templatable(config[CONF_TARGET], args, cg.int32)
@@ -94,11 +94,11 @@ def uh_thermostat_set_target_to_code(config, action_id, template_arg, args):
     yield var
 
 
-@automation.register_action('uh_thermostat.report_position', ReportPositionAction, cv.Schema({
-    cv.Required(CONF_ID): cv.use_id(Uh_thermostat),
+@automation.register_action('uhthermostat.report_position', ReportPositionAction, cv.Schema({
+    cv.Required(CONF_ID): cv.use_id(Uhthermostat),
     cv.Required(CONF_POSITION): cv.templatable(cv.int_),
 }))
-def uh_thermostat_report_position_to_code(config, action_id, template_arg, args):
+def uhthermostat_report_position_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     template_ = yield cg.templatable(config[CONF_POSITION], args, cg.int32)
@@ -106,11 +106,11 @@ def uh_thermostat_report_position_to_code(config, action_id, template_arg, args)
     yield var
 
 
-@automation.register_action('uh_thermostat.set_speed', SetSpeedAction, cv.Schema({
-    cv.Required(CONF_ID): cv.use_id(Uh_thermostat),
+@automation.register_action('uhthermostat.set_speed', SetSpeedAction, cv.Schema({
+    cv.Required(CONF_ID): cv.use_id(Uhthermostat),
     cv.Required(CONF_SPEED): cv.templatable(validate_speed),
 }))
-def uh_thermostat_set_speed_to_code(config, action_id, template_arg, args):
+def uhthermostat_set_speed_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     template_ = yield cg.templatable(config[CONF_SPEED], args, cg.int32)
@@ -120,4 +120,4 @@ def uh_thermostat_set_speed_to_code(config, action_id, template_arg, args):
 
 @coroutine_with_priority(100.0)
 def to_code(config):
-    cg.add_global(uh_thermostat_ns.using)
+    cg.add_global(uhthermostat_ns.using)

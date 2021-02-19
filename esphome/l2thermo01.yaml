@@ -143,30 +143,19 @@ text_sensor:
 # =========================================================
 # GOAL =>> thermostat_de: !include conf/common/thermostat_de/thermostat_de01.yaml
 # =========================================================
-# nice, but relies on ESP32 platform (substitions needed to be changed in order to test):
-# output:
-#   - platform: ledc
-#     pin: GPIO22
-#     id: rtttl_out
-# uhtest01:
-#   output: rtttl_out
+# test components right after cloning (no change of functionality)
+# ----------------------------------------------------------
+uhthermostat:
+  - platform: uheq3n1
+    id: $thermostat_de01_id
+    pin_boost_button: D4
+    pin_rotary_encoder01: D5
+    pin_rotary_encoder02: D6
 # =========================================================
-uh_thermostat:
-  - platform: uh_e3n1
-  #   id: $thermostat_de01_id
-  #   pin_boost_button: D4
-  #   pin_rotary_encoder01: D5
-  #   pin_rotary_encoder02: D6
-# =========================================================
-# uh_thermostat:
-#   - platform: ulna2003
-  #   id: $thermostat_de01_id
-  #   pin_boost_button: D4
-  #   pin_rotary_encoder01: D5
-  #   pin_rotary_encoder02: D6
-# =========================================================
-# uhbase:
-#   - platform: uhext
+# test components after renaming parameters for validation
+# ----------------------------------------------------------
+# uhthermostat:
+#   - platform: uheq3n1
 #     id: $thermostat_de01_id
 #     pin_boost_button:
 #       mcp23017: ${mcp23017_hub01_id}
@@ -189,6 +178,26 @@ uh_thermostat:
 #       mode: OUTPUT
 #       inverted: false
 #       # inverted: true
+# =========================================================
+# very simple test
+# ----------------------------------------------------------
+# zzbase:
+#   - platform: zzext
+#     id: $thermostat_de01_id
+#     my_required_key: "text bla"
+#     my_optional_key: 321
+# =========================================================
+# test with component rtttl as base
+#     -> nice, but relies on ESP32 platform (substitions 
+#           needed to be changed in order to test):
+# ----------------------------------------------------------
+# output:
+#   - platform: ledc
+#     pin: GPIO22
+#     id: rtttl_out
+# uhtest01:
+#   output: rtttl_out
+# =========================================================
 
 ####################################################################
 # EOF
