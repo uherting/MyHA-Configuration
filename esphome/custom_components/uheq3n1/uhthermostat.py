@@ -8,8 +8,6 @@ from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_
 uheq3n1_ns = cg.esphome_ns.namespace('uheq3n1')
 UHEQ3N1StepMode = uheq3n1_ns.enum('UHEQ3N1StepMode')
 
-CONF_PIN_Z = "pin_z"
-
 STEP_MODES = {
     'FULL_STEP': UHEQ3N1StepMode.UHEQ3N1_STEP_MODE_FULL_STEP,
     'HALF_STEP': UHEQ3N1StepMode.UHEQ3N1_STEP_MODE_HALF_STEP,
@@ -20,7 +18,7 @@ UHEQ3N1 = uheq3n1_ns.class_('UHEQ3N1', uhthermostat.Uhthermostat, cg.Component)
 
 CONFIG_SCHEMA = uhthermostat.UHTHERMOSTAT_SCHEMA.extend({
     cv.Required(CONF_ID): cv.declare_id(UHEQ3N1),
-    cv.Required(CONF_PIN_Z): pins.gpio_output_pin_schema,
+    cv.Required(CONF_PIN_A): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_B): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_C): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_D): pins.gpio_output_pin_schema,
