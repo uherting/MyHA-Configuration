@@ -7,18 +7,9 @@
       - globals.set:
           id: isWifiOn
           value: id(${wifi_status_id}).state
-      # - lambda: |-
-      #     ESP_LOGD("DEBUGUH", "wifi_status_id d: %d", id(id(${wifi_status_id}).state));
-      #     ESP_LOGD("DEBUGUH", "wifi_status_id s: %s", id(id(${wifi_status_id}).state));
-      # - lambda: |-
-      #     id(isDeviceConnected) = true; // is_connected()
-
-#      # just debugging:
-#      - lambda: |-
-#          ESP_LOGD(DEBUG, "wifi_status_id d: %d", id(id(${wifi_status_id}).state));
-#          ESP_LOGD(DEBUG, "wifi_status_id s: %s", id(id(${wifi_status_id}).state));
-#      - lambda: |-
-#          id(${binary_template_sensor_01_id}).publish_state(iswifiOn).state);
+      - globals.set:
+          id: isDeviceConnected
+          value: id(${wifi_status_id}).state
 
 ####################################################################
 # EOF
