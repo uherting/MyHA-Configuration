@@ -148,9 +148,14 @@ text_sensor:
 uhthermostat:
   - platform: uheq3n1
     id: $thermostat_de01_id
-    pin_boost_button: D5
-    pin_rotary_encoder01: D6
-    pin_rotary_encoder02: D7
+    pin_z: D5
+    pin_b: D6
+    pin_c: D7
+    pin_d: D0
+    max_speed: "250 steps/s"
+    # pin_boost_button: D5
+    # pin_rotary_encoder01: D6
+    # pin_rotary_encoder02: D7
 # =========================================================
 # test components after renaming parameters for validation
 # ----------------------------------------------------------
@@ -188,7 +193,7 @@ uhthermostat:
 #     my_optional_key: 321
 # =========================================================
 # test with component rtttl as base
-#     -> nice, but relies on ESP32 platform (substitions 
+#     -> nice, but relies on ESP32 platform (substitions
 #           needed to be changed in order to test):
 # ----------------------------------------------------------
 # output:
