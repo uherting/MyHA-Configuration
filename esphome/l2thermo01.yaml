@@ -148,9 +148,9 @@ text_sensor:
 uhthermostat:
   - platform: uheq3n1
     id: $thermostat_de01_id
-    pin_boost_button: D4
-    pin_rotary_encoder01: D5
-    pin_rotary_encoder02: D6
+    pin_boost_button: D5
+    pin_rotary_encoder01: D6
+    pin_rotary_encoder02: D7
 # =========================================================
 # test components after renaming parameters for validation
 # ----------------------------------------------------------
