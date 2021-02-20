@@ -1,0 +1,9 @@
+ESPHome component directories in the container
+----------------------------------------------
+
+* ESPHome (my customations) 
+    - the name of thedir in the MyHAconfiguration repository:
+        esphome/custom_components_dev
+* ESPHome (base files)
+    - the dir which needs to contain symlinks to all dirs located:
+        /.../components
