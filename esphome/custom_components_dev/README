@@ -1,9 +1,20 @@
-ESPHome component directories in the container
-----------------------------------------------
+Summary
+-------
+This README contains hints and information how to handle  customisations 
+based on more than one component.
 
-* ESPHome (my customations) 
-    - the name of thedir in the MyHAconfiguration repository:
-        esphome/custom_components_dev
-* ESPHome (base files)
-    - the dir which needs to contain symlinks to all dirs located:
-        /.../components
+General
+-------
+* The dir containing this README is for developing components which consist
+    of more than one component. An example in ESPHome base would be the 
+    platform uln20003 which is based on the stepper component.
+
+Directory locations in the docker container
+-------------------------------------------
+- MyHAconfiguration repository: esphome/custom_components_dev
+- docker container: /..../components
+    - this is the dir which needs to contain symlinks to all dirs located
+        in esphome/custom_components_dev
+    - see esphome/custom_components_dev/../../shell_scripts for the script
+        docker_mk_symlinks_for_esphome_components.sh
+    
