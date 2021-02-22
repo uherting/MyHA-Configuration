@@ -184,25 +184,6 @@ uhthermostat:
 #       inverted: false
 #       # inverted: true
 # =========================================================
-# very simple test
-# ----------------------------------------------------------
-# zzbase:
-#   - platform: zzext
-#     id: $thermostat_de01_id
-#     my_required_key: "text bla"
-#     my_optional_key: 321
-# =========================================================
-# test with component rtttl as base
-#     -> nice, but relies on ESP32 platform (substitions
-#           needed to be changed in order to test):
-# ----------------------------------------------------------
-# output:
-#   - platform: ledc
-#     pin: GPIO22
-#     id: rtttl_out
-# uhtest01:
-#   output: rtttl_out
-# =========================================================
 
 ####################################################################
 # EOF
