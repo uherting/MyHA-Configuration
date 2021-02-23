@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 # this script clones ESPHome devices
 
