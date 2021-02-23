@@ -1,20 +1,51 @@
 Summary
 -------
-This README contains hints and information how to handle  customisations 
+This README contains hints and information how to handle customisations
 based on more than one component.
 
+Fast track:
+    - Start the bash shell in the container
+        -> docker exec -it `docker ps | grep esphome | cut -f 1 -d " "` bash
+        as in custom_components_dev/../../shell_scripts/docker_hashell_esphome.sh
+    - Run the script in the bash shell of the container
+      `find / -type d -name custom_components_dev`/../../shell_scripts/docker_esphome_components_dev_to_esphome_base.sh
+      ==> /config/esphome/custom_components_dev/../../.....
 General
 -------
 * The dir containing this README is for developing components which consist
-    of more than one component. An example in ESPHome base would be the 
-    platform uln20003 which is based on the stepper component.
+    of more than one component (configcontained in/esphome/custom_components_dev).
+    An example in ESPHome base would be the platform uln20003 which is based on
+    the stepper component.
+
+Docker
+------
+Task: copy components from config/esphome/custom_components_dev to the directory
+esphome/components which is part of the container.
+
+- A aka 'step by step'
+    - accessing docker container via the shell
+        - getting the id of the docker container
+            -> docker ps | grep -e "CONTAINER ID" -e esphome
+        - executing a bash shell in the container
+            -> docker exec -it <id of the container> bash
+        - a little helper: alias ll (should be available in bash)
+            -> alias ll='ls -alF'
+        - copying is not described here as it is too error prone
+- B - aka 'the fast approach'
+    - finding the ESPHome directories required
+        - starting the shell ina container whoose id changes by design
+          (defining an alias is not necessary as of 20210222_134400)
+            -> docker exec -it `docker ps | grep esphome | cut -f 1 -d " "` bash
+        - find THE esphome component directory
+            -> find / -type d -name components | grep "/opt"
+        - find the esphome custom_components directory
+            -> find / -type d -name custom_components_dev
+        - copying is not described here as it is too error prone
+- C - aka 'the even faster approach'
+    - see "fast track" above
 
 Directory locations in the docker container
 -------------------------------------------
 - MyHAconfiguration repository: esphome/custom_components_dev
-- docker container: /..../components
+- docker container: /opt/.../components
     - this is the dir which needs to contain symlinks to all dirs located
-        in esphome/custom_components_dev
-    - see esphome/custom_components_dev/../../shell_scripts for the script
-        docker_mk_symlinks_for_esphome_components.sh
-    

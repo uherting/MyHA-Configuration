@@ -1,1 +1,5 @@
-this dir is for developing components which consist of one part only
+this dir is for developing components which consist of one component only
+
+This comes from the need not to import from another component.
+
+For the sake of a standard developing should take place though in the directory "custom_components_dev".
