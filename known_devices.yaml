@@ -2,28 +2,28 @@
 huawei_p9_lite_fritz_box:
   name: HUAWEI-P9-lite.fritz.box
   mac: 8C:EB:C6:7A:BB:66
-  icon: mdi:account
+  icon: mdi:cellphone-android
   picture:
   track: true
 
 redminote8pro_min8_fritz_box:
   name: RedmiNote8Pro-miN8.fritz.box
   mac: 2C:D0:66:E1:F0:98
-  icon: mdi:account
+  icon: mdi:cellphone-android
   picture:
   track: true
 
 redminote8pro_min8_fritz_box_2:
   name: RedmiNote8Pro-miN8.fritz.box2
   mac: 02:E0:20:01:B8:FD
-  icon: mdi:account
+  icon: mdi:cellphone-android
   picture:
   track: true
 
 ping_tabby:
   name: ping_tabby
   mac:
-  icon:
+  icon: mdi:tablet-android
   picture:
   track: true
 

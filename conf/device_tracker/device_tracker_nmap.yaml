@@ -2,6 +2,13 @@
 #  DEVICE TRACKING (nmap)
 
   - platform: nmap_tracker
+    # Seconds between each scan for new devices. This only applies to local
+    # device trackers, not applications that push updates.
+    # as seen on https://www.home-assistant.io/integrations/device_tracker/
+    #
+    # the value of 30 secs comes from this video: https://www.youtube.com/watch?v=hoeVUbQ0M3g
+    interval_seconds: 30
+
     # home_interval: The number of minutes Nmap will not scan this device,
     #                assuming it is home, in order to preserve the device battery.
     # home_interval: 3
