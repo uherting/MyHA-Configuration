@@ -23,10 +23,12 @@ frontend:
   # themes installed via HACS
   themes: !include_dir_merge_named themes
 
+# for the ONVIF integration
+ffmpeg:
+  ffmpeg_bin: /usr/bin/ffmpeg
+
 input_boolean: !include conf/input_booleans.yaml
 input_datetime: !include conf/input_datetime/time_stamps_esp.yaml
-
-# input_select: !include_dir_merge_list conf/input_selects
 input_select: !include conf/input_select/theme_select.yaml
 
 # outdated iframe for mdi icons
