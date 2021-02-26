@@ -1,0 +1,45 @@
+hints, examples, etc.
+=====================
+
+# =========================================================================
+#  increament of values
+# =========================================================================
+idx=$((idx+1))
+
+# =========================================================================
+#  Returning Values from Bash Functions
+# =========================================================================
+variants from https://www.linuxjournal.com/content/return-values-bash-functions
+# ---------------------
+# simple version
+# ---------------------
+function myfunc()
+{
+    local __resultvar=$1
+    local myresult='some value'
+    eval $__resultvar="'$myresult'"
+}
+
+myfunc result
+echo $result
+# ---------------------
+#  if no variable name is passed to the function, the value is output to the standard output.
+# ---------------------
+function myfunc()
+{
+    local __resultvar=$1
+    local myresult='some value'
+    if [[ "$__resultvar" ]]; then
+        eval $__resultvar="'$myresult'"
+    else
+        echo "$myresult"
+    fi
+}
+
+myfunc result
+echo $result
+result2=$(myfunc)
+echo $result2
+
+
+# EOF
