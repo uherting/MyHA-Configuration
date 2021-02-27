@@ -23,8 +23,13 @@ if [ $# -eq 1 ]; then
     DEBUG=1
   fi
 fi
+
+
+# ==========================================================================
+#  these are the settings to be changed (if at all)
+# ==========================================================================
 SRC_DIR="/home/uwe/Git/UH/esphome/esphome/components/"
-TGT_DIR="/home/uwe/Git/UH/MyHAConfig/esphome/custom_components"
+TGT_DIR="/home/uwe/Git/UH/MyHAConfig/esphome/custom_components_dev"
 
 # what are the component names to be cloned called? (space separated)
 COMPONENT_NAMES_ORIGIN="stepper uln2003"
@@ -32,6 +37,10 @@ COMPONENT_NAMES_ORIGIN="stepper uln2003"
 # what are the cloned components to be called? (space separated)
 # attn: the order has to match the order in COMPONENT_NAMES_ORIGIN!!!
 COMPONENT_NAMES_CLONED="thermostat_uh equi_n1"
+
+# on which host is the ESPHome codebase?
+# -> to be used whether the script is executed on the correct machine
+HOST_WITH_REPOSITORY="alpha"
 
 # ==========================================================================
 #  !!!! no changes needed below here !!!!
@@ -122,6 +131,9 @@ fi
 
 
 # check existance of tgt and src dir
+echo "INFO: checking existance of src and tgt dir"
+echo "INFO:     src: ${SRC_DIR}"
+echo "INFO:     tgt: ${TGT_DIR}"
 EXIT_YN=0
 if [ ! -d ${TGT_DIR} ]; then
   echo "ERROR: dir ${TGT_DIR} does not exist"
@@ -138,15 +150,19 @@ if [ ${EXIT_YN} -eq 1 ]; then
   fi
   exit 3
 fi
-exit 102
 
 # start the real task ...  Eventually.
 echo "INFO: Changing PWD to ${TGT_DIR}."
 cd ${TGT_DIR}
-exit 102
+if [ $? -ne 0 ];then
+  echo "ERROR: cannot change PWD to ${TGT_DIR}"
+  exit 4
+fi
 
-echo "INFO: Cleaning up ${TGT_DIR} from residues of preivious runs of ${BNAME}."
-rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}
+echo "INFO: Cleaning up tgt dir from residues of previous runs of ${BNAME}.sh"
+echo "INFO:   to be exec: rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}"
+#rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}
+exit 201
 
 echo "INFO: "
 echo "INFO: Copying directories to be cloned into ${TGT_DIR}."
