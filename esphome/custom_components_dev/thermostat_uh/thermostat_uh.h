@@ -2,17 +2,17 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/automation.h"
-#include "esphome/components/uhthermostat/uhthermostat.h"
+#include "esphome/components/thermostat_uh/thermostat_uh.h"
 
 namespace esphome {
-namespace uhthermostat {
+namespace thermostat_uh {
 
-#define LOG_UHTHERMOSTAT(this) \
+#define LOG_THERMOSTAT_UH(this) \
   ESP_LOGCONFIG(TAG, "  Acceleration: %.0f steps/s^2", this->acceleration_); \
   ESP_LOGCONFIG(TAG, "  Deceleration: %.0f steps/s^2", this->deceleration_); \
   ESP_LOGCONFIG(TAG, "  Max Speed: %.0f steps/s", this->max_speed_);
 
-class Uhthermostat {
+class Thermostat_uh {
  public:
   void set_target(int32_t steps) { this->target_position = steps; }
   void report_position(int32_t steps) { this->current_position = steps; }
@@ -39,31 +39,31 @@ class Uhthermostat {
 
 template<typename... Ts> class SetTargetAction : public Action<Ts...> {
  public:
-  explicit SetTargetAction(Uhthermostat *parent) : parent_(parent) {}
+  explicit SetTargetAction(Thermostat_uh *parent) : parent_(parent) {}
 
   TEMPLATABLE_VALUE(int32_t, target)
 
   void play(Ts... x) override { this->parent_->set_target(this->target_.value(x...)); }
 
  protected:
-  Uhthermostat *parent_;
+  Thermostat_uh *parent_;
 };
 
 template<typename... Ts> class ReportPositionAction : public Action<Ts...> {
  public:
-  explicit ReportPositionAction(Uhthermostat *parent) : parent_(parent) {}
+  explicit ReportPositionAction(Thermostat_uh *parent) : parent_(parent) {}
 
   TEMPLATABLE_VALUE(int32_t, position)
 
   void play(Ts... x) override { this->parent_->report_position(this->position_.value(x...)); }
 
  protected:
-  Uhthermostat *parent_;
+  Thermostat_uh *parent_;
 };
 
 template<typename... Ts> class SetSpeedAction : public Action<Ts...> {
  public:
-  explicit SetSpeedAction(Uhthermostat *parent) : parent_(parent) {}
+  explicit SetSpeedAction(Thermostat_uh *parent) : parent_(parent) {}
 
   TEMPLATABLE_VALUE(float, speed);
 
@@ -74,8 +74,8 @@ template<typename... Ts> class SetSpeedAction : public Action<Ts...> {
   }
 
  protected:
-  Uhthermostat *parent_;
+  Thermostat_uh *parent_;
 };
 
-}  // namespace uhthermostat
+}  // namespace thermostat_uh
 }  // namespace esphome

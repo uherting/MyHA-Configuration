@@ -1,12 +1,12 @@
-#include "uhthermostat.h"
+#include "thermostat_uh.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace uhthermostat {
+namespace thermostat_uh {
 
-static const char *TAG = "uhthermostat";
+static const char *TAG = "thermostat_uh";
 
-void Uhthermostat::calculate_speed_(uint32_t now) {
+void Thermostat_uh::calculate_speed_(uint32_t now) {
   // delta t since last calculation in seconds
   float dt = (now - this->last_calculation_) * 1e-6f;
   this->last_calculation_ = now;
@@ -28,7 +28,7 @@ void Uhthermostat::calculate_speed_(uint32_t now) {
   }
   this->current_speed_ = clamp(this->current_speed_, 0.0f, this->max_speed_);
 }
-int32_t Uhthermostat::should_step_() {
+int32_t Thermostat_uh::should_step_() {
   uint32_t now = micros();
   this->calculate_speed_(now);
   if (this->current_speed_ == 0.0f)
@@ -46,5 +46,5 @@ int32_t Uhthermostat::should_step_() {
   return 0;
 }
 
-}  // namespace uhthermostat
+}  // namespace thermostat_uh
 }  // namespace esphome

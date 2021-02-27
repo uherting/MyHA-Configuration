@@ -1,23 +1,23 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome import pins
-from esphome.components import uhthermostat
+from esphome.components import thermostat_uh
 from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_D, \
     CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
 
-uheq3n1_ns = cg.esphome_ns.namespace('uheq3n1')
-UHEQ3N1StepMode = uheq3n1_ns.enum('UHEQ3N1StepMode')
+equi_n1_ns = cg.esphome_ns.namespace('equi_n1')
+EQUI_N1StepMode = equi_n1_ns.enum('EQUI_N1StepMode')
 
 STEP_MODES = {
-    'FULL_STEP': UHEQ3N1StepMode.UHEQ3N1_STEP_MODE_FULL_STEP,
-    'HALF_STEP': UHEQ3N1StepMode.UHEQ3N1_STEP_MODE_HALF_STEP,
-    'WAVE_DRIVE': UHEQ3N1StepMode.UHEQ3N1_STEP_MODE_WAVE_DRIVE,
+    'FULL_STEP': EQUI_N1StepMode.EQUI_N1_STEP_MODE_FULL_STEP,
+    'HALF_STEP': EQUI_N1StepMode.EQUI_N1_STEP_MODE_HALF_STEP,
+    'WAVE_DRIVE': EQUI_N1StepMode.EQUI_N1_STEP_MODE_WAVE_DRIVE,
 }
 
-UHEQ3N1 = uheq3n1_ns.class_('UHEQ3N1', uhthermostat.Uhthermostat, cg.Component)
+EQUI_N1 = equi_n1_ns.class_('EQUI_N1', thermostat_uh.Thermostat_uh, cg.Component)
 
-CONFIG_SCHEMA = uhthermostat.UHTHERMOSTAT_SCHEMA.extend({
-    cv.Required(CONF_ID): cv.declare_id(UHEQ3N1),
+CONFIG_SCHEMA = thermostat_uh.THERMOSTAT_UH_SCHEMA.extend({
+    cv.Required(CONF_ID): cv.declare_id(EQUI_N1),
     cv.Required(CONF_PIN_A): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_B): pins.gpio_output_pin_schema,
     cv.Required(CONF_PIN_C): pins.gpio_output_pin_schema,
@@ -30,7 +30,7 @@ CONFIG_SCHEMA = uhthermostat.UHTHERMOSTAT_SCHEMA.extend({
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(var, config)
-    yield uhthermostat.register_uhthermostat(var, config)
+    yield thermostat_uh.register_thermostat_uh(var, config)
 
     pin_a = yield cg.gpio_pin_expression(config[CONF_PIN_A])
     cg.add(var.set_pin_a(pin_a))
