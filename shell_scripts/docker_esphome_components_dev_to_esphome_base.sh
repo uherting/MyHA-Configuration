@@ -1,4 +1,7 @@
 #!/bin/bash
+# attn:
+#   the script is executed in the HA docker container which has got bash in
+#   a diffrent location than standard Ubuntu
 
 #
 # attn:

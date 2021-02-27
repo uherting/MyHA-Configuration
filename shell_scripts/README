@@ -7,6 +7,12 @@ hints, examples, etc.
 idx=$((idx+1))
 
 # =========================================================================
+#  associative arrays
+# =========================================================================
+- https://www.linuxjournal.com/content/bash-associative-arrays
+- https://www.linuxjournal.com/content/bash-arrays
+
+# =========================================================================
 #  Returning Values from Bash Functions
 # =========================================================================
 variants from https://www.linuxjournal.com/content/return-values-bash-functions
