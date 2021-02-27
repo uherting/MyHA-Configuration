@@ -13,9 +13,17 @@
 
 BNAME=`basename $0 .sh`
 DNAME=`dirname $0`
+# replace the current dir name ./ with the absolute path
 if [ "$DNAME" == "." ];then
- DNAME="`pwd`"
+  DNAME="`pwd`"
 fi
+# change the relative path to a absolute path
+if [ "`echo $DNAME | cut -c1-2`" == ".." ];then
+  DNAME="`pwd`/${DNAME}"
+fi
+
+echo "DEBUG: BNAME=${BNAME}"
+echo "DEBUG: DNAME=${DNAME}"
 
 DEBUG=0
 if [ $# -eq 1 ]; then
@@ -52,6 +60,8 @@ function change_case () {
   local __resultvar=$1
   local __target_type=$2
   local __text_to_convert=$3
+  local myresult_pt1=""
+  local myresult_pt2=""
   local myresult='the input value was not processed due to wrong target type'
 
   if [ "${__text_to_convert}" == "" ]; then
@@ -61,7 +71,11 @@ function change_case () {
     case "$__target_type" in
       u ) myresult=`echo ${__text_to_convert} | tr [:lower:] [:upper:]`;;
       l ) myresult=`echo ${__text_to_convert} | tr [:upper:] [:lower:]`;;
-      m ) myresult="`echo ${__text_to_convert} | cut -c1 | tr [:lower:] [:upper:]``echo ${__text_to_convert} | cut -c2- | tr [:upper:] [:lower:]`";;
+      m ) myresult_pt1="`echo ${__text_to_convert} | cut -c1 | tr [:lower:] [:upper:]`"
+          myresult_pt2="`echo ${__text_to_convert} | cut -c2- | tr [:upper:] [:lower:]`"
+          myresult="${myresult_pt1}${myresult_pt2}"
+          # echo "DEBUG: __text_to_convert=${__text_to_convert}   myresult=${myresult}"
+          ;;
     esac
   fi
 
@@ -82,8 +96,8 @@ change_case COMPONENT_NAMES_CLONED_LC "l" "${COMPONENT_NAMES_CLONED}"
 
 # put the names in a associative array
 declare -A arr_names_lc
-declare -A arr_names_mc
-declare -A arr_names_uc
+# declare -A arr_names_mc
+# declare -A arr_names_uc
 declare -A arr_names_all
 
 # fill arrays with key / value pairs
@@ -92,31 +106,32 @@ comp_name_cloned_mc=""
 comp_name_cloned_uc=""
 comp_name_origin_mc=""
 comp_name_origin_uc=""
-for comp_name_origin_lc in ${COMPONENT_NAMES_ORIGIN_LC}
+for COMP_NAME_ORIGIN_LC in ${COMPONENT_NAMES_ORIGIN_LC}
 do
   # origin names
-  change_case comp_name_origin_mc "m" "${comp_name_origin_lc}"
-  change_case comp_name_origin_uc "u" "${comp_name_origin_lc}"
+  change_case comp_name_origin_mc "m" "${COMP_NAME_ORIGIN_LC}"
+  change_case comp_name_origin_uc "u" "${COMP_NAME_ORIGIN_LC}"
 
   # cloned names
   comp_name_cloned_lc=`echo ${COMPONENT_NAMES_CLONED_LC} | cut -f $idx -d " "`
-  change_case comp_name_cloned_mc "m" "${comp_name_cloned_lc}"
-  change_case comp_name_cloned_uc "u" "${comp_name_cloned_lc}"
-
-  # echo "comp_name_cloned_lc = ${comp_name_cloned_lc}"
-  idx=$((idx+1))
-  arr_names_lc["${comp_name_origin_lc}"]="${comp_name_cloned_lc}"
-  arr_names_mc["${comp_name_origin_mc}"]="${comp_name_cloned_mc}"
-  arr_names_uc["${comp_name_origin_uc}"]="${comp_name_cloned_uc}"
-
-  arr_names_all["${comp_name_origin_lc}"]="${comp_name_cloned_lc}"
-  arr_names_all["${comp_name_origin_mc}"]="${comp_name_cloned_mc}"
-  arr_names_all["${comp_name_origin_uc}"]="${comp_name_cloned_uc}"
-
   if [ "${comp_name_cloned_lc}" == "" ]; then
     echo "ERROR: amount of names in ORIGIN / CLONED does not match."
     exit 3
   fi
+
+  change_case comp_name_cloned_mc "m" "${comp_name_cloned_lc}"
+  change_case comp_name_cloned_uc "u" "${comp_name_cloned_lc}"
+
+  echo "DEBUG: comp_name_cloned_lc = ${comp_name_cloned_lc}"
+  arr_names_lc["${COMP_NAME_ORIGIN_LC}"]="${comp_name_cloned_lc}"
+  # arr_names_mc["${comp_name_origin_mc}"]="${comp_name_cloned_mc}"
+  # arr_names_uc["${comp_name_origin_uc}"]="${comp_name_cloned_uc}"
+
+  arr_names_all["${COMP_NAME_ORIGIN_LC}"]="${comp_name_cloned_lc}"
+  arr_names_all["${comp_name_origin_mc}"]="${comp_name_cloned_mc}"
+  arr_names_all["${comp_name_origin_uc}"]="${comp_name_cloned_uc}"
+
+  idx=$((idx+1))
 done
 
 # debug output
@@ -131,9 +146,9 @@ fi
 
 
 # check existance of tgt and src dir
-echo "INFO: checking existance of src and tgt dir"
-echo "INFO:     src: ${SRC_DIR}"
-echo "INFO:     tgt: ${TGT_DIR}"
+# echo "INFO: checking existance of src and tgt dir"
+# echo "INFO:     src: ${SRC_DIR}"
+# echo "INFO:     tgt: ${TGT_DIR}"
 EXIT_YN=0
 if [ ! -d ${TGT_DIR} ]; then
   echo "ERROR: dir ${TGT_DIR} does not exist"
@@ -151,8 +166,45 @@ if [ ${EXIT_YN} -eq 1 ]; then
   exit 3
 fi
 
+# change naming conventions in files
+SED_CMD_FILE="${DNAME}/${BNAME}.sed_cmd"
+echo "DEBUG: SED_CMD_FILE=${SED_CMD_FILE}"
+
+# for key in "${!arr_names_lc[@]}"
+# do
+#   value=${arr_names_lc[$key]}
+#   echo "DEBUG: (sed/lc): key/val=$key/${value}" >> s.txt
+# done
+# for key in "${!arr_names_mc[@]}"
+# do
+#   value=${arr_names_mc[$key]}
+#   echo "DEBUG: (sed/mc): key/val=$key/${value}" >> s.txt
+# done
+# for key in "${!arr_names_all[@]}"
+# do
+#   value=${arr_names_all[$key]}
+#   echo "DEBUG: (sed/all): key/val=$key/${value}" >> s.txt
+# done
+
+echo "INFO: creating sed script file"
+if [ -f ${SED_CMD_FILE} ]; then
+  rm ${SED_CMD_FILE}
+fi
+for key in "${!arr_names_all[@]}"
+do
+  value=${arr_names_all[$key]}
+  echo "s#${key}#${value}#g" >> ${SED_CMD_FILE}
+done
+
+GREP_OPTIONS_ORIGIN=""
+for p in ${COMPONENT_NAMES_ORIGIN_LC}
+do
+  GREP_OPTIONS_ORIGIN="${GREP_OPTIONS_ORIGIN}-e ${p} "
+done
+echo "DEBUG: GREP_OPTIONS_ORIGIN = ${GREP_OPTIONS_ORIGIN}"
+
 # start the real task ...  Eventually.
-echo "INFO: Changing PWD to ${TGT_DIR}."
+echo "INFO: Changing PWD to ${TGT_DIR} (to check permissions)."
 cd ${TGT_DIR}
 if [ $? -ne 0 ];then
   echo "ERROR: cannot change PWD to ${TGT_DIR}"
@@ -160,46 +212,31 @@ if [ $? -ne 0 ];then
 fi
 
 echo "INFO: Cleaning up tgt dir from residues of previous runs of ${BNAME}.sh"
-echo "INFO:   to be exec: rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}"
-#rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}
-exit 201
+# echo "INFO:   to be exec: rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}"
+rm -rf ${COMPONENT_NAMES_ORIGIN_LC} ${COMPONENT_NAMES_CLONED_LC}
 
-echo "INFO: "
-echo "INFO: Copying directories to be cloned into ${TGT_DIR}."
-for dir in ${COMPONENT_NAMES_ORIGIN_LC}
+echo "INFO: Copying directories to be cloned into ${TGT_DIR}"
+for directory in ${COMPONENT_NAMES_ORIGIN_LC}
 do
-  cp -r ${SRC_DIR}${dir} .
+  cp -r ${SRC_DIR}/${directory} ${TGT_DIR}
 done
-exit 103
-
-GREP_OPTIONS_ORIGIN=""
-for p in ${COMPONENT_NAMES_ORIGIN_LC}
-do
-  GREP_OPTIONS_ORIGIN="${GREP_OPTIONS}-e \"${p}\" "
-done
-
-# change naming conventions in files
-SED_SCRIPT=""
-for key in "${!arr_names_all[@]}"
-do
-  value=${arr_names_all[$i]}
-  echo "key  : $key  value: ${value}"
-  SED_SCRIPT="${SED_SCRIPT}-e \"s/${key}/${value}/g'\" "
-done
-echo "GREP_OPTIONS_ORIGIN = ${GREP_OPTIONS_ORIGIN}"
-echo "SED_SCRIPT = ${SED_SCRIPT}"
-exit 104
 
 # loop over the dirs we have got and apply filter of original component names
-for d in `ls | grep ${GREP_OPTIONS_ORIGIN}`
+DIRECTORIES_TO_WORK_ON="`ls | grep ${GREP_OPTIONS_ORIGIN}`"
+# echo "DEBUG: PWD now: `pwd`"
+echo "DEBUG: now working on dirs generated by \"ls | grep ${GREP_OPTIONS_ORIGIN}\""
+for DIRECTORY_TO_WORK_ON in ${DIRECTORIES_TO_WORK_ON}
 do
-  echo "========================================"
-  echo "  directory $d"
-  echo "========================================"
-
-  cd $d
+  # echo "INFO: working on directory ${DIRECTORY_TO_WORK_ON}"
+  # echo "DEBUG: cd to ${TGT_DIR}/${DIRECTORY_TO_WORK_ON}"
+  cd ${TGT_DIR}/${DIRECTORY_TO_WORK_ON}
+  if [ $? -ne 0 ];then
+    echo "ERROR: cannot change PWD to ${TGT_DIR}/${DIRECTORY_TO_WORK_ON}"
+    exit 5
+  fi
 
   # change naming conventions
+  echo "INFO: changing naming conventions (dir ${DIRECTORY_TO_WORK_ON})"
   for i in `find . -type f \
     | grep -v "__pycache__" \
     | xargs grep -ni ${GREP_OPTIONS_ORIGIN} \
@@ -207,35 +244,52 @@ do
     | cut -f 1 -d ":" \
     | sort -u`
   do
-    echo "  Change naming conventions in file: $i"
-    echo "cmd executed: sed -i ${SED_SCRIPT} $i"
-    # sed -i ${SED_SCRIPT} $i
+    echo "INFO:   Change naming conventions in file: $i"
+    if [ -f $i ]; then
+      # echo "DEBUG: cmd executed: sed -i -f ${SED_CMD_FILE} $i" >> t.txt
+      sed -i -f ${SED_CMD_FILE} $i
+    else
+      echo "ERROR: file $i does not exist. cannot apply sed to it."
+    fi
   done
-
-exit 105
 
   # change file names
-  for filename in `ls *.cpp *.h *.py`
+  echo "INFO: changing file names"
+  for FILENAME in `ls *.cpp *.h *.py`
   do
-    key=`echo $filename | cut -f 1 -d "."`
-    filename_base=$arr_names_lc[$key]
-    ext=`echo $filename | cut -f 2 -d "."`
-    filename_new=${filename_base}.${ext}
-    mv $filename $filename_new
-    echo "  Renamed file: $filename -> $filename_new"
+    key=`echo $FILENAME | cut -f 1 -d "."`
+    # FILENAME_BASE=`echo ${arr_names_lc["$key"]} | tr -d "\[" | tr -d "\]"`
+    FILENAME_BASE=${arr_names_lc["$key"]}
+    if [ "${FILENAME_BASE}" == "" ]; then
+      echo "INFO:   file name $FILENAME will not be changed"
+    else
+      # echo "DEBUG: FILENAME=${FILENAME} / key=${key} / FILENAME_BASE=${FILENAME_BASE}"
+      ext=`echo $FILENAME | cut -f 2 -d "."`
+      FILENAME_NEW="${FILENAME_BASE}.${ext}"
+      # echo "DEBUG:   (ext/fn/fnnew)=(${ext}/${key}/${FILENAME_BASE})"
+      # echo "DEBUG:   FILENAME/FILENAME_NEW:${FILENAME}/${FILENAME_NEW}"
+      if [ "${FILENAME}" == "${FILENAME_NEW}" ]; then
+        echo "INFO:   file name $FILENAME will not be changed (huh?)"
+      else
+        echo "INFO:   Renaming file $FILENAME -> $FILENAME_NEW"
+        mv $FILENAME $FILENAME_NEW
+      fi
+    fi
   done
-exit 106
 
-  cd -
+  cd ${TGT_DIR}
 
-  # change dir names
-  for dirname in "${!arr_names_lc[@]}"
-  do
-    dirname_new=${arr_names_lc[$dirname]}
-    mv $dirname $dirname_new
-    echo "  Renamed directory: $dirname -> $dirname_new"
-  done
 done
+
+# change dir names
+echo "INFO: changing directory names"
+for DIRECTORY_TO_WORK_ON in "${!arr_names_lc[@]}"
+do
+  dirname_new=${arr_names_lc[$DIRECTORY_TO_WORK_ON]}
+  mv ${DIRECTORY_TO_WORK_ON} $dirname_new
+  echo "INFO: Renamed directory: ${DIRECTORY_TO_WORK_ON} -> $dirname_new"
+done
+
+rm ${SED_CMD_FILE}
+
 # EOF
-
-
