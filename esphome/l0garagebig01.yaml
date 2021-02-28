@@ -120,7 +120,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/sensor/l0garagebig01.yaml
+  - <<: !include conf/sensor/l0garagebig01_case.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
