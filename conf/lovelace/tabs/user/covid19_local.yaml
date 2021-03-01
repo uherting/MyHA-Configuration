@@ -64,6 +64,108 @@ cards:
       - sensor.lk_eichsfeld_newdeaths
       - sensor.lk_eichsfeld_newrecovered
 
+  - type: entities
+    title: RKI Covid Data Stuttgart
+    show_header_toggle: false
+    entities:
+      - sensor.sk_stuttgart_casesper100k
+      - sensor.sk_stuttgart_weekincidence
+      - sensor.sk_stuttgart_count
+      - sensor.sk_stuttgart_deaths
+      - sensor.sk_stuttgart_recovered
+      - sensor.sk_stuttgart_newcases
+      - sensor.sk_stuttgart_newdeaths
+      - sensor.sk_stuttgart_newrecovered
+
+  - type: entities
+    title: RKI Covid Data Tübingen
+    show_header_toggle: false
+    entities:
+      - sensor.lk_tubingen_casesper100k
+      - sensor.lk_tubingen_weekincidence
+      - sensor.lk_tubingen_count
+      - sensor.lk_tubingen_deaths
+      - sensor.lk_tubingen_recovered
+      - sensor.lk_tubingen_newcases
+      - sensor.lk_tubingen_newdeaths
+      - sensor.lk_tubingen_newrecovered
+
+  - type: entities
+    title: RKI Covid Data NDS
+    show_header_toggle: false
+    entities:
+      - sensor.bl_niedersachsen_casesper100k
+      - sensor.bl_niedersachsen_weekincidence
+      - sensor.bl_niedersachsen_count
+      - sensor.bl_niedersachsen_deaths
+      - sensor.bl_niedersachsen_recovered
+      - sensor.bl_niedersachsen_newcases
+      - sensor.bl_niedersachsen_newdeaths
+      - sensor.bl_niedersachsen_newrecovered
+
+  - type: entities
+    title: RKI Covid Data Thüringen
+    show_header_toggle: false
+    entities:
+      - sensor.bl_thuringen_casesper100k
+      - sensor.bl_thuringen_weekincidence
+      - sensor.bl_thuringen_count
+      - sensor.bl_thuringen_deaths
+      - sensor.bl_thuringen_recovered
+      - sensor.bl_thuringen_newcases
+      - sensor.bl_thuringen_newdeaths
+      - sensor.bl_thuringen_newrecovered
+
+  - type: entities
+    title: RKI Covid Data Sachsen-Anhalt
+    show_header_toggle: false
+    entities:
+      - sensor.bl_sachsen_anhalt_casesper100k
+      - sensor.bl_sachsen_anhalt_weekincidence
+      - sensor.bl_sachsen_anhalt_count
+      - sensor.bl_sachsen_anhalt_deaths
+      - sensor.bl_sachsen_anhalt_recovered
+      - sensor.bl_sachsen_anhalt_newcases
+      - sensor.bl_sachsen_anhalt_newdeaths
+      - sensor.bl_sachsen_anhalt_newrecovered
+
+  - type: entities
+    title: RKI Covid Data BW
+    show_header_toggle: false
+    entities:
+      - sensor.bl_baden_wurttemberg_casesper100k
+      - sensor.bl_baden_wurttemberg_weekincidence
+      - sensor.bl_baden_wurttemberg_count
+      - sensor.bl_baden_wurttemberg_deaths
+      - sensor.bl_baden_wurttemberg_recovered
+      - sensor.bl_baden_wurttemberg_newcases
+      - sensor.bl_baden_wurttemberg_newdeaths
+      - sensor.bl_baden_wurttemberg_newrecovered
+
+  - type: custom:mini-graph-card
+    title: RKI Covid LK WeeklyIncidence
+    entities:
+      - sensor.lk_gottingen_weekincidence
+      - sensor.lk_goslar_weekincidence
+      - sensor.lk_nordhausen_weekincidence
+      - sensor.lk_eichsfeld_weekincidence
+      - sensor.sk_stuttgart_weekincidence
+      - sensor.lk_tubingen_weekincidence
+    hours_to_show: 24
+    hour24: true
+    show_legend: true
+
+  - type: custom:mini-graph-card
+    title: RKI Covid BL WeeklyIncidence
+    entities:
+      - sensor.bl_niedersachsen_weekincidence
+      - sensor.bl_thuringen_weekincidence
+      - sensor.bl_sachsen_anhalt_weekincidence
+      - sensor.bl_baden_wurttemberg_weekincidence
+    hours_to_show: 24
+    hour24: true
+    show_legend: true
+
 ####################################################################
 # EOF
 ####################################################################
