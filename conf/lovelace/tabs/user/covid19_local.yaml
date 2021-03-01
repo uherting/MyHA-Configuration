@@ -151,10 +151,12 @@ cards:
       - sensor.lk_eichsfeld_weekincidence
       - sensor.sk_stuttgart_weekincidence
       - sensor.lk_tubingen_weekincidence
-    hours_to_show: 24
+    hours_to_show: 48
     hour24: true
     show_legend: true
     font_size: 75
+    points_per_hour: 0.25
+    height: 300
 
   - type: custom:mini-graph-card
     title: RKI Covid BL WeeklyIncidence
@@ -163,10 +165,12 @@ cards:
       - sensor.bl_thuringen_weekincidence
       - sensor.bl_sachsen_anhalt_weekincidence
       - sensor.bl_baden_wurttemberg_weekincidence
-    hours_to_show: 24
+    hours_to_show: 48
     hour24: true
     show_legend: true
     font_size: 75
+    points_per_hour: 0.25
+    height: 300
 
 ####################################################################
 # EOF
