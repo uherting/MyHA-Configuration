@@ -154,6 +154,7 @@ cards:
     hours_to_show: 24
     hour24: true
     show_legend: true
+    font_size: 75
 
   - type: custom:mini-graph-card
     title: RKI Covid BL WeeklyIncidence
@@ -165,6 +166,7 @@ cards:
     hours_to_show: 24
     hour24: true
     show_legend: true
+    font_size: 75
 
 ####################################################################
 # EOF
