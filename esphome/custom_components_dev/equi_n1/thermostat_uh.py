@@ -2,8 +2,12 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome import pins
 from esphome.components import thermostat_uh
-from esphome.const import CONF_ID, CONF_PIN_A, CONF_PIN_B, CONF_PIN_C, CONF_PIN_D, \
-    CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
+from esphome.const import CONF_ID, CONF_SLEEP_WHEN_DONE, CONF_STEP_MODE
+
+CONF_PIN_A = 'pin_a'
+CONF_PIN_B = 'pin_b'
+CONF_PIN_C = 'pin_c'
+# CONF_PIN_D = 'pin_d'
 
 equi_n1_ns = cg.esphome_ns.namespace('equi_n1')
 EQUI_N1StepMode = equi_n1_ns.enum('EQUI_N1StepMode')
@@ -38,8 +42,8 @@ def to_code(config):
     cg.add(var.set_pin_b(pin_b))
     pin_c = yield cg.gpio_pin_expression(config[CONF_PIN_C])
     cg.add(var.set_pin_c(pin_c))
-    pin_d = yield cg.gpio_pin_expression(config[CONF_PIN_D])
-    cg.add(var.set_pin_d(pin_d))
+    # pin_d = yield cg.gpio_pin_expression(config[CONF_PIN_D])
+    # cg.add(var.set_pin_d(pin_d))
 
     cg.add(var.set_sleep_when_done(config[CONF_SLEEP_WHEN_DONE]))
     cg.add(var.set_step_mode(config[CONF_STEP_MODE]))
