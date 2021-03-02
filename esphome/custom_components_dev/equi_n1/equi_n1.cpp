@@ -7,9 +7,9 @@ namespace equi_n1 {
 static const char *TAG = "equi_n1.thermostat_uh";
 
 void EQUI_N1::setup() {
-  this->pin_a_->setup();
-  this->pin_b_->setup();
-  this->pin_c_->setup();
+  this->push_button_->setup();
+  this->rotary_encoder01_->setup();
+  this->rotary_encoder02_->setup();
   // this->pin_d_->setup();
   this->loop();
 }
@@ -19,9 +19,9 @@ void EQUI_N1::loop() {
     this->high_freq_.stop();
 
     if (this->sleep_when_done_) {
-      this->pin_a_->digital_write(false);
-      this->pin_b_->digital_write(false);
-      this->pin_c_->digital_write(false);
+      this->push_button_->digital_write(false);
+      this->rotary_encoder01_->digital_write(false);
+      this->rotary_encoder02_->digital_write(false);
       // this->pin_d_->digital_write(false);
       // do not write pos
       return;
@@ -37,9 +37,9 @@ void EQUI_N1::loop() {
 }
 void EQUI_N1::dump_config() {
   ESP_LOGCONFIG(TAG, "EQUI_N1:");
-  LOG_PIN("  Pin A: ", this->pin_a_);
-  LOG_PIN("  Pin B: ", this->pin_b_);
-  LOG_PIN("  Pin C: ", this->pin_c_);
+  LOG_PIN("  Pin A: ", this->push_button_);
+  LOG_PIN("  Pin B: ", this->rotary_encoder01_);
+  LOG_PIN("  Pin C: ", this->rotary_encoder02_);
   // LOG_PIN("  Pin D: ", this->pin_d_);
   ESP_LOGCONFIG(TAG, "  Sleep when done: %s", YESNO(this->sleep_when_done_));
   const char *step_mode_s = "";
@@ -81,9 +81,9 @@ void EQUI_N1::write_step_(int32_t step) {
     }
   }
 
-  this->pin_a_->digital_write((res >> 0) & 1);
-  this->pin_b_->digital_write((res >> 1) & 1);
-  this->pin_c_->digital_write((res >> 2) & 1);
+  this->push_button_->digital_write((res >> 0) & 1);
+  this->rotary_encoder01_->digital_write((res >> 1) & 1);
+  this->rotary_encoder02_->digital_write((res >> 2) & 1);
   // this->pin_d_->digital_write((res >> 3) & 1);
 }
 

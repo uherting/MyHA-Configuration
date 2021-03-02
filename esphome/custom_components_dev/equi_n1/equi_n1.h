@@ -15,9 +15,9 @@ enum EQUI_N1StepMode {
 
 class EQUI_N1 : public thermostat_uh::Thermostat_uh, public Component {
  public:
-  void set_pin_a(GPIOPin *pin_a) { pin_a_ = pin_a; }
-  void set_pin_b(GPIOPin *pin_b) { pin_b_ = pin_b; }
-  void set_pin_c(GPIOPin *pin_c) { pin_c_ = pin_c; }
+  void set_push_button(GPIOPin *push_button) { push_button_ = push_button; }
+  void set_rotary_encoder01(GPIOPin *rotary_encoder01) { rotary_encoder01_ = rotary_encoder01; }
+  void set_rotary_encoder02(GPIOPin *rotary_encoder02) { rotary_encoder02_ = rotary_encoder02; }
   // void set_pin_d(GPIOPin *pin_d) { pin_d_ = pin_d; }
 
   void setup() override;
@@ -31,9 +31,9 @@ class EQUI_N1 : public thermostat_uh::Thermostat_uh, public Component {
   void write_step_(int32_t step);
 
   bool sleep_when_done_{false};
-  GPIOPin *pin_a_;
-  GPIOPin *pin_b_;
-  GPIOPin *pin_c_;
+  GPIOPin *push_button_;
+  GPIOPin *rotary_encoder01_;
+  GPIOPin *rotary_encoder02_;
   // GPIOPin *pin_d_;
   EQUI_N1StepMode step_mode_{EQUI_N1_STEP_MODE_FULL_STEP};
   HighFrequencyLoopRequester high_freq_;
