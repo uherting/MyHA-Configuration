@@ -12,10 +12,19 @@ path: cams
 badges: [ ]
 cards:
 
+  # # ONVIF CAM "TheWorld" hires
+  # - type: picture-entity
+  #   entity: camera.ipcam_ker01_mainstream
+  #   camera_view: auto
+
+  # ONVIF CAM "TheWorld" lowres
+  - type: picture-entity
+    entity: camera.ipcam_ker01_substream
+    camera_view: auto
+
   # ESP32-cam cameras
   - type: picture-glance
     title: ESP32Cam 01
-#        show_header_toggle: false
     camera_image: camera.l9_cam32_01_cam
     camera_view: live
     entities:
@@ -27,7 +36,6 @@ cards:
 
   - type: picture-glance
     title: ESP32Cam 02
-#        show_header_toggle: false
     camera_image: camera.l9_cam32_02_cam
     camera_view: live
     entities:
@@ -39,7 +47,6 @@ cards:
 
   - type: picture-glance
     title: ESP32Cam 03
-#        show_header_toggle: false
     camera_image: camera.l9_cam32_03_cam
     camera_view: live
     entities:
@@ -52,7 +59,6 @@ cards:
   # TTGO-cameras
   - type: picture-glance
     title: TTGO Cam 01
-#        show_header_toggle: false
     camera_image: camera.l9_cam_ttgo_01_cam
     camera_view: live
     entities:
@@ -63,7 +69,6 @@ cards:
       - sensor.l9_cam_ttgo_01_wifi_signal
   - type: picture-glance
     title: TTGO Cam 02
-#        show_header_toggle: false
     camera_image: camera.l9_cam_ttgo_02_cam
     camera_view: live
     entities:

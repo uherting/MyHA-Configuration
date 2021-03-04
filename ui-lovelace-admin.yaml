@@ -16,7 +16,6 @@ views:
   - !include /config/conf/lovelace/tabs/admin/system_monitor_01.yaml
   - !include /config/conf/lovelace/tabs/admin/setup.yaml
   - !include /config/conf/lovelace/tabs/admin/esphome-unplugged-devices.yaml
-  - !include /config/conf/lovelace/tabs/admin/cams.yaml
   - !include /config/conf/lovelace/tabs/admin/printer.yaml
 
 ####################################################################

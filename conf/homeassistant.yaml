@@ -11,6 +11,7 @@ external_url: !secret HA_EXTERNAL_URL
 internal_url: !secret HA_INTERNAL_URL
 
 allowlist_external_dirs:
+  - /config/var/opt
   - /config/var/opt/tg/l9esp32cam01
   - /config/var/opt/tg/l9esp32cam02
   - /config/var/opt/tg/l9esp32cam03
