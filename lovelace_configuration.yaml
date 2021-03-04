@@ -41,6 +41,7 @@
   dashboards:
 
     # the name of the dashboard needs to contain a hyphen (-)
+
     uilovelace-admin:
       mode: yaml
       filename: ui-lovelace-admin.yaml
@@ -49,7 +50,14 @@
       show_in_sidebar: true
       require_admin: true
 
-    # the name of the dashboard needs to contain a hyphen (-)
+    uilovelace-user02:
+      mode: yaml
+      filename: ui-lovelace_02.yaml
+      title: Overview ESP
+      icon: mdi:cpu-32-bit
+      show_in_sidebar: true
+      require_admin: false
+
     uilovelace-esp-admin:
       mode: yaml
       filename: ui-lovelace-admin_esp8266.yaml
@@ -58,7 +66,6 @@
       show_in_sidebar: true
       require_admin: true
 
-    # the name of the dashboard needs to contain a hyphen (-)
 #    uilovelace-user:
 #      mode: yaml
 #      filename: uilovelace-user.yaml

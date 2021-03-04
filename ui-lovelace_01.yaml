@@ -1,0 +1,26 @@
+####################################################################
+####################################################################
+#
+# lovelace configuration for users
+#
+####################################################################
+####################################################################
+
+title: Home 431
+
+# Optional background for all views. Check https://developer.mozilla.org/en-US/docs/Web/CSS/background for more examples.
+# background: center / cover no-repeat url("/background.png") fixed
+
+views:
+  - !include /config/conf/lovelace/tabs/user/ics.yaml
+  - !include /config/conf/lovelace/tabs/user/cams.yaml
+  - !include /config/conf/lovelace/tabs/user/lights.yaml
+#  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
+  - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
+  - !include /config/conf/lovelace/tabs/user/weather.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_local.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_world.yaml
+
+####################################################################
+# EOF
+####################################################################
