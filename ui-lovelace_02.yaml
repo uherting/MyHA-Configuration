@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# lovelace configuration for users
+# lovelace configuration for users - dashboard #2
 #
 ####################################################################
 ####################################################################
@@ -12,10 +12,7 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
-  # HA app entities
-  - !include /config/conf/lovelace/tabs/user/smartphones.yaml
-
-  # now the ESP devices
+  # ESP devices
   - !include /config/conf/lovelace/tabs/user/esp8266_l2.yaml
   - !include /config/conf/lovelace/tabs/user/esp8266_l0.yaml
   - !include /config/conf/lovelace/tabs/user/esp8266_l1.yaml

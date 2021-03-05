@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# lovelace configuration for users
+# lovelace configuration for users - dashboard #1
 #
 ####################################################################
 ####################################################################
@@ -12,12 +12,18 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
+  # misc information
   - !include /config/conf/lovelace/tabs/user/ics.yaml
   - !include /config/conf/lovelace/tabs/user/cams.yaml
   - !include /config/conf/lovelace/tabs/user/lights.yaml
 #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
   - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
   - !include /config/conf/lovelace/tabs/user/weather.yaml
+
+  # HA app entities
+  - !include /config/conf/lovelace/tabs/user/smartphones.yaml
+
+  # covid entities
   - !include /config/conf/lovelace/tabs/user/covid19_local.yaml
   - !include /config/conf/lovelace/tabs/user/covid19_world.yaml
 
