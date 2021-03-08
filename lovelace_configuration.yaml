@@ -40,7 +40,7 @@
 # Add more dashboards
   dashboards:
 
-    # the name of the dashboard needs to contain a hyphen (-)
+    # attn: the name of the dashboard needs to contain a hyphen (-)
 
     uilovelace-user02:
       mode: yaml
@@ -50,7 +50,7 @@
       show_in_sidebar: true
       require_admin: false
 
-    uilovelace-admin:
+    uilovelace-zadminall:
       mode: yaml
       filename: ui-lovelace-admin.yaml
       title: Overview Admin
@@ -58,7 +58,7 @@
       show_in_sidebar: true
       require_admin: true
 
-    uilovelace-esp-admin:
+    uilovelace-zadminesp:
       mode: yaml
       filename: ui-lovelace-admin_esp8266.yaml
       title: Overview Admin ESPHome
