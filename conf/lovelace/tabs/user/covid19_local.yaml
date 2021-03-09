@@ -148,7 +148,7 @@ cards:
       - sensor.lk_gottingen_weekincidence
       - sensor.lk_goslar_weekincidence
       - sensor.lk_nordhausen_weekincidence
-      - sensor.lk_eichsfeld_weekincidence
+      # - sensor.lk_eichsfeld_weekincidence
       - sensor.sk_stuttgart_weekincidence
       - sensor.lk_tubingen_weekincidence
     hours_to_show: 72
@@ -162,7 +162,7 @@ cards:
     title: RKI Covid BL WeeklyIncidence
     entities:
       - sensor.bl_niedersachsen_weekincidence
-      - sensor.bl_thuringen_weekincidence
+      # - sensor.bl_thuringen_weekincidence
       - sensor.bl_sachsen_anhalt_weekincidence
       - sensor.bl_baden_wurttemberg_weekincidence
     hours_to_show: 72
