@@ -66,6 +66,32 @@ cards:
       - sensor.china_coronavirus_deaths
       - sensor.china_coronavirus_recovered
 
+  - type: custom:mini-graph-card
+    title: JH death count (low end)
+    entities:
+      - sensor.germany_coronavirus_deaths
+      - sensor.south_africa_coronavirus_deaths
+      - sensor.china_coronavirus_deaths
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    font_size: 75
+    points_per_hour: 0.2
+    height: 300
+
+  - type: custom:mini-graph-card
+    title: JH death count (high end)
+    entities:
+      - sensor.us_coronavirus_deaths
+      - sensor.united_kingdom_coronavirus_deaths
+      - sensor.india_coronavirus_deaths
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    font_size: 75
+    points_per_hour: 0.2
+    height: 300
+
 ####################################################################
 # EOF
 ####################################################################

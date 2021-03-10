@@ -17,10 +17,11 @@ cards:
   #   entity: camera.ipcam_ker01_mainstream
   #   camera_view: auto
 
-  # ONVIF CAM "TheWorld" lowres
-  - type: picture-entity
-    entity: camera.ipcam_ker01_substream
-    camera_view: auto
+  # works with F5 (refreshing the page) only
+  # # ONVIF CAM "TheWorld" lowres
+  # - type: picture-entity
+  #   entity: camera.ipcam_ker01_substream
+  #   camera_view: auto
 
   # ESP32-cam cameras
   - type: picture-glance
