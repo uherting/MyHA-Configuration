@@ -3,17 +3,17 @@
 
 #globals:
   - id: isWifiOn
-    type: boolean
+    type: bool
     restore_value: no
     initial_value: 'false'
 
   - id: isDeviceConnected
-    type: boolean
+    type: bool
     restore_value: no
     initial_value: 'false'
 
   - id: doNotExecuteLocalAutomation
-    type: boolean
+    type: bool
     restore_value: no
     initial_value: 'false'
 

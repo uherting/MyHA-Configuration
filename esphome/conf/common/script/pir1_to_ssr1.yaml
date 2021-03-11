@@ -7,24 +7,24 @@
     mode: restart
     then:
       - lambda: |-
-          if (!isWifiOn) {
+          if (!id(isWifiOn)) {
             id(${ssr01_id}).turn_on();
           }
-      - delay: !secret DELAY_02SEC
+      - delay: !secret DELAY_02MIN
       - lambda: |-
-          if (!isWifiOn) {
+          if (!id(isWifiOn)) {
             id(${ssr01_id}).turn_off();
           }
-      - delay: !secret DELAY_02SEC
-      - lambda: |-
-          if (!isWifiOn) {
-            id(${ssr01_id}).turn_on();
-          }
-      - delay: !secret DELAY_02SEC
-      - lambda: |-
-          if (!isWifiOn) {
-            id(${ssr01_id}).turn_off();
-          }
+      # - delay: !secret DELAY_02SEC
+      # - lambda: |-
+      #     if (!id(isWifiOn)) {
+      #       id(${ssr01_id}).turn_on();
+      #     }
+      # - delay: !secret DELAY_02SEC
+      # - lambda: |-
+      #     if (!id(isWifiOn)) {
+      #       id(${ssr01_id}).turn_off();
+      #     }
 
 ####################################################################
 # EOF

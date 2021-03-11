@@ -7,6 +7,7 @@
       - globals.set:
           id: isWifiOn
           value: id(${wifi_status_id}).state
+          # value: 'true'
       - globals.set:
           id: isDeviceConnected
           value: id(${wifi_status_id}).state
