@@ -7,24 +7,14 @@
     mode: restart
     then:
       - lambda: |-
-          if (!id(isWifiOn)) {
+          if (!id(isDeviceConnected)) {
             id(${ssr01_id}).turn_on();
           }
       - delay: !secret DELAY_02MIN
       - lambda: |-
-          if (!id(isWifiOn)) {
+          if (!id(isDeviceConnected)) {
             id(${ssr01_id}).turn_off();
           }
-      # - delay: !secret DELAY_02SEC
-      # - lambda: |-
-      #     if (!id(isWifiOn)) {
-      #       id(${ssr01_id}).turn_on();
-      #     }
-      # - delay: !secret DELAY_02SEC
-      # - lambda: |-
-      #     if (!id(isWifiOn)) {
-      #       id(${ssr01_id}).turn_off();
-      #     }
 
 ####################################################################
 # EOF

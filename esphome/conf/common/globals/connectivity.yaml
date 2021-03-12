@@ -2,20 +2,11 @@
 # GLOBAL VARIABLES
 
 #globals:
-  - id: isWifiOn
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-
   - id: isDeviceConnected
     type: bool
     restore_value: no
-    initial_value: 'false'
-
-  - id: doNotExecuteLocalAutomation
-    type: bool
-    restore_value: no
-    initial_value: 'false'
+    # assume the best, test for the worst later...
+    initial_value: 'true'
 
 ####################################################################
 # EOF

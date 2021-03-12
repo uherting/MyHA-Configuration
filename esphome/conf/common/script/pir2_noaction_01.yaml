@@ -9,12 +9,12 @@
       - lambda: |-
           boolean dummy_var = true;
       # - lambda: |-
-      #     if (!isWifiOn) {
+      #     if (!isDeviceConnected) {
       #       id(${ssr01_id}).turn_on();
       #     }
       # - delay: !secret DELAY_01MIN
       # - lambda: |-
-      #     if (!isWifiOn) {
+      #     if (!isDeviceConnected) {
       #       id(${ssr01_id}).turn_off();
       #     }
 
