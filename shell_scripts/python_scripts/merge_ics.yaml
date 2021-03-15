@@ -1,10 +1,13 @@
 sources:
   1:
     filename: et_21.ics
+    timezone: Europe/Berlin
   2:
     filename: et_22.ics
-  3:
-    filename: ds_2021_to_2031.ics
+    timezone: Europe/Berlin
+  # 3:
+  #   filename: ds_2021_to_2031.ics
+  #   timezone: Europe/Berlin
 
 sinks:
   -
@@ -12,7 +15,7 @@ sinks:
     sources:
       1: ET_2021
       2: ET_2022
-      3: DST Events
+      # 3: DST Events
     options:
       version: 2.0
       prodid: -//ICSOwner//Feiertage20212022plusDST//EN
