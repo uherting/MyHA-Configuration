@@ -20,12 +20,14 @@ cards:
     title: Misc Information
     show_header_toggle: false
     entities:
-      # Muellabfuhr
       - sensor.ics_1
-      # Sommerzeit (Anfang/Ende)
-      #- sensor.ics_2
-      # Advent
-      #- sensor.ics_3
+      - sensor.ics_2
+      - sensor.ics_3
+      - sensor.ics_900
+      - sensor.ics_950
+      - sensor.ics_990
+      - sensor.ics_991
+      - sensor.ics_992
 
 
 ####################################################################
