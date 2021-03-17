@@ -16,12 +16,22 @@
 # Source: https://www.home-assistant.io/integrations/binary_sensor.template/
 # Note: restart of HA was required to (de)activate this sensor.
 # Example configuration.yaml entry
-#  - platform: template
-#    sensors:
-#      sun_up:
-#        friendly_name: "Sun is up"
-#        value_template: >-
-#          {{ state_attr('sun.sun', 'elevation')|float > 0 }}
+  - platform: template
+    sensors:
+      sun_up:
+        friendly_name: "Sun is up"
+        value_template: >-
+          {{ state_attr('sun.sun', 'elevation')|float > 0 }}
+      sun_down:
+        friendly_name: "Sun is down"
+        value_template: >-
+          {{ state_attr('sun.sun', 'elevation')|float <= 0 }}
+      # only when civil twilight applies
+      # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+      sun_dwn_twilight:
+        friendly_name: "Sun is down (civil twilight)"
+        value_template: >-
+          {{ state_attr('sun.sun', 'elevation')|float < 6 }}
 
 # ############################################################
 #  END OF FILE
