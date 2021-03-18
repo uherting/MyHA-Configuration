@@ -24,7 +24,7 @@
           - logger.log: "Double clicked, no action."
       - timing:
           - ON for 1s to 2s
-          - OFF for at least 0.5s
+          - OFF for at least 0.2s
         then:
           - logger.log: "Single long clicked, no action."
           # - logger.log: "Single long clicked, automation off."
@@ -40,7 +40,7 @@
           # - switch.turn_on: ${ssr01_id}
       - timing:
           - ON for at most 1s
-          - OFF for at least 0.5s
+          - OFF for at least 0.2s
         then:
           - logger.log: "Single short clicked, no action."
           # - logger.log: "Single short clicked, automation on."
