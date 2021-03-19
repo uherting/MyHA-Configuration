@@ -1,0 +1,19 @@
+####################################################################
+# GLOBAL VARIABLES
+
+#globals:
+  - id: isOc1OnViaBtn
+    type: bool
+    restore_value: no
+    # assume the best, test for the worst later...
+    initial_value: 'false'
+
+  - id: isOc1On
+    type: bool
+    restore_value: no
+    # assume the best, test for the worst later...
+    initial_value: 'false'
+
+####################################################################
+# EOF
+####################################################################

@@ -90,10 +90,15 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 #-------------------------------------------------------------------
 # MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
 
-globals: !include conf/common/globals/connectivity.yaml
+globals:
+  - <<: !include conf/common/globals/connectivity.yaml
+  - <<: !include conf/common/globals/opto_coupler_01.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/common/script/pir1_to_ssr1.yaml
+  - <<: !include conf/common/script/touch_button_A4_double.yaml
+  - <<: !include conf/common/script/touch_button_A4_short.yaml
+  - <<: !include conf/common/script/touch_button_A4_long.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -107,8 +112,8 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/reed02.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A4.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A5.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
