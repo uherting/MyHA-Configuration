@@ -1,0 +1,18 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_multi_click action of TB A4 (short click)
+  - id: ssr_script_tb_01_click_short
+    mode: restart
+    then:
+      - if:
+          condition:
+              # lambda: 'return (!id(isDeviceConnected);'
+              lambda: 'return (true);'
+          then:
+            - logger.log: "ssr_script_tb_01_click_short dummy action."
+
+####################################################################
+# EOF
+####################################################################

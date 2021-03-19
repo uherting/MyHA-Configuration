@@ -2,19 +2,19 @@
 # SCRIPTS
 
 #script:
-  # on_press action of PIR #03
+  # on_press action of PIR #03 (offline automation)
   - id: ssr_script_pir_03
     mode: restart
     then:
-      - lambda: |-
-          if (!isDeviceConnected) {
-            id(${ssr03_id}).turn_on();
-          }
-      - delay: !secret DELAY_01MIN
-      - lambda: |-
-          if (!isDeviceConnected) {
-            id(${ssr03_id}).turn_off();
-          }
+      - if:
+        condition:
+          lambda: 'return (!id(isDeviceConnected));'
+        then:
+          # - logger.log: "Turning SSR03 on as part of offline automation."
+          - switch.turn_on: ${ssr03_id}
+          - delay: !secret DELAY_02MIN
+          - switch.turn_off: ${ssr03_id}
+          # - logger.log: "Turning SSR03 off as part of offline automation."
 
 ####################################################################
 # EOF
