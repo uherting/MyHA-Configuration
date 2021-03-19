@@ -15,14 +15,20 @@ badges: [
   binary_sensor.workday_sensor
   ]
 cards:
-  # misc information (user targeted)
+  # Rubbish pickup, full / new moon
   - type: entities
-    title: Misc Information
+    title: Rubbish pickup, full / new moon
     show_header_toggle: false
     entities:
       - sensor.ics_1
       - sensor.ics_2
       - sensor.ics_3
+
+  # Holidays and DST
+  - type: entities
+    title: Holidays and DST
+    show_header_toggle: false
+    entities:
       - sensor.ics_900
       - sensor.ics_950
       - sensor.ics_990

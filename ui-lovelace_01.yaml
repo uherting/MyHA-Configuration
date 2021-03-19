@@ -13,7 +13,7 @@ title: Home 431
 
 views:
   # misc information
-  - !include /config/conf/lovelace/tabs/user/ics.yaml
+  - !include /config/conf/lovelace/tabs/user/information.yaml
   - !include /config/conf/lovelace/tabs/user/cams.yaml
   - !include /config/conf/lovelace/tabs/user/lights.yaml
 #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
