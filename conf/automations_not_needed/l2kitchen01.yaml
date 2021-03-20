@@ -2,6 +2,9 @@
 #
 #  automation for l2kitchen01
 #
+#  attention: this automation is executed on the device and
+#             does not need to exist on home assistant.
+#
 # ############################################################
 
 - alias: L2 Kitchen ON if motion detected
