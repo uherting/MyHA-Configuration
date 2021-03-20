@@ -13,7 +13,7 @@ path: covid19_local
 cards:
 
   - type: entities
-    title: RKI Covid Data Goe
+    title: RKI Covid Data - LK Gö
     show_header_toggle: false
     entities:
       - sensor.lk_gottingen_casesper100k
@@ -26,7 +26,7 @@ cards:
       - sensor.lk_gottingen_newrecovered
 
   - type: entities
-    title: RKI Covid Data GS
+    title: RKI Covid Data - LK GS
     show_header_toggle: false
     entities:
       - sensor.lk_goslar_casesper100k
@@ -39,7 +39,7 @@ cards:
       - sensor.lk_goslar_newrecovered
 
   - type: entities
-    title: RKI Covid Data NDH
+    title: RKI Covid Data - LK NDH
     show_header_toggle: false
     entities:
       - sensor.lk_nordhausen_casesper100k
@@ -52,7 +52,7 @@ cards:
       - sensor.lk_nordhausen_newrecovered
 
   - type: entities
-    title: RKI Covid Data Eichsfeld
+    title: RKI Covid Data - LK Eichsfeld
     show_header_toggle: false
     entities:
       - sensor.lk_eichsfeld_casesper100k
@@ -65,7 +65,7 @@ cards:
       - sensor.lk_eichsfeld_newrecovered
 
   - type: entities
-    title: RKI Covid Data Stuttgart
+    title: RKI Covid Data - Stadt Stuttgart
     show_header_toggle: false
     entities:
       - sensor.sk_stuttgart_casesper100k
@@ -78,7 +78,7 @@ cards:
       - sensor.sk_stuttgart_newrecovered
 
   - type: entities
-    title: RKI Covid Data Tübingen
+    title: RKI Covid Data - LK Tübingen
     show_header_toggle: false
     entities:
       - sensor.lk_tubingen_casesper100k
@@ -91,7 +91,7 @@ cards:
       - sensor.lk_tubingen_newrecovered
 
   - type: entities
-    title: RKI Covid Data NDS
+    title: RKI Covid Data - BL NDS
     show_header_toggle: false
     entities:
       - sensor.bl_niedersachsen_casesper100k
@@ -104,7 +104,7 @@ cards:
       - sensor.bl_niedersachsen_newrecovered
 
   - type: entities
-    title: RKI Covid Data Thüringen
+    title: RKI Covid Data - BL Thüringen
     show_header_toggle: false
     entities:
       - sensor.bl_thuringen_casesper100k
@@ -117,7 +117,7 @@ cards:
       - sensor.bl_thuringen_newrecovered
 
   - type: entities
-    title: RKI Covid Data Sachsen-Anhalt
+    title: RKI Covid Data - BL Sachsen-Anhalt
     show_header_toggle: false
     entities:
       - sensor.bl_sachsen_anhalt_casesper100k
@@ -130,7 +130,7 @@ cards:
       - sensor.bl_sachsen_anhalt_newrecovered
 
   - type: entities
-    title: RKI Covid Data BW
+    title: RKI Covid Data - BL BW
     show_header_toggle: false
     entities:
       - sensor.bl_baden_wurttemberg_casesper100k
@@ -143,12 +143,12 @@ cards:
       - sensor.bl_baden_wurttemberg_newrecovered
 
   - type: custom:mini-graph-card
-    title: RKI Covid LK WeeklyIncidence
+    title: RKI Covid Data - LK WeeklyIncidence
     entities:
       - sensor.lk_gottingen_weekincidence
       - sensor.lk_goslar_weekincidence
       - sensor.lk_nordhausen_weekincidence
-      # - sensor.lk_eichsfeld_weekincidence
+      - sensor.lk_eichsfeld_weekincidence
       - sensor.sk_stuttgart_weekincidence
       - sensor.lk_tubingen_weekincidence
     hours_to_show: 72
@@ -156,13 +156,13 @@ cards:
     show_legend: true
     font_size: 75
     points_per_hour: 0.2
-    height: 300
+    height: 360
 
   - type: custom:mini-graph-card
-    title: RKI Covid BL WeeklyIncidence
+    title: RKI Covid Data - BL WeeklyIncidence
     entities:
       - sensor.bl_niedersachsen_weekincidence
-      # - sensor.bl_thuringen_weekincidence
+      - sensor.bl_thuringen_weekincidence
       - sensor.bl_sachsen_anhalt_weekincidence
       - sensor.bl_baden_wurttemberg_weekincidence
     hours_to_show: 72
@@ -170,7 +170,7 @@ cards:
     show_legend: true
     font_size: 75
     points_per_hour: 0.2
-    height: 300
+    height: 360
 
 ####################################################################
 # EOF
