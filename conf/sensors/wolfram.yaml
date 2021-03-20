@@ -2,6 +2,8 @@
 # Sensors
 ##########################################################################################
 
+#sensor:
+
 ################################################################################
 # Sensor uses data from this calendar: https://www.webcal.fi/de-DE/feiertage.php
 # from https://github.com/CCOSTAN/Home-AssistantConfig/blob/master/config/packages/holiday.yaml#L66-L99:

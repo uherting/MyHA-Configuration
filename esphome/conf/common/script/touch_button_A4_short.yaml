@@ -14,6 +14,9 @@
             lambda: 'return (true);'
           then:
             - logger.log: "ssr_script_tb_01_click_short dummy action."
+            # - globals.set:
+            #     id: isOc1OnViaBtn
+            #     value: 'true'
 
 ####################################################################
 # EOF

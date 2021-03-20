@@ -5,6 +5,7 @@
 ##########################################################################################
 # Date and time
 
+#sensor:
   - platform: time_date
     display_options:
       - 'time'
