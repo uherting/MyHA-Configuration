@@ -15,12 +15,18 @@ badges: [
   binary_sensor.workday_sensor
   ]
 cards:
-  # Rubbish pickup, full / new moon
+  # Rubbish collection
   - type: entities
-    title: Rubbish pickup, full / new moon
+    title: Rubbish collection
     show_header_toggle: false
     entities:
       - sensor.ics_1
+
+  # Full / new moon
+  - type: entities
+    title: Full moon / New moon
+    show_header_toggle: false
+    entities:
       - sensor.ics_2
       - sensor.ics_3
 
