@@ -8,8 +8,10 @@
     then:
       - if:
           condition:
-              # lambda: 'return (!id(isDeviceConnected);'
-              lambda: 'return (true);'
+            # execute this script only if we are offline
+            # lambda: 'return (!id(isDeviceConnected);'
+            # execute this script anyway (TM) for debugging purposes
+            lambda: 'return (true);'
           then:
             - logger.log: "ssr_script_tb_01_click_dbl dummy action."
 
