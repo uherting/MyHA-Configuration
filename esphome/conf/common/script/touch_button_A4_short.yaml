@@ -6,17 +6,21 @@
   - id: ssr_script_tb_01_click_short
     mode: restart
     then:
+      # - logger.log: "script ssr_script_tb_01_click_short action."
       - if:
-          condition:
-            # execute this script only if we are offline
-            # lambda: 'return (!id(isDeviceConnected);'
-            # execute this script anyway (TM) for debugging purposes
-            lambda: 'return (true);'
-          then:
-            - logger.log: "ssr_script_tb_01_click_short dummy action."
-            # - globals.set:
-            #     id: isOc1OnViaBtn
-            #     value: 'true'
+        # execution only: the light bar is off
+        condition:
+          lambda: 'return (!id(isLightBarOn));'
+        then:                  
+          # trigger octo coupler so that the light bar will go on
+          - globals.set:
+              id: isLightBarOnViaBtn
+              value: 'true'
+          - globals.set:
+              id: isLightBarOn
+              value: 'true'
+          - script.execute: lightbar_script_oc_trigger_on
+          # - logger.log: "The light bar was switched on."
 
 ####################################################################
 # EOF

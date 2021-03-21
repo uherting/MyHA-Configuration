@@ -1,0 +1,29 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01 to control SSR01 and the lightbar(via opto coupler)
+  #   - SSR01 is switched on no matter whether the sun is below or above the horizon
+  #   - the light bar is switched on / off depending on the sun being below the horizon
+  - id: ssr_script_pir_01
+    mode: restart
+    then:
+      - switch.turn_on: ${ssr01_id}
+      - if:
+          # execution only: after the sun is below the horizon
+          condition:
+            sun.is_below_horizon:
+          then:
+            - script.execute: lightbar_script_oc_trigger_on
+      - delay: !secret DELAY_02MIN
+      - switch.turn_off: ${ssr01_id}
+      - if:
+          # execution only: after the sun is below the horizon
+          condition:
+            sun.is_below_horizon:
+          then:
+            - script.execute: lightbar_script_oc_trigger_off
+
+####################################################################
+# EOF
+####################################################################

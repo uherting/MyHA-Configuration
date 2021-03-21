@@ -2,13 +2,13 @@
 # GLOBAL VARIABLES
 
 #globals:
-  - id: isOc1OnViaBtn
+  - id: isLightBarOnViaBtn
     type: bool
     restore_value: no
     # assume the best, test for the worst later...
     initial_value: 'false'
 
-  - id: isOc1On
+  - id: isLightBarOn
     type: bool
     restore_value: no
     # assume the best, test for the worst later...
