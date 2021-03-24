@@ -148,7 +148,6 @@ cards:
       - sensor.lk_gottingen_weekincidence
       - sensor.lk_goslar_weekincidence
       - sensor.lk_nordhausen_weekincidence
-      - sensor.lk_eichsfeld_weekincidence
       - sensor.sk_stuttgart_weekincidence
       - sensor.lk_tubingen_weekincidence
     hours_to_show: 72
@@ -156,13 +155,12 @@ cards:
     show_legend: true
     font_size: 75
     points_per_hour: 0.2
-    height: 360
+    height: 340
 
   - type: custom:mini-graph-card
     title: RKI Covid Data - BL WeeklyIncidence
     entities:
       - sensor.bl_niedersachsen_weekincidence
-      - sensor.bl_thuringen_weekincidence
       - sensor.bl_sachsen_anhalt_weekincidence
       - sensor.bl_baden_wurttemberg_weekincidence
     hours_to_show: 72
@@ -170,7 +168,19 @@ cards:
     show_legend: true
     font_size: 75
     points_per_hour: 0.2
-    height: 360
+    height: 340
+
+  - type: custom:mini-graph-card
+    title: RKI Covid Data - High incedences
+    entities:
+      - sensor.bl_thuringen_weekincidence
+      - sensor.lk_eichsfeld_weekincidence
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    font_size: 75
+    points_per_hour: 0.2
+    height: 340
 
 ####################################################################
 # EOF
