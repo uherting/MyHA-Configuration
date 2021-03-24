@@ -27,7 +27,7 @@
           - ON for at most 0.3s
           - OFF for at least 0.2s
         then:
-          # - logger.log: "Single short clicked, no further action."
+          # - logger.log: "Single short clicked. Exec script ssr_script_tb_01_click_short."
           - script.execute: ssr_script_tb_01_click_short
           # - logger.log: "Single short clicked, automation on."
           # - service: automation.turn_on

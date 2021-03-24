@@ -7,6 +7,7 @@
     mode: restart
     then:
       # - logger.log: "script ssr_script_tb_01_click_short action."
+      - switch.toggle: ${ssr01_id}
       - if:
         # execution only: the light bar is off
         condition:

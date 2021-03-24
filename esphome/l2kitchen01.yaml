@@ -114,7 +114,7 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/reed02.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A4.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A5.yaml
 
 #-------------------------------------------------------------------

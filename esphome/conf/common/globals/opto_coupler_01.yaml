@@ -8,6 +8,12 @@
     # assume the best, test for the worst later...
     initial_value: 'false'
 
+  - id: isLightBarOnViaPIR
+    type: bool
+    restore_value: no
+    # assume the best, test for the worst later...
+    initial_value: 'false'
+
   - id: isLightBarOn
     type: bool
     restore_value: no
