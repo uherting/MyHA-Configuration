@@ -11,8 +11,9 @@ title: Information
 path: information
 badges: [
   person.uwe, person.gillian,
+  binary_sensor.workday_sensor,
   sun.sun,
-  binary_sensor.workday_sensor
+  binary_sensor.sun_dwn_twilight
   ]
 cards:
   # Rubbish collection

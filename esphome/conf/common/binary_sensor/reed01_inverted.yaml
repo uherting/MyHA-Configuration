@@ -1,7 +1,6 @@
 ####################################################################
 # BINARY SENSORS
 
-
 #binary_sensor:
 
 ####################################################################
@@ -21,6 +20,9 @@
       - delayed_on: 100ms
       - delayed_off: 100ms
     device_class: door
+    on_release:
+      then:
+        - script.execute: ssr_script_reed_01
 
 # ############################################################
 #  END OF FILE
