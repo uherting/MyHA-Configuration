@@ -9,22 +9,12 @@
 icon: mdi:lightbulb
 title: Light switches
 path: lightswitches
-
-# device tracker integration (via WiFi)
-# ping: kind of reliable
-# nmap: not reliable at all
 badges: [
   person.uwe, person.gillian,
+  binary_sensor.workday_sensor,
   sun.sun,
-  binary_sensor.workday_sensor
+  binary_sensor.sun_dwn_twilight
   ]
-
-# device_tracker.huawei_vns_l31,
-# device_tracker.redmi_4
-
-# device_tracker.ping_uh, device_tracker.ping_gh,
-# device_tracker.nmap_uh, device_tracker.nmap_gh,
-
 cards:
   - type: glance
     title: Lichtschalter
