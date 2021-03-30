@@ -9,6 +9,10 @@ var/opt/tg/*/*.jpg
 .HA_VERSION
 secrets.yaml
 
+# barcode buddy
+access.log
+error.log
+
 # all __pycache__ dirs
 __pycache__
 
