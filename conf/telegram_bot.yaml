@@ -7,8 +7,12 @@
 - platform: polling
   api_key: !secret TELEGRAM_TOKEN
   allowed_chat_ids:
-    - !secret TELEGRAM_GRP_NOTIFY_CHAT_ID
-    - !secret TELEGRAM_HA_USER_H431_CHAT_ID
+    - !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
+    - !secret TELEGRAM_NOTIFY_GRP_ALERTS_CHAT_ID
+    - !secret TELEGRAM_NOTIFY_GRP_WARNINGS_CHAT_ID
+    - !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
+    - !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
+    - !secret TELEGRAM_HA_USER_UH_CHAT_ID
 
 # ############################################################
 #  END OF FILE

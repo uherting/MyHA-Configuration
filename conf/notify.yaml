@@ -5,37 +5,36 @@
 # --------------------- device_tracker ---------------------
 - name: device_tracker_gh
   platform: telegram
-  chat_id: !secret TELEGRAM_HA_USER_H431_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
 - name: device_tracker_life360_info
   platform: telegram
-  chat_id: !secret TELEGRAM_HA_USER_H431_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
 # --------------------- cameras ---------------------
 - name: l9_cam_esp32
   platform: telegram
-  chat_id: !secret TELEGRAM_GRP_NOTIFY_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
 
 - name: l9_cam_ttgo
   platform: telegram
-  chat_id: !secret TELEGRAM_GRP_NOTIFY_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
 
 # ------------------- google backup addon -------------------
 - name: google_drive_backup_stale_backup_info
   platform: telegram
-  chat_id: !secret TELEGRAM_HA_USER_H431_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
 
 # --------------------- home assistant ---------------------
 - name: ha_status_info
   platform: telegram
-  chat_id: !secret TELEGRAM_HA_USER_H431_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
 
 # --------------------- home assistant ---------------------
 - name: hacs_info
   platform: telegram
-  chat_id: !secret TELEGRAM_HA_USER_H431_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
 
 # ############################################################
 #  END OF FILE
 # ############################################################
-
