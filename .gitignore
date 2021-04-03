@@ -10,8 +10,10 @@ var/opt/tg/*/*.jpg
 secrets.yaml
 
 # barcode buddy
-access.log
-error.log
+log/**/access.log
+log/**/access.log.*
+log/**/error.log
+log/**/error.log.*
 
 # all __pycache__ dirs
 __pycache__
