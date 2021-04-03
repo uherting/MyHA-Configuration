@@ -53,7 +53,7 @@
     uilovelace-adminall:
       mode: yaml
       filename: ui-lovelace-admin.yaml
-      title: Overview Admin
+      title: Admin - 1
       icon: mdi:tools
       show_in_sidebar: true
       require_admin: true
@@ -61,7 +61,7 @@
     uilovelace-adminesp:
       mode: yaml
       filename: ui-lovelace-admin_esp8266.yaml
-      title: Overview Admin ESPHome
+      title: Admin - 2(ESP)
       icon: mdi:devices
       show_in_sidebar: true
       require_admin: true
