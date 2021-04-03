@@ -44,9 +44,9 @@
 
     uilovelace-user02:
       mode: yaml
-      filename: ui-lovelace_02.yaml
+      filename: ui-lovelace-user02.yaml
       title: Overview ESPHome
-      icon: mdi:cpu-32-bit
+      icon: mdi:memory
       show_in_sidebar: true
       require_admin: false
 
