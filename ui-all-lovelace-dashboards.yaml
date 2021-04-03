@@ -50,7 +50,7 @@
       show_in_sidebar: true
       require_admin: false
 
-    uilovelace-zadminall:
+    uilovelace-adminall:
       mode: yaml
       filename: ui-lovelace-admin.yaml
       title: Overview Admin
@@ -58,7 +58,7 @@
       show_in_sidebar: true
       require_admin: true
 
-    uilovelace-zadminesp:
+    uilovelace-adminesp:
       mode: yaml
       filename: ui-lovelace-admin_esp8266.yaml
       title: Overview Admin ESPHome
