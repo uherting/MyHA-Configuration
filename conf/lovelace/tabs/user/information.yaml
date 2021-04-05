@@ -25,15 +25,15 @@ cards:
 
   # Full / new moon
   - type: entities
-    title: Full moon / New moon
+    title: Full / New Moon
     show_header_toggle: false
     entities:
       - sensor.ics_2
       - sensor.ics_3
 
-  # Holidays and DST
+  # Holidays
   - type: entities
-    title: Holidays and DST
+    title: Holidays
     show_header_toggle: false
     entities:
       - sensor.ics_900
@@ -42,6 +42,12 @@ cards:
       - sensor.ics_991
       - sensor.ics_992
 
+  # DST
+  - type: entities
+    title: DST
+    show_header_toggle: false
+    entities:
+      - sensor.ics_995
 
 ####################################################################
 # EOF

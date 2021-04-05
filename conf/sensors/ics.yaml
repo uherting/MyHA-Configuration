@@ -105,15 +105,16 @@
   #   force_update: 3600
   #   id: 4
 
-  # # Sommerzeit (Anfang/Ende)
-  # - platform: ics
-  #   # url is just an ordinary web page at google
-  #   url: https://calendar.google.com/calendar/embed?src=de.german%23holiday%40group.v.calendar.google.com&ctz=Europe%2FBerlin
-  #   name: Sommerzeit
-  #   contains: Sommerzeit
-  #   lookahead: 180
-  #   force_update: 3600
-  #   id: 5
+  # Sommerzeit (Anfang/Ende)
+  - platform: ics
+    # url is just an ordinary web page at google
+    url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
+    name: Sommerzeit
+    startswith: Sommerzeit
+    lookahead: 400
+    force_update: 3600
+    id: 995
+    icon: mdi:weather-sunny
 
 ####################################################################
 # EOF
