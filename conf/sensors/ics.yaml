@@ -14,7 +14,7 @@
     url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
     name: Abfall
     startswith: Abfall
-    lookahead: 31
+    lookahead: 40
     force_update: 3600
     id: 1
     icon: mdi:delete-empty
@@ -24,7 +24,7 @@
     url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
     name: Vollmond
     startswith: Full Moon
-    lookahead: 31
+    lookahead: 40
     force_update: 3600
     id: 2
     icon: mdi:moon-full
@@ -34,7 +34,7 @@
     url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
     name: Neumond
     startswith: New Moon
-    lookahead: 31
+    lookahead: 40
     force_update: 3600
     id: 3
     icon: mdi:moon-new
@@ -56,7 +56,7 @@
     # url: http://de-kalender.de/downloads/feiertage_niedersachsen_2021_et.ics
     name: Ostermontag
     startswith: Ostermontag
-    lookahead: 365
+    lookahead: 400
     force_update: 3600
     id: 950
     icon: mdi:rabbit
@@ -67,7 +67,7 @@
     # url: http://de-kalender.de/downloads/feiertage_niedersachsen_2021_et.ics
     name: Advent
     contains: Advent
-    lookahead: 365
+    lookahead: 400
     force_update: 3600
     id: 990
     icon: mdi:candle
