@@ -105,16 +105,25 @@
   #   force_update: 3600
   #   id: 4
 
-  # Sommerzeit (Anfang/Ende)
+  # Sommerzeit (Beginn)
   - platform: ics
-    # url is just an ordinary web page at google
     url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
-    name: Sommerzeit
-    startswith: Sommerzeit
+    name: Sommerzeit (Beginn)
+    startswith: Sommerzeit (Beginn)
     lookahead: 400
     force_update: 3600
     id: 995
-    icon: mdi:weather-sunny
+    icon: mdi:weather-sunset-up
+
+  # Sommerzeit (Ende)
+  - platform: ics
+    url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
+    name: Sommerzeit (Ende)
+    startswith: Sommerzeit (Ende)
+    lookahead: 400
+    force_update: 3600
+    id: 996
+    icon: mdi:weather-sunset-down
 
 ####################################################################
 # EOF
