@@ -24,14 +24,14 @@ frontend:
   themes: !include_dir_merge_named themes
 
 # stream:
-#   stream_source: "rtsp://admin:LifeTec12@192.168.178.97:554/onvif2"
-#   # stream_source: "rtsp://admin:LifeTec12@192.168.178.97:554/onvif1"
-#   # stream_source: "http://admin:LifeTec12@192.168.178.97:5000/"
+#   stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif2"
+#   # stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif1"
+#   # stream_source: "http://admin:H431LifeTec1234@192.168.178.97:5000/"
 #   filename: /config/var/opt/theworld.mp4
 
-# # for the ONVIF integration
-# ffmpeg:
-#   ffmpeg_bin: /usr/bin/ffmpeg
+# for the ONVIF integration
+ffmpeg:
+  ffmpeg_bin: /usr/bin/ffmpeg
 
 input_boolean: !include conf/input_booleans.yaml
 input_datetime: !include conf/input_datetime/time_stamps_esp.yaml
