@@ -109,6 +109,23 @@ python_script:
 
 switch: !include_dir_merge_list conf/switches
 
+# DOODS
+image_processing:
+  - platform: doods
+    scan_interval: 180
+    url: "http://192.168.178.31:8080"
+    detector: default
+    source:
+      - entity_id: camera.ipcam_ker01_mainstream
+    file_out:
+      - "/media/{{ camera_entity.split('.')[1] }}_latest.jpg"
+      - "/media/{{ camera_entity.split('.')[1] }}_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+    confidence: 50
+    labels:
+      - name: person
+        confidence: 40
+      - car
+
 ####################################################################
 # EOF
 ####################################################################
