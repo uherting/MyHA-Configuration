@@ -112,7 +112,11 @@ switch: !include_dir_merge_list conf/switches
 # DOODS
 image_processing:
   - platform: doods
-    scan_interval: 180
+    # a scan interval of 180 mins. default is 10 secs.
+    # rather call the image_processing.scan service
+    # when you actually want to perform processing.
+    # for details see: https://www.home-assistant.io/integrations/doods/
+    scan_interval: 10800
     url: "http://192.168.178.31:8080"
     detector: default
     source:
