@@ -109,27 +109,27 @@ python_script:
 
 switch: !include_dir_merge_list conf/switches
 
-# # DOODS
-# image_processing:
-#   - platform: doods
-#     # a scan interval of 180 mins. default is 10 secs.
-#     # rather call the image_processing.scan service
-#     # when you actually want to perform processing.
-#     # for details see: https://www.home-assistant.io/integrations/doods/
-#     scan_interval: 10800
-#     url: "http://192.168.178.31:8080"
-#     detector: default
-#     source:
-#       - entity_id: camera.ipcam_ker01_mainstream
-#     file_out:
-#       - "/media/{{ camera_entity.split('.')[1] }}_latest.jpg"
-#       - "/media/{{ camera_entity.split('.')[1] }}_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
-#     confidence: 50
-#     labels:
-#       - name: person
-#         confidence: 40
-#       - car
-#       - truck
+# DOODS
+image_processing:
+  - platform: doods
+    # a scan interval of 180 mins. default is 10 secs.
+    # rather call the image_processing.scan service
+    # when you actually want to perform processing.
+    # for details see: https://www.home-assistant.io/integrations/doods/
+    scan_interval: 10800
+    url: "http://192.168.178.31:8080"
+    detector: default
+    source:
+      - entity_id: camera.ipcam_ker01_mainstream
+    file_out:
+      - "/media/{{ camera_entity.split('.')[1] }}_latest.jpg"
+      - "/media/{{ camera_entity.split('.')[1] }}_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+    confidence: 50
+    labels:
+      - name: person
+        confidence: 40
+      - car
+      - truck
 
 ####################################################################
 # EOF
