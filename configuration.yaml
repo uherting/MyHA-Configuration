@@ -129,6 +129,7 @@ image_processing:
       - name: person
         confidence: 40
       - car
+      - truck
 
 ####################################################################
 # EOF
