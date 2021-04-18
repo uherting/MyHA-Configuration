@@ -1,0 +1,41 @@
+#
+# !!! This automation is not fully configured!!!
+#
+
+- id: f53090b5497946ccb0faac9295458cad
+  alias: Motion is detected - DOODS
+  initial_state: false
+  trigger:
+  - platform: state
+    entity_id: sensor.isshellymotiondetected
+    to: 'True'
+  condition: []
+  action:
+  - service: image_processing.scan
+    entity_id: image_processing.YOUR_DOODS_ENTITY
+  mode: single
+- id: d00ds
+  alias: Dudes who likes DOODS
+  trigger:
+  - entity_id: image_processing.YOUR_DOODS_ENTITY
+    platform: state
+  condition:
+  - condition: or
+    conditions:
+    - condition: template
+      value_template: '{{ ''car'' in state_attr(''image_processing.YOUR_DOODS_ENTITY'',
+        ''summary'') }}'
+    - condition: template
+      value_template: '{{ ''truck'' in state_attr(''image_processing.YOUR_DOODS_ENTITY'',
+        ''summary'') }}'
+    - condition: template
+      value_template: '{{ ''person'' in state_attr(''image_processing.YOUR_DOODS_ENTITY'',
+        ''summary'') }}'
+  action:
+  - data:
+      data:
+        photo:
+        - caption: Motion is Detected
+          file: /media/YOUR_CAMERA_ENTITY_latest.jpg
+      message: Motion is Detected
+    service: notify.telegram
