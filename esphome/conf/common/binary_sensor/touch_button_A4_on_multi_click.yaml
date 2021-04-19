@@ -25,12 +25,14 @@
     on_multi_click:
       - timing:
           - ON for at most 0.3s
-          - OFF for at most 0.4s
-          - ON for at most 0.3s
           - OFF for at least 0.2s
         then:
-          # - logger.log: "Double clicked, no further action."
-          - script.execute: ssr_script_tb_01_click_dbl
+          # - logger.log: "Single short clicked. Exec script ssr_script_tb_01_click_short."
+          - script.execute: ssr_script_tb_01_click_short
+          # - logger.log: "Single short clicked, automation on."
+          # - service: automation.turn_on
+          #   data:
+          #     entity_id: automation.<nameOfAutomation>
       - timing:
           - ON for 1s to 2s
           - OFF for at least 0.2s
@@ -50,14 +52,12 @@
           # - switch.turn_on: ${ssr01_id}
       - timing:
           - ON for at most 0.3s
+          - OFF for at most 0.4s
+          - ON for at most 0.3s
           - OFF for at least 0.2s
         then:
-          # - logger.log: "Single short clicked, no further action."
-          - script.execute: ssr_script_tb_01_click_short
-          # - logger.log: "Single short clicked, automation on."
-          # - service: automation.turn_on
-          #   data:
-          #     entity_id: automation.<nameOfAutomation>
+          # - logger.log: "Double clicked, no further action."
+          - script.execute: ssr_script_tb_01_click_dbl
 
 # ############################################################
 #  END OF FILE

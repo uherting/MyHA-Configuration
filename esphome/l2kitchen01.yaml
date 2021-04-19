@@ -79,7 +79,7 @@ time: !include conf/common/time.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
-i2c: !include conf/common/device/i2c.yaml
+i2c: !include conf/common/device/i2c_v2.yaml
 dallas: !include conf/common/device/dallas.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -95,10 +95,12 @@ globals:
   - <<: !include conf/common/globals/opto_coupler_01.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir1_to_ssr1.yaml
+  - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
   - <<: !include conf/common/script/touch_button_A4_double.yaml
   - <<: !include conf/common/script/touch_button_A4_short.yaml
   - <<: !include conf/common/script/touch_button_A4_long.yaml
+  - <<: !include conf/common/script/lightbar_script_oc_trigger_off.yaml
+  - <<: !include conf/common/script/lightbar_script_oc_trigger_on.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -112,7 +114,7 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/reed02.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A4.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A5.yaml
 
 #-------------------------------------------------------------------
