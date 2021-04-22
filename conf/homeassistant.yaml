@@ -15,7 +15,13 @@ allowlist_external_dirs:
   - /config/var/opt/tg/l9esp32cam01
   - /config/var/opt/tg/l9esp32cam02
   - /config/var/opt/tg/l9esp32cam03
+  - /config/var/opt/tg/l9esp32cam04
+  - /config/var/opt/tg/l9esp32cam05
+  - /config/var/opt/tg/l9esp32cam06
+  - /config/var/opt/tg/l9esp32cam07
+  - /config/var/opt/tg/l9esp32cam08
   - /config/var/opt/tg/l9ttgocam01
   - /config/var/opt/tg/l9ttgocam02
+  - /config/var/opt/tg/ipcam_ker01
 
 customize: !include customization.yaml
