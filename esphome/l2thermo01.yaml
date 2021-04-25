@@ -56,9 +56,9 @@ packages:
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-logger:
+# logger:
 #  # see secrets.yaml for log level definitions
-  level: !secret LOG_LEVEL_DEBUG
+  # level: !secret LOG_LEVEL_DEBUG
 #  # uncomment the following line for custom component logging
 #   esp8266_store_log_strings_in_flash: False
 
@@ -70,7 +70,8 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 i2c: !include conf/common/device/i2c_v2.yaml
-dallas: !include conf/common/device/dallas.yaml
+# dallas: !include conf/common/device/dallas.yaml
+dallas: !include conf/common/device/dallas_update_1min.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
@@ -145,17 +146,18 @@ text_sensor:
 # =========================================================
 # test components right after cloning (no change of functionality)
 # ----------------------------------------------------------
-uhthermostat:
-  - platform: uheq3n1
-    id: $thermostat_de01_id
-    pin_z: D5
-    pin_b: D6
-    pin_c: D7
-    pin_d: D0
-    max_speed: "250 steps/s"
-    # pin_boost_button: D5
-    # pin_rotary_encoder01: D6
-    # pin_rotary_encoder02: D7
+# uhthermostat:
+#   - platform: uheq3n1
+#     id: $thermostat_de01_id
+#     pin_z: D5
+#     pin_b: D6
+#     pin_c: D7
+#     pin_d: D0
+#     max_speed: "250 steps/s"
+#     # pin_boost_button: D5
+#     # pin_rotary_encoder01: D6
+#     # pin_rotary_encoder02: D7
+
 # =========================================================
 # test components after renaming parameters for validation
 # ----------------------------------------------------------
