@@ -2,7 +2,7 @@
 # GLOBAL VARIABLES
 
 #globals:
-  - id: isLightBarOnViaBtn
+  - id: isLightBarOnViaPIR
     type: bool
     restore_value: no
     # assume the best, test for the worst later...

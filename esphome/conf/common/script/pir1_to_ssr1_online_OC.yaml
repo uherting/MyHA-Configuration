@@ -8,7 +8,9 @@
   - id: ssr_script_pir_01
     mode: restart
     then:
+      - logger.log: "Turning SSR01 on as part of offline automation."
       - switch.turn_on: ${ssr01_id}
+      - logger.log: "If after sunset then switch the lightbar on."
       - if:
           # execution only: after the sun is below the horizon
           condition:
@@ -18,8 +20,11 @@
             - globals.set:
               id: isLightBarOnViaPIR
               value: 'true'
+      - logger.log: "Delaying as part of offline automation."
       - delay: !secret DELAY_02MIN
+      - logger.log: "Turning SSR01 off as part of offline automation."
       - switch.turn_off: ${ssr01_id}
+      - logger.log: "If after sunset then switch the lightbar off."
       - if:
           # execution only: after the sun is below the horizon
           condition:
