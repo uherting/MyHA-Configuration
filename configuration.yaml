@@ -23,11 +23,11 @@ frontend:
   # themes installed via HACS
   themes: !include_dir_merge_named themes
 
-# stream:
+stream:
+  stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif1"
+  filename: /config/var/opt/theworld.mp4
 #   stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif2"
-#   # stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif1"
 #   # stream_source: "http://admin:H431LifeTec1234@192.168.178.97:5000/"
-#   filename: /config/var/opt/theworld.mp4
 
 # for the ONVIF integration
 ffmpeg:

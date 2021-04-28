@@ -1,0 +1,36 @@
+# ############################################################
+#
+#  ICS
+#
+# ############################################################
+
+
+# ############################################################
+# Rubbish collection due tomorrow
+# ############################################################
+- alias: ICS - Rubbish collection due tomorrow
+  id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.ics_1
+      attribute: remaining
+      below: 2
+      above: 0
+# -------------------- CONDITIONS -------------------
+  # condition:
+  #   condition: template
+  #   value_template: "{{ trigger.event.data.repository is defined }}"
+# --------------------- ACTIONS ---------------------
+  action:
+# ---------------- SEND NOTIFICATION ----------------
+    - service: notify.ics_notify
+      data_template:
+        title: Rubbish collection is due tomorrow
+        message: >
+          Date / time: {{ states('sensor.date_time') }}
+
+# ############################################################
+#  END OF FILE
+# ############################################################

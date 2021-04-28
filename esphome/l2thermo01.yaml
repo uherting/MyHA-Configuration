@@ -70,7 +70,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 i2c: !include conf/common/device/i2c_v2.yaml
-# dallas: !include conf/common/device/dallas.yaml
+# dallas: !include conf/common/device/_update_5min.yaml
 dallas: !include conf/common/device/dallas_update_1min.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -114,7 +114,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/sensor/l2thermo01_case.yaml
-  # - <<: !include conf/sensor/l2thermo01_env01.yaml
+  - <<: !include conf/sensor/l2thermo01_env01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS

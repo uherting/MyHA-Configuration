@@ -12,19 +12,32 @@ badges: [ ]
 cards:
 
   - type: custom:mini-graph-card
-    title: Temperatures (case)
+    title: Temperatures (L2Thermo01)
     entities:
-      - sensor.l2_kitchen01_tempcase_01
-      - sensor.l2_storage01_tempcase_01
-      - sensor.l2_corridor01_tempcase_01
       - sensor.l2_thermo01_tempcase_01
+      - sensor.l2_thermo01_tempenv_01
     hours_to_show: 72
     hour24: true
     show_legend: true
     font_size: 75
     lower_bound: 15
     upper_bound: 40
-    points_per_hour: 0.2
+    points_per_hour: 1
+    height: 250
+
+  - type: custom:mini-graph-card
+    title: Temperatures (case)
+    entities:
+      - sensor.l2_kitchen01_tempcase_01
+      - sensor.l2_storage01_tempcase_01
+      # - sensor.l2_corridor01_tempcase_01
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    font_size: 75
+    lower_bound: 15
+    upper_bound: 30
+    points_per_hour: 1
     height: 250
 
   - type: entities
@@ -72,7 +85,7 @@ cards:
     show_header_toggle: false
     entities:
       - sensor.l2_thermo01_tempcase_01
-      # - sensor.l2_thermo01_tempenv_01
+      - sensor.l2_thermo01_tempenv_01
       # - binary_sensor.l2_thermo01_pir_01
       # - binary_sensor.l2_thermo01_pir_02
       # - binary_sensor.l2_thermo01_door

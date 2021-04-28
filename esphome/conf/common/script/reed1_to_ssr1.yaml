@@ -6,7 +6,9 @@
   - id: ssr_script_reed_01
     mode: restart
     then:
+      # set PIR to "no motion detected" and turn the SSR off
       - lambda: |-
+          id(${pir01_id}).publish_state(false);
           id(${ssr01_id}).turn_off();
 
 ####################################################################

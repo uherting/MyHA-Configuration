@@ -12,16 +12,18 @@ path: cams
 badges: [ ]
 cards:
 
+
   # ONVIF CAM "TheWorld" hires
+  # works with F5 (refreshing the page) only
   - type: picture-entity
     entity: camera.ipcam_ker01_mainstream
     camera_view: auto
 
-  #works with F5 (refreshing the page) only
   # ONVIF CAM "TheWorld" lowres
-  - type: picture-entity
-    entity: camera.ipcam_ker01_substream
-    camera_view: auto
+  # works with F5 (refreshing the page) only
+  # - type: picture-entity
+  #   entity: camera.ipcam_ker01_substream
+  #   camera_view: auto
 
   # ESP32-cam cameras
   - type: picture-glance
@@ -30,7 +32,7 @@ cards:
     camera_view: live
     entities:
       - light.l9_cam32_01_camlight
-#      - binary_sensor.l9_cam32_01_pir_01
+      # - binary_sensor.l9_cam32_01_pir_01
       - binary_sensor.l9_cam32_01_status
       - sensor.l9_cam32_01_esphome_version
       - sensor.l9_cam32_01_wifi_signal
@@ -41,7 +43,7 @@ cards:
     camera_view: live
     entities:
       - light.l9_cam32_02_camlight
-      - binary_sensor.l9_cam32_02_pir_01
+      # - binary_sensor.l9_cam32_02_pir_01
       - binary_sensor.l9_cam32_02_status
       - sensor.l9_cam32_02_esphome_version
       - sensor.l9_cam32_02_wifi_signal
@@ -52,7 +54,7 @@ cards:
     camera_view: live
     entities:
       - light.l9_cam32_03_camlight
-      - binary_sensor.l9_cam32_03_pir_01
+      # - binary_sensor.l9_cam32_03_pir_01
       - binary_sensor.l9_cam32_03_status
       - sensor.l9_cam32_03_esphome_version
       - sensor.l9_cam32_03_wifi_signal
