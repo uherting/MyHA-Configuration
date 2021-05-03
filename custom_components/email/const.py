@@ -12,6 +12,7 @@ CONF_SHOW_ALL = 'show_all'
 ATTR_COUNT = 'count'
 ATTR_EMAILS = 'emails'
 ATTR_TRACKING_NUMBERS = 'tracking_numbers'
+CONF_SSL = 'ssl'
 
 EMAIL_ATTR_FROM = 'from'
 EMAIL_ATTR_SUBJECT = 'subject'
