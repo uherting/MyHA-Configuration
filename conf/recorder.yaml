@@ -10,7 +10,7 @@
 # purge_interval: 1
 
 # use the MariaDB add-on...
-db_url: mysql://homeassistant:lifetec@core-mariadb/homeassistant?charset=utf8
+db_url: mysql://homeassistant:Lifetec12!@core-mariadb/homeassistant?charset=utf8
 
 # automatically purge the database every night at 04:12 local time.
 # according to https://www.home-assistant.io/integrations/recorder
