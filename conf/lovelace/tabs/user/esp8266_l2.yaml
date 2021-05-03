@@ -95,21 +95,18 @@ cards:
   #     # - switch.l2_corridor01_ssr_02
   #     # - light.l2_corridor01_fastled_01
 
-  # - type: light
-  #   entity: light.l2_corridor01_fastled_01
-
   # ================================
   #  WLED entities across two cards
   # ================================
-  # l2wled01 (nightlight, estimated current)
-  - type: entities
-    title: L2 WLED 01
-    entities:
-      - switch.l2wled01_nightlight
-      - sensor.l2wled01_estimated_current
-  # l2wled01 on/off, colour
-  - type: light
-    entity: light.l2wled01
+  # # l2wled01 (nightlight, estimated current)
+  # - type: entities
+  #   title: L2 WLED 01
+  #   entities:
+  #     - switch.l2wled01_nightlight
+  #     - sensor.l2wled01_estimated_current
+  # # l2wled01 on/off, colour
+  # - type: light
+  #   entity: light.l2wled01
 
 ####################################################################
 # EOF
