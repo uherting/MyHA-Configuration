@@ -6,10 +6,14 @@
   - id: ssr_script_reed_01
     mode: restart
     then:
-      # set PIR to "no motion detected" and turn the SSR off
-      - lambda: |-
-          id(${pir01_id}).publish_state(false);
-          id(${ssr01_id}).turn_off();
+      - if:
+          condition: 
+            - script.is_running: ssr_script_pir_01
+          then:
+            - script.stop: ssr_script_pir_01
+      # the following might help against a just triggered PIR if the "ON" time is less than 3secs
+      - delay: !secret DELAY_03SEC
+      - lambda: id(${ssr01_id}).turn_off();
 
 ####################################################################
 # EOF

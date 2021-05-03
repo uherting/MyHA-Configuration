@@ -40,18 +40,18 @@ cards:
     points_per_hour: 1
     height: 250
 
-  - type: entities
-    title: L2 Corridor 01
-    show_header_toggle: false
-    entities:
-      - sensor.l2_corridor01_tempcase_01
-      # - sensor.l2_corridor01_tempenv_01
-      - binary_sensor.l2_corridor01_pir_01
-      - binary_sensor.l2_corridor01_pir_02
-      # - binary_sensor.l2_corridor01_door
-      # - switch.l2_corridor01_ssr_01
-      # - switch.l2_corridor01_ssr_02
-      # - light.l2_corridor01_fastled_01
+  # - type: entities
+  #   title: L2 Corridor 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l2_corridor01_tempcase_01
+  #     # - sensor.l2_corridor01_tempenv_01
+  #     - binary_sensor.l2_corridor01_pir_01
+  #     - binary_sensor.l2_corridor01_pir_02
+  #     # - binary_sensor.l2_corridor01_door
+  #     # - switch.l2_corridor01_ssr_01
+  #     # - switch.l2_corridor01_ssr_02
+  #     # - light.l2_corridor01_fastled_01
 
   # - type: light
   #   entity: light.l2_corridor01_fastled_01

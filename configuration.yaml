@@ -10,7 +10,7 @@ cloud:
 logger: !include conf/logger.yaml
 recorder: !include conf/recorder.yaml
 history: !include conf/history.yaml
-influxdb: !include conf/influxdb.yaml
+# influxdb: !include conf/influxdb.yaml
 
 #mqtt: !include conf/mqtt.yaml
 
@@ -26,8 +26,8 @@ frontend:
 stream:
   stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif1"
   filename: /config/var/opt/theworld.mp4
-#   stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif2"
-#   # stream_source: "http://admin:H431LifeTec1234@192.168.178.97:5000/"
+  # stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif2"
+  # # stream_source: "http://admin:H431LifeTec1234@192.168.178.97:5000/"
 
 # for the ONVIF integration
 ffmpeg:
@@ -83,15 +83,7 @@ tankerkoenig: !include  conf/tankerkoenig.yaml
 
 pi_hole: !include conf/pi_holes/pi_holes.yaml
 
-rest_command:
-  github_create_issue_on_new_ha_version:
-    url: https://api.github.com/repos/uherting/MyHA-Configuration/issues
-    method: POST
-    headers:
-      Authorization: !secret GITHUB_TOKEN
-    payload: '{"title":"Home-Assistant {{ version }} available","body":"Home-Assistant {{ version }} is now available."}'
-
-#rest_command: !include conf/rest_command.yaml
+# rest_command: !include conf/rest_command.yaml
 
 notify: !include conf/notify.yaml
 
