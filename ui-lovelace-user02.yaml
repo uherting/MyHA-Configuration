@@ -15,8 +15,8 @@ views:
   # ESP devices
   - !include /config/conf/lovelace/tabs/user/esp8266_l2.yaml
   - !include /config/conf/lovelace/tabs/user/esp8266_l0.yaml
-  - !include /config/conf/lovelace/tabs/user/esp8266_l1.yaml
-  - !include /config/conf/lovelace/tabs/user/esp8266_l9.yaml
+  # - !include /config/conf/lovelace/tabs/user/esp8266_l1.yaml
+  # - !include /config/conf/lovelace/tabs/user/esp8266_l9.yaml
 
 ####################################################################
 # EOF

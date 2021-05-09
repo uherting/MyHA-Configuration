@@ -9,7 +9,7 @@
     name: $pir01_name
     id: ${pir01_id}
     pin:
-      mcp23017: ${mcp23017_hub01_id}
+      mcp23xxx: ${mcp23017_hub01_id}
       number: !secret MCP23017_PIN_A0
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: INPUT

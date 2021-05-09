@@ -10,7 +10,7 @@
     name: $touchbutton01_name
     id: ${touchbutton01_id}
     pin:
-      mcp23017: ${mcp23017_hub01_id}
+      mcp23xxx: ${mcp23017_hub01_id}
       number: !secret MCP23017_PIN_A4
       #
       # TODO: before installation change settings for mode / inverted

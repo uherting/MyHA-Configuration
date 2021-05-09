@@ -7,7 +7,7 @@
     name: ${ssr01_name}
     id: ${ssr01_id}
     pin:
-      mcp23017: ${mcp23017_hub01_id}
+      mcp23xxx: ${mcp23017_hub01_id}
       number: !secret MCP23017_PIN_B0
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: OUTPUT
@@ -22,7 +22,7 @@
 #    name: ${opto_cpl01_name}
 #    id: ${opto_cpl01_id}
 #    pin:
-#      mcp23017: ${mcp23017_hub01_id}
+#      mcp23xxx: ${mcp23017_hub01_id}
 #      number: !secret MCP23017_PIN_B7
 #      # mode can be INPUT, INPUT_PULLUP or OUTPUT
 #      mode: OUTPUT

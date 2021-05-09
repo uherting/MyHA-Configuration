@@ -1,0 +1,120 @@
+####################################################################
+# SUBSTITUTIONS
+
+  # device definitions
+  device_name: l2ble01
+  device_comment: Level 2 BLE device 01
+  device_platform: ESP32
+  device_board: esp32doit-devkit-v1
+  # alternative: device_board: esp32dev
+  wifi_static_ip: 192.168.178.229
+
+  # the friendly name and id
+  friendly_name: L2 BLE01
+  friendly_id: L2BLE01
+
+  log_level: !secret LOG_LEVEL_INFO
+
+  # wifi settings
+  wifi_status_name: ${friendly_name} Status
+  wifi_status_id: ${friendly_id}Status
+  wifi_uptime_name: ${friendly_name} Uptime
+  wifi_uptime_id: ${friendly_id}Uptime
+  wifi_uptime_human_name: ${friendly_name} Uptime human readable
+  wifi_uptime_human_id: ${friendly_id}UptimeHumanReadable
+  wifi_signal_name: ${friendly_name} WiFi Signal
+  wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
+  wifi_conn_ssid_name: ${friendly_name} Conn SSID
+  wifi_conn_bssid_name: ${friendly_name} Conn BSSID
+
+  # mqtt user / password
+  mqtt_user: mqtt_${device_name}
+  mqtt_pw: mqtt_${device_name}
+
+  # details for DALLAS sensors connected to the device
+  dallas_01c01_name: $friendly_name TempCase 01
+  dallas_01c01_address: !secret DALLAS_01_L2KITCHEN01_CASESENSOR_01_ADDRESS
+  dallas_01e01_name: $friendly_name TempEnv 01
+  dallas_01e01_address: !secret DALLAS_01_L2KITCHEN01_ENVSENSOR_01_ADDRESS
+
+  #
+  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
+  #
+
+  # ------------------------------------------------------------------
+  # non standard substitutions
+
+  # none so far
+
+  # ------------------------------------------------------------------
+  # standard substitutions follow
+
+  # connected sensors / interfaces
+  # offline sensors
+  binary_template_sensor_01_name: $friendly_name BIN_TEMPL 01
+  binary_template_sensor_01_id: ${friendly_id}_BIN_TEMPL_01
+  binary_template_sensor_02_name: $friendly_name BIN_TEMPL 02
+  binary_template_sensor_02_id: ${friendly_id}_BIN_TEMPL_02
+  # MCP23017 hub ids
+  mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
+  # opto couplers
+  opto_cpl01_name: ${friendly_name} OptoCoupler 01
+  opto_cpl01_id: ${friendly_id}_OC01
+  # PIRs
+  pir01_name: $friendly_name PIR 01
+  pir01_id: ${friendly_id}_PIR_01
+  pir02_name: $friendly_name PIR 02
+  pir02_id: ${friendly_id}_PIR_02
+  # local reed relays
+  reed_contact01_name: $friendly_name Door
+  reed_contact01_id: ${friendly_id}_REED_01
+  reed_contact02_name: $friendly_name REED 01
+  reed_contact02_id: ${friendly_id}_REED_02
+  reed_contact03_name: $friendly_name REED 03
+  reed_contact03_id: ${friendly_id}_REED_03
+  reed_contact04_name: $friendly_name REED 04
+  reed_contact04_id: ${friendly_id}_REED_04
+  # remote reed relays
+  # (none so far)
+  # SSRs
+  ssr01_name: $friendly_name SSR 01
+  ssr01_id: ${friendly_id}_SSR01
+  ssr02_name: $friendly_name SSR 02
+  ssr02_id: ${friendly_id}_SSR02
+  ssr03_name: $friendly_name SSR 03
+  ssr03_id: ${friendly_id}_SSR03
+  # touch buttons
+  touchbutton01_name: $friendly_name TB 01
+  touchbutton01_id: ${friendly_id}_TB_01
+  touchbutton02_name: $friendly_name TB 02
+  touchbutton02_id: ${friendly_id}_TB_02
+
+  # ESP32 specific
+  ESP_ONBOARD_LED_PIN_NAME: "${friendly_name} Onboard LED"
+  ESP_ONBOARD_LED_PIN_ID: "${friendly_id}_Onboard_LED"
+  ESP_ONBOARD_LED_PIN_NUMBER: "2"
+  ESP_ONBOARD_RESTART_NAME: "${friendly_name} Restart"
+  ESP_ONBOARD_RESTART_ID: "${friendly_id}_Restart"
+
+  # Xiaomi Mijia BLE Sensors
+  # ------------------------
+  # name / token / bind key:
+  # ATC_4A3592 / 89d4fc2c02489c5b1dfe3ae7 / 3e4ed23b4f3516cc26e6ca53e33c0d0f
+  xi_01_base_name: Xiaomi Lounge
+  xi_01_macaddress: "A4:C1:38:B1:CD:7F"
+  xi_01_bindkey: "3e4ed23b4f3516cc26e6ca53e33c0d0f"
+  xi_01_temperature_name: ${xi_01_base_name} Temperature
+  xi_01_humidity_name: ${xi_01_base_name} Humidity
+  xi_01_battery_name: ${xi_01_base_name} Battery
+  # name / token / bind key:
+  #  /  / 
+  xi_02_base_name: Xiaomi Bedroom
+  xi_02_macaddress: ""
+  xi_02_bindkey: ""
+  xi_02_temperature_name: ${xi_01_base_name} Temperature
+  xi_02_humidity_name: ${xi_01_base_name} Humidity
+  xi_02_battery_name: ${xi_01_base_name} Battery
+
+####################################################################
+# EOF
+####################################################################
