@@ -60,7 +60,7 @@
 
     uilovelace-adminesp:
       mode: yaml
-      filename: ui-lovelace-admin02_esp8266.yaml
+      filename: ui-lovelace-admin02_esp.yaml
       title: Admin - 2(ESP)
       icon: mdi:devices
       show_in_sidebar: true
