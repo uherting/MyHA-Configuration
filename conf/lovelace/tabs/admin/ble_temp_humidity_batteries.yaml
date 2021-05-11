@@ -1,0 +1,49 @@
+####################################################################
+####################################################################
+#
+# temp_and_humidity tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:bluetooth-connect
+title: Temperature and Humidity
+path: temp_humidity_battery
+badges: []
+cards:
+  - type: entities
+    title: BLE Temp / Humidity / Batteries
+    show_header_toggle: false
+    entities:
+      - sensor.xiaomi_lounge_temperature
+      - sensor.xiaomi_lounge_humidity
+      - sensor.xiaomi_lounge_battery
+
+  # - type: entities
+  #   title: BLE Humidity
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.xiaomi_lounge_humidity
+
+  # - type: entities
+  #   title: BLE Batteries
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.xiaomi_lounge_battery
+
+  - type: custom:mini-graph-card
+    title: BLE Batteries
+    entities:
+      - sensor.xiaomi_lounge_battery
+    hours_to_show: 
+    hour24: true
+    show_legend: true
+    font_size: 75
+    lower_bound: 0
+    upper_bound: 100
+    points_per_hour: 0.5
+    height: 250
+
+####################################################################
+# EOF
+####################################################################

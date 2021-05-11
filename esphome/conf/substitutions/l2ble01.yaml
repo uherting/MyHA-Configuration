@@ -101,8 +101,10 @@
   # name / token / bind key:
   # ATC_4A3592 / 89d4fc2c02489c5b1dfe3ae7 / 3e4ed23b4f3516cc26e6ca53e33c0d0f
   xi_01_base_name: Xiaomi Lounge
-  xi_01_macaddress: "A4:C1:38:B1:CD:7F"
-  xi_01_bindkey: "3e4ed23b4f3516cc26e6ca53e33c0d0f"
+  xi_01_macaddress: A4:C1:38:4A:35:92
+  xi_01_bindkey: 3e4ed23b4f3516cc26e6ca53e33c0d0f
+  # xi_01_bindkey: "89d4fc2c02489c5b1dfe3ae7"
+  xi_01_token: "3e4ed23b4f3516cc26e6ca53e33c0d0f"
   xi_01_temperature_name: ${xi_01_base_name} Temperature
   xi_01_humidity_name: ${xi_01_base_name} Humidity
   xi_01_battery_name: ${xi_01_base_name} Battery
@@ -111,6 +113,7 @@
   xi_02_base_name: Xiaomi Bedroom
   xi_02_macaddress: ""
   xi_02_bindkey: ""
+  xi_02_token: ""
   xi_02_temperature_name: ${xi_01_base_name} Temperature
   xi_02_humidity_name: ${xi_01_base_name} Humidity
   xi_02_battery_name: ${xi_01_base_name} Battery

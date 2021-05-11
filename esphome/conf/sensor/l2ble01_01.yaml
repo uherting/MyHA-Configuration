@@ -2,6 +2,7 @@
 # SENSORS
 
 #sensor:
+  # ATC_4A3592
   - platform: xiaomi_lywsd03mmc
     mac_address: ${xi_01_macaddress}
     bindkey: ${xi_01_bindkey}

@@ -38,6 +38,7 @@ cards:
       # TTGO cams
       - binary_sensor.l9_cam_ttgo_01_status
       - binary_sensor.l9_cam_ttgo_02_status
+      - binary_sensor.l2_ble01_status
 
 ####################################################################
 # EOF

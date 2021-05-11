@@ -47,7 +47,19 @@ cards:
       - sensor.l2_thermo01_uptime_human_readable
       - sensor.l2_thermo01_esphome_version
 
-  # - type: entities
+  - type: entities
+    title: L2 BLE 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2_ble01_conn_ip_addr
+      - sensor.l2_ble01_wifi_signal
+      - sensor.l2_ble01_conn_ssid
+      - sensor.l2_ble01_conn_bssid
+      - sensor.l2_ble01_uptime
+      - sensor.l2_ble01_uptime_human_readable
+      - sensor.l2_ble01_esphome_version
+
+    # - type: entities
   #   title: L2 Corridor 01
   #   show_header_toggle: false
   #   entities:
