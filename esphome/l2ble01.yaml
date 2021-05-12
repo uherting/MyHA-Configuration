@@ -47,9 +47,9 @@ packages:
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-logger:
+# logger:
 #  # see secrets.yaml for log level definitions
-  level: !secret LOG_LEVEL_DEBUG
+  # level: !secret LOG_LEVEL_DEBUG
 #  # uncomment the following line for custom component logging
 #   esp8266_store_log_strings_in_flash: False
 
@@ -109,6 +109,9 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/sensor/l2ble01_01.yaml
+  - <<: !include conf/sensor/l2ble01_02.yaml
+  - <<: !include conf/sensor/l2ble01_03.yaml
+  - <<: !include conf/sensor/l2ble01_04.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -119,11 +122,11 @@ sensor:
 
 #-------------------------------------------------------------------
 # SWITCHES
-switch:
+# switch:
   # - <<: !include conf/common/switch/ssr01.yaml
   # - <<: !include conf/common/switch/ssr02.yaml
-  - <<: !include conf/common/switch/esp32_general_01.yaml
-  - <<: !include conf/common/switch/esp32_general_02.yaml
+  # - <<: !include conf/common/switch/esp32_general_01.yaml
+  # - <<: !include conf/common/switch/esp32_general_02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

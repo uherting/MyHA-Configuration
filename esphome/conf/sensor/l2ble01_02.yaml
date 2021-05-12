@@ -1,0 +1,18 @@
+####################################################################
+# SENSORS
+
+#sensor:
+  # ATC_758EEC
+  - platform: xiaomi_lywsd03mmc
+    mac_address: ${xi_02_macaddress}
+    bindkey: ${xi_02_bindkey}
+    temperature:
+      name: ${xi_02_temperature_name}
+    humidity:
+      name: ${xi_02_humidity_name}
+    battery_level:
+      name: ${xi_02_battery_name}
+
+####################################################################
+# EOF
+####################################################################

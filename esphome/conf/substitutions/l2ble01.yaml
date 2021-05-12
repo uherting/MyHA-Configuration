@@ -96,27 +96,44 @@
   ESP_ONBOARD_RESTART_NAME: "${friendly_name} Restart"
   ESP_ONBOARD_RESTART_ID: "${friendly_id}_Restart"
 
-  # Xiaomi Mijia BLE Sensors
-  # ------------------------
-  # name / token / bind key:
-  # ATC_4A3592 / 89d4fc2c02489c5b1dfe3ae7 / 3e4ed23b4f3516cc26e6ca53e33c0d0f
+  # Xiaomi Mijia BLE Temp/Humidity Sensors
+  # --------------------------------------
+  # device type / name / token / bind key:
+  # Xiaomi LYWSD03MMC / ATC_4A3592 / 3e4ed23b4f3516cc26e6ca53e33c0d0f / 89d4fc2c02489c5b1dfe3ae7
   xi_01_base_name: Xiaomi Lounge
   xi_01_macaddress: A4:C1:38:4A:35:92
   xi_01_bindkey: 3e4ed23b4f3516cc26e6ca53e33c0d0f
-  # xi_01_bindkey: "89d4fc2c02489c5b1dfe3ae7"
-  xi_01_token: "3e4ed23b4f3516cc26e6ca53e33c0d0f"
+  xi_01_token: "89d4fc2c02489c5b1dfe3ae7"
   xi_01_temperature_name: ${xi_01_base_name} Temperature
   xi_01_humidity_name: ${xi_01_base_name} Humidity
   xi_01_battery_name: ${xi_01_base_name} Battery
-  # name / token / bind key:
-  #  /  / 
+  # device type / name / token / bind key:
+  # Xiaomi LYWSD03MMC / ATC_758EEC / 23dcac0d79e05e27132c63e4 / 646dcaf71cd68f54405177af435060fc
   xi_02_base_name: Xiaomi Bedroom
-  xi_02_macaddress: ""
-  xi_02_bindkey: ""
-  xi_02_token: ""
+  xi_02_macaddress: "A4:C1:38:75:8E:EC"
+  xi_02_bindkey: "646dcaf71cd68f54405177af435060fc"
+  xi_02_token: "23dcac0d79e05e27132c63e4"
   xi_02_temperature_name: ${xi_01_base_name} Temperature
   xi_02_humidity_name: ${xi_01_base_name} Humidity
   xi_02_battery_name: ${xi_01_base_name} Battery
+  # device type / name / token / bind key:
+  # Xiaomi LYWSD03MMC / ATC_E9D59F / f1d2f2e2e966889e7a01e695 / 89ec2f32edbdfba24d3dfd1dc11a691d
+  xi_03_base_name: Xiaomi Storage
+  xi_03_macaddress: A4:C1:38:E9:D5:9F
+  xi_03_bindkey: 89ec2f32edbdfba24d3dfd1dc11a691d
+  xi_03_token: "f1d2f2e2e966889e7a01e695"
+  xi_03_temperature_name: ${xi_01_base_name} Temperature
+  xi_03_humidity_name: ${xi_01_base_name} Humidity
+  xi_03_battery_name: ${xi_01_base_name} Battery
+  # device type / name / token / bind key:
+  # Xiaomi LYWSD03MMC / ATC_BFE3C3 / df5bcc61b941770908f6d896 / 972a326b234105fb96cb9a1d14c47655
+  xi_04_base_name: Xiaomi Bathroom
+  xi_04_macaddress: A4:C1:38:BF:E3:C3
+  xi_04_bindkey: 972a326b234105fb96cb9a1d14c47655
+  xi_04_token: "df5bcc61b941770908f6d896"
+  xi_04_temperature_name: ${xi_01_base_name} Temperature
+  xi_04_humidity_name: ${xi_01_base_name} Humidity
+  xi_04_battery_name: ${xi_01_base_name} Battery
 
 ####################################################################
 # EOF
