@@ -14,23 +14,31 @@ cards:
   - type: custom:mini-graph-card
     title: Room Temperatures
     entities:
+      - sensor.xiaomi_bathroom_temperature
+      - sensor.xiaomi_bedroom_temperature
       - sensor.xiaomi_lounge_temperature
+      - sensor.xiaomi_storage_temperature
     hours_to_show: 72
     hour24: true
     show_legend: true
+    line_width: 2
     font_size: 75
-    lower_bound: 20
-    upper_bound: 25
+    lower_bound: 10
+    upper_bound: 28
     points_per_hour: 12
     height: 250
 
   - type: custom:mini-graph-card
     title: Room Humidity
     entities:
+      - sensor.xiaomi_bathroom_humidity
+      - sensor.xiaomi_bedroom_humidity
       - sensor.xiaomi_lounge_humidity
+      - sensor.xiaomi_storage_humidity
     hours_to_show: 72
     hour24: true
     show_legend: true
+    line_width: 2
     font_size: 75
     lower_bound: 30
     upper_bound: 60

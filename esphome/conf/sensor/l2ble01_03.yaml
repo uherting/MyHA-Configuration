@@ -2,16 +2,16 @@
 # SENSORS
 
 #sensor:
-  # 
+  # ATC_E9D59F
   - platform: xiaomi_lywsd03mmc
-    mac_address: ${xi_02_macaddress}
-    bindkey: ${xi_02_bindkey}
+    mac_address: ${xi_03_macaddress}
+    bindkey: ${xi_03_bindkey}
     temperature:
-      name: ${xi_02_temperature_name}
+      name: ${xi_03_temperature_name}
     humidity:
-      name: ${xi_02_humidity_name}
+      name: ${xi_03_humidity_name}
     battery_level:
-      name: ${xi_02_battery_name}
+      name: ${xi_03_battery_name}
 
 ####################################################################
 # EOF
