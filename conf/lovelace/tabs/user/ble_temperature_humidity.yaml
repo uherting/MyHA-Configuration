@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# temp_and_humidity tab --- lovelace configuration
+# ble_temperature_humidity tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
@@ -23,9 +23,9 @@ cards:
     show_legend: true
     line_width: 2
     font_size: 75
-    lower_bound: 10
-    upper_bound: 28
-    points_per_hour: 12
+    # lower_bound: 10
+    # upper_bound: 28
+    points_per_hour: 5
     height: 250
 
   - type: custom:mini-graph-card
@@ -40,9 +40,9 @@ cards:
     show_legend: true
     line_width: 2
     font_size: 75
-    lower_bound: 30
-    upper_bound: 60
-    points_per_hour: 12
+    # lower_bound: 30
+    # upper_bound: 60
+    points_per_hour: 5
     height: 250
 
 ####################################################################
