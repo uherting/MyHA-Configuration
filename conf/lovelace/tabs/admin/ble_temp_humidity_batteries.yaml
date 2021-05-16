@@ -8,39 +8,50 @@
 
 icon: mdi:bluetooth-connect
 title: Temperature and Humidity
-path: temp_humidity_battery
+path: temp_humidity_batteries
 badges: []
 cards:
   - type: entities
-    title: BLE Temp / Humidity / Batteries
+    title: BLE Temperatures
     show_header_toggle: false
     entities:
+      - sensor.xiaomi_bathroom_temperature
+      - sensor.xiaomi_bedroom_temperature
       - sensor.xiaomi_lounge_temperature
+      - sensor.xiaomi_storage_temperature
+  
+  - type: entities
+    title: BLE Humidity
+    show_header_toggle: false
+    entities:
+      - sensor.xiaomi_bathroom_humidity
+      - sensor.xiaomi_bedroom_humidity
       - sensor.xiaomi_lounge_humidity
+      - sensor.xiaomi_storage_humidity
+
+  - type: entities
+    title: BLE Batteries
+    show_header_toggle: false
+    entities:
+      - sensor.xiaomi_bathroom_battery
+      - sensor.xiaomi_bedroom_battery
       - sensor.xiaomi_lounge_battery
-
-  # - type: entities
-  #   title: BLE Humidity
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.xiaomi_lounge_humidity
-
-  # - type: entities
-  #   title: BLE Batteries
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.xiaomi_lounge_battery
+      - sensor.xiaomi_storage_battery
 
   - type: custom:mini-graph-card
     title: BLE Batteries
     entities:
+      - sensor.xiaomi_bathroom_battery
+      - sensor.xiaomi_bedroom_battery
       - sensor.xiaomi_lounge_battery
+      - sensor.xiaomi_storage_battery
     hours_to_show: 
     hour24: true
     show_legend: true
+    line_width: 2
     font_size: 75
-    lower_bound: 0
-    upper_bound: 100
+    # lower_bound: 0
+    # upper_bound: 100
     points_per_hour: 0.5
     height: 250
 

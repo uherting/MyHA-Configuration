@@ -16,7 +16,7 @@ views:
   - !include /config/conf/lovelace/tabs/admin/esp8266_l0.yaml
   # - !include /config/conf/lovelace/tabs/admin/esp8266_l1.yaml
   # - !include /config/conf/lovelace/tabs/admin/esp8266_l9.yaml
-
+  - !include /config/conf/lovelace/tabs/admin/ble_temp_humidity_batteries.yaml
 ####################################################################
 # EOF
 ####################################################################
