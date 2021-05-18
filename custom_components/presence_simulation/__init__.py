@@ -5,10 +5,16 @@ import time
 import asyncio
 from datetime import datetime,timedelta,timezone
 from homeassistant.components import history
+import homeassistant.util.dt as dt_util
+from homeassistant.const import EVENT_HOMEASSISTANT_START
+from homeassistant.components.recorder.models import States
+from homeassistant.components.recorder.const import DATA_INSTANCE
 from .const import (
         DOMAIN,
         SWITCH_PLATFORM,
-        SWITCH
+        SWITCH,
+        RESTORE_SCENE,
+        SCENE_PLATFORM
 )
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,26 +29,31 @@ async def async_setup_entry(hass, entry):
         interval = entry.data['interval']
     else:
         interval = 30
-    return await async_mysetup(hass, [entry.data["entities"]], entry.data["delta"], interval)
+    if 'restore' in entry.data:
+        restore = entry.data['restore']
+    else:
+        restore = False
+    return await async_mysetup(hass, [entry.data["entities"]], entry.data["delta"], interval, restore)
 
 async def async_setup(hass, config):
     """Set up this component using YAML."""
     if config.get(DOMAIN) is None:
         # We get here if the integration is set up using config flow
         return True
-    return await async_mysetup(hass, config[DOMAIN].get("entity_id",[]), config[DOMAIN].get('delta', "7"), config[DOMAIN].get('interval', '30'))
+    return await async_mysetup(hass, config[DOMAIN].get("entity_id",[]), config[DOMAIN].get('delta', "7"), config[DOMAIN].get('interval', '30'), config[DOMAIN].get('restore', False))
 
 
-async def async_mysetup(hass, entities, deltaStr, refreshInterval):
+async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam):
     """Set up this component (YAML or UI)."""
     #delta is the size in days of the historic to get from the DB
     delta = int(deltaStr)
-    #delta = 1/24+4/24/6 # for test
     #interval is the number of seconds the component will wait before checking if the entity need to be switch
     interval = int(refreshInterval)
+    restoreAfterStop = restoreParam
     _LOGGER.debug("Config: Entities for presence simulation: %s", entities)
     _LOGGER.debug("Config: Cycle of %s days", delta)
     _LOGGER.debug("Config: Scan interval of %s seconds", interval)
+    _LOGGER.debug("Config: Restore state: %s", restoreAfterStop)
     _LOGGER.debug("Config: Timezone that will be used to display datetime: %s", hass.config.time_zone)
 
     async def stop_presence_simulation(err=None, restart=False):
@@ -55,6 +66,17 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval):
             #empty the start_datetime  attribute
             await entity.reset_start_datetime()
             await entity.reset_entities()
+            # if the scene exist, turn it on
+            scene = hass.states.get(SCENE_PLATFORM+"."+RESTORE_SCENE)
+            if scene is not None:
+                service_data = {}
+                service_data["entity_id"] = SCENE_PLATFORM+"."+RESTORE_SCENE
+                _LOGGER.debug("Restoring scene after the simulation")
+                try:
+                    await hass.services.async_call("scene", "turn_on", service_data, blocking=False)
+                except Exception as e:
+                    _LOGGER.error("Error when restoring the scene after the simulation")
+                    pass
         if err is not None:
             _LOGGER.debug("Error in presence simulation, exiting")
             raise e
@@ -70,24 +92,22 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval):
         for entity in entities:
             #to make it asyncable, not sure it is needed
             await asyncio.sleep(0)
-            try:
+            if 'entity_id' in  hass.states.get(entity).attributes:
                 #get the list of the associated entities
                 #the entity_id attribute will be filled for groups or light groups
                 group_entities = hass.states.get(entity).attributes["entity_id"]
-            except Exception as e:
-                _LOGGER.debug("Entity %s has no attribute entity_id, it is not a group or a light group", entity)
+                #and call recursively, in case a group contains a group
+                group_entities_expanded = await async_expand_entities(group_entities)
+                _LOGGER.debug("State %s", group_entities_expanded)
+                entities_new += group_entities_expanded
+            else:
+                _LOGGER.debug("Entity %s has no attribute entity_id, it is not a group nor a light group", entity)
                 try:
                     hass.states.get(entity)
                 except Exception as e:
                     _LOGGER.error("Error when trying to identify entity %s: %s", entity, e)
                 else:
                     entities_new.append(entity)
-            else:
-                #and call recursively, in case a group contains a group
-                group_entities_expanded = await async_expand_entities(group_entities)
-                _LOGGER.debug("State %s", group_entities_expanded)
-                for tmp in group_entities_expanded:
-                    entities_new.append(tmp)
         return entities_new
 
     async def handle_presence_simulation(call, restart=False):
@@ -98,9 +118,11 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval):
             else:
                 overridden_entities = [call.data.get("entity_id", entities)]
             overridden_delta = call.data.get("delta", delta)
+            overridden_restore = call.data.get("restore_states", restoreAfterStop)
         elif not restart: #if we are it is a call from the toggle service or from the turn_on action of the switch entity
             overridden_entities = entities
             overridden_delta = delta
+            overridden_restore = restoreAfterStop
         #else, should not happen
 
         #get the switch entity
@@ -115,16 +137,25 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval):
         _LOGGER.debug("Presence simulation started")
 
         current_date = datetime.now(timezone.utc)
-        if not restart:
-            #set attribute on the switch
-            await entity.set_start_datetime(datetime.now(hass.config.time_zone))
         #compute the start date that will be used in the query to get the historic of the entities
         minus_delta = current_date + timedelta(-overridden_delta)
         #expand the entitiies, meaning replace the groups with the entities in it
         expanded_entities = await async_expand_entities(overridden_entities)
+        if not restart:
+            #set attribute on the switch
+            await entity.set_start_datetime(datetime.now(hass.config.time_zone))
+            if overridden_restore:
+                service_data = {}
+                service_data["scene_id"] = RESTORE_SCENE
+                service_data["snapshot_entities"] = expanded_entities
+                _LOGGER.debug("Saving scene before launching the simulation")
+                try:
+                    await hass.services.async_call("scene", "create", service_data, blocking=True)
+                except Exception as e:
+                    _LOGGER.error("Scene could not be created, continue without the restore functionality: %s", e)
+                    #restoreAfterStop = False
         await entity.set_entities(expanded_entities)
         _LOGGER.debug("Getting the historic from %s for %s", minus_delta, expanded_entities)
-        #dic = history.get_significant_states(hass=hass, start_time=minus_delta, entity_ids=expanded_entities)
         dic = history.get_significant_states(hass=hass, start_time=minus_delta, entity_ids=expanded_entities, significant_changes_only=False)
         _LOGGER.debug("history: %s", dic)
         for entity_id in dic:
@@ -171,11 +202,9 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval):
         _LOGGER.debug("Simulate one entity: %s", entity_id)
         for state in hist: #hypothsis: states are ordered chronologically
             _LOGGER.debug("State %s", state.as_dict())
-            #_LOGGER.debug("Switch of %s foreseen at %s", entity_id, (state.last_updated+timedelta(delta)).replace(tzinfo=hass.config.time_zone))
             _LOGGER.debug("Switch of %s foreseen at %s", entity_id, state.last_updated+timedelta(delta))
             #get the switch entity
             entity = hass.data[DOMAIN][SWITCH_PLATFORM][SWITCH]
-            #await entity.async_add_next_event((state.last_updated+timedelta(delta)).replace(tzinfo=hass.config.time_zone), entity_id, state.state)
             await entity.async_add_next_event(state.last_updated+timedelta(delta), entity_id, state.state)
 
             #a while with sleeps of _interval_ seconds is used here instead of a big sleep to check regulary the is_running() parameter
@@ -258,10 +287,20 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval):
         entity = hass.data[DOMAIN][SWITCH_PLATFORM][SWITCH]
         return entity.is_on
 
+    async def restore_state(call):
+        """Restore states."""
+        _LOGGER.debug("restoring states")
+        """ retrieve the last status after last shutdown and restore it """
+        session = hass.data[DATA_INSTANCE].get_session()
+        result = session.query(States.state).filter(States.entity_id == SWITCH_PLATFORM+"."+SWITCH).order_by(States.last_changed.desc()).limit(1)
+        if result.count() > 0 and result[0][0] == "on":
+          _LOGGER.debug("Simulation was on before last shutdown, restarting it")
+          await handle_presence_simulation(None)
 
     hass.services.async_register(DOMAIN, "start", handle_presence_simulation)
     hass.services.async_register(DOMAIN, "stop", handle_stop_presence_simulation)
     hass.services.async_register(DOMAIN, "toggle", handle_toggle_presence_simulation)
+    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_START, restore_state)
 
     return True
 
@@ -272,4 +311,4 @@ async def update_listener(hass, entry):
     if len(entry.options) > 0:
         entry.data = entry.options
         entry.options = {}
-        await async_mysetup(hass, [entry.data["entities"]], entry.data["delta"], entry.data["interval"])
+        await async_mysetup(hass, [entry.data["entities"]], entry.data["delta"], entry.data["interval"], entry.data["restore"])
