@@ -1,40 +1,37 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l2ble01
+# DEVICE: l9cam3207
 #
 ####################################################################
 ####################################################################
 
-####################################################################
-# DESCRIPTION
-####################################################################
+######################### DESCRIPTION #########################
 #
 # Purpose:
-#   - collecting temperature and humidity from Xiaomi devices
-#
-# Future feature:
-#   - device tracker for presence detection
+#   - just an ordinary cam triggered by a PIR connected to another device
+#   no longer: - act as a notification device based on PIR sensor attached to the module
 #
 # Hardware:
-#   - 1 ESP32
+#   - ESP32-cam
 #
 # Automation:
-#   - none so far
+#   - yes, HA internal only
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - none so far
-#
+#   - 1 button
+#   - future plan:
+#     - 1 PIR sensor via I2C / MCP23017
 # Output
-#   - the device reports to HA only 
+#   - none
 #
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l2ble01.yaml
+substitutions: !include conf/substitutions/l9cam3207.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
@@ -47,9 +44,9 @@ packages:
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-# logger:
+#logger:
 #  # see secrets.yaml for log level definitions
-  # level: !secret LOG_LEVEL_DEBUG
+#  level: !secret LOG_LEVEL_DEBUG
 #  # uncomment the following line for custom component logging
 #   esp8266_store_log_strings_in_flash: False
 
@@ -61,7 +58,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-# i2c: !include conf/common/device/i2c_esp32_v1.yaml
+i2c: !include conf/common/device/i2c_esp32_v1.yaml
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -72,35 +69,26 @@ time: !include conf/common/time.yaml
 #-------------------------------------------------------------------
 # MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
 
-# globals:
-#   - <<: !include conf/common/globals/connectivity.yaml
-#   - <<: !include conf/common/globals/opto_coupler_01.yaml
-#   - <<: !include conf/common/globals/opto_coupler_02.yaml
-#   - <<: !include conf/common/globals/opto_coupler_03.yaml
+# globals: !include conf/common/globals/connectivity.yaml
 # interval: !include conf/common/interval/connectivity.yaml
 # script:
-#   - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
-#   # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
-#   - <<: !include conf/common/script/touch_button_A4_on_press.yaml
-#   # - <<: !include conf/common/script/touch_button_A4_double.yaml
-#   # - <<: !include conf/common/script/touch_button_A4_short.yaml
-#   # - <<: !include conf/common/script/touch_button_A4_long.yaml
-#   - <<: !include conf/common/script/lightbar_script_oc_trigger_on_off.yaml
+#   - <<: !include conf/common/script/pir1_to_ssr1.yaml
+
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-#   - <<: !include conf/common/binary_sensor/pir01.yaml
-#   # - <<: !include conf/common/binary_sensor/pir02.yaml
-#   # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
-#   # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
-#   # - <<: !include conf/common/binary_sensor/reed01.yaml
-#   # - <<: !include conf/common/binary_sensor/reed02.yaml
-#   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
-#   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
-#   - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
-#   # - <<: !include conf/common/binary_sensor/touch_button_A5.yaml
+  # - <<: !include conf/common/binary_sensor/pir01.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed01.yaml
+  # - <<: !include conf/common/binary_sensor/reed02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -109,10 +97,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/sensor/l2ble01_01.yaml
-  - <<: !include conf/sensor/l2ble01_02.yaml
-  - <<: !include conf/sensor/l2ble01_03.yaml
-  - <<: !include conf/sensor/l2ble01_04.yaml
+  # - <<: !include conf/sensor/l9cam3207.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -126,8 +111,6 @@ sensor:
 # switch:
   # - <<: !include conf/common/switch/ssr01.yaml
   # - <<: !include conf/common/switch/ssr02.yaml
-  # - <<: !include conf/common/switch/esp32_general_01.yaml
-  # - <<: !include conf/common/switch/esp32_general_02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -139,9 +122,18 @@ text_sensor:
   # device related
   # none so far
 
+#################### DETAILED CONFIGURATION CAM ######################
+
+# cam
+esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
+
 #-------------------------------------------------------------------
-# Enable the BLE Tracker
-esp32_ble_tracker:
+# flashlight
+output: !include conf/common/esp32_camera/esp32cam_output.yaml
+
+#-------------------------------------------------------------------
+# cam light
+light: !include conf/common/esp32_camera/esp32cam_light.yaml
 
 ####################################################################
 # EOF

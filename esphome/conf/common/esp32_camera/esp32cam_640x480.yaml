@@ -1,5 +1,5 @@
 ####################################################################
-# ESP32_CAMERA
+# esp32_camera
 
 ######################### CAM DEVICE #########################
 # Author by airijia.com
@@ -7,6 +7,7 @@
 # Lovelace camera card https://github.com/custom-cards/camera-card
 # Video tutorial https://youtu.be/-towjof_ixU
 
+#esp32_camera:
   name: $friendly_name Cam
   external_clock:
     pin: GPIO0

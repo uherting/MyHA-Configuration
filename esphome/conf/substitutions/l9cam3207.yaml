@@ -1,17 +1,18 @@
 ####################################################################
 # SUBSTITUTIONS
 
-  # substitutions unique to the device
-  devicename: l9cam3207
+  # device definitions
+  device_name: l9cam3207
+  device_comment: Level 9 ESP32-cam device 07
   device_platform: ESP32
   # from the french guy @ 20190712
   # - https://www.youtube.com/watch?v=fHgqFuGaTGE)
   device_board: nodemcu-32s
-  wifi_static_ip: 192.168.178.999
+  wifi_static_ip: 192.168.178.181
 
   # the friendly name / id
-  friendly_name: L9 Cam32 01
-  friendly_id: L9Cam3201
+  friendly_name: L9 Cam32 07
+  friendly_id: L9Cam3207
 
   log_level: !secret LOG_LEVEL_INFO
 
@@ -35,7 +36,7 @@
   pir01_name: $friendly_name PIR 01
   pir01_id: ${friendly_id}_PIR_01
   cam_light_name: $friendly_name CamLight
-  cam_light_id: ${friendly_name}CamLight
+  cam_light_id: ${friendly_id}_CamLight
 
 ####################################################################
 # EOF
