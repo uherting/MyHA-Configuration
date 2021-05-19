@@ -33,6 +33,10 @@
   mqtt_pw: mqtt_${device_name}
 
   # misc substitutions
+  dht01_name: $friendly_name DHT 01
+  dht01_id: ${friendly_id}_DHT_01
+  dht01_name_temperature: ${dht01_name} Temp
+  dht01_name_humidity: ${dht01_name} Humidity
   pir01_name: $friendly_name PIR 01
   pir01_id: ${friendly_id}_PIR_01
   cam_light_name: $friendly_name CamLight

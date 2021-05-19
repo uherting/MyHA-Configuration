@@ -61,6 +61,11 @@
   # standard substitutions follow
 
   # connected sensors / interfaces
+  # DHT sensors
+  dht01_name: $friendly_name DHT 01
+  dht01_id: ${friendly_id}_DHT_01
+  dht01_name_temperature: ${dht01_name} Temp
+  dht01_name_humidity: ${dht01_name} Humidity
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
   # opto couplers

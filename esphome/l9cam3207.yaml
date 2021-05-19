@@ -96,6 +96,7 @@ sensor:
   # common sensors
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
+  # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
   # - <<: !include conf/sensor/l9cam3207.yaml
 

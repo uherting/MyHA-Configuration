@@ -126,6 +126,7 @@ sensor:
   # common sensors
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
+  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
   # device related
   - <<: !include conf/sensor/l2kitchen01_case.yaml
 
