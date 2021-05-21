@@ -58,7 +58,7 @@ substitutions: !include conf/substitutions/l0garagesmall01.yaml
 ###################### PACKAGES CONFIGURATION ######################
 
 packages:
-  wifi: !include conf/common/networking/wifi.yaml
+  wifi: !include conf/common/networking/wifi_multiple_networks.yaml
   ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
   device_base: !include conf/common/packages/device_base.yaml
