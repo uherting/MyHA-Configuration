@@ -41,6 +41,7 @@ esphome:
 
 packages:
   wifi: !include conf/common/networking/wifi_multiple_networks.yaml
+  # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
   device_base: !include conf/common/packages/device_base.yaml
