@@ -1,0 +1,20 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+# workday sensor
+# from: https://www.home-assistant.io/integrations/workday/
+  - platform: workday
+    name: Workday Sensor
+    country: DE
+    province: NI
+    workdays: [mon, tue, wed, thu, fri]
+    excludes: [sat, sun, holiday]
+
+# ############################################################
+#  END OF FILE
+# ############################################################

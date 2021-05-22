@@ -4,18 +4,11 @@
 #
 # ############################################################
 
-# from: https://www.home-assistant.io/integrations/workday/
-  - platform: workday
-    name: Workday Sensor
-    country: DE
-    province: NI
-    workdays: [mon, tue, wed, thu, fri]
-    excludes: [sat, sun, holiday]
+#binary_sensor:
 
-
+# sun related sensors
 # Source: https://www.home-assistant.io/integrations/binary_sensor.template/
 # Note: restart of HA was required to (de)activate this sensor.
-# Example configuration.yaml entry
   - platform: template
     sensors:
       sun_up:
@@ -36,4 +29,3 @@
 # ############################################################
 #  END OF FILE
 # ############################################################
-

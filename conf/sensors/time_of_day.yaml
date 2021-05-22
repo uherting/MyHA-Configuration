@@ -1,0 +1,26 @@
+##########################################################################################
+# Sensors
+##########################################################################################
+
+##########################################################################################
+# Time of the day
+
+#sensor:
+  - platform: template
+    sensors:
+      time_of_day:
+        friendly_name: "Time of Day"
+        value_template: >-
+          {% if is_state('binary_sensor.morning','on') %}
+            Morning  
+          {% elif is_state('binary_sensor.afternoon','on') %}
+            Afternoon 
+          {% elif is_state('binary_sensor.evening','on') %}
+            Evening
+          {% else %}
+            Night
+          {% endif %}
+
+####################################################################
+# EOF
+####################################################################

@@ -1,0 +1,31 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+# time of day sensors to be used in the sensor time_of_day
+# from https://www.youtube.com/watch?v=CE6uQ5N5KJM
+  - platform: tod
+    name: Morning
+    after: sunrise
+    after_offset: "-02:00"
+    before: "12:00"
+  - platform: tod
+    name: Afternoon
+    after: "12:00"
+    before: "17:00"
+  - platform: tod
+    name: Evening
+    after: "17:00"
+    before: "22:00"
+  - platform: tod
+    name: Night
+    after: "22:00"
+    before: sunrise
+
+# ############################################################
+#  END OF FILE
+# ############################################################
