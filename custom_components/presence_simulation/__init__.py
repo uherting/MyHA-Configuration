@@ -3,6 +3,7 @@
 import logging
 import time
 import asyncio
+import json
 from datetime import datetime,timedelta,timezone
 from homeassistant.components import history
 import homeassistant.util.dt as dt_util
@@ -92,25 +93,24 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
         for entity in entities:
             #to make it asyncable, not sure it is needed
             await asyncio.sleep(0)
-            if 'entity_id' in  hass.states.get(entity).attributes:
-                #get the list of the associated entities
-                #the entity_id attribute will be filled for groups or light groups
-                group_entities = hass.states.get(entity).attributes["entity_id"]
-                #and call recursively, in case a group contains a group
-                group_entities_expanded = await async_expand_entities(group_entities)
-                _LOGGER.debug("State %s", group_entities_expanded)
-                entities_new += group_entities_expanded
+            if hass.states.get(entity) is None:
+                _LOGGER.error("Error when trying to identify entity %s, it seems it doesn't exist", entity)
+                raise Exception("Entity is not known by HA, see log for more details")
             else:
-                _LOGGER.debug("Entity %s has no attribute entity_id, it is not a group nor a light group", entity)
-                try:
-                    hass.states.get(entity)
-                except Exception as e:
-                    _LOGGER.error("Error when trying to identify entity %s: %s", entity, e)
+                if 'entity_id' in  hass.states.get(entity).attributes:
+                    #get the list of the associated entities
+                    #the entity_id attribute will be filled for groups or light groups
+                    group_entities = hass.states.get(entity).attributes["entity_id"]
+                    #and call recursively, in case a group contains a group
+                    group_entities_expanded = await async_expand_entities(group_entities)
+                    _LOGGER.debug("State %s", group_entities_expanded)
+                    entities_new += group_entities_expanded
                 else:
+                    _LOGGER.debug("Entity %s has no attribute entity_id, it is not a group nor a light group", entity)
                     entities_new.append(entity)
         return entities_new
 
-    async def handle_presence_simulation(call, restart=False):
+    async def handle_presence_simulation(call, restart=False, entities_after_restart=None, delta_after_restart=None):
         """Start the presence simulation"""
         if call is not None: #if we are here, it is a call of the service, or a restart at the end of a cycle
             if isinstance(call.data.get("entity_id", entities), list):
@@ -120,10 +120,25 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
             overridden_delta = call.data.get("delta", delta)
             overridden_restore = call.data.get("restore_states", restoreAfterStop)
         elif not restart: #if we are it is a call from the toggle service or from the turn_on action of the switch entity
-            overridden_entities = entities
-            overridden_delta = delta
+            if entities_after_restart is not None:
+                overridden_entities = entities_after_restart
+            else:
+                overridden_entities = entities
+            if delta_after_restart is not None:
+                overridden_delta = delta_after_restart
+            else:
+                overridden_delta = delta
             overridden_restore = restoreAfterStop
-        #else, should not happen
+        else: #this is a restart and the simulation was launched after a restart of HA
+            if entities_after_restart is not None:
+                overridden_entities = entities_after_restart
+            else:
+                overridden_entities = entities
+            if delta_after_restart is not None:
+                overridden_delta = delta_after_restart
+            else:
+                overridden_delta = delta
+            overridden_restore = restoreAfterStop
 
         #get the switch entity
         entity = hass.data[DOMAIN][SWITCH_PLATFORM][SWITCH]
@@ -140,7 +155,14 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
         #compute the start date that will be used in the query to get the historic of the entities
         minus_delta = current_date + timedelta(-overridden_delta)
         #expand the entitiies, meaning replace the groups with the entities in it
-        expanded_entities = await async_expand_entities(overridden_entities)
+        try:
+            expanded_entities = await async_expand_entities(overridden_entities)
+        except Exception as e:
+            _LOGGER.error("Error during identifing entities")
+            running = False
+            entity.internal_turn_off()
+            return
+
         if not restart:
             #set attribute on the switch
             await entity.set_start_datetime(datetime.now(hass.config.time_zone))
@@ -153,8 +175,9 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
                     await hass.services.async_call("scene", "create", service_data, blocking=True)
                 except Exception as e:
                     _LOGGER.error("Scene could not be created, continue without the restore functionality: %s", e)
-                    #restoreAfterStop = False
+
         await entity.set_entities(expanded_entities)
+        await entity.set_delta(overridden_delta)
         _LOGGER.debug("Getting the historic from %s for %s", minus_delta, expanded_entities)
         dic = history.get_significant_states(hass=hass, start_time=minus_delta, entity_ids=expanded_entities, significant_changes_only=False)
         _LOGGER.debug("history: %s", dic)
@@ -163,8 +186,8 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
             #launch an async task by entity_id
             hass.async_create_task(simulate_single_entity(entity_id, dic[entity_id]))
 
-        #launch an async task that will restart the silulation after the delay has passed
-        hass.async_create_task(restart_presence_simulation(call))
+        #launch an async task that will restart the simulation after the delay has passed
+        hass.async_create_task(restart_presence_simulation(call, entities_after_restart=entities_after_restart, delta_after_restart=delta_after_restart))
         _LOGGER.debug("All async tasks launched")
 
     async def handle_toggle_presence_simulation(call):
@@ -175,12 +198,15 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
             await handle_presence_simulation(call, restart=False)
 
 
-    async def restart_presence_simulation(call):
+    async def restart_presence_simulation(call, entities_after_restart=None, delta_after_restart=None):
         """Make sure that once _delta_ days is passed, relaunch the presence simulation for another _delta_ days"""
         if call is not None: #if we are here, it is a call of the service, or a restart at the end of a cycle
             overridden_delta = call.data.get("delta", delta)
         else:
-            overridden_delta = delta
+            if delta_after_restart is None:
+                overridden_delta = delta
+            else:
+                overridden_delta = delta_after_restart
         _LOGGER.debug("Presence simulation will be relaunched in %i days", overridden_delta)
         #compute the moment the presence simulation will have to be restarted
         start_plus_delta = datetime.now(timezone.utc) + timedelta(overridden_delta)
@@ -193,9 +219,9 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
 
         if is_running():
             _LOGGER.debug("%s has passed, presence simulation is relaunched", overridden_delta)
-            #Call top stop needed to avoid the start to do nothing since already running
+            #Call to stop needed to avoid the start to do nothing since already running
             await handle_stop_presence_simulation(call, restart=True)
-            await handle_presence_simulation(call, restart=True)
+            await handle_presence_simulation(call, restart=True, entities_after_restart=entities_after_restart, delta_after_restart=delta_after_restart)
 
     async def simulate_single_entity(entity_id, hist):
         """This method will replay the historic of one entity received in parameter"""
@@ -251,7 +277,11 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
                 service_data["brightness"] = state.attributes["brightness"]
             if "rgb_color" in state.attributes:
                 service_data["rgb_color"] = state.attributes["rgb_color"]
-            await hass.services.async_call("light", "turn_"+state.state, service_data, blocking=False)
+            if state.state == "on" or state.state == "off":
+                await hass.services.async_call("light", "turn_"+state.state, service_data, blocking=False)
+            else:
+                _LOGGER.debug("State in neither on nor off (is %s), do nothing", state.state)
+
         elif domain == "cover":
             #if it is a cover, checking the position
             _LOGGER.debug("Switching Cover %s to %s", entity_id, state.state)
@@ -280,7 +310,10 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
                     del service_data["tilt_position"]
         else:
             _LOGGER.debug("Switching entity %s to %s", entity_id, state.state)
-            await hass.services.async_call("homeassistant", "turn_"+state.state, service_data, blocking=False)
+            if state.state == "on" or state.state == "off":
+                await hass.services.async_call("homeassistant", "turn_"+state.state, service_data, blocking=False)
+            else:
+                _LOGGER.debug("State in neither on nor off (is %s), do nothing", state.state)
 
     def is_running():
         """Returns true if the simulation is running"""
@@ -289,13 +322,19 @@ async def async_mysetup(hass, entities, deltaStr, refreshInterval, restoreParam)
 
     async def restore_state(call):
         """Restore states."""
-        _LOGGER.debug("restoring states")
+        _LOGGER.debug("Restoring states")
         """ retrieve the last status after last shutdown and restore it """
         session = hass.data[DATA_INSTANCE].get_session()
-        result = session.query(States.state).filter(States.entity_id == SWITCH_PLATFORM+"."+SWITCH).order_by(States.last_changed.desc()).limit(1)
+        result = session.query(States.state, States.attributes).filter(States.entity_id == SWITCH_PLATFORM+"."+SWITCH).order_by(States.last_changed.desc()).limit(1)
         if result.count() > 0 and result[0][0] == "on":
           _LOGGER.debug("Simulation was on before last shutdown, restarting it")
-          await handle_presence_simulation(None)
+          previous_attribute = json.loads(result[0][1])
+          _LOGGER.debug("attributes entity_id: %s", previous_attribute["entity_id"])
+          if 'delta' in previous_attribute:
+            delta_after_restart=previous_attribute['delta']
+          else:
+            delta
+          await handle_presence_simulation(call=None, entities_after_restart=previous_attribute["entity_id"], delta_after_restart=delta_after_restart)
 
     hass.services.async_register(DOMAIN, "start", handle_presence_simulation)
     hass.services.async_register(DOMAIN, "stop", handle_stop_presence_simulation)
