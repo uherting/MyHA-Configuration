@@ -24,7 +24,7 @@ if [ ! -d ${TGT_DIR} ]; then
 fi
 
 echo "doing dd"
-time dd bs=4M ${ADD_PARM} \
+time dd bs=32M ${ADD_PARM} \
         if=/dev/mmcblk0 \
         of=${of} \
         status=progress

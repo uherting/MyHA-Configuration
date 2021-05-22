@@ -18,7 +18,7 @@ echo ""
 echo ""
 
 echo "doing dd"
-time dd bs=4M \
+time dd bs=32M \
         if=${if} \
         of=${of} \
         status=progress
