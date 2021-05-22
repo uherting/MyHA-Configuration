@@ -9,20 +9,8 @@
 icon: mdi:script
 title: Information
 path: information
-badges: [
-  person.uwe, person.gillian,
-  binary_sensor.workday_sensor,
-  sun.sun,
-  binary_sensor.sun_dwn_twilight
-  ]
+badges: []
 cards:
-  # Rubbish collection
-  - type: entities
-    title: Rubbish collection
-    show_header_toggle: false
-    entities:
-      - sensor.ics_1
-
   # Full / new moon
   - type: entities
     title: Full / New Moon

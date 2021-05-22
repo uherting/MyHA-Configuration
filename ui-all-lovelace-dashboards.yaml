@@ -36,43 +36,45 @@
       type: module
     - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
       type: module
+    - url: /hacsfiles/banner-card/banner-card.js
+      type: module
 
 # Add more dashboards
   dashboards:
 
     # attn: the name of the dashboard needs to contain a hyphen (-)
 
-    uilovelace-user02:
+    uilovelace-admin-ovall:
       mode: yaml
-      filename: ui-lovelace-user02.yaml
-      title: Overview ESPHome
-      icon: mdi:memory
-      show_in_sidebar: true
-      require_admin: false
-
-    uilovelace-adminall:
-      mode: yaml
-      filename: ui-lovelace-admin01_overview.yaml
+      filename: ui-lovelace-admin_overview.yaml
       title: Admin - 1
       icon: mdi:tools
       show_in_sidebar: true
       require_admin: true
 
-    uilovelace-adminesp:
+    uilovelace-admin-ovesp:
       mode: yaml
-      filename: ui-lovelace-admin02_esp.yaml
+      filename: ui-lovelace-admin_overview_esp.yaml
       title: Admin - 2(ESP)
       icon: mdi:devices
       show_in_sidebar: true
       require_admin: true
 
-#    uilovelace-user:
-#      mode: yaml
-#      filename: uilovelace-user.yaml
-#      title: Overview User
-#      # icon: mdi:tools
-#      show_in_sidebar: true
-#      require_admin: false
+    uilovelace-user-ovall:
+      mode: yaml
+      filename: ui-lovelace-user_overview.yaml
+      title: Overview
+      icon: mdi:cash-register
+      show_in_sidebar: true
+      require_admin: false
+
+    uilovelace-user-ovesp:
+      mode: yaml
+      filename: ui-lovelace-user_overview_esp.yaml
+      title: Overview ESPHome
+      icon: mdi:memory
+      show_in_sidebar: true
+      require_admin: false
 
 # ############################################################
 #  END OF FILE

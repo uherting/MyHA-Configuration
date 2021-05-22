@@ -12,8 +12,21 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
-  # entry page
-  - !include /config/conf/lovelace/tabs/user/entry_page.yaml
+  # misc information
+  - !include /config/conf/lovelace/tabs/user/information.yaml
+  - !include /config/conf/lovelace/tabs/user/cams.yaml
+  - !include /config/conf/lovelace/tabs/user/lights.yaml
+  - !include /config/conf/lovelace/tabs/user/ble_temperature_humidity.yaml
+#  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
+  - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
+  - !include /config/conf/lovelace/tabs/user/weather.yaml
+
+  # HA app entities
+  - !include /config/conf/lovelace/tabs/user/smartphones.yaml
+
+  # covid entities
+  - !include /config/conf/lovelace/tabs/user/covid19_rki.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_world.yaml
 
 ####################################################################
 # EOF
