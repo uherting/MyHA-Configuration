@@ -21,7 +21,7 @@ if [ ! -d ${HA_PATH} ];then
 fi
 
 SRC_DIR="${HA_PATH}/themes"
-TGT_FILE="${HA_PATH}/conf/input_selects/themes.yaml"
+TGT_FILE="${HA_PATH}/conf/input_select/theme_select.yaml"
 
 echo "HA_PATH = ${HA_PATH}"
 echo "SRC_DIR = ${SRC_DIR}"
