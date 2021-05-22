@@ -5,7 +5,7 @@
 ####################################################################
 ####################################################################
 
-icon: mdi:script
+icon: mdi:map
 title: Information
 path: information
 badges: [
@@ -15,6 +15,7 @@ badges: [
   binary_sensor.sun_dwn_twilight,
   sensor.ics_1
   ]
+
 cards:
   # # Rubbish collection
   # - type: entities

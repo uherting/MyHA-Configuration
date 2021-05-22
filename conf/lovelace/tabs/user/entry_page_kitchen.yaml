@@ -1,0 +1,31 @@
+####################################################################
+#
+# central overview kitchen tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+# icon: mdi:script
+title: Kitchen
+path: kitchen
+badges: [
+  person.uwe, person.gillian,
+  binary_sensor.workday_sensor,
+  sun.sun,
+  binary_sensor.sun_dwn_twilight,
+  sensor.ics_1
+  ]
+
+cards:
+  - type: 'custom:banner-card'
+    heading: Kitchen
+    link: kitchen
+    entities:
+      - entity: switch.l2_kitchen01_ssr_01
+        name: Light
+      - entity: sensor.l2_kitchen01_tempcase_01
+        name: Temperature
+
+####################################################################
+# EOF
+####################################################################

@@ -14,6 +14,11 @@ title: Home 431
 views:
   # entry page
   - !include /config/conf/lovelace/tabs/user/entry_page.yaml
+  - !include /config/conf/lovelace/tabs/user/entry_page_kitchen.yaml
+  - !include /config/conf/lovelace/tabs/user/entry_page_storage.yaml
+  - !include /config/conf/lovelace/tabs/user/entry_page_bathroom.yaml
+  - !include /config/conf/lovelace/tabs/user/entry_page_lounge.yaml
+  - !include /config/conf/lovelace/tabs/user/entry_page_bedroom.yaml
 
 ####################################################################
 # EOF

@@ -1,0 +1,33 @@
+####################################################################
+#
+# central overview storage tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+# icon: mdi:script
+title: Storage
+path: storage
+badges: [
+  person.uwe, person.gillian,
+  binary_sensor.workday_sensor,
+  sun.sun,
+  binary_sensor.sun_dwn_twilight,
+  sensor.ics_1
+  ]
+
+cards:
+  - type: 'custom:banner-card'
+    heading: Storage
+    link: storage
+    entities:
+      - entity: switch.l2_storage01_ssr_01
+        name: Light
+      - entity: sensor.xiaomi_storage_temperature
+        name: Temp
+      - entity: sensor.xiaomi_storage_humidity
+        name: Humidity
+
+####################################################################
+# EOF
+####################################################################
