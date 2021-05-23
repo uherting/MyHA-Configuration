@@ -44,6 +44,22 @@
 
     # attn: the name of the dashboard needs to contain a hyphen (-)
 
+    uilovelace-user-ovall:
+      mode: yaml
+      filename: ui-lovelace-user_overview.yaml
+      title: Information
+      icon: mdi:information
+      show_in_sidebar: true
+      require_admin: false
+
+    uilovelace-user-ovesp:
+      mode: yaml
+      filename: ui-lovelace-user_overview_esp.yaml
+      title: Overview ESPHome
+      icon: mdi:memory
+      show_in_sidebar: true
+      require_admin: false
+
     uilovelace-admin-ovall:
       mode: yaml
       filename: ui-lovelace-admin_overview.yaml
@@ -59,22 +75,6 @@
       icon: mdi:devices
       show_in_sidebar: true
       require_admin: true
-
-    uilovelace-user-ovall:
-      mode: yaml
-      filename: ui-lovelace-user_overview.yaml
-      title: Overview
-      icon: mdi:cash-register
-      show_in_sidebar: true
-      require_admin: false
-
-    uilovelace-user-ovesp:
-      mode: yaml
-      filename: ui-lovelace-user_overview_esp.yaml
-      title: Overview ESPHome
-      icon: mdi:memory
-      show_in_sidebar: true
-      require_admin: false
 
 # ############################################################
 #  END OF FILE
