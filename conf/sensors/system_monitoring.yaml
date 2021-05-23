@@ -27,7 +27,6 @@
       - type: load_5m
       - type: load_15m
       - type: last_boot
-      - type: processor_use
       - type: network_in
         arg: hassio
       - type: network_out
