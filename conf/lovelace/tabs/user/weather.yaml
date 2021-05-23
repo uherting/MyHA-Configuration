@@ -19,9 +19,9 @@ cards:
   - type: weather-forecast
     entity: weather.home_hourly
 
-  # AccuWeather
-  - type: weather-forecast
-    entity: weather.home431
+  # # AccuWeather
+  # - type: weather-forecast
+  #   entity: weather.home431
 
   # # Deutscher Wetterdienst (DWD)
   # - type: weather-forecast
