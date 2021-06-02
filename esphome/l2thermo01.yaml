@@ -127,7 +127,7 @@ sensor:
 
 #-------------------------------------------------------------------
 # SWITCHES
-switch:
+#switch:
   # - <<: !include conf/common/switch/ssr01.yaml
   # - <<: !include conf/common/switch/ssr02.yaml
 
