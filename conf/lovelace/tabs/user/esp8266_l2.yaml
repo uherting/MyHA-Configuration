@@ -19,6 +19,7 @@ cards:
     hours_to_show: 72
     hour24: true
     show_legend: true
+    line_width: 2
     font_size: 75
     lower_bound: 15
     upper_bound: 40
@@ -34,6 +35,7 @@ cards:
     hours_to_show: 72
     hour24: true
     show_legend: true
+    line_width: 2
     font_size: 75
     lower_bound: 15
     upper_bound: 30

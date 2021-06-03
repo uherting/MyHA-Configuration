@@ -45,14 +45,14 @@ cards:
       - sensor.xiaomi_bedroom_battery
       - sensor.xiaomi_lounge_battery
       - sensor.xiaomi_storage_battery
-    hours_to_show: 
+    hours_to_show: 72
     hour24: true
     show_legend: true
     line_width: 2
     font_size: 75
-    # lower_bound: 0
-    # upper_bound: 100
-    points_per_hour: 0.5
+    lower_bound: 0
+    upper_bound: 100
+    points_per_hour: 5
     height: 250
 
 ####################################################################

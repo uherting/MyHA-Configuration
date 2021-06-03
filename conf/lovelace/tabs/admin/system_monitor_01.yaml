@@ -13,10 +13,11 @@ cards:
 
   - type: 'custom:banner-card'
     heading: 
-      - mdi:desktop-classic
+      - mdi:memory
       - Processor
     # background: '#B0C2ED'
-    # link: /lovelace/banner-card
+    # link: /system_monitor/processor
+    row_size: 2
     entities:
       - entity: sensor.processor_temperature
         name: Temp
@@ -29,7 +30,9 @@ cards:
   #     - entity: sensor.network_throughput_out_hassio
 
   - type: 'custom:banner-card'
-    heading: Motherboard
+    heading: 
+      - mdi:desktop-classic
+      - Motherboard
     entities:
       - entity: sensor.load_1m
       - entity: sensor.load_5m
@@ -41,7 +44,9 @@ cards:
         name: Mem use
 
   - type: 'custom:banner-card'
-    heading: Harddisk
+    heading: 
+      - mdi:harddisk
+      - Harddisk
     entities:
       - entity: sensor.disk_use
       - entity: sensor.disk_free
