@@ -1,0 +1,85 @@
+####################################################################
+#
+# central overview tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:map
+title: Information
+path: information
+badges: [
+  person.uwe, person.gillian,
+  binary_sensor.workday_sensor,
+  sun.sun,
+  binary_sensor.sun_dwn_twilight,
+  sensor.ics_1
+  ]
+
+cards:
+  # # Rubbish collection
+  # - type: entities
+  #   title: Rubbish collection
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.ics_1
+
+  # kitchen
+  - type: 'custom:banner-card'
+    heading: Kitchen
+    link: kitchen
+    row_size: 2
+    entities:
+      - entity: switch.l2_kitchen01_ssr_01
+        name: Light
+      - entity: sensor.l2_kitchen01_tempcase_01
+        name: Temperature
+
+  # storage
+  - type: 'custom:banner-card'
+    heading: Storage
+    link: storage
+    entities:
+      - entity: switch.l2_storage01_ssr_01
+        name: Light
+      - entity: sensor.xiaomi_storage_temperature
+        name: Temp
+      - entity: sensor.xiaomi_storage_humidity
+        name: Humidity
+
+  # bathroom
+  - type: 'custom:banner-card'
+    heading: Bathroom
+    link: bathroom
+    row_size: 2
+    entities:
+      - entity: sensor.xiaomi_bathroom_temperature
+        name: Temp
+      - entity: sensor.xiaomi_bathroom_humidity
+        name: Humidity
+
+  # lounge
+  - type: 'custom:banner-card'
+    heading: Lounge
+    link: lounge
+    row_size: 2
+    entities:
+      - entity: sensor.xiaomi_lounge_temperature
+        name: Temp
+      - entity: sensor.xiaomi_lounge_humidity
+        name: Humidity
+
+  # bedroom
+  - type: 'custom:banner-card'
+    heading: Bedroom
+    link: bedroom
+    row_size: 2
+    entities:
+      - entity: sensor.xiaomi_bedroom_temperature
+        name: Temp
+      - entity: sensor.xiaomi_bedroom_humidity
+        name: Humidity
+
+####################################################################
+# EOF
+####################################################################

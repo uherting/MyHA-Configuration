@@ -44,33 +44,41 @@
 
     # attn: the name of the dashboard needs to contain a hyphen (-)
 
-    uilovelace-user-ovall:
+    uilovelace-usr-smarty:
       mode: yaml
-      filename: ui-lovelace-user_overview.yaml
+      filename: ui-lovelace-usr_smarty.yaml
+      title: Information
+      icon: mdi:home-outline
+      show_in_sidebar: true
+      require_admin: false
+
+    uilovelace-usr-ovw-all:
+      mode: yaml
+      filename: ui-lovelace-usr_ovw.yaml
       title: Information
       icon: mdi:information
       show_in_sidebar: true
       require_admin: false
 
-    uilovelace-user-ovesp:
+    uilovelace-usr-ovw-esp:
       mode: yaml
-      filename: ui-lovelace-user_overview_esp.yaml
+      filename: ui-lovelace-usr_ovw_esp.yaml
       title: Overview ESPHome
       icon: mdi:memory
       show_in_sidebar: true
       require_admin: false
 
-    uilovelace-admin-ovall:
+    uilovelace-adm-ovw-all:
       mode: yaml
-      filename: ui-lovelace-admin_overview.yaml
+      filename: ui-lovelace-adm_ovw_all.yaml
       title: Admin - 1
       icon: mdi:tools
       show_in_sidebar: true
       require_admin: true
 
-    uilovelace-admin-ovesp:
+    uilovelace-adm-ovw-esp:
       mode: yaml
-      filename: ui-lovelace-admin_overview_esp.yaml
+      filename: ui-lovelace-adm_ovw_esp.yaml
       title: Admin - 2(ESP)
       icon: mdi:devices
       show_in_sidebar: true
