@@ -20,6 +20,7 @@ cards:
   - type: 'custom:banner-card'
     heading: Lounge
     link: lounge
+    row_size: 2
     entities:
       - entity: sensor.xiaomi_lounge_temperature
         name: Temp

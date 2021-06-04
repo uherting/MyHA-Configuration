@@ -28,6 +28,7 @@ cards:
   - type: 'custom:banner-card'
     heading: Kitchen
     link: kitchen
+    row_size: 2
     entities:
       - entity: switch.l2_kitchen01_ssr_01
         name: Light
@@ -50,6 +51,7 @@ cards:
   - type: 'custom:banner-card'
     heading: Bathroom
     link: bathroom
+    row_size: 2
     entities:
       - entity: sensor.xiaomi_bathroom_temperature
         name: Temp
@@ -60,6 +62,7 @@ cards:
   - type: 'custom:banner-card'
     heading: Lounge
     link: lounge
+    row_size: 2
     entities:
       - entity: sensor.xiaomi_lounge_temperature
         name: Temp
@@ -70,6 +73,7 @@ cards:
   - type: 'custom:banner-card'
     heading: Bedroom
     link: bedroom
+    row_size: 2
     entities:
       - entity: sensor.xiaomi_bedroom_temperature
         name: Temp

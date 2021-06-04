@@ -20,6 +20,7 @@ cards:
   - type: 'custom:banner-card'
     heading: Kitchen
     link: kitchen
+    row_size: 2
     entities:
       - entity: switch.l2_kitchen01_ssr_01
         name: Light
