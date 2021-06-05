@@ -105,6 +105,11 @@ cards:
             name: Hum
             show_state: true
 
+  # Norwegian Meteorological Institute
+  - type: weather-forecast
+    entity: weather.home
+    # entity: weather.home_hourly
+
 ####################################################################
 # EOF
 ####################################################################

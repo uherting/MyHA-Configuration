@@ -21,7 +21,12 @@
     - url: /hacsfiles/search-card/search-card.js
       type: module
 
+    # nice litte graphics displaying history of values
     - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+      type: module
+
+    # huge clickable title --- to huge for most cases!!!
+    - url: /hacsfiles/banner-card/banner-card.js
       type: module
 
     # -------------------------------------------------------------------------
@@ -45,8 +50,6 @@
     #   type: module
     # - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
     #   type: module
-    # - url: /hacsfiles/banner-card/banner-card.js
-    #   type: module
 
   # Add more dashboards
   dashboards:
@@ -56,7 +59,7 @@
     uilovelace-usr-smarty:
       mode: yaml
       filename: ui-lovelace-usr_smarty.yaml
-      title: Information
+      title: Home
       icon: mdi:home-outline
       show_in_sidebar: true
       require_admin: false
@@ -65,7 +68,7 @@
       mode: yaml
       filename: ui-lovelace-usr_ovw_all.yaml
       title: Information
-      icon: mdi:information
+      icon: mdi:information-outline
       show_in_sidebar: true
       require_admin: false
 

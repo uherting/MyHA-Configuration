@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# lovelace configuration for users - dashboard #1
+# lovelace dashboard configuration for mobile users
 #
 ####################################################################
 ####################################################################
@@ -12,7 +12,6 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
-  # entry page
   - !include /config/conf/lovelace/tabs/user/smarty_01.yaml
   # - !include /config/conf/lovelace/tabs/user/smarty_02.yaml
   # - !include /config/conf/lovelace/tabs/user/smarty_03.yaml

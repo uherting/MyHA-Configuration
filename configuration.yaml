@@ -14,7 +14,7 @@ history: !include conf/history.yaml
 
 #mqtt: !include conf/mqtt.yaml
 
-lovelace: !include conf/lovelace/core/mode_resources_dashboards.yaml
+lovelace: !include configuration_resources_dashboards.yaml
 
 frontend:
   # no longer supported:
