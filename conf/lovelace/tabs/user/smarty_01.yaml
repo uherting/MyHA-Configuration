@@ -17,23 +17,51 @@ badges: [
   ]
 
 cards:
-  # - type: vertical-stack
-  #   cards:
+  - type: vertical-stack
+    cards:
       - type: grid
         title: Lounge
         columns: 3
         cards:
-          # - type: button
-          #   name: Light
-          #   entity: switch.l2_storage01_ssr_01
-          #   show_state: false
-          - type: 'button'
+          # - type: 'custom:button-card'
+          #   color_type: label-card
+          #   color: rgb(0,0,255)
+          #   name: Lounge
+          - type: 'custom:button-card'
             name: Temp
             entity: sensor.xiaomi_lounge_temperature
             show_state: true
-          - type: button
+          - type: 'custom:button-card'
             name: Hum
             entity: sensor.xiaomi_lounge_humidity
+            show_state: true
+          # - type: 'custom:button-card'
+          #   show_state: false
+
+      - type: grid
+        title: Bathroom
+        columns: 3
+        cards:
+          - type: 'custom:button-card'
+            entity: sensor.xiaomi_bathroom_temperature
+            name: Temp
+            show_state: true
+          - type: 'custom:button-card'
+            entity: sensor.xiaomi_bathroom_humidity
+            name: Hum
+            show_state: true
+
+      - type: grid
+        title: Bedroom
+        columns: 3
+        cards:
+          - type: 'custom:button-card'
+            entity: sensor.xiaomi_bedroom_temperature
+            name: Temp
+            show_state: true
+          - type: 'custom:button-card'
+            entity: sensor.xiaomi_bedroom_humidity
+            name: Hum
             show_state: true
 
       - type: grid
@@ -42,86 +70,35 @@ cards:
         cards:
           - type: 'custom:button-card'
             entity: switch.l2_kitchen01_ssr_01
+            name: Light
+            color: rgb(255,255,0)
             # icon: mdi:lamp
-            color: auto
-            # tap_action:
-          - type: button
-            name: Temp
+            # color: auto
+          - type: 'custom:button-card'
             entity: sensor.l2_kitchen01_tempcase_01
+            cards:
+            name: Temp
             show_state: true
+            # icon: mdi:thermometer
+            # color: auto
 
       - type: grid
-        title: 'Storage'
+        title: Storage
         columns: 3
         cards:
-          - type: button
-            name: Light
+          - type: 'custom:button-card'
             entity: switch.l2_storage01_ssr_01
+            name: Light
+            color: rgb(255,255,0)
             show_state: false
-          - type: button
+          - type: 'custom:button-card'
             name: Temp
             entity: sensor.xiaomi_storage_temperature
             show_state: true
-          - type: button
+          - type: 'custom:button-card'
             name: Hum
             entity: sensor.xiaomi_storage_humidity
             show_state: true
-
-  # # kitchen
-  # - type: 'custom:banner-card'
-  #   heading: Kitchen
-  #   link: kitchen
-  #   row_size: 3
-  #   entities:
-  #     - entity: switch.l2_kitchen01_ssr_01
-  #       name: Light
-  #     - entity: sensor.l2_kitchen01_tempcase_01
-  #       name: Temp
-
-  # # storage
-  # - type: 'custom:banner-card'
-  #   heading: Storage
-  #   link: storage
-  #   entities:
-  #     - entity: switch.l2_storage01_ssr_01
-  #       name: Light
-  #     - entity: sensor.xiaomi_storage_temperature
-  #       name: Temp
-  #     - entity: sensor.xiaomi_storage_humidity
-  #       name: Humidity
-
-  # # bathroom
-  # - type: 'custom:banner-card'
-  #   heading: Bathroom
-  #   link: bathroom
-  #   row_size: 2
-  #   entities:
-  #     - entity: sensor.xiaomi_bathroom_temperature
-  #       name: Temp
-  #     - entity: sensor.xiaomi_bathroom_humidity
-  #       name: Humidity
-
-  # # lounge
-  # - type: 'custom:banner-card'
-  #   heading: Lounge
-  #   link: lounge
-  #   row_size: 2
-  #   entities:
-  #     - entity: sensor.xiaomi_lounge_temperature
-  #       name: Temp
-  #     - entity: sensor.xiaomi_lounge_humidity
-  #       name: Humidity
-
-  # # bedroom
-  # - type: 'custom:banner-card'
-  #   heading: Bedroom
-  #   link: bedroom
-  #   row_size: 2
-  #   entities:
-  #     - entity: sensor.xiaomi_bedroom_temperature
-  #       name: Temp
-  #     - entity: sensor.xiaomi_bedroom_humidity
-  #       name: Humidity
 
 ####################################################################
 # EOF
