@@ -22,7 +22,7 @@ views:
   - !include /config/conf/lovelace/tabs/user/weather.yaml
 
   # HA app entities
-  - !include /config/conf/lovelace/tabs/user/smartphones.yaml
+  - !include /config/conf/lovelace/tabs/user/ha_app_entities.yaml
 
   # covid entities
   - !include /config/conf/lovelace/tabs/user/covid19_rki.yaml
