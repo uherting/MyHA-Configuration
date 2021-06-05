@@ -12,21 +12,56 @@ badges: [
   person.uwe, person.gillian,
   binary_sensor.workday_sensor,
   sun.sun,
-  binary_sensor.sun_dwn_twilight,
+  # binary_sensor.sun_dwn_twilight,
   sensor.ics_1
   ]
 
 cards:
+  
   - type: vertical-stack
     cards:
+
       - type: grid
-        title: Lounge
+        square: false
+        # title: Kitchen
         columns: 3
         cards:
-          # - type: 'custom:button-card'
-          #   color_type: label-card
-          #   color: rgb(0,0,255)
-          #   name: Lounge
+          - type: 'custom:button-card'
+            entity: switch.l2_kitchen01_ssr_01
+            name: 'Kitchen'
+            color: yellow
+          - type: 'custom:button-card'
+            entity: sensor.l2_kitchen01_tempcase_01
+            cards:
+            name: ' '
+            show_state: true
+
+      - type: grid
+        square: false
+        # title: Storage
+        columns: 3
+        cards:
+          - type: 'custom:button-card'
+            entity: switch.l2_storage01_ssr_01
+            name: 'Storage'
+            color: yellow
+            show_state: false
+          - type: 'custom:button-card'
+            name: Temp
+            entity: sensor.xiaomi_storage_temperature
+            show_state: true
+          - type: 'custom:button-card'
+            name: Hum
+            entity: sensor.xiaomi_storage_humidity
+            show_state: true
+
+      - type: grid
+        square: false
+        # title: Lounge
+        columns: 3
+        cards:
+          - type: 'custom:button-card'
+            name: Lounge
           - type: 'custom:button-card'
             name: Temp
             entity: sensor.xiaomi_lounge_temperature
@@ -39,9 +74,12 @@ cards:
           #   show_state: false
 
       - type: grid
-        title: Bathroom
+        square: false
+        # title: Bathroom
         columns: 3
         cards:
+          - type: 'custom:button-card'
+            name: Bathroom
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bathroom_temperature
             name: Temp
@@ -52,9 +90,12 @@ cards:
             show_state: true
 
       - type: grid
-        title: Bedroom
+        square: false
+        # title: Bedroom
         columns: 3
         cards:
+          - type: 'custom:button-card'
+            name: Bedroom
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bedroom_temperature
             name: Temp
@@ -62,42 +103,6 @@ cards:
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bedroom_humidity
             name: Hum
-            show_state: true
-
-      - type: grid
-        title: Kitchen
-        columns: 3
-        cards:
-          - type: 'custom:button-card'
-            entity: switch.l2_kitchen01_ssr_01
-            name: Light
-            color: rgb(255,255,0)
-            # icon: mdi:lamp
-            # color: auto
-          - type: 'custom:button-card'
-            entity: sensor.l2_kitchen01_tempcase_01
-            cards:
-            name: Temp
-            show_state: true
-            # icon: mdi:thermometer
-            # color: auto
-
-      - type: grid
-        title: Storage
-        columns: 3
-        cards:
-          - type: 'custom:button-card'
-            entity: switch.l2_storage01_ssr_01
-            name: Light
-            color: rgb(255,255,0)
-            show_state: false
-          - type: 'custom:button-card'
-            name: Temp
-            entity: sensor.xiaomi_storage_temperature
-            show_state: true
-          - type: 'custom:button-card'
-            name: Hum
-            entity: sensor.xiaomi_storage_humidity
             show_state: true
 
 ####################################################################
