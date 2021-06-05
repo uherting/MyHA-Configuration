@@ -63,7 +63,7 @@
 
     uilovelace-usr-ovw-all:
       mode: yaml
-      filename: ui-lovelace-usr_ovw.yaml
+      filename: ui-lovelace-usr_ovw_all.yaml
       title: Information
       icon: mdi:information
       show_in_sidebar: true
