@@ -8,7 +8,11 @@
 
   # external resources
   resources:
-    # card-tools is a prerequisite for ???
+    - url: /hacsfiles/button-card/button-card.js
+      type: module
+
+    # !!! card-tools and card-mod are the base for search-card !!!
+    # card-tools is likely a prerequisite for card-mod
     - url: /hacsfiles/lovelace-card-tools/card-tools.js
       type: module
     # card-mod is a prerequisite for search card (probably !?!?)
@@ -16,30 +20,35 @@
       type: module
     - url: /hacsfiles/search-card/search-card.js
       type: module
-    - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
-      type: module
-    - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
-      type: module
-    - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
-      type: module
-    - url: /hacsfiles/hass-shutter-card/hass-shutter-card.js
-      type: module
-    - url: /hacsfiles/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
-      type: module
-    - url: /hacsfiles/select-list-card/select-list-card.js
-      type: module
-    - url: /hacsfiles/lovelace-badge-card/badge-card.js
-      type: module
-    - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
-      type: module
-    - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
-      type: module
+
     - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
       type: module
-    - url: /hacsfiles/banner-card/banner-card.js
-      type: module
 
-# Add more dashboards
+    # -------------------------------------------------------------------------
+    # !!! the next ones are for items probably installed but not used at all !!!
+    # -------------------------------------------------------------------------
+    # - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
+    #   type: module
+    # - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
+    #   type: module
+    # - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+    #   type: module
+    # - url: /hacsfiles/hass-shutter-card/hass-shutter-card.js
+    #   type: module
+    # - url: /hacsfiles/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
+    #   type: module
+    # - url: /hacsfiles/select-list-card/select-list-card.js
+    #   type: module
+    # - url: /hacsfiles/lovelace-badge-card/badge-card.js
+    #   type: module
+    # - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
+    #   type: module
+    # - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
+    #   type: module
+    # - url: /hacsfiles/banner-card/banner-card.js
+    #   type: module
+
+  # Add more dashboards
   dashboards:
 
     # attn: the name of the dashboard needs to contain a hyphen (-)
@@ -87,4 +96,3 @@
 # ############################################################
 #  END OF FILE
 # ############################################################
-
