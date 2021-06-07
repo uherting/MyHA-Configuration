@@ -83,7 +83,7 @@
     uilovelace-adm-ovw-all:
       mode: yaml
       filename: ui-lovelace-adm_ovw_all.yaml
-      title: Admin - 1
+      title: Admin - general
       icon: mdi:tools
       show_in_sidebar: true
       require_admin: true
@@ -91,7 +91,7 @@
     uilovelace-adm-ovw-esp:
       mode: yaml
       filename: ui-lovelace-adm_ovw_esp.yaml
-      title: Admin - 2(ESP)
+      title: Admin - ESP
       icon: mdi:devices
       show_in_sidebar: true
       require_admin: true
