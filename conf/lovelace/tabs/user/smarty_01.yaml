@@ -10,7 +10,8 @@ title: Information
 path: information
 badges: [
   person.uwe, person.gillian,
-  binary_sensor.workday_sensor,
+  sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
+  # binary_sensor.workday_sensor,
   sun.sun,
   # binary_sensor.sun_dwn_twilight,
   sensor.ics_1
