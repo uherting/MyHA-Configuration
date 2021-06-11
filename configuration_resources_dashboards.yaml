@@ -72,14 +72,6 @@
       show_in_sidebar: true
       require_admin: false
 
-    uilovelace-usr-ovw-esp:
-      mode: yaml
-      filename: ui-lovelace-usr_ovw_esp.yaml
-      title: Overview ESPHome
-      icon: mdi:memory
-      show_in_sidebar: true
-      require_admin: false
-
     uilovelace-adm-ovw-all:
       mode: yaml
       filename: ui-lovelace-adm_ovw_all.yaml
@@ -88,11 +80,19 @@
       show_in_sidebar: true
       require_admin: true
 
-    uilovelace-adm-ovw-esp:
+    uilovelace-adm-ovw-esp1:
       mode: yaml
-      filename: ui-lovelace-adm_ovw_esp.yaml
-      title: Admin - ESP
+      filename: ui-lovelace-adm_ovw_esp1.yaml
+      title: Admin - ESP1
       icon: mdi:devices
+      show_in_sidebar: true
+      require_admin: true
+
+    uilovelace-adm-ovw-esp2:
+      mode: yaml
+      filename: ui-lovelace-adm_ovw_esp2.yaml
+      title: Admin - ESP2
+      icon: mdi:memory
       show_in_sidebar: true
       require_admin: true
 
