@@ -16,7 +16,6 @@ views:
   # - !include /config/conf/lovelace/tabs/user/information.yaml
   - !include /config/conf/lovelace/tabs/user/cams.yaml
 #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
-  - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
   - !include /config/conf/lovelace/tabs/user/weather.yaml
 
   # HA app entities
