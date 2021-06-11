@@ -6,7 +6,7 @@
 ####################################################################
 ####################################################################
 
-icon: mdi:script
+icon: mdi:information-outline
 title: Information
 path: information
 badges: []

@@ -5,9 +5,9 @@
 ####################################################################
 ####################################################################
 
-icon: mdi:map
-title: Information
-path: information
+icon: mdi:home-outline
+title: Overview
+path: overview
 badges: [
   person.uwe, person.gillian,
   sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
