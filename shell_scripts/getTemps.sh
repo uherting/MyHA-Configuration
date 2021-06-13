@@ -1,17 +1,22 @@
+path="/sys/devices/virtual/thermal"
 name="temp"
-T1=""
-for i in `find /sys -type f -name $name`
+TEMP=""
+for dir in thermal_zone0 thermal_zone1
 do 
-  # echo $i
-  T1="${T1} `cat ${i}`"
+  file="${path}/${dir}/${name}"
+  # echo $file
+  TEMP="${TEMP} `cat ${file}`"
 done
-echo "T1 = ${T1}"
+echo "TEMP = ${TEMP}"
 
-name="trip*temp"
-TT=""
-for i in `find /sys -type f -name $name`
+path="/sys/devices/virtual/thermal/thermal_zone0"
+TP=""
+for name in trip_point_0_temp trip_point_1_temp
 do 
-  # echo $i
-  TT="${TT} `cat ${i}`"
+  file="${path}/${name}"
+  # echo $file
+  TP="${TP} `cat ${file}`"
 done
-echo "TT = ${TT}"
+echo "TP = ${TP}"
+
+read c
