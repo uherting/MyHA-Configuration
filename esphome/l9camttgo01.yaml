@@ -59,6 +59,7 @@ packages:
 
 api: !include conf/common/networking/api.yaml
 time: !include conf/common/time.yaml
+# sun: !include conf/common/sun.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
