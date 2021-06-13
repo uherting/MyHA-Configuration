@@ -6,6 +6,11 @@
 ####################################################################
 ####################################################################
 
+#
+# !!! big problem here as power_supply: and light: are incompatible !!!!
+#
+# error msg: ID 'L2Corridor01_PSU_1' of type power_supply::PowerSupply doesn't inherit from output::BinaryOutput.
+
 ####################################################################
 # DESCRIPTION
 ####################################################################
@@ -150,8 +155,8 @@ sensor:
 
 #-------------------------------------------------------------------
 # POWER SUPPLY
-power_supply:
-  - <<: !include conf/common/power_supply.yaml
+# power_supply:
+#   - <<: !include conf/common/power_supply.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -165,7 +170,8 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # BINARY LIGHT (virtual switch acting as a trigger for device l2wled01)
-light: !include conf/light/l2corridor01.yaml
+#
+# light: !include conf/light/l2corridor01.yaml
 
 ####################################################################
 # EOF

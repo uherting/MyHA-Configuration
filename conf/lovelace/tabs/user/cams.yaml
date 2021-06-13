@@ -37,27 +37,27 @@ cards:
       - sensor.l9_cam32_01_esphome_version
       - sensor.l9_cam32_01_wifi_signal
 
-  # - type: picture-glance
-  #   title: ESP32Cam 02
-  #   camera_image: camera.l9_cam32_02_cam
-  #   camera_view: live
-  #   entities:
-  #     - light.l9_cam32_02_camlight
-  #     # - binary_sensor.l9_cam32_02_pir_01
-  #     - binary_sensor.l9_cam32_02_status
-  #     - sensor.l9_cam32_02_esphome_version
-  #     - sensor.l9_cam32_02_wifi_signal
+  - type: picture-glance
+    title: ESP32Cam 02
+    camera_image: camera.l9_cam32_02_cam
+    camera_view: live
+    entities:
+      - light.l9_cam32_02_camlight
+      # - binary_sensor.l9_cam32_02_pir_01
+      - binary_sensor.l9_cam32_02_status
+      - sensor.l9_cam32_02_esphome_version
+      - sensor.l9_cam32_02_wifi_signal
 
-  # - type: picture-glance
-  #   title: ESP32Cam 03
-  #   camera_image: camera.l9_cam32_03_cam
-  #   camera_view: live
-  #   entities:
-  #     - light.l9_cam32_03_camlight
-  #     # - binary_sensor.l9_cam32_03_pir_01
-  #     - binary_sensor.l9_cam32_03_status
-  #     - sensor.l9_cam32_03_esphome_version
-  #     - sensor.l9_cam32_03_wifi_signal
+  - type: picture-glance
+    title: ESP32Cam 03
+    camera_image: camera.l9_cam32_03_cam
+    camera_view: live
+    entities:
+      - light.l9_cam32_03_camlight
+      # - binary_sensor.l9_cam32_03_pir_01
+      - binary_sensor.l9_cam32_03_status
+      - sensor.l9_cam32_03_esphome_version
+      - sensor.l9_cam32_03_wifi_signal
 
   # # ESP32-cam cameras
   # - type: picture-glance
@@ -71,27 +71,27 @@ cards:
   #     - sensor.l9_cam32_07_esphome_version
   #     - sensor.l9_cam32_07_wifi_signal
 
-  # # TTGO-cameras
-  # - type: picture-glance
-  #   title: TTGO Cam 01
-  #   camera_image: camera.l9_cam_ttgo_01_cam
-  #   camera_view: live
-  #   entities:
-  #     - binary_sensor.l9_cam_ttgo_01_pir
-  #     - binary_sensor.l9_cam_ttgo_01_button
-  #     - binary_sensor.l9_cam_ttgo_01_status
-  #     - sensor.l9_cam_ttgo_01_esphome_version
-  #     - sensor.l9_cam_ttgo_01_wifi_signal
-  # - type: picture-glance
-  #   title: TTGO Cam 02
-  #   camera_image: camera.l9_cam_ttgo_02_cam
-  #   camera_view: live
-  #   entities:
-  #     - binary_sensor.l9_cam_ttgo_02_pir
-  #     - binary_sensor.l9_cam_ttgo_02_button
-  #     - binary_sensor.l9_cam_ttgo_02_status
-  #     - sensor.l9_cam_ttgo_02_esphome_version
-  #     - sensor.l9_cam_ttgo_02_wifi_signal
+  # TTGO-cameras
+  - type: picture-glance
+    title: TTGO Cam 01
+    camera_image: camera.l9_cam_ttgo_01_cam
+    camera_view: live
+    entities:
+      - binary_sensor.l9_cam_ttgo_01_pir
+      - binary_sensor.l9_cam_ttgo_01_button
+      - binary_sensor.l9_cam_ttgo_01_status
+      - sensor.l9_cam_ttgo_01_esphome_version
+      - sensor.l9_cam_ttgo_01_wifi_signal
+  - type: picture-glance
+    title: TTGO Cam 02
+    camera_image: camera.l9_cam_ttgo_02_cam
+    camera_view: live
+    entities:
+      - binary_sensor.l9_cam_ttgo_02_pir
+      - binary_sensor.l9_cam_ttgo_02_button
+      - binary_sensor.l9_cam_ttgo_02_status
+      - sensor.l9_cam_ttgo_02_esphome_version
+      - sensor.l9_cam_ttgo_02_wifi_signal
 
 ####################################################################
 # EOF

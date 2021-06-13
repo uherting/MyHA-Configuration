@@ -105,7 +105,7 @@
   light_virtual_01_id: ${friendly_id}_lightvirt_01
 
   # Power Supply Component
-  power_supply_name: $friendly_name_PSU_1
+  power_supply_name: $friendly_name PSU01
   power_supply_id: ${friendly_id}_PSU_1
   # power_supply_pin: !secret GPIO_PIN_D5
 
