@@ -7,14 +7,14 @@
     mode: restart
     then:
       - if:
-        condition:
-          lambda: 'return (!id(isDeviceConnected));'
-        then:
-          # - logger.log: "Turning SSR02 on as part of offline automation."
-          - switch.turn_on: ${ssr02_id}
-          - delay: !secret DELAY_02MIN
-          - switch.turn_off: ${ssr02_id}
-          # - logger.log: "Turning SSR02 off as part of offline automation."
+          condition:
+            lambda: 'return (!id(isDeviceConnected));'
+          then:
+            # - logger.log: "Turning SSR02 on as part of offline automation."
+            - switch.turn_on: ${ssr02_id}
+            - delay: !secret DELAY_02MIN
+            - switch.turn_off: ${ssr02_id}
+            # - logger.log: "Turning SSR02 off as part of offline automation."
 
 ####################################################################
 # EOF
