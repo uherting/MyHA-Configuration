@@ -96,6 +96,8 @@ interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/common/script/pir1_to_ssr1.yaml
   - <<: !include conf/common/script/pir2_to_ssr2.yaml
+  - <<: !include conf/common/script/reed1_to_ssr1.yaml
+  - <<: !include conf/common/script/reed2_to_ssr2.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS

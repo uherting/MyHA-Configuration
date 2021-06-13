@@ -22,7 +22,7 @@
     device_class: door
     on_release:
       then:
-        - script.execute: ssr_script_reed_01
+        - script.execute: ssr_script_reed_02
 
 # ############################################################
 #  END OF FILE
