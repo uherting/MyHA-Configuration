@@ -1,6 +1,10 @@
 ####################################################################
 # ESP32_CAMERA
 
+######################### CAM DEVICE #########################
+# TTGO T-Camera V17
+# for details see https://esphome.io/components/esp32_camera.html#configuration-for-ttgo-t-camera-v17
+#esp32_camera:
   name: $friendly_name Cam
   external_clock:
     pin: GPIO32

@@ -2,7 +2,8 @@
 # SUBSTITUTIONS
 
   # substitutions unique to the device
-  devicename: l9camttgo01
+  device_name: l9camttgo01
+  device_comment: Level 9 TTGO-cam device 01
   device_platform: ESP32
   device_board: esp-wrover-kit
   wifi_static_ip: 192.168.178.999

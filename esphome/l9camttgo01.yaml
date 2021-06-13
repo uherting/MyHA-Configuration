@@ -28,14 +28,9 @@
 #   - none
 #
 
-####################################################################
-# SUBSTITUTIONS
-substitutions: !include conf/substitutions/l9camttgo01.yaml
+############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-####################################################################
-# DEVICE
-esphome:
-  name: $devicename
+substitutions: !include conf/substitutions/l9camttgo01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
@@ -74,14 +69,14 @@ i2c:
 #-------------------------------------------------------------------
 # ESP32_CAMERA / FONTS / DISPLAY
 
-esp32_camera: !include conf/esp32_camera/l9camttgo01.yaml
+esp32_camera: !include conf/common/esp32_camera/ttgo_cam_01.yaml
 font: !include conf/common/font/ttgo_cam_01.yaml
 display: !include conf/display/ttgo_cam_01.yaml
 interval: !include conf/interval/l9camttgo01.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
-binary_sensor: !include conf/binary_sensor/l9camttgo01.yaml
+binary_sensor: !include conf/common/binary_sensor/ttgo_cam_01.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
