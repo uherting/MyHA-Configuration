@@ -1,7 +1,6 @@
-
-huawei_p9_lite_fritz_box:
-  name: HUAWEI-P9-lite.fritz.box
-  mac: 8C:EB:C6:7A:BB:66
+sp_uhnote10pro_fritz_box:
+  name: SP-UHNote10Pro.fritz.box
+  mac: 64:DD:E9:5F:66:51
   icon: mdi:cellphone-android
   picture:
   track: true
@@ -16,6 +15,13 @@ redminote8pro_min8_fritz_box:
 redminote8pro_min8_fritz_box_2:
   name: RedmiNote8Pro-miN8.fritz.box2
   mac: 02:E0:20:01:B8:FD
+  icon: mdi:cellphone-android
+  picture:
+  track: true
+
+huawei_p9_lite_fritz_box:
+  name: HUAWEI-P9-lite.fritz.box
+  mac: 8C:EB:C6:7A:BB:66
   icon: mdi:cellphone-android
   picture:
   track: true
