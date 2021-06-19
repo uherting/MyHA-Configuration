@@ -68,8 +68,7 @@
       mode: yaml
       filename: ui-lovelace-usr_ovw_all.yaml
       title: Information
-      icon: mdi:information-outline
-      show_in_sidebar: true
+      icon: mdi:camera-outline
       require_admin: false
 
     uilovelace-adm-ovw-all:

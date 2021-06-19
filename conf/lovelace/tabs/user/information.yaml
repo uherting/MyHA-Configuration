@@ -9,7 +9,15 @@
 icon: mdi:information-outline
 title: Information
 path: information
-badges: []
+badges: [
+  person.uwe, person.gillian,
+  sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
+  # binary_sensor.workday_sensor,
+  sun.sun,
+  # binary_sensor.sun_dwn_twilight,
+  sensor.ics_1
+  ]
+
 cards:
   # Full / new moon
   - type: entities
@@ -37,6 +45,11 @@ cards:
     entities:
       - sensor.ics_995
       - sensor.ics_996
+
+  # Norwegian Meteorological Institute
+  - type: weather-forecast
+    entity: weather.home
+    # entity: weather.home_hourly
 
 ####################################################################
 # EOF
