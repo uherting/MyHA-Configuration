@@ -19,6 +19,12 @@ badges: [
   ]
 
 cards:
+
+  # Norwegian Meteorological Institute
+  - type: weather-forecast
+    entity: weather.home
+    # entity: weather.home_hourly
+
   # Full / new moon
   - type: entities
     title: Full / New Moon
@@ -45,11 +51,6 @@ cards:
     entities:
       - sensor.ics_995
       - sensor.ics_996
-
-  # Norwegian Meteorological Institute
-  - type: weather-forecast
-    entity: weather.home
-    # entity: weather.home_hourly
 
 ####################################################################
 # EOF
