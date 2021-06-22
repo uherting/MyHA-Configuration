@@ -8,14 +8,7 @@
 icon: mdi:home-outline
 title: Overview
 path: overview
-badges: [
-  person.uwe, person.gillian,
-  sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
-  # binary_sensor.workday_sensor,
-  sun.sun,
-  # binary_sensor.sun_dwn_twilight,
-  sensor.ics_1
-  ]
+badges: []
 
 cards:
   
@@ -105,11 +98,6 @@ cards:
             entity: sensor.xiaomi_bedroom_humidity
             name: Hum
             show_state: true
-
-  # Norwegian Meteorological Institute
-  - type: weather-forecast
-    entity: weather.home
-    # entity: weather.home_hourly
 
 ####################################################################
 # EOF
