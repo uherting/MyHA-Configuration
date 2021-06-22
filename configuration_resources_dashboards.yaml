@@ -67,8 +67,8 @@
     uilovelace-usr-ovw-all:
       mode: yaml
       filename: ui-lovelace-usr_ovw_all.yaml
-      title: Information
-      icon: mdi:camera-outline
+      title: Overview
+      icon: mdi:highway
       require_admin: false
 
     uilovelace-adm-ovw-all:
