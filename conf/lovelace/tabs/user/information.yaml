@@ -10,7 +10,6 @@ icon: mdi:information-outline
 title: Information
 path: information
 badges: [
-  person.uwe, person.gillian,
   sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
   # binary_sensor.workday_sensor,
   sun.sun,

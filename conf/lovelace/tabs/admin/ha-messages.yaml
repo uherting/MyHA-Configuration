@@ -9,10 +9,14 @@
 icon: mdi:home-assistant
 title: HA messages
 path: ha-messages
-badges: [ sun.sun,
+badges: [ 
+          person.uwe, 
+          person.gillian,
+          sun.sun,
           binary_sensor.workday_sensor,
           binary_sensor.updater
   ]
+
 cards:
 #  # integrated but not connected devices
 #  - type: entity-filter
