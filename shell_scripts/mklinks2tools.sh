@@ -15,6 +15,9 @@ if [ "${SRC_DIR}" == "" ];then
   exit 1
 fi
 
+echo "HOST: ${HN}"
+echo "SRC_DIR: ${SRC_DIR}"
+
 TGT_DIR="${HOME}/bin"
 
 # cd to ${HOME}/bin if possible
@@ -42,4 +45,4 @@ done
 # go back where we started
 cd -
 
-/usr/share/hassio/homeassistant/shell_scripts
+
