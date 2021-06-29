@@ -1,6 +1,19 @@
 #!/usr/bin/bash
 
-SRC_DIR="/home/uwe/Git/UH/MyHAConfig/shell_scripts"
+
+HN=`hostname`
+SRC_DIR=""
+if [ "${HN}" == "alpha" ];then
+  SRC_DIR="/usr/share/hassio/homeassistant/shell_scripts"
+fi
+if [ "${HN}" == "beta" ];then
+  SRC_DIR="/home/uwe/Git/UH/MyHAConfig/shell_scripts"
+fi
+
+if [ "${SRC_DIR}" == "" ];then
+  echo "ERROR: hostname not in the list"
+  exit 1
+fi
 
 TGT_DIR="${HOME}/bin"
 
@@ -29,3 +42,4 @@ done
 # go back where we started
 cd -
 
+/usr/share/hassio/homeassistant/shell_scripts
