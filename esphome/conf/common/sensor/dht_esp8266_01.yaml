@@ -21,12 +21,14 @@
     pin: !secret DHT_SENSOR_PIN_ESP8266
     temperature:
       name: $dht01_name_temperature
+      id: $dht01_id_temperature
     humidity:
       name: $dht01_name_humidity
+      id: dht01_id_humidity
     # model: AUTO_DETECT (default)
     model: AUTO_DETECT
     # update_interval: 60s (default)
-    update_interval: !secret DHT_UPDATE_INTERVAL_01MIN
+    update_interval: !secret DHT_UPDATE_INTERVAL_15MIN
 
 ####################################################################
 # EOF
