@@ -15,13 +15,13 @@ cards:
   - type: weather-forecast
     entity: weather.openweathermap
 
-  # OpenWeatherMap - Precipitation
-  - type: entities
-    title: Precipitation (OpenWeatherMap)
-    show_header_toggle: false
-    entities:
-      - sensor.openweathermap_forecast_precipitation
-      - sensor.openweathermap_forecast_precipitation_probability
+  # # OpenWeatherMap - Precipitation
+  # - type: entities
+  #   title: Precipitation (OpenWeatherMap)
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.openweathermap_forecast_precipitation
+  #     - sensor.openweathermap_forecast_precipitation_probability
 
   # Norwegian Meteorological Institute
   - type: weather-forecast
