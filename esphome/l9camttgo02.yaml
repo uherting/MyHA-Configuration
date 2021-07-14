@@ -1,0 +1,98 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l9camttgo02
+#
+####################################################################
+####################################################################
+
+######################### DESCRIPTION #########################
+#
+# Purpose:
+#   - act as a notification device based on PIR sensor located on the module
+#
+# Hardware:
+#   - TTGO-cam
+#
+# Automation:
+#   - yes, HA internal only so far
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 1 button
+#   - future plan:
+#     - 1 PIR sensor via I2C / MCP23017
+# Output
+#   - none
+#
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: !include conf/substitutions/l9camttgo02.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+
+packages:
+  wifi: !include conf/common/networking/wifi_multiple_networks.yaml
+  # captive_portal: conf/common/networking/captive_portal.yaml
+  ota: !include conf/common/networking/ota.yaml
+  # esphome: and logger:
+  device_base: !include conf/common/packages/device_base.yaml
+
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+#logger:
+#  # see secrets.yaml for log level definitions
+#  level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+time: !include conf/common/time.yaml
+# sun: !include conf/common/sun.yaml
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+#-------------------------------------------------------------------
+# ESP32_CAMERA / FONTS / DISPLAY
+
+esp32_camera: !include conf/common/esp32_camera/ttgo_cam_01.yaml
+font: !include conf/common/font/ttgo_cam_01.yaml
+display: !include conf/display/ttgo_cam_01.yaml
+interval: !include conf/interval/l9camttgo02.yaml
+
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor: !include conf/common/binary_sensor/ttgo_cam_01.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor: !include conf/sensor/l9camttgo02.yaml
+
+#-------------------------------------------------------------------
+# TEXT_SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
+  # device related
+  # none so far
+
+####################################################################
+# EOF
+####################################################################
+
