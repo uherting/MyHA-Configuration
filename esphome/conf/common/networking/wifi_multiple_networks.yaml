@@ -15,12 +15,12 @@ wifi:
   domain: !secret WIFI_DOMAIN
 
   # # Optional manual IP
-  # manual_ip:
-  #   static_ip: $wifi_static_ip
-  #   gateway: !secret WIFI_GATEWAY
-  #   subnet: !secret WIFI_SUBNET
-  #   dns1: !secret WIFI_DNS1
-  #   dns2: !secret WIFI_DNS2
+  manual_ip:
+    static_ip: $wifi_static_ip
+    gateway: !secret WIFI_GATEWAY
+    subnet: !secret WIFI_SUBNET
+    dns1: !secret WIFI_DNS1
+    dns2: !secret WIFI_DNS2
   # # fast_connect: not possible with multiple networks!
   # fast_connect: !secret WIFI_FAST_CONNECT
 

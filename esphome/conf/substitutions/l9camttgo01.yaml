@@ -6,7 +6,7 @@
   device_comment: Level 9 TTGO-cam device 01
   device_platform: ESP32
   device_board: esp-wrover-kit
-  wifi_static_ip: 192.168.178.999
+  wifi_static_ip: 192.168.178.188
 
   # the friendly name / id
   friendly_name: L9 Cam Ttgo 01
@@ -37,4 +37,3 @@
 ####################################################################
 # EOF
 ####################################################################
-

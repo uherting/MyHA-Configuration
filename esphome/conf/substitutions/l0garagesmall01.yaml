@@ -6,7 +6,7 @@
   device_comment: Level 0 GarageSmall device 01
   device_platform: ESP8266
   device_board: nodemcuv2
-  wifi_static_ip: 192.168.178.999
+  wifi_static_ip: 192.168.178.203
 
   # the friendly name and id
   friendly_name: L0 GarageSmall01

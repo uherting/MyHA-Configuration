@@ -3,9 +3,10 @@
 
   # substitutions unique to the device
   devicename: l9camttgo02
+  device_comment: Level 9 TTGO-cam device 02
   device_platform: ESP32
   device_board: esp-wrover-kit
-  wifi_static_ip: 192.168.178.999
+  wifi_static_ip: 192.168.178.189
 
   # the friendly name / id
   friendly_name: L9 Cam Ttgo 02
@@ -36,4 +37,3 @@
 ####################################################################
 # EOF
 ####################################################################
-

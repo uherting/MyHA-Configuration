@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l9cam3207
+# DEVICE: l9cam3204
 #
 ####################################################################
 ####################################################################
@@ -31,7 +31,7 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l9cam3207.yaml
+substitutions: !include conf/substitutions/l9cam3204.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
@@ -100,7 +100,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  # - <<: !include conf/sensor/l9cam3207.yaml
+  # - <<: !include conf/sensor/l9cam3204.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
