@@ -1,5 +1,10 @@
 #!/usr/bin/bash
 
+#
+# attn: this script is not longer of use as VS code is installed / updated via the system update procedure
+#       as suggested at https://code.visualstudio.com/docs/setup/linux
+#
+
 # This script checks whether there is a new vs code file downloaded and installs it if it exists
 
 
