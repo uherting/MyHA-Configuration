@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+# This script creates symbolic links if the file exists is the bin directory and the repository
 
 HN=`hostname`
 SRC_DIR=""
@@ -44,5 +45,3 @@ done
 
 # go back where we started
 cd -
-
-
