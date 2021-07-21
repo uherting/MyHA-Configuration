@@ -20,3 +20,9 @@ echo "to be installed: ${TOBEINSTALLED}"
 apt remove code
 apt install ${TOBEINSTALLED}
 
+exit 0
+
+# this might work, too:
+# wget 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' -O /tmp/code_latest_amd64.deb
+# dpkg -i /tmp/code_latest_amd64.deb
+# rm -f /tmp/code_latest_amd64.deb
