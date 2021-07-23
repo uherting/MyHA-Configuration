@@ -18,7 +18,7 @@ cards:
       - type: grid
         square: false
         # title: Kitchen
-        columns: 3
+        columns: 4
         cards:
           - type: 'custom:button-card'
             entity: switch.l2_kitchen01_ssr_01
@@ -33,7 +33,7 @@ cards:
       - type: grid
         square: false
         # title: Storage
-        columns: 3
+        columns: 4
         cards:
           - type: 'custom:button-card'
             entity: switch.l2_storage01_ssr_01
@@ -52,7 +52,7 @@ cards:
       - type: grid
         square: false
         # title: Lounge
-        columns: 3
+        columns: 4
         cards:
           - type: 'custom:button-card'
             name: Lounge
@@ -70,7 +70,7 @@ cards:
       - type: grid
         square: false
         # title: Bathroom
-        columns: 3
+        columns: 4
         cards:
           - type: 'custom:button-card'
             name: Bathroom
@@ -86,7 +86,7 @@ cards:
       - type: grid
         square: false
         # title: Bedroom
-        columns: 3
+        columns: 4
         cards:
           - type: 'custom:button-card'
             name: Bedroom
