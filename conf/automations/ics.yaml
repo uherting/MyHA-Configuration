@@ -18,9 +18,15 @@
       attribute: remaining
       below: 2
       above: 0
+      for: 17h
+
 # -------------------- CONDITIONS -------------------
   # condition:
-  #   condition: template
+  #   condition: numeric_state
+  #   entity_id: sensor.ics_1
+  #   below: 2
+  #   for:
+  #     hours: 12
   #   value_template: "{{ trigger.event.data.repository is defined }}"
 # --------------------- ACTIONS ---------------------
   action:
