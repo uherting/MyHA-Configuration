@@ -3,6 +3,10 @@
 ##########################################################################################
 
 # automation:
+
+# ############################################################
+# Theme change Current Theme
+# ############################################################
   - alias: 'Theme change Current Theme'
     id: 'Change Current Theme'
 #    initial_state: false
@@ -15,7 +19,10 @@
         name: >
           {{states('input_select.theme')}}
 
-  - alias: 'Theme change Sun based'
+# ############################################################
+# Theme change Sun based
+# ############################################################
+- alias: 'Theme change Sun based'
     id: 'Sun based theme change'
 #    initial_state: false
     trigger:
@@ -39,17 +46,13 @@
 #        to: below_horizon
     condition: []
     action:
-#      - delay:
-#          seconds: 3
-
-# TODO: debug service_template
+# TODO: debug service_template (???)
 #         for details see:
 #           https://www.home-assistant.io/docs/scripts/service-calls/#use-templates-to-decide-which-service-to-call
       # - service: >
       - service_template: frontend.set_theme
         data_template:
-          name: >
-            {{ states('sensor.sun_based_theme') }}
+          name: {{ states('sensor.sun_based_theme') }}
 #            {% if trigger.platform == 'sun' %}
 #              {{states('input_select.set_sunset_theme') if trigger.event == 'sunset' else
 #                states('input_select.set_sunrise_theme') }}
@@ -57,14 +60,11 @@
 #              {{ states('sensor.sun_based_theme') }}
 #            {% endif %}
       - condition: template
-        value_template: >
-          {{ is_state('input_boolean.notify_system', 'on')}}
+        value_template: {{ is_state('input_boolean.notify_system', 'on')}}
       - service: notify.system
         data_template:
           title: >
-            Ha Main: Sun set Theme
+            HA Main: Sun set Theme
           message: >
             {{ as_timestamp(now()) | timestamp_custom("%X") }}:
             Sun is {{states('sun.sun')}} and Frontend is set to '{{ states('sensor.sun_based_theme') }}'
-
-
