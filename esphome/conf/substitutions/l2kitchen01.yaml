@@ -12,6 +12,10 @@
   friendly_name: L2 Kitchen01
   friendly_id: L2Kitchen01
 
+  # sensor base names / ids for other rooms
+  friendly_name_bathroom: L2 Bathroom01
+  friendly_id_bathroom: L2Bathroom01
+
   log_level: !secret LOG_LEVEL_INFO
 
   # wifi settings
@@ -35,6 +39,8 @@
   dallas_01c01_address: !secret DALLAS_01_L2KITCHEN01_CASESENSOR_01_ADDRESS
   dallas_01e01_name: $friendly_name TempEnv 01
   dallas_01e01_address: !secret DALLAS_01_L2KITCHEN01_ENVSENSOR_01_ADDRESS
+  dallas_01e10_name: $friendly_name_bathroom TempEnv 02
+  dallas_01e10_address: !secret DALLAS_01_L2BATHROOM01_ENVSENSOR_02_ADDRESS
 
   #
   # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
@@ -79,7 +85,8 @@
   reed_contact04_name: $friendly_name REED 04
   reed_contact04_id: ${friendly_id}_REED_04
   # remote reed relays
-  # (none so far)
+  reed_contact10_name: $friendly_name_bathroom Window
+  reed_contact10_id: ${friendly_id_bathroom}_REED_10
   # SSRs
   ssr01_name: $friendly_name SSR 01
   ssr01_id: ${friendly_id}_SSR01

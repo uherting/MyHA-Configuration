@@ -67,9 +67,9 @@ packages:
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-# logger:
+logger:
 #  # see secrets.yaml for log level definitions
-  # level: !secret LOG_LEVEL_DEBUG
+  level: !secret LOG_LEVEL_DEBUG
 #  # uncomment the following line for custom component logging
 #   esp8266_store_log_strings_in_flash: False
 
@@ -117,6 +117,7 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
   # - <<: !include conf/common/binary_sensor/reed02.yaml
+  - <<: !include conf/common/binary_sensor/reed10.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
@@ -131,6 +132,8 @@ sensor:
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
   # device related
   - <<: !include conf/sensor/l2kitchen01_case.yaml
+  # - <<: !include conf/sensor/l2kitchen01_env01.yaml
+  # - <<: !include conf/sensor/l2kitchen01_env10.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
