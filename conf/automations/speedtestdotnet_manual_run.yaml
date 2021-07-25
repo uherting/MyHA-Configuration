@@ -1,6 +1,6 @@
 # ############################################################
 #
-#  Home assistant start / stop info
+#  # speedtestdotnet_manual_run
 #
 # ############################################################
 
@@ -20,10 +20,10 @@
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------
-    - service: speedtestdotnet.speedtest
     - service: input_boolean.turn_off
       data:
         entity_id: input_boolean.speedtestdotnet
+    - service: speedtestdotnet.speedtest
 
 # ############################################################
 #  END OF FILE

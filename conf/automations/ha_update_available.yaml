@@ -6,7 +6,7 @@
 
 
 # ############################################################
-# ha_update_available
+# ha_update_available notification and GitHub issue creation
 # ############################################################
 - alias: HA update available
   id: 'ha_update_available old'
@@ -24,23 +24,10 @@
       data_template:
         message: >
           Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available.
-
-- alias: HA update available
-  id: 'ha_update_available'
-  initial_state: true
-  trigger:
-    platform: state
-    entity_id: updater.updater
-  action:
-    - service: notify.ha_status_info
-      data_template:
-        message: >
-          Home Assistant {{ states.updater.updater.state }} now available
     - service: rest_command.github_create_issue_on_new_ha_version
       data_template:
-        version: "{{ states.updater.updater.state }}"
+        version: "Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
 
 ############################################################
 #  END OF FILE
 # ############################################################
-
