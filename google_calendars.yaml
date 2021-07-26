@@ -26,17 +26,3 @@
     ignore_availability: true
     name: Movements-Basement
     track: true
-
-# - cal_id: 1abv0la4sc3qnd3ddcqgkhggc8@group.calendar.google.com
-#   entities:
-#   - device_id: business
-#     ignore_availability: true
-#     name: Business
-#     track: true
-
-# - cal_id: g6r2j9p5air5ajrnjli2o1e5uk@group.calendar.google.com
-#   entities:
-#   - device_id: business
-#     ignore_availability: true
-#     name: Business
-#     track: true
