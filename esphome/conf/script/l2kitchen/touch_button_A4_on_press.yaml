@@ -1,0 +1,41 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of TB A4
+  - id: ssr_script_tb_01_click_on_press
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: 'return (id(isLightBarOn));'
+          then:                  
+            # the light bar is on
+            - logger.log: "script l2kitchen / ssr_script_tb_01_click_on_press action, branch: if."
+            # trigger octo coupler so that the light bar will go off
+            - script.execute: lightbar_script_oc_trigger_on_off
+            - globals.set:
+                id: isLightBarOnViaBtn
+                value: 'false'
+            - globals.set:
+                id: isLightBarOn
+                value: 'false'
+            # SSR01 stays on. it will go off after motion stopped
+          else:
+            # the light bar is off
+            - logger.log: "script l2kitchen / ssr_script_tb_01_click_on_press action, branch: else."
+            # switch the SSR on no matter in which state it is
+            - switch.turn_on: ${ssr01_id}
+            - globals.set:
+                id: isLightBarOnViaBtn
+                value: 'true'
+            # trigger octo coupler so that the light bar will go on
+            - script.execute: lightbar_script_oc_trigger_on_off
+            - globals.set:
+                id: isLightBarOn
+                value: 'true'
+            # - logger.log: "The light bar was switched on."
+
+####################################################################
+# EOF
+####################################################################

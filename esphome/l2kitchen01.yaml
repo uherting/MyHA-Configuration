@@ -101,11 +101,13 @@ interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
   # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
-  - <<: !include conf/common/script/touch_button_A4_on_press.yaml
-  # - <<: !include conf/common/script/touch_button_A4_double.yaml
-  # - <<: !include conf/common/script/touch_button_A4_short.yaml
-  # - <<: !include conf/common/script/touch_button_A4_long.yaml
-  - <<: !include conf/common/script/lightbar_script_oc_trigger_on_off.yaml
+  # - <<: !include conf/common/script/touch_button_A4_on_press.yaml
+  - <<: !include conf/script/l2kitchen/touch_button_A4_double.yaml
+  - <<: !include conf/script/l2kitchen/touch_button_A4_short.yaml
+  - <<: !include conf/script/l2kitchen/touch_button_A4_long.yaml
+  - <<: !include conf/script/l2kitchen/lightbar_script_oc_trigger_on_off.yaml
+  - <<: !include conf/script/l2kitchen/lightbar_script_oc_trigger_next_level.yaml
+  - <<: !include conf/script/l2kitchen/lightbar_script_oc_trigger_on_max.yaml
   
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -117,11 +119,11 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
   # - <<: !include conf/common/binary_sensor/reed02.yaml
-  - <<: !include conf/common/binary_sensor/reed10.yaml
+  - <<: !include conf/common/binary_sensor/reed10_A7.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A5.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
 
 #-------------------------------------------------------------------
 # SENSORS

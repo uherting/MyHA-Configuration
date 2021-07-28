@@ -3,10 +3,10 @@
 
 #script:
   # triggering the opto coupler in order to switch the light bar off
-  - id: lightbar_script_oc_trigger_on_off
+  - id: lightbar_script_oc_trigger_next_level
     mode: single
     then:
-      - logger.log: "The lightbar is now theoretically switched on/off. But as there is no action in the script lightbar_script_oc_trigger_on ..."
+      - logger.log: "The lightbar is now theoretically to the next level. But as there is no action in the script lightbar_script_oc_trigger_next_level ..."
 
 ####################################################################
 # EOF
