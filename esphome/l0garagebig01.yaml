@@ -135,9 +135,9 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 switch:
-  - <<: !include conf/common/switch/ssr01.yaml
-  - <<: !include conf/common/switch/ssr02.yaml
-  - <<: !include conf/common/switch/ssr03.yaml
+  - <<: !include conf/common/switch/ssr01_B0.yaml
+  - <<: !include conf/common/switch/ssr02_B1.yaml
+  - <<: !include conf/common/switch/ssr03_B2.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

@@ -126,8 +126,8 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 # switch:
-  # - <<: !include conf/common/switch/ssr01.yaml
-  # - <<: !include conf/common/switch/ssr02.yaml
+  # - <<: !include conf/common/switch/ssr01_B0.yaml
+  # - <<: !include conf/common/switch/ssr02_B1.yaml
   # - <<: !include conf/common/switch/esp32_general_01.yaml
   # - <<: !include conf/common/switch/esp32_general_02.yaml
 

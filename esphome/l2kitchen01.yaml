@@ -134,8 +134,8 @@ sensor:
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
   # device related
   - <<: !include conf/sensor/l2kitchen01_case.yaml
-  # - <<: !include conf/sensor/l2kitchen01_env01.yaml
-  # - <<: !include conf/sensor/l2kitchen01_env10.yaml
+  - <<: !include conf/sensor/l2kitchen01_env01.yaml
+  - <<: !include conf/sensor/l2kitchen01_env10.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -147,8 +147,8 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 switch:
-  - <<: !include conf/common/switch/ssr01.yaml
-  # - <<: !include conf/common/switch/ssr02.yaml
+  - <<: !include conf/common/switch/ssr01_B0.yaml
+  # - <<: !include conf/common/switch/ssr02_B1.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
