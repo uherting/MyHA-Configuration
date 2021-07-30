@@ -1,0 +1,21 @@
+####################################################################
+# SWITCHES
+
+# switch:
+
+#############################
+# opto coupler
+#  - platform: gpio
+    name: ${opto_cpl03_name}
+    id: ${opto_cpl03_id}
+    pin:
+      mcp23xxx: ${mcp23017_hub01_id}
+      number: !secret MCP23017_PIN_B7
+      # mode can be INPUT, INPUT_PULLUP or OUTPUT
+      mode: OUTPUT
+      inverted: false
+    restore_mode: ALWAYS_OFF
+
+# ############################################################
+#  END OF FILE
+# ############################################################

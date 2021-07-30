@@ -10,7 +10,7 @@
     id: ${opto_cpl02_id}
     pin:
       mcp23xxx: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_B7
+      number: !secret MCP23017_PIN_B6
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: OUTPUT
       inverted: false
