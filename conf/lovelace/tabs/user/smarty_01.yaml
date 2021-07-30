@@ -25,9 +25,8 @@ cards:
             name: 'Kitchen'
             color: yellow
           - type: 'custom:button-card'
-            entity: sensor.l2_kitchen01_tempcase_01
-            cards:
             name: ' '
+            entity: sensor.l2_kitchen01_tempenv_01
             show_state: true
 
       - type: grid
@@ -41,11 +40,11 @@ cards:
             color: yellow
             show_state: false
           - type: 'custom:button-card'
-            name: Temp
+            name: ' '
             entity: sensor.xiaomi_storage_temperature
             show_state: true
           - type: 'custom:button-card'
-            name: Hum
+            name: ' '
             entity: sensor.xiaomi_storage_humidity
             show_state: true
 
@@ -57,11 +56,11 @@ cards:
           - type: 'custom:button-card'
             name: Lounge
           - type: 'custom:button-card'
-            name: Temp
+            name: ' '
             entity: sensor.xiaomi_lounge_temperature
             show_state: true
           - type: 'custom:button-card'
-            name: Hum
+            name: ' '
             entity: sensor.xiaomi_lounge_humidity
             show_state: true
           # - type: 'custom:button-card'
@@ -76,11 +75,15 @@ cards:
             name: Bathroom
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bathroom_temperature
-            name: Temp
+            name: ' '
             show_state: true
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bathroom_humidity
-            name: Hum
+            name: ' '
+            show_state: true
+          - type: 'custom:button-card'
+            entity: binary_sensor.l2_bathroom01_window
+            name: ' '
             show_state: true
 
       - type: grid
@@ -92,11 +95,35 @@ cards:
             name: Bedroom
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bedroom_temperature
-            name: Temp
+            name: ' '
             show_state: true
           - type: 'custom:button-card'
             entity: sensor.xiaomi_bedroom_humidity
-            name: Hum
+            name: ' '
+            show_state: true
+
+      - type: grid
+        square: false
+        # title: Bedroom
+        columns: 4
+        cards:
+          - type: 'custom:button-card'
+            name: 'OutNorth'
+          - type: 'custom:button-card'
+            entity: sensor.l2_bathroom01_tempenv_02
+            name: ' '
+            show_state: true
+
+      - type: grid
+        square: false
+        # title: Bedroom
+        columns: 4
+        cards:
+          - type: 'custom:button-card'
+            name: 'OutSouth'
+          - type: 'custom:button-card'
+            # entity: sensor.l2_storage
+            name: ' '
             show_state: true
 
 ####################################################################
