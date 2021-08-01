@@ -32,15 +32,36 @@
   mqtt_user: mqtt_${device_name}
   mqtt_pw: mqtt_${device_name}
 
-  # misc substitutions
+  #
+  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
+  #
+
+  # ------------------------------------------------------------------
+  # non standard substitutions
+
+  # LED
+  cam_light_name: $friendly_name CamLight
+  cam_light_id: ${friendly_id}_CamLight
+
+  # PIR
+  pir01_name: $friendly_name PIR 01
+  pir01_id: ${friendly_id}_PIR_01
+
+  # ------------------------------------------------------------------
+  # standard substitutions follow
+
+  # connected sensors / interfaces
+  # BH1750 Ambient Light Sensor
+  bh1750_01_name: $friendly_name BH1750 Illuminance 01
+  bh1750_01_address: !secret BH1750_0X23_ADDRESS
+  bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
+  bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
+
+  # DHT temp / humidity
   dht01_name: $friendly_name DHT 01
   dht01_id: ${friendly_id}_DHT_01
   dht01_name_temperature: ${dht01_name} Temp
   dht01_name_humidity: ${dht01_name} Humidity
-  pir01_name: $friendly_name PIR 01
-  pir01_id: ${friendly_id}_PIR_01
-  cam_light_name: $friendly_name CamLight
-  cam_light_id: ${friendly_id}_CamLight
 
 ####################################################################
 # EOF

@@ -30,9 +30,21 @@
   mqtt_user: mqtt_${device_name}
   mqtt_pw: mqtt_${device_name}
 
-  # misc substitutions
+  #
+  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
+  #
+
+  # ------------------------------------------------------------------
+  # non standard substitutions
   font_times_new_roman_ttf: "fonts/times-new-roman.ttf"
   display_id: ${friendly_id}_DISP_01
+
+  # ------------------------------------------------------------------
+  # standard substitutions follow
+
+  # connected sensors / interfaces
+
+  # none so far
 
 ####################################################################
 # EOF
