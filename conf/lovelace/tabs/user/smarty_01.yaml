@@ -8,7 +8,9 @@
 icon: mdi:home-outline
 title: Overview
 path: overview
-badges: []
+badges: [
+          binary_sensor.sun_dwn_twilight,
+        ]
 
 cards:
   
@@ -46,6 +48,10 @@ cards:
           - type: 'custom:button-card'
             name: ' '
             entity: sensor.xiaomi_storage_humidity
+            show_state: true
+          - type: 'custom:button-card'
+            name: ' '
+            entity: sensor.l2_storage01_bh1750_illuminance_01
             show_state: true
 
       - type: grid
