@@ -18,7 +18,7 @@
 
 #sensor:
   - platform: dht
-    pin: !secret DHT_SENSOR_PIN_ESP32
+    pin: !secret DHT_SENSOR_PIN_ESP32_GPIO14
     temperature:
       name: $dht01_name_temperature
     humidity:

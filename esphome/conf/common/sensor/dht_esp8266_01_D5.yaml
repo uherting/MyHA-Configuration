@@ -18,7 +18,7 @@
 
 #sensor:
   - platform: dht
-    pin: !secret DHT_SENSOR_PIN_ESP8266
+    pin: !secret DHT_SENSOR_PIN_ESP8266_D5
     temperature:
       name: $dht01_name_temperature
       id: $dht01_id_temperature
