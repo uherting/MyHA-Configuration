@@ -42,11 +42,25 @@ cards:
   #   height: 250
 
   - type: custom:mini-graph-card
-    title: Temperatures (case)
+    title: Temperatures Kitchen
     entities:
       - sensor.l2_kitchen01_tempcase_01
+      - sensor.l2_kitchen01_tempenv_01
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    line_width: 2
+    font_size: 75
+    lower_bound: 15
+    upper_bound: 30
+    points_per_hour: 1
+    height: 250
+
+  - type: custom:mini-graph-card
+    title: Temperatures Storage
+    entities:
       - sensor.l2_storage01_tempcase_01
-      # - sensor.l2_corridor01_tempcase_01
+      - sensor.xiaomi_storage_temperature
     hours_to_show: 72
     hour24: true
     show_legend: true
