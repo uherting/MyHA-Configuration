@@ -27,19 +27,19 @@ cards:
     points_per_hour: 1
     height: 250
 
-  - type: custom:mini-graph-card
-    title: Temperatures (L2Thermo01)
-    entities:
-      - sensor.l2_thermo01_dht_01_humidity
-    hours_to_show: 72
-    hour24: true
-    show_legend: true
-    line_width: 2
-    font_size: 75
-    lower_bound: 0
-    upper_bound: 50
-    points_per_hour: 1
-    height: 250
+  # - type: custom:mini-graph-card
+  #   title: Temperatures (L2Thermo01)
+  #   entities:
+  #     - sensor.l2_thermo01_dht_01_humidity
+  #   hours_to_show: 72
+  #   hour24: true
+  #   show_legend: true
+  #   line_width: 2
+  #   font_size: 75
+  #   lower_bound: 0
+  #   upper_bound: 50
+  #   points_per_hour: 1
+  #   height: 250
 
   - type: custom:mini-graph-card
     title: Temperatures (case)
