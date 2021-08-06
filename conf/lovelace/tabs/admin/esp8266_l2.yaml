@@ -59,7 +59,7 @@ cards:
       - sensor.l2_thermo01_uptime_human_readable
       - sensor.l2_thermo01_esphome_version
 
-    # - type: entities
+  # - type: entities
   #   title: L2 Corridor 01
   #   show_header_toggle: false
   #   entities:
