@@ -98,9 +98,10 @@ sensor:
   # common sensors
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
-  # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
   # - <<: !include conf/sensor/l9cam3201.yaml
+  # - <<: !include conf/common/sensor/bh1750_01.yaml
+  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
