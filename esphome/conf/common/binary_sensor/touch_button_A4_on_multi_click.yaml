@@ -18,10 +18,10 @@
       # before installation => inverted: true / mode: INPUT_PULLUP
       #
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      # mode: INPUT
-      mode: INPUT_PULLUP
-      # inverted: false
-      inverted: true
+      mode: INPUT
+      # mode: INPUT_PULLUP
+      inverted: false
+      # inverted: true
     on_multi_click:
       - timing:
           - ON for at most 0.3s

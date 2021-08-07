@@ -18,10 +18,10 @@
       # before installation => inverted: true / mode: INPUT_PULLUP
       #
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      # mode: INPUT
-      mode: INPUT_PULLUP
-      # inverted: false
-      inverted: true
+      mode: INPUT
+      # mode: INPUT_PULLUP
+      inverted: false
+      # inverted: true
     on_press:
       - logger.log: "TB on_press without any action due to lack of time."
       # - script.execute: ssr_script_tb_01_click_on_press

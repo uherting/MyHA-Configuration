@@ -10,10 +10,12 @@
     name: $touchbutton01_name
     id: ${touchbutton01_id}
     pin:
-      number: !secret GPIO_PIN_D4
+      number: !secret GPIO_PIN_D5
       # mode can be INPUT, INPUT_PULLUP or OUTPUT
       mode: INPUT
+      # mode: INPUT_PULLUP
       inverted: false
+      # inverted: true
     on_multi_click:
       - timing:
           - ON for at most 1s
