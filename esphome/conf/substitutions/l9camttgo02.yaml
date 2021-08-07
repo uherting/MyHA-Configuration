@@ -37,7 +37,7 @@
   # ------------------------------------------------------------------
   # non standard substitutions
   font_times_new_roman_ttf: "fonts/times-new-roman.ttf"
-  display_id: ${friendly_id}_DISP_01
+  display_id: ${friendly_id}_DISP_02
 
   # ------------------------------------------------------------------
   # standard substitutions follow
