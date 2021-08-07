@@ -22,6 +22,7 @@
       # mode: INPUT_PULLUP
       inverted: false
       # inverted: true
+    device_class: power
     on_press:
       - logger.log: "TB on_press without any action due to lack of time."
       # - script.execute: ssr_script_tb_01_click_on_press

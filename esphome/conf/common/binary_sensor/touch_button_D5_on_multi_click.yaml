@@ -16,6 +16,7 @@
       # mode: INPUT_PULLUP
       inverted: false
       # inverted: true
+    device_class: power
     on_multi_click:
       - timing:
           - ON for at most 1s
