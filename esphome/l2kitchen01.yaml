@@ -122,7 +122,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/reed10_A7.yaml
   # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
 
 #-------------------------------------------------------------------
