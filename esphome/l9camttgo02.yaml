@@ -69,14 +69,14 @@ i2c:
 #-------------------------------------------------------------------
 # ESP32_CAMERA / FONTS / DISPLAY
 
-esp32_camera: !include conf/common/esp32_camera/ttgo_cam_01.yaml
-font: !include conf/common/font/ttgo_cam_01.yaml
-display: !include conf/display/ttgo_cam_01.yaml
+esp32_camera: !include conf/common/esp32_camera/ttgo_cam_640x480.yaml
+font: !include conf/common/font/ttgo_cam_all.yaml
+display: !include conf/display/ttgo_cam_02.yaml
 interval: !include conf/interval/l9camttgo02.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
-binary_sensor: !include conf/common/binary_sensor/ttgo_cam_01.yaml
+binary_sensor: !include conf/binary_sensor/l9camttgo02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -95,4 +95,3 @@ text_sensor:
 ####################################################################
 # EOF
 ####################################################################
-
