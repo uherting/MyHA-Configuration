@@ -19,10 +19,9 @@
         friendly_name: "Sun is down"
         value_template: >-
           {{ state_attr('sun.sun', 'elevation')|float <= 0 }}
-      # only when civil twilight applies
-      # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
       sun_dwn_twilight:
-        friendly_name: "Sun is down (civil twilight)"
+        # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+        friendly_name: "civil twilight"
         value_template: >-
           {{ state_attr('sun.sun', 'elevation')|float < 6 }}
 

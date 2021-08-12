@@ -35,6 +35,11 @@ cards:
   # - type: weather-forecast
   #   entity: weather.dwd_weather_h431
 
+  - type: entities
+    entities:
+      - sensor.blitzortung_lightning_distance
+      - sensor.blitzortung_lightning_counter
+      - sensor.blitzortung_lightning_azimuth
   # # Windy.Com
   - type: iframe
     url: https://embed.windy.com/embed2.html?lat=51.649&lon=10.422&zoom=11&level=surface&overlay=temp&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=51.649&detailLon=10.422&metricWind=default&metricTemp=default&radarRange=-1
