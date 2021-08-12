@@ -6,7 +6,8 @@
   - id: lightbar_script_oc_trigger_on_max
     mode: single
     then:
-      - logger.log: "The lightbar is now theoretically switched on to max brightness. But as there is no action in the script lightbar_script_oc_trigger_on_max ..."
+      - logger.log: "The lightbar is now theoretically switched on to max brightness."
+      - logger.log: "But as there is no action in the script lightbar_script_oc_trigger_on_max ..."
 
 ####################################################################
 # EOF

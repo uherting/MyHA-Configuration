@@ -6,7 +6,8 @@
   - id: lightbar_script_oc_trigger_on_off
     mode: single
     then:
-      - logger.log: "The lightbar is now theoretically switched on/off. But as there is no action in the script lightbar_script_oc_trigger_on_off ..."
+      - logger.log: "The lightbar is now theoretically switched on/off."
+      - logger.log: "But as there is no action in the script lightbar_script_oc_trigger_on_off ..."
 
 ####################################################################
 # EOF

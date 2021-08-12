@@ -3,10 +3,10 @@
 
 #script:
   # on_multi_click action of TB A4 (long click)
-  - id: ssr_script_tb_01_click_long
+  - id: tb_01_click_long
     mode: restart
     then:
-      # - logger.log: "script ssr_script_tb_01_click_long action."
+      # - logger.log: "script tb_01_click_long action."
       - if:
           condition:
             # execute this script only if we are offline
@@ -15,7 +15,8 @@
             # execute this script anyway (TM) for debugging purposes
             lambda: 'return (true);'
           then:
-            - logger.log: "script l2kitchen / ssr_script_tb_01_click_long action."
+            - logger.log: "script tb_01_click_long action."
+            # - script.execute: lightbar_script_oc_trigger_on_off
 
 ####################################################################
 # EOF

@@ -3,16 +3,24 @@
 
 #script:
   # on_multi_click action of TB A4 (short click)
-  - id: ssr_script_tb_01_click_short
+  - id: tb_01_click_short
     mode: restart
     then:
-      # - logger.log: "script ssr_script_tb_01_click_short action."
-      - switch.toggle: ${ssr01_id}
+      # - logger.log: "script tb_01_click_short action."
+      # - switch.toggle: ${ssr01_id}
       - if:
           # execution only: the light bar is off
           condition:
-            lambda: 'return (!id(isLightBarOn));'
-          then:                  
+            # execute this script only if we are offline
+            # lambda: 'return (!id(isDeviceConnected);'
+            
+            # execute only if the lightbar is on
+            # lambda: 'return (!id(isLightBarOn));'
+
+            # execute this script anyway (TM) for debugging purposes
+            lambda: 'return (true);'
+          then:
+            - logger.log: "script tb_01_click_short action."
             # trigger octo coupler so that the light bar will go on
             - globals.set:
                 id: isLightBarOnViaBtn
@@ -21,7 +29,7 @@
                 id: isLightBarOn
                 value: 'true'
             - script.execute: lightbar_script_oc_trigger_on_max
-            # - logger.log: "The light bar was switched on to max brightness."
+            # - logger.log: "The light bar was (theoretically) switched to max brightness."
 
 ####################################################################
 # EOF

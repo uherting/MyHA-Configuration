@@ -3,7 +3,7 @@
 
 #script:
   # on_multi_click action of TB A4 (double click)
-  - id: ssr_script_tb_01_click_dbl
+  - id: tb_01_click_dbl
     mode: restart
     then:
       - if:
@@ -14,7 +14,7 @@
             # execute this script anyway (TM) for debugging purposes
             lambda: 'return (true);'
           then:
-            - logger.log: "script l2kitchen / ssr_script_tb_01_click_dbl action."
+            - logger.log: "script tb_01_click_dbl action."
 
 ####################################################################
 # EOF
