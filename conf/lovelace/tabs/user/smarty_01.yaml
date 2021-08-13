@@ -10,6 +10,7 @@ title: Overview
 path: overview
 badges: [
           binary_sensor.sun_dwn_twilight,
+          sensor.abfall
         ]
 
 cards:

@@ -94,6 +94,7 @@ automation: !include_dir_merge_list conf/automations
 
 binary_sensor: !include_dir_merge_list conf/binary_sensors
 sensor: !include_dir_merge_list conf/sensors
+template: !include_dir_merge_list conf/templates
 
 google: !include google_client.yaml
 
