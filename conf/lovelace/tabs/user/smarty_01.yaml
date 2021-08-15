@@ -91,6 +91,7 @@ cards:
           - type: 'custom:button-card'
             entity: binary_sensor.l2_bathroom01_window
             name: ' '
+            color: yellow
             show_state: true
 
       - type: grid
