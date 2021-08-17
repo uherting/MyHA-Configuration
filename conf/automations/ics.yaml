@@ -18,7 +18,8 @@
       attribute: remaining
       below: 2
       above: 0
-      for: 17h
+      for: 
+        hours: 17
 
 # -------------------- CONDITIONS -------------------
   # condition:
