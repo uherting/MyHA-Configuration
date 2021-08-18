@@ -12,6 +12,7 @@
   id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
   mode: single
   initial_state: true
+
 # --------------------- TRIGGER ---------------------
   trigger:
     # notification at 8am on the day before taking the bins out
@@ -39,6 +40,7 @@
 # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
+
 # --------------------- ACTIONS ---------------------
   action:
   - choose:
