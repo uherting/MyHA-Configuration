@@ -98,7 +98,7 @@ template: !include_dir_merge_list conf/templates
 
 google: !include google_client.yaml
 
-pyscript:
+# pyscript:
 
 python_script:
 

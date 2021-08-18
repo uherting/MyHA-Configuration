@@ -51,9 +51,9 @@ logs:
   homeassistant.components: CRITICAL
   homeassistant.components.media_player: INFO
   homeassistant.components.notify: WARN
-  homeassistant.components.pyscript: WARN
-  homeassistant.components.pyscript.func.hello_world_basic: DEBUG
-  homeassistant.components.pyscript.func.hello_world_adv: DEBUG
+  # homeassistant.components.pyscript: WARN
+  # homeassistant.components.pyscript.func.hello_world_basic: DEBUG
+  # homeassistant.components.pyscript.func.hello_world_adv: DEBUG
   homeassistant.components.recorder: ERROR
   homeassistant.components.sensor: WARN
   homeassistant.components.sensor.darksky: WARN
