@@ -5,7 +5,7 @@
 # ############################################################
 
 # ############################################################
-# L2 Storage ON if motion detected
+# L2 Storage: SSR01 ON if motion detected
 # ############################################################
 - alias: L2 Storage ON if motion detected
   id: 'L2 Storage ON if motion detected'
@@ -28,7 +28,7 @@
     entity_id: switch.l2_storage01_ssr_01
 
 # ############################################################
-# switch off the light after there is no motion for x minutes
+# L2 Storage: SSR01 off the light after there is no motion for x minutes
 # ############################################################
 - alias: L2 Storage OFF post motion
   id: 'L2 Storage OFF post motion'
