@@ -1,0 +1,21 @@
+##########################################################################################
+# Sensors
+##########################################################################################
+
+#sensor:
+
+##########################################################################################
+# This is the configuration for the HACS integration named youtube
+
+  # TYT Investigates 
+  # Breaking news and commentary from the original-reporting arm of The Young Turks.
+  - platform: youtube
+    channel_id: UCwNJt9PYyN1uyw2XhNIQMMA
+
+  # Basics of Sikhi 
+  - platform: youtube
+    channel_id: UC8B7EIN0EeqbZ2oQptkiQlA
+
+####################################################################
+# EOF
+####################################################################
