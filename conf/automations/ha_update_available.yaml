@@ -9,16 +9,20 @@
 # ha_update_available notification and GitHub issue creation
 # ############################################################
 - alias: HA update available
-  id: 'ha_update_available old'
-  initial_state: false
+  id: 'ha_update_available'
+  initial_state: true
+
+# --------------------- TRIGGER ---------------------
   trigger:
   - platform: state
     entity_id: binary_sensor.updater
 #    from: 'unavailable'
     to: 'on'
-#  condition: time
-#    after: '07:00:00'
-#    before: '07:02:00'
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+
+# --------------------- ACTIONS ---------------------
   action:
     - service: notify.ha_status_info
       data_template:
