@@ -8,7 +8,8 @@
 # ############################################################
 # speedtestdotnet_manual_run
 # ############################################################
-- alias: speedtestdotnet manual run
+- alias: Speedtestdotnet manual run
+  id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6b5f'
   initial_state: true
   mode: single
   max_exceeded: silent
