@@ -6,37 +6,64 @@
 
 
 # ############################################################
-# Rubbish collection due tomorrow
+# Rubbish collection due notifications
 # ############################################################
-- alias: ICS - Rubbish collection due tomorrow
+- alias: ICS - Rubbish collection notifications
   id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
+  mode: single
   initial_state: true
 # --------------------- TRIGGER ---------------------
   trigger:
+    # notification at 8am on the day before taking the bins out
     - platform: numeric_state
       entity_id: sensor.ics_1
       attribute: remaining
-      below: 2
-      above: 0
+      # remaining changed from 3 to 2
+      below: '3'
+      above: '1'
+      for: 
+        hours: 8
+      id: "Rubbish_PutTheBinOutTomorrow"
+
+    # notification at 5pm on the day taking the bins out
+    - platform: numeric_state
+      entity_id: sensor.ics_1
+      attribute: remaining
+      # remaining changed from 2 to 1
+      below: '2'
+      above: '0'
       for: 
         hours: 17
+      id: "Rubbish_PutTheBinOutToday"
 
 # -------------------- CONDITIONS -------------------
-  # condition:
-  #   condition: numeric_state
-  #   entity_id: sensor.ics_1
-  #   below: 2
-  #   for:
-  #     hours: 12
-  #   value_template: "{{ trigger.event.data.repository is defined }}"
+  # none whatsoever
+  condition: []
 # --------------------- ACTIONS ---------------------
   action:
-# ---------------- SEND NOTIFICATION ----------------
-    - service: notify.ics_notify
-      data_template:
-        title: Rubbish collection is due tomorrow
-        message: >
-          Date / time: {{ states('sensor.date_time') }}
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: "Rubbish_PutTheBinOutTomorrow"
+      sequence:
+      - service: notify.ics_notify
+      # ---------------- SEND NOTIFICATION ----------------
+      - service: notify.ics_notify
+        data_template:
+          title: Rubbish collection is due the day after tomorrow
+          message: >
+            Date / time: {{ states('sensor.date_time') }}
+    - conditions:
+      - condition: trigger
+        id: "Rubbish_PutTheBinOutToday"
+      sequence:
+      # ---------------- SEND NOTIFICATION ----------------
+      - service: notify.ics_notify
+        data_template:
+          title: Rubbish collection is due tomorrow
+          message: >
+            Date / time: {{ states('sensor.date_time') }}
+    default: []
 
 # ############################################################
 #  END OF FILE
