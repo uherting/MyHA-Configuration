@@ -48,9 +48,9 @@
       - condition: trigger
         id: "Rubbish_PutTheBinOutTomorrow"
       sequence:
-      - service: notify.ics_notify
       # ---------------- SEND NOTIFICATION ----------------
-      - service: notify.ics_notify
+      # - service: notify.ics_notify
+      - service: notify.ha_status_info
         data_template:
           title: Rubbish collection is due the day after tomorrow
           message: >
@@ -60,7 +60,8 @@
         id: "Rubbish_PutTheBinOutToday"
       sequence:
       # ---------------- SEND NOTIFICATION ----------------
-      - service: notify.ics_notify
+      # - service: notify.ics_notify
+      - service: notify.ha_status_info
         data_template:
           title: Rubbish collection is due tomorrow
           message: >
