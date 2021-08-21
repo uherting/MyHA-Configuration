@@ -17,25 +17,25 @@
   trigger:
     # notification at 8am on the day before taking the bins out
     - platform: numeric_state
+      id: "Rubbish_PutTheBinOutTomorrow"
       entity_id: sensor.ics_1
       attribute: remaining
       # remaining changed from 3 to 2
       below: '3'
       above: '1'
-      for: 
+      for:
         hours: 8
-      id: "Rubbish_PutTheBinOutTomorrow"
 
     # notification at 5pm on the day taking the bins out
     - platform: numeric_state
+      id: "Rubbish_PutTheBinOutToday"
       entity_id: sensor.ics_1
       attribute: remaining
       # remaining changed from 2 to 1
       below: '2'
       above: '0'
-      for: 
+      for:
         hours: 17
-      id: "Rubbish_PutTheBinOutToday"
 
 # -------------------- CONDITIONS -------------------
   # none whatsoever
