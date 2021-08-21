@@ -9,7 +9,7 @@
 # ha_update_available notification and GitHub issue creation
 # ############################################################
 - alias: HA update available
-  id: 'ha_update_available'
+  id: '34f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
   initial_state: true
 
 # --------------------- TRIGGER ---------------------

@@ -9,6 +9,7 @@
 # ha_startup_notification
 # ############################################################
 - alias: HA startup notification
+  id: '56f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
   initial_state: true
 # --------------------- TRIGGER ---------------------
   trigger:
@@ -30,6 +31,7 @@
 # ha_shutdown_notification
 # ############################################################
 - alias: HA shutdown notification
+  id: '78f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
   initial_state: true
 # --------------------- TRIGGER ---------------------
   trigger:
