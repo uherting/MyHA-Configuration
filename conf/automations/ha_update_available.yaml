@@ -21,7 +21,6 @@
 # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
-
 # --------------------- ACTIONS ---------------------
   action:
     - service: notify.ha_status_info

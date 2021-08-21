@@ -37,6 +37,9 @@
   trigger:
   - platform: homeassistant
     event: shutdown
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------

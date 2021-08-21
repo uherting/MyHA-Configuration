@@ -1,30 +1,38 @@
 # ############################################################
 #
-#  Google Drive Backup: stale backup info
+#  ICS
 #
 # ############################################################
 
 
 # ############################################################
-# snapshots went stale
+# Rubbish collection due notifications
 # ############################################################
-- alias: Snapshots went stale
-  id: 'snapshots_went_stale'
+- alias: ICS - Final rubbish collection notification
+  id: '01f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
+  mode: single
   initial_state: true
+
 # --------------------- TRIGGER ---------------------
   trigger:
-  - platform: state
-    entity_id: binary_sensor.snapshots_stale
-    to: 'on'
+    - platform: time
+      at: "19:00:00"
+
 # -------------------- CONDITIONS -------------------
-  # none whatsoever
-  condition: []
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.ics_1
+    attribute: remaining
+    below: '2'
+    above: '0'
+
 # --------------------- ACTIONS ---------------------
   action:
-    - service: notify.google_drive_backup_stale_backup_info
+    - service: notify.tg_notification_grp
       data_template:
+        title: Rubbish collection is due tomorrow
         message: >
-          Snapshots of Google Drive Backup are stale. Please visit the <a href="/cebe7a76_hassio_google_drive_backup">Hass.io Google Drive Backup</a> add-on status page for details.
+          Date / time: {{ states('sensor.date_time') }}
 
 # ############################################################
 #  END OF FILE

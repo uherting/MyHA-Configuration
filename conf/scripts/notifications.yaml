@@ -1,19 +1,13 @@
 # ############################################################
 #
-#  
+#  scripts sending infos into the notification group at Telegram
 #
 # ############################################################
 
-#send_msg_via_tg_test:
-#  alias: Send text message via Telegram TEST
-#  description: This script sends a text message
-#  sequence:
-#    - service: notify.l9_cam_ttgo
-#      data:
-#        title: "TEST SCRIPT title"
-#        message: "test script msg"
-
-send_msg_txt_via_tg:
+# --------------------------------------------------------------
+# sending a text message
+# --------------------------------------------------------------
+tg_txt_notification:
   alias: Send text message via Telegram
   description: This script sends a text message given as a parameter
   fields:
@@ -24,12 +18,16 @@ send_msg_txt_via_tg:
       description: 'The message content'
       example: 'The light is on!'
   sequence:
-    - service: notify.l9_cam_ttgo
+    - service: notify.tg_notification_grp
       data_template:
         title: "{{ msg_title }}"
-        message: "{{ msg_message }}"
+        message: "{{ msg_message }}\ncurrent TS: {{ (now().timestamp())
+                   | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
-send_msg_file_via_tg:
+# --------------------------------------------------------------
+# sending a file
+# --------------------------------------------------------------
+tg_file_notification:
   alias: Send file via Telegram
   description: This script sends a file given as a parameter
   fields:
@@ -40,16 +38,19 @@ send_msg_file_via_tg:
       description: 'The caption which goes along'
       example: 'area 1, photo 1'
   sequence:
-    - service: notify.l9_cam_ttgo
+    - service: notify.tg_notification_grp
       data_template:
         title: "m_title"
         message: "m_msg"
         data:
           photo:
             - file: "{{ msg_filename }}"
-              caption: "{{ msg_caption }}"
+              caption: "{{ msg_caption }}\ncurrent TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
-send_msg_files3_via_tg:
+# --------------------------------------------------------------
+# sending three files
+# --------------------------------------------------------------
+tg_files3_notification:
   alias: Send file via Telegram
   description: This script sends a file given as a parameter
   fields:
@@ -72,18 +73,18 @@ send_msg_files3_via_tg:
       description: 'The caption which goes along file #3'
       example: 'area 1, photo 3'
   sequence:
-    - service: notify.l9_cam_ttgo
+    - service: notify.tg_notification_grp
       data_template:
         title: "m_title"
         message: "m_msg"
         data:
           photo:
             - file: "{{ msg_filename_1 }}"
-              caption: "{{ msg_caption_1 }}"
+              caption: "{{ msg_caption_1 }}\ncurrent TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
             - file: "{{ msg_filename_2 }}"
-              caption: "{{ msg_caption_2 }}"
+              caption: "{{ msg_caption_2 }}\ncurrent TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
             - file: "{{ msg_filename_3 }}"
-              caption: "{{ msg_caption_3 }}"
+              caption: "{{ msg_caption_3 }}\ncurrent TS: {{ (now().timestamp())   | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
 # ############################################################
 #  END OF FILE

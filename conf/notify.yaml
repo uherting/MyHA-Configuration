@@ -35,8 +35,8 @@
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
 
-# --------------------- ICS integration ---------------------
-- name: ics_notify
+# ------------------ General Notification ------------------
+- name: tg_notification_grp
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 

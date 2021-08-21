@@ -19,11 +19,10 @@
 # --------------------- ACTIONS ---------------------
   action:
 # ------------------- SEND NOTIFICATION -------------------
-    - service: script.send_msg_txt_via_tg
+    - service: script.tg_txt_notification
       data_template:
         msg_message: >
           TTGO cam L9 01 online again
-          The cam became online at {{ states('sensor.date_time') }}
 # ---------------------------------------------------------------
 
 # ############################################################

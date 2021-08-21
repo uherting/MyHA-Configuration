@@ -10,6 +10,7 @@
 - alias: L2 Storage ON if motion detected
   id: 'L2 Storage ON if motion detected'
   initial_state: true
+# --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
       entity_id: binary_sensor.l2_storage01_pir_01
@@ -17,13 +18,18 @@
     - platform: state
       entity_id: binary_sensor.l2_storage01_reed_01
       to: 'off'
+# -------------------- CONDITIONS -------------------
   condition:
     - condition: template
       # only when civil twilight applies
       # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+      # was: 
       # value_template: '{{ state_attr("sun.sun", "elevation")|float < 6 }}'
+      # now: a central binary sensor
       value_template: "{{ is_state('binary_sensor.sun_dwn_twilight', 'on') }}"
+# --------------------- ACTIONS ---------------------
   action:
+# --------------------- SSR ON ----------------------
     service: switch.turn_on
     entity_id: switch.l2_storage01_ssr_01
 
@@ -33,6 +39,8 @@
 - alias: L2 Storage OFF post motion
   id: 'L2 Storage OFF post motion'
   initial_state: true
+# --------------------- TRIGGER ---------------------
+  # PIR detects motion OR door (reed relay) gets closed
   trigger:
     - platform: state
       entity_id: binary_sensor.l2_storage01_pir_01
@@ -42,7 +50,9 @@
     - platform: state
       entity_id: binary_sensor.l2_storage01_reed_01
       to: 'on'
+# --------------------- ACTIONS ---------------------
   action:
+# --------------------- SSR OFF ---------------------
     service: switch.turn_off
     entity_id: switch.l2_storage01_ssr_01
 

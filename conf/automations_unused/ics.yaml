@@ -39,7 +39,7 @@
 
 # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition: []
+  # condition: []
 
 # --------------------- ACTIONS ---------------------
   action:
@@ -49,7 +49,7 @@
         id: "Rubbish_PutTheBinOutTomorrow"
       sequence:
       # ---------------- SEND NOTIFICATION ----------------
-      - service: notify.ics_notify
+      - service: notify.tg_notification_grp
         data_template:
           title: Rubbish collection is due the day after tomorrow
           message: >
@@ -59,13 +59,13 @@
         id: "Rubbish_PutTheBinOutToday"
       sequence:
       # ---------------- SEND NOTIFICATION ----------------
-      - service: notify.ics_notify
+      - service: notify.tg_notification_grp
         data_template:
           title: Rubbish collection is due tomorrow
           message: >
             Date / time: {{ states('sensor.date_time') }}
     default:
-          - service: notify.ics_notify
+          - service: notify.tg_notification_grp
             data_template:
               title: Rubbish collection default notification
               message: >

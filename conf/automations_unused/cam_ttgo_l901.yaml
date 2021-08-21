@@ -19,11 +19,10 @@
 # --------------------- ACTIONS ---------------------
     action:
 # ------------------- SEND NOTIFICATION -------------------
-      - service: script.send_msg_txt_via_tg
+      - service: script.tg_txt_notification
         data_template:
           msg_message: >
             TTGO cam L9 01 online again
-            The cam became online at {{ states('sensor.date_time') }}
 # ---------------------------------------------------------------
 
 # ############################################################
@@ -41,11 +40,10 @@
 # --------------------- ACTIONS ---------------------
     action:
 # ------------------- SEND NOTIFICATION -------------------
-      - service: script.send_msg_txt_via_tg
+      - service: script.tg_txt_notification
         data_template:
           msg_message: >
             TTGO cam L9 01 went offline
-            The cam went offline at {{ states('sensor.date_time') }}
 # ---------------------------------------------------------------
 
 # ############################################################
@@ -81,7 +79,7 @@
           msg_title: "MOTION DETECTED"
           msg_message: "Motion was detected in area #1, 3 photos follow."
 
-      - service: script.send_msg_files3_via_tg
+      - service: script.tg_files3_notification
         data:
           msg_filename_1: "/config/var/opt/tg/l9ttgocam01/1.jpg"
           msg_caption_1: "area 1, photo 1"

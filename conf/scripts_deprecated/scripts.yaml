@@ -1,0 +1,92 @@
+# ############################################################
+#
+#  deprecated scripts
+#
+# ############################################################
+
+#send_msg_via_tg_test:
+#  alias: Send text message via Telegram TEST
+#  description: This script sends a text message
+#  sequence:
+#    - service: notify.tg_notification_grp
+#      data:
+#        title: "TEST SCRIPT title"
+#        message: "test script msg"
+
+send_msg_txt_via_tg:
+  alias: Send text message via Telegram
+  description: This script sends a text message given as a parameter
+  fields:
+    msg_title:
+      description: 'The title of the notification'
+      example: 'State change'
+    msg_message:
+      description: 'The message content'
+      example: 'The light is on!'
+  sequence:
+    - service: notify.tg_notification_grp
+      data_template:
+        title: "{{ msg_title }}"
+        message: "{{ msg_message }}\ncurrent TS: {{ (now().timestamp() + 2*60*60)
+                   | timestamp_custom('%Y%m%d_%H%M%S') }}\nThe script send_msg_txt_via_tg is deprecated."
+
+send_msg_file_via_tg:
+  alias: Send file via Telegram
+  description: This script sends a file given as a parameter
+  fields:
+    msg_filename:
+      description: 'The name of the file'
+      example: '/config/var/opt/tg/l9ttgocam01/1.jpg'
+    msg_caption:
+      description: 'The caption which goes along'
+      example: 'area 1, photo 1'
+  sequence:
+    - service: notify.tg_notification_grp
+      data_template:
+        title: "m_title"
+        message: "m_msg"
+        data:
+          photo:
+            - file: "{{ msg_filename }}"
+              caption: "{{ msg_caption }}"
+
+send_msg_files3_via_tg:
+  alias: Send file via Telegram
+  description: This script sends a file given as a parameter
+  fields:
+    msg_filename_1:
+      description: 'The name of file #1'
+      example: '/config/var/opt/tg/l9ttgocam01/1.jpg'
+    msg_caption_1:
+      description: 'The caption which goes along file #1'
+      example: 'area 1, photo 1'
+    msg_filename_2:
+      description: 'The name of file #2'
+      example: '/config/var/opt/tg/l9ttgocam01/2.jpg'
+    msg_caption_2:
+      description: 'The caption which goes along file #2'
+      example: 'area 1, photo 2'
+    msg_filename_3:
+      description: 'The name of file #3'
+      example: '/config/var/opt/tg/l9ttgocam01/3.jpg'
+    msg_caption_3:
+      description: 'The caption which goes along file #3'
+      example: 'area 1, photo 3'
+  sequence:
+    - service: notify.tg_notification_grp
+      data_template:
+        title: "m_title"
+        message: "m_msg"
+        data:
+          photo:
+            - file: "{{ msg_filename_1 }}"
+              caption: "{{ msg_caption_1 }}"
+            - file: "{{ msg_filename_2 }}"
+              caption: "{{ msg_caption_2 }}"
+            - file: "{{ msg_filename_3 }}"
+              caption: "{{ msg_caption_3 }}"
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+
