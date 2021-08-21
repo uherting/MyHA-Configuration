@@ -3,7 +3,7 @@
 
 #script:
   # on_press action of TB A4
-  - id: ssr_script_tb_01_click_on_press
+  - id: tb_01_click_on_press
     mode: restart
     then:
       - if:
