@@ -49,8 +49,7 @@
         id: "Rubbish_PutTheBinOutTomorrow"
       sequence:
       # ---------------- SEND NOTIFICATION ----------------
-      # - service: notify.ics_notify
-      - service: notify.ha_status_info
+      - service: notify.ics_notify
         data_template:
           title: Rubbish collection is due the day after tomorrow
           message: >
@@ -60,8 +59,7 @@
         id: "Rubbish_PutTheBinOutToday"
       sequence:
       # ---------------- SEND NOTIFICATION ----------------
-      # - service: notify.ics_notify
-      - service: notify.ha_status_info
+      - service: notify.ics_notify
         data_template:
           title: Rubbish collection is due tomorrow
           message: >
