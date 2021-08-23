@@ -21,8 +21,8 @@
 # -------------------- CONDITIONS -------------------
   condition:
   - condition: numeric_state
-    entity_id: sensor.ics_1
-    attribute: remaining
+    entity_id: sensor.abfall
+    # attribute: remaining
     below: '2'
     above: '0'
 
