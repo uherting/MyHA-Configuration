@@ -1,12 +1,11 @@
 # ############################################################
 #
-#  HACS - making life easier
-#    for details see https://hacs.xyz/docs/basic/automation
+#  ESPHome devices state changed
 #
 # ############################################################
 
 # ############################################################
-# HACS updates pending
+# ESPHome devices state changed
 # ############################################################
 
 - alias: ESPHome devices state changed 21 22
@@ -35,7 +34,7 @@
 #          {%- set new_state = trigger.event.data.new_state %}
 #          {{ new_state.object_id.endswith('pir01') or new_state.object_id.endswith('status') }}
   action:
-    - service: notify.ha_status_info
+    - service: notify.tg_admin_grp
       data_template:
         title: ESPHome dev change
         message: Device {{ state_attr(trigger.event.data.entity_id, "friendly_name") }}

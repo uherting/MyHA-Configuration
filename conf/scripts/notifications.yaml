@@ -5,9 +5,9 @@
 # ############################################################
 
 # --------------------------------------------------------------
-# sending a text message
+# sending a text message to the TG notification group
 # --------------------------------------------------------------
-tg_txt_notification:
+tg_txt:
   alias: Send text message via Telegram
   icon: mdi:text
   description: This script sends a text message given as a parameter
@@ -25,16 +25,45 @@ tg_txt_notification:
       required: true
       example: 'The light is on!'
       default: 'default msg text'
+    msg_receiver:
+      description: 'The receiver of the message'
+      advanced: true
+      required: false
+      example: 'admin'
+      default: 'admin'
   mode: queued
   sequence:
-    - service: notify.tg_notification_grp
-      data_template:
-        title: "{{ msg_title }}"
-        message: >
-          {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+    - choose:
+      # admin group
+      - conditions:
+        - condition: template
+          value_template: "{{ msg_receiver == 'admin' }}"
+        sequence:
+        - service: notify.tg_admin_grp
+          data_template:
+            title: "{{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      # general notification group
+      - conditions:
+        - condition: template
+          value_template: "{{ msg_receiver == 'notify' }}"
+        sequence:
+        - service: notify.tg_notification_grp
+          data_template:
+            title: "{{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      # receiver does not exist
+      default:
+        - service: notify.tg_admin_grp
+          data_template:
+            title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
 
 # --------------------------------------------------------------
-# sending a file
+# sending a file to the TG notification group
 # --------------------------------------------------------------
 tg_file_notification:
   alias: Send file via Telegram
@@ -55,10 +84,10 @@ tg_file_notification:
         data:
           photo:
             - file: "{{ msg_filename }}"
-              caption: "{{ msg_caption }}, current TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
 # --------------------------------------------------------------
-# sending three files
+# sending three files to the TG notification group
 # --------------------------------------------------------------
 tg_files3_notification:
   alias: Send file via Telegram
@@ -91,11 +120,11 @@ tg_files3_notification:
         data:
           photo:
             - file: "{{ msg_filename_1 }}"
-              caption: "{{ msg_caption_1 }}, current TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption_1 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
             - file: "{{ msg_filename_2 }}"
-              caption: "{{ msg_caption_2 }}, current TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption_2 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
             - file: "{{ msg_filename_3 }}"
-              caption: "{{ msg_caption_3 }}, current TS: {{ (now().timestamp())   | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption_3 }} @ {{ (now().timestamp())   | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
 # ############################################################
 #  END OF FILE

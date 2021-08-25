@@ -20,18 +20,8 @@
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
-# ------------------- google backup addon -------------------
-- name: google_drive_backup_stale_backup_info
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
-
-# --------------------- home assistant ---------------------
-- name: ha_status_info
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
-
-# --------------------- home assistant ---------------------
-- name: hacs_info
+# ------------------ Admin Notification ------------------
+- name: tg_admin_grp
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
 

@@ -30,10 +30,11 @@
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------
-    - service: script.tg_txt_notification
+    - service: script.tg_txt
       data_template:
         msg_title: "L2 bathroom notification"
         msg_text: "The bathroom window is still open"
+        msg_receiver: "notify"
 
 # ############################################################
 #  END OF FILE

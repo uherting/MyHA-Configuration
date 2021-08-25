@@ -23,10 +23,11 @@
   condition: []
 # --------------------- ACTIONS ---------------------
   action:
-    - service: notify.ha_status_info
+    - service: script.tg_txt
       data_template:
-        message: >
-          Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available.
+        msg_title: "Home Assistant"
+        msg_text: "HA {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
+        msg_receiver: "admin"
     - service: rest_command.github_create_issue_on_new_ha_version
       data_template:
         version: "Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."

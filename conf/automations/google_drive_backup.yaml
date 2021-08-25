@@ -21,7 +21,7 @@
   condition: []
 # --------------------- ACTIONS ---------------------
   action:
-    - service: notify.google_drive_backup_stale_backup_info
+    - service: notify.tg_admin_grp
       data_template:
         message: >
           Snapshots of Google Drive Backup are stale. Please visit the <a href="/cebe7a76_hassio_google_drive_backup">Hass.io Google Drive Backup</a> add-on status page for details.
