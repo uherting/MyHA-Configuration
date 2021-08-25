@@ -24,10 +24,18 @@ cards:
       - entity: sensor.processor_use
         name: Use
 
-  #     - entity: sensor.network_in_hassio
-  #     - entity: sensor.network_out_hassio
-  #     - entity: sensor.network_throughput_in_hassio
-  #     - entity: sensor.network_throughput_out_hassio
+  - type: custom:mini-graph-card
+    title: Processor
+    entities:
+      - sensor.processor_temperature
+      - sensor.processor_use
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    line_width: 2
+    font_size: 75
+    points_per_hour: 0.5
+    height: 270
 
   - type: 'custom:banner-card'
     heading: 
@@ -42,6 +50,20 @@ cards:
       - entity: sensor.memory_free
       - entity: sensor.memory_use_percent
         name: Mem use
+
+  - type: custom:mini-graph-card
+    title: Motherboard
+    entities:
+      - sensor.load_1m
+      - sensor.load_5m
+      - sensor.load_15m
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    line_width: 2
+    font_size: 75
+    points_per_hour: 0.5
+    height: 250
 
   - type: 'custom:banner-card'
     heading: 
@@ -66,6 +88,20 @@ cards:
         name: Upload
       - entity: sensor.speedtest_ping
         name: Ping
+
+  - type: custom:mini-graph-card
+    title: Speedtest
+    entities:
+      - sensor.speedtest_download
+      - sensor.speedtest_upload
+      - sensor.speedtest_ping
+    hours_to_show: 72
+    hour24: true
+    show_legend: true
+    line_width: 2
+    font_size: 75
+    points_per_hour: 0.5
+    height: 300
 
   # - type: entities
   #   title: Fritzbox
