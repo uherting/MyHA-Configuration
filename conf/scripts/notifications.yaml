@@ -9,26 +9,36 @@
 # --------------------------------------------------------------
 tg_txt_notification:
   alias: Send text message via Telegram
+  icon: mdi:text
   description: This script sends a text message given as a parameter
   fields:
     msg_title:
       description: 'The title of the notification'
+      advanced: true
+      required: true
       example: 'State change'
-    msg_message:
+      default: 'default msg title'
+      # selector: text
+    msg_text:
       description: 'The message content'
+      advanced: true
+      required: true
       example: 'The light is on!'
+      default: 'default msg text'
+  mode: queued
   sequence:
     - service: notify.tg_notification_grp
       data_template:
         title: "{{ msg_title }}"
-        message: "{{ msg_message }}\ncurrent TS: {{ (now().timestamp())
-                   | timestamp_custom('%Y%m%d_%H%M%S') }}"
+        message: >
+          {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
 
 # --------------------------------------------------------------
 # sending a file
 # --------------------------------------------------------------
 tg_file_notification:
   alias: Send file via Telegram
+  icon: mdi:file
   description: This script sends a file given as a parameter
   fields:
     msg_filename:
@@ -45,13 +55,14 @@ tg_file_notification:
         data:
           photo:
             - file: "{{ msg_filename }}"
-              caption: "{{ msg_caption }}\ncurrent TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption }}, current TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
 # --------------------------------------------------------------
 # sending three files
 # --------------------------------------------------------------
 tg_files3_notification:
   alias: Send file via Telegram
+  icon: mdi:file-multiple
   description: This script sends a file given as a parameter
   fields:
     msg_filename_1:
@@ -80,11 +91,11 @@ tg_files3_notification:
         data:
           photo:
             - file: "{{ msg_filename_1 }}"
-              caption: "{{ msg_caption_1 }}\ncurrent TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption_1 }}, current TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
             - file: "{{ msg_filename_2 }}"
-              caption: "{{ msg_caption_2 }}\ncurrent TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption_2 }}, current TS: {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
             - file: "{{ msg_filename_3 }}"
-              caption: "{{ msg_caption_3 }}\ncurrent TS: {{ (now().timestamp())   | timestamp_custom('%Y%m%d_%H%M%S') }}"
+              caption: "{{ msg_caption_3 }}, current TS: {{ (now().timestamp())   | timestamp_custom('%Y%m%d_%H%M%S') }}"
 
 # ############################################################
 #  END OF FILE

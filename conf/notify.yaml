@@ -14,11 +14,11 @@
 # --------------------- cameras ---------------------
 - name: l9_cam_esp32
   platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
 - name: l9_cam_ttgo
   platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
 # ------------------- google backup addon -------------------
 - name: google_drive_backup_stale_backup_info

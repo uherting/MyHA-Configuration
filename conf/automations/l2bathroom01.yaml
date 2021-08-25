@@ -8,31 +8,32 @@
 # ############################################################
 #  Bathroom window open
 # ############################################################
-- alias: Bathroom window open
-  id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
+- alias: L2 Bathroom window open
+  id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6bee'
   mode: single
   initial_state: true
 # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
       entity_id: binary_sensor.l2_bathroom01_window
-      to: 'off'
+      to: 'on'
       for:
         hours: 0
         minutes: 10
 # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition:
-    - condition: time
-      after: "06:00:00"
-      before: "23:30:00"
+  condition: []
+  # condition:
+  #   - condition: time
+  #     after: "06:00:00"
+  #     before: "23:30:00"
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------
     - service: script.tg_txt_notification
       data_template:
-        msg_message: >
-          The bathroom window is still open.
+        msg_title: "L2 bathroom notification"
+        msg_text: "The bathroom window is still open"
 
 # ############################################################
 #  END OF FILE
