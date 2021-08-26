@@ -64,8 +64,8 @@ input_select: !include conf/input_select/theme_select.yaml
 
 zone: !include conf/zones/zones.yaml
 
-script: !include conf/scripts/notifications.yaml
-# script: !include_dir_merge_list conf/scripts
+# script: !include conf/scripts/notifications.yaml
+script: !include_dir_merge_named conf/scripts
 
 
 # not required as the add-on is installed

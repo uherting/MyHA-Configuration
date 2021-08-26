@@ -1,0 +1,134 @@
+# ############################################################
+#
+#  Telegram messaging
+#
+#  Purpose: sending text or files into the Telegram groups
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# sending a text message to the TG notification group
+# --------------------------------------------------------------
+tg_txt:
+  alias: Send text message via Telegram
+  icon: mdi:text
+  description: This script sends a text message given as a parameter
+  fields:
+    msg_title:
+      description: 'The title of the notification'
+      advanced: true
+      required: true
+      example: 'State change'
+      default: 'default msg title'
+      # selector: text
+    msg_text:
+      description: 'The message content'
+      advanced: true
+      required: true
+      example: 'The light is on!'
+      default: 'default msg text'
+    msg_receiver:
+      description: 'The receiver of the message'
+      advanced: true
+      required: false
+      example: 'admin'
+      default: 'admin'
+  mode: queued
+  sequence:
+    - choose:
+      # admin group
+      - conditions:
+        - condition: template
+          value_template: "{{ msg_receiver == 'admin' }}"
+        sequence:
+        - service: notify.tg_admin_grp
+          data_template:
+            title: "{{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      # general notification group
+      - conditions:
+        - condition: template
+          value_template: "{{ msg_receiver == 'notify' }}"
+        sequence:
+        - service: notify.tg_notification_grp
+          data_template:
+            title: "{{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      # receiver does not exist
+      default:
+        - service: notify.tg_admin_grp
+          data_template:
+            title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+
+# --------------------------------------------------------------
+# sending a file to the TG notification group
+# --------------------------------------------------------------
+tg_file_notification:
+  alias: Send file via Telegram
+  icon: mdi:file
+  description: This script sends a file given as a parameter
+  fields:
+    msg_filename:
+      description: 'The name of the file'
+      example: '/config/var/opt/tg/l9ttgocam01/1.jpg'
+    msg_caption:
+      description: 'The caption which goes along with the file'
+      example: 'area 1, photo 1'
+  sequence:
+    - service: notify.tg_notification_grp
+      data_template:
+        title: "m_title"
+        message: "m_msg"
+        data:
+          photo:
+            - file: "{{ msg_filename }}"
+              caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+
+# --------------------------------------------------------------
+# sending three files to the TG notification group
+# --------------------------------------------------------------
+tg_files3_notification:
+  alias: Send file via Telegram
+  icon: mdi:file-multiple
+  description: This script sends a file given as a parameter
+  fields:
+    msg_filename_1:
+      description: 'The name of file #1'
+      example: '/config/var/opt/tg/l9ttgocam01/1.jpg'
+    msg_caption_1:
+      description: 'The caption which goes along with file #1'
+      example: 'area 1, photo 1'
+    msg_filename_2:
+      description: 'The name of file #2'
+      example: '/config/var/opt/tg/l9ttgocam01/2.jpg'
+    msg_caption_2:
+      description: 'The caption which goes along with file #2'
+      example: 'area 1, photo 2'
+    msg_filename_3:
+      description: 'The name of file #3'
+      example: '/config/var/opt/tg/l9ttgocam01/3.jpg'
+    msg_caption_3:
+      description: 'The caption which goes along with file #3'
+      example: 'area 1, photo 3'
+  sequence:
+    - service: notify.tg_notification_grp
+      data_template:
+        title: "m_title"
+        message: "m_msg"
+        data:
+          photo:
+            - file: "{{ msg_filename_1 }}"
+              caption: "{{ msg_caption_1 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+            - file: "{{ msg_filename_2 }}"
+              caption: "{{ msg_caption_2 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}"
+            - file: "{{ msg_filename_3 }}"
+              caption: "{{ msg_caption_3 }} @ {{ (now().timestamp())   | timestamp_custom('%Y%m%d_%H%M%S') }}"
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+
