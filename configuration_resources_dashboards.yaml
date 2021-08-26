@@ -82,16 +82,8 @@
     uilovelace-adm-ovw-esp1:
       mode: yaml
       filename: ui-lovelace-adm_ovw_esp1.yaml
-      title: Admin - ESP1
+      title: Admin - ESP
       icon: mdi:devices
-      show_in_sidebar: true
-      require_admin: true
-
-    uilovelace-adm-ovw-esp2:
-      mode: yaml
-      filename: ui-lovelace-adm_ovw_esp2.yaml
-      title: Admin - ESP2
-      icon: mdi:memory
       show_in_sidebar: true
       require_admin: true
 
