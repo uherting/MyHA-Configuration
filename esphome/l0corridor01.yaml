@@ -110,12 +110,8 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir01.yaml
   # - <<: !include conf/common/binary_sensor/pir02.yaml
-  # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
   # - <<: !include conf/common/binary_sensor/reed02.yaml
-  # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/touch_button01.yaml
   # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
@@ -125,9 +121,9 @@ sensor:
   # common sensors
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
   # device related
   - <<: !include conf/sensor/l0corridor01_case.yaml
+  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS

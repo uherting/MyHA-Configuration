@@ -120,14 +120,8 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir01.yaml
   - <<: !include conf/common/binary_sensor/pir02.yaml
-  # - <<: !include conf/common/binary_sensor/pir01_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/pir02_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/pir01_gpio.yaml
-  # - <<: !include conf/common/binary_sensor/pir02_gpio.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
   # - <<: !include conf/common/binary_sensor/reed02.yaml
-  # - <<: !include conf/common/binary_sensor/reed01_inverted.yaml
-  # - <<: !include conf/common/binary_sensor/reed02_inverted.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
 
