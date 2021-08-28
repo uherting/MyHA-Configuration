@@ -6,12 +6,35 @@
 
 
 # ############################################################
+#  Bathroom window open TG feedback
+# ############################################################
+- alias: L2 Bathroom window open TG feedback
+  id: '66779e2c-40cb-485d-9c68-6d819197dc82'
+  mode: single
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/L2BathroomWindow_ack"
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+# --------------------- ACTIONS ---------------------
+  action:
+# ---------------- switch alert off -----------------
+    - service: alert.turn_off
+      target:
+        entity_id: alert.L2BathroomWindowOpen
+
+# ############################################################
 #  Bathroom window open
 # ############################################################
 - alias: L2 Bathroom window open
   id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6bee'
   mode: single
-  initial_state: true
+  initial_state: false
 # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state

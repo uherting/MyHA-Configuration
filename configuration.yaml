@@ -92,7 +92,8 @@ pi_hole: !include conf/pi_holes/pi_holes.yaml
 notify: !include conf/notify.yaml
 
 automation: !include_dir_merge_list conf/automations
-#automation: !include automations_test.yaml
+
+alert: !include_dir_merge_named conf/alerts
 
 binary_sensor: !include_dir_merge_list conf/binary_sensors
 sensor: !include_dir_merge_list conf/sensors

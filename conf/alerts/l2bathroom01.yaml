@@ -1,0 +1,29 @@
+# ############################################################
+#
+#  L2Bathroom01
+#
+# ############################################################
+
+
+# ############################################################
+#  Bathroom window open
+# ############################################################
+#alert:
+  l2_bathroom_wndow_open:
+    name: 'L2 Bathroom'
+    title: 'Window is open'
+    done_message: 'Window was closed'
+    entity_id: binary_sensor.l2_bathroom01_window
+    state: "on"
+    repeat: 15
+    can_acknowledge: true
+    skip_first: true
+    data:
+      inline_keyboard:
+        - 'Close garage:/L2BathroomWindow_close, Acknowledge:/L2BathroomWindow_ack'
+    notifiers:
+      - tg_notification_grp
+
+# ############################################################
+#  END OF FILE
+# ############################################################
