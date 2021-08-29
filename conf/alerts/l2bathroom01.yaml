@@ -9,10 +9,10 @@
 #  Bathroom window open
 # ############################################################
 #alert:
-  l2_bathroom_wndow_open:
-    name: 'L2 Bathroom'
-    title: 'Window is open'
-    done_message: 'Window was closed'
+  l2_bathroom_window_open:
+    name: 'L2 Bathroom window is open'
+    # title: 'L2 Bathroom title'
+    done_message: 'L2 Bathroom window was closed'
     entity_id: binary_sensor.l2_bathroom01_window
     state: "on"
     repeat: 15
@@ -20,7 +20,7 @@
     skip_first: true
     data:
       inline_keyboard:
-        - 'Close garage:/L2BathroomWindow_close, Acknowledge:/L2BathroomWindow_ack'
+        - 'Acknowledge:/L2BathroomWindow_ack'
     notifiers:
       - tg_notification_grp
 

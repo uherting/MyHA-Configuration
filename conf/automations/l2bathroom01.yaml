@@ -26,7 +26,7 @@
 # ---------------- switch alert off -----------------
     - service: alert.turn_off
       target:
-        entity_id: alert.L2BathroomWindowOpen
+        entity_id: alert.l2_bathroom_window_open
 
 # ############################################################
 #  Bathroom window open
