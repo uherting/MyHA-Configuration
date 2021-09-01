@@ -9,20 +9,9 @@
 icon: mdi:information-outline
 title: Information
 path: information
-badges: [
-          # sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
-          # binary_sensor.workday_sensor,
-          # sun.sun,
-          # binary_sensor.sun_dwn_twilight,
-          # sensor.ics_1
-        ]
+badges: [ ]
 
 cards:
-
-  # Norwegian Meteorological Institute
-  - type: weather-forecast
-    entity: weather.home
-    # entity: weather.home_hourly
 
   # Full / new moon
   - type: entities

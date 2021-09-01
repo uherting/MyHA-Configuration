@@ -11,29 +11,25 @@ icon: mdi:weather-sunny
 title: weather
 path: weather
 cards:
-  # OpenWeatherMap
-  - type: weather-forecast
-    entity: weather.openweathermap
+  # # OpenWeatherMap
+  # - type: weather-forecast
+  #   entity: weather.openweathermap
 
-  # # OpenWeatherMap - Precipitation
-  # - type: entities
-  #   title: Precipitation (OpenWeatherMap)
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.openweathermap_forecast_precipitation
-  #     - sensor.openweathermap_forecast_precipitation_probability
+  # Norwegian Meteorological Institute
+  - type: weather-forecast
+    entity: weather.home
 
   # Norwegian Meteorological Institute
   - type: weather-forecast
     entity: weather.home_hourly
 
-  # # AccuWeather
-  # - type: weather-forecast
-  #   entity: weather.home431
-
-  # # Deutscher Wetterdienst (DWD)
-  # - type: weather-forecast
-  #   entity: weather.dwd_weather_h431
+  # Precipitation (OpenWeatherMap)
+  - type: entities
+    title: Precipitation (OpenWeatherMap)
+    show_header_toggle: false
+    entities:
+      - sensor.openweathermap_forecast_precipitation
+      - sensor.openweathermap_forecast_precipitation_probability
 
   - type: entities
     entities:
