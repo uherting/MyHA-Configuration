@@ -2,6 +2,7 @@
 hacs_token.txt
 home-assistant_v2.db
 home-assistant.log
+home-assistant.log.1
 home-assistant_v2.db-shm
 home-assistant_v2.db-wal
 var/opt/tg/*/*.jpg
