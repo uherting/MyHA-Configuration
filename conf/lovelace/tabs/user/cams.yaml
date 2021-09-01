@@ -59,17 +59,16 @@ cards:
       - sensor.l9_cam32_03_esphome_version
       - sensor.l9_cam32_03_wifi_signal
 
-  # # ESP32-cam cameras
-  # - type: picture-glance
-  #   title: ESP32Cam 07
-  #   camera_image: camera.l9_cam32_07_cam
-  #   camera_view: live
-  #   entities:
-  #     - light.l9_cam32_07_camlight
-  #     # - binary_sensor.l9_cam32_07_pir_01
-  #     - binary_sensor.l9_cam32_07_status
-  #     - sensor.l9_cam32_07_esphome_version
-  #     - sensor.l9_cam32_07_wifi_signal
+  - type: picture-glance
+    title: ESP32Cam 04
+    camera_image: camera.l9_cam32_04_cam
+    camera_view: live
+    entities:
+      - light.l9_cam32_04_camlight
+      # - binary_sensor.l9_cam32_04_pir_01
+      - binary_sensor.l9_cam32_04_status
+      - sensor.l9_cam32_04_esphome_version
+      - sensor.l9_cam32_04_wifi_signal
 
   # TTGO-cameras
   - type: picture-glance
