@@ -1,14 +1,6 @@
-.storage/*
-hacs_token.txt
-home-assistant_v2.db
-home-assistant.log
-home-assistant.log.1
-home-assistant_v2.db-shm
-home-assistant_v2.db-wal
-var/opt/tg/*/*.jpg
-.google.token
-.HA_VERSION
-secrets.yaml
+# ############################################################
+#  Which files do not enter the GitHub repository?
+# ############################################################
 
 # barcode buddy
 log/**/access.log
@@ -19,3 +11,37 @@ log/**/error.log.*
 # all __pycache__ dirs
 __pycache__
 
+# settings in general(???) I still do not know! :-(
+.storage/*
+
+# some Google token. I cannot tell the purpose of this file anymore. :-(
+.google.token
+
+# the version of HA, e.g. '2021.9.1' on a single line w/ no newline
+.HA_VERSION
+
+#
+# all the HA stuff we do not want to have in the repository
+#
+
+# the HA token
+hacs_token.txt
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+
+# the DB
+home-assistant_v2.db
+
+# log files
+home-assistant.log
+home-assistant.log.1
+
+# the cam snapshots we took
+var/opt/tg/*/*.jpg
+
+# no secrets.yaml on a public accessable repository. Sorry!
+secrets.yaml
+
+# ############################################################
+#  EOF
+# ############################################################
