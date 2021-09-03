@@ -3,6 +3,9 @@
 # - 
 default_config:
 
+# normally included by default_config:, here to make sure only!
+media_source:
+
 homeassistant: !include conf/homeassistant.yaml
 
 updater:
