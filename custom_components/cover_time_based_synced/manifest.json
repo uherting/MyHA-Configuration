@@ -1,0 +1,10 @@
+{
+  "domain": "cover_time_based_synced",
+  "name": "Cover Time Based Synced",
+  "version": "2.0.0",
+  "documentation": "https://github.com/kotborealis/home-assistant-custom-components-cover-time-based-synced",
+  "issue_tracker": "https://github.com/kotborealis/home-assistant-custom-components-cover-time-based-synced/issues",
+  "requirements": [],
+  "codeowners": ["@kotborealis"],
+  "iot_class": "local_push"
+}
