@@ -3,8 +3,11 @@
 # - 
 default_config:
 
-# normally included by default_config:, here to make sure only!
-media_source:
+# normally included by default_config:, here to make sure only! (used in combination with frigate)
+# media_source:
+
+# activate usb 
+# usb:
 
 homeassistant: !include conf/homeassistant.yaml
 
