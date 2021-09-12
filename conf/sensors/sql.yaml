@@ -1,0 +1,37 @@
+##########################################################################################
+# Sensors
+##########################################################################################
+
+##########################################################################################
+# SQL platform
+
+#sensor:
+  # mariadb recorder db size sensor
+  - platform: sql
+    db_url: !secret MARIADB_DBURL
+    queries:
+      - name: MariaDb DB size
+        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1048576, 2) "value" FROM information_schema.tables WHERE table_schema="homeassistant" GROUP BY table_schema;'
+        column: 'value'
+        unit_of_measurement: MB
+        
+  # influxdb db size sensor #
+  # attn: this does not work for an unknown reason!!!
+  # - platform: influxdb
+  #   host: !secret INFLUXDB_HOST
+  #   port: !secret INFLUXDB_PORT
+  #   username: !secret INFLUXDB_USERNAME
+  #   password: !secret INFLUXDB_PASSWORD
+  #   queries:
+  #     - name: InfluxDb DB Size
+  #       unit_of_measurement: MB
+  #       value_template: '{{ (value | float / 1024 /1024) | round(1) }}'
+  #       group_function: sum
+  #       measurement: '"monitor"."shard"'
+  #       database: _internal
+  #       where: 'time > now() - 10s'
+  #       field: diskBytes
+
+####################################################################
+# EOF
+####################################################################
