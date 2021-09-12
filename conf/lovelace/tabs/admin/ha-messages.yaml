@@ -15,7 +15,8 @@ badges: [
           sun.sun,
           binary_sensor.sun_dwn_twilight,
           binary_sensor.workday_sensor,
-          binary_sensor.updater
+          binary_sensor.updater,
+          sensor.potential_breaking_changes
   ]
 
 cards:
