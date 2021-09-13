@@ -32,9 +32,9 @@
       data_template:
         msg_title: "Updates pending in HACS"
         msg_text: >-
-          "{% for repo in state_attr(trigger.entity_id, 'repositories') %}
-            **{{ repo.display_name }}** _{{ repo["installed_version"] }}_ -> _{{ repo["available_version"] }}_
-          {% endfor %}"
+          {% for repo in state_attr(trigger.entity_id, 'repositories') %}
+            {{ repo.display_name }} _{{ repo["installed_version"] }}_ -> _{{ repo["available_version"] }}_
+          {% endfor %}
         msg_receiver: "admin"
     # - service: notify.tg_admin_grp
     #   data_template:
