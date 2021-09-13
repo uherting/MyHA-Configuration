@@ -1,13 +1,13 @@
 # ############################################################
 #
-#  XIAOMI low battery notifcation
+#  XIAOMI low battery notification
 #
 # ############################################################
 
 # ############################################################
 # HACS updates pending
 # ############################################################
-- alias: XIAOMI low battery notifcation
+- alias: XIAOMI low battery notification
   id: 'ec50a982-5886-495e-9454-c8e329878610'
   initial_state: false
 
@@ -19,7 +19,7 @@
       - sensor.xiaomi_bedroom_battery
       - sensor.xiaomi_lounge_battery
       - sensor.xiaomi_storage_battery
-    below: 30
+    below: 20
 
 # -------------------- CONDITIONS -------------------
   condition: []
@@ -28,7 +28,7 @@
   action:
     - service: script.tg_txt
       data_template:
-        msg_title: "XIAOMI low battery notifcation"
+        msg_title: "XIAOMI low battery notification"
         msg_text: >-
           Room: {% if trigger.to_state.entity_id == 'sensor.xiaomi_bathroom_battery' %} bathroom
           {% elif trigger.to_state.entity_id == 'sensor.xiaomi_bedroom_battery' %} bedroom
