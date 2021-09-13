@@ -11,14 +11,20 @@
 - alias: HACS has new repositories
   id: 'HACS has new repositories'
   initial_state: true
+
+# --------------------- TRIGGER ---------------------
   trigger:
     platform: event
     event_type: hacs/repository
     event_data:
       action: registration
+
+# -------------------- CONDITIONS -------------------
   condition:
     condition: template
     value_template: "{{ trigger.event.data.repository is defined }}"
+
+# --------------------- ACTIONS ---------------------
   action:
 #    - service: persistent_notification.create
 #      data_template:
