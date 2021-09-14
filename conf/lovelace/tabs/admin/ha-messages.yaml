@@ -51,6 +51,9 @@ cards:
       - entity: binary_sensor.updater
         name: HA update available
       - type: divider
+      - entity: sensor.potential_breaking_changes
+        name: Breaking changes
+      - type: divider
       - entity: sensor.hacs
         icon: 'hacs:hacs'
         name: HACS updates
