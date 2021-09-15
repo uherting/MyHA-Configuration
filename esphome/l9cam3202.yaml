@@ -97,7 +97,7 @@ sensor:
   # device related
   # - <<: !include conf/sensor/l9cam3202.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
+  # - <<: !include conf/common/sensor/dht_esp32_GPIO14_upd_01min.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
