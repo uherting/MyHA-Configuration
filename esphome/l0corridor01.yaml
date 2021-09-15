@@ -123,7 +123,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/sensor/l0corridor01_case.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
+  # - <<: !include conf/common/sensor/dht_esp8266_01_D5_upd_15min.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
