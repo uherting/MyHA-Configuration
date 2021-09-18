@@ -15,8 +15,8 @@ badges: [
           sun.sun,
           binary_sensor.sun_dwn_twilight,
           binary_sensor.workday_sensor,
-          binary_sensor.updater,
-          sensor.potential_breaking_changes
+          # binary_sensor.updater,
+          # sensor.potential_breaking_changes
   ]
 
 cards:
@@ -45,7 +45,7 @@ cards:
 
   # HACS updates
   - type: entities
-    title: Home Assistant - overall info
+    title: HA - overall system info
     show_header_toggle: false
     entities:
       - entity: binary_sensor.updater
