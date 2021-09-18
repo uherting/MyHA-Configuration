@@ -1,0 +1,38 @@
+# esphome-unplugged-devices
+###########################################################################{% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
+{%- for state in e -%}
+{%- if state.entity_id.startswith("binary_sensor.l") %}
+{%- if state.entity_id.endswith("status") %}
+{#- {%- if state.name | selectattr("device_class", "is", "connectivity") %} #}
+- {{ state.entity_id }}
+{#- {%- endif -%} #}
+{%- endif -%}
+{%- endif -%}
+{%- endfor %}
+
+# time
+###########################################################################
+{{ (now().timestamp()) | timestamp_custom('%Y%m%d_%H%M%S') }}
+
+# tell me the name of the sun based theme
+###########################################################################
+{{ states('sensor.sun_based_theme') }}
+
+# variables test
+###########################################################################
+{% set my_test_json = {"temperature": 25,"unit": "°C"} %}The temperature is {{ my_test_json.temperature }} {{ my_test_json.unit }}.
+
+# misc things
+###########################################################################
+{% if is_state("sun.sun", "above_horizon") -%}
+  The sun rose {{ relative_time(states.sun.sun.last_changed) }} ago.
+{%- else -%}
+  The sun will rise at {{ as_timestamp(strptime(state_attr("sun.sun", "next_rising"), "")) | timestamp_local }}.
+{%- endif %}
+
+For loop example getting entity values in the weather domain:
+
+{% for state in states.weather -%}
+  {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
+  {{ state.name | lower }} is {{state.state_with_unit}}
+{%- endfor %}.
