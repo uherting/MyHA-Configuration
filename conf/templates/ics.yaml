@@ -3,6 +3,8 @@
 ##########################################################################################
 
 # template:
+
+# how many days till rubbish gets collected?
   - sensor:
       - name: "Abfall"
         unit_of_measurement: "d"
