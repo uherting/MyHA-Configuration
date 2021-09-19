@@ -1,3 +1,16 @@
+# bathroom window
+###########################################################################{% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
+{{ states('binary_sensor.l2_bathroom01_window').startswith("off") }}
+{{ is_state('binary_sensor.l2_bathroom01_window', 'off') }}
+{{ (is_state('binary_sensor.l2_bathroom01_window', 'off')) and true }}
+{{ (states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0}}
+final test:
+{{ (is_state('binary_sensor.l2_bathroom01_window', 'off')) and ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0) }}
+{{  (is_state('binary_sensor.l2_bathroom01_window', 'off')) 
+    and 
+    ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0)
+}}
+
 # esphome-unplugged-devices
 ###########################################################################{% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
 {%- for state in e -%}
