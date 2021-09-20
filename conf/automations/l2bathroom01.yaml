@@ -7,6 +7,9 @@
 
 # ############################################################
 #  Bathroom window open TG feedback
+#     This autoamtion gets feedback from Telegram as the user
+#     ackknowledges the alert message send to a group via the
+#     defined alert.
 # ############################################################
 - alias: L2 Bathroom window open TG feedback
   id: '66779e2c-40cb-485d-9c68-6d819197dc82'
@@ -28,36 +31,42 @@
       target:
         entity_id: alert.l2_bathroom_window_open
 
-# ############################################################
-#  Bathroom window open
-# ############################################################
-- alias: L2 Bathroom window open
-  id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6bee'
-  mode: single
-  initial_state: false
-# --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.l2_bathroom01_window
-      to: 'on'
-      for:
-        hours: 0
-        minutes: 10
-# -------------------- CONDITIONS -------------------
-  # none whatsoever
-  condition: []
-  # condition:
-  #   - condition: time
-  #     after: "06:00:00"
-  #     before: "23:30:00"
-# --------------------- ACTIONS ---------------------
-  action:
-# --------------------- NOTIFY ---------------------
-    - service: script.tg_txt
-      data_template:
-        msg_title: "L2 bathroom notification"
-        msg_text: "The bathroom window is still open"
-        msg_receiver: "notify"
+
+
+#
+# the following automation was replaced by an alert:
+#
+
+# # ############################################################
+# #  Bathroom window open
+# # ############################################################
+# - alias: L2 Bathroom window open
+#   id: '18f21f84-a67c-11eb-a2ec-07e7a0fc6bee'
+#   mode: single
+#   initial_state: false
+# # --------------------- TRIGGER ---------------------
+#   trigger:
+#     - platform: state
+#       entity_id: binary_sensor.l2_bathroom01_window
+#       to: 'on'
+#       for:
+#         hours: 0
+#         minutes: 10
+# # -------------------- CONDITIONS -------------------
+#   # none whatsoever
+#   condition: []
+#   # condition:
+#   #   - condition: time
+#   #     after: "06:00:00"
+#   #     before: "23:30:00"
+# # --------------------- ACTIONS ---------------------
+#   action:
+# # --------------------- NOTIFY ---------------------
+#     - service: script.tg_txt
+#       data_template:
+#         msg_title: "L2 bathroom notification"
+#         msg_text: "The bathroom window is still open"
+#         msg_receiver: "notify"
 
 # ############################################################
 #  END OF FILE
