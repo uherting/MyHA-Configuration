@@ -1,0 +1,31 @@
+# ############################################################
+#
+#  L2Bathroom01
+#
+# ############################################################
+
+
+# ############################################################
+#  Bathroom window open conditions
+# ############################################################
+# input_number:
+  l2_bathroom_alert_below_temp:
+    name: Alert trigger L2 bathroom window open outdoor temp below
+    min: 1
+    max: 30
+    step: 0.5
+    unit_of_measurement: °C
+    icon: mdi:target
+
+# Alert delay time L2 bathroom window open [minutes]
+  l2_bathroom_alert_delay_time:
+    name: L2 bathroom alert delay time
+    min: 1
+    max: 59
+    step: 1
+    unit_of_measurement: minutes
+    icon: mdi:target
+
+# ############################################################
+#  END OF FILE
+# ############################################################

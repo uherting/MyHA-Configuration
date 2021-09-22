@@ -41,9 +41,10 @@ stream:
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
 
-input_boolean: !include conf/input_booleans.yaml
-input_datetime: !include conf/input_datetime/time_stamps_esp.yaml
-input_select: !include conf/input_select/theme_select.yaml
+input_boolean: !include_dir_merge_list conf/input_boolean
+input_datetime: !include_dir_merge_list conf/input_datetime
+input_select: !include_dir_merge_list conf/input_select
+input_number: !include_dir_merge_list conf/input_number
 
 # outdated iframe for mdi icons
 # current mdi icons can be obtained within the VS code editor (menu -> mdi explorer)
@@ -108,9 +109,12 @@ template: !include_dir_merge_list conf/templates
 
 google: !include google_client.yaml
 
+# no idea for what is was used
 # pyscript:
 
-python_script:
+# Python script which dismisses all persistent notifications.
+# deaktivated as it is no longer needed
+# python_script:
 
 switch: !include_dir_merge_list conf/switches
 
