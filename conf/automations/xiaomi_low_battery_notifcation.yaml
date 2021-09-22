@@ -9,7 +9,7 @@
 # ############################################################
 - alias: XIAOMI low battery notification
   id: 'ec50a982-5886-495e-9454-c8e329878610'
-  initial_state: false
+  initial_state: true
 
 # --------------------- TRIGGER ---------------------
   trigger:
