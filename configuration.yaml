@@ -3,6 +3,9 @@
 # - 
 default_config:
 
+# enable mobile apps
+mobile_app:
+
 # normally included by default_config:, here to make sure only! (used in combination with frigate)
 # media_source:
 

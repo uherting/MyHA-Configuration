@@ -1,0 +1,50 @@
+####################################################################
+#
+# smartphone status tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:cellphone
+title: Overview
+path: smartphones
+badges: [ ]
+
+cards:
+  
+  - type: entities
+    title: Smartphone UH Note10pro
+    show_header_toggle: false
+    entities:
+      - device_tracker.spuhnote10pro
+      - sensor.spuhnote10pro_battery_state
+      - sensor.spuhnote10pro_battery_level
+      - sensor.spuhnote10pro_battery_temperature
+      - sensor.spuhnote10pro_charger_type
+      - binary_sensor.spuhnote10pro_is_charging
+
+  - type: entities
+    title: Smartphone UH VNS
+    show_header_toggle: false
+    entities:
+      - device_tracker.vns_l31
+      - sensor.spuhvns_l31_battery_state
+      - sensor.spuhvns_l31_battery_level
+      - sensor.spuhvns_l31_battery_temperature
+      - sensor.spuhvns_l31_charger_type
+      - binary_sensor.spuhvns_l31_is_charging
+
+  - type: entities
+    title: Smartphone GH Note8pro
+    show_header_toggle: false
+    entities:
+      - device_tracker.spghnote8pro
+      - sensor.spghnote8pro_battery_state
+      - sensor.spghnote8pro_battery_level
+      - sensor.spghnote8pro_battery_temperature
+      - sensor.spghnote8pro_charger_type
+      - binary_sensor.spghnote8pro_is_charging
+
+####################################################################
+# EOF
+####################################################################

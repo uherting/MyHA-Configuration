@@ -18,6 +18,7 @@ views:
   - !include /config/conf/lovelace/tabs/admin/settings.yaml
   - !include /config/conf/lovelace/tabs/admin/esphome-unplugged-devices.yaml
   - !include /config/conf/lovelace/tabs/admin/printer.yaml
+  - !include /config/conf/lovelace/tabs/admin/smartphone_status.yaml
 
 ####################################################################
 # EOF
