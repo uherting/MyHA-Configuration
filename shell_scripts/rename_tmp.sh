@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# attn: no longer needed!
+
+exit 99
 
 for i in `find .. -type f -name \*.yaml | xargs grep \
       -e sensor.xiaomi_bathroom \
