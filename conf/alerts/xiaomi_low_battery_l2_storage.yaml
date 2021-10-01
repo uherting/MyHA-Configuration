@@ -1,0 +1,31 @@
+# ############################################################
+#
+#  Xioami battery low
+#
+# ############################################################
+
+
+# ############################################################
+#  L2 Storage Xioami battery low
+# ############################################################
+#alert:
+  xiaomi_low_battery_l2_storage:
+    name: 'L2 Storage Xioami battery low'
+    done_message: 'L2 Storage Xioami battery OK'
+    entity_id: binary_sensor.xiaomi_low_battery_l2_storage
+    state: "on"
+    repeat:
+      - 10
+      - 30
+      - 60
+    can_acknowledge: true
+    skip_first: true
+    data:
+      inline_keyboard:
+        - 'Acknowledge:/xiaomi_low_battery_l2_storage.ack'
+    notifiers:
+      - tg_notification_grp
+
+# ############################################################
+#  END OF FILE
+# ############################################################

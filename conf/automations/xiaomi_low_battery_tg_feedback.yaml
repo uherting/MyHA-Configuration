@@ -1,0 +1,100 @@
+# ############################################################
+#
+#  XIAOMI low battery TG feedback
+#
+# ############################################################
+
+
+# ############################################################
+#  These automations get feedback from Telegram as the user
+#  ackknowledges the alert message send to a group via the
+#  defined alert.
+# ############################################################
+
+# ############################################################
+- alias: XIAOMI low battery bathroom TG feedback
+  id: ''
+  mode: single
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/xiaomi_low_battery_l2_bathroom.ack"
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+# --------------------- ACTIONS ---------------------
+  action:
+# ---------------- switch alert off -----------------
+    - service: alert.turn_off
+      target:
+        entity_id: alert.xiaomi_low_battery_l2_bathroom
+
+# ############################################################
+- alias: XIAOMI low battery bedroom TG feedback
+  id: '784d86de-edae-477b-a93e-7f6860c5551b'
+  mode: single
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/xiaomi_low_battery_l2_bedroom.ack"
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+# --------------------- ACTIONS ---------------------
+  action:
+# ---------------- switch alert off -----------------
+    - service: alert.turn_off
+      target:
+        entity_id: alert.xiaomi_low_battery_l2_bedroom
+
+# ############################################################
+- alias: XIAOMI low battery lounge TG feedback
+  id: '84a574d7-a756-408c-8493-d1be459580ba'
+  mode: single
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/xiaomi_low_battery_l2_lounge.ack"
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+# --------------------- ACTIONS ---------------------
+  action:
+# ---------------- switch alert off -----------------
+    - service: alert.turn_off
+      target:
+        entity_id: alert.xiaomi_low_battery_l2_lounge
+
+# ############################################################
+- alias: XIAOMI low battery storage TG feedback
+  id: 'cbdc0e4e-d59a-4999-8f58-ae24b081b468'
+  mode: single
+  initial_state: true
+# --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: telegram_callback
+      event_data:
+        data: "/xiaomi_low_battery_l2_storage.ack"
+# -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+# --------------------- ACTIONS ---------------------
+  action:
+# ---------------- switch alert off -----------------
+    - service: alert.turn_off
+      target:
+        entity_id: alert.xiaomi_low_battery_l2_storage
+
+# ############################################################
+#  END OF FILE
+# ############################################################
