@@ -15,36 +15,36 @@ cards:
     title: BLE Temperatures
     show_header_toggle: false
     entities:
-      - sensor.xiaomi_bathroom_temperature
-      - sensor.xiaomi_bedroom_temperature
-      - sensor.xiaomi_lounge_temperature
-      - sensor.xiaomi_storage_temperature
+      - sensor.xiaomi_l2_bathroom_temperature
+      - sensor.xiaomi_l2_bedroom_temperature
+      - sensor.xiaomi_l2_lounge_temperature
+      - sensor.xiaomi_l2_storage_temperature
   
   - type: entities
     title: BLE Humidity
     show_header_toggle: false
     entities:
-      - sensor.xiaomi_bathroom_humidity
-      - sensor.xiaomi_bedroom_humidity
-      - sensor.xiaomi_lounge_humidity
-      - sensor.xiaomi_storage_humidity
+      - sensor.xiaomi_l2_bathroom_humidity
+      - sensor.xiaomi_l2_bedroom_humidity
+      - sensor.xiaomi_l2_lounge_humidity
+      - sensor.xiaomi_l2_storage_humidity
 
   - type: entities
     title: BLE Batteries
     show_header_toggle: false
     entities:
-      - sensor.xiaomi_bathroom_battery
-      - sensor.xiaomi_bedroom_battery
-      - sensor.xiaomi_lounge_battery
-      - sensor.xiaomi_storage_battery
+      - sensor.xiaomi_l2_bathroom_battery
+      - sensor.xiaomi_l2_bedroom_battery
+      - sensor.xiaomi_l2_lounge_battery
+      - sensor.xiaomi_l2_storage_battery
 
   - type: custom:mini-graph-card
     title: BLE Batteries
     entities:
-      - sensor.xiaomi_bathroom_battery
-      - sensor.xiaomi_bedroom_battery
-      - sensor.xiaomi_lounge_battery
-      - sensor.xiaomi_storage_battery
+      - sensor.xiaomi_l2_bathroom_battery
+      - sensor.xiaomi_l2_bedroom_battery
+      - sensor.xiaomi_l2_lounge_battery
+      - sensor.xiaomi_l2_storage_battery
     hours_to_show: 72
     hour24: true
     show_legend: true

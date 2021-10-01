@@ -15,10 +15,10 @@
   trigger:
     platform: numeric_state
     entity_id: 
-      - sensor.xiaomi_bathroom_battery
-      - sensor.xiaomi_bedroom_battery
-      - sensor.xiaomi_lounge_battery
-      - sensor.xiaomi_storage_battery
+      - sensor.xiaomi_l2_bathroom_battery
+      - sensor.xiaomi_l2_bedroom_battery
+      - sensor.xiaomi_l2_lounge_battery
+      - sensor.xiaomi_l2_storage_battery
     below: 20
 
 # -------------------- CONDITIONS -------------------
@@ -30,9 +30,9 @@
       data_template:
         msg_title: "XIAOMI low battery notification"
         msg_text: >-
-          Room: {% if trigger.to_state.entity_id == 'sensor.xiaomi_bathroom_battery' %} bathroom
-          {% elif trigger.to_state.entity_id == 'sensor.xiaomi_bedroom_battery' %} bedroom
-          {% elif trigger.to_state.entity_id == 'sensor.xiaomi_lounge_battery' %} lounge
+          Room: {% if trigger.to_state.entity_id == 'sensor.xiaomi_l2_bathroom_battery' %} bathroom
+          {% elif trigger.to_state.entity_id == 'sensor.xiaomi_l2_bedroom_battery' %} bedroom
+          {% elif trigger.to_state.entity_id == 'sensor.xiaomi_l2_lounge_battery' %} lounge
           {% else %} storage room {% endif %}
         msg_receiver: "admin"
 

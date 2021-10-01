@@ -28,7 +28,7 @@ cards:
     show_header_toggle: false
     entities:
       - sensor.l2_storage01_tempcase_01
-      - sensor.xiaomi_storage_temperature
+      - sensor.xiaomi_l2_storage_temperature
       - sensor.l2_storage01_bh1750_illuminance_01
       - binary_sensor.l2_storage01_pir_01
       # - binary_sensor.l2_storage01_pir_02
@@ -100,7 +100,7 @@ cards:
     title: Temperatures Storage
     entities:
       - sensor.l2_storage01_tempcase_01
-      - sensor.xiaomi_storage_temperature
+      - sensor.xiaomi_l2_storage_temperature
     hours_to_show: 72
     hour24: true
     show_legend: true

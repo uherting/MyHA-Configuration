@@ -47,11 +47,11 @@ cards:
             show_state: false
           - type: 'custom:button-card'
             name: ' '
-            entity: sensor.xiaomi_storage_temperature
+            entity: sensor.xiaomi_l2_storage_temperature
             show_state: true
           - type: 'custom:button-card'
             name: ' '
-            entity: sensor.xiaomi_storage_humidity
+            entity: sensor.xiaomi_l2_storage_humidity
             show_state: true
           - type: 'custom:button-card'
             name: ' '
@@ -67,11 +67,11 @@ cards:
             name: Lounge
           - type: 'custom:button-card'
             name: ' '
-            entity: sensor.xiaomi_lounge_temperature
+            entity: sensor.xiaomi_l2_lounge_temperature
             show_state: true
           - type: 'custom:button-card'
             name: ' '
-            entity: sensor.xiaomi_lounge_humidity
+            entity: sensor.xiaomi_l2_lounge_humidity
             show_state: true
           # - type: 'custom:button-card'
           #   show_state: false
@@ -84,11 +84,11 @@ cards:
           - type: 'custom:button-card'
             name: Bathroom
           - type: 'custom:button-card'
-            entity: sensor.xiaomi_bathroom_temperature
+            entity: sensor.xiaomi_l2_bathroom_temperature
             name: ' '
             show_state: true
           - type: 'custom:button-card'
-            entity: sensor.xiaomi_bathroom_humidity
+            entity: sensor.xiaomi_l2_bathroom_humidity
             name: ' '
             show_state: true
           - type: 'custom:button-card'
@@ -105,11 +105,11 @@ cards:
           - type: 'custom:button-card'
             name: Bedroom
           - type: 'custom:button-card'
-            entity: sensor.xiaomi_bedroom_temperature
+            entity: sensor.xiaomi_l2_bedroom_temperature
             name: ' '
             show_state: true
           - type: 'custom:button-card'
-            entity: sensor.xiaomi_bedroom_humidity
+            entity: sensor.xiaomi_l2_bedroom_humidity
             name: ' '
             show_state: true
 
