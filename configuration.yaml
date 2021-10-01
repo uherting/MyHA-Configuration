@@ -44,10 +44,10 @@ stream:
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
 
-input_boolean: !include_dir_merge_list conf/input_boolean
-input_datetime: !include_dir_merge_list conf/input_datetime
-input_select: !include_dir_merge_list conf/input_select
-input_number: !include_dir_merge_list conf/input_number
+input_boolean: !include_dir_merge_named conf/input_boolean
+input_datetime: !include_dir_merge_named conf/input_datetime
+input_number: !include_dir_merge_named conf/input_number
+input_select: !include_dir_merge_named conf/input_select
 
 # outdated iframe for mdi icons
 # current mdi icons can be obtained within the VS code editor (menu -> mdi explorer)
