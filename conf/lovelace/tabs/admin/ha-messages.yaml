@@ -34,7 +34,7 @@ cards:
   # HA Google Drive Backup - stale snapshot
   - type: conditional
     conditions:
-      - entity: binary_sensor.backups_stale
+      - entity: binary_sensor.snapshots_stale
         state_not: 'off'
     card:
       type: markdown
@@ -58,7 +58,7 @@ cards:
         icon: 'hacs:hacs'
         name: HACS updates
       - type: divider
-      - entity: sensor.backup_state
+      - entity: sensor.snapshot_backup
         icon: 'mdi:cloud-upload-outline'
         name: HA Google Backup state
       - type: divider
