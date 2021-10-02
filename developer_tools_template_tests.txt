@@ -1,3 +1,8 @@
+# boolean sensor
+# XIAOMI battery condition bad (below 20%)
+###########################################################################{% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
+{{ states('sensor.xiaomi_l2_storage_battery') | int < 20 }}
+
 # bathroom window
 ###########################################################################{% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
 {{ states('binary_sensor.l2_bathroom01_window').startswith("off") }}
