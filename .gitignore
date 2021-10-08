@@ -35,6 +35,7 @@ home-assistant_v2.db
 # log files
 home-assistant.log
 home-assistant.log.1
+home-assistant.log.fault
 
 # the cam snapshots we took
 var/opt/tg/*/*.jpg
