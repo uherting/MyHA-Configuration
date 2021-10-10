@@ -10,21 +10,43 @@
 # ############################################################
 # input_number:
   l2_bathroom_alert_below_temp:
-    name: Alert trigger L2 bathroom window open outdoor temp below
+    name: L2 bathroom alert temp below
     min: 1
     max: 30
     step: 0.5
     unit_of_measurement: °C
-    icon: mdi:target
+    mode: slider
+    icon: mdi:thermometer-lines
 
-# Alert delay time L2 bathroom window open [minutes]
-  l2_bathroom_alert_delay_time:
-    name: L2 bathroom alert delay time
+# Alert delay time L2 bathroom window open [minutes] 1
+  l2_bathroom_alert_delay_time_1:
+    name: L2 bathroom alert delay 1
     min: 1
-    max: 59
+    max: 20
     step: 1
     unit_of_measurement: minutes
-    icon: mdi:target
+    mode: slider
+    icon: mdi:timer
+
+# Alert delay time L2 bathroom window open [minutes] 2
+  l2_bathroom_alert_delay_time_2:
+    name: L2 bathroom alert delay 2
+    min: 21
+    max: 45
+    step: 1
+    unit_of_measurement: minutes
+    mode: slider
+    icon: mdi:timer
+
+# Alert delay time L2 bathroom window open [minutes] 3
+  l2_bathroom_alert_delay_time_3:
+    name: L2 bathroom alert delay 3
+    min: 45
+    max: 60
+    step: 1
+    unit_of_measurement: minutes
+    mode: slider
+    icon: mdi:timer
 
 # ############################################################
 #  END OF FILE

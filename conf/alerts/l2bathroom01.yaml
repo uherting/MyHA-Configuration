@@ -15,7 +15,11 @@
     done_message: 'L2 Bathroom window was closed'
     entity_id: binary_sensor.l2_bathroom_window_generic
     state: "on"
-    repeat: 15
+    repeat: 
+      - (states('sensor.l2_bathroom_alert_delay_time_1') | int )
+      - (states('sensor.l2_bathroom_alert_delay_time_2') | int )
+      - (states('sensor.l2_bathroom_alert_delay_time_3') | int )
+
     can_acknowledge: true
     skip_first: true
     data:

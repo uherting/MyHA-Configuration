@@ -105,7 +105,7 @@ notify: !include conf/notify.yaml
 
 automation: !include_dir_merge_list conf/automations
 
-# alert: !include_dir_merge_named conf/alerts
+alert: !include_dir_merge_named conf/alerts
 
 binary_sensor: !include_dir_merge_list conf/binary_sensors
 sensor: !include_dir_merge_list conf/sensors
