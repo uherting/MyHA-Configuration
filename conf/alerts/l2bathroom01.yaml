@@ -16,9 +16,9 @@
     entity_id: binary_sensor.l2_bathroom_window_generic
     state: "on"
     repeat: 
-      - (states('sensor.l2_bathroom_alert_delay_time_1') | int )
-      - (states('sensor.l2_bathroom_alert_delay_time_2') | int )
-      - (states('sensor.l2_bathroom_alert_delay_time_3') | int )
+      - 10
+      - 25
+      - 60
 
     can_acknowledge: true
     skip_first: true
