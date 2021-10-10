@@ -7,11 +7,11 @@
 #
   - binary_sensor:
       - name: "L2 Bathroom Window Generic"
-        unique_id: "l2_bathroom01_window_generic"
+        unique_id: "l2_bathroom_window_generic"
         state: >
           {{  (is_state('binary_sensor.l2_bathroom01_window', 'on')) 
               and 
-              ((states('sensor.l2_bathroom01_tempenv_02') | float ) < (states('sensor.l2_bathroom_alert_below_temp') | float ))
+              ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 15.0 )
           }}
 
 ####################################################################
