@@ -10,6 +10,9 @@ fi
 if [ "${HN}" == "beta" ];then
   SRC_DIR="/home/uwe/Git/UH/MyHAConfig/shell_scripts"
 fi
+if [ "${HN}" == "delta" ];then
+  SRC_DIR="/home/uwe/Git/UH/MyHAConfig/shell_scripts"
+fi
 
 if [ "${SRC_DIR}" == "" ];then
   echo "ERROR: hostname not in the list"
