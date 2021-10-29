@@ -18,7 +18,7 @@ views:
 #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
 
   # HA app entities
-  - !include /config/conf/lovelace/tabs/user/ha_app_entities.yaml
+  - !include /config/conf/lovelace/tabs/user/smartphone_status.yaml
 
   # covid entities
   - !include /config/conf/lovelace/tabs/user/covid19_rki.yaml

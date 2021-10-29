@@ -24,17 +24,6 @@ cards:
       - binary_sensor.spuhnote10pro_is_charging
 
   - type: entities
-    title: Smartphone UH VNS
-    show_header_toggle: false
-    entities:
-      - device_tracker.vns_l31
-      - sensor.spuhvns_l31_battery_state
-      - sensor.spuhvns_l31_battery_level
-      - sensor.spuhvns_l31_battery_temperature
-      - sensor.spuhvns_l31_charger_type
-      - binary_sensor.spuhvns_l31_is_charging
-
-  - type: entities
     title: Smartphone GH Note8pro
     show_header_toggle: false
     entities:
@@ -44,6 +33,29 @@ cards:
       - sensor.spghnote8pro_battery_temperature
       - sensor.spghnote8pro_charger_type
       - binary_sensor.spghnote8pro_is_charging
+
+  - type: entities
+    title: Tablet Tabby
+    show_header_toggle: false
+    entities:
+      - device_tracker.bdf_x20
+      - sensor.bdf_x20_battery_health
+      - sensor.bdf_x20_battery_state
+      - sensor.bdf_x20_battery_level
+      - sensor.bdf_x20_battery_temperature
+      - sensor.bdf_x20_charger_type
+      - binary_sensor.bdf_x20_is_charging
+
+  - type: entities
+    title: Smartphone UH VNS
+    show_header_toggle: false
+    entities:
+      - device_tracker.vns_l31
+      - sensor.spuhvns_l31_battery_state
+      - sensor.spuhvns_l31_battery_level
+      - sensor.spuhvns_l31_battery_temperature
+      - sensor.spuhvns_l31_charger_type
+      - binary_sensor.spuhvns_l31_is_charging
 
 ####################################################################
 # EOF
