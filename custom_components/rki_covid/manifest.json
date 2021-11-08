@@ -1,0 +1,15 @@
+{
+  "domain": "rki_covid",
+  "version": "1.5.6",
+  "iot_class": "cloud_polling",
+  "name": "Robert-Koch Institut COVID Numbers",
+  "documentation": "https://github.com/thebino/rki_covid/blob/master/README.md",
+  "issue_tracker": "https://github.com/thebino/rki_covid/issues",
+  "dependencies": [],
+  "codeowners": ["@thebino"],
+  "requirements": [
+      "rki-covid-parser>=1.2.4"
+  ],
+  "quality_scale": "gold",
+  "config_flow": true
+}
