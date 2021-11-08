@@ -21,9 +21,10 @@ logs:
   custom_components.hacs.repository.integration.hacs.integration: WARN
   custom_components.hacs: WARN
   custom_components.hacs.data: WARN
+  custom_components.ics: WARN
   custom_components.media_player.floorplan_speaker: error
   custom_components.media_player.living_room: info
-  custom_components.ics: WARN
+  custom_components.rki_covid.sensor: WARN
   googleapiclient.discovery: WARN
   hacs: WARN
   hacs.data: WARN
