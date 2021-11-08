@@ -58,9 +58,9 @@ class BlindCard extends HTMLElement {
           </div>
           <div class="sc-blind-middle" style="flex-direction: ` + (buttonsPosition == 'right' ? 'row-reverse': 'row') + `;">
             <div class="sc-blind-buttons">
-              <ha-icon-button icon="mdi:arrow-up" class="sc-blind-button" data-command="up"></ha-icon-button><br>
-              <ha-icon-button icon="mdi:stop" class="sc-blind-button" data-command="stop"></ha-icon-button><br>
-              <ha-icon-button icon="mdi:arrow-down" class="sc-blind-button" data-command="down"></ha-icon-button>
+              <ha-icon-button class="sc-blind-button" data-command="up"><ha-icon icon="mdi:arrow-up"></ha-icon></ha-icon-button><br>
+              <ha-icon-button class="sc-blind-button" data-command="stop"><ha-icon icon="mdi:stop"></ha-icon></ha-icon-button><br>
+              <ha-icon-button class="sc-blind-button" data-command="down"><ha-icon icon="mdi:arrow-down"></ha-icon></ha-icon-button>
             </div>
             <div class="sc-blind-selector">
               <div class="sc-blind-selector-picture">
