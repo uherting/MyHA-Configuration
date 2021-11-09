@@ -7,8 +7,8 @@
 ####################################################################
 
 icon: mdi:virus-outline
-title: COVID-19
-path: covid19_local
+title: COVID-19 numbers
+path: covid19_local_n
 #type: vertical-stack
 cards:
 

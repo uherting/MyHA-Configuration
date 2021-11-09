@@ -6,9 +6,9 @@
 ####################################################################
 ####################################################################
 
-icon: mdi:virus-outline
-title: COVID-19
-path: covid19_local
+icon: mdi:virus-off-outline
+title: COVID-19 graphs
+path: covid19_local_g
 #type: vertical-stack
 cards:
 
