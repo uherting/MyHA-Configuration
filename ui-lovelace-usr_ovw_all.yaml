@@ -21,8 +21,9 @@ views:
   - !include /config/conf/lovelace/tabs/user/smartphone_status.yaml
 
   # covid entities
-  - !include /config/conf/lovelace/tabs/user/covid19_rki.yaml
   - !include /config/conf/lovelace/tabs/user/covid19_world.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_rki_numbers.yaml
+  - !include /config/conf/lovelace/tabs/user/covid19_rki_graphs.yaml
 
 ####################################################################
 # EOF

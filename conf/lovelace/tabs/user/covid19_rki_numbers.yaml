@@ -117,7 +117,7 @@ cards:
       - sensor.bl_thuringen_newrecovered
 
   - type: entities
-    title: RKI Covid Data - BL Sachsen-Anhalt
+    title: RKI Covid Data - BL S-A
     show_header_toggle: false
     entities:
       - sensor.bl_sachsen_anhalt_casesper100k
@@ -142,48 +142,18 @@ cards:
       - sensor.bl_baden_wurttemberg_newdeaths
       - sensor.bl_baden_wurttemberg_newrecovered
 
-  - type: custom:mini-graph-card
-    title: RKI Covid Data - LK WeeklyIncidence
+  - type: entities
+    title: RKI Covid Data - BL FS S
+    show_header_toggle: false
     entities:
-      - sensor.lk_gottingen_weekincidence
-      - sensor.lk_goslar_weekincidence
-      - sensor.lk_nordhausen_weekincidence
-      - sensor.sk_stuttgart_weekincidence
-      - sensor.lk_tubingen_weekincidence
-    hours_to_show: 72
-    hour24: true
-    show_legend: true
-    line_width: 2
-    font_size: 75
-    points_per_hour: 0.2
-    height: 340
-
-  - type: custom:mini-graph-card
-    title: RKI Covid Data - BL WeeklyIncidence
-    entities:
-      - sensor.bl_niedersachsen_weekincidence
-      - sensor.bl_sachsen_anhalt_weekincidence
-      - sensor.bl_baden_wurttemberg_weekincidence
-    hours_to_show: 72
-    hour24: true
-    show_legend: true
-    line_width: 2
-    font_size: 75
-    points_per_hour: 0.2
-    height: 340
-
-  - type: custom:mini-graph-card
-    title: RKI Covid Data - High incedences
-    entities:
-      - sensor.bl_thuringen_weekincidence
-      - sensor.lk_eichsfeld_weekincidence
-    hours_to_show: 72
-    hour24: true
-    show_legend: true
-    line_width: 2
-    font_size: 75
-    points_per_hour: 0.2
-    height: 340
+      - sensor.bl_sachsen_casesper100k
+      - sensor.bl_sachsen_weekincidence
+      - sensor.bl_sachsen_count
+      - sensor.bl_sachsen_deaths
+      - sensor.bl_sachsen_recovered
+      - sensor.bl_sachsen_newcases
+      - sensor.bl_sachsen_newdeaths
+      - sensor.bl_sachsen_newrecovered
 
 ####################################################################
 # EOF
