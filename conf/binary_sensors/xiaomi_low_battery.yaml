@@ -12,22 +12,22 @@
       xiaomi_low_battery_l2_bathroom:
         friendly_name: Xiaomi low battery L2 bathroom
         value_template: >-
-          {{ states('sensor.xiaomi_l2_bathroom_battery') | int < 20 }}
+          {{ states('sensor.xiaomi_l2_bathroom_battery') | int(0) < 20 }}
 
       xiaomi_low_battery_l2_bedroom:
         friendly_name: Xiaomi low battery L2 bedroom
         value_template: >-
-          {{ states('sensor.xiaomi_l2_bedroom_battery') | int < 20 }}
+          {{ states('sensor.xiaomi_l2_bedroom_battery') | int(0) < 20 }}
 
       xiaomi_low_battery_l2_lounge:
         friendly_name: Xiaomi low battery L2 lounge
         value_template: >-
-          {{ states('sensor.xiaomi_l2_lounge_battery') | int < 20 }}
+          {{ states('sensor.xiaomi_l2_lounge_battery') | int(0) < 20 }}
 
       xiaomi_low_battery_l2_storage:
         friendly_name: Xiaomi low battery L2 storage
         value_template: >-
-          {{ states('sensor.xiaomi_l2_storage_battery') | int < 20 }}
+          {{ states('sensor.xiaomi_l2_storage_battery') | int(0) < 20 }}
 
 # ############################################################
 #  END OF FILE
