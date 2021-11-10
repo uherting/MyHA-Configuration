@@ -25,6 +25,7 @@ logs:
   custom_components.media_player.floorplan_speaker: error
   custom_components.media_player.living_room: info
   custom_components.rki_covid.sensor: WARN
+  fritzconnection: WARN
   googleapiclient.discovery: WARN
   hacs: WARN
   hacs.data: WARN
