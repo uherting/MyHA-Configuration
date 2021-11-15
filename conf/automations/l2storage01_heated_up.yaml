@@ -1,0 +1,31 @@
+# ############################################################
+#
+#  L2 Storage warm
+#
+# ############################################################
+
+# ############################################################
+# snapshots went stale
+# ############################################################
+- alias: L2 Storage warm
+  id: "37bd8726-e4c4-4b47-9ee4-c0b156d9e290"
+  # no need to have it running under normal conditions
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time_pattern
+      minutes: "/5"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: "{{ ((states('sensor.xiaomi_l2_storage_temperature') | float(99) ) > 20.9 ) }}"
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: script.tg_txt
+      data_template:
+        msg_title: "L2 Storage warm"
+        msg_text: "The room is above 21 degree C"
+        msg_receiver: "admin"
+#
+# ############################################################
+#  END OF FILE
+# ############################################################
