@@ -1,7 +1,7 @@
 # boolean sensor
 # XIAOMI battery condition bad (below 20%)
 ###########################################################################
-{{ states('sensor.xiaomi_l2_storage_battery') | int < 20 }}
+{{ states('sensor.xiaomi_l2_storage_battery') | int(99) < 20 }}
 
 # bathroom window
 ###########################################################################
@@ -15,6 +15,7 @@ final test:
     and 
     ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0)
 }}
+
 # esphome-unplugged-devices
 ###########################################################################
 {% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
