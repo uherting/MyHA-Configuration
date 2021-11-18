@@ -4,28 +4,27 @@
 #
 # ############################################################
 
-
 # ############################################################
 #  L2 Lounge Xioami battery low
 # ############################################################
 #alert:
-  xiaomi_low_battery_l2_lounge:
-    name: 'L2 Lounge Xioami battery low'
-    done_message: 'L2 Lounge Xioami battery OK'
-    entity_id: binary_sensor.xiaomi_low_battery_l2_lounge
-    state: "on"
-    repeat:
-      - 10
-      - 30
-      - 60
-    can_acknowledge: true
-    skip_first: true
-    data:
-      inline_keyboard:
-        - 'Acknowledge:/xiaomi_low_battery_l2_lounge.ack'
-    notifiers:
-      - tg_notification_grp
+xiaomi_low_battery_l2_lounge:
+  name: "L2 Lounge Xioami battery low"
+  done_message: "L2 Lounge Xioami battery OK"
+  entity_id: binary_sensor.xiaomi_low_battery_l2_lounge
+  state: "on"
+  repeat:
+    - 10
+    - 30
+    - 60
 
+  can_acknowledge: true
+  skip_first: true
+  data:
+    inline_keyboard:
+      - "Acknowledge:/xiaomi_low_battery_l2_lounge.ack"
+  notifiers:
+    - tg_notification_grp
 # ############################################################
 #  END OF FILE
 # ############################################################

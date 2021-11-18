@@ -4,28 +4,27 @@
 #
 # ############################################################
 
-
 # ############################################################
 #  L2 Bathroom Xioami battery low
 # ############################################################
 #alert:
-  xiaomi_low_battery_l2_bathroom:
-    name: 'L2 Bathroom Xioami battery low'
-    done_message: 'L2 Bathroom Xioami battery OK'
-    entity_id: binary_sensor.xiaomi_low_battery_l2_bathroom
-    state: "on"
-    repeat:
-      - 10
-      - 30
-      - 60
-    can_acknowledge: true
-    skip_first: true
-    data:
-      inline_keyboard:
-        - 'Acknowledge:/xiaomi_low_battery_l2_bathroom.ack'
-    notifiers:
-      - tg_notification_grp
+xiaomi_low_battery_l2_bathroom:
+  name: "L2 Bathroom Xioami battery low"
+  done_message: "L2 Bathroom Xioami battery OK"
+  entity_id: binary_sensor.xiaomi_low_battery_l2_bathroom
+  state: "on"
+  repeat:
+    - 10
+    - 30
+    - 60
 
+  can_acknowledge: true
+  skip_first: true
+  data:
+    inline_keyboard:
+      - "Acknowledge:/xiaomi_low_battery_l2_bathroom.ack"
+  notifiers:
+    - tg_notification_grp
 # ############################################################
 #  END OF FILE
 # ############################################################
