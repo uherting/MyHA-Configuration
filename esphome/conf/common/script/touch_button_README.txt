@@ -11,3 +11,7 @@ Naming conventions
     * short: Triggers opto coupler #1 in order to toggle state of the light bar between off and high intensity.
     * long: No idea what a double click should trigger.
     * double: Triggers opto coupler #1 in order to change state the light bar between to off.
+
+Documentation
+-------------
+See https://esphome.io/components/binary_sensor/index.html?highlight=on_multi_click
