@@ -8,9 +8,8 @@
 
 title: ESP8266 l2 Details
 path: esp8266_l2_details
-badges: [ ]
+badges: []
 cards:
-
   - type: entities
     title: L2 Kitchen 01
     show_header_toggle: false
@@ -62,8 +61,8 @@ cards:
     show_legend: true
     line_width: 2
     font_size: 75
-    lower_bound: 0
-    upper_bound: 50
+    # lower_bound: 0
+    # upper_bound: 50
     points_per_hour: 1
     height: 250
 
@@ -91,8 +90,8 @@ cards:
     show_legend: true
     line_width: 2
     font_size: 75
-    lower_bound: 15
-    upper_bound: 30
+    # lower_bound: 15
+    # upper_bound: 30
     points_per_hour: 1
     height: 250
 
@@ -106,8 +105,8 @@ cards:
     show_legend: true
     line_width: 2
     font_size: 75
-    lower_bound: 15
-    upper_bound: 30
+    # lower_bound: 15
+    # upper_bound: 30
     points_per_hour: 1
     height: 250
 
@@ -139,7 +138,6 @@ cards:
   # # l2wled01 on/off, colour
   # - type: light
   #   entity: light.l2wled01
-
 ####################################################################
 # EOF
 ####################################################################
