@@ -7,36 +7,36 @@
 # for details see https://esphome.io/components/sensor/uptime.html
 
 #sensor:
-  - platform: uptime
-    name: ${wifi_uptime_name}
-    id: ${wifi_uptime_id}
-    update_interval: 60s
-    on_raw_value:
-      then:
-        - text_sensor.template.publish:
-            id: ${wifi_uptime_human_id}
-            state: !lambda |-
-              int seconds = round(id(${wifi_uptime_id}).raw_state);
-              int days = seconds / (24 * 3600);
-              seconds = seconds % (24 * 3600);
-              int hours = seconds / 3600;
-              seconds = seconds % 3600;
-              int minutes = seconds /  60;
-              seconds = seconds % 60;
+- platform: uptime
+  name: ${wifi_uptime_name}
+  id: ${wifi_uptime_id}
+  update_interval: !secret ESPHOME_UPTIME_UPDATE_INTERVAL
+  on_raw_value:
+    then:
+      - text_sensor.template.publish:
+          id: ${wifi_uptime_human_id}
+          state: !lambda |-
+            int seconds = round(id(${wifi_uptime_id}).raw_state);
+            int days = seconds / (24 * 3600);
+            seconds = seconds % (24 * 3600);
+            int hours = seconds / 3600;
+            seconds = seconds % 3600;
+            int minutes = seconds /  60;
+            seconds = seconds % 60;
 
-              /*
-              int upt = id(${wifi_uptime_id}).state;
-              ESP_LOGI("main", "INFO: uptime: is %u", upt);
-              ESP_LOGI("main", "INFO: isDeviceConnected is: %s", id(isDeviceConnected) ? "True" : "False");
-              ESP_LOGI("main", "INFO: Status .......... is: %s", id(${wifi_status_id}).state ? "True" : "False");
-              */
+            /*
+            int upt = id(${wifi_uptime_id}).state;
+            ESP_LOGI("main", "INFO: uptime: is %u", upt);
+            ESP_LOGI("main", "INFO: isDeviceConnected is: %s", id(isDeviceConnected) ? "True" : "False");
+            ESP_LOGI("main", "INFO: Status .......... is: %s", id(${wifi_status_id}).state ? "True" : "False");
+            */
 
-              return (
-                (days ? String(days) + "d " : "") +
-                (hours ? String(hours) + "h " : "") +
-                (minutes ? String(minutes) + "m " : "") +
-                (String(seconds) + "s")
-              ).c_str();
+            return (
+              (days ? String(days) + "d " : "") +
+              (hours ? String(hours) + "h " : "") +
+              (minutes ? String(minutes) + "m " : "") +
+              (String(seconds) + "s")
+            ).c_str();
 
 ####################################################################
 # EOF
