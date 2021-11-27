@@ -1,0 +1,18 @@
+####################################################################
+# esp32_camera web server functionality
+
+######################### CAM DEVICE #########################
+# ESP32-CAM
+# The esp32_camera_web_server component allows you to use expose
+# web server of ESP32-based camera boards in ESPHome that directly
+# can be integrated into external surveillance or PVR software.
+# for details see: https://esphome.io/components/esp32_camera_web_server.html
+
+# esp32_camera_web_server:
+- port: 8080
+  mode: stream
+- port: 8081
+  mode: snapshot
+####################################################################
+# EOF
+####################################################################

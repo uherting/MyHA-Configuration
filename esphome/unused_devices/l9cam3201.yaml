@@ -76,7 +76,6 @@ i2c: !include conf/common/device/i2c_esp32_v1.yaml
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1.yaml
 
-
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
@@ -109,8 +108,8 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 # switch:
-  # - <<: !include conf/common/switch/ssr01_B0.yaml
-  # - <<: !include conf/common/switch/ssr02_B1.yaml
+# - <<: !include conf/common/switch/ssr01_B0.yaml
+# - <<: !include conf/common/switch/ssr02_B1.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -124,8 +123,11 @@ text_sensor:
 
 #################### DETAILED CONFIGURATION CAM ######################
 
-# cam
+# cam device
 esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
+
+# web server on cam device
+esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
 
 #-------------------------------------------------------------------
 # flashlight
@@ -134,7 +136,6 @@ output: !include conf/common/esp32_camera/esp32cam_output.yaml
 #-------------------------------------------------------------------
 # cam light
 light: !include conf/common/esp32_camera/esp32cam_light.yaml
-
 ####################################################################
 # EOF
 ####################################################################
