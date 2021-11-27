@@ -29,17 +29,13 @@ cards:
       - binary_sensor.l2_storage01_status
       # ESP32 cams
       - binary_sensor.l9_cam32_01_status
-      # - binary_sensor.l9_cam32_02_status
-      # - binary_sensor.l9_cam32_03_status
-      # - binary_sensor.l9_cam32_04_status
-      # - binary_sensor.l9_cam32_05_status
-      # - binary_sensor.l9_cam32_06_status
-      # - binary_sensor.l9_cam32_07_status
+      - binary_sensor.l9_cam32_02_status
+      - binary_sensor.l9_cam32_03_status
+      - binary_sensor.l9_cam32_04_status
       # TTGO cams
       - binary_sensor.l9_cam_ttgo_01_status
       - binary_sensor.l9_cam_ttgo_02_status
       - binary_sensor.l2_ble01_status
-
 ####################################################################
 # EOF
 ####################################################################
