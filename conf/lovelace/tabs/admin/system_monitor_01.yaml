@@ -10,9 +10,8 @@ icon: mdi:speedometer
 title: system monitor
 path: system_monitor
 cards:
-
-  - type: 'custom:banner-card'
-    heading: 
+  - type: "custom:banner-card"
+    heading:
       - mdi:memory
       - Processor
     # background: '#B0C2ED'
@@ -37,8 +36,8 @@ cards:
     points_per_hour: 0.5
     height: 270
 
-  - type: 'custom:banner-card'
-    heading: 
+  - type: "custom:banner-card"
+    heading:
       - mdi:desktop-classic
       - Motherboard
     entities:
@@ -46,8 +45,9 @@ cards:
       - entity: sensor.load_5m
       - entity: sensor.load_15m
       - entity: sensor.memory_use
-        name: Mem free
+        name: Mem use
       - entity: sensor.memory_free
+        name: Mem free
       - entity: sensor.memory_use_percent
         name: Mem use
 
@@ -65,8 +65,8 @@ cards:
     points_per_hour: 0.5
     height: 250
 
-  - type: 'custom:banner-card'
-    heading: 
+  - type: "custom:banner-card"
+    heading:
       - mdi:harddisk
       - Harddisk
     entities:
@@ -77,7 +77,7 @@ cards:
       - entity: sensor.swap_free
       - entity: sensor.swap_use_percent
 
-  - type: 'custom:banner-card'
+  - type: "custom:banner-card"
     heading:
       - mdi:network
       - Speedtest
@@ -158,8 +158,6 @@ cards:
   #     green: 0
   #     yellow: 33
   #     red: 80
-
-
 ####################################################################
 # EOF
 ####################################################################
