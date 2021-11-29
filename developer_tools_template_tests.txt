@@ -8,7 +8,7 @@
 {{ states('binary_sensor.l2_bathroom01_window').startswith("off") }}
 {{ is_state('binary_sensor.l2_bathroom01_window', 'off') }}
 {{ (is_state('binary_sensor.l2_bathroom01_window', 'off')) and true }}
-{{ (states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0}}
+{{ (states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0 }}
 final test:
 {{ (is_state('binary_sensor.l2_bathroom01_window', 'off')) and ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0) }}
 {{  (is_state('binary_sensor.l2_bathroom01_window', 'off')) 
@@ -16,18 +16,31 @@ final test:
     ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0)
 }}
 
-# esphome-unplugged-devices
+# esphome-unplugged-devices (new)
 ###########################################################################
-{% set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) %}
+{%- set snd_msg = 0 -%}
+{%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
+{%- for state in e -%}
+{%- if state.entity_id.startswith("binary_sensor.l") -%}
+{%- if state.entity_id.endswith("status") -%}
+{%- set snd_msg = 0 %}- {{ state.entity_id }}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{#%- if (snd_msg) -%}===> Message needs to be send{%- endif -%#}
+{# #}
+
+# esphome-unplugged-devices (old)
+###########################################################################
+{%- set snd_msg = 0 -%}{%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
 {%- for state in e -%}
 {%- if state.entity_id.startswith("binary_sensor.l") %}
 {%- if state.entity_id.endswith("status") %}
-{#- {%- if state.name | selectattr("device_class", "is", "connectivity") %} #}
 - {{ state.entity_id }}
-{#- {%- endif -%} #}
 {%- endif -%}
 {%- endif -%}
-{%- endfor %}
+{%- endfor -%}
+{# #}
 
 # time
 ###########################################################################
