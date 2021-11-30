@@ -16,30 +16,25 @@ final test:
     ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0)
 }}
 
-# esphome-unplugged-devices (new)
+# esphome-unplugged-devices (very new)
 ###########################################################################
-{%- set snd_msg = 0 -%}
+{# collect the entity ids #}
+{%- set ns=namespace(entities=[],msg_yn=false) -%}
 {%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
 {%- for state in e -%}
 {%- if state.entity_id.startswith("binary_sensor.l") -%}
 {%- if state.entity_id.endswith("status") -%}
-{%- set snd_msg = 0 %}- {{ state.entity_id }}
+{% set ns.entities = ns.entities + [state.entity_id] %}
+{% set ns.msg_yn = true %}
 {%- endif -%}
 {%- endif -%}
 {%- endfor -%}
-{#%- if (snd_msg) -%}===> Message needs to be send{%- endif -%#}
-{# #}
-
-# esphome-unplugged-devices (old)
-###########################################################################
-{%- set snd_msg = 0 -%}{%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
-{%- for state in e -%}
-{%- if state.entity_id.startswith("binary_sensor.l") %}
-{%- if state.entity_id.endswith("status") %}
-- {{ state.entity_id }}
-{%- endif -%}
-{%- endif -%}
+{# now the output #}
+{%- if ns.msg_yn -%}
+{%- for entity in ns.entities -%}
+- {{ entity }}
 {%- endfor -%}
+{%- endif -%}
 {# #}
 
 # time
