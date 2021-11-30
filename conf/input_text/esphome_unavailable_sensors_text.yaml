@@ -1,0 +1,29 @@
+# ############################################################
+#
+#  ESPHome unavailable sensors
+#
+# ############################################################
+
+#input_text:
+
+# ############################################################
+#  ESPHome unavailable sensors
+# ############################################################
+esphome_unavailable_sensors_text:
+  name: ESPHome unavailable sensors Text
+  initial: ""
+  mode: text
+  min: 0
+  max: 255
+  icon: mdi:gamepad-square-outline
+
+esphome_unavailable_sensors_old_text:
+  name: ESPHome unavailable sensors OldText
+  initial: ""
+  mode: text
+  min: 0
+  max: 255
+  icon: mdi:gamepad-square
+# ############################################################
+#  END OF FILE
+# ############################################################

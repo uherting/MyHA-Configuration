@@ -1,6 +1,6 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 # in order to get rid of the following it is necessary to comment out "default_config:"
-# - 
+# -
 default_config:
 
 # enable mobile apps
@@ -9,7 +9,7 @@ mobile_app:
 # normally included by default_config:, here to make sure only! (used in combination with frigate)
 # media_source:
 
-# activate usb 
+# activate usb
 # usb:
 
 homeassistant: !include conf/homeassistant.yaml
@@ -49,6 +49,7 @@ input_boolean: !include_dir_merge_named conf/input_boolean
 input_datetime: !include_dir_merge_named conf/input_datetime
 input_number: !include_dir_merge_named conf/input_number
 input_select: !include_dir_merge_named conf/input_select
+input_text: !include_dir_merge_named conf/input_text
 
 # outdated iframe for mdi icons
 # current mdi icons can be obtained within the VS code editor (menu -> mdi explorer)
@@ -68,7 +69,6 @@ input_select: !include_dir_merge_named conf/input_select
 #   base_url: example.duckdns.org:8123
 #http: !include conf/http.yaml
 
-
 # Text to speech
 #tts:
 #  - platform: google_translate
@@ -77,7 +77,6 @@ zone: !include conf/zones/zones.yaml
 
 # script: !include conf/scripts/notifications.yaml
 script: !include_dir_merge_named conf/scripts
-
 
 # not required as the add-on is installed
 # see https://www.home-assistant.io/integrations/duckdns/
@@ -95,7 +94,7 @@ group: !include_dir_merge_list conf/groups
 
 telegram_bot: !include conf/telegram_bot.yaml
 
-tankerkoenig: !include  conf/tankerkoenig.yaml
+tankerkoenig: !include conf/tankerkoenig.yaml
 
 pi_hole: !include conf/pi_holes/pi_holes.yaml
 
@@ -127,7 +126,6 @@ image_processing: !include conf/image_processing.yaml
 
 # breaking_changes integration from HACS
 breaking_changes:
-
 ####################################################################
 # EOF
 ####################################################################

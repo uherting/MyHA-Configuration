@@ -1,0 +1,62 @@
+# ############################################################
+#
+#  Telegram messaging
+#
+#  Purpose: sending text or files into the Telegram groups
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# sending a text message to the TG notification group
+# --------------------------------------------------------------
+esphome_detect_unavailable_devices:
+  alias: Detect unavailable ESPHome devices
+  icon: mdi:controller-classic-outline
+  description: This script detects unavailable ESPHome devices
+  # in case a message needs to be send we need additional data
+  # for details see script file telegram_messaging.yaml
+  fields:
+    msg_title:
+      description: "The title of the notification"
+      advanced: true
+      required: true
+      example: "State change"
+      default: "default msg title"
+      # selector: text
+    msg_text:
+      description: "The message content"
+      advanced: true
+      required: true
+      example: "The light is on!"
+      default: "default msg text"
+    msg_receiver:
+      description: "The receiver of the message"
+      advanced: true
+      required: false
+      example: "admin"
+      default: "admin"
+  mode: queued
+  sequence:
+    - choose:
+        # admin group
+        - conditions:
+            - condition: template
+              value_template: "{{ msg_receiver == 'admin' }}"
+          sequence:
+            - service: notify.tg_admin_grp
+              data_template:
+                title: "{{ msg_title }}"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      # receiver does not exist
+      default:
+        - service: notify.tg_admin_grp
+          data_template:
+            title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+
+# ############################################################
+#  END OF FILE
+# ############################################################
+

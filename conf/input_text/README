@@ -1,16 +1,10 @@
 ##########################################################################################
-# Templated Sensors
+#
+# Text (input_text)
+#
 ##########################################################################################
 
-# template:
-
-# how many days till rubbish gets collected?
-- sensor:
-    - name: "Abfall"
-      unit_of_measurement: "d"
-      state: >
-        {% set ics_num = state_attr("sensor.ics_1", "remaining") | int(999) %}
-        {{ ics_num }}
+# docs: https://www.home-assistant.io/integrations/input_text
 
 ####################################################################
 # EOF
