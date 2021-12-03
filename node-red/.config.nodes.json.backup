@@ -1340,25 +1340,6 @@
             }
         }
     },
-    "node-red-node-rbe": {
-        "name": "node-red-node-rbe",
-        "version": "0.5.0",
-        "local": false,
-        "user": false,
-        "nodes": {
-            "rbe": {
-                "name": "rbe",
-                "types": [
-                    "rbe"
-                ],
-                "enabled": true,
-                "local": false,
-                "user": false,
-                "module": "node-red-node-rbe",
-                "file": "/opt/node_modules/node-red-node-rbe/rbe.js"
-            }
-        }
-    },
     "node-red-node-sentiment": {
         "name": "node-red-node-sentiment",
         "version": "0.1.6",
@@ -1435,25 +1416,6 @@
                 "user": false,
                 "module": "node-red-node-suncalc",
                 "file": "/opt/node_modules/node-red-node-suncalc/79-suncalc.js"
-            }
-        }
-    },
-    "node-red-node-tail": {
-        "name": "node-red-node-tail",
-        "version": "0.3.1",
-        "local": false,
-        "user": false,
-        "nodes": {
-            "tail": {
-                "name": "tail",
-                "types": [
-                    "tail"
-                ],
-                "enabled": true,
-                "local": false,
-                "user": false,
-                "module": "node-red-node-tail",
-                "file": "/opt/node_modules/node-red-node-tail/28-tail.js"
             }
         }
     },
