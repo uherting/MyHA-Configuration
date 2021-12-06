@@ -1,6 +1,5 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 # in order to get rid of the following it is necessary to comment out "default_config:"
-# -
 default_config:
 
 # enable mobile apps
