@@ -10,18 +10,23 @@
       unique_id: "8909703b-325f-4492-8028-c378add42190"
       state: >
         {# collect the entity ids #}
-        {%- set ns=namespace(entities=[],msg_yn=false) -%}
+        {%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
         {%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
         {%- for state in e -%}
         {%- if state.entity_id.startswith("binary_sensor.l") -%}
         {%- if state.entity_id.endswith("status") -%}
-        {% set ns.entities = ns.entities + [state.entity_id] %}
+        {%- if ns.entities|length == 0 -%}
+        {%- set ns.entity_string = state.entity_id -%}
+        {%- else -%}
+        {%- set ns.entity_string = state.entity_id + ';' + ns.entity_string -%}
+        {%- endif -%}
+        {%- set ns.entities = ns.entities + [state.entity_id] -%}
         {# found an unavailable entity, flip the send_a_message switch to on #}
-        {% set ns.msg_yn = true %}
+        {%- set ns.msg_yn = true -%}
         {%- endif -%}
         {%- endif -%}
         {%- endfor -%}
-        {# set the sensor #}
+        {# print the processed values #}
         {{ ns.msg_yn }}
 
 ####################################################################

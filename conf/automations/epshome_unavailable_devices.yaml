@@ -15,14 +15,14 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: time_pattern
-      # Matches every hour at 5 minutes past whole
-      minutes: /2
+      # Matches every x minutes
+      minutes: /5
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.esphome_detect_unavailable_devices
+    - service: script.esphome_detect_unavailable_devices_main
       data_template:
         msg_title: "ESPHome"
         msg_text: "unavailable ESPHome devices list:"

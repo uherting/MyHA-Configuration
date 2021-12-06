@@ -1,7 +1,51 @@
-# boolean sensor
-# XIAOMI battery condition bad (below 20%)
+# esphome-unplugged-devices
 ###########################################################################
-{{ states('sensor.xiaomi_l2_storage_battery') | int(99) < 20 }}
+        {# collect the entity ids #}
+        {%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
+        {%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
+        {%- for state in e -%}
+        {%- if state.entity_id.startswith("binary_sensor.l") -%}
+        {%- if state.entity_id.endswith("status") -%}
+        {%- if ns.entities|length == 0 -%}
+        {%- set ns.entity_string = state.entity_id -%}
+        {%- else -%}
+        {%- set ns.entity_string = state.entity_id + ';' + ns.entity_string -%}
+        {%- endif -%}
+        {%- set ns.entities = ns.entities + [state.entity_id] -%}
+        {# found an unavailable entity, flip the send_a_message switch to on #}
+        {%- set ns.msg_yn = true -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {# print the processed values #}
+        {{ '\n    results:' }}
+        - {{ ns.entities }}
+        - {{ ns.entity_string }}
+        - {{ ns.msg_yn }}
+        {{ '\n    result current txt == "":' }}
+        - {{ states('input_text.esphome_unavailable_sensors_text') == "" }}
+        {{ '\n    result current txt == old txt:' }}
+        - {{ states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') }}
+
+        {{ '\n    result if statements' }}
+        {# were some unavailable devices found? #}
+        {%- if states('input_text.esphome_unavailable_sensors_text') == "" -%}
+        {{ '\n        - current string is empty, no action necessary' }}
+        {%- else -%}
+        {# if old and current are equal, no action! #}
+        {%- if states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') -%}
+        {{ '\n        - old == current, no actiom ' }}
+        {%- else -%}
+        {{ '\n        - old != current, action required' }}
+        {%- endif -%}
+        {%- endif -%}
+{{ '\n\n' }}
+
+
+# XIAOMI battery condition bad (below 10%)
+###########################################################################
+# boolean sensor
+{{ states('sensor.xiaomi_l2_storage_battery') | int(99) < 10 }}
 
 # bathroom window
 ###########################################################################
@@ -15,27 +59,6 @@ final test:
     and 
     ((states('sensor.l2_bathroom01_tempenv_02') | float ) < 12.0)
 }}
-
-# esphome-unplugged-devices (very new)
-###########################################################################
-{# collect the entity ids #}
-{%- set ns=namespace(entities=[],msg_yn=false) -%}
-{%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
-{%- for state in e -%}
-{%- if state.entity_id.startswith("binary_sensor.l") -%}
-{%- if state.entity_id.endswith("status") -%}
-{% set ns.entities = ns.entities + [state.entity_id] %}
-{% set ns.msg_yn = true %}
-{%- endif -%}
-{%- endif -%}
-{%- endfor -%}
-{# now the output #}
-{%- if ns.msg_yn -%}
-{%- for entity in ns.entities -%}
-- {{ entity }}
-{%- endfor -%}
-{%- endif -%}
-{# #}
 
 # time
 ###########################################################################
