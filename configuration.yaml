@@ -12,7 +12,38 @@ mobile_app:
 # activate usb
 # usb:
 
-homeassistant: !include conf/homeassistant.yaml
+homeassistant:
+  name: Home431
+
+  latitude: !secret HA_LOCATION_LATITUDE
+  longitude: !secret HA_LOCATION_LONGITUDE
+  elevation: !secret HA_LOCATION_ELEVATION
+
+  unit_system: metric
+  time_zone: !secret HA_LOCATION_TIME_ZONE
+
+  external_url: !secret HA_EXTERNAL_URL
+  internal_url: !secret HA_INTERNAL_URL
+
+  allowlist_external_dirs:
+    - /config/var/opt/stream
+    - /config/var/opt/tg/l9esp32cam01
+    - /config/var/opt/tg/l9esp32cam02
+    - /config/var/opt/tg/l9esp32cam03
+    - /config/var/opt/tg/l9esp32cam04
+    - /config/var/opt/tg/l9esp32cam05
+    - /config/var/opt/tg/l9esp32cam06
+    - /config/var/opt/tg/l9esp32cam07
+    - /config/var/opt/tg/l9esp32cam08
+    - /config/var/opt/tg/l9ttgocam01
+    - /config/var/opt/tg/l9ttgocam02
+    - /config/var/opt/tg/ipcam_ker01
+
+  customize:
+    person.uwe:
+      entity_picture: "/local/avatars/uh.jpg"
+    person.gillian:
+      entity_picture: "/local/avatars/gh.jpg"
 
 updater:
 
