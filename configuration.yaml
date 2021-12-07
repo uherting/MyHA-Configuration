@@ -13,17 +13,15 @@ mobile_app:
 
 homeassistant:
   name: Home431
-
   latitude: !secret HA_LOCATION_LATITUDE
   longitude: !secret HA_LOCATION_LONGITUDE
   elevation: !secret HA_LOCATION_ELEVATION
-
   unit_system: metric
   time_zone: !secret HA_LOCATION_TIME_ZONE
-
+  currency: EUR
   external_url: !secret HA_EXTERNAL_URL
   internal_url: !secret HA_INTERNAL_URL
-
+  # packages: !include_dir_named packages
   allowlist_external_dirs:
     - /config/var/opt/stream
     - /config/var/opt/tg/l9esp32cam01
@@ -37,12 +35,22 @@ homeassistant:
     - /config/var/opt/tg/l9ttgocam01
     - /config/var/opt/tg/l9ttgocam02
     - /config/var/opt/tg/ipcam_ker01
-
   customize:
     person.uwe:
       entity_picture: "/local/avatars/uh.jpg"
     person.gillian:
       entity_picture: "/local/avatars/gh.jpg"
+  # packages: !include_dir_named packages
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 192.168.178.0/24
+      trusted_users:
+        192.168.178.32: !secret AUTHPROVIDER_USERID_EDMIN
+        192.168.178.52: !secret AUTHPROVIDER_USERID_UWE
+        192.168.178.53: !secret AUTHPROVIDER_USERID_GILLIAN
+        192.168.178.69: !secret AUTHPROVIDER_USERID_TABBY
 
 updater:
 
