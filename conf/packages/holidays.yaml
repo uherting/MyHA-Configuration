@@ -1,0 +1,110 @@
+# ############################################################
+#
+#  holidays, etc.
+#
+#  Purpose:
+#   - create sensors for holidays, etc. based on data
+#     retrieved from https://www.wolframalpha.com
+#
+# ############################################################
+sensor:
+  - platform: rest
+    name: Wolfram NEWYEAR date
+    resource: !secret WOLFRAMALPHA_API_NEWYEAR_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram NEWYEAR days until
+    resource: !secret WOLFRAMALPHA_API_NEWYEAR_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram DST date
+    resource: !secret WOLFRAMALPHA_API_DST_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram DST days until
+    resource: !secret WOLFRAMALPHA_API_DST_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram EASTER date
+    resource: !secret WOLFRAMALPHA_API_EASTER_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram EASTER days until
+    resource: !secret WOLFRAMALPHA_API_EASTER_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram HALLOWEEN date
+    resource: !secret WOLFRAMALPHA_API_HALLOWEEN_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram HALLOWEEN days until
+    resource: !secret WOLFRAMALPHA_API_HALLOWEEN_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram ADVENT date
+    resource: !secret WOLFRAMALPHA_API_ADVENT_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram ADVENT days until
+    resource: !secret WOLFRAMALPHA_API_ADVENT_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram XMAS date
+    resource: !secret WOLFRAMALPHA_API_XMAS_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram XMAS days until
+    resource: !secret WOLFRAMALPHA_API_XMAS_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram NEWYEARSEVE date
+    resource: !secret WOLFRAMALPHA_API_NEWYEARSEVE_DATE
+    value_template: "{{ (value|replace('on ', '')) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+
+  - platform: rest
+    name: Wolfram NEWYEARSEVE days until
+    resource: !secret WOLFRAMALPHA_API_NEWYEARSEVE_DAYS
+    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    unit_of_measurement: Days
+    scan_interval: 43200
+####################################################################
+# EOF
+####################################################################

@@ -1,3 +1,13 @@
+####################################################################
+####################################################################
+#
+# core configuration file of Home Assistant
+#
+# file name: configuration.yaml
+#
+####################################################################
+####################################################################
+
 # Configure a default setup of Home Assistant (frontend, api, etc)
 # in order to get rid of the following it is necessary to comment out "default_config:"
 default_config:
@@ -40,7 +50,7 @@ homeassistant:
       entity_picture: "/local/avatars/uh.jpg"
     person.gillian:
       entity_picture: "/local/avatars/gh.jpg"
-  # packages: !include_dir_named packages
+  packages: !include_dir_named conf/packages
   auth_providers:
     - type: homeassistant
     - type: trusted_networks
