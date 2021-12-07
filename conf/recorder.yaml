@@ -19,8 +19,6 @@ auto_purge: true
 purge_keep_days: 30
 
 include:
-#  entities:
-#    - group.landscaping
   domains:
     - binary_sensor
     - sensor
@@ -37,18 +35,8 @@ exclude:
     - scene
     - script
     - weblink
-#     - automation
-#     - group
-#     - input_boolean
-#     - input_number
-#     - input_select
-#     - media_player
-#     - time_date
-#     - updater
-#     - weather
-#     - weblink
-#     - zone
   entities:
+    - sensor.basics_of_sikhi
     - sensor.beat
     - sensor.clock_am_pm
     - sensor.clock_date
@@ -89,9 +77,9 @@ exclude:
     - sensor.time
     - sensor.time_date
     - sensor.time_utc
+    - sensor.tyt_investigates
     - sun.sun
     - zone.home
-
 # ############################################################
 #  END OF FILE
 # ############################################################
