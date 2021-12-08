@@ -37,7 +37,7 @@
 # Input:
 #   - 2 temperatur sensors (for the case / environment)
 #   - 1 PIR/RCWL sensor via I2C / MCP23017
-#   - 1 TP223 touch button for ???
+#   - 1 TP223 touch button for switching on the light manually
 #
 # Output
 #   - 1 SSR via I2C / MCP23017
@@ -110,7 +110,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/sensor/l2storage01_case.yaml
-  - <<: !include conf/common/sensor/bh1750_01.yaml
+  # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01_D5_upd_15min.yaml
 
 #-------------------------------------------------------------------
