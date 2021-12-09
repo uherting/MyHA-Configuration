@@ -61,12 +61,7 @@ cards:
             icon: mdi:incognito-circle
             tap_action:
               action: call-service
-              service: automation.turn_off
-              service_data:
-                entity_id: automation.l2_storage_on_if_motion_detected
-            double_tap_action:
-              action: call-service
-              service: automation.turn_on
+              service: automation.toggle
               service_data:
                 entity_id: automation.l2_storage_on_if_motion_detected
 
