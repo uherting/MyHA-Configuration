@@ -8,30 +8,29 @@
 icon: mdi:home-outline
 title: Overview
 path: overview
-badges: [
-          sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
-          sun.sun,
-          binary_sensor.sun_dwn_twilight,
-          sensor.abfall,
-          sensor.ics_1
-        ]
+badges:
+  [
+    sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
+    sun.sun,
+    binary_sensor.sun_dwn_twilight,
+    sensor.abfall,
+    sensor.ics_1,
+  ]
 
 cards:
-  
   - type: vertical-stack
     cards:
-
       - type: grid
         square: false
         # title: Kitchen
         columns: 4
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: switch.l2_kitchen01_ssr_01
-            name: 'Kitchen'
+            name: "Kitchen"
             color: yellow
-          - type: 'custom:button-card'
-            name: ' '
+          - type: "custom:button-card"
+            name: " "
             entity: sensor.l2_kitchen01_tempenv_01
             show_state: true
 
@@ -40,37 +39,50 @@ cards:
         # title: Storage
         columns: 4
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: switch.l2_storage01_ssr_01
-            name: 'Storage'
+            name: "Storage"
             color: yellow
             show_state: false
-          - type: 'custom:button-card'
-            name: ' '
+          - type: "custom:button-card"
+            name: " "
             entity: sensor.xiaomi_l2_storage_temperature
             show_state: true
-          - type: 'custom:button-card'
-            name: ' '
+          - type: "custom:button-card"
+            name: " "
             entity: sensor.xiaomi_l2_storage_humidity
             show_state: true
-          - type: 'custom:button-card'
-            name: ' '
-            entity: sensor.l2_storage01_bh1750_illuminance_01
-            show_state: true
+          - type: "custom:button-card"
+            name: " "
+            # entity: sensor.l2_storage01_bh1750_illuminance_01
+            entity: binary_sensor.l2storage_spymode
+            color: yellow
+            show_state: false
+            icon: mdi:incognito-circle
+            tap_action:
+              action: call-service
+              service: automation.turn_off
+              service_data:
+                entity_id: automation.l2_storage_on_if_motion_detected
+            double_tap_action:
+              action: call-service
+              service: automation.turn_on
+              service_data:
+                entity_id: automation.l2_storage_on_if_motion_detected
 
       - type: grid
         square: false
         # title: Lounge
         columns: 4
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             name: Lounge
-          - type: 'custom:button-card'
-            name: ' '
+          - type: "custom:button-card"
+            name: " "
             entity: sensor.xiaomi_l2_lounge_temperature
             show_state: true
-          - type: 'custom:button-card'
-            name: ' '
+          - type: "custom:button-card"
+            name: " "
             entity: sensor.xiaomi_l2_lounge_humidity
             show_state: true
           # - type: 'custom:button-card'
@@ -81,19 +93,19 @@ cards:
         # title: Bathroom
         columns: 4
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             name: Bathroom
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: sensor.xiaomi_l2_bathroom_temperature
-            name: ' '
+            name: " "
             show_state: true
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: sensor.xiaomi_l2_bathroom_humidity
-            name: ' '
+            name: " "
             show_state: true
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: binary_sensor.l2_bathroom01_window
-            name: ' '
+            name: " "
             color: yellow
             show_state: true
 
@@ -102,15 +114,15 @@ cards:
         # title: Bedroom
         columns: 4
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             name: Bedroom
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: sensor.xiaomi_l2_bedroom_temperature
-            name: ' '
+            name: " "
             show_state: true
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             entity: sensor.xiaomi_l2_bedroom_humidity
-            name: ' '
+            name: " "
             show_state: true
 
       - type: grid
@@ -118,11 +130,11 @@ cards:
         # title: Bedroom
         columns: 4
         cards:
-          - type: 'custom:button-card'
-            name: 'OutNorth'
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
+            name: "OutNorth"
+          - type: "custom:button-card"
             entity: sensor.l2_bathroom01_tempenv_02
-            name: ' '
+            name: " "
             show_state: true
 
       - type: grid
@@ -130,13 +142,12 @@ cards:
         # title: Bedroom
         columns: 4
         cards:
-          - type: 'custom:button-card'
-            name: 'OutSouth'
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
+            name: "OutSouth"
+          - type: "custom:button-card"
             # entity: sensor.l2_storage
-            name: ' '
+            name: " "
             show_state: true
-
 ####################################################################
 # EOF
 ####################################################################

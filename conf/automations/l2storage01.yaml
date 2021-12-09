@@ -8,28 +8,30 @@
 # L2 Storage: SSR01 ON if motion detected
 # ############################################################
 - alias: L2 Storage ON if motion detected
-  id: 'L2 Storage ON if motion detected'
+  id: "L2 Storage ON if motion detected"
   initial_state: true
-# --------------------- TRIGGER ---------------------
+  # --------------------- TRIGGER ---------------------
+  # motion is detected or door is opened
   trigger:
     - platform: state
       entity_id: binary_sensor.l2_storage01_pir_01
-      to: 'on'
-    - platform: state
-      entity_id: binary_sensor.l2_storage01_reed_01
-      to: 'off'
-# -------------------- CONDITIONS -------------------
+      to: "on"
+    # the following is configured in the ESPHome part of the device
+    # - platform: state
+    #   entity_id: binary_sensor.l2_storage01_door
+    #   to: "on"
+  # -------------------- CONDITIONS -------------------
   condition:
     - condition: template
       # only when civil twilight applies
       # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
-      # was: 
+      # was:
       # value_template: '{{ state_attr("sun.sun", "elevation")|float < 6 }}'
       # now: a central binary sensor
       value_template: "{{ is_state('binary_sensor.sun_dwn_twilight', 'on') }}"
-# --------------------- ACTIONS ---------------------
+  # --------------------- ACTIONS ---------------------
   action:
-# --------------------- SSR ON ----------------------
+    # --------------------- SSR ON ----------------------
     service: switch.turn_on
     entity_id: switch.l2_storage01_ssr_01
 
@@ -37,25 +39,45 @@
 # L2 Storage: SSR01 off the light after there is no motion for x minutes
 # ############################################################
 - alias: L2 Storage OFF post motion
-  id: 'L2 Storage OFF post motion'
+  id: "L2 Storage OFF post motion"
   initial_state: true
-# --------------------- TRIGGER ---------------------
-  # PIR detects motion OR door (reed relay) gets closed
+  # --------------------- TRIGGER ---------------------
+  # no motion is detected for x minutes or door is closed
   trigger:
     - platform: state
       entity_id: binary_sensor.l2_storage01_pir_01
-      to: 'off'
+      to: "off"
       for:
         minutes: 2
-    - platform: state
-      entity_id: binary_sensor.l2_storage01_reed_01
-      to: 'on'
-# --------------------- ACTIONS ---------------------
+    # the following is configured in the ESPHome part of the device
+    # - platform: state
+    #   entity_id: binary_sensor.l2_storage01_door
+    #   to: "off"
+  # --------------------- ACTIONS ---------------------
   action:
-# --------------------- SSR OFF ---------------------
+    # --------------------- SSR OFF ---------------------
     service: switch.turn_off
     entity_id: switch.l2_storage01_ssr_01
 
+# ############################################################
+# L2 Storage: Switch spy mode automatically off of after x minutes
+# ############################################################
+- alias: L2 Storage spy mode automatic off
+  id: "64816bf3-0aad-455f-9cb7-a77c53e7cf50"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # no motion is detected for x minutes or door is closed
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l2_storage01_pir_01
+      to: "off"
+      for:
+        minutes: 30
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SSR OFF ---------------------
+    service: automation.turn_on
+    entity_id: automation.l2_storage_on_if_motion_detected
 # ############################################################
 #  END OF FILE
 # ############################################################
