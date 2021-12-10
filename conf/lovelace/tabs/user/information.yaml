@@ -9,37 +9,44 @@
 icon: mdi:information-outline
 title: Information
 path: information
-badges: [ ]
+badges: []
 
 cards:
-
   # Full / new moon
   - type: entities
     title: Full / New Moon
     show_header_toggle: false
     entities:
-      - sensor.ics_2
-      - sensor.ics_3
+      - sensor.full_moon
+      - sensor.new_moon
+      # - sensor.ics_2
+      # - sensor.ics_3
 
   # Holidays
   - type: entities
     title: Holidays
     show_header_toggle: false
     entities:
-      - sensor.ics_900
-      - sensor.ics_950
-      - sensor.ics_990
-      - sensor.ics_991
-      - sensor.ics_992
+      - sensor.new_year
+      - sensor.easter_sunday
+      - sensor.halloween
+      - sensor.first_advent
+      - sensor.xmas
+      - sensor.new_years_eve
+      # - sensor.ics_900
+      # - sensor.ics_950
+      # - sensor.ics_990
+      # - sensor.ics_991
+      # - sensor.ics_992
 
   # DST
   - type: entities
     title: DST
     show_header_toggle: false
     entities:
-      - sensor.ics_995
-      - sensor.ics_996
-
+      - sensor.dst
+      # - sensor.ics_995
+      # - sensor.ics_996
 ####################################################################
 # EOF
 ####################################################################
