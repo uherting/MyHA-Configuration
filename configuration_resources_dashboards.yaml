@@ -4,89 +4,99 @@
 #
 ############################################################
 
-  mode: yaml
+mode: yaml
 
-  # external resources
-  resources:
-    - url: /hacsfiles/button-card/button-card.js
-      type: module
+# external resources
+resources:
+  - url: /hacsfiles/button-card/button-card.js
+    type: module
 
-    # !!! card-tools and card-mod are the base for search-card !!!
-    # card-tools is likely a prerequisite for card-mod
-    - url: /hacsfiles/lovelace-card-tools/card-tools.js
-      type: module
-    # card-mod is a prerequisite for search card (probably !?!?)
-    - url: /hacsfiles/lovelace-card-mod/card-mod.js
-      type: module
-    - url: /hacsfiles/search-card/search-card.js
-      type: module
+  # !!! card-tools and card-mod are the base for search-card !!!
+  # card-tools is likely a prerequisite for card-mod
+  - url: /hacsfiles/lovelace-card-tools/card-tools.js
+    type: module
+  # card-mod is a prerequisite for search card (probably !?!?)
+  - url: /hacsfiles/lovelace-card-mod/card-mod.js
+    type: module
+  - url: /hacsfiles/search-card/search-card.js
+    type: module
 
-    # nice litte graphics displaying history of values
-    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
-      type: module
+  # nice litte graphics displaying history of values
+  - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+    type: module
 
-    # huge clickable title --- to huge for most cases!!!
-    - url: /hacsfiles/banner-card/banner-card.js
-      type: module
+  - url: /hacsfiles/surveillance-card/surveillance-card.js
+    type: module
 
-    # -------------------------------------------------------------------------
-    # !!! the next ones are for items probably installed but not used at all !!!
-    # -------------------------------------------------------------------------
-    # - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
-    #   type: module
-    # - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
-    #   type: module
-    # - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
-    #   type: module
-    # - url: /hacsfiles/hass-shutter-card/hass-shutter-card.js
-    #   type: module
-    # - url: /hacsfiles/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
-    #   type: module
-    # - url: /hacsfiles/select-list-card/select-list-card.js
-    #   type: module
-    # - url: /hacsfiles/lovelace-badge-card/badge-card.js
-    #   type: module
-    # - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
-    #   type: module
-    # - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
-    #   type: module
+  # huge clickable title --- too huge for most cases!!!
+  - url: /hacsfiles/banner-card/banner-card.js
+    type: module
 
-  # Add more dashboards
-  dashboards:
+  # -------------------------------------------------------------------------
+  # !!! the next ones are for items probably installed but not used at all !!!
+  # -------------------------------------------------------------------------
+  # - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
+  #   type: module
+  # - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
+  #   type: module
+  # - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+  #   type: module
+  # - url: /hacsfiles/hass-shutter-card/hass-shutter-card.js
+  #   type: module
+  # - url: /hacsfiles/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
+  #   type: module
+  # - url: /hacsfiles/select-list-card/select-list-card.js
+  #   type: module
+  # - url: /hacsfiles/lovelace-badge-card/badge-card.js
+  #   type: module
+  # - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
+  #   type: module
+  # - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
+  #   type: module
 
-    # attn: the name of the dashboard needs to contain a hyphen (-)
+# Add more dashboards
+dashboards:
+  # attn: the name of the dashboard needs to contain a hyphen (-)
 
-    uilovelace-usr-smarty:
-      mode: yaml
-      filename: ui-lovelace-usr_smarty.yaml
-      title: Home
-      icon: mdi:home-outline
-      show_in_sidebar: true
-      require_admin: false
+  uilovelace-usr-smarty:
+    mode: yaml
+    filename: ui-lovelace-usr_smarty.yaml
+    title: Home
+    icon: mdi:home-outline
+    show_in_sidebar: true
+    require_admin: false
 
-    uilovelace-usr-ovw-all:
-      mode: yaml
-      filename: ui-lovelace-usr_ovw_all.yaml
-      title: Overview
-      icon: mdi:highway
-      require_admin: false
+  uilovelace-usr-ovw-all:
+    mode: yaml
+    filename: ui-lovelace-usr_ovw_all.yaml
+    title: Overview
+    icon: mdi:highway
+    show_in_sidebar: true
+    require_admin: false
 
-    uilovelace-adm-ovw-all:
-      mode: yaml
-      filename: ui-lovelace-adm_ovw_all.yaml
-      title: Admin - general
-      icon: mdi:tools
-      show_in_sidebar: true
-      require_admin: true
+  ui-lovelace-usr-cctv-cams:
+    mode: yaml
+    filename: ui-lovelace-usr_cctv.yaml
+    title: CCTV
+    icon: mdi:cctv
+    show_in_sidebar: true
+    require_admin: false
 
-    uilovelace-adm-ovw-esp1:
-      mode: yaml
-      filename: ui-lovelace-adm_ovw_esp1.yaml
-      title: Admin - ESP
-      icon: mdi:devices
-      show_in_sidebar: true
-      require_admin: true
+  uilovelace-adm-ovw-all:
+    mode: yaml
+    filename: ui-lovelace-adm_ovw_all.yaml
+    title: Admin - general
+    icon: mdi:tools
+    show_in_sidebar: true
+    require_admin: true
 
+  uilovelace-adm-ovw-esp1:
+    mode: yaml
+    filename: ui-lovelace-adm_ovw_esp1.yaml
+    title: Admin - ESP
+    icon: mdi:devices
+    show_in_sidebar: true
+    require_admin: true
 # ############################################################
 #  END OF FILE
 # ############################################################

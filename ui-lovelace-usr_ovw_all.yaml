@@ -14,8 +14,8 @@ title: Home 431
 views:
   # misc information
   # - !include /config/conf/lovelace/tabs/user/information.yaml
-  - !include /config/conf/lovelace/tabs/user/cams.yaml
-#  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
+  # - !include /config/conf/lovelace/tabs/user/cctv.yaml
+  #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
 
   # HA app entities
   - !include /config/conf/lovelace/tabs/user/smartphone_status.yaml
@@ -24,7 +24,6 @@ views:
   - !include /config/conf/lovelace/tabs/user/covid19_world.yaml
   - !include /config/conf/lovelace/tabs/user/covid19_rki_numbers.yaml
   - !include /config/conf/lovelace/tabs/user/covid19_rki_graphs.yaml
-
 ####################################################################
 # EOF
 ####################################################################
