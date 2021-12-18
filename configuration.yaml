@@ -62,6 +62,21 @@ homeassistant:
         192.168.178.53: !secret AUTHPROVIDER_USERID_GILLIAN
         192.168.178.69: !secret AUTHPROVIDER_USERID_TABBY
 
+panel_custom:
+  - name: ha_server_con
+    sidebar_title: Dashboard
+    sidebar_icon: mdi:view-dashboard
+    js_url: /api/hassio/app/entrypoint.js
+    url_path: "hassio/dashboard"
+    embed_iframe: true
+    require_admin: true
+    config:
+      ingress: core_configurator
+  # - name: supervisor
+  #   sidebar_title: Supervisor
+  #   sidebar_icon: mdi:account-supervisor
+  #   url_path: dashboard
+
 updater:
 
 cloud:
