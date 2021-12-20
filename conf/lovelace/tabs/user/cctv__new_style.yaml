@@ -11,18 +11,34 @@ title: Surveillance
 path: cctv
 badges: []
 
-cards:
-  # ONVIF CAM "TheWorld" hires
-  # works with F5 (refreshing the page) only
-  - type: picture-entity
-    entity: camera.ipcam_ker01_mainstream
-    camera_view: auto
+panel: true
 
-  # ONVIF CAM "TheWorld" lowres
-  # works with F5 (refreshing the page) only
+cards:
+  - type: custom:surveillance-card
+    focus_motion: true
+    thumb_interval: 7
+    update_interval: 3
+    recording_duration: 10
+    show_capture_buttons: true
+    # string 	“live” will show the live view if the stream integration is enabled.
+    # camera_view: "live"
+    cameras:
+      - entity: camera.ipcam_ker01_mainstream
+        # motion_entity: binary_sensor.front_porch_motion
+      - entity: camera.ipcam_ker01_substream
+        # motion_entity: binary_sensor.front_porch_motion
+
+  # # ONVIF CAM "TheWorld" hires
+  # # works with F5 (refreshing the page) only
   # - type: picture-entity
-  #   entity: camera.ipcam_ker01_substream
+  #   entity: camera.ipcam_ker01_mainstream
   #   camera_view: auto
+
+  # # ONVIF CAM "TheWorld" lowres
+  # # works with F5 (refreshing the page) only
+  # # - type: picture-entity
+  # #   entity: camera.ipcam_ker01_substream
+  # #   camera_view: auto
 
   # # ESP32-cam cameras
   # - type: picture-glance

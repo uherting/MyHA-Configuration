@@ -16,8 +16,8 @@ views:
   - !include /config/conf/lovelace/tabs/user/information.yaml
   - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
   - !include /config/conf/lovelace/tabs/user/weather.yaml
-  # - !include /config/conf/lovelace/tabs/user/cams.yaml
   - !include /config/conf/lovelace/tabs/user/youtube.yaml
+  - !include /config/conf/lovelace/tabs/user/cctv.yaml
   # - !include /config/conf/lovelace/tabs/user/smarty_02.yaml
   # - !include /config/conf/lovelace/tabs/user/smarty_03.yaml
   # - !include /config/conf/lovelace/tabs/user/smarty_04.yaml

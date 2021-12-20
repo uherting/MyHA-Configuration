@@ -74,13 +74,13 @@ dashboards:
     show_in_sidebar: true
     require_admin: false
 
-  ui-lovelace-usr-cctv-cams:
-    mode: yaml
-    filename: ui-lovelace-usr_cctv.yaml
-    title: CCTV
-    icon: mdi:cctv
-    show_in_sidebar: true
-    require_admin: false
+  # ui-lovelace-usr-cctv-cams:
+  #   mode: yaml
+  #   filename: ui-lovelace-usr_cctv.yaml
+  #   title: CCTV
+  #   icon: mdi:cctv
+  #   show_in_sidebar: true
+  #   require_admin: false
 
   uilovelace-adm-ovw-all:
     mode: yaml
