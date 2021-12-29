@@ -8,6 +8,12 @@ mode: yaml
 
 # external resources
 resources:
+  - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
+    type: module
+
+  - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+    type: module
+
   - url: /hacsfiles/button-card/button-card.js
     type: module
 
@@ -29,8 +35,8 @@ resources:
     type: module
 
   # huge clickable title --- too huge for most cases!!!
-  - url: /hacsfiles/banner-card/banner-card.js
-    type: module
+  # - url: /hacsfiles/banner-card/banner-card.js
+  #   type: module
 
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!

@@ -1,13 +1,13 @@
 # ############################################################
 #
-#  holidays, etc.
-#
 #  Purpose:
 #   - create sensors for holidays, etc. based on data
 #     retrieved from https://www.wolframalpha.com
 #
 # ############################################################
 sensor:
+  # ---------------------------------------------------------------------------
+  # full / new moon
   - platform: rest
     name: Full Moon date
     resource: !secret WOLFRAMALPHA_API_FULLMOON_DATE
@@ -36,6 +36,8 @@ sensor:
     unit_of_measurement: Days
     scan_interval: 43200
 
+  # ---------------------------------------------------------------------------
+  # holidays
   - platform: rest
     name: New Year date
     resource: !secret WOLFRAMALPHA_API_NEWYEAR_DATE

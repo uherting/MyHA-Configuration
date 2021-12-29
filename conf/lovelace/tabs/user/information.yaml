@@ -12,6 +12,16 @@ path: information
 badges: []
 
 cards:
+  # # Holidays
+  # - type: entities
+  #   title: TEST Holidays
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.holiday_new_year
+  #       # attribute: display
+  #     - sensor.holiday_new_years_eve
+  #       # attribute: display
+
   # Full / new moon
   - type: entities
     title: Full / New Moon
@@ -31,22 +41,43 @@ cards:
       # - sensor.ics_995
       # - sensor.ics_996
 
-  # Holidays
   - type: entities
-    title: Holidays
+    title: Halloween
     show_header_toggle: false
     entities:
-      - sensor.new_year
-      - sensor.easter_sunday
-      - sensor.halloween
-      - sensor.first_advent
-      - sensor.xmas
-      - sensor.new_years_eve
-      # - sensor.ics_900
-      # - sensor.ics_950
-      # - sensor.ics_990
-      # - sensor.ics_991
-      # - sensor.ics_992
+      - sensor.halloween_date
+
+  # Holidays
+  - type: "custom:auto-entities"
+    card:
+      type: entities
+      title: Holidays
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: "sensor.holiday_*"
+    show_empty: true
+    unique: false
+    sort:
+      method: state
+      numeric: true
+
+  # # Holidays
+  # - type: entities
+  #   title: Holidays
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.new_year
+  #     - sensor.easter_sunday
+  #     - sensor.halloween
+  #     - sensor.first_advent
+  #     - sensor.xmas
+  #     - sensor.new_years_eve
+  #     # - sensor.ics_900
+  #     # - sensor.ics_950
+  #     # - sensor.ics_990
+  #     # - sensor.ics_991
+  #     # - sensor.ics_992
 ####################################################################
 # EOF
 ####################################################################
