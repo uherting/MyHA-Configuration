@@ -167,6 +167,7 @@ tankerkoenig: !include conf/tankerkoenig.yaml
 
 pi_hole: !include conf/pi_holes/pi_holes.yaml
 
+# uncommenting results in error while checking the configuration.
 # rest_command: !include conf/rest_command.yaml
 
 notify: !include conf/notify.yaml
