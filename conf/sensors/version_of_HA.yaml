@@ -5,10 +5,19 @@
 #sensor:
 
 ##########################################################################################
-# Date and time
+# HA version
 
-  - platform: version
+- platform: version
+  # name: Current Version
+  image: default
+  source: local
+  scan_interval: 86400
 
+- platform: version
+  # name: Latest Version
+  image: default
+  source: container
+  scan_interval: 86400
 ####################################################################
 # EOF
 ####################################################################

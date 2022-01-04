@@ -9,33 +9,33 @@
 icon: mdi:home-assistant
 title: HA messages
 path: ha-messages
-badges: [ 
-          person.uwe, 
-          person.gillian,
-          sun.sun,
-          binary_sensor.sun_dwn_twilight,
-          binary_sensor.workday_sensor,
-          # binary_sensor.updater,
-          # sensor.potential_breaking_changes
+badges: [
+    person.uwe,
+    person.gillian,
+    sun.sun,
+    binary_sensor.sun_dwn_twilight,
+    binary_sensor.workday_sensor,
+    # binary_sensor.updater,
+    # sensor.potential_breaking_changes
   ]
 
 cards:
-#  # integrated but not connected devices
-#  - type: entity-filter
-#    show_empty: false
-#    card:
-#      title: Update for HA available
-#      show_header_toggle: false
-#    state_filter:
-#      - "on"
-#    entities:
-#      - binary_sensor.updater
+  #  # integrated but not connected devices
+  #  - type: entity-filter
+  #    show_empty: false
+  #    card:
+  #      title: Update for HA available
+  #      show_header_toggle: false
+  #    state_filter:
+  #      - "on"
+  #    entities:
+  #      - binary_sensor.updater
 
   # HA Google Drive Backup - stale snapshot
   - type: conditional
     conditions:
       - entity: binary_sensor.snapshots_stale
-        state_not: 'off'
+        state_not: "off"
     card:
       type: markdown
       content: >-
@@ -48,6 +48,8 @@ cards:
     title: HA - overall system info
     show_header_toggle: false
     entities:
+      - entity: sensor.current_version
+      - entity: sensor.latest_version
       - entity: binary_sensor.updater
         name: HA update available
       - type: divider
@@ -55,17 +57,16 @@ cards:
         name: Breaking changes
       - type: divider
       - entity: sensor.hacs
-        icon: 'hacs:hacs'
+        icon: "hacs:hacs"
         name: HACS updates
       - type: divider
       - entity: sensor.snapshot_backup
-        icon: 'mdi:cloud-upload-outline'
+        icon: "mdi:cloud-upload-outline"
         name: HA Google Backup state
       - type: divider
       - entity: sensor.last_boot
-        icon: 'mdi:calendar'
+        icon: "mdi:calendar"
         name: Last boot (HA host)
-
 ####################################################################
 # EOF
 ####################################################################

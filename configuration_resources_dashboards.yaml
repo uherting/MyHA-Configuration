@@ -35,8 +35,8 @@ resources:
     type: module
 
   # huge clickable title --- too huge for most cases!!!
-  # - url: /hacsfiles/banner-card/banner-card.js
-  #   type: module
+  - url: /hacsfiles/banner-card/banner-card.js
+    type: module
 
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
