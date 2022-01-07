@@ -1,3 +1,17 @@
+# battery levels from https://leonardosmarthomemakers.com/home-assistant-templating-guide/
+###########################################################################
+{%- set output = namespace(sensors=[]) -%}
+{%- for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') -%}
+  {%- if 0 <= state.state | int(-1) < 20 | int  -%}
+     {%- set output.sensors = output.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] -%}
+  {%- endif -%}
+{%- endfor -%}
+{% if (output.sensors |length) > 1 %}
+Check the battery for {{ output.sensors|join(', ')}}
+{% else %}
+so far so good
+{% endif %}
+
 # esphome-unplugged-devices
 ###########################################################################
         {# collect the entity ids #}
