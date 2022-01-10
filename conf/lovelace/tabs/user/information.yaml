@@ -32,20 +32,15 @@ cards:
       # - sensor.ics_2
       # - sensor.ics_3
 
-  # DST
+  # DST / Halloween
   - type: entities
-    title: DST
+    title: Misc
     show_header_toggle: false
     entities:
       - sensor.dst
+      - sensor.halloween_display
       # - sensor.ics_995
       # - sensor.ics_996
-
-  - type: entities
-    title: Halloween
-    show_header_toggle: false
-    entities:
-      - sensor.halloween_date
 
   # Holidays
   - type: "custom:auto-entities"
