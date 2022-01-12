@@ -62,13 +62,14 @@ homeassistant:
         192.168.178.53: !secret AUTHPROVIDER_USERID_GILLIAN
         192.168.178.69: !secret AUTHPROVIDER_USERID_TABBY
 
+# additional icons on the side bar
 panel_custom:
   # - name: ha_server_con
   - name: srv_dashboard
     sidebar_title: Dashboard
     sidebar_icon: mdi:view-dashboard
     js_url: /api/hassio/app/entrypoint.js
-    url_path: "hassio/dashboard"
+    url_path: "config/dashboard"
     embed_iframe: true
     require_admin: true
     config:
