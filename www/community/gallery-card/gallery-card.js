@@ -63,7 +63,7 @@ class GalleryCard extends LitElement {
                         ></hui-image>` :
                       this._isImageExtension(resource.extension) ?
                       html`<img class="lzy_img" src="/local/community/gallery-card/placeholder.jpg" data-src="${resource.url}"/>` :
-					  html`<video class="lzy_video" preload="auto" data-src="${resource.url}#t=0.1" @loadedmetadata="${ev => this._videoMetadataLoaded(ev)}"></video>`
+					            html`<video preload="none" src="${resource.url}#t=0.1" @loadedmetadata="${ev => this._videoMetadataLoaded(ev)}" @canplay="${ev => this._downloadNextMenuVideo()}"></video>`
                     }
                     <figcaption>${resource.caption} <span class="duration"></span></figcaption>
                     </figure>
@@ -95,7 +95,8 @@ class GalleryCard extends LitElement {
 
   _downloadNextMenuVideo() {
     let v = this.shadowRoot.querySelector(".resource-menu figure video[preload='none']");
-    if (v != null)
+    
+    if (v)
     {
       v.removeAttribute("preload");
       v.load();
@@ -174,7 +175,7 @@ class GalleryCard extends LitElement {
 
     this.currentResourceIndex = nextResourceIdx;
 
-    if (fromSlideshow && this.parentNode.tagName && this.parentNode.tagName.toLowerCase() == "hui-card-preview") {
+    if (fromSlideshow && this.parentNode && this.parentNode.tagName && this.parentNode.tagName.toLowerCase() == "hui-card-preview") {
       return;
     }
 
@@ -303,9 +304,13 @@ class GalleryCard extends LitElement {
     this.currentResourceIndex = undefined;
     this.resources = [];
 
-    const maximumFiles = this.config.maximum_files;
+    const maximumFilesPerEntity = this.config.maximum_files_per_entity ?? true;
+    const maximumFiles = maximumFilesPerEntity ? this.config.maximum_files : undefined;
+    const maximumFilesTotal = maximumFilesPerEntity ? undefined: this.config.maximum_files;
     const fileNameFormat = this.config.file_name_format;
     const captionFormat = this.config.caption_format;
+    const captionLeadingZeros = this.config.caption_leading_zeros ?? false;
+    const parsedDateSort = this.config.parsed_date_sort ?? false;
     const reverseSort = this.config.reverse_sort ?? true;
 
     this.config.entities.forEach(entity => {
@@ -321,7 +326,7 @@ class GalleryCard extends LitElement {
       }
 
       if (entityId.substring(0, 15).toLowerCase() == "media-source://") {
-        commands.push(this._loadMediaResource(hass, entityId, maximumFiles, fileNameFormat, captionFormat, recursive, reverseSort));
+        commands.push(this._loadMediaResource(hass, entityId, maximumFiles, fileNameFormat, captionFormat, captionLeadingZeros, recursive, reverseSort));
       }
       else {
         var entityState = hass.states[entityId];
@@ -337,15 +342,49 @@ class GalleryCard extends LitElement {
           if (entityState.attributes.entity_picture != undefined)
             commands.push(this._loadCameraResource(entityId, entityState));
 
+          //Custom Files component
           if (entityState.attributes.fileList != undefined)
-            commands.push(this._loadFilesResources(entityState.attributes.fileList, maximumFiles, fileNameFormat, captionFormat, reverseSort));
+            commands.push(this._loadFilesResources(entityState.attributes.fileList, maximumFiles, fileNameFormat, captionFormat, captionLeadingZeros, reverseSort));
+
+          //HA Folder component
+          if (entityState.attributes.file_list != undefined)
+            commands.push(this._loadFilesResources(entityState.attributes.file_list, maximumFiles, fileNameFormat, captionFormat, captionLeadingZeros, reverseSort));
         }
       }
     });
 
     Promise.all(commands).then(resources => {
       this.resources = resources.filter(result => !result.error).flat(Infinity);
+
+      if (parsedDateSort) {        
+        if (reverseSort) {
+          this.resources.sort(function (x, y) { return y.date - x.date; });
+        }
+        else {
+          this.resources.sort(function (x, y) { return x.date - y.date; });
+        }
+      }
+
+      if (maximumFilesTotal != undefined && !isNaN(maximumFilesTotal) && maximumFilesTotal < this.resources.length) {
+        //Keep only N total, but make sure camera resources remain
+        this.resources = this.resources.filter(function(resource) {
+          if (resource.isHass)
+            return true;
+          else if (this.count < maximumFilesTotal) {
+            this.count++;
+            return true;
+          }
+          else {
+            return false;
+          }
+        }, {count: resources.filter(resource => resource.isHass).length});
+      }
+
       this.currentResourceIndex = 0; 
+      if (!(this.parentNode && this.parentNode.tagName && this.parentNode.tagName.toLowerCase() == "hui-card-preview")) {
+        //Give the UI a second to refresh before setting focus, so that keypresses work
+        setTimeout(() => {this.shadowRoot.querySelector('.resource-viewer button').focus();}, 1000);
+      }
 
       this.errors = [];
       resources.filter(result => result.error).flat(Infinity).forEach(error => {
@@ -357,13 +396,13 @@ class GalleryCard extends LitElement {
     });
   }
 
-  _loadMediaResource(hass, contentId, maximumFiles, fileNameFormat, captionFormat, recursive, reverseSort) {
+  _loadMediaResource(hass, contentId, maximumFiles, fileNameFormat, captionFormat, captionLeadingZeros, recursive, reverseSort) {
     return this._loadMedia(this, hass, contentId, maximumFiles, recursive, reverseSort)
       .then(values => {
         var resources = [];
 
         values.forEach(mediaItem => {
-            var resource = this._createFileResource(mediaItem.authenticated_path, fileNameFormat, captionFormat);
+            var resource = this._createFileResource(mediaItem.authenticated_path, fileNameFormat, captionFormat, captionLeadingZeros);
 
             if (resource !== undefined) {
               resources.push(resource);
@@ -485,7 +524,7 @@ class GalleryCard extends LitElement {
     return Promise.resolve(resource);
   }
 
-  _loadFilesResources(files, maximumFiles, fileNameFormat, captionFormat, reverseSort) {
+  _loadFilesResources(files, maximumFiles, fileNameFormat, captionFormat, captionLeadingZeros, reverseSort) {
     var resources = [];
     if (files) {
       files = files.filter(file => file.indexOf("@eaDir") < 0);
@@ -505,7 +544,7 @@ class GalleryCard extends LitElement {
         if (filePath.indexOf("/config/www/") < 0)
           fileUrl = "/local/" + filePath.substring(filePath.indexOf("/www/")+5);
 
-        var resource = this._createFileResource(fileUrl, fileNameFormat, captionFormat);
+        var resource = this._createFileResource(fileUrl, fileNameFormat, captionFormat, captionLeadingZeros);
         
         if (resource !== undefined) {
           resources.push(resource);
@@ -516,7 +555,7 @@ class GalleryCard extends LitElement {
     return Promise.resolve(resources);
   }
 
-  _createFileResource(fileRawUrl, fileNameFormat, captionFormat) {
+  _createFileResource(fileRawUrl, fileNameFormat, captionFormat, captionLeadingZeros) {
     var resource;
 
     var fileUrl = fileRawUrl.split("?")[0];
@@ -530,6 +569,7 @@ class GalleryCard extends LitElement {
       fileName = decodeURIComponent(fileName);
 
       var fileCaption = "";
+      var date = "";
       if (fileNameFormat === undefined || captionFormat === undefined)
           fileCaption = fileName;
       else {
@@ -537,22 +577,41 @@ class GalleryCard extends LitElement {
         fileCaption = captionFormat;
 
         var hr = 0;
+        var year = 0;
+        var month = 0;
+        var day = 0;
+        var hour = 0;
+        var min = 0;
+        var sec = 0;
         for (let token of tokens) {
           var searchIndex = fileNameFormat.indexOf(token);
 
           if (searchIndex >= 0) {
             var val = fileName.substring(searchIndex, searchIndex + token.length);
+            if (token == "%YYY" ) year = parseInt(val);
+            if (token == "%m" ) month = parseInt(val);
+            if (token == "%d" ) day = parseInt(val);
+            if (token == "%H" ) hour = parseInt(val);
+            if (token == "%M" ) min = parseInt(val);
+            if (token == "%S" ) sec = parseInt(val);
             if (token == "%H" && captionFormat.indexOf("%p") >= 0) {
               hr = parseInt(val);
               if (val == "00") val = 12;
               if (parseInt(val) > 12) val = parseInt(val) - 12;
+              if (captionLeadingZeros)
+                val = val.toString().padStart(2, '0');
             }
-            if (token == "%m" || token == "%d" | token == "%H") val = parseInt(val);
+            if (!captionLeadingZeros && (token == "%m" || token == "%d" | token == "%H")) val = parseInt(val);
             fileCaption = fileCaption.replace(token, val);
           }
         }
 
         fileCaption = fileCaption.replace("%p", (hr > 11 ? "PM" : "AM"));
+        
+        if (year != 0 && month != 0 && day != 0) {
+          date = new Date(year, month, day, hour, min, sec);
+        }    
+        
       }
 
       resource = {
@@ -561,7 +620,8 @@ class GalleryCard extends LitElement {
         name: fileName,
         extension: ext,
         caption: fileCaption,
-        index: -1
+        index: -1,
+        date: date
       };
     }
 
@@ -642,7 +702,6 @@ class GalleryCard extends LitElement {
           padding: 12px;
         }
       }
-
       @media all and (min-width: 600px) {
         .menu-responsive .resource-viewer {
           float: left;
@@ -660,7 +719,6 @@ class GalleryCard extends LitElement {
           float: right;
         }
       }
-
       .menu-bottom .resource-viewer {
         width: 100%;
       }
@@ -682,7 +740,6 @@ class GalleryCard extends LitElement {
       .menu-bottom .resource-viewer figure video {
         max-height: 70vh;
       }
-
       .menu-right .resource-viewer {
         float: left;
         width: 75%;
@@ -698,7 +755,6 @@ class GalleryCard extends LitElement {
         overflow-y: scroll; 
         float: right;
       }
-
       .menu-left .resource-viewer {
         float: right;
         width: 75%;
@@ -714,12 +770,10 @@ class GalleryCard extends LitElement {
         overflow-y: scroll; 
         float: left;
       }
-
       .menu-left .btn-reload {
         float: left;
         margin-left: 25px;
       }
-
       .menu-top {
         display: flex;
         flex-direction: column;
@@ -747,7 +801,6 @@ class GalleryCard extends LitElement {
       .menu-top .resource-viewer figure video {
         max-height: 70vh;
       }
-
       .menu-hidden .resource-viewer {
         width: 100%;
       }
@@ -760,7 +813,6 @@ class GalleryCard extends LitElement {
         overflow-x: scroll;
         display: none;
       }
-
       /* The Modal (background) */
       .modal {
         display: none; /* Hidden by default */
@@ -775,7 +827,6 @@ class GalleryCard extends LitElement {
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
       }
-
       /* Modal Content (Image) */
       .modal-content {
         margin: auto;
@@ -783,7 +834,6 @@ class GalleryCard extends LitElement {
         width: 80%;
         max-width: 700px;
       }
-
       /* Caption of Modal Image (Image Text) - Same Width as the Image */
       #popupCaption {
         margin: auto;
@@ -795,18 +845,15 @@ class GalleryCard extends LitElement {
         padding: 10px 0;
         height: 150px;
       }
-
       /* Add Animation - Zoom in the Modal */
       .modal-content, #popupCaption {
         animation-name: zoom;
         animation-duration: 0.6s;
       }
-
       @keyframes zoom {
         from {transform:scale(0)}
         to {transform:scale(1)}
       }
-
       /* 100% Image Width on Smaller Screens */
       @media only screen and (max-width: 700px){
         .modal-content {
@@ -852,7 +899,7 @@ class GalleryCardEditor extends LitElement {
     this._captionExample =  this._fileNameExample;
     if (this._config.file_name_format && this._config.file_name_format != ""
       && this._config.caption_format && this._config.caption_format != "") {
-      this._captionExample = this.generateSampleText(this._config.caption_format, false);
+      this._captionExample = this.generateSampleText(this._config.caption_format, this._config.caption_leading_zeros);
     } 
   }
 
@@ -881,6 +928,10 @@ class GalleryCardEditor extends LitElement {
     return this._config.maximum_files || "";
   }
 
+  get _maximumFilesPerEntity() {
+    return this._config.maximum_files_per_entity ?? true;
+  }
+
   get _slideshowTimer() {
     return this._config.slideshow_timer || "";
   }
@@ -893,9 +944,17 @@ class GalleryCardEditor extends LitElement {
     return this._config.caption_format || "";
   }
 
+  get _captionLeadingZeros() {
+    return this._config.caption_leading_zeros || false;
+  }
+
+  get _parsedDateSort() {
+    return this._config.parsed_date_sort ?? false;
+  }
+
   get _reverseSort() {
     return this._config.reverse_sort ?? true;
-  }
+  }  
 
   get _showReload() {
     return this._config.show_reload ?? false;
@@ -939,9 +998,8 @@ class GalleryCardEditor extends LitElement {
     <div class="card-config">
     ${this._addMediaOpened ?
       html`
-        <paper-dialog no-cancel-on-outside-click id="addMediaDialog" opened="${this._addMediaOpened}">
-          <h2>Add a Media Source</h2>
-          <p>
+        <mwc-dialog heading="Add a Media Source" id="addMediaDialog" open @closed="${this.closeAddMedia}" class="gallery-popup">
+          <div>
             <paper-dropdown-menu style="flex-grow:1;">
               <paper-listbox selected="0" slot="dropdown-content" id="addMediaDD">
                 <paper-item>${this._selectedMediaPath == "" ? "ALL MEDIA" : this._selectedMediaPath}</paper-item>
@@ -950,17 +1008,16 @@ class GalleryCardEditor extends LitElement {
                 })}
               </paper-listbox>
             </paper-dropdown-menu>
-            <ha-icon-button icon="hass:folder-download" @click="${this.browseDirectory}"></ha-icon-button>
-            ${this._selectedMediaPath !== "" ? html`<ha-icon-button icon="hass:folder-upload" @click="${this.upDirectory}"></mwc-button>` : html``}
+            <ha-icon-button @click="${this.browseDirectory}">
+              <ha-icon icon="hass:folder-download"></ha-icon>
+            </ha-icon-button>
+            ${this._selectedMediaPath !== "" ? html`<ha-icon-button @click="${this.upDirectory}"><ha-icon icon="hass:folder-upload"></ha-icon></mwc-button>` : html``}
             </br>
             <ha-checkbox></ha-checkbox>Media in All Subdirectories<br/>
-            <div class="buttons">
-            <mwc-button class="dialog-button" @click="${this.addMediaSource}">Add</mwc-button>
-            &nbsp;&nbsp;
-            <mwc-button class="dialog-button" @click="${this.closeAddMedia}">Cancel</mwc-button>
-            </div>
-          </p>
-        </paper-dialog>
+          </div>
+          <mwc-button slot="primaryAction" dialogAction="ok" @click="${this.addMediaSource}">Add</mwc-button>
+          <mwc-button slot="secondaryAction" dialogAction="cancel" @click="${this.closeAddMedia}">Cancel</mwc-button>
+        </mwc-dialog>
         ` : html``
     }
     <div class="side-by-side">
@@ -982,14 +1039,19 @@ class GalleryCardEditor extends LitElement {
             else {
               entityId = entity;
             }
-
             return html`
                 <div style="display:flex; align-items: center;">
                   <ha-icon icon="hass:folder-image"></ha-icon>
-                  <span style="flex-grow:1;">${entityId + (recursive ? ' (& subdirs)' : '')}</span>
-                  <ha-icon-button icon="hass:arrow-down" .index="${index}" .moveDirection="${1}" @click="${this._moveEntity}"></ha-icon-button>
-                  <ha-icon-button icon="hass:arrow-up" .index="${index}" .moveDirection="${-1}" @click="${this._moveEntity}"></ha-icon-button>
-                  <ha-icon-button icon="hass:close" .index="${index}" @click="${this._deleteEntity}"></ha-icon-button>
+                  <span style="flex-grow:1;">${entityId + (recursive ? ' (& subdirs)' : '')}</span>                  
+                  <ha-icon-button .index="${index}" .moveDirection="${-1}" @click="${this._moveEntity}">
+                    <ha-icon icon="hass:arrow-up"></ha-icon>
+                  </ha-icon-button>
+                  <ha-icon-button .index="${index}" .moveDirection="${1}" @click="${this._moveEntity}">
+                    <ha-icon icon="hass:arrow-down"></ha-icon>
+                  </ha-icon-button>
+                  <ha-icon-button .index="${index}" @click="${this._deleteEntity}">
+                    <ha-icon icon="hass:close"></ha-icon>
+                  </ha-icon-button>
                 </div>
             `;
           })} 
@@ -998,7 +1060,7 @@ class GalleryCardEditor extends LitElement {
           <paper-dropdown-menu style="flex-grow:1;"
           @value-changed="${this._addEntity}">
             <paper-listbox slot="dropdown-content">
-              ${Object.keys(this.hass.states).filter(entId => entId.startsWith('camera.') || this.hass.states[entId].attributes.fileList != undefined).sort().map(entId => html`
+              ${Object.keys(this.hass.states).filter(entId => entId.startsWith('camera.') || this.hass.states[entId].attributes.fileList != undefined || this.hass.states[entId].attributes.file_list != undefined).sort().map(entId => html`
                     <paper-item>${entId}</paper-item>
                 `)}
             </paper-listbox>
@@ -1040,21 +1102,7 @@ class GalleryCardEditor extends LitElement {
             .checked="${this._showReload}"
             .configValue = "${"show_reload"}"
             @click="${this._valueChanged}"
-          ></ha-checkbox>Show Reload Button<br/>
-        <ha-checkbox
-            .checked="${this._reverseSort}"
-            .configValue = "${"reverse_sort"}"
-            @click="${this._valueChanged}"
-          ></ha-checkbox>Reverse sort (newest first)<br/>
-        <paper-input
-          .label="${"Maximum files per entity to display"}
-          (${this.hass.localize(
-            "ui.panel.lovelace.editor.card.config.optional"
-          )})"
-          .value="${this._maximumFiles}"
-          .configValue="${"maximum_files"}"
-          @value-changed="${this._valueChanged}"
-        ></paper-input>
+          ></ha-checkbox>Show Reload Button     
         <paper-input
           .label="${"Slideshow Time (seconds)"}
           (${this.hass.localize(
@@ -1063,7 +1111,21 @@ class GalleryCardEditor extends LitElement {
           .value="${this._slideshowTimer}"
           .configValue="${"slideshow_timer"}"
           @value-changed="${this._valueChanged}"
+        ></paper-input>          
+        <paper-input
+          .label="${"Maximum files"}
+          (${this.hass.localize(
+            "ui.panel.lovelace.editor.card.config.optional"
+          )})"
+          .value="${this._maximumFiles}"
+          .configValue="${"maximum_files"}"
+          @value-changed="${this._valueChanged}"
         ></paper-input>
+        <ha-checkbox
+            .checked="${this._maximumFilesPerEntity}"
+            .configValue = "${"maximum_files_per_entity"}"
+            @click="${this._valueChanged}"
+          ></ha-checkbox>...per Entity<br/>
       </div>
     </div>
     <div class="side-by-side">
@@ -1089,7 +1151,7 @@ class GalleryCardEditor extends LitElement {
           .configValue="${"file_name_format"}"
           @value-changed="${this._valueChanged}"
         ></paper-input>
-        <div class="example">Your file names look like: ${this._fileNameExample}</div>
+        <div class="example">Your file names look like: ${this._fileNameExample}</div>        
         <paper-input
           .label="${"Format for Caption"}
           (${this.hass.localize(
@@ -1099,7 +1161,22 @@ class GalleryCardEditor extends LitElement {
           .configValue="${"caption_format"}"
           @value-changed="${this._valueChanged}"
         ></paper-input>
+        <ha-checkbox
+          .checked="${this._captionLeadingZeros}"
+          .configValue = "${"caption_leading_zeros"}"
+          @click="${this._valueChanged}"
+        ></ha-checkbox>Include Leading Zeros in Caption
         <div class="example">Your captions will look like: ${this._captionExample}</div>
+        <ha-checkbox
+            .checked="${this._parsedDateSort}"
+            .configValue = "${"parsed_date_sort"}"
+            @click="${this._valueChanged}"
+          ></ha-checkbox>Sort using Dates from Captions<br/>
+        <ha-checkbox
+            .checked="${this._reverseSort}"
+            .configValue = "${"reverse_sort"}"
+            @click="${this._valueChanged}"
+          ></ha-checkbox>Reverse sort (newest first)<br/>
       </div>
     </div>
     `;
@@ -1117,19 +1194,7 @@ class GalleryCardEditor extends LitElement {
     ) {
       return;
     }
-    if (target.configValue == "reverse_sort") {
-      this._config = {
-        ...this._config,
-        reverse_sort: !target.checked
-      };
-    }
-    else if (target.configValue == "show_reload") {
-      this._config = {
-        ...this._config,
-        show_reload: !target.checked
-      };
-    }
-    else if (target.configValue) {
+    if (target.configValue) {
       if (target.value === "") {
         this._config = { ...this._config };
         delete this._config[target.configValue];
@@ -1137,7 +1202,7 @@ class GalleryCardEditor extends LitElement {
         this._config = {
           ...this._config,
           [target.configValue]:
-            target.checked !== undefined ? target.checked : target.value,
+            target.checked !== undefined ? !target.checked : target.value,
         };
       }
     }
@@ -1161,7 +1226,7 @@ class GalleryCardEditor extends LitElement {
   }
 
   addMediaSource(ev) {
-    var val = "media-source://media_source" + this._getSelectedValue(ev.target.parentNode.parentNode);
+    var val = "media-source://media_source" + this._getSelectedValue(ev.target.parentNode.parentNode.parentNode);
     var checked = ev.target.parentNode.parentNode.querySelector("ha-checkbox").checked;
 
     var entities = Object.assign([], this._config.entities);
@@ -1208,7 +1273,7 @@ class GalleryCardEditor extends LitElement {
   }
 
   browseDirectory(ev) {
-    var ddVal = this._getSelectedValue(ev.target.parentNode);
+    var ddVal = this._getSelectedValue(ev.target.parentNode.parentNode);
 
     if (ddVal != this._selectedMediaPath) {
       this._selectedMediaPath = ddVal;
@@ -1245,8 +1310,9 @@ class GalleryCardEditor extends LitElement {
   }
 
   _moveEntity(ev) {
-    var index = ev.target.index;
-    var dir = ev.target.moveDirection;
+    var ctl = ev.target.parentNode;
+    var index = ctl.index;
+    var dir = ctl.moveDirection;
 
     if (index + dir >= 0 && index + dir < this._config.entities.length) {
       var entities = Object.assign([], this._config.entities);
@@ -1307,6 +1373,12 @@ class GalleryCardEditor extends LitElement {
       }
       paper-dropdown-menu, ha-checkbox {
         vertical-align: middle;
+      }
+      .gallery-popup {
+        --mdc-dialog-min-width: 375px;
+        --mdc-dialog-max-width: 375px;
+        --mdc-dialog-min-height: 250px;
+        --mdc-dialog-max-height: 250px;
       }
     `;
   }
