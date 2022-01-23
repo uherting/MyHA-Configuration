@@ -1,0 +1,67 @@
+####################################################################
+####################################################################
+#
+# covid-19 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:virus
+title: COVID-19
+path: covid19_world_n
+#type: vertical-stack
+cards:
+  - type: entities
+    title: Coronavirus World
+    show_header_toggle: false
+    entities:
+      - sensor.worldwide_coronavirus_confirmed
+      # - sensor.worldwide_coronavirus_current
+      - sensor.worldwide_coronavirus_deaths
+      # - sensor.worldwide_coronavirus_recovered
+
+  - type: entities
+    title: Coronavirus Europe
+    show_header_toggle: false
+    entities:
+      - sensor.united_kingdom_coronavirus_confirmed
+      # - sensor.united_kingdom_coronavirus_current
+      - sensor.united_kingdom_coronavirus_deaths
+      # - sensor.united_kingdom_coronavirus_recovered
+      - type: divider
+      - sensor.germany_coronavirus_confirmed
+      # - sensor.germany_coronavirus_current
+      - sensor.germany_coronavirus_deaths
+      # - sensor.germany_coronavirus_recovered
+      - type: divider
+
+  - type: entities
+    title: Coronavirus Other
+    show_header_toggle: false
+    entities:
+      - sensor.south_africa_coronavirus_confirmed
+      # - sensor.south_africa_coronavirus_current
+      - sensor.south_africa_coronavirus_deaths
+      # - sensor.south_africa_coronavirus_recovered
+      - type: divider
+      - sensor.us_coronavirus_confirmed
+      # - sensor.us_coronavirus_current
+      - sensor.us_coronavirus_deaths
+      # - sensor.us_coronavirus_recovered
+
+  - type: entities
+    title: Coronavirus Misc
+    show_header_toggle: false
+    entities:
+      - sensor.india_coronavirus_confirmed
+      # - sensor.india_coronavirus_current
+      - sensor.india_coronavirus_deaths
+      # - sensor.india_coronavirus_recovered
+      - type: divider
+      - sensor.china_coronavirus_confirmed
+      # - sensor.china_coronavirus_current
+      - sensor.china_coronavirus_deaths
+      # - sensor.china_coronavirus_recovered
+####################################################################
+# EOF
+####################################################################
