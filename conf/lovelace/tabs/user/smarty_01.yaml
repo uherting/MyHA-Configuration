@@ -23,7 +23,7 @@ cards:
       - type: grid
         square: false
         # title: Kitchen
-        columns: 4
+        columns: 5
         cards:
           - type: "custom:button-card"
             entity: switch.l2_kitchen01_ssr_01
@@ -32,12 +32,22 @@ cards:
           - type: "custom:button-card"
             name: " "
             entity: sensor.l2_kitchen01_tempenv_01
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
             show_state: true
 
       - type: grid
         square: false
         # title: Storage
-        columns: 4
+        columns: 5
         cards:
           - type: "custom:button-card"
             entity: switch.l2_storage01_ssr_01
@@ -51,6 +61,10 @@ cards:
           - type: "custom:button-card"
             name: " "
             entity: sensor.xiaomi_l2_storage_humidity
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
             show_state: true
           - type: "custom:button-card"
             name: " "
@@ -68,7 +82,7 @@ cards:
       - type: grid
         square: false
         # title: Lounge
-        columns: 4
+        columns: 5
         cards:
           - type: "custom:button-card"
             name: Lounge
@@ -80,13 +94,19 @@ cards:
             name: " "
             entity: sensor.xiaomi_l2_lounge_humidity
             show_state: true
-          # - type: 'custom:button-card'
-          #   show_state: false
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
 
       - type: grid
         square: false
         # title: Bathroom
-        columns: 4
+        columns: 5
         cards:
           - type: "custom:button-card"
             name: Bathroom
@@ -99,6 +119,10 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
             entity: binary_sensor.l2_bathroom01_window
             name: " "
             color: yellow
@@ -107,7 +131,7 @@ cards:
       - type: grid
         square: false
         # title: Bedroom
-        columns: 4
+        columns: 5
         cards:
           - type: "custom:button-card"
             name: Bedroom
@@ -119,11 +143,19 @@ cards:
             entity: sensor.xiaomi_l2_bedroom_humidity
             name: " "
             show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
 
       - type: grid
         square: false
-        # title: Bedroom
-        columns: 4
+        # title: OutNorth
+        columns: 5
         cards:
           - type: "custom:button-card"
             name: "OutNorth"
@@ -131,14 +163,38 @@ cards:
             entity: sensor.l2_bathroom01_tempenv_02
             name: " "
             show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
 
       - type: grid
         square: false
-        # title: Bedroom
-        columns: 4
+        # title: OutSouth
+        columns: 5
         cards:
           - type: "custom:button-card"
             name: "OutSouth"
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
           - type: "custom:button-card"
             # entity: sensor.l2_storage
             name: " "
