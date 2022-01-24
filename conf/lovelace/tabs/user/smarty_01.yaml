@@ -73,6 +73,7 @@ cards:
             color: yellow
             show_state: false
             icon: mdi:incognito-circle
+            name: "SpyMod"
             tap_action:
               action: call-service
               service: automation.toggle
