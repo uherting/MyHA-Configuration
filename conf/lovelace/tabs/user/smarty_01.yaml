@@ -26,12 +26,13 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
-            entity: switch.l2_kitchen01_ssr_01
             name: "Kitchen"
+            entity: switch.l2_kitchen01_ssr_01
             color: yellow
           - type: "custom:button-card"
             name: " "
             entity: sensor.l2_kitchen01_tempenv_01
+            show_state: true
           - type: "custom:button-card"
             # entity: sensor.l2_storage
             name: " "
