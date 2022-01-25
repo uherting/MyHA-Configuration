@@ -1,0 +1,112 @@
+# ############################################################
+#
+#  Check battery levels and send a notification in case of emergency(TM)
+#
+#  Purpose:
+#   - check battery levels
+#   - send text into the Telegram group
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# controlling the overall process of
+#   - ...
+#   - sending a text message to the TG notification group
+# --------------------------------------------------------------
+check_batteries:
+  alias: Detect unavailable ESPHome devices
+  icon: mdi:controller-classic-outline
+  description: This script detects unavailable ESPHome devices
+  variables:
+    state: "{{ 0 }}"
+  # in case a message needs to be send we need additional data
+  # for details see script file telegram_messaging.yaml
+  fields:
+    msg_title:
+      description: "The title of the notification"
+      advanced: true
+      required: true
+      example: "State change"
+      default: "default msg title"
+      # selector: text
+    msg_text:
+      description: "The message content"
+      advanced: true
+      required: true
+      example: "The light is on!"
+      default: "default msg text"
+    msg_receiver:
+      description: "The receiver of the message"
+      advanced: true
+      required: false
+      example: "admin"
+      default: "admin"
+  mode: queued
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.esphome_unavailable_sensors_text
+      data:
+        value: "
+          {%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
+          {%- set e =  states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) -%}
+          {%- for state in e -%}
+          {%- if state.entity_id.startswith('binary_sensor.l') -%}
+          {%- if state.entity_id.endswith('status') -%}
+          {%- if ns.entities|length == 0 -%}
+          {%- set ns.entity_string = state.entity_id -%}
+          {%- else -%}
+          {%- set ns.entity_string = state.entity_id + ';' + ns.entity_string -%}
+          {%- endif -%}
+          {%- set ns.entities = ns.entities + [state.entity_id] -%}
+          {%- set ns.msg_yn = true -%}
+          {%- endif -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.entity_string }}"
+    - choose:
+        # if the sensor texts are not equal, then ...
+        - conditions:
+            - condition: template
+              value_template: "{{ states('input_text.esphome_unavailable_sensors_old_text') != states('input_text.esphome_unavailable_sensors_text') }}"
+          sequence:
+            - service: input_text.set_value
+              target:
+                entity_id: input_text.esphome_unavailable_sensors_old_text
+              data:
+                value: "{{ states('input_text.esphome_unavailable_sensors_text') }}"
+            - service: notify.tg_admin_grp
+              data_template:
+                title: "{{ msg_title }}"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+                  NOTEQUAL - EOM
+    - choose:
+        # if the sensor texts are equal, then ...
+        - conditions:
+            - condition: template
+              value_template: "{{ states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') }}"
+          sequence:
+            - service: notify.tg_admin_grp
+              data_template:
+                title: "{{ msg_title }}"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+                  EQUAL - EOM
+      default:
+        - delay: 00:00:01
+# ############################################################
+#  END OF FILE
+# ############################################################
+
+{%- set output = namespace(sensors=[]) -%}
+{%- for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') -%}
+  {%- if 0 <= state.state | int(-1) < 20 | int  -%}
+     {%- set output.sensors = output.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] -%}
+  {%- endif -%}
+{%- endfor -%}
+{% if (output.sensors |length) > 1 %}
+Check the battery for {{ output.sensors|join(', ')}}
+{% else %}
+so far so good
+{% endif %}
