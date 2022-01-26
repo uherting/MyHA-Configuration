@@ -68,7 +68,6 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            name: " "
             # entity: sensor.l2_storage01_bh1750_illuminance_01
             entity: binary_sensor.l2storage_spymode
             color: yellow
