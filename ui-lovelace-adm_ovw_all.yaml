@@ -17,8 +17,8 @@ views:
   - !include /config/conf/lovelace/tabs/admin/ble_temp_humidity_batteries.yaml
   - !include /config/conf/lovelace/tabs/admin/settings.yaml
   - !include /config/conf/lovelace/tabs/admin/esphome-unplugged-devices.yaml
+  - !include /config/conf/lovelace/tabs/admin/pi-holes.yaml
   - !include /config/conf/lovelace/tabs/admin/printer.yaml
-
 ####################################################################
 # EOF
 ####################################################################
