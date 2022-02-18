@@ -111,15 +111,16 @@ For loop example getting entity values in the weather domain:
 
 # misc older things
 ###########################################################################
-{% if is_state("sun.sun", "above_horizon") -%}
-  The sun rose {{ relative_time(states.sun.sun.last_changed) }} ago.
-{%- else -%}
-  The sun will rise at {{ as_timestamp(strptime(state_attr("sun.sun", "next_rising"), "")) | timestamp_local }}.
-{%- endif %}
-
-For loop example getting entity values in the weather domain:
-
-{% for state in states.weather -%}
-  {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
-  {{ state.name | lower }} is {{state.state_with_unit}}
-{%- endfor %}.
+# Currently 'strptime' will return '2022-02-19T06:21:58.456270+00:00', however this template will fail to render in Home Assistant core 2022.1
+#{% if is_state("sun.sun", "above_horizon") -%}
+#  The sun rose {{ relative_time(states.sun.sun.last_changed) }} ago.
+#{%- else -%}
+#  The sun will rise at {{ as_timestamp(strptime(state_attr("sun.sun", "next_rising"), "")) | timestamp_local }}.
+#{%- endif %}
+#
+#For loop example getting entity values in the weather domain:
+#
+#{% for state in states.weather -%}
+#  {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
+#  {{ state.name | lower }} is {{state.state_with_unit}}
+#{%- endfor %}.
