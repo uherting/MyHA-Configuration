@@ -1,60 +1,55 @@
+# esphome-unplugged-devices
+###########################################################################
+{%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
+{%- set e = states.binary_sensor | selectattr('attributes.device_class', '==', 'connectivity') -%}
+{%- for state in e -%}
+{%- if state.entity_id.startswith("binary_sensor.l") -%}
+{%- if state.entity_id.endswith("status") -%}
+{%- if is_state(state.entity_id, 'off') -%}
+{%- set ns.entities = ns.entities + [state.entity_id] -%}
+{%- set ns.msg_yn = true -%}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+
+{%- if (ns.entities | length) > 0 -%}
+{% set ns.entity_string = ns.entities | sort | join(', ') | replace("_status", "") %}
+Check the devices for connectivity: {{ ns.entity_string }}
+{% else %}
+so far so good
+{%- endif -%}
+
+
+{# print the processed values #}
+{{ '\nresults:' }}
+  - {{ ns.entities }}
+  - {{ ns.entity_string }}
+  - send message: {{ ns.msg_yn }}
+
+# playing around with dates
+###########################################################################
+{%- set d = states("sensor.Full_Moon_days_until") -%}
+{%- if '0' == d -%}
+{%- set d = 'today' -%}
+{%- endif %}
+{%- set s = states("sensor.Full_Moon_date") + " (" + d + ")" %}
+{{ s }}
+
 # battery levels from https://leonardosmarthomemakers.com/home-assistant-templating-guide/
 ###########################################################################
-{%- set output = namespace(sensors=[]) -%}
-{%- for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') -%}
-  {%- if 0 <= state.state | int(-1) < 20 | int  -%}
-     {%- set output.sensors = output.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] -%}
+{%- set ns = namespace(sensors=[]) -%}
+{%- set e = states.sensor | selectattr('attributes.device_class', '==', 'battery') -%}
+{%- for state in e -%}
+  {%- if 0 <= state.state | int(-1) < 10 | int  -%}
+     {%- set ns.sensors = ns.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] -%}
   {%- endif -%}
 {%- endfor -%}
-{% if (output.sensors |length) > 1 %}
-Check the battery for {{ output.sensors|join(', ')}}
+{% if (ns.sensors |length) > 0 %}
+Check the battery for {{ ns.sensors|join(', ')}}
 {% else %}
 so far so good
 {% endif %}
-
-# esphome-unplugged-devices
-###########################################################################
-        {# collect the entity ids #}
-        {%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
-        {%- set e =  states.binary_sensor | selectattr("state", "in", ["unavailable", "unknown", "off"]) -%}
-        {%- for state in e -%}
-        {%- if state.entity_id.startswith("binary_sensor.l") -%}
-        {%- if state.entity_id.endswith("status") -%}
-        {%- if ns.entities|length == 0 -%}
-        {%- set ns.entity_string = state.entity_id -%}
-        {%- else -%}
-        {%- set ns.entity_string = state.entity_id + ';' + ns.entity_string -%}
-        {%- endif -%}
-        {%- set ns.entities = ns.entities + [state.entity_id] -%}
-        {# found an unavailable entity, flip the send_a_message switch to on #}
-        {%- set ns.msg_yn = true -%}
-        {%- endif -%}
-        {%- endif -%}
-        {%- endfor -%}
-        {# print the processed values #}
-        {{ '\n    results:' }}
-        - {{ ns.entities }}
-        - {{ ns.entity_string }}
-        - {{ ns.msg_yn }}
-        {{ '\n    result current txt == "":' }}
-        - {{ states('input_text.esphome_unavailable_sensors_text') == "" }}
-        {{ '\n    result current txt == old txt:' }}
-        - {{ states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') }}
-
-        {{ '\n    result if statements' }}
-        {# were some unavailable devices found? #}
-        {%- if states('input_text.esphome_unavailable_sensors_text') == "" -%}
-        {{ '\n        - current string is empty, no action necessary' }}
-        {%- else -%}
-        {# if old and current are equal, no action! #}
-        {%- if states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') -%}
-        {{ '\n        - old == current, no actiom ' }}
-        {%- else -%}
-        {{ '\n        - old != current, action required' }}
-        {%- endif -%}
-        {%- endif -%}
-{{ '\n\n' }}
-
 
 # XIAOMI battery condition bad (below 10%)
 ###########################################################################
@@ -108,19 +103,3 @@ For loop example getting entity values in the weather domain:
   {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
   {{ state.name | lower }} is {{state.state_with_unit}}
 {%- endfor %}.
-
-# misc older things
-###########################################################################
-# Currently 'strptime' will return '2022-02-19T06:21:58.456270+00:00', however this template will fail to render in Home Assistant core 2022.1
-#{% if is_state("sun.sun", "above_horizon") -%}
-#  The sun rose {{ relative_time(states.sun.sun.last_changed) }} ago.
-#{%- else -%}
-#  The sun will rise at {{ as_timestamp(strptime(state_attr("sun.sun", "next_rising"), "")) | timestamp_local }}.
-#{%- endif %}
-#
-#For loop example getting entity values in the weather domain:
-#
-#{% for state in states.weather -%}
-#  {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
-#  {{ state.name | lower }} is {{state.state_with_unit}}
-#{%- endfor %}.
