@@ -11,9 +11,8 @@ title: COVID-19 numbers
 path: covid19_local_n
 #type: vertical-stack
 cards:
-
   - type: entities
-    title: RKI Covid Data - LK Gö
+    title: LK Gö
     show_header_toggle: false
     entities:
       - sensor.lk_gottingen_casesper100k
@@ -26,7 +25,7 @@ cards:
       - sensor.lk_gottingen_newrecovered
 
   - type: entities
-    title: RKI Covid Data - LK GS
+    title: LK GS
     show_header_toggle: false
     entities:
       - sensor.lk_goslar_casesper100k
@@ -39,7 +38,7 @@ cards:
       - sensor.lk_goslar_newrecovered
 
   - type: entities
-    title: RKI Covid Data - LK NDH
+    title: LK NDH
     show_header_toggle: false
     entities:
       - sensor.lk_nordhausen_casesper100k
@@ -52,7 +51,7 @@ cards:
       - sensor.lk_nordhausen_newrecovered
 
   - type: entities
-    title: RKI Covid Data - LK Eichsfeld
+    title: LK Eichsfeld
     show_header_toggle: false
     entities:
       - sensor.lk_eichsfeld_casesper100k
@@ -65,7 +64,7 @@ cards:
       - sensor.lk_eichsfeld_newrecovered
 
   - type: entities
-    title: RKI Covid Data - Stadt Stuttgart
+    title: Stadt Stuttgart
     show_header_toggle: false
     entities:
       - sensor.sk_stuttgart_casesper100k
@@ -78,7 +77,7 @@ cards:
       - sensor.sk_stuttgart_newrecovered
 
   - type: entities
-    title: RKI Covid Data - LK Tübingen
+    title: LK Tübingen
     show_header_toggle: false
     entities:
       - sensor.lk_tubingen_casesper100k
@@ -91,7 +90,7 @@ cards:
       - sensor.lk_tubingen_newrecovered
 
   - type: entities
-    title: RKI Covid Data - BL NDS
+    title: BL NDS
     show_header_toggle: false
     entities:
       - sensor.bl_niedersachsen_casesper100k
@@ -104,7 +103,7 @@ cards:
       - sensor.bl_niedersachsen_newrecovered
 
   - type: entities
-    title: RKI Covid Data - BL Thüringen
+    title: BL Thüringen
     show_header_toggle: false
     entities:
       - sensor.bl_thuringen_casesper100k
@@ -117,7 +116,7 @@ cards:
       - sensor.bl_thuringen_newrecovered
 
   - type: entities
-    title: RKI Covid Data - BL S-A
+    title: BL S-A
     show_header_toggle: false
     entities:
       - sensor.bl_sachsen_anhalt_casesper100k
@@ -130,7 +129,7 @@ cards:
       - sensor.bl_sachsen_anhalt_newrecovered
 
   - type: entities
-    title: RKI Covid Data - BL BW
+    title: BL BW
     show_header_toggle: false
     entities:
       - sensor.bl_baden_wurttemberg_casesper100k
@@ -143,7 +142,7 @@ cards:
       - sensor.bl_baden_wurttemberg_newrecovered
 
   - type: entities
-    title: RKI Covid Data - BL FS S
+    title: BL FS S
     show_header_toggle: false
     entities:
       - sensor.bl_sachsen_casesper100k
@@ -154,7 +153,6 @@ cards:
       - sensor.bl_sachsen_newcases
       - sensor.bl_sachsen_newdeaths
       - sensor.bl_sachsen_newrecovered
-
 ####################################################################
 # EOF
 ####################################################################
