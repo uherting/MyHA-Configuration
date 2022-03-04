@@ -80,7 +80,12 @@ binary_sensor: !include conf/binary_sensor/l9camttgo02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
-sensor: !include conf/sensor/l9camttgo02.yaml
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  # - <<: !include conf/sensor/l9camttgo02.yaml
 
 #-------------------------------------------------------------------
 # TEXT_SENSORS
