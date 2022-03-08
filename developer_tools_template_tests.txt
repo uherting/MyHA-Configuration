@@ -1,31 +1,39 @@
+# content of: /config/developer_tools_template_tests.txt
+
+# test only
+###########################################################################
+{%- set ns=namespace(entities_final=[], entities=[], entity_string='', msg_yn=false) -%}
+{%- set ns.entities = states.binary_sensor | selectattr('attributes.device_class', '==', 'connectivity') -%}
+{%- for state in ns.entities -%}
+{{ state.name }}
+{% endfor %}
+
 # esphome-unplugged-devices
 ###########################################################################
-{%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
-{%- set e = states.binary_sensor | selectattr('attributes.device_class', '==', 'connectivity') -%}
-{%- for state in e -%}
+{%- set ns=namespace(entities_final=[], entities=[], entity_string='', msg_yn=false) -%}
+{%- set ns.entities = states.binary_sensor | selectattr('attributes.device_class', '==', 'connectivity') -%}
+{%- for state in ns.entities -%}
 {%- if state.entity_id.startswith("binary_sensor.l") -%}
 {%- if state.entity_id.endswith("status") -%}
 {%- if is_state(state.entity_id, 'off') -%}
-{%- set ns.entities = ns.entities + [state.entity_id] -%}
+{%- set ns.entities_final = ns.entities_final + [state.name] -%}
 {%- set ns.msg_yn = true -%}
 {%- endif -%}
 {%- endif -%}
 {%- endif -%}
 {%- endfor -%}
 
-{%- if (ns.entities | length) > 0 -%}
-{% set ns.entity_string = ns.entities | sort | join(', ') | replace("_status", "") %}
-Check the devices for connectivity: {{ ns.entity_string }}
+{%- if (ns.entities_final | length) > 0 -%}
+{% set ns.entity_string = ns.entities_final | sort | join(', ') | replace(" Status", "") %}
+The following devices are not available in HA: {{ ns.entity_string }}
 {% else %}
 so far so good
 {%- endif -%}
 
-
-{# print the processed values #}
-{{ '\nresults:' }}
-  - {{ ns.entities }}
-  - {{ ns.entity_string }}
-  - send message: {{ ns.msg_yn }}
+{# print the processed values #}{{ '\nresults:' }}
+  - ns.entities_final: {{ ns.entities_final }}
+  - ns.entity_string: {{ ns.entity_string }}
+  - ns.msg_yn: send message: {{ ns.msg_yn }}
 
 # playing around with dates
 ###########################################################################
