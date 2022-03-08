@@ -1,5 +1,22 @@
 # content of: /config/developer_tools_template_tests.txt
 
+# using a regex
+# from https://community.home-assistant.io/t/jinja-template-regex-to-narrow-list-of-sensors/271402/2
+###########################################################################
+{% set ns = namespace(update_sensors=[],on_sensors=(states.binary_sensor | selectattr('state', 'eq', 'on') | list)) %}
+{% for s in ns.on_sensors %}
+  {% if "update" in s.name | lower or "update" in s.entity_id %}
+    {% set ns.update_sensors = ns.update_sensors + [s] %}
+  {% endif %}
+{% endfor %}
+{{ ns.update_sensors | map(attribute="entity_id") | unique | join(", ") }} {% set ns = namespace(update_sensors=[],on_sensors=(states.binary_sensor | selectattr('state', 'eq', 'on') | list)) %}
+{% for s in ns.on_sensors %}
+  {% if "update" in s.name | lower or "update" in s.entity_id %}
+    {% set ns.update_sensors = ns.update_sensors + [s] %}
+  {% endif %}
+{% endfor %}
+{{ ns.update_sensors | map(attribute="entity_id") | unique | join(", ") }} 
+
 # test only
 ###########################################################################
 {%- set ns=namespace(entities_final=[], entities=[], entity_string='', msg_yn=false) -%}
