@@ -3,6 +3,9 @@
 #
 # esphome-unplugged-devices tab --- lovelace configuration
 #
+# TODO:
+# replace filter card with thomasloven/lovelace-auto-entities card
+#   for details see https://github.com/uherting/MyHA-Configuration/issues/5
 ####################################################################
 ####################################################################
 
