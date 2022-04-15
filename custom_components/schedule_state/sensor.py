@@ -223,6 +223,7 @@ class ScheduleSensor(SensorEntity):
         self._attributes["states"] = self.data.known_states
         self._attributes["start"] = self.data.start
         self._attributes["end"] = self.data.end
+        self._attributes["errors"] = self.data.error_states
 
     async def async_recalculate(self):
         """Recalculate schedule state."""
@@ -258,6 +259,7 @@ class ScheduleSensorData:
         self.refresh_time = None
         self.overrides = []
         self.known_states = set()
+        self.error_states = set()
         self.start = None
         self.end = None
         self.entities = set()
@@ -266,6 +268,9 @@ class ScheduleSensorData:
     async def process_events(self):
         """Process the list of events and derive the schedule for the day."""
         states = {}
+
+        # keep track of the states with errors and report them in the attributes
+        self.error_states = set()
 
         for event in self.events + self.overrides:
             _LOGGER.debug(f"{self.name}: processing event {event}")
@@ -283,15 +288,24 @@ class ScheduleSensorData:
                     self.entities.update(referenced)
                 if not cond_func(variables):
                     _LOGGER.debug(
-                        f"{self.name}: {state}: condition was not satisfied, skipping {event}"
+                        f"{self.name}: {state}: condition was not satisfied - skipping"
                     )
                     continue
 
             start = await self.get_start(event)
             end = await self.get_end(event)
-            if start > end:
+            if None in (start, end):
+                # there was a problem evaluating the template
+                self.error_states.add(state)
                 _LOGGER.error(
-                    f"{self.name}: {state}: error with event - start:{start} > end:{end}"
+                    f"{self.name}: {state}: error with event definition - skipping"
+                )
+                continue
+
+            if start > end:
+                self.error_states.add(state)
+                _LOGGER.error(
+                    f"{self.name}: {state}: error with event definition - start:{start} > end:{end} - skipping"
                 )
                 continue
 
@@ -334,6 +348,7 @@ class ScheduleSensorData:
 
         elif s is not None:
             if st is not None:
+                # TODO fix schema so that this can't happen
                 _LOGGER.debug(
                     f"{self.name}: ... ignoring {prefixt} since {prefix} was provided"
                 )
@@ -342,8 +357,13 @@ class ScheduleSensorData:
         else:
             st.hass = self.hass
             # TODO should be able to combine these two
-            temp = st.async_render_with_possible_json_value(st, time.min)
-            info = st.async_render_to_info(None, parse_result=False)
+            try:
+                temp = st.async_render_with_possible_json_value(st, time.min)
+                info = st.async_render_to_info(None, parse_result=False)
+            except (ValueError, TypeError) as e:
+                _LOGGER.error(f"{self.name}: ... failed to evaluate {prefixt}: {e}")
+                return None
+
             _LOGGER.debug(
                 f"{self.name}: ... {prefixt} text: {temp} -- entities used: {info.entities}"
             )
@@ -351,13 +371,15 @@ class ScheduleSensorData:
                 self.entities.add(e)
             ret = self.guess_value(temp)
 
-        if ret is None:
-            ret = default
+            if ret is None:
+                _LOGGER.error(f"{self.name}: FAILED - could not parse '{temp}'")
 
         _LOGGER.debug(f"{self.name}: ... >> {prefix} time: {ret}")
         return ret
 
     def guess_value(self, text):
+        """After evaluating a template, try to figure out what the resulting value means.
+        We are looking for a time value. Dates don't matter."""
         try:
             date = dt.parse_datetime(text)
             if date is not None:
@@ -406,7 +428,7 @@ class ScheduleSensorData:
         now = dt.as_local(dt_now())
         nu = time(now.hour, now.minute)
 
-        self.overrides = [o for o in self.overrides if o["expires"] > now]
+        self.overrides = [o for o in self.overrides if dt.as_local(o["expires"]) > now]
         for o in self.overrides:
             _LOGGER.debug(
                 f"{self.name}: override = {o['start']} - {o['end']} == {o['state']} [expires {o['expires']}]"
