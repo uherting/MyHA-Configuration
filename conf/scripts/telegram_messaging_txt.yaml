@@ -1,0 +1,69 @@
+# ############################################################
+#
+#  Telegram messaging
+#
+#  Purpose: sending text into a Telegram group
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# sending a text message to a TG group
+# --------------------------------------------------------------
+tg_txt:
+  alias: Send text message via Telegram
+  icon: mdi:text
+  description: This script sends a text message given as a parameter
+  fields:
+    msg_title:
+      description: "The title of the notification"
+      advanced: true
+      required: true
+      example: "State change"
+      default: "default msg title"
+      # selector: text
+    msg_text:
+      description: "The message content"
+      advanced: true
+      required: true
+      example: "The light is on!"
+      default: "default msg text"
+    msg_receiver:
+      description: "The receiver of the message"
+      advanced: true
+      required: false
+      example: "admin"
+      default: "admin"
+  mode: queued
+  sequence:
+    - choose:
+        # admin group
+        - conditions:
+            - condition: template
+              value_template: "{{ msg_receiver == 'admin' }}"
+          sequence:
+            - service: notify.tg_admin_grp
+              data_template:
+                title: "{{ msg_title }}"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+        # general notification group
+        - conditions:
+            - condition: template
+              value_template: "{{ msg_receiver == 'notify' }}"
+          sequence:
+            - service: notify.tg_notification_grp
+              data_template:
+                title: "{{ msg_title }}"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      # receiver does not exist
+      default:
+        - service: notify.tg_admin_grp
+          data_template:
+            title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+            message: >
+              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+
+# ############################################################
+#  END OF FILE
+# ############################################################

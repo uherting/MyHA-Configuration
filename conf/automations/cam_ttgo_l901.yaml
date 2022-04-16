@@ -88,6 +88,7 @@
         msg_caption_2: "L901, photo 2"
         msg_filename_3: "/config/var/opt/tg/l9ttgocam01/3.jpg"
         msg_caption_3: "L901, photo 3"
+        msg_receiver: notify
 # ---------------------------------------------------------------
 
 # ############################################################
