@@ -35,7 +35,8 @@
   - platform: gpio
     pin:
       number: GPIO34
-      mode: INPUT_PULLUP
+      # mode: INPUT_PULLUP
+      mode: INPUT
       inverted: True
     name: $friendly_name Button
     device_class: light
