@@ -7,8 +7,8 @@
 ####################################################################
 
 icon: mdi:cctv
-title: Surveillance
-path: cctv
+title: SurveillanceNew
+path: cctv_new_style
 badges: []
 
 panel: true
@@ -23,10 +23,14 @@ cards:
     # string 	“live” will show the live view if the stream integration is enabled.
     # camera_view: "live"
     cameras:
-      - entity: camera.ipcam_ker01_mainstream
-        # motion_entity: binary_sensor.front_porch_motion
-      - entity: camera.ipcam_ker01_substream
-        # motion_entity: binary_sensor.front_porch_motion
+      # - entity: camera.l9_cam_ttgo_01_cam
+      #   motion_entity: binary_sensor.l9_cam_ttgo_01_pir
+      - entity: camera.l9_cam_ttgo_02_cam
+        motion_entity: binary_sensor.l9_cam_ttgo_02_pir
+      # - entity: camera.ipcam_ker01_mainstream
+      #   # motion_entity: binary_sensor.front_porch_motion
+      # - entity: camera.ipcam_ker01_substream
+      #   # motion_entity: binary_sensor.front_porch_motion
 
   # # ONVIF CAM "TheWorld" hires
   # # works with F5 (refreshing the page) only

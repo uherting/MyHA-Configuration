@@ -12,6 +12,8 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
+  - !include /config/conf/lovelace/tabs/user/cctv_01.yaml
+  - !include /config/conf/lovelace/tabs/user/cctv_02.yaml
   - !include /config/conf/lovelace/tabs/user/cctv__new_style.yaml
 ####################################################################
 # EOF

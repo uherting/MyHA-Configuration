@@ -1,0 +1,28 @@
+####################################################################
+####################################################################
+#
+# cctv tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:cctv
+title: Surveillance 2
+path: cctv2
+badges: []
+
+cards:
+  # ONVIF CAM "TheWorld" hires
+  # works with F5 (refreshing the page) only
+  - type: picture-entity
+    entity: camera.ipcam_ker01_mainstream
+    camera_view: auto
+
+  # ONVIF CAM "TheWorld" lowres
+  # works with F5 (refreshing the page) only
+  # - type: picture-entity
+  #   entity: camera.ipcam_ker01_substream
+  #   camera_view: auto
+####################################################################
+# EOF
+####################################################################
