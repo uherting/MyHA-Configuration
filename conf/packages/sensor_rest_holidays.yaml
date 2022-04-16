@@ -18,7 +18,7 @@ sensor:
   - platform: rest
     name: Full Moon days until
     resource: !secret WOLFRAMALPHA_API_FULLMOON_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -32,7 +32,7 @@ sensor:
   - platform: rest
     name: New Moon days until
     resource: !secret WOLFRAMALPHA_API_NEWMOON_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -48,7 +48,7 @@ sensor:
   - platform: rest
     name: New Year days until
     resource: !secret WOLFRAMALPHA_API_NEWYEAR_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -62,7 +62,7 @@ sensor:
   - platform: rest
     name: DST days until
     resource: !secret WOLFRAMALPHA_API_DST_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -76,7 +76,7 @@ sensor:
   - platform: rest
     name: Easter Sunday days until
     resource: !secret WOLFRAMALPHA_API_EASTER_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -90,7 +90,7 @@ sensor:
   - platform: rest
     name: Halloween days until
     resource: !secret WOLFRAMALPHA_API_HALLOWEEN_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -104,7 +104,7 @@ sensor:
   - platform: rest
     name: First Advent days until
     resource: !secret WOLFRAMALPHA_API_FIRST_ADVENT_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: ""
     scan_interval: 43200
 
@@ -118,7 +118,7 @@ sensor:
   - platform: rest
     name: Xms days until
     resource: !secret WOLFRAMALPHA_API_XMAS_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 
@@ -132,7 +132,7 @@ sensor:
   - platform: rest
     name: New Years eve days until
     resource: !secret WOLFRAMALPHA_API_NEWYEARSEVE_DAYS
-    value_template: "{{ (value|replace(' days', '')) | int(-999) }}"
+    value_template: "{{ (value|replace(' days', '')) | int(0) }}"
     unit_of_measurement: Days
     scan_interval: 43200
 ####################################################################
