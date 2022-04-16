@@ -8,21 +8,22 @@
 # ESP32-cam L9-01 is going somewhere
 # ############################################################
 - alias: ZZZ Example ESP32-01
-  id: 'ZZZ Example ESP32-01'
+  id: "b0fec211-3309-4534-b9f1-ee80d7e54320"
   initial_state: false
-# --------------------- TRIGGER ---------------------
+  # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
       entity_id: binary_sensor.l9_cam_ttgo_01_status
-      from: 'off'
-      to: 'on'
-# --------------------- ACTIONS ---------------------
+      from: "off"
+      to: "on"
+  # --------------------- ACTIONS ---------------------
   action:
-# ------------------- SEND NOTIFICATION -------------------
+    # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_txt_notification
       data_template:
         msg_message: >
           TTGO cam L9 01 online again
+
 # ---------------------------------------------------------------
 
 # ############################################################
