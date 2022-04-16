@@ -49,7 +49,7 @@
 # ############################################################
 - alias: Cam TTGO L9_01 PIR
   id: "96f966d5-ecfb-4be7-8ce9-ea9084c3ac44"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
