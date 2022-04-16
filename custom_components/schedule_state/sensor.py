@@ -5,6 +5,7 @@ from datetime import time, timedelta, datetime
 import logging
 from pprint import pformat
 import asyncio
+import hashlib
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.core import HomeAssistant, callback
@@ -41,11 +42,14 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
                 vol.Required(CONF_STATE, default=DEFAULT_STATE): cv.string,
                 vol.Optional(CONF_COMMENT): cv.string,
                 vol.Optional(CONF_CONDITION): _CONDITION_SCHEMA,
+                vol.Optional(CONF_ICON): cv.icon,
             }
         ],
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_DEFAULT_STATE, default=DEFAULT_STATE): cv.string,
         vol.Optional(CONF_REFRESH, default="6:00:00"): cv.time_period_str,
+        vol.Optional(CONF_ICON, default="mdi:calendar-check"): cv.icon,
+        vol.Optional(CONF_ERROR_ICON, default="mdi:calendar-alert"): cv.icon,
     }
 )
 
@@ -62,6 +66,7 @@ OVERRIDE_SERVICE_SCHEMA = vol.Schema(
         vol.Optional(CONF_DURATION): cv.positive_int,
         vol.Optional(CONF_START): cv.time,
         vol.Optional(CONF_END): cv.time,
+        vol.Optional(CONF_ICON): cv.icon,
     }
 )
 
@@ -70,6 +75,8 @@ CLEAR_OVERRIDES_SERVICE_SCHEMA = vol.Schema(
         vol.Optional(ATTR_ENTITY_ID): cv.entity_ids,
     }
 )
+
+MINUTES_TO_REFRESH_ON_ERROR = 5
 
 
 class Override(dict):
@@ -127,6 +134,7 @@ async def async_setup_platform(
                 service.data.get(CONF_START, None),
                 service.data.get(CONF_END, None),
                 service.data.get(CONF_DURATION, None),
+                service.data.get(CONF_ICON, None),
             )
             update_tasks.append(target_device.async_update_ha_state(True))
 
@@ -162,20 +170,24 @@ async def async_setup_platform(
         schema=CLEAR_OVERRIDES_SERVICE_SCHEMA,
     )
 
-    default_state = config.get(CONF_DEFAULT_STATE)
-    async_add_entities([ScheduleSensor(hass, data, name, default_state)], True)
+    async_add_entities([ScheduleSensor(hass, name, data, config)], True)
 
 
 class ScheduleSensor(SensorEntity):
     """Representation of a sensor that returns a state name based on a predefined schedule."""
 
-    def __init__(self, hass, data, name, default_state):
+    def __init__(self, hass, name, data, config):
         """Initialize the sensor."""
         self.data = data
         self._attributes = {}
         self._name = name
         self._state = None
-        self._default_state = default_state
+        self._default_state = config.get(CONF_DEFAULT_STATE)
+        self._icon = config.get(CONF_ICON)
+        self._error_icon = config.get(CONF_ERROR_ICON)
+
+        unique_id = hashlib.sha3_512(name.encode("utf-8")).hexdigest()
+        self._attr_unique_id = unique_id
 
     async def async_added_to_hass(self):
         """Handle added to Hass."""
@@ -184,7 +196,7 @@ class ScheduleSensor(SensorEntity):
         @callback
         def recalc_callback(*args):
             _LOGGER.debug(f"{self.data.name}: something changed {args}")
-            self.data.force_refresh = True
+            self.data.force_refresh = dt.as_local(dt_now())
             self.schedule_update_ha_state(force_refresh=True)
 
         if len(self.data.entities):
@@ -221,19 +233,23 @@ class ScheduleSensor(SensorEntity):
             value = self._default_state
         self._state = value
         self._attributes["states"] = self.data.known_states
-        self._attributes["start"] = self.data.start
-        self._attributes["end"] = self.data.end
+        self._attributes["start"] = self.data.attributes.get("start", None)
+        self._attributes["end"] = self.data.attributes.get("end", None)
         self._attributes["errors"] = self.data.error_states
+        if len(self.data.error_states):
+            self._attr_icon = self._error_icon
+        else:
+            self._attr_icon = self.data.attributes.get("icon", None) or self._icon
 
     async def async_recalculate(self):
         """Recalculate schedule state."""
         _LOGGER.info(f"{self._name}: recalculate")
         await self.data.process_events()
 
-    async def async_set_override(self, state: str, start, end, duration):
+    async def async_set_override(self, state: str, start, end, duration, icon):
         """Set override state."""
         _LOGGER.info(f"{self._name}: override to {state} for {start} {end} {duration}")
-        if self.data.set_override(state, start, end, duration):
+        if self.data.set_override(state, start, end, duration, icon):
             return await self.data.process_events()
         return False
 
@@ -260,10 +276,10 @@ class ScheduleSensorData:
         self.overrides = []
         self.known_states = set()
         self.error_states = set()
-        self.start = None
-        self.end = None
+        self.attributes = {}
         self.entities = set()
-        self.force_refresh = False
+        self.force_refresh = None
+        self.icon_map = {}
 
     async def process_events(self):
         """Process the list of events and derive the schedule for the day."""
@@ -278,6 +294,10 @@ class ScheduleSensorData:
             cond = event.get(CONF_CONDITION, None)
             self.known_states.add(state)
 
+            icon = event.get(CONF_ICON, None)
+            if icon is not None:
+                self.icon_map[state] = icon
+
             variables = {}
             if cond is not None:
                 _LOGGER.debug(f"{self.name}: condition {cond}")
@@ -286,19 +306,37 @@ class ScheduleSensorData:
                     referenced = condition.async_extract_entities(conf)
                     _LOGGER.debug(f"... entities used: {referenced}")
                     self.entities.update(referenced)
-                if not cond_func(variables):
+
+                cond_result = cond_func(variables)
+                if cond_result is False:
                     _LOGGER.debug(
                         f"{self.name}: {state}: condition was not satisfied - skipping"
+                    )
+                    continue
+                elif cond_result is None:
+                    self.error_states.add(state)
+                    _LOGGER.error(
+                        f"{self.name}: {state}: error evaluating condition - skipping"
                     )
                     continue
 
             start = await self.get_start(event)
             end = await self.get_end(event)
             if None in (start, end):
-                # there was a problem evaluating the template
+                # There was a problem evaluating the template.
+                # This can happen if the things that the template is dependent on have not been started up by HA yet...
+                # or it could be a problem with the template definition, it's doesn't seem possible to know which.
+                # Try to re-load it in a few minutes.
+                new_refresh_time = dt.as_local(dt_now()) + timedelta(
+                    minutes=MINUTES_TO_REFRESH_ON_ERROR
+                )
+                if self.force_refresh is not None:
+                    self.force_refresh = min(self.force_refresh, new_refresh_time)
+                else:
+                    self.force_refresh = new_refresh_time
                 self.error_states.add(state)
                 _LOGGER.error(
-                    f"{self.name}: {state}: error with event definition - skipping"
+                    f"{self.name}: {state}: error with event definition - skipping, will try again in {MINUTES_TO_REFRESH_ON_ERROR} minutes"
                 )
                 continue
 
@@ -434,30 +472,29 @@ class ScheduleSensorData:
                 f"{self.name}: override = {o['start']} - {o['end']} == {o['state']} [expires {o['expires']}]"
             )
 
-        self.start = None
-        self.end = None
+        self.attributes = {}
         time_since_refresh = now - self.refresh_time
-        if (
-            time_since_refresh.total_seconds() >= self.refresh.total_seconds()
-            or self.force_refresh
+        if time_since_refresh.total_seconds() >= self.refresh.total_seconds() or (
+            self.force_refresh is not None and now > self.force_refresh
         ):
             await self.process_events()
-            self.force_refresh = False
+            self.force_refresh = None
 
         for state in self.states:
             if nu in self.states[state]:
                 _LOGGER.debug(f"{self.name}: current state is {state} ({nu})")
                 for i in self.states[state]._intervals:
                     if nu >= i.lower and nu < i.upper:
-                        self.start = i.lower.isoformat()
-                        self.end = i.upper.isoformat()
+                        self.attributes["start"] = i.lower.isoformat()
+                        self.attributes["end"] = i.upper.isoformat()
                 self.value = state
+                self.attributes["icon"] = self.icon_map.get(state, None)
                 return
 
         _LOGGER.debug(f"{self.name}: using default state ({nu})")
         self.value = None
 
-    def set_override(self, state, start, end, duration):
+    def set_override(self, state, start, end, duration, icon):
         now = dt.as_local(dt_now())
         allow_split = True
 
@@ -501,6 +538,8 @@ class ScheduleSensorData:
 
         ev = Override(state, start.time(), end.time(), end + timedelta(seconds=30))
         self.overrides.append(ev)
+        if icon is not None:
+            self.icon_map[state] = icon
         return True
 
     def clear_overrides(self):
@@ -586,7 +625,7 @@ async def _async_process_if(hass, name, if_configs):
                 name,
                 ConditionErrorContainer("condition", errors=errors),
             )
-            return False
+            return None
 
         return True
 
