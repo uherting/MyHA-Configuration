@@ -22,8 +22,8 @@ resolution: 640x480
 jpeg_quality: 15
 # vertical_flip: true
 vertical_flip: false
-horizontal_mirror: true
-#  horizontal_mirror: false
+horizontal_mirror: false
+#  horizontal_mirror: true
 
 # ############################################################
 #  END OF FILE
