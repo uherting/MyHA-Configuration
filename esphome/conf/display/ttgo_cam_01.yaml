@@ -1,24 +1,24 @@
 ####################################################################
 # DISPLAY
 
-  - platform: ssd1306_i2c
-    model: "SSD1306 128x64"
-    address: 0x3C
-    id: ${display_id}
-    # rotation: 180°
-    rotation: 0°
-    # for usage of pages see https://esphome.io/components/display/index.html#display-pages
-    pages:
-      - id: page1
-        lambda: |-
-          it.print(5, 20, id(font_times_new_roman_35), "");
-      - id: page2
-        lambda: |-
-          it.print(5, 20, id(font_times_new_roman_35), "Hallo!");
-#          it.print(0, 0, id(font_times_new_roman_35), "");
-#          it.strftime(64, 0, id(font_times_new_roman_20), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
-#          it.strftime(64, 64, id(font_times_new_roman_35), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
-#          it.print(0, 10, id(font_times_new_roman_20), "This is page 2!");
+- platform: ssd1306_i2c
+  model: "SSD1306 128x64"
+  address: 0x3C
+  id: ${display_id}
+  # rotation: 180°
+  rotation: 0°
+  # for usage of pages see https://esphome.io/components/display/index.html#display-pages
+  pages:
+    - id: page1
+      lambda: |-
+        it.print(5, 20, id(font_times_new_roman_35), "");
+    - id: page2
+      lambda: |-
+        it.print(5, 20, id(font_times_new_roman_35), "");
+      # it.print(0, 0, id(font_times_new_roman_35), "Hallo!");
+      # it.strftime(64, 0, id(font_times_new_roman_20), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
+      # it.strftime(64, 64, id(font_times_new_roman_35), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
+      # it.print(0, 10, id(font_times_new_roman_20), "This is page 2!");
 
 # ############################################################
 #  END OF FILE

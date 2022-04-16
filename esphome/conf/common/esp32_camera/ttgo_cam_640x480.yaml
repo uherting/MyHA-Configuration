@@ -6,23 +6,23 @@
 # for details see https://esphome.io/components/esp32_camera.html#configuration-for-ttgo-t-camera-v17
 
 # esp32_camera:
-  name: $friendly_name Cam
-  external_clock:
-    pin: GPIO32
-    frequency: 20MHz
-  i2c_pins:
-    sda: GPIO13
-    scl: GPIO12
-  data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO18, GPIO23, GPIO36, GPIO39]
-  vsync_pin: GPIO27
-  href_pin: GPIO25
-  pixel_clock_pin: GPIO19
-  # power_down_pin: GPIO26
-  resolution: 640x480
-  jpeg_quality: 15
-  vertical_flip: true
-#  vertical_flip: false
-  horizontal_mirror: true
+name: $friendly_name Cam
+external_clock:
+  pin: GPIO32
+  frequency: 20MHz
+i2c_pins:
+  sda: GPIO13
+  scl: GPIO12
+data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO18, GPIO23, GPIO36, GPIO39]
+vsync_pin: GPIO27
+href_pin: GPIO25
+pixel_clock_pin: GPIO19
+# power_down_pin: GPIO26
+resolution: 640x480
+jpeg_quality: 15
+# vertical_flip: true
+vertical_flip: false
+horizontal_mirror: true
 #  horizontal_mirror: false
 
 # ############################################################
