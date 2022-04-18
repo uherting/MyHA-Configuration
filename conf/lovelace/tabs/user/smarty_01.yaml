@@ -41,9 +41,9 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
-            show_state: true
+            name: "KitchenC"
+            entity: switch.l2_kitchen01_ssr_02
+            color: yellow
 
       - type: grid
         square: false
