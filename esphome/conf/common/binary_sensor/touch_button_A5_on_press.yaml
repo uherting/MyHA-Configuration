@@ -8,7 +8,7 @@
 
 - platform: gpio
   name: $touchbutton01_name
-  id: ${touchbutton01_id}
+  id: ${touchbutton02_id}
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
     number: !secret MCP23017_PIN_A5

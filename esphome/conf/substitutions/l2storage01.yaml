@@ -11,6 +11,8 @@ wifi_static_ip: 192.168.178.221
 # the friendly name and id
 friendly_name: L2 Storage01
 friendly_id: L2Storage01
+friendly2_name: L2 Kitchen01
+friendly2_id: L2Kitchen01
 
 log_level: !secret LOG_LEVEL_INFO
 
@@ -89,15 +91,15 @@ reed_contact04_id: ${friendly_id}_REED_04
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01
-ssr02_name: $friendly_name SSR 02
-ssr02_id: ${friendly_id}_SSR02
+ssr02_name: $friendly2_name SSR 02
+ssr02_id: ${friendly2_id}_SSR02
 ssr03_name: $friendly_name SSR 03
 ssr03_id: ${friendly_id}_SSR03
 # touch buttons
 touchbutton01_name: $friendly_name TB 01
 touchbutton01_id: ${friendly_id}_TB_01
-touchbutton02_name: $friendly_name TB 02
-touchbutton02_id: ${friendly_id}_TB_02
+touchbutton02_name: $friendly2_name TB 02
+touchbutton02_id: ${friendly2_id}_TB_02
 ####################################################################
 # EOF
 ####################################################################
