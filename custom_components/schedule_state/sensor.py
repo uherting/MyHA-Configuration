@@ -1,11 +1,11 @@
 """
 A sensor that returns a string based on a defined schedule.
 """
-from datetime import time, timedelta, datetime
+import asyncio
+from datetime import datetime, time, timedelta
+import hashlib
 import logging
 from pprint import pformat
-import asyncio
-import hashlib
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.core import HomeAssistant, callback
@@ -18,10 +18,10 @@ from homeassistant.exceptions import (
 from homeassistant.helpers import condition
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import dt
-from homeassistant.helpers.event import async_track_state_change_event
 import portion as P
 import voluptuous as vol
 
@@ -284,6 +284,9 @@ class ScheduleSensorData:
     async def process_events(self):
         """Process the list of events and derive the schedule for the day."""
         states = {}
+
+        # keep track of known states and report them in the attributes
+        self.known_states = set()
 
         # keep track of the states with errors and report them in the attributes
         self.error_states = set()
