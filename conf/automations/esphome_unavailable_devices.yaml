@@ -10,7 +10,7 @@
 - alias: Notify admin of unavailable ESPHome devices
   id: "1ed7edf6-f99f-4038-a5a7-307e73282fab"
   mode: single
-  initial_state: false
+  initial_state: true
 
   # --------------------- TRIGGER ---------------------
   trigger:

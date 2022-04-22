@@ -19,10 +19,11 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_txt_notification
-      data_template:
-        msg_message: >
-          TTGO cam L9 01 online again
+    - service: script.tg_txt
+      data:
+        msg_title: "TTGO cam L9 01 online again"
+        msg_text: ""
+        msg_receiver: admin
 
 # ############################################################
 # cam going offline
@@ -39,10 +40,11 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_txt_notification
-      data_template:
-        msg_message: >
-          TTGO cam L9 01 went offline
+    - service: script.tg_txt
+      data:
+        msg_title: "TTGO cam L9 01 went offline"
+        msg_text: ""
+        msg_receiver: admin
 
 # ############################################################
 # PIR on cam is detecting motion

@@ -1,0 +1,80 @@
+# ############################################################
+#
+#  Create notification with unavailable pihole service
+#
+# ############################################################
+
+# ############################################################
+#  notify admin of offline pihole service
+# ############################################################
+- alias: Notify admin of offline pihole service
+  id: "67a06252-2c28-491a-a4e6-990d7797acb2"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: switch.pi_hole
+      to: "off"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: script.tg_txt
+      data:
+        msg_title: "Pihole offline"
+        msg_text: "It was detected that pihole is offline."
+        msg_receiver: notify
+
+# ############################################################
+#  notify admin of unavailable pihole service
+# ############################################################
+- alias: Notify admin of unavailable pihole service
+  id: "b5e2eeeb-3565-40ec-a740-765f3d09f2fb"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: switch.pi_hole
+      to: "unavailable"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: script.tg_txt
+      data:
+        msg_title: "Pihole unavailable"
+        msg_text: "It was detected that pihole is not available."
+        msg_receiver: notify
+
+# ############################################################
+#  notify admin of online pihole service
+# ############################################################
+- alias: Notify admin of online pihole service
+  id: "8aef0de7-ce00-49b5-8dcc-245eaee0f5fe"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: switch.pi_hole
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: script.tg_txt
+      data:
+        msg_title: "Pihole online"
+        msg_text: "It was detected that pihole is online again."
+        msg_receiver: notify
+############################################################
+#  END OF FILE
+# ############################################################

@@ -81,18 +81,18 @@ esphome_detect_unavailable_devices_main:
                 message: >
                   {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
                   NOTEQUAL - EOM
-    - choose:
-        # if the sensor texts are equal, then ...
-        - conditions:
-            - condition: template
-              value_template: "{{ states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') }}"
-          sequence:
-            - service: notify.tg_admin_grp
-              data_template:
-                title: "{{ msg_title }}"
-                message: >
-                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
-                  EQUAL - EOM
+      # - choose:
+      #     # if the sensor texts are equal, then ...
+      #     - conditions:
+      #         - condition: template
+      #           value_template: "{{ states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') }}"
+      #       sequence:
+      #         - service: notify.tg_admin_grp
+      #           data_template:
+      #             title: "{{ msg_title }}"
+      #             message: >
+      #               {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+      #               EQUAL - EOM
       default:
         - delay: 00:00:01
 # ############################################################
