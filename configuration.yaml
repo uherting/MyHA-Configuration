@@ -84,7 +84,7 @@ panel_custom:
     config:
       ingress: core_configurator
 
-updater:
+# updater:
 
 cloud:
 
