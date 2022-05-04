@@ -78,7 +78,7 @@ panel_custom:
     sidebar_title: Restart
     sidebar_icon: mdi:restart
     js_url: /api/hassio/app/entrypoint.js
-    url_path: "config/server_control"
+    url_path: "config/system"
     embed_iframe: true
     require_admin: true
     config:
