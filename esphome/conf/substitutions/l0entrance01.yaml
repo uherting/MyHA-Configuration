@@ -91,10 +91,10 @@ reed_contact03_id: ${friendly_id}_REED_03
 reed_contact04_name: $friendly_name REED 04
 reed_contact04_id: ${friendly_id}_REED_04
 # RCWLs
-rcwl01_name: $friendly_name PIR 01
-rcwl01_id: ${friendly_id}_PIR_01
-rcwl02_name: $friendly_name PIR 02
-rcwl02_id: ${friendly_id}_PIR_02
+rcwl01_name: $friendly_name RCWL 01
+rcwl01_id: ${friendly_id}_RCWL_01
+rcwl02_name: $friendly_name RCWL 02
+rcwl02_id: ${friendly_id}_RCWL_02
 # remote reed relays
 # reed_contact10_name: $friendly_name_bathroom Window
 # reed_contact10_id: ${friendly_id_bathroom}_REED_10
