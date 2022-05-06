@@ -11,7 +11,7 @@
 ####################################################################
 #
 # Purpose:
-#   - Based on a PIR/RCWL sensor ...
+#   - Based on a PIR sensor ...
 #       - a lamp shall be switched on/off using a SSR
 #   - Two temperature sensors to control the temperature in the
 #     case and of the environment
@@ -21,7 +21,7 @@
 #   - 1 MCP23017 modul
 #   - 2 Dallas 18B20 sensor
 #   - 1 SSR module with 1 SSR
-#   - 1 PIR/RCWL
+#   - 1 PIR
 #   - steel housing for external Dallas 18B20 sensors
 #   - heat shrink tube, misc diameter
 #   - case for the hardware
@@ -36,7 +36,7 @@
 #
 # Input:
 #   - 2 temperatur sensors (for the case / environment)
-#   - 1 PIR/RCWL sensor via I2C / MCP23017
+#   - 1 PIR sensor via I2C / MCP23017
 #   - 1 TP223 touch button for switching on the light manually
 #
 # Output
