@@ -1,0 +1,152 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l0entrance01
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - Based on a PIR/RCWL sensor ...
+#       - to be defined
+#   - Two temperature sensors to control the temperature in the
+#     case and of the environment
+#
+# Future feature: none so far
+#
+# Hardware:
+#   - 1 ESP8266
+#   - 1 MCP23017 modul
+#   - 2 Dallas 18B20 sensor
+#   - 1 PIR
+#   - 1 RCWL
+#   - steel housing for external Dallas 18B20 sensors
+#   - heat shrink tube, misc diameter
+#   - case for the hardware
+#   - PCB
+#   - wire
+#   - for future feature: opto coupler PC817 => IKEA remote
+#
+# Automation:
+#   - partially, see binary sensors definition file
+#   - for future feature: none so far
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 2 temperatur sensors (for the case / environment)
+#   - 1 PIR sensor via I2C / MCP23017
+#   - 1 RCWL sensor via I2C / MCP23017
+#
+# Output
+#   - none so far
+#
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: !include conf/substitutions/l0entrance01.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+
+packages:
+  wifi: !include conf/common/networking/wifi_multiple_networks.yaml
+  # captive_portal: conf/common/networking/captive_portal.yaml
+  ota: !include conf/common/networking/ota.yaml
+  # esphome: and logger:
+  device_base: !include conf/common/packages/device_base.yaml
+
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+# logger:
+#  # see secrets.yaml for log level definitions
+  # level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+time: !include conf/common/time.yaml
+# sun: !include conf/common/sun.yaml
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+i2c: !include conf/common/device/i2c_v2.yaml
+dallas: !include conf/common/device/dallas.yaml
+mcp23017: !include conf/common/device/mcp23017.yaml
+
+####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+#-------------------------------------------------------------------
+# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+
+globals:
+  - <<: !include conf/common/globals/connectivity.yaml
+interval: !include conf/common/interval/connectivity.yaml
+script:
+  - <<: !include conf/script/l0entrance/pir01.yaml
+  - <<: !include conf/script/l0entrance/rcwl02.yaml
+  # - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
+  # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
+  # - <<: !include conf/common/script/touch_button_A4_on_press.yaml
+  
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor:
+  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  - <<: !include conf/common/binary_sensor/pir01.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  - <<: !include conf/common/binary_sensor/rcwl02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01.yaml
+  # - <<: !include conf/common/binary_sensor/reed02.yaml
+  # reed relay from bathroom window
+  # - <<: !include conf/common/binary_sensor/reed10_A7.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  # - <<: !include conf/sensor/l0entrance01_case.yaml
+  # - <<: !include conf/sensor/l0entrance01_env01.yaml
+  # - <<: !include conf/common/sensor/bh1750_01.yaml
+  # - <<: !include conf/common/sensor/dht_esp8266_01_D5_upd_15min.yaml
+
+#-------------------------------------------------------------------
+# SERVOS
+# servo:
+#   - <<: !include conf/common/servo/servo01.yaml
+# output:
+#   - <<: !include conf/common/output/servo01.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+# switch:
+#   - <<: !include conf/common/switch/ssr01_B0.yaml
+#   - <<: !include conf/common/switch/ssr02_B1.yaml
+
+#-------------------------------------------------------------------
+# TEXT SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
+  # device related
+  # none so far
+
+####################################################################
+# EOF
+####################################################################

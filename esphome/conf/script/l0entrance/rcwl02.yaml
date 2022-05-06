@@ -1,0 +1,20 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_multi_click action of TB A4 (double click)
+- id: ssr_script_rcwl_02
+  mode: restart
+  then:
+    - if:
+        condition:
+          # execute this script only if we are offline
+          # lambda: 'return (!id(isDeviceConnected);'
+
+          # execute this script anyway (TM) for debugging purposes
+          lambda: "return (true);"
+        then:
+          - logger.log: "script ssr_script_rcwl_02 action."
+####################################################################
+# EOF
+####################################################################

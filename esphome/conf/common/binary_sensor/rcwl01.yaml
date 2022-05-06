@@ -1,0 +1,25 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# RCWL
+
+- platform: gpio
+  name: $rcwl01_name
+  id: ${rcwl01_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A0
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    inverted: false
+  device_class: motion
+  # fallback automation while the device is offline:
+  on_press:
+    then:
+      - script.execute: ssr_script_rcwl_01
+# ############################################################
+#  END OF FILE
+# ############################################################
