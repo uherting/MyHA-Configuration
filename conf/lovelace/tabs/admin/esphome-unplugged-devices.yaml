@@ -25,11 +25,13 @@ cards:
       # ESP8266
       - binary_sensor.l0_corridor01_status
       - binary_sensor.l0_corridor02_status
+      - binary_sensor.l0_entrance01_status
       - binary_sensor.l0_garagebig01_status
       - binary_sensor.l0_garagesmall01_status
       - binary_sensor.l1_thehut01_status
       - binary_sensor.l2_kitchen01_status
       - binary_sensor.l2_storage01_status
+      - binary_sensor.l2_thermo01_status
       # ESP32 cams
       - binary_sensor.l9_cam32_01_status
       - binary_sensor.l9_cam32_02_status

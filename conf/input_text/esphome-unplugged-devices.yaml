@@ -14,6 +14,10 @@ esphome_unavailable_sensors_text:
   name: EsphomeUnavailableSensorsText
   mode: text
   initial: ""
+esphome_unavailable_sensors_old_text:
+  name: EsphomeUnavailableSensorsTextOld
+  mode: text
+  initial: ""
 # ############################################################
 #  END OF FILE
 # ############################################################
