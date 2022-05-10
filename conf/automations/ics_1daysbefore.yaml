@@ -4,29 +4,28 @@
 #
 # ############################################################
 
-
 # ############################################################
 # Rubbish collection due notifications
 # ############################################################
 - alias: ICS - Final rubbish collection notification
-  id: '01f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
+  id: "01f21f84-a67c-11eb-a2ec-07e7a0fc6b5d"
   mode: single
   initial_state: true
 
-# --------------------- TRIGGER ---------------------
+  # --------------------- TRIGGER ---------------------
   trigger:
     - platform: time
-      at: "19:01:00"
+      at: "19:00:00"
 
-# -------------------- CONDITIONS -------------------
+  # -------------------- CONDITIONS -------------------
   condition:
-  - condition: numeric_state
-    entity_id: sensor.abfall
-    # attribute: remaining
-    below: '2'
-    above: '0'
+    - condition: numeric_state
+      entity_id: sensor.abfall
+      # attribute: remaining
+      below: "2"
+      above: "0"
 
-# --------------------- ACTIONS ---------------------
+  # --------------------- ACTIONS ---------------------
   action:
     - service: notify.tg_notification_grp
       data_template:
