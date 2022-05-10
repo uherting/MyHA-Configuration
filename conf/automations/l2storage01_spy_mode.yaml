@@ -1,0 +1,28 @@
+# ############################################################
+#
+#  automation for l2storage01
+#
+# ############################################################
+
+# ############################################################
+# L2 Storage: Switch spy mode automatically off of after x minutes
+# ############################################################
+- alias: L2 Storage spy mode automatic off
+  id: "64816bf3-0aad-455f-9cb7-a77c53e7cf50"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # no motion is detected for x minutes or door is closed
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l2_storage01_pir_01
+      to: "off"
+      for:
+        minutes: 30
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SSR OFF ---------------------
+    service: automation.turn_on
+    entity_id: automation.l2_storage_on_if_motion_detected
+# ############################################################
+#  END OF FILE
+# ############################################################
