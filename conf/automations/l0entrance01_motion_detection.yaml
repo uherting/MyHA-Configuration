@@ -1,0 +1,71 @@
+# ############################################################
+#
+#  l0entrance01
+#
+# ############################################################
+
+# ############################################################
+# l0entrance01 motion detection
+# ############################################################
+- alias: L0 Entrance01 motion detection
+  id: "10ff8f8d-4911-40b9-9d7f-117826d774ff"
+  mode: queued
+  max: 25
+
+  initial_state: false
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      id: "l0entrance01_pir"
+      entity_id: binary_sensor.l0_entrance01_pir_01
+      from: "off"
+      to: "on"
+
+    - platform: state
+      id: "l0entrance01_rcwl"
+      entity_id: binary_sensor.l0_entrance01_rcwl_02
+      from: "off"
+      to: "on"
+
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  # condition: []
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: "l0entrance01_pir"
+          sequence:
+            # ---------------- SEND NOTIFICATION ----------------
+            - service: script.tg_txt
+              data:
+                msg_title: "l0entrance01 PIR got triggered"
+                msg_text: ""
+                msg_receiver: admin
+        - conditions:
+            - condition: trigger
+              id: "l0entrance01_rcwl"
+          sequence:
+            # ---------------- SEND NOTIFICATION ----------------
+            - service: script.tg_txt
+              data:
+                msg_title: "l0entrance01 RCWL got triggered"
+                msg_text: ""
+                msg_receiver: admin
+      default:
+        - service: script.tg_txt
+          data:
+            msg_title: "Dummy l0entrance01 notification"
+            msg_text: ""
+            msg_receiver: admin
+          data_template:
+            title: Dummy l0entrance01 notification
+            message: >
+              Date / time: {{ states('sensor.date_time') }}
+
+# ############################################################
+#  END OF FILE
+# ############################################################
