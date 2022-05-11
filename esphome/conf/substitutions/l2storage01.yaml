@@ -62,6 +62,9 @@ binary_template_sensor_01_name: $friendly_name BIN_TEMPL 01
 binary_template_sensor_01_id: ${friendly_id}_BIN_TEMPL_01
 binary_template_sensor_02_name: $friendly_name BIN_TEMPL 02
 binary_template_sensor_02_id: ${friendly_id}_BIN_TEMPL_02
+# other template sensors
+binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
+binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
 # DHT sensors
 dht01_name: $friendly_name DHT 01
 dht01_id: ${friendly_id}_DHT_01

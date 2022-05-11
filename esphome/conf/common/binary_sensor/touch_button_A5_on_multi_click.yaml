@@ -1,0 +1,64 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# TOUCH BUTTON
+
+- platform: gpio
+  name: $touchbutton02_name
+  id: ${touchbutton02_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A5
+    #
+    # TODO: before installation change settings for mode / inverted
+    # production => inverted: false / mode: INPUT
+    # before installation => inverted: true / mode: INPUT_PULLUP
+    #
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    # mode: INPUT_PULLUP
+    inverted: false
+    # inverted: true
+  device_class: power
+  on_multi_click:
+    - timing:
+        - ON for at most 0.3s
+        - OFF for at least 0.2s
+      then:
+        # - logger.log: "Single short clicked. Exec script tb_02_click_short."
+        - script.execute: tb_02_click_short
+        # - logger.log: "Single short clicked, automation on."
+        # - service: automation.turn_on
+        #   data:
+        #     entity_id: automation.<nameOfAutomation>
+    - timing:
+        - ON for 1s to 2s
+        - OFF for at least 0.2s
+      then:
+        # - logger.log: "Single long clicked, no further action."
+        - script.execute: tb_02_click_long
+        # - logger.log: "Single long clicked, automation off."
+        # - service: automation.turn_off
+        #   data:
+        #     entity_id: automation.<nameOfAutomation>
+        # - switch.turn_off: ${ssr02_id}
+        # - delay: !secret DELAY_01SEC
+        # - switch.turn_on: ${ssr02_id}
+        # - delay: !secret DELAY_01SEC
+        # - switch.turn_off: ${ssr02_id}
+        # - delay: !secret DELAY_01SEC
+        # - switch.turn_on: ${ssr02_id}
+    - timing:
+        - ON for at most 0.3s
+        - OFF for at most 0.4s
+        - ON for at most 0.3s
+        - OFF for at least 0.2s
+      then:
+        # - logger.log: "Double clicked, no further action."
+        - script.execute: tb_02_click_dbl
+# ############################################################
+#  END OF FILE
+# ############################################################

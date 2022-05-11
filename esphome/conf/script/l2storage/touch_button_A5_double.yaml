@@ -1,0 +1,24 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_multi_click action of TB A5 (double click)
+- id: tb_02_click_dbl
+  mode: single
+  then:
+    # - logger.log: "script tb_02_click_dbl action."
+    - if:
+        condition:
+          # execute this script only if we are offline
+          # lambda: 'return (!id(isDeviceConnected);'
+
+          # execute this script anyway (TM) for debugging purposes
+          lambda: "return (true);"
+        then:
+          - binary_sensor.template.publish:
+              id: ${binary_template_sensor_spy_mode_id}
+              state: true
+      # - logger.log: "script tb_02_click_dbl action."
+####################################################################
+# EOF
+####################################################################
