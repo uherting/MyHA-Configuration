@@ -20,9 +20,9 @@
         minutes: 30
   # --------------------- ACTIONS ---------------------
   action:
-    # --------------------- SSR OFF ---------------------
+    # ------------ AUTOMATION ACTIVE AGAIN ------------
     service: automation.turn_on
-    entity_id: automation.l2_storage_on_if_motion_detected
+    entity_id: automation.l2_storage_motion_detected_ssr01_on
 # ############################################################
 #  END OF FILE
 # ############################################################

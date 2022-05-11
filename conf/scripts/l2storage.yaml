@@ -1,0 +1,24 @@
+# ############################################################
+#
+#  Telegram messaging
+#
+#  Purpose: sending text into a Telegram group
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# sending a text message to a TG group
+# --------------------------------------------------------------
+spy_mode_control:
+  alias: Send text message via Telegram
+  icon: mdi:text
+  description: This script sends a text message given as a parameter
+  mode: queued
+  sequence:
+    delay: 2sec
+    # service: automation.toggle
+    # data:
+    #   entity_id: automation.l2_storage_motion_detected_ssr01_on
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -5,10 +5,10 @@
 # ############################################################
 
 # ############################################################
-# L2 Storage: SSR01 ON if motion detected
+# L2 Storage: SSR01 on if motion detected
 # ############################################################
-- alias: L2 Storage ON if motion detected
-  id: "L2 Storage ON if motion detected"
+- alias: L2 Storage motion detected ssr01 on
+  id: "6f39f27c-abc9-4f79-bdf5-945393c13d7e"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # motion is detected or door is opened
@@ -16,10 +16,6 @@
     - platform: state
       entity_id: binary_sensor.l2_storage01_pir_01
       to: "on"
-    # the following is configured in the ESPHome part of the device
-    # - platform: state
-    #   entity_id: binary_sensor.l2_storage01_door
-    #   to: "on"
   # -------------------- CONDITIONS -------------------
   # condition: []
   condition:
@@ -37,10 +33,10 @@
     entity_id: switch.l2_storage01_ssr_01
 
 # ############################################################
-# L2 Storage: SSR01 off the light after there is no motion for x minutes
+# L2 Storage: SSR01 off after there is no motion for x minutes
 # ############################################################
-- alias: L2 Storage OFF post motion
-  id: "L2 Storage OFF post motion"
+- alias: L2 Storage no more motion ssr01 off
+  id: "f40ec355-2fb4-48d1-b58b-2d9785d33b2f"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # no motion is detected for x minutes or door is closed

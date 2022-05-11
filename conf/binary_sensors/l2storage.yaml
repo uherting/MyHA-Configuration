@@ -13,4 +13,4 @@
     l2storage_spymode:
       friendly_name: "SpyMode"
       value_template: >-
-        {{ states('automation.l2_storage_on_if_motion_detected') != 'on' }}
+        {{ states("automation.l2_storage_motion_detected_ssr01_on") != 'on' }}
