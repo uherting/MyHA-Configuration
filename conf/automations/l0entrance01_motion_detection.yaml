@@ -58,14 +58,9 @@
       default:
         - service: script.tg_txt
           data:
-            msg_title: "Dummy l0entrance01 notification"
+            msg_title: "l0entrance01 motion detection problem"
             msg_text: ""
             msg_receiver: admin
-          data_template:
-            title: Dummy l0entrance01 notification
-            message: >
-              Date / time: {{ states('sensor.date_time') }}
-
 # ############################################################
 #  END OF FILE
 # ############################################################
