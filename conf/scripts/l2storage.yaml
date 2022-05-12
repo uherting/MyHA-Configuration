@@ -15,7 +15,12 @@ spy_mode_control:
   description: This script sends a text message given as a parameter
   mode: queued
   sequence:
-    delay: 2sec
+    - service: automation.toggle
+      data: {}
+      target:
+        entity_id: automation.l2_storage_motion_detected_ssr01_on
+    # - delay: 2sec
+
     # service: automation.toggle
     # data:
     #   entity_id: automation.l2_storage_motion_detected_ssr01_on
