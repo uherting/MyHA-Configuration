@@ -9,9 +9,9 @@
 # ############################################################
 - alias: L2 Storage spy mode toggle
   id: "0a590c08-ad40-4181-a713-6c6b4c720939"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
-  # doble click binary_sensor.l2_storage01_bin_templ_spymode
+  # double click binary_sensor.l2_storage01_bin_templ_spymode
   trigger:
     - platform: state
       id: "l2storage01_spymode_off"
