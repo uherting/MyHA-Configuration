@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l0entrance01
+# DEVICE: l0laundryfloor01
 #
 ####################################################################
 ####################################################################
@@ -49,7 +49,7 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l0entrance01.yaml
+substitutions: !include conf/substitutions/l0laundryfloor01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
@@ -110,8 +110,8 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l0entrance01_case.yaml
-  # - <<: !include conf/sensor/l0entrance01_env01.yaml
+  # - <<: !include conf/sensor/l0laundryfloor01_case.yaml
+  # - <<: !include conf/sensor/l0laundryfloor01_env01.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01_D5_upd_15min.yaml
 
