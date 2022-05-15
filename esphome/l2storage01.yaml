@@ -99,8 +99,8 @@ script:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir01.yaml
-  - <<: !include conf/common/binary_sensor/reed01_A2.yaml
+  - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  - <<: !include conf/common/binary_sensor/reed_A2.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
   - <<: !include conf/binary_sensor/l2storage01.yaml
