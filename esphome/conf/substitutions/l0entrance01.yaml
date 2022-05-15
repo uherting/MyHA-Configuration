@@ -12,10 +12,6 @@ wifi_static_ip: 192.168.178.207
 friendly_name: L0 Entrance01
 friendly_id: L0Entrance01
 
-# sensor base names / ids for other rooms
-# friendly_name_bathroom: L2 Bathroom01
-# friendly_id_bathroom: L2Bathroom01
-
 log_level: !secret LOG_LEVEL_INFO
 
 # wifi settings
