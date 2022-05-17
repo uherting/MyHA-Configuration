@@ -26,12 +26,12 @@ spy_mode_control:
     #       #     return true;
     #       #   }
 
-    # - service: automation.toggle
-    #   data: {}
-    #   target:
-    #     entity_id: automation.l2_storage_motion_detected_ssr01_on
-    - service: input_boolean.toggle
-      entity_id: input_boolean.l2storage_spymode
+    - service: automation.toggle
+      data: {}
+      target:
+        entity_id: automation.l2_storage_motion_detected_ssr01_on
+    # - service: input_boolean.toggle
+    #   entity_id: input_boolean.l2storage_spymode
 # ############################################################
 #  END OF FILE
 # ############################################################
