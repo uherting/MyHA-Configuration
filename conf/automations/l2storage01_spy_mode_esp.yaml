@@ -41,11 +41,9 @@
       default:
         - service: script.tg_txt
           data:
-            msg_title: "L2 Storage spy mode toggle problem"
+            msg_title: "L2 Storage spy mode action not provided"
             msg_text: ""
             msg_receiver: admin
-        # - service: automation.turn_on
-        #   entity_id: automation.l2_storage_motion_detected_ssr01_on
 # ############################################################
 #  END OF FILE
 # ############################################################

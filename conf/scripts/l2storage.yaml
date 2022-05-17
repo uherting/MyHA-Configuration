@@ -1,29 +1,37 @@
 # ############################################################
 #
-#  Telegram messaging
-#
-#  Purpose: sending text into a Telegram group
+#  Customised scripts for L2Storage01
 #
 # ############################################################
 
 # --------------------------------------------------------------
-# sending a text message to a TG group
+# This script toggles an automation in order to simulate spy mode
 # --------------------------------------------------------------
 spy_mode_control:
-  alias: Send text message via Telegram
+  alias: Toggle an automation in order to simulate spy mode in L2Storage01
   icon: mdi:text
-  description: This script sends a text message given as a parameter
+  description: This script toggles an automation in order to simulate spy mode
   mode: queued
   sequence:
-    - service: automation.toggle
-      data: {}
-      target:
-        entity_id: automation.l2_storage_motion_detected_ssr01_on
-    # - delay: 2sec
+    # - service: binary_sensor.template.publish
+    #   data:
+    #   target:
+    #     entity_id:
+    #       binary_sensor.l2_storage01_bin_templ_spymode
+    #       # id: binary_sensor.l2_storage01_bin_templ_spymode
+    #       # state: !lambda |-
+    #       #   if (id(binary_sensor.l2_storage01_bin_templ_spymode).state) {
+    #       #     return false;
+    #       #   } else {
+    #       #     return true;
+    #       #   }
 
-    # service: automation.toggle
-    # data:
-    #   entity_id: automation.l2_storage_motion_detected_ssr01_on
+    # - service: automation.toggle
+    #   data: {}
+    #   target:
+    #     entity_id: automation.l2_storage_motion_detected_ssr01_on
+    - service: input_boolean.toggle
+      entity_id: input_boolean.l2storage_spymode
 # ############################################################
 #  END OF FILE
 # ############################################################

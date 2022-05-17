@@ -6,7 +6,7 @@
 
 #binary_sensor:
 
-# "spy mode" for light automation in l2storage
+# "spy mode" for light automation in l2storage01
 # if on the automation for the light is off
 - platform: template
   sensors:
