@@ -11,6 +11,7 @@
 l2storage_spymode:
   name: Spy mode for L2Storage01
   icon: mdi:incognito-circle
+  # initially off as automation l2_storage_motion_detected_ssr01_on active on start / restart
   initial: off
 # ############################################################
 #  END OF FILE

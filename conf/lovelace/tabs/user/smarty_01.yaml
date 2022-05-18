@@ -69,21 +69,21 @@ cards:
           #   show_state: true
           - type: "custom:button-card"
             # name: "SpyMod"
-            name: "TemplateS"
+            name: "ESPHome"
             entity: binary_sensor.l2_storage01_bin_templ_spymode
             color: yellow
             show_state: false
             icon: mdi:incognito-circle
             tap_action:
               action: call-service
-              service: script.spy_mode_control
+              service: script.l2_storage01_bin_templ_spymode_control
               service_data: {}
             # service: automation.toggle
             # service_data:
             #   entity_id: automation.l2_storage_motion_detected_ssr01_on
           - type: "custom:button-card"
             name: "SpyMod"
-            entity: binary_sensor.l2storage_spymode
+            entity: input_boolean.l2storage_spymode
             color: yellow
             show_state: false
             icon: mdi:incognito-circle

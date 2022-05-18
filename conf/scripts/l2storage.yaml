@@ -7,12 +7,16 @@
 # --------------------------------------------------------------
 # This script toggles an automation in order to simulate spy mode
 # --------------------------------------------------------------
-spy_mode_control:
+l2_storage01_bin_templ_spymode_control:
   alias: Toggle an automation in order to simulate spy mode in L2Storage01
   icon: mdi:text
   description: This script toggles an automation in order to simulate spy mode
   mode: queued
   sequence:
+    - service: automation.toggle
+      data: {}
+      target:
+        entity_id: automation.l2_storage_motion_detected_ssr01_on
     # - service: binary_sensor.template.publish
     #   data:
     #   target:
@@ -26,10 +30,6 @@ spy_mode_control:
     #       #     return true;
     #       #   }
 
-    - service: automation.toggle
-      data: {}
-      target:
-        entity_id: automation.l2_storage_motion_detected_ssr01_on
     # - service: input_boolean.toggle
     #   entity_id: input_boolean.l2storage_spymode
 # ############################################################
