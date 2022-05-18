@@ -50,7 +50,7 @@ cards:
     entities:
       - entity: sensor.current_version
       - entity: sensor.latest_version
-      - entity: binary_sensor.updater
+        # - entity: binary_sensor.updater
         name: HA update available
       - type: divider
       - entity: sensor.potential_breaking_changes
