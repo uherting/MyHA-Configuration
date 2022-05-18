@@ -33,7 +33,6 @@ cards:
       # - sensor.germany_coronavirus_current
       - sensor.germany_coronavirus_deaths
       # - sensor.germany_coronavirus_recovered
-      - type: divider
 
   - type: entities
     title: Coronavirus Other
