@@ -127,8 +127,8 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 switch:
-  - <<: !include conf/common/switch/ssr01_B0.yaml
-  - <<: !include conf/common/switch/ssr02_B1.yaml
+  - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
+  - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

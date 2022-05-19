@@ -1,0 +1,26 @@
+####################################################################
+# SWITCHES
+
+# switch:
+
+#############################
+# SSR
+- platform: gpio
+  name: ${ssr02_name}
+  id: ${ssr02_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_B1
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: OUTPUT
+    # high triggered SSR
+    # inverted: false
+    # ---
+    # low triggered SSR
+    inverted: true
+  restore_mode: ALWAYS_OFF
+  # for AppDaemon
+  icon: mdi:lamp
+# ############################################################
+#  END OF FILE
+# ############################################################
