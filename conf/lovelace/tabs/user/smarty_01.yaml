@@ -119,6 +119,30 @@ cards:
 
       - type: grid
         square: false
+        # title: Bedroom
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            name: Bedroom
+          - type: "custom:button-card"
+            entity: sensor.xiaomi_l2_bedroom_temperature
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.xiaomi_l2_bedroom_humidity
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.l2_storage
+            name: " "
+            show_state: true
+
+      - type: grid
+        square: false
         # title: Bathroom
         columns: 5
         cards:
@@ -140,30 +164,6 @@ cards:
             entity: binary_sensor.l2_bathroom01_window
             name: " "
             color: yellow
-            show_state: true
-
-      - type: grid
-        square: false
-        # title: Bedroom
-        columns: 5
-        cards:
-          - type: "custom:button-card"
-            name: Bedroom
-          - type: "custom:button-card"
-            entity: sensor.xiaomi_l2_bedroom_temperature
-            name: " "
-            show_state: true
-          - type: "custom:button-card"
-            entity: sensor.xiaomi_l2_bedroom_humidity
-            name: " "
-            show_state: true
-          - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
-            show_state: true
-          - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
             show_state: true
 
       - type: grid
