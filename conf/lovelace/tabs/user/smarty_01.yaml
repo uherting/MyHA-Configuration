@@ -182,12 +182,12 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: sensor.l2_thermo01_dht_01_temp
+            name: "DHTT"
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: sensor.l2_thermo01_dht_01_humidity
+            name: "DHTH"
             show_state: true
 
       - type: grid
