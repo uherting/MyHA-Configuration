@@ -50,7 +50,7 @@ substitutions: !include conf/substitutions/l2storage01.yaml
 ###################### PACKAGES CONFIGURATION ######################
 
 packages:
-  wifi: !include conf/common/networking/wifi_multiple_networks.yaml
+  wifi: !include conf/common/networking/wifi_multiple_networks_static_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
