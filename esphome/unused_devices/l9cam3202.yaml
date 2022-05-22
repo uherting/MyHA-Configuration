@@ -36,7 +36,7 @@ substitutions: !include conf/substitutions/l9cam3202.yaml
 ###################### PACKAGES CONFIGURATION ######################
 
 packages:
-  wifi: !include conf/common/networking/wifi_multiple_networks_static_ip.yaml
+  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
