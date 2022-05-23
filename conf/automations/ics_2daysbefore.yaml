@@ -27,12 +27,11 @@
 
   # --------------------- ACTIONS ---------------------
   action:
-    - service: notify.tg_notification_grp
+    - service: script.tg_txt
       data_template:
-        title: Rubbish collection is due the day after tomorrow
-        message: >
-          Date / time: {{ states('sensor.date_time') }}
-
+        msg_title: "*Rubbish collection*"
+        msg_text: "Rubbish collection is due the day *after tomorrow*"
+        msg_receiver: "notify"
 # ############################################################
 #  END OF FILE
 # ############################################################
