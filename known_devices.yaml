@@ -1,62 +1,20 @@
-sp_uhnote10pro_fritz_box:
-  name: SP-UHNote10Pro.fritz.box
-  mac: 64:DD:E9:5F:66:51
-  icon: mdi:cellphone-android
-  picture:
-  track: true
-
-redminote8pro_min8_fritz_box:
-  name: RedmiNote8Pro-miN8.fritz.box
-  mac: 2C:D0:66:E1:F0:98
-  icon: mdi:cellphone-android
-  picture:
-  track: true
-
-redminote8pro_min8_fritz_box_2:
-  name: RedmiNote8Pro-miN8.fritz.box2
-  mac: 02:E0:20:01:B8:FD
-  icon: mdi:cellphone-android
-  picture:
-  track: true
-
-huawei_p9_lite_fritz_box:
-  name: HUAWEI-P9-lite.fritz.box
+phone_uh:
+  name: phone_uh
   mac: 8C:EB:C6:7A:BB:66
-  icon: mdi:cellphone-android
+  icon: mdi:account
   picture:
   track: true
 
-ping_tabby:
-  name: ping_tabby
-  mac:
+phone_gh:
+  name: phone_gh
+  mac: 2C:D0:66:E1:F0:98
+  icon: mdi:account
+  picture:
+  track: true
+
+phone_tabby:
+  name: phone_tabby
+  mac: 00:08:22:8E:A6:74
   icon: mdi:tablet-android
   picture:
   track: true
-
-ping_uh:
-  name: ping_uh
-  mac: 8C:EB:C6:7A:BB:66
-  icon: mdi:account
-  picture:
-  track: true
-
-ping_gh:
-  name: ping_gh
-  mac: 2C:D0:66:E1:F0:98
-  icon: mdi:account
-  picture:
-  track: true
-
-# life360_gillian_h:
-#   name: life360_gillian_h
-#   mac: 2C:D0:66:E1:F0:98
-#   icon: mdi:account
-#   picture:
-#   track: true
-
-# life360_uwe_h:
-#   name: life360_uwe_h
-#   mac: 8C:EB:C6:7A:BB:66
-#   icon: mdi:account
-#   picture:
-#   track: true

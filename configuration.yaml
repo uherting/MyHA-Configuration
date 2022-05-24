@@ -155,6 +155,7 @@ script: !include_dir_merge_named conf/scripts
 # device tracking and presence detection
 # attn: configured as an integration in the config ui so the following is no longer required
 # device_tracker: !include conf/device_tracker/device_tracker_nmap.yaml
+device_tracker: !include_dir_merge_list conf/device_tracker
 
 # life360: !include conf/life360.yaml
 
