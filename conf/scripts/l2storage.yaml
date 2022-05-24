@@ -17,21 +17,6 @@ l2_storage01_bin_templ_spymode_control:
       data: {}
       target:
         entity_id: automation.l2_storage_motion_detected_ssr01_on
-    # - service: binary_sensor.template.publish
-    #   data:
-    #   target:
-    #     entity_id:
-    #       binary_sensor.l2_storage01_bin_templ_spymode
-    #       # id: binary_sensor.l2_storage01_bin_templ_spymode
-    #       # state: !lambda |-
-    #       #   if (id(binary_sensor.l2_storage01_bin_templ_spymode).state) {
-    #       #     return false;
-    #       #   } else {
-    #       #     return true;
-    #       #   }
-
-    # - service: input_boolean.toggle
-    #   entity_id: input_boolean.l2storage_spymode
 # ############################################################
 #  END OF FILE
 # ############################################################

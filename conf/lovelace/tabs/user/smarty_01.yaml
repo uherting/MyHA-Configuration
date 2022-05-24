@@ -83,7 +83,7 @@ cards:
             #   entity_id: automation.l2_storage_motion_detected_ssr01_on
           - type: "custom:button-card"
             name: "SpyMod"
-            entity: input_boolean.l2storage_spymode
+            entity: binary_sensor.l2storage_spymode
             color: yellow
             show_state: false
             icon: mdi:incognito-circle

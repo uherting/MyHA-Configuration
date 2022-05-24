@@ -14,36 +14,14 @@
   # double click binary_sensor.l2_storage01_bin_templ_spymode
   trigger:
     - platform: state
-      id: "l2storage01_spymode_off"
-      entity_id: binary_sensor.l2_storage01_bin_templ_spymode
-      to: "off"
-    - platform: state
       id: "l2storage01_spymode_on"
       entity_id: binary_sensor.l2_storage01_bin_templ_spymode
       to: "on"
   # --------------------- ACTIONS ---------------------
   action:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id: "l2storage01_spymode_off"
-          sequence:
-            # ---------- SET AUTOMATION ACTIVE AGAIN ----------
-            - service: automation.turn_on
-              entity_id: automation.l2_storage_motion_detected_ssr01_on
-        - conditions:
-            - condition: trigger
-              id: "l2storage01_spymode_on"
-          sequence:
-            # ------------ SET AUTOMATION INACTIVE ------------
-            - service: automation.turn_off
-              entity_id: automation.l2_storage_motion_detected_ssr01_on
-      default:
-        - service: script.tg_txt
-          data:
-            msg_title: "L2 Storage spy mode action not provided"
-            msg_text: ""
-            msg_receiver: admin
+    # --------------- AUTOMATION TOGGLE ---------------
+    service: automation.toggle
+    entity_id: automation.l2_storage_motion_detected_ssr01_on
 # ############################################################
 #  END OF FILE
 # ############################################################

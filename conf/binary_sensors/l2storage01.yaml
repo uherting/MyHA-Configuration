@@ -1,18 +1,20 @@
 # ############################################################
 #
-#  Input boolean
+#  Binary sensors
 #
 # ############################################################
 
-#input_boolean
+#binary_sensor:
 
-# "spy mode" for light automation in l2storage01
+# "spy mode" for light automation in l2storage
 # if on the automation for the light is off
-l2storage_spymode:
-  name: Spy mode for L2Storage01
-  icon: mdi:incognito-circle
-  # initially off as automation l2_storage_motion_detected_ssr01_on active on start / restart
-  initial: off
+- platform: template
+  sensors:
+    l2storage_spymode:
+      friendly_name: "SpyMode"
+      value_template: >-
+        {{ states("automation.l2_storage_motion_detected_ssr01_on") != 'on' }}
+
 # ############################################################
 #  END OF FILE
 # ############################################################
