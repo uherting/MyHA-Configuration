@@ -34,19 +34,15 @@ resources:
   - url: /hacsfiles/surveillance-card/surveillance-card.js
     type: module
 
-  # huge clickable title --- too huge for most cases!!!
-  - url: /hacsfiles/banner-card/banner-card.js
-    type: module
+  # # mushroom card (not used so far)
+  # - url: /hacsfiles/lovelace-mushroom/mushroom.js
+  #   type: module
 
-  # mushroom card
-  - url: /hacsfiles/lovelace-mushroom/mushroom.js
-    type: module
+  # # header cards (not used so far)
+  # - url: /hacsfiles/lovelace-header-cards/lovelace-header-cards.js
+  #   type: module
 
-  # header cards
-  - url: /hacsfiles/lovelace-header-cards/lovelace-header-cards.js
-    type: module
-
-    # -------------------------------------------------------------------------
+  # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
   # - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
@@ -66,6 +62,9 @@ resources:
   # - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
   #   type: module
   # - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
+  #   type: module
+  # # huge clickable title --- too huge for most cases!!!
+  # - url: /hacsfiles/banner-card/banner-card.js
   #   type: module
 
 # Add more dashboards
