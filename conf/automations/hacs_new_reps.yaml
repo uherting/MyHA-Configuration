@@ -9,39 +9,28 @@
 # HACS new repositories
 # ############################################################
 - alias: HACS has new repositories
-  id: 'HACS has new repositories'
+  id: "HACS has new repositories"
   initial_state: true
-
-# --------------------- TRIGGER ---------------------
+  # --------------------- TRIGGER ---------------------
   trigger:
     platform: event
     event_type: hacs/repository
     event_data:
       action: registration
-
-# -------------------- CONDITIONS -------------------
+  # -------------------- CONDITIONS -------------------
   condition:
     condition: template
     value_template: "{{ trigger.event.data.repository is defined }}"
-
-# --------------------- ACTIONS ---------------------
+  # --------------------- ACTIONS ---------------------
   action:
-#    - service: persistent_notification.create
-#      data_template:
-#        title: New repository in HACS
-#        message: >-
-#          {% set repo = trigger.event.data.repository %}
-#          {% set id = trigger.event.data.repository_id %}
-#          [{{ repo }}](/hacs/repository/{{ id }})
-#          was just added to HACS.
-#          See <a href="http://192.168.178.31:8123/hacs">here</a>
     - service: script.tg_txt
       data_template:
         msg_title: "New repository in HACS"
-        msg_text: "{% set repo = trigger.event.data.repository %}
+        msg_text: >-
+          {% set repo = trigger.event.data.repository %}
           {% set id = trigger.event.data.repository_id %}
           [{{ repo }}](/hacs/repository/{{ id }})
-          was just added to HACS."
+          was just added to HACS.
         msg_receiver: "admin"
     # - service: notify.tg_admin_grp
     #   data_template:
@@ -51,7 +40,6 @@
     #       {% set id = trigger.event.data.repository_id %}
     #       [{{ repo }}](/hacs/repository/{{ id }})
     #       was just added to HACS.
-
 # ############################################################
 #  END OF FILE
 # ############################################################
