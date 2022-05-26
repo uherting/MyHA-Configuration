@@ -10,7 +10,7 @@
 # ############################################################
 - alias: HACS has updates pending
   id: "HACS has updates pending"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   trigger:
     platform: state
