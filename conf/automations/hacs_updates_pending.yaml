@@ -9,25 +9,20 @@
 # HACS updates pending
 # ############################################################
 - alias: HACS has updates pending
-  id: 'HACS has updates pending'
-  initial_state: true
+  id: "HACS has updates pending"
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
   trigger:
     platform: state
     entity_id: sensor.hacs
+  # -------------------- CONDITIONS -------------------
   condition:
     - condition: template
       value_template: "{{ states(trigger.entity_id) != 'unknown'}}"
     - condition: template
-      value_template: "{{ (states(trigger.entity_id) | float) != 0}}"
+      value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
+  # --------------------- ACTIONS ---------------------
   action:
-#    - service: persistent_notification.create
-#      data_template:
-#        title: Updates pending in HACS
-#        message: >-
-#          {% for repo in state_attr(trigger.entity_id, 'repositories') %}
-#            **{{ repo.display_name }}** _{{ repo["installed_version"] }}_ -> _{{ repo["available_version"] }}_
-#            See <a href="http://192.168.178.31:8123/hacs">here</a>
-#          {% endfor %}
     - service: script.tg_txt
       data_template:
         msg_title: "Updates pending in HACS"
@@ -36,14 +31,12 @@
             {{ repo.display_name }} _{{ repo["installed_version"] }}_ -> _{{ repo["available_version"] }}_
           {% endfor %}
         msg_receiver: "admin"
-    # - service: notify.tg_admin_grp
+    # - service: script.tg_txt
     #   data_template:
-    #     title: Updates pending in HACS
-    #     message: >-
-    #       {% for repo in state_attr(trigger.entity_id, 'repositories') %}
-    #         **{{ repo.display_name }}** _{{ repo["installed_version"] }}_ -> _{{ repo["available_version"] }}_
-    #       {% endfor %}
-
+    #     msg_title: "Updates pending in HACS (debug)"
+    #     msg_text: >-
+    #       Amount of repositories to be updated: {{ (states(trigger.entity_id) | float) }}
+    #     msg_receiver: "admin"
 # ############################################################
 #  END OF FILE
 # ############################################################
