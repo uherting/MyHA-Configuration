@@ -10,7 +10,7 @@
 # ############################################################
 - alias: HACS has updates pending
   id: "HACS has updates pending"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     platform: state
@@ -31,12 +31,6 @@
             {{ repo.display_name }} _{{ repo["installed_version"] }}_ -> _{{ repo["available_version"] }}_
           {% endfor %}
         msg_receiver: "admin"
-    # - service: script.tg_txt
-    #   data_template:
-    #     msg_title: "Updates pending in HACS (debug)"
-    #     msg_text: >-
-    #       Amount of repositories to be updated: {{ (states(trigger.entity_id) | float) }}
-    #     msg_receiver: "admin"
 # ############################################################
 #  END OF FILE
 # ############################################################
