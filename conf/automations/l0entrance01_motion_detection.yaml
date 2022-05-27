@@ -12,7 +12,7 @@
   mode: queued
   max: 25
 
-  initial_state: false
+  initial_state: true
 
   # --------------------- TRIGGER ---------------------
   trigger:
@@ -42,8 +42,8 @@
             # ---------------- SEND NOTIFICATION ----------------
             - service: script.tg_txt
               data:
-                msg_title: "l0entrance01 PIR got triggered"
-                msg_text: ""
+                msg_title: "*l0entrance01*"
+                msg_text: "PIR got triggered."
                 msg_receiver: admin
         - conditions:
             - condition: trigger
@@ -52,13 +52,13 @@
             # ---------------- SEND NOTIFICATION ----------------
             - service: script.tg_txt
               data:
-                msg_title: "l0entrance01 RCWL got triggered"
-                msg_text: ""
+                msg_title: "*l0entrance01*"
+                msg_text: "RCWL got triggered."
                 msg_receiver: admin
       default:
         - service: script.tg_txt
           data:
-            msg_title: "l0entrance01 motion detection problem"
+            msg_title: "l0entrance01: motion detection, but no trigger???"
             msg_text: ""
             msg_receiver: admin
 # ############################################################

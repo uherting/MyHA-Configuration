@@ -1,0 +1,15 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# was something delivered to the postbox?
+
+- platform: template
+  name: ${template_sensor_postbox_delivery_name}
+  id: ${template_sensor_postbox_delivery_id}
+  icon: mdi:mailbox-outline
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -3,7 +3,7 @@
 
 # device definitions
 device_name: l0entrance01
-device_comment: Level 2 Entrance device 01
+device_comment: Level 0 Entrance device 01
 device_platform: ESP8266
 device_board: nodemcuv2
 wifi_static_ip: 192.168.178.207
@@ -45,7 +45,16 @@ dallas_01e01_address: !secret DALLAS_01_L0ENTRANCE01_ENVSENSOR_01_ADDRESS
 # ------------------------------------------------------------------
 # non standard substitutions
 
-# none so far
+# Ultrasonic sensor
+postbox_newspaper_name: $friendly_name US 01
+postbox_newspaper_id: ${friendly_id}_US_01
+# forked light barrier (Gabellichtschranke)
+postbox_slit_a3_name: $friendly_name FLB 03
+postbox_slit_a3_id: ${friendly_id}_FLB_03
+postbox_door_a4_name: $friendly_name FLB 04
+postbox_door_a4_id: ${friendly_id}_FLB_04
+template_sensor_postbox_delivery_name: $friendly_name PostBox Delivery 01
+template_sensor_postbox_delivery_id: ${friendly_id}_PostBox_Delivery_01
 
 # ------------------------------------------------------------------
 # standard substitutions follow
@@ -56,7 +65,6 @@ bh1750_01_name: $friendly_name BH1750 Illuminance 01
 bh1750_01_address: !secret BH1750_0X23_ADDRESS
 bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
 bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
-
 # offline sensors
 binary_template_sensor_01_name: $friendly_name BIN_TEMPL 01
 binary_template_sensor_01_id: ${friendly_id}_BIN_TEMPL_01

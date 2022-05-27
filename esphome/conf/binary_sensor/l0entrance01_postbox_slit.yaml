@@ -1,0 +1,26 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# forked light barrier (Gabellichtschranke)
+
+- platform: gpio
+  name: $postbox_slit_a3_name
+  id: ${postbox_slit_a3_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A3
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    inverted: false
+  device_class: tamper
+  on_press:
+    then:
+      - binary_sensor.template.publish:
+          id: $template_sensor_postbox_delivery_id
+          state: true
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -102,6 +102,9 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/pir_A0.yaml
   - <<: !include conf/common/binary_sensor/rcwl_A1.yaml
   - <<: !include conf/common/binary_sensor/reed_A2.yaml
+  - <<: !include conf/binary_sensor/l0entrance01_postbox_delivery.yaml
+  - <<: !include conf/binary_sensor/l0entrance01_postbox_slit.yaml
+  - <<: !include conf/binary_sensor/l0entrance01_postbox_door.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -110,6 +113,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
+  - <<: !include conf/sensor/l0entrance01_postbox_newspaper.yaml
   # - <<: !include conf/sensor/l0entrance01_case.yaml
   # - <<: !include conf/sensor/l0entrance01_env01.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml

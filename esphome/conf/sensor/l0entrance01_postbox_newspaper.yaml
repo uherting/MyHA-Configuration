@@ -1,0 +1,26 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# WiFi sensors
+#sensor:
+- platform: ultrasonic
+  trigger_pin: D5
+  echo_pin: D6
+  name: $postbox_newspaper_name
+  id: $postbox_newspaper_id
+  # standard values as of https://esphome.io/components/sensor/ultrasonic.html
+  update_interval: !secret UPDATE_INTERVAL_60SEC
+  timeout: 2.0m
+  pulse_time: 10us
+  on_value_range:
+    # from 0.01 < value < 0.60
+    above: 0.01
+    below: 0.60
+    then:
+      - binary_sensor.template.publish:
+          id: $template_sensor_postbox_delivery_id
+          state: true
+####################################################################
+# EOF
+####################################################################
