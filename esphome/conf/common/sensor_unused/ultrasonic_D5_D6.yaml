@@ -1,0 +1,19 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# ultrasonic sensors
+
+#sensor:
+- platform: ultrasonic
+  trigger_pin: D5
+  echo_pin: D6
+  name: $ultrasonic01_name
+  id: $ultrasonic01_id
+  # standard values as of https://esphome.io/components/sensor/ultrasonic.html
+  update_interval: !secret UPDATE_INTERVAL_60SEC
+  timeout: 2.0
+  # pulse_time: 10us
+####################################################################
+# EOF
+####################################################################

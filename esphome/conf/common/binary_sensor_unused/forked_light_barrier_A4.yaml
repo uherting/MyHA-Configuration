@@ -1,0 +1,19 @@
+####################################################################
+# BINARY SENSORS
+
+####################################################################
+# forked light barrier (Gabellichtschranke)
+
+- platform: gpio
+  name: $flb_a4_name
+  id: ${flb_a4_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A4
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    inverted: false
+  device_class: tamper
+# ############################################################
+#  END OF FILE
+# ############################################################
