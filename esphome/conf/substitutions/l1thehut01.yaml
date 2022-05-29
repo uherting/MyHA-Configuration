@@ -1,114 +1,114 @@
 ####################################################################
 # SUBSTITUTIONS
 
-  device_name: l1thehut01
-  device_comment: Level 1 TheHut device 01
-  device_platform: ESP8266
-  device_board: nodemcuv2
-  wifi_static_ip: 192.168.178.210
+device_name: l1thehut01
+device_comment: Level 1 TheHut device 01
+device_platform: ESP8266
+device_board: nodemcuv2
+wifi_static_ip: 192.168.178.210
 
-  # the friendly name and id
-  friendly_name: L1 TheHut01
-  friendly_id: L1TheHut01
+# the friendly name and id
+friendly_name: L1 TheHut01
+friendly_id: L1TheHut01
 
-  # substitutions for a sensor located in another area but connected to this device
-  # devicename_l0corridor01: l0corridor01
-  # friendly_name_l0corridor01: L0 Corridor01
-  # friendly_id_l0corridor01: L0Corridor01
+# substitutions for a sensor located in another area but connected to this device
+# devicename_l0corridor01: l0corridor01
+# friendly_name_l0corridor01: L0 Corridor01
+# friendly_id_l0corridor01: L0Corridor01
 
-  log_level: !secret LOG_LEVEL_INFO
+log_level: !secret LOG_LEVEL_INFO
 
-  # wifi settings
-  wifi_status_name: ${friendly_name} Status
-  wifi_status_id: ${friendly_id}Status
-  wifi_uptime_name: ${friendly_name} Uptime
-  wifi_uptime_id: ${friendly_id}Uptime
-  wifi_uptime_human_name: ${friendly_name} Uptime human readable
-  wifi_uptime_human_id: ${friendly_id}UptimeHumanReadable
-  wifi_signal_name: ${friendly_name} WiFi Signal
-  wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
-  wifi_conn_ssid_name: ${friendly_name} Conn SSID
-  wifi_conn_bssid_name: ${friendly_name} Conn BSSID
+# wifi settings
+wifi_status_name: ${friendly_name} Status
+wifi_status_id: ${friendly_id}Status
+wifi_uptime_name: ${friendly_name} Uptime
+wifi_uptime_id: ${friendly_id}Uptime
+wifi_uptime_human_name: ${friendly_name} Uptime human readable
+wifi_uptime_human_id: ${friendly_id}UptimeHumanReadable
+wifi_signal_name: ${friendly_name} WiFi Signal
+wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
+wifi_conn_ssid_name: ${friendly_name} Conn SSID
+wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 
-  # mqtt user / password
-  mqtt_user: mqtt_${device_name}
-  mqtt_pw: mqtt_${device_name}
+# mqtt user / password
+mqtt_user: mqtt_${device_name}
+mqtt_pw: mqtt_${device_name}
 
-  # details for DALLAS sensors connected to the device
-  dallas_01c01_name: $friendly_name TempCase 01
-  dallas_01c01_address: !secret DALLAS_01_L1THEHUT01_CASESENSOR_01_ADDRESS
-  dallas_01e01_name: $friendly_name TempEnv 01
-  dallas_01e01_address: !secret DALLAS_01_L1THEHUT01_ENVSENSOR_01_ADDRESS
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L1THEHUT01_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L1THEHUT01_ENVSENSOR_01_ADDRESS
 
-  #
-  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-  #
+#
+# DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
+#
 
-  # ------------------------------------------------------------------
-  # non standard substitutions
+# ------------------------------------------------------------------
+# non standard substitutions
 
-  servo01_name: ${friendly_id}_SERVO_NAME_01
-  servo01_id: ${friendly_id}_SERVO_ID_01
-  servo01_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
-  servo02_name: ${friendly_id}_SERVO_NAME_01
-  servo02_id: ${friendly_id}_SERVO_ID_01
-  servo02_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
+servo01_name: ${friendly_id}_SERVO_NAME_01
+servo01_id: ${friendly_id}_SERVO_ID_01
+servo01_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
+servo02_name: ${friendly_id}_SERVO_NAME_01
+servo02_id: ${friendly_id}_SERVO_ID_01
+servo02_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
 
-  pca9685_output1_id: ${friendly_id}_PCA9685_ID_01
-  pca9685_output2_id: ${friendly_id}_PCA9685_ID_02
+pca9685_output1_id: ${friendly_id}_PCA9685_ID_01
+pca9685_output2_id: ${friendly_id}_PCA9685_ID_02
 
-  # ------------------------------------------------------------------
-  # standard substitutions follow
+# ------------------------------------------------------------------
+# standard substitutions follow
 
-  # connected sensors / interfaces
-  # BH1750 Ambient Light Sensor
-  bh1750_01_name: $friendly_name BH1750 Illuminance 01
-  bh1750_01_address: !secret BH1750_0X23_ADDRESS
-  bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
-  bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
-
-  # DHT sensors
-  dht01_name: $friendly_name DHT 01
-  dht01_id: ${friendly_id}_DHT_01
-  dht01_name_temperature: ${dht01_name} Temp
-  dht01_name_humidity: ${dht01_name} Humidity
-  # MCP23017 hub ids
-  mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
-  # opto couplers
-  opto_cpl01_name: ${friendly_name} OptoCoupler 01
-  opto_cpl01_id: ${friendly_id}_OC01
-  # PIRs
-  pir01_name: $friendly_name PIR 01
-  pir01_id: ${friendly_id}_PIR_01
-  pir02_name: $friendly_name PIR 02
-  pir02_id: ${friendly_id}_PIR_02
-  pir03_name: $friendly_name PIR 03
-  pir03_id: ${friendly_id}_PIR_03
-  # local reed relays
-  reed_contact01_name: $friendly_name REED 01
-  reed_contact01_id: ${friendly_id}_REED_01
-  reed_contact02_name: $friendly_name REED 02
-  reed_contact02_id: ${friendly_id}_REED_02
-  reed_contact03_name: $friendly_name REED 03
-  reed_contact03_id: ${friendly_id}_REED_03
-  reed_contact04_name: $friendly_name REED 04
-  reed_contact04_id: ${friendly_id}_REED_04
-  # remote reed relays
-  # reed_contact90_name: $friendly_name_l0corridor01 REED 90
-  # reed_contact90_id: ${friendly_id_l0corridor01}_REED_90
-  # SSRs
-  ssr01_name: $friendly_name SSR 01
-  ssr01_id: ${friendly_id}_SSR01
-  ssr02_name: $friendly_name SSR 02
-  ssr02_id: ${friendly_id}_SSR02
-  ssr03_name: $friendly_name SSR 03
-  ssr03_id: ${friendly_id}_SSR03
-  # touch buttons
-  touchbutton01_name: $friendly_name TB 01
-  touchbutton01_id: ${friendly_id}_TB_01
-  touchbutton02_name: $friendly_name TB 02
-  touchbutton02_id: ${friendly_id}_TB_02
-
+# connected sensors / interfaces
+# BH1750 Ambient Light Sensor
+bh1750_01_name: $friendly_name BH1750 Illuminance 01
+bh1750_01_address: !secret BH1750_0X23_ADDRESS
+bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
+bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
+# DHT sensors
+dht01_name: $friendly_name DHT 01
+dht01_name_temperature: ${dht01_name} Temp
+dht01_id_temperature: ${friendly_id}_DHT_01_Temp
+dht01_name_humidity: ${dht01_name} Humidity
+dht01_id_humidity: ${friendly_id}_DHT_01_Hum
+dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
+# MCP23017 hub ids
+mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
+# opto couplers
+opto_cpl01_name: ${friendly_name} OptoCoupler 01
+opto_cpl01_id: ${friendly_id}_OC01
+# PIRs
+pir01_name: $friendly_name PIR 01
+pir01_id: ${friendly_id}_PIR_01
+pir02_name: $friendly_name PIR 02
+pir02_id: ${friendly_id}_PIR_02
+pir03_name: $friendly_name PIR 03
+pir03_id: ${friendly_id}_PIR_03
+# local reed relays
+reed_contact01_name: $friendly_name REED 01
+reed_contact01_id: ${friendly_id}_REED_01
+reed_contact02_name: $friendly_name REED 02
+reed_contact02_id: ${friendly_id}_REED_02
+reed_contact03_name: $friendly_name REED 03
+reed_contact03_id: ${friendly_id}_REED_03
+reed_contact04_name: $friendly_name REED 04
+reed_contact04_id: ${friendly_id}_REED_04
+# remote reed relays
+# reed_contact90_name: $friendly_name_l0corridor01 REED 90
+# reed_contact90_id: ${friendly_id_l0corridor01}_REED_90
+# SSRs
+ssr01_name: $friendly_name SSR 01
+ssr01_id: ${friendly_id}_SSR01
+ssr02_name: $friendly_name SSR 02
+ssr02_id: ${friendly_id}_SSR02
+ssr03_name: $friendly_name SSR 03
+ssr03_id: ${friendly_id}_SSR03
+# touch buttons
+touchbutton01_name: $friendly_name TB 01
+touchbutton01_id: ${friendly_id}_TB_01
+touchbutton02_name: $friendly_name TB 02
+touchbutton02_id: ${friendly_id}_TB_02
 ####################################################################
 # EOF
 ####################################################################

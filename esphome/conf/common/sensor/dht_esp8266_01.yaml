@@ -1,0 +1,35 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# DHT sensor for ESP8266 based boards
+#
+# note:
+# - The DHT22 and DHT11 require external pull up resistors on the
+#   data line. To do this, solder a resistor with about 4.7kΩ
+#   (anything in the range from 1kΩ to 10kΩ probably works fine,
+#   but if you’re having issues try the 4.7kΩ recommended by the
+#   manufacturer) between DATA and 3.3V.
+# - If you’re seeing lots of invalid temperature/humidity warnings
+#   in the logs, try manually setting the DHT model with the model:
+#   configuration variable. Other problems could be wrong pull-up
+#   resistor values on the DATA pin or too long cables.
+#
+
+#sensor:
+- platform: dht
+  pin: !secret DHT_SENSOR_PIN_ESP8266
+  temperature:
+    name: $dht01_name_temperature
+    id: $dht01_id_temperature
+  humidity:
+    name: $dht01_name_humidity
+    id: dht01_id_humidity
+  # model: AUTO_DETECT (default)
+  model: AUTO_DETECT
+  # update_interval: 60s (default)
+  # update_interval: !secret DHT_UPDATE_INTERVAL_15MIN
+  update_interval: $dht01_upd
+####################################################################
+# EOF
+####################################################################

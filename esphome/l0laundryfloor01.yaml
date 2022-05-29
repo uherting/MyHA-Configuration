@@ -113,7 +113,7 @@ sensor:
   # - <<: !include conf/sensor/l0laundryfloor01_case.yaml
   # - <<: !include conf/sensor/l0laundryfloor01_env01.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01_D5_upd_15min.yaml
+  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS

@@ -60,7 +60,6 @@ bh1750_01_name: $friendly_name BH1750 Illuminance 01
 bh1750_01_address: !secret BH1750_0X23_ADDRESS
 bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
 bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
-
 # offline sensors
 binary_template_sensor_01_name: $friendly_name BIN_TEMPL 01
 binary_template_sensor_01_id: ${friendly_id}_BIN_TEMPL_01
@@ -68,9 +67,11 @@ binary_template_sensor_02_name: $friendly_name BIN_TEMPL 02
 binary_template_sensor_02_id: ${friendly_id}_BIN_TEMPL_02
 # DHT sensors
 dht01_name: $friendly_name DHT 01
-dht01_id: ${friendly_id}_DHT_01
 dht01_name_temperature: ${dht01_name} Temp
+dht01_id_temperature: ${friendly_id}_DHT_01_Temp
 dht01_name_humidity: ${dht01_name} Humidity
+dht01_id_humidity: ${friendly_id}_DHT_01_Hum
+dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 # MCP23017 hub ids
 mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
 # opto couplers

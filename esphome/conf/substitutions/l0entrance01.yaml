@@ -72,9 +72,11 @@ binary_template_sensor_02_name: $friendly_name BIN_TEMPL 02
 binary_template_sensor_02_id: ${friendly_id}_BIN_TEMPL_02
 # DHT sensors
 dht01_name: $friendly_name DHT 01
-dht01_id: ${friendly_id}_DHT_01
 dht01_name_temperature: ${dht01_name} Temp
+dht01_id_temperature: ${friendly_id}_DHT_01_Temp
 dht01_name_humidity: ${dht01_name} Humidity
+dht01_id_humidity: ${friendly_id}_DHT_01_Hum
+dht01_upd: !secret DHT_UPDATE_INTERVAL_15MIN
 # MCP23017 hub ids
 mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
 # opto couplers
