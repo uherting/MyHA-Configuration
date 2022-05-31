@@ -44,8 +44,8 @@ cards:
     entities:
       - sensor.l2_thermo01_tempcase_01
       - sensor.l2_thermo01_tempenv_01
-      - sensor.l2_thermo01_dht_01_temp
-      - sensor.l2_thermo01_dht_01_humidity
+      # - sensor.l2_thermo01_dht_01_temp
+      # - sensor.l2_thermo01_dht_01_humidity
       # - binary_sensor.l2_thermo01_pir_01
       # - binary_sensor.l2_thermo01_pir_02
       # - binary_sensor.l2_thermo01_door
