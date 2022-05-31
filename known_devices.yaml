@@ -12,7 +12,7 @@ phone_gh:
   picture:
   track: true
 
-phone_tabby:
+tablet_tabby:
   name: phone_tabby
   mac: 00:08:22:8E:A6:74
   icon: mdi:tablet-android
