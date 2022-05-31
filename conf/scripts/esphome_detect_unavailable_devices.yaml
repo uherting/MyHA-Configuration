@@ -17,8 +17,9 @@ esphome_detect_unavailable_devices_main:
   alias: Detect unavailable ESPHome devices
   icon: mdi:controller-classic-outline
   description: This script detects unavailable ESPHome devices
-  variables:
-    state: "{{ 0 }}"
+  # TODO: Q: what is this "{{ 0 }}" for???
+  # variables:
+  #   state: "{{ 0 }}"
   # in case a message needs to be send we need additional data
   # for details see script file telegram_messaging.yaml
   fields:
@@ -45,10 +46,13 @@ esphome_detect_unavailable_devices_main:
   sequence:
     - service: input_text.set_value
       target:
-        entity_id: input_text.esphome_unavailable_sensors_text
+        entity_id: input_text.esphome_unavailable_devices_text
+      # create a semicolon separated list of binary_sensor.l*_status entities
+      #
+      # the code below does not work here but in the template test area
       data:
-        value: "
-          {%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
+        value:
+          "{%- set ns=namespace(entities=[],msg_yn=false, entity_string='') -%}
           {%- set e =  states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) -%}
           {%- for state in e -%}
           {%- if state.entity_id.startswith('binary_sensor.l') -%}
@@ -56,7 +60,7 @@ esphome_detect_unavailable_devices_main:
           {%- if ns.entities|length == 0 -%}
           {%- set ns.entity_string = state.entity_id -%}
           {%- else -%}
-          {%- set ns.entity_string = state.entity_id + ';' + ns.entity_string -%}
+          {%- set ns.entity_string = state.entity_id + '; ' + ns.entity_string -%}
           {%- endif -%}
           {%- set ns.entities = ns.entities + [state.entity_id] -%}
           {%- set ns.msg_yn = true -%}
@@ -64,28 +68,37 @@ esphome_detect_unavailable_devices_main:
           {%- endif -%}
           {%- endfor -%}
           {{ ns.entity_string }}"
+    # - service: input_text.set_value
+    #   target:
+    #     entity_id: input_text.esphome_unavailable_devices_markdowntext
+    #   data:
+    #     value: "{{ states('input_text.esphome_unavailable_devices_text') }}"
+    # - service: script.tg_txt
+    #   data_template:
+    #     msg_title: "*{{ msg_title }}*"
+    #     msg_text: "{{ msg_text }} NOTEQUAL - EOM # {{ states('input_text.esphome_unavailable_devices_text') }} #"
+    #     msg_receiver: "{{ msg_receiver }}"
     - choose:
         # if the sensor texts are not equal, then ...
         - conditions:
             - condition: template
-              value_template: "{{ states('input_text.esphome_unavailable_sensors_old_text') != states('input_text.esphome_unavailable_sensors_text') }}"
+              value_template: "{{ states('input_text.esphome_unavailable_devices_old_text') != states('input_text.esphome_unavailable_devices_text') }}"
           sequence:
             - service: input_text.set_value
               target:
-                entity_id: input_text.esphome_unavailable_sensors_old_text
+                entity_id: input_text.esphome_unavailable_devices_old_text
               data:
-                value: "{{ states('input_text.esphome_unavailable_sensors_text') }}"
-            - service: notify.tg_admin_grp
+                value: "{{ states('input_text.esphome_unavailable_devices_text') }}"
+            - service: script.tg_txt
               data_template:
-                title: "{{ msg_title }}"
-                message: >
-                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
-                  NOTEQUAL - EOM
+                msg_title: "*{{ msg_title }}*"
+                msg_text: "{{ msg_text }} {{ states('input_text.esphome_unavailable_devices_text') }}"
+                msg_receiver: "{{ msg_receiver }}"
       # - choose:
       #     # if the sensor texts are equal, then ...
       #     - conditions:
       #         - condition: template
-      #           value_template: "{{ states('input_text.esphome_unavailable_sensors_old_text') == states('input_text.esphome_unavailable_sensors_text') }}"
+      #           value_template: "{{ states('input_text.esphome_unavailable_devices_old_text') == states('input_text.esphome_unavailable_devices_text') }}"
       #       sequence:
       #         - service: notify.tg_admin_grp
       #           data_template:

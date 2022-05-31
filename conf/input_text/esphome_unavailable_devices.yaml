@@ -1,0 +1,27 @@
+# ############################################################
+#
+#
+#
+# ############################################################
+
+#input_text:
+
+# ############################################################
+#
+# ############################################################
+
+esphome_unavailable_devices_markdowntext:
+  name: EsphomeUnavailableDevicesMarkdownText
+  mode: text
+  initial: ""
+esphome_unavailable_devices_text:
+  name: EsphomeUnavailableDevicesText
+  mode: text
+  initial: ""
+esphome_unavailable_devices_old_text:
+  name: EsphomeUnavailableDevicesTextOld
+  mode: text
+  initial: ""
+# ############################################################
+#  END OF FILE
+# ############################################################
