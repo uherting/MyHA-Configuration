@@ -5,9 +5,9 @@
 # ############################################################
 
 # ############################################################
-#  notify admin of unavailable ESPHome devices
+#  notify TG admin group of unavailable ESPHome devices
 # ############################################################
-- alias: Notify admin of unavailable ESPHome devices
+- alias: Notify of unavailable ESPHome devices
   id: "1ed7edf6-f99f-4038-a5a7-307e73282fab"
   mode: single
   initial_state: false
@@ -19,14 +19,18 @@
       minutes: /5
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition: []
+  condition: "{{ states('sensor.unavailable_esphome_devices_info') | int > 0 }}"
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.esphome_detect_unavailable_devices_main
-      data:
-        msg_title: "ESPHome"
-        msg_text: "The following ESPHome devices are unavailable:"
+    - service: script.tg_txt
+      data_template:
+        msg_title: "*ESPHome (unavailable devices)*"
+        msg_text: "The following ESPHome devices are unavailable:
+          {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join(', ') }}"
         msg_receiver: "admin"
+        # {% for repo in state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') %}
+        # - {{ repo }}
+        # {% endfor %}"
 ############################################################
 #  END OF FILE
 # ############################################################
