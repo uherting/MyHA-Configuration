@@ -1,0 +1,65 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# ############################################################
+#
+#  ESPHome - unavailable devices notification
+#
+#  see https://www.home-assistant.io/integrations/template/#trigger-based-template-binary-sensors-buttons-numbers-selects-and-sensors
+#     for Trigger-based template binary sensors, buttons, numbers, selects and sensors
+#     example:
+# template:
+#   - trigger:
+#       - platform: time_pattern
+#         # This will update every night
+#         hours: 0
+#         minutes: 0
+#     sensor:
+#       # Keep track how many days have past since a date
+#       - name: "Not smoking"
+#         state: '{{ ( ( as_timestamp(now()) - as_timestamp(strptime("06.07.2018", "%d.%m.%Y")) ) / 86400 ) | round(default=0) }}'
+#         unit_of_measurement: "Days"
+#
+- trigger:
+    - platform: time_pattern
+      # This will hopefully update every x minutes
+      minutes: /1
+  unique_id: "861a719c-ca16-486e-9017-4ceed4e35103"
+  sensor:
+    - name: "Unavailable ESPHome devices info"
+      unique_id: "e66a009f-e9b5-4e6d-adf9-de10f63551dc"
+      icon: mdi:counter
+      availability: "true"
+      state: >-
+        {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr('entity_id', 'match', 'binary_sensor.l[0,2,9].*_status') | map(attribute='entity_id') | list -%}
+        {% set ns = namespace(devices=[]) %}
+        {% for entity in all_entities_with_required_state_list %}
+        {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
+        {% endfor %}
+        {{ ns.devices | unique | list | length }}
+      attributes:
+        unavailable_device_names: >-
+          {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr('entity_id', 'match', 'binary_sensor.l[0,2,9].*_status') | map(attribute='entity_id') | list -%}
+          {% set ns = namespace(devices=[]) %}
+          {% for entity in all_entities_with_required_state_list %}
+          {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
+          {% endfor %}
+          {{ ns.devices | unique | list }}
+
+        # {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr("entity_id", "match", "binary_sensor.l[0,2,9].*_status") | map(attribute="entity_id") | list -%}
+        # {{ all_entities_with_required_state_list }}
+        # {% set ns = namespace(devices=[]) %}
+        # {% for entity in all_entities_with_required_state_list %}
+        # {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
+        # {% endfor %}
+        # {{ ns.devices | unique | list }}
+
+#   {%- set all_status_entities_string=all_status_entities_list | join('\n- ') | regex_replace(find='_status', replace='', ignorecase=False)-%}
+#   - {{ all_status_entities_string  }}
+
+####################################################################
+# EOF
+####################################################################

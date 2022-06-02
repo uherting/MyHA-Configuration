@@ -1,0 +1,72 @@
+# ############################################################
+#
+#  ESPHome - unavailable devices notification
+#
+#  Purpose:
+#   - finding unavailable espHome devices
+#   - sending text into a Telegram group with the names of the unavailable devices
+#
+#  see https://www.home-assistant.io/docs/configuration/templating/ for template sensors
+#  see https://www.home-assistant.io/integrations/template/#trigger-based-template-binary-sensors-buttons-numbers-selects-and-sensors
+#     for Trigger-based template binary sensors, buttons, numbers, selects and sensors
+#     example:
+# template:
+#   - trigger:
+#       - platform: time_pattern
+#         # This will update every night
+#         hours: 0
+#         minutes: 0
+#     sensor:
+#       # Keep track how many days have past since a date
+#       - name: "Not smoking"
+#         state: '{{ ( ( as_timestamp(now()) - as_timestamp(strptime("06.07.2018", "%d.%m.%Y")) ) / 86400 ) | round(default=0) }}'
+#         unit_of_measurement: "Days"
+#
+# ############################################################
+
+esphome_detect_unavailable_devices_main:
+  alias: Detect unavailable ESPHome devices
+  icon: mdi:controller-classic-outline
+  description: This script detects unavailable ESPHome devices
+  fields:
+    msg_title:
+      description: "The title of the notification"
+      advanced: true
+      required: true
+      example: "State change"
+      default: "default msg title"
+      # selector: text
+    msg_text:
+      description: "The message content"
+      advanced: true
+      required: true
+      example: "The light is on!"
+      default: "default msg text"
+    msg_receiver:
+      description: "The receiver of the message"
+      advanced: true
+      required: false
+      example: "admin"
+      default: "admin"
+  mode: queued
+  sequence:
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.esphome_unavailable_devices_text
+      data:
+        value: >-
+          {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr("entity_id", "match", "binary_sensor.l[0,2,9].*_status") | map(attribute="entity_id") | list -%}
+          {{ all_entities_with_required_state_list }}
+          {% set ns = namespace(devices=[]) %}
+          {% for entity in all_entities_with_required_state_list %}
+          {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
+          {% endfor %}
+          {{ ns.devices | unique | list | length }}
+    - service: script.tg_txt
+      data_template:
+        msg_title: "*{{ msg_title }}*"
+        msg_text: "DEBUG: {{ msg_text }} {{ states('input_text.esphome_unavailable_devices_text') }} devices offline."
+        msg_receiver: "{{ msg_receiver }}"
+# ############################################################
+#  END OF FILE
+# ############################################################
