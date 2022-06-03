@@ -20,16 +20,30 @@
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
-# ------------------ Admin Notification ------------------
-- name: tg_admin_grp
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
-
 # ------------------ General Notification ------------------
 - name: tg_notification_grp
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
 
+# ------------------ Admin Notification ------------------
+- name: tg_admin_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
+
+# ------------------ Warning Notification ------------------
+- name: tg_warning_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_WARNINGS_CHAT_ID
+
+# ------------------ Alert Notification ------------------
+- name: tg_alert_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_ALERTS_CHAT_ID
+
+# ------------------ Cam Notification ------------------
+- name: tg_cam_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
 # ############################################################
 #  END OF FILE
 # ############################################################
