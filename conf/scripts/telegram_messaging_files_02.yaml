@@ -4,6 +4,9 @@
 #
 #  Purpose: sending text or 1/3 files into a Telegram group
 #
+#  Attention: not all notification groups as defined in
+#  conf/notify.yaml are implemented yet
+#
 # ############################################################
 
 # --------------------------------------------------------------

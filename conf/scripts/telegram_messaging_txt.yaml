@@ -4,6 +4,9 @@
 #
 #  Purpose: sending text into a Telegram group
 #
+#  Attention: not all notification groups as defined in
+#  conf/notify.yaml are implemented yet
+#
 # ############################################################
 
 # --------------------------------------------------------------
