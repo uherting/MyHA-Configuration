@@ -4,25 +4,28 @@ from datetime import datetime
 import requests
 from waste_collection_schedule import Collection
 
-TITLE = "Cambridge.gov.uk"
+TITLE = "Scambs.gov.uk"
 DESCRIPTION = (
-    "Source for cambridge.gov.uk services for Cambridge and part of Cambridgeshire"
+    "Source for scambs.gov.uk services for South Cambridgeshire District Council"
 )
-URL = "cambridge.gov.uk"
+URL = "scambs.gov.uk"
 TEST_CASES = {
-    "houseNumber": {"post_code": "CB13JD", "number": 37},
-    "houseName": {"post_code": "cb215hd", "number": "ROSEMARY HOUSE"},
+    "houseNumber": {"post_code": "CB236GZ", "number": 53},
+    "houseName": {"post_code": "CB225HT", "number": "Rectory Farm Cottage"},
 }
-
 API_URLS = {
     "address_search": "https://servicelayer3c.azure-api.net/wastecalendar/address/search/",
     "collection": "https://servicelayer3c.azure-api.net/wastecalendar/collection/search/{}/",
 }
-
 ICONS = {
     "DOMESTIC": "mdi:trash-can",
     "RECYCLE": "mdi:recycle",
     "ORGANIC": "mdi:leaf",
+}
+ROUNDS = {
+    "DOMESTIC": "Black Bin",
+    "RECYCLE": "Blue Bin",
+    "ORGANIC": "Green Bin",
 }
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,7 +43,6 @@ class Source:
         )
         r.raise_for_status()
         addresses = r.json()
-
         address_ids = [
             x["id"] for x in addresses if x["houseNumber"].capitalize() == self._number
         ]
@@ -62,7 +64,10 @@ class Source:
                         date=datetime.strptime(
                             collection["date"], "%Y-%m-%dT%H:%M:%SZ"
                         ).date(),
-                        t=round_type.title(),
+                        t=ROUNDS.get(
+                            round_type, round_type.title()
+                        ),  # returns concise values: Black Bin, Blue Bin, Green Bin
+                        # t = round_type.title(),  # returns standard Scambs values: Black Bin Collection, Blue Bin Collection, Green Bin Collection
                         icon=ICONS.get(round_type),
                     )
                 )
