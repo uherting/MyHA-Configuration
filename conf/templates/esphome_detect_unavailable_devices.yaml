@@ -48,6 +48,9 @@
           {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
           {% endfor %}
           {{ ns.devices | unique | list }}
+        device_list_length: >-
+          {%- set hash_value=state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join(', ') | length -%}
+          {{ hash_value }}
 
 ####################################################################
 # EOF
