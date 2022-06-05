@@ -16,10 +16,17 @@
   trigger:
     - platform: time_pattern
       # Matches every x minutes
-      minutes: /5
+      minutes: /1
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition: "{{ states('sensor.unavailable_esphome_devices_info') | int > 0 }}"
+  condition:
+    - and:
+        - condition: template
+          value_template: "{{ states('sensor.unavailable_esphome_devices_info') != 'unavailable' }}"
+        - condition: numeric_state
+          entity_id:
+            - sensor.unavailable_esphome_devices_info
+          above: 0
   # --------------------- ACTIONS ---------------------
   action:
     - service: script.tg_txt
