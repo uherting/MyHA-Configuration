@@ -31,7 +31,7 @@
   action:
     - service: script.tg_txt
       data_template:
-        msg_title: "*ESPHome (unavailable devices)*"
+        msg_title: "ESPHome (unavailable devices)"
         msg_text: "The following ESPHome devices are unavailable:
           {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join(', ') }}"
         msg_receiver: "admin"

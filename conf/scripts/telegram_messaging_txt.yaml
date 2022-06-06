@@ -46,7 +46,7 @@ tg_txt:
           sequence:
             - service: notify.tg_admin_grp
               data_template:
-                title: "{{ msg_title }}"
+                title: "*{{ msg_title }}*"
                 message: >
                   {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
         # general notification group
@@ -56,14 +56,14 @@ tg_txt:
           sequence:
             - service: notify.tg_notification_grp
               data_template:
-                title: "{{ msg_title }}"
+                title: "*{{ msg_title }}*"
                 message: >
                   {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
       # receiver does not exist
       default:
         - service: notify.tg_admin_grp
           data_template:
-            title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+            title: "receiver '{{ msg_receiver }}' does not exist. Title: *{{ msg_title }}*"
             message: >
               {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
 
