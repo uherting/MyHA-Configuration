@@ -33,13 +33,14 @@
       unique_id: "e66a009f-e9b5-4e6d-adf9-de10f63551dc"
       icon: mdi:counter
       availability: "true"
-      state: >-
-        {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr('entity_id', 'match', 'binary_sensor.l[0,2,9].*_status') | map(attribute='entity_id') | list -%}
-        {% set ns = namespace(devices=[]) %}
-        {% for entity in all_entities_with_required_state_list %}
-        {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
-        {% endfor %}
-        {{ ns.devices | unique | list | length }}
+      state: ""
+      # state: >-
+      #   {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr('entity_id', 'match', 'binary_sensor.l[0,2,9].*_status') | map(attribute='entity_id') | list -%}
+      #   {% set ns = namespace(devices=[]) %}
+      #   {% for entity in all_entities_with_required_state_list %}
+      #   {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
+      #   {% endfor %}
+      #   {{ ns.devices | unique | list | length }}
       attributes:
         unavailable_device_names: >-
           {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr('entity_id', 'match', 'binary_sensor.l[0,2,9].*_status') | map(attribute='entity_id') | list -%}
@@ -48,9 +49,9 @@
           {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
           {% endfor %}
           {{ ns.devices | unique | list }}
-        device_list_length: >-
-          {%- set hash_value=state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join(', ') | length -%}
-          {{ hash_value }}
+        # device_list_length: >-
+        #   {%- set hash_value=state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join(', ') | length -%}
+        #   {{ hash_value }}
 
 ####################################################################
 # EOF
