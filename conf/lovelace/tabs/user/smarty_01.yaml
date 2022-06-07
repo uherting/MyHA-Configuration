@@ -199,7 +199,11 @@ cards:
           - type: "custom:button-card"
             name: "OutSouth"
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
+            entity: sensor.l2_storage01_dht_01_temp
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.l2_storage01_dht_01_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
@@ -207,12 +211,8 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage01_dht_01_temp
-            name: ""
-            show_state: true
-          - type: "custom:button-card"
-            # entity: sensor.l2_storage01_dht_01_humidity
-            name: ""
+            # entity: sensor.l2_storage
+            name: " "
             show_state: true
 ####################################################################
 # EOF
