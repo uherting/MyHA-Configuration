@@ -1,0 +1,143 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l9cam3205
+#
+####################################################################
+####################################################################
+
+######################### DESCRIPTION #########################
+#
+# Purpose:
+#   - just an ordinary cam triggered by a PIR connected to another device
+#   no longer: - act as a notification device based on PIR sensor attached to the module
+#
+# Hardware:
+#   - ESP32-cam
+#
+# Automation:
+#   - yes, HA internal only
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - 1 button
+#   - future plan:
+#     - 1 PIR sensor via I2C / MCP23017
+# Output
+#   - none
+#
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: !include conf/substitutions/l9cam3205.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+
+packages:
+  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  # captive_portal: conf/common/networking/captive_portal.yaml
+  ota: !include conf/common/networking/ota.yaml
+  # esphome: and logger:
+  device_base: !include conf/common/packages/device_base.yaml
+
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+#logger:
+#  # see secrets.yaml for log level definitions
+#  level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+time: !include conf/common/time.yaml
+# sun: !include conf/common/sun.yaml
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+# IC2 needs another file for the ESP32 platform
+i2c: !include conf/common/device/i2c_esp32_v1.yaml
+# dallas: !include conf/common/device/dallas.yaml
+# mcp23017: !include conf/common/device/mcp23017.yaml
+
+####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+#-------------------------------------------------------------------
+# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+
+# globals: !include conf/common/globals/connectivity.yaml
+# interval: !include conf/common/interval/connectivity.yaml
+# script:
+#   - <<: !include conf/common/script/pir1_to_ssr1.yaml
+
+
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor:
+  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  # - <<: !include conf/common/binary_sensor/pir01.yaml
+  # - <<: !include conf/common/binary_sensor/pir02.yaml
+  # - <<: !include conf/common/binary_sensor/reed01.yaml
+  # - <<: !include conf/common/binary_sensor/reed02.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  # - <<: !include conf/sensor/l9cam3205.yaml
+  # - <<: !include conf/common/sensor/bh1750_01.yaml
+  # - <<: !include conf/common/sensor/dht_esp32_GPIO14_upd_01min.yaml
+
+#-------------------------------------------------------------------
+# SERVOS
+# servo:
+#   - <<: !include conf/common/servo/servo01.yaml
+# output:
+#   - <<: !include conf/common/output/servo01.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+# switch:
+  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
+  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+
+#-------------------------------------------------------------------
+# TEXT SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
+  # device related
+  # none so far
+
+#################### DETAILED CONFIGURATION CAM ######################
+
+# cam device
+esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
+
+# web server on cam device
+esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
+
+#-------------------------------------------------------------------
+# flashlight
+output: !include conf/common/esp32_camera/esp32cam_output.yaml
+
+#-------------------------------------------------------------------
+# cam light
+light: !include conf/common/esp32_camera/esp32cam_light.yaml
+
+####################################################################
+# EOF
+####################################################################
