@@ -7,30 +7,33 @@
 # ############################################################
 #  notify TG admin group of unavailable ESPHome devices
 # ############################################################
-- alias: Notify of unavailable ESPHome devices
+- alias: Notify admin of unavailable ESPHome devices
   id: "1ed7edf6-f99f-4038-a5a7-307e73282fab"
   mode: single
-  initial_state: false
+  initial_state: true
 
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: time_pattern
-      # Matches every x minutes
-      minutes: /5
+    - platform: state
+      entity_id: sensor.unavailable_esphome_devices_info
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition: "{{ states('sensor.unavailable_esphome_devices_info') | int > 0 }}"
+  condition: []
+  # condition:
+  # - and:
+  #     - condition: template
+  #       value_template: "{{ states('sensor.unavailable_esphome_devices_info') != 'unavailable' }}"
+  #     - condition: numeric_state
+  #       entity_id:
+  #         - sensor.unavailable_esphome_devices_info
+  #       above: 0
   # --------------------- ACTIONS ---------------------
   action:
     - service: script.tg_txt
       data_template:
-        msg_title: "*ESPHome (unavailable devices)*"
-        msg_text: "The following ESPHome devices are unavailable:
-          {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join(', ') }}"
+        msg_title: "ESPHome (unavailable devices)"
+        msg_text: "The following ESPHome devices are unavailable:\n- {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join('\n- ') }}\n"
         msg_receiver: "admin"
-        # {% for repo in state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') %}
-        # - {{ repo }}
-        # {% endfor %}"
 ############################################################
 #  END OF FILE
 # ############################################################
