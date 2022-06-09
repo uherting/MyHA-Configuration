@@ -75,16 +75,16 @@ dashboards:
   uilovelace-usr-smarty1:
     mode: yaml
     filename: ui-lovelace-usr_smarty1.yaml
-    title: Smarty 1
-    icon: mdi:home-outline
+    title: Smarty
+    icon: mdi:cellphone
     show_in_sidebar: true
     require_admin: false
 
   uilovelace-usr-ovw-all1:
     mode: yaml
     filename: ui-lovelace-usr_ovw_all1.yaml
-    title: Overview 1
-    icon: mdi:highway
+    title: Overview
+    icon: mdi:earth
     show_in_sidebar: true
     require_admin: false
 

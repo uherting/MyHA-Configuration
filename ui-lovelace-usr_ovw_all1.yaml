@@ -17,6 +17,9 @@ views:
   # - !include /config/conf/lovelace/tabs/user/cctv.yaml
   #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
 
+  # playground for testing
+  - !include /config/conf/lovelace/tabs/user/l0testing.yaml
+
   # HA app entities
   - !include /config/conf/lovelace/tabs/user/smartphone_status.yaml
 
