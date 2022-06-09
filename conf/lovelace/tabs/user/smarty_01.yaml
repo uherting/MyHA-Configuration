@@ -6,8 +6,8 @@
 ####################################################################
 
 icon: mdi:cellphone
-title: Overview
-path: overview
+title: Overview 1
+path: overview1
 badges:
   [
     sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
