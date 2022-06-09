@@ -49,6 +49,7 @@ exclude:
     - sensor.ha_uptime
     - sensor.l0_corridor01_uptime
     - sensor.l0_corridor02_uptime
+    - sensor.l0_entrance_uptime
     - sensor.l0_garagebig01_uptime
     - sensor.l0_garagebig02_uptime
     - sensor.l1_thehut01_uptime
@@ -59,6 +60,7 @@ exclude:
     - sensor.l2_thermo01_uptime
     - sensor.l0_corridor01_uptime_human_readable
     - sensor.l0_corridor02_uptime_human_readable
+    - sensor.l0_entrance01_uptime_human_readable
     - sensor.l0_garagebig01_uptime_human_readable
     - sensor.l0_garagebig02_uptime_human_readable
     - sensor.l1_thehut01_uptime_human_readable
