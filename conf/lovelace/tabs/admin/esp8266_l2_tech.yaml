@@ -8,9 +8,8 @@
 
 title: ESP8266 l2 Tech
 path: esp8266_l2_tech
-badges: [ ]
+badges: []
 cards:
-
   - type: entities
     title: L2 Kitchen 01
     show_header_toggle: false
@@ -21,6 +20,7 @@ cards:
       - sensor.l2_kitchen01_conn_bssid
       - sensor.l2_kitchen01_uptime
       - sensor.l2_kitchen01_uptime_human_readable
+      - binary_sensor.l2_kitchen01_status
       - sensor.l2_kitchen01_esphome_version
 
   - type: entities
@@ -33,6 +33,7 @@ cards:
       - sensor.l2_storage01_conn_bssid
       - sensor.l2_storage01_uptime
       - sensor.l2_storage01_uptime_human_readable
+      - binary_sensor.l2_storage01_status
       - sensor.l2_storage01_esphome_version
 
   - type: entities
@@ -45,6 +46,7 @@ cards:
       - sensor.l2_ble01_conn_bssid
       - sensor.l2_ble01_uptime
       - sensor.l2_ble01_uptime_human_readable
+      - binary_sensor.l2_ble01_status
       - sensor.l2_ble01_esphome_version
 
   - type: entities
@@ -57,6 +59,7 @@ cards:
       - sensor.l2_thermo01_conn_bssid
       - sensor.l2_thermo01_uptime
       - sensor.l2_thermo01_uptime_human_readable
+      - binary_sensor.l2_thermo01_status
       - sensor.l2_thermo01_esphome_version
 
   # - type: entities
@@ -69,8 +72,8 @@ cards:
   #     - sensor.l2_corridor01_conn_bssid
   #     - sensor.l2_corridor01_uptime
   #     - sensor.l2_corridor01_uptime_human_readable
+  #     - binary_sensor.l2_corridor01_status
   #     - sensor.l2_corridor01_esphome_version
-
 ####################################################################
 # EOF
 ####################################################################

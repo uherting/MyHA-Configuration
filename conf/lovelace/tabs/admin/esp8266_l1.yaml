@@ -8,9 +8,8 @@
 
 title: ESP8266 l1
 path: esp8266_l1
-badges: [ ]
+badges: []
 cards:
-
   - type: entities
     title: L1 TheHut 01
     show_header_toggle: false
@@ -21,8 +20,8 @@ cards:
       - sensor.l1thehut01_conn_bssid
       - sensor.l1thehut01_uptime
       - sensor.l1thehut01_uptime_human_readable
+      - binary_sensor.l1thehut01_status
       - sensor.l1thehut01_esphome_version
-
 ####################################################################
 # EOF
 ####################################################################

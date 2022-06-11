@@ -21,17 +21,17 @@ cards:
       - binary_sensor.l0_entrance01_postbox_delivery_01
       - binary_sensor.l0_entrance01_rcwl_02
       - sensor.l0_entrance01_us_01
-      - sensor.l0_entrance01_uptime_human_readable
   - type: entities
     title: l0entrance01 Diagnostics
     entities:
-      - sensor.l0_entrance01_conn_bssid
       - sensor.l0_entrance01_conn_ip_addr
-      - sensor.l0_entrance01_conn_ssid
-      - sensor.l0_entrance01_esphome_version
-      - binary_sensor.l0_entrance01_status
-      - sensor.l0_entrance01_uptime
       - sensor.l0_entrance01_wifi_signal
+      - sensor.l0_entrance01_conn_ssid
+      - sensor.l0_entrance01_conn_bssid
+      - sensor.l0_entrance01_uptime
+      - sensor.l0_entrance01_uptime_human_readable
+      - binary_sensor.l0_entrance01_status
+      - sensor.l0_entrance01_esphome_version
 ####################################################################
 # EOF
 ####################################################################
