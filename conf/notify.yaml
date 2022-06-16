@@ -44,6 +44,16 @@
 - name: tg_cam_grp
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
+
+# ---------- Cam Notification Entrance outside ----------
+- name: tg_cam_entrance_outside_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAM_ENTRANCE_OUTSIDE_CHAT_ID
+
+# ---------- Cam Notification Entrance inside ----------
+- name: tg_cam_entrance_inside_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_CAM_ENTRANCE_INSIDE_CHAT_ID
 # ############################################################
 #  END OF FILE
 # ############################################################
