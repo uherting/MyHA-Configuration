@@ -7,39 +7,14 @@
   mode: single
   then:
     # - logger.log: "script tb_02_click_dbl action."
-    - if:
-        condition:
-          # execute this script only if we are offline
-          # lambda: 'return (!id(isDeviceConnected);'
-
-          # execute this script anyway (TM) for debugging purposes
-          lambda: "return (true);"
-        then:
-          - binary_sensor.template.publish:
-              id: ${binary_template_sensor_spy_mode_id}
-              state: true
-          - delay: !secret DELAY_300MS
-          - binary_sensor.template.publish:
-              id: ${binary_template_sensor_spy_mode_id}
-              state: false
-          # - binary_sensor.template.publish:
-          #     id: ${binary_template_sensor_spy_mode_id}
-          #     state: !lambda |-
-          #       if (id(${binary_template_sensor_spy_mode_id}).state) {
-          #         return false;
-          #       } else {
-          #         return true;
-          #       }
-          # - delay: !secret DELAY_300MS
-          # - binary_sensor.template.publish:
-          #     id: ${binary_template_sensor_spy_mode_id}
-          #     state: !lambda |-
-          #       if (id(${binary_template_sensor_spy_mode_id}).state) {
-          #         return false;
-          #       } else {
-          #         return true;
-          #       }
-      # - logger.log: "script tb_02_click_dbl action."
+    - binary_sensor.template.publish:
+        id: ${binary_template_sensor_spy_mode_id}
+        state: true
+    - delay: !secret DELAY_01SEC
+    - binary_sensor.template.publish:
+        id: ${binary_template_sensor_spy_mode_id}
+        state: false
+# - logger.log: "script tb_02_click_dbl action."
 ####################################################################
 # EOF
 ####################################################################
