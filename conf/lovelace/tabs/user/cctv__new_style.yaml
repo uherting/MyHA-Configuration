@@ -25,11 +25,11 @@ cards:
     cameras:
       # - entity: camera.l9_cam_ttgo_01_cam
       #   motion_entity: binary_sensor.l9_cam_ttgo_01_pir
-      - entity: camera.l9_cam_ttgo_02_cam
-        motion_entity: binary_sensor.l9_cam_ttgo_02_pir
+      - entity: camera.l9_cam_ttgo_01_cam
+        motion_entity: binary_sensor.l9_cam_ttgo_01_pir
       # - entity: camera.ipcam_ker01_mainstream
       #   # motion_entity: binary_sensor.front_porch_motion
-      # - entity: camera.ipcam_ker01_substream
+      - entity: camera.ipcam_ker01_substream
       #   # motion_entity: binary_sensor.front_porch_motion
 
   # # ONVIF CAM "TheWorld" hires
