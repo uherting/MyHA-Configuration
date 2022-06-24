@@ -1,0 +1,21 @@
+# ############################################################
+#
+#  Count Home Assistant errors and warnings
+#
+#   from: https://community.home-assistant.io/t/counter-warning-error-issue/85490/11
+#
+# ############################################################
+
+# counter:
+
+homeassistant_errors:
+  name: HA Errors
+  icon: mdi:alert-octagram
+  restore: false
+homeassistant_warnings:
+  name: HA Warnings
+  icon: mdi:alert
+  restore: false
+# ############################################################
+#  END OF FILE
+# ############################################################

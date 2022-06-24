@@ -1,0 +1,52 @@
+# ############################################################
+#
+#  Count Home Assistant errors and warnings
+#
+#   from: https://community.home-assistant.io/t/counter-warning-error-issue/85490/11
+#
+# ############################################################
+
+# ############################################################
+# Count Home Assistant errors
+# ############################################################
+- alias: Count Home Assistant errors
+  id: "e15c4d86-ab37-4ac3-9e7a-556b73b66a11"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: ERROR
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- NOTIFY ---------------------
+    - service: counter.increment
+      entity_id: counter.homeassistant_errors
+
+# ############################################################
+# Count Home Assistant warnings
+# ############################################################
+- alias: Count Home Assistant warnings
+  id: "18261659-3d0e-48e5-b262-a05fdfbe8010"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: WARNING
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- NOTIFY ---------------------
+    - service: counter.increment
+      entity_id: counter.homeassistant_warnings
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -21,6 +21,11 @@ mobile_app:
 # activate usb
 # usb:
 
+# wegen error / warning counter
+# for details see https://www.home-assistant.io/integrations/system_log/
+system_log:
+  fire_event: true
+
 homeassistant:
   name: Home431
   latitude: !secret HA_LOCATION_LATITUDE
@@ -114,6 +119,8 @@ frontend:
 # for the ONVIF integration
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
+
+counter: !include_dir_merge_named conf/counter
 
 input_boolean: !include_dir_merge_named conf/input_boolean
 input_datetime: !include_dir_merge_named conf/input_datetime

@@ -50,8 +50,10 @@ cards:
     entities:
       - entity: sensor.current_version
       - entity: sensor.latest_version
-        # - entity: binary_sensor.updater
         name: HA update available
+      - type: divider
+      - entity: counter.homeassistant_warnings
+      - entity: counter.homeassistant_errors
       - type: divider
       - entity: sensor.hacs
         icon: "hacs:hacs"

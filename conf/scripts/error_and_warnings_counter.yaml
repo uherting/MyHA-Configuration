@@ -1,0 +1,30 @@
+# ############################################################
+#
+#  Customised scripts for resetting counters for errors and warnings
+#
+#   from: https://community.home-assistant.io/t/counter-warning-error-issue/85490/11
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# Reset error counter
+# --------------------------------------------------------------
+homeassistant_reset_error_counter:
+  alias: "Reset error counter"
+  sequence:
+    service: counter.reset
+    data:
+      entity_id: counter.homeassistant_errors
+
+# --------------------------------------------------------------
+# Reset warnings counter
+# --------------------------------------------------------------
+homeassistant_reset_warning_counter:
+  alias: "Reset warnings counter"
+  sequence:
+    service: counter.reset
+    data:
+      entity_id: counter.homeassistant_warnings
+# ############################################################
+#  END OF FILE
+# ############################################################

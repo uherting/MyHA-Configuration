@@ -40,6 +40,7 @@ logs:
   hassio.store.git: WARN
   hole: WARN
   homeassistant.bootstrap: WARN
+  homeassistant.components: CRITICAL
   homeassistant.components.automation: WARN
   homeassistant.components.binary_sensor: ERROR
   homeassistant.components.climate.nest: WARN
@@ -50,7 +51,7 @@ logs:
   homeassistant.components.feedreader: WARN
   homeassistant.components.frontend: WARN
   homeassistant.components.http: WARN
-  homeassistant.components: CRITICAL
+  homeassistant.components.logger: debug
   homeassistant.components.media_player: INFO
   homeassistant.components.notify: WARN
   # homeassistant.components.pyscript: WARN
@@ -65,8 +66,8 @@ logs:
   homeassistant.components.telegram_bot: WARN
   homeassistant.components.weather: WARN
   homeassistant.components.zeroconf: WARN
-#  homeassistant.components.zwave: WARN
-#  homeassistant.config_entries.ipp: ERROR
+  #  homeassistant.components.zwave: WARN
+  #  homeassistant.config_entries.ipp: ERROR
   homeassistant.config_entries: CRITICAL
   homeassistant.core: WARN
   homeassistant.exceptions: INFO
@@ -89,7 +90,6 @@ logs:
   sensor.ecosys_p5026cdw_magenta_tk_5240ms: CRITICAL
   sensor.ecosys_p5026cdw_waste_toner_box: CRITICAL
   sensor.ecosys_p5026cdw_yellow_tk_5240ys: CRITICAL
-
 # ############################################################
 #  END OF FILE
 # ############################################################
