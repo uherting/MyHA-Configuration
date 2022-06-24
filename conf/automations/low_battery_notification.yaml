@@ -1,0 +1,32 @@
+# ############################################################
+#
+#  Create notification for low battery level condition for all battery sensors
+#
+# ############################################################
+
+# ############################################################
+#  Low battery level notification for all battery sensors
+# ############################################################
+- alias: Low battery level notification for all battery sensors
+  id: "b350e9a3-4cfa-4786-a472-7151a7d53891"
+  description: "This automation sends a low battery level notification for all battery sensors"
+  mode: single
+  initial_state: true
+
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
+    input:
+      time: "19:00:00"
+      day: 4
+      threshold: 10
+      # --------------------- ACTIONS ---------------------
+      actions:
+        - service: script.tg_txt
+          data_template:
+            msg_title: "Low battery level notification"
+            msg_text: "The following devices have a low bat condition:\n- {{ sensors |replace(',', ',\n-') }}\n"
+            msg_receiver: "admin"
+############################################################
+#  END OF FILE
+# ############################################################
