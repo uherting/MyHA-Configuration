@@ -10,11 +10,12 @@
     - binary_sensor.template.publish:
         id: ${binary_template_sensor_spy_mode_id}
         state: true
+    - switch.turn_off: ${ssr01_id}
     - delay: !secret DELAY_01SEC
     - binary_sensor.template.publish:
         id: ${binary_template_sensor_spy_mode_id}
         state: false
-# - logger.log: "script tb_02_click_dbl action."
+    # - logger.log: "script tb_02_click_dbl action."
 ####################################################################
 # EOF
 ####################################################################
