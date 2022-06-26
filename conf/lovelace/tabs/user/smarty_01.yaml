@@ -211,8 +211,8 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: sensor.l2_thermo01_tempenv_01
+            name: "Thermo"
             show_state: true
 ####################################################################
 # EOF
