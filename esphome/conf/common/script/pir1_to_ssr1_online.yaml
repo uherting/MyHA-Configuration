@@ -2,17 +2,16 @@
 # SCRIPTS
 
 #script:
-  # on_press action of PIR #01 (offline automation)
-  - id: ssr_script_pir_01
-    mode: restart
-    then:
-      - logger.log: "Turning SSR01 on as part of offline automation."
-      - switch.turn_on: ${ssr01_id}
-      - logger.log: "Delaying as part of offline automation."
-      - delay: !secret DELAY_02MIN
-      - logger.log: "Turning SSR01 off as part of offline automation."
-      - switch.turn_off: ${ssr01_id}
-
+# on_press action of PIR #01 (offline automation)
+- id: ssr_script_pir_01
+  mode: restart
+  then:
+    # - logger.log: "Turning SSR01 on as part of offline automation."
+    - switch.turn_on: ${ssr01_id}
+    # - logger.log: "Delaying as part of offline automation."
+    - delay: !secret DELAY_02MIN
+    # - logger.log: "Turning SSR01 off as part of offline automation."
+    - switch.turn_off: ${ssr01_id}
 ####################################################################
 # EOF
 ####################################################################
