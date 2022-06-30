@@ -18,7 +18,9 @@
       entity_id: sensor.unavailable_esphome_devices_info
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition: []
+  condition:
+    condition: template
+    value_template: "{{ (state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join('')) != '' }}"
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
