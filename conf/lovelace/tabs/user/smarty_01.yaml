@@ -28,7 +28,7 @@ cards:
         cards:
           - type: "custom:button-card"
             name: "Kitchen"
-            entity: switch.l2_kitchen01_ssr_02
+            entity: switch.l2_kitchen01_ssr_09
             color: yellow
           - type: "custom:button-card"
             name: " "

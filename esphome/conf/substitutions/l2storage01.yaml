@@ -95,8 +95,9 @@ reed_contact04_id: ${friendly_id}_REED_04
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01
-ssr02_name: $friendly2_name SSR 02
-ssr02_id: ${friendly2_id}_SSR02
+# kitchen main light
+ssr02_name: $friendly2_name SSR 09
+ssr02_id: ${friendly2_id}_SSR09
 ssr03_name: $friendly_name SSR 03
 ssr03_id: ${friendly_id}_SSR03
 # touch buttons

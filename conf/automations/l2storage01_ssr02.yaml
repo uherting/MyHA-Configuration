@@ -22,7 +22,7 @@
   action:
     # --------------------- SSR OFF ---------------------
     service: switch.turn_off
-    entity_id: switch.l2_storage01_ssr_02
+    entity_id: switch.l2_kitchen01_ssr_09
 # ############################################################
 #  END OF FILE
 # ############################################################

@@ -15,8 +15,8 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
+          # kitchen main light with SSR attached to device l2storage01
           - switch.toggle: ${ssr02_id}
-          # - logger.log: "script tb_02_click_short action."
 ####################################################################
 # EOF
 ####################################################################
