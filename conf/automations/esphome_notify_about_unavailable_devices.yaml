@@ -19,16 +19,9 @@
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
-  # condition:
-  # - and:
-  #     - condition: template
-  #       value_template: "{{ states('sensor.unavailable_esphome_devices_info') != 'unavailable' }}"
-  #     - condition: numeric_state
-  #       entity_id:
-  #         - sensor.unavailable_esphome_devices_info
-  #       above: 0
   # --------------------- ACTIONS ---------------------
   action:
+    # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_txt
       data_template:
         msg_title: "ESPHome (unavailable devices)"

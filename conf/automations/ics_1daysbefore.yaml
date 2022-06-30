@@ -27,9 +27,10 @@
 
   # --------------------- ACTIONS ---------------------
   action:
+    # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_txt
       data_template:
-        msg_title: "*Rubbish collection*"
+        msg_title: "Rubbish collection"
         msg_text: "Rubbish collection is due *tomorrow*"
         msg_receiver: "notify"
 # ############################################################

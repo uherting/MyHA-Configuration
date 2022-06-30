@@ -58,7 +58,7 @@
       default:
         - service: script.tg_txt
           data:
-            msg_title: "l0entrance01: motion detection, but no trigger???"
+            msg_title: "l0entrance01: motion detection, but no trigger??? Huh_!?!?"
             msg_text: ""
             msg_receiver: admin
 # ############################################################
