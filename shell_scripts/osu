@@ -1,0 +1,4 @@
+clear
+/root/bin/osupd
+echo " "
+date
