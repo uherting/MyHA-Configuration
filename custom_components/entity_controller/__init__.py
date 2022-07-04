@@ -18,7 +18,7 @@ along with Entity Controller.  If not, see <https://www.gnu.org/licenses/>.
 """
 Entity controller component for Home Assistant.
 Maintainer:       Daniel Mason
-Version:          v9.2.10
+Version:          v9.4.0
 Project Page:     https://danielbkr.net/projects/entity-controller/
 Documentation:    https://github.com/danobot/entity-controller
 """
@@ -105,7 +105,7 @@ from .entity_services import (
 
 
 
-VERSION = '9.2.10'
+VERSION = '9.4.0'
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -191,6 +191,15 @@ async def async_setup(hass, config):
         trigger="override",
         source=["idle", "active_timer", "blocked"],
         dest="overridden",
+    )
+
+    machine.add_transition(
+        trigger="activate",
+        source=["idle", "blocked"],
+        dest="active",
+    )
+    machine.add_transition(
+        trigger="activate", source="active_timer", dest=None, after="_reset_timer"
     )
 
     # Idle
@@ -356,6 +365,7 @@ async def async_setup(hass, config):
 
 class EntityController(entity.Entity):
     from .entity_services import (
+        async_entity_service_activate as async_activate,
         async_entity_service_clear_block as async_clear_block,
         async_entity_service_enable_stay_mode as async_enable_stay_mode,
         async_entity_service_disable_stay_mode as async_disable_stay_mode,
