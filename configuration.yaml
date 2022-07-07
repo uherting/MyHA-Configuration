@@ -172,6 +172,7 @@ device_tracker: !include_dir_merge_list conf/device_tracker
 group: !include_dir_merge_list conf/groups
 
 telegram_bot: !include conf/telegram_bot.yaml
+notify: !include conf/notify.yaml
 
 tankerkoenig: !include conf/tankerkoenig.yaml
 
@@ -179,8 +180,6 @@ pi_hole: !include conf/pi_holes/pi_holes.yaml
 
 # uncommenting results in error while checking the configuration.
 # rest_command: !include conf/rest_command.yaml
-
-notify: !include conf/notify.yaml
 
 automation: !include_dir_merge_list conf/automations
 
@@ -200,9 +199,9 @@ google: !include google_client.yaml
 # python_script:
 
 switch: !include_dir_merge_list conf/switches
-
 # DOODS
-image_processing: !include conf/image_processing.yaml
+#image_processing: !include conf/doods/image_processing.yaml
+
 ####################################################################
 # EOF
 ####################################################################
