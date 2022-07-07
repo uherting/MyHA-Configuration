@@ -17,7 +17,7 @@
       entity_id: binary_sensor.l2_kitchen01_pir_01
       to: "off"
       for:
-        minutes: 3
+        minutes: 15
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR OFF ---------------------
