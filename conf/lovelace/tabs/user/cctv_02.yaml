@@ -1,14 +1,14 @@
 ####################################################################
 ####################################################################
 #
-# cctv tab --- lovelace configuration
+# a cctv tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
 
 icon: mdi:cctv
-title: Surveillance 2
-path: cctv2
+title: CCTV TheWorld
+path: cctv2-the-world
 badges: []
 
 cards:
