@@ -1,3 +1,7 @@
+clear
 apt update && apt upgrade
 apt autoremove
 
+echo " "
+echo " "
+echo "Update ended at: `date`"
