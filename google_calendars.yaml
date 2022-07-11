@@ -26,3 +26,9 @@
     ignore_availability: true
     name: Movements-Basement
     track: true
+
+- cal_id: uhocssde8ps59ds21gabnm1v0k@group.calendar.google.com
+  entities:
+  - device_id: fahrschule
+    ignore_availability: true
+    name: Fahrschule
