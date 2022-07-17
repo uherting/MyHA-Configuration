@@ -64,24 +64,17 @@ cards:
             name: " "
             entity: sensor.xiaomi_l2_storage_humidity
             show_state: true
-          # - type: "custom:button-card"
-          #   # entity: sensor.l2_storage
-          #   name: " "
-          #   show_state: true
           - type: "custom:button-card"
-            # name: "SpyMod"
-            name: "ESPHome"
-            entity: binary_sensor.l2_storage01_bin_templ_spymode
-            color: yellow
-            show_state: false
-            icon: mdi:incognito-circle
-            tap_action:
-              action: call-service
-              service: script.l2_storage01_bin_templ_spymode_control
-              service_data: {}
-            # service: automation.toggle
-            # service_data:
-            #   entity_id: automation.l2_storage_motion_detected_ssr01_on
+            name: ""
+            # name: "ESPHome"
+            # entity: binary_sensor.l2_storage01_bin_templ_spymode
+            # color: yellow
+            # show_state: false
+            # icon: mdi:incognito-circle
+            # tap_action:
+            #   action: call-service
+            #   service: script.l2_storage01_bin_templ_spymode_control
+            #   service_data: {}
           - type: "custom:button-card"
             name: "SpyMod"
             entity: binary_sensor.l2storage_spymode
