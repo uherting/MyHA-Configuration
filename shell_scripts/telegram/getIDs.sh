@@ -13,4 +13,5 @@ DNAME=`dirname $0`
 SECRETS_FILE="${DNAME}/../../secrets.yaml"
 
 MY_API_TOKEN=`grep TELEGRAM_TOKEN ${SECRETS_FILE} | cut -f2 -d'"'`
-curl -X GET https://api.telegram.org/bot${MY_API_TOKEN}/getUpdates
+echo ${MY_API_TOKEN}
+#curl -X GET https://api.telegram.org/bot${MY_API_TOKEN}/getUpdates
