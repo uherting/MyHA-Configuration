@@ -12,6 +12,9 @@
 # in order to get rid of the following it is necessary to comment out "default_config:"
 default_config:
 
+# just keep it enabled as it might disabled if default_config: is disabled i.e.
+homeassistant_alerts:
+
 # enable mobile apps
 mobile_app:
 
