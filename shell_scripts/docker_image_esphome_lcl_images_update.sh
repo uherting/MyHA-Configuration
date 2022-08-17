@@ -9,7 +9,7 @@ fi
 . ${DNAME}/scriptConfig
 # echo "BUILD_DIR_FOR_DOCKER=${BUILD_DIR_FOR_DOCKER}"
 
-echo "Is  the esphome dashboard cotainer running? See the following output:"
+echo "Is  the esphome dashboard container running? See the following output:"
 sudo docker ps
 echo "any running container has to be stopped."
 echo "press STRC-c if any container shows up."
