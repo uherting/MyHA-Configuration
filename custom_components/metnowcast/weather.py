@@ -9,6 +9,8 @@ from homeassistant.const import (
     CONF_LONGITUDE,
     CONF_NAME,
     TEMP_CELSIUS,
+    SPEED_METERS_PER_SECOND,
+    LENGTH_MILLIMETERS
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -26,6 +28,8 @@ from .const import (
     DOMAIN,
     NAME,
     CONDITIONS_MAP,
+    ATTR_RADAR_COVERAGE,
+    ATTR_HAS_PRECIPITATION
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,6 +59,10 @@ def format_condition(condition: str) -> str:
 class NowcastWeather(WeatherEntity):
     """Representation of a Nowcast sensor."""
 
+    _attr_native_temperature_unit = TEMP_CELSIUS
+    _attr_native_wind_speed_unit = SPEED_METERS_PER_SECOND
+    _attr_native_precipitation_unit= LENGTH_MILLIMETERS
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -72,6 +80,9 @@ class NowcastWeather(WeatherEntity):
         self._raw_data = None
         self._forecast: list[Forecast] = None
         self._first_timeserie = None
+        self._radar_coverage = ""
+        self._has_precipitation = False
+
 
     @property
     def force_update(self) -> str:
@@ -97,17 +108,12 @@ class NowcastWeather(WeatherEntity):
         return format_condition(condition)
 
     @property
-    def temperature(self) -> float:
+    def native_temperature(self) -> float:
         """Return the temperature."""
         return self._first_timeserie["data"]["instant"]["details"]["air_temperature"]
 
     @property
-    def temperature_unit(self) -> str:
-        """Return the unit of measurement."""
-        return TEMP_CELSIUS
-
-    @property
-    def pressure(self) -> float:
+    def native_pressure(self) -> float:
         """Return the pressure."""
         return None
 
@@ -117,7 +123,7 @@ class NowcastWeather(WeatherEntity):
         return self._first_timeserie["data"]["instant"]["details"]["relative_humidity"]
 
     @property
-    def wind_speed(self) -> float:
+    def native_wind_speed(self) -> float:
         """Return the wind speed."""
         return self._first_timeserie["data"]["instant"]["details"]["wind_speed"]
 
@@ -151,13 +157,23 @@ class NowcastWeather(WeatherEntity):
         )
         return device_info
 
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        return {
+            ATTR_RADAR_COVERAGE: self._radar_coverage,
+            ATTR_HAS_PRECIPITATION: self._has_precipitation
+        }
+
     async def async_update(self):
         """Retrieve latest state."""
         self._raw_data = await self._hass.async_add_executor_job(
             self._met_api.get_complete, self.lat, self.lon
         )
+        self._radar_coverage = self._raw_data["properties"]["meta"]["radar_coverage"]
         timeseries = self._raw_data["properties"]["timeseries"]
         self._forecast = []
+        self._has_precipitation = False
 
         for timeserie in timeseries:
             details = timeserie["data"]["instant"]["details"]
@@ -171,6 +187,8 @@ class NowcastWeather(WeatherEntity):
                 precipitation_rate = details["precipitation_rate"]
             if self.location_name == "debug":
                 precipitation_rate = random.randrange(30)
+            if precipitation_rate > 0:
+                self._has_precipitation = True
 
             relative_humidity = None
             if "relative_humidity" in details:
