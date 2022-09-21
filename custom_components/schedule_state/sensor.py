@@ -4,10 +4,18 @@ A sensor that returns a string based on a defined schedule.
 import asyncio
 from datetime import datetime, time, timedelta
 import hashlib
+import locale
 import logging
 from pprint import pformat
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
+from homeassistant.const import (
+    ATTR_ENTITY_ID,
+    CONF_CONDITION,
+    CONF_ICON,
+    CONF_NAME,
+    CONF_STATE,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import (
     ConditionError,
@@ -25,7 +33,23 @@ from homeassistant.util import dt
 import portion as P
 import voluptuous as vol
 
-from .const import *
+from .const import (
+    CONF_COMMENT,
+    CONF_DEFAULT_STATE,
+    CONF_DURATION,
+    CONF_END,
+    CONF_END_TEMPLATE,
+    CONF_ERROR_ICON,
+    CONF_EVENTS,
+    CONF_MINUTES_TO_REFRESH_ON_ERROR,
+    CONF_REFRESH,
+    CONF_START,
+    CONF_START_TEMPLATE,
+    DEFAULT_NAME,
+    DEFAULT_STATE,
+    DOMAIN,
+    PLATFORMS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,7 +122,7 @@ CLEAR_OVERRIDES_SERVICE_SCHEMA = vol.Schema(
 
 class Override(dict):
     def __init__(self, state, start, end, expires):
-        _LOGGER.info(f"New Override: {state} {start} {end} {expires}")
+        _LOGGER.info(f"New Override: {state} s={start} e={end} expires={expires}")
         self["state"] = state
         self["start"] = start
         self["end"] = end
@@ -254,6 +278,12 @@ class ScheduleSensor(SensorEntity):
         self._attributes["states"] = self.data.known_states
         self._attributes["start"] = self.data.attributes.get("start", None)
         self._attributes["end"] = self.data.attributes.get("end", None)
+        self._attributes["friendly_start"] = friendly_time(
+            self.data.attributes.get("start", None)
+        )
+        self._attributes["friendly_end"] = friendly_time(
+            self.data.attributes.get("end", None)
+        )
         self._attributes["errors"] = self.data.error_states
         if len(self.data.error_states):
             self._attr_icon = self._error_icon
@@ -325,7 +355,7 @@ class ScheduleSensorData:
 
             # Calculate new refresh time to be used if there was a problem evaluating the template or condition.
             # This can happen if the things that the template is dependent on have not been started up by HA yet...
-            # or it could be a problem with the template/conditon definition, it doesn't seem possible to know which.
+            # or it could be a problem with the template/condition definition, it doesn't seem possible to know which.
             new_refresh_time = dt.as_local(dt_now()) + timedelta(
                 minutes=self.minutes_to_refresh_on_error
             )
@@ -480,7 +510,7 @@ class ScheduleSensorData:
             _LOGGER.debug(f"{self.name}: ...... found timestamp: {date}")
             tme = dt.as_local(date).time()
             return tme
-        except:
+        except:  # noqa: E722
             pass
 
         return None
@@ -504,66 +534,89 @@ class ScheduleSensorData:
             await self.process_events()
             self.force_refresh = None
 
+        state, i = self.find_interval(nu)
+        if state is not None:
+            _LOGGER.debug(f"{self.name}: current state is {state} ({nu})")
+            self.attributes["start"] = i.lower
+            self.attributes["end"] = i.upper
+            self.value = state
+            self.attributes["icon"] = self.icon_map.get(state, None)
+            if i.upper == time.max:
+                # If the interval ends at midnight, peek ahead to the next day.
+                # This won't necessarily be right, because the schedule could be recalculated
+                # the next day, but it is arguably more useful.
+                next_state, next_i = self.find_interval(time.min)
+                if next_state == state and next_i is not None:
+                    self.attributes["end"] = next_i.upper
+        else:
+            _LOGGER.debug(f"{self.name}: using default state ({nu})")
+            self.value = None
+
+    def find_interval(self, nu):
         for state in self.states:
             if nu in self.states[state]:
-                _LOGGER.debug(f"{self.name}: current state is {state} ({nu})")
                 for i in self.states[state]._intervals:
                     if nu >= i.lower and nu < i.upper:
-                        self.attributes["start"] = i.lower.isoformat()
-                        self.attributes["end"] = i.upper.isoformat()
-                self.value = state
-                self.attributes["icon"] = self.icon_map.get(state, None)
-                return
+                        return state, i
 
-        _LOGGER.debug(f"{self.name}: using default state ({nu})")
-        self.value = None
+        return None, None
 
     def set_override(self, state, start, end, duration, icon):
         now = dt.as_local(dt_now())
         allow_split = True
 
         if start is None and end is None and duration is None:
-            _LOGGER.error(
-                "override failed: you have to provide one of start/end/duration"
-            )
+            # 000
+            _LOGGER.error("override failed: must provide one of start/end/duration")
             return False
         elif start is not None and end is not None and duration is not None:
-            _LOGGER.error(
-                "override failed: you cannot provide start+end+duration together"
-            )
+            # 111
+            _LOGGER.error("override failed: cannot provide start+end+duration together")
             return False
-        elif start is None and end is None:
+        elif start is None and end is None and duration is not None:
+            # 001 --> now to now+d
             start = simple_time(now)
             end = start + timedelta(minutes=duration)
         elif start is not None and end is None and duration is not None:
+            # 101 --> start to start+d
             start = next_time(now, start)
             end = start + timedelta(minutes=duration)
         elif start is None and end is not None and duration is not None:
+            # 011 --> end-d to end
             end = next_time(now, end)
             start = end - timedelta(minutes=duration)
         elif start is None and end is not None and duration is None:
+            # 010 --> now to end
             start = next_time(now, now)
             end = next_time(now, end)
         elif start is not None and end is not None and duration is None:
+            # 110 --> start to end
             # don't try to fix wraparounds in this case, where both start and end times were provided
             start = next_time(now, start)
             end = next_time(now, end)
             allow_split = False
         else:
+            # 100 --> start to ???
             _LOGGER.error("override failed: no duration provided")
             return False
 
-        if start > end:
-            if allow_split:
-                # split into two overrides if there is a wraparound (eg: 23:55 to 00:10)
-                ev = Override(state, start.time(), time.max, start_of_next_day(now))
-                self.overrides.append(ev)
-                start = time.min
-            else:
-                _LOGGER.error(f"override failed: start ({start}) > end ({end})")
-                return False
+        start = start.time()
+        expires = end + timedelta(seconds=30)
+        end = end.time()
 
-        ev = Override(state, start.time(), end.time(), end + timedelta(seconds=30))
+        if not (start > end):
+            pass
+        elif start > end and allow_split:
+            # split into two overrides if there is a wraparound (eg: 23:55 to 00:10)
+            ev = Override(state, start, time.max, start_of_next_day(now))
+            _LOGGER.info(f"adding override: {ev} (split)")
+            self.overrides.append(ev)
+            start = time.min
+        else:
+            _LOGGER.error(f"override failed: start ({start}) > end ({end})")
+            return False
+
+        ev = Override(state, start, end, expires)
         self.overrides.append(ev)
         if icon is not None:
             self.icon_map[state] = icon
@@ -617,6 +670,18 @@ def localtime_from_time(tme: time) -> time:
         date.tzinfo,
     )
     return dt.as_local(date).time()
+
+
+def friendly_time(t):
+    """Simple time formatting so that you don't have to do it in Lovelace everywhere.
+    For more advanced uses, you can use the start/end attributes instead of the friendly versions.
+    """
+    # TODO translations...
+    if t is None:
+        return "-"
+    elif t == time.max:
+        return "midnight"
+    return t.strftime(locale.nl_langinfo(locale.T_FMT))
 
 
 async def _async_process_if(hass, name, if_configs):
