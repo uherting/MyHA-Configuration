@@ -11,7 +11,7 @@
   id: "64816bf3-0aad-455f-9cb7-a77c53e7cf50"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # no motion is detected for x minutes or door is closed
+  # no motion is detected for x minutes
   trigger:
     - platform: state
       entity_id: binary_sensor.l2_storage01_pir_01
