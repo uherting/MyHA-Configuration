@@ -15,7 +15,7 @@
             - delay: !secret DELAY_02MIN
             - switch.turn_off: ${ssr01_id}
             # - logger.log: "Turning SSR01 off as part of offline automation."
-
+ 
 ####################################################################
 # EOF
 ####################################################################

@@ -14,7 +14,7 @@
 #   - Based on a PIR/RCWL sensor ...
 #       - a LED strip (indirect light, outside wall) shall be
 #         switched on using a SSR
-#   - Two temperature sensors to control the temperature in the
+#   - Two temperature sensors to measure the temperature in the
 #     case and of the environment
 #
 # Future feature:
