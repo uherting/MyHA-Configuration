@@ -11,25 +11,22 @@
 ####################################################################
 #
 # Purpose:
-#   - Based on a PIR/RCWL sensor ...
-#       - a LED strip (indirect light, outside wall) shall be
-#         switched on using a SSR
-#   - Two temperature sensors to control the temperature in the
-#     case and of the environment
+#   - Based on one / more PIR/RCWL sensor ...
+#       - lamp(s) will be switched on using a SSR
+#   - One temperature sensor to measure the temperature in the case and 
+#     x temperature sensors to measure the environment temperatures
 #
 # Future feature:
-#   - The IKEA remote shall be triggered via opto couplers to switch on
-#     the light above the kitchen sink
+#   ./.
 #
 # Hardware:
 #   - 1 ESP8266
 #   - 1 MCP23017 modul
-#   - 2 Dallas 18B20 sensor
+#   - x Dallas 18B20 sensors with / without steel housing
 #   - 1 SSR module with 1 SSR
-#   - 1 PIR/RCWL
-#   - 1 TP223 touch button
-#   - steel housing for external Dallas 18B20 sensors
-#   - heat shrink tube, misc diameter
+#   - 1 PIR (?) for motion detection
+#   - 1 RCWL for motion detection
+#   - 1 TP223 touch button (???)
 #   - case for the hardware
 #   - PCB
 #   - wire
@@ -37,15 +34,14 @@
 #
 # Automation:
 #   - partially, see binary sensors definition file
-#   - for future feature: setup with opto coupler to be developed
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - 2 temperatur sensors (for the case / environment)
-#   - 1 PIR/RCWL sensor via I2C / MCP23017
-#   - 1 TP223 touch button for ???
+#   - x temperature sensors (for the case / environment)
+#   - 1 PIR/RCWL sensors via I2C / MCP23017
+#   - 1 TP223 touch button for ... (???)
 #
 # Output
 #   - 1 SSR via I2C / MCP23017
@@ -95,19 +91,20 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir1_to_ssr1.yaml
-  - <<: !include conf/common/script/pir2_to_ssr2.yaml
-  - <<: !include conf/common/script/reed1_to_ssr1.yaml
-  - <<: !include conf/common/script/reed2_to_ssr2.yaml
+  - <<: !include conf/common/script/pir1_to_ssr1_offline.yaml
+  - <<: !include conf/common/script/pir2_to_ssr1_02.yaml
+  # - <<: !include conf/common/script/pir2_to_ssr2.yaml
+  # - <<: !include conf/common/script/reed1_to_ssr1.yaml
+  # - <<: !include conf/common/script/reed2_to_ssr2.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir01.yaml
-  - <<: !include conf/common/binary_sensor/pir02.yaml
-  - <<: !include conf/common/binary_sensor/reed01_A2.yaml
-  - <<: !include conf/common/binary_sensor/reed02_A3.yaml
+  - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  - <<: !include conf/common/binary_sensor/pir_A1.yaml
+  # - <<: !include conf/common/binary_sensor/reed01_A2.yaml
+  # - <<: !include conf/common/binary_sensor/reed02_A3.yaml
   # - <<: !include conf/common/binary_sensor/touch_button01.yaml
   # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
@@ -131,8 +128,9 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 switch:
-  - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+  - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
+  # - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
+  # - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
