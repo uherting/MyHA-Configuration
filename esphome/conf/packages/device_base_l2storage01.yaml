@@ -1,5 +1,5 @@
 ####################################################################
-# PACKAGES --- GENERAL CONFIGURATION FOR ALL DEVICES
+# PACKAGES --- GENERAL CONFIGURATION FOR DEVICE l2storage01
 
 ####################################################################
 # DEVICE DEFINITION
@@ -16,6 +16,8 @@ esphome:
       - binary_sensor.template.publish:
           id: ${binary_template_sensor_spy_mode_id}
           state: false
+      - switch.turn_off: ${ssr01_id}
+      - switch.turn_off: ${ssr02_id}
 
 ####################################################################
 # LOGGING (central setup)
