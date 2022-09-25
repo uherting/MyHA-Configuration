@@ -12,7 +12,7 @@
   name: ${binary_template_sensor_heating_gas_burns_name}
   id: ${binary_template_sensor_heating_gas_burns_id}
   lambda: |-
-    if (id(sensor.).state > 30) {
+    if (id(${dallas_01e13_name}).state > 20) {
       // gas is being burned
       return true;
     } else {
