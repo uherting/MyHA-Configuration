@@ -1,0 +1,25 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# Template Binary Sensor
+# see https://esphome.io/components/binary_sensor/template.html
+
+# sensor heating: gas_burns
+- platform: template
+  name: ${binary_template_sensor_heating_gas_burns_name}
+  id: ${binary_template_sensor_heating_gas_burns_id}
+  lambda: |-
+    if (id(sensor.).state > 30) {
+      // gas is being burned
+      return true;
+    } else {
+      // gas is not being burned
+      return false;
+    }
+
+# ############################################################
+#  END OF FILE
+# ############################################################

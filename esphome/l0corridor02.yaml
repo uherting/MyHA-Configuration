@@ -58,7 +58,7 @@ packages:
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
-  device_base: !include conf/common/packages/device_base.yaml
+  device_base: !include conf/packages/device_base_l0corridor02.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
@@ -116,7 +116,14 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   # - <<: !include conf/sensor/l0corridor02_case.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
+  # - <<: !include conf/sensor/l0corridor02_env_01.yaml
+  # - <<: !include conf/sensor/l0corridor02_env_02.yaml
+  # - <<: !include conf/sensor/l0corridor02_env_03.yaml
+  # heating room Dallas 18B20
+  # - <<: !include conf/sensor/l0corridor02_env_10.yaml
+  # - <<: !include conf/sensor/l0corridor02_env_11.yaml
+  # - <<: !include conf/sensor/l0corridor02_env_12.yaml
+  # - <<: !include conf/sensor/l0corridor02_env_13.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
