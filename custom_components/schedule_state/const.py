@@ -6,6 +6,8 @@ PLATFORMS = ["sensor"]
 
 DEFAULT_NAME = "Schedule State Sensor"
 DEFAULT_STATE = "default"
+DEFAULT_ICON = "mdi:calendar-check"
+DEFAULT_ERROR_ICON = "mdi:calendar-alert"
 
 CONF_EVENTS = "events"
 CONF_START = "start"
@@ -18,3 +20,4 @@ CONF_COMMENT = "comment"
 CONF_DURATION = "duration"
 CONF_ERROR_ICON = "error_icon"
 CONF_MINUTES_TO_REFRESH_ON_ERROR = "minutes_to_refresh_on_error"
+CONF_EXTRA_ATTRIBUTES = "extra_attributes"
