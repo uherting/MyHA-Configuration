@@ -38,6 +38,20 @@ cards:
       - sensor.l0_corridor02_esphome_version
       - switch.l0_corridor02_restart_device
 
+  - type: entities
+    title: L2 HeatingRoomArea 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0heatingroomarea01_conn_ip_addr
+      - sensor.l0heatingroomarea01_wifi_signal
+      - sensor.l0heatingroomarea01_conn_ssid
+      - sensor.l0heatingroomarea01_conn_bssid
+      - sensor.l0heatingroomarea01_uptime
+      - sensor.l0heatingroomarea01_uptime_human_readable
+      - binary_sensor.l0heatingroomarea01_status
+      - sensor.l0heatingroomarea01_esphome_version
+      - switch.l0heatingroomarea01_restart_device
+
   # - type: entities
   #   title: L0 GarageBig 01
   #     ...
