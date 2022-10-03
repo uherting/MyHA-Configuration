@@ -6,10 +6,24 @@
 ####################################################################
 ####################################################################
 
-title: ESP8266 l0
-path: esp8266_l0
+title: ESP8266 l0 Tech
+path: esp8266_l0_tech
 badges: []
 cards:
+  - type: entities
+    title: L0 Entrance 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0_entrance01_conn_ip_addr
+      - sensor.l0_entrance01_wifi_signal
+      - sensor.l0_entrance01_conn_ssid
+      - sensor.l0_entrance01_conn_bssid
+      - sensor.l0_entrance01_uptime
+      - sensor.l0_entrance01_uptime_human_readable
+      - binary_sensor.l0_entrance01_status
+      - sensor.l0_entrance01_esphome_version
+      - switch.l0_entrance01_restart_device
+
   - type: entities
     title: L0 Corridor 01
     show_header_toggle: false
