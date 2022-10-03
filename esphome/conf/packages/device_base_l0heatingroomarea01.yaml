@@ -1,0 +1,40 @@
+####################################################################
+# PACKAGES --- GENERAL CONFIGURATION FOR DEVICE l2storage01
+
+####################################################################
+# DEVICE DEFINITION
+esphome:
+  name: $device_name
+  comment: $device_comment
+  platform: $device_platform
+  board: $device_board
+  build_path: ./build/${device_name}
+  # special to device l0corridor02:
+  # on_boot:
+  #   priority: -100
+  #   then:
+  #     - binary_sensor.template.publish:
+  #         id: ${binary_template_sensor_heating_gas_burns_id}
+  #         state: false
+  #     - switch.turn_off: ${ssr01_id}
+  #     - switch.turn_off: ${ssr02_id}
+
+####################################################################
+# LOGGING (central setup)
+#
+# according to:
+#  - https://esphome.io/components/logger.html?highlight=logger#log-levels
+#  - see secrets.yaml for definitions
+logger:
+  level: ${log_level}
+
+####################################################################
+# Switches (central setup)
+#
+switch:
+  - platform: restart
+    name: ${restart_device_switch_name}
+    id: ${restart_device_switch_id}
+####################################################################
+# EOF
+####################################################################
