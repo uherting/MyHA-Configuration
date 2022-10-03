@@ -103,6 +103,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir_A0.yaml
   - <<: !include conf/common/binary_sensor/pir_A1.yaml
+  # - <<: !include conf/binary_sensor/l0corridor02.yaml
   # - <<: !include conf/common/binary_sensor/reed01_A2.yaml
   # - <<: !include conf/common/binary_sensor/reed02_A3.yaml
   # - <<: !include conf/common/binary_sensor/touch_button01.yaml
