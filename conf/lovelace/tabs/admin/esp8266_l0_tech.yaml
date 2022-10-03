@@ -11,46 +11,46 @@ path: esp8266_l0
 badges: []
 cards:
   - type: entities
-    title: L2 Corridor 01
+    title: L0 Corridor 01
     show_header_toggle: false
     entities:
-      - sensor.l0_corridor01_conn_ip_addr
-      - sensor.l0_corridor01_wifi_signal
-      - sensor.l0_corridor01_conn_ssid
-      - sensor.l0_corridor01_conn_bssid
-      - sensor.l0_corridor01_uptime
-      - sensor.l0_corridor01_uptime_human_readable
-      - binary_sensor.l0_corridor01_status
-      - sensor.l0_corridor01_esphome_version
-      - switch.l0_corridor01_restart_device
+      - sensor.l0_corridor_01_conn_ip_addr
+      - sensor.l0_corridor_01_wifi_signal
+      - sensor.l0_corridor_01_conn_ssid
+      - sensor.l0_corridor_01_conn_bssid
+      - sensor.l0_corridor_01_uptime
+      - sensor.l0_corridor_01_uptime_human_readable
+      - binary_sensor.l0_corridor_01_status
+      - sensor.l0_corridor_01_esphome_version
+      - switch.l0_corridor_01_restart_device
 
   - type: entities
-    title: L2 Corridor 02
+    title: L0 Corridor 02
     show_header_toggle: false
     entities:
-      - sensor.l0_corridor02_conn_ip_addr
-      - sensor.l0_corridor02_wifi_signal
-      - sensor.l0_corridor02_conn_ssid
-      - sensor.l0_corridor02_conn_bssid
-      - sensor.l0_corridor02_uptime
-      - sensor.l0_corridor02_uptime_human_readable
-      - binary_sensor.l0_corridor02_status
-      - sensor.l0_corridor02_esphome_version
-      - switch.l0_corridor02_restart_device
+      - sensor.l0_corridor_02_conn_ip_addr
+      - sensor.l0_corridor_02_wifi_signal
+      - sensor.l0_corridor_02_conn_ssid
+      - sensor.l0_corridor_02_conn_bssid
+      - sensor.l0_corridor_02_uptime
+      - sensor.l0_corridor_02_uptime_human_readable
+      - binary_sensor.l0_corridor_02_status
+      - sensor.l0_corridor_02_esphome_version
+      - switch.l0_corridor_02_restart_device
 
   - type: entities
-    title: L2 HeatingRoomArea 01
+    title: L0 HeatingRoomArea 01
     show_header_toggle: false
     entities:
-      - sensor.l0heatingroomarea01_conn_ip_addr
-      - sensor.l0heatingroomarea01_wifi_signal
-      - sensor.l0heatingroomarea01_conn_ssid
-      - sensor.l0heatingroomarea01_conn_bssid
-      - sensor.l0heatingroomarea01_uptime
-      - sensor.l0heatingroomarea01_uptime_human_readable
-      - binary_sensor.l0heatingroomarea01_status
-      - sensor.l0heatingroomarea01_esphome_version
-      - switch.l0heatingroomarea01_restart_device
+      - sensor.l0_heatingroomarea_01_conn_ip_addr
+      - sensor.l0_heatingroomarea_01_wifi_signal
+      - sensor.l0_heatingroomarea_01_conn_ssid
+      - sensor.l0_heatingroomarea_01_conn_bssid
+      - sensor.l0_heatingroomarea_01_uptime
+      - sensor.l0_heatingroomarea_01_uptime_human_readable
+      - binary_sensor.l0_heatingroomarea_01_status
+      - sensor.l0_heatingroomarea_01_esphome_version
+      - switch.l0_heatingroomarea_01_restart_device
 
   # - type: entities
   #   title: L0 GarageBig 01
