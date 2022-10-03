@@ -1,0 +1,49 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l0 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l0
+path: esp8266_l0
+badges: []
+cards:
+  - type: entities
+    title: L2 Corridor 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0_corridor01_conn_ip_addr
+      - sensor.l0_corridor01_wifi_signal
+      - sensor.l0_corridor01_conn_ssid
+      - sensor.l0_corridor01_conn_bssid
+      - sensor.l0_corridor01_uptime
+      - sensor.l0_corridor01_uptime_human_readable
+      - binary_sensor.l0_corridor01_status
+      - sensor.l0_corridor01_esphome_version
+      - switch.l0_corridor01_restart_device
+
+  - type: entities
+    title: L2 Corridor 02
+    show_header_toggle: false
+    entities:
+      - sensor.l0_corridor02_conn_ip_addr
+      - sensor.l0_corridor02_wifi_signal
+      - sensor.l0_corridor02_conn_ssid
+      - sensor.l0_corridor02_conn_bssid
+      - sensor.l0_corridor02_uptime
+      - sensor.l0_corridor02_uptime_human_readable
+      - binary_sensor.l0_corridor02_status
+      - sensor.l0_corridor02_esphome_version
+      - switch.l0_corridor02_restart_device
+
+  # - type: entities
+  #   title: L0 GarageBig 01
+  #     ...
+  # - type: entities
+  #   title: L0 GarageSmall 01
+  #     ...
+####################################################################
+# EOF
+####################################################################

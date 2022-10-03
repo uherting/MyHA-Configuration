@@ -59,6 +59,9 @@ dallas_01e13_address: !secret DALLAS_01_L0CORRIDOR02_HEATING_EXHAUST_PIPE_ADDRES
 # ------------------------------------------------------------------
 # standard substitutions follow
 
+# restart switch
+restart_device_switch_name: $friendly_name Restart Device
+restart_device_switch_id: ${friendly_id}_Restart_Device
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor
 bh1750_01_name: $friendly_name BH1750 Illuminance 01

@@ -18,7 +18,13 @@ esphome:
 #  - see secrets.yaml for definitions
 logger:
   level: ${log_level}
-
+####################################################################
+# Switches (central setup)
+#
+switch:
+  - platform: restart
+    name: ${restart_device_switch_name}
+    id: ${restart_device_switch_id}
 ####################################################################
 # EOF
 ####################################################################

@@ -54,6 +54,9 @@ dallas_01e10_address: !secret DALLAS_01_L2BATHROOM01_ENVSENSOR_02_ADDRESS
 # ------------------------------------------------------------------
 # standard substitutions follow
 
+# restart switch
+restart_device_switch_name: $friendly_name Restart Device
+restart_device_switch_id: ${friendly_id}_Restart_Device
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor
 bh1750_01_name: $friendly_name BH1750 Illuminance 01
