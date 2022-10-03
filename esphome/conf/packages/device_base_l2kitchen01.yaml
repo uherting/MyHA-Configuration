@@ -9,7 +9,7 @@ esphome:
   platform: $device_platform
   board: $device_board
   build_path: ./build/${device_name}
-  # special to device l2storage01:
+  # special to device l2kitchen01:
   on_boot:
     priority: -100
     then:

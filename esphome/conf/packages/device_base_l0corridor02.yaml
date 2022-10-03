@@ -9,13 +9,15 @@ esphome:
   platform: $device_platform
   board: $device_board
   build_path: ./build/${device_name}
-  # special to device l2storage01:
+  # special to device l0corridor02:
   # on_boot:
   #   priority: -100
   #   then:
   #     - binary_sensor.template.publish:
   #         id: ${binary_template_sensor_heating_gas_burns_id}
   #         state: false
+  #     - switch.turn_off: ${ssr01_id}
+  #     - switch.turn_off: ${ssr02_id}
 
 ####################################################################
 # LOGGING (central setup)
