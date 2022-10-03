@@ -9,7 +9,7 @@ device_board: nodemcuv2
 wifi_static_ip: 192.168.178.203
 
 # the friendly name and id
-friendly_name: L0 HeatingRoomArea 01
+friendly_name: L0 HeatingRoomArea01
 friendly_id: L0HeatingRoomArea01
 
 log_level: !secret LOG_LEVEL_INFO
