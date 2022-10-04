@@ -11,31 +11,22 @@
 ####################################################################
 #
 # Purpose:
-#   - Based on two PIR sensors ...
-#       - the lamp closest to the sensor shall be switched on
-#         using SSRs after motion was detected
-#   - Two temperature sensors to control the temperature in the
-#     case and of the environment
+#   - Based on one / more PIR/RCWL sensor ...
+#       - lamp(s) will be switched on using a SSR
+#   - One temperature sensor to measure the temperature in the case and 
+#     x temperature sensors to measure the environment temperatures
+#
+# Future feature:
+#   - 1 TP223 touch button for toggling light
+#      disabling motion detection if switch is 'on', see l2storage01
 #
 # Hardware:
 #   - 1 ESP8266
 #   - 1 MCP23017 modul
-#   - 2 Dallas 18B20 sensor
-#   - 1 SSR module with 2 SSRs
-#   - 2 PIR
-#   - steel housing for external Dallas 18B20 sensors
-#   - heat shrink tube, misc diameter
-#   - case for the hardware
-#   - PCB
-#   - wire
-#
-# Hardware:
-#   - 1 ESP8266
-#   - 1 MCP23017 modul
-#   - 2 Dallas 18B20 sensor
-#   - 1 SSR module with 2 SSR
-#   - 2 PIR/RCWL
-#   - 1 TP223 touch button
+#   - x Dallas 18B20 sensors with / without steel housing
+#   - 1 SSR module with 1 SSR
+#   - 2 PIR/RCWL for motion detection
+#   - 1 TP223 touch button (???)
 #   - steel housing for external Dallas 18B20 sensors
 #   - heat shrink tube, misc diameter
 #   - case for the hardware
@@ -49,10 +40,10 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - 2 temperatur sensors (for the case / environment)
+#   - x temperature sensors (for the case / environment)
 #   - 2 PIR/RCWL sensor via I2C / MCP23017
-#   - 1 TP223 touch button for toggling both lights
-#     disabling motion detection if switch is 'on'
+#   - 1 TP223 touch button for toggling light
+#      disabling motion detection if switch is 'on' 
 #
 # Output
 #   - 1 SSR via I2C / MCP23017
@@ -69,7 +60,7 @@ packages:
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
   # esphome: and logger:
-  device_base: !include conf/common/packages/device_base.yaml
+  device_base: !include conf/packages/device_base_l0corridor02.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
@@ -102,18 +93,15 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir1_to_ssr1.yaml
+  - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
+  - <<: !include conf/common/script/pir2_to_ssr1_02.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir01.yaml
-  # - <<: !include conf/common/binary_sensor/pir02.yaml
-  # - <<: !include conf/common/binary_sensor/reed01.yaml
-  # - <<: !include conf/common/binary_sensor/reed02.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  - <<: !include conf/common/binary_sensor/pir_A1.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -123,7 +111,10 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/sensor/l0corridor01_case.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
+  # - <<: !include conf/sensor/l0corridor01_case.yaml
+  # - <<: !include conf/sensor/l0corridor01_env_01.yaml
+  # - <<: !include conf/sensor/l0corridor01_env_02.yaml
+  # - <<: !include conf/sensor/l0corridor01_env_03.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -136,7 +127,6 @@ sensor:
 # SWITCHES
 switch:
   - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
