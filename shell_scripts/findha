@@ -19,4 +19,4 @@ fi
 
 cd ${HA_PATH}
 
-find . -name \*.yaml | grep -v _unused 2> /dev/null | xargs grep -n $SEARCH_STRING | sort
+find . -name \*.yaml 2> /dev/null | grep -v _unused 2> /dev/null | xargs grep -n $SEARCH_STRING | sort
