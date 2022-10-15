@@ -1,0 +1,32 @@
+####################################################################
+# SUBSTITUTIONS
+
+# device definitions
+device_name: l2kitchen01
+device_comment: Level 2 Test device 01
+device_platform: ESP8266
+device_board: nodemcuv2
+wifi_static_ip: 192.168.178.220
+
+# the friendly name and id
+friendly_name: L2 Test01
+friendly_id: L2Test01
+
+# sensor base names / ids for other rooms
+friendly_name_bathroom: L2 Bathroom01
+friendly_id_bathroom: L2Bathroom01
+
+# the log level of this very device
+log_level: !secret LOG_LEVEL_INFO
+
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L2KITCHEN01_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L2KITCHEN01_ENVSENSOR_01_ADDRESS
+dallas_01e10_name: $friendly_name_bathroom TempEnv 02
+dallas_01e10_address: !secret DALLAS_01_L2BATHROOM01_ENVSENSOR_02_ADDRESS
+
+####################################################################
+# EOF
+####################################################################

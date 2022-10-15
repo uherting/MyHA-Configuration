@@ -1,0 +1,51 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l9test01
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+
+substitutions: 
+  <<: !include conf/substitutions/l9test01.yaml
+  <<: !include conf/substitutions/common01.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+
+packages:
+  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  # captive_portal: conf/common/networking/captive_portal.yaml
+  ota: !include conf/common/networking/ota.yaml
+  # esphome: and logger:
+  device_base: !include conf/packages/device_base_l9test01.yaml
+
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+# logger:
+#  # see secrets.yaml for log level definitions
+  # level: !secret LOG_LEVEL_DEBUG
+#  # uncomment the following line for custom component logging
+#   esp8266_store_log_strings_in_flash: False
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+time: !include conf/common/time.yaml
+# sun: !include conf/common/sun.yaml
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+i2c: !include conf/common/device/i2c_v2.yaml
+dallas: !include conf/common/device/dallas.yaml
+mcp23017: !include conf/common/device/mcp23017.yaml
+
+####################################################################
+# EOF
+####################################################################
