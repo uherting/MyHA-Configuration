@@ -1,5 +1,0 @@
-####################################################################
-# OVERWRITE COMMON SUBSTITUTIONS
-
-dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
-reed_contact01_name: $friendly_name Door LaundryFloor

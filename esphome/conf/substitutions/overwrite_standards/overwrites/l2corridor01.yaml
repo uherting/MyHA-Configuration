@@ -1,9 +1,0 @@
-####################################################################
-# OVERWRITE COMMON SUBSTITUTIONS
-
-dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
-reed_contact01_name: $friendly_name Door Kitchen
-reed_contact02_name: $friendly_name Door Flat
-reed_contact03_name: $friendly_name Door Bathroom
-reed_contact04_name: $friendly_name Door Bedroom
-reed_contact05_name: $friendly_name Door Lounge
