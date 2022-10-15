@@ -52,6 +52,7 @@
 substitutions: 
   <<: !include conf/substitutions/l0laundryfloor01.yaml
   <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l0laundryfloor01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

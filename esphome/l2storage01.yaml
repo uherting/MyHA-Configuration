@@ -48,6 +48,7 @@
 substitutions: 
   <<: !include conf/substitutions/l2storage01.yaml
   <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l2storage01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

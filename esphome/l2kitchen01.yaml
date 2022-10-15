@@ -56,6 +56,7 @@
 substitutions: 
   <<: !include conf/substitutions/l2kitchen01.yaml
   <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l2kitchen01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

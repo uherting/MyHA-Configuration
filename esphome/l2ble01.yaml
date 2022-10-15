@@ -37,6 +37,7 @@
 substitutions: 
   <<: !include conf/substitutions/l2ble01.yaml
   <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l2ble01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

@@ -54,6 +54,7 @@
 substitutions: 
   <<: !include conf/substitutions/l0corridor02.yaml
   <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l0corridor02.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

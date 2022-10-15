@@ -69,6 +69,7 @@
 substitutions: 
   <<: !include conf/substitutions/l2corridor01.yaml
   <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l2corridor01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
