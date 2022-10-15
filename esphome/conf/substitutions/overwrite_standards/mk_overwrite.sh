@@ -1,5 +1,5 @@
 TGT_DIR="overwrites"
-for l*yaml
+for i in l*yaml
 do
   TGT_FILE="${TGT_DIR}/${i}"
   echo "####################################################################" > ${TGT_FILE}
