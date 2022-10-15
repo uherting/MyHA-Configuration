@@ -1,5 +1,5 @@
 ####################################################################
-# SUBSTITUTIONS
+# DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
 device_name: l0corridor01
@@ -12,6 +12,17 @@ wifi_static_ip: 192.168.178.201
 friendly_name: L0 Corridor01
 friendly_id: L0Corridor01
 
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L0CORRIDOR01_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L0CORRIDOR01_ENVSENSOR_01_ADDRESS
+
+
+# ------------------------------------------------------------------
+# standard substitutions follow  
+
+# log_level
 log_level: !secret LOG_LEVEL_INFO
 
 # wifi settings
@@ -30,39 +41,16 @@ wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 mqtt_user: mqtt_${device_name}
 mqtt_pw: mqtt_${device_name}
 
-# details for DALLAS sensors connected to the device
-dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L0CORRIDOR01_CASESENSOR_01_ADDRESS
-dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L0CORRIDOR01_ENVSENSOR_01_ADDRESS
-
-#
-# DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-#
-
-# ------------------------------------------------------------------
-# non standard substitutions
-
-# none so far
-
-# ------------------------------------------------------------------
-# standard substitutions follow
-
 # restart switch
 restart_device_switch_name: $friendly_name Restart Device
 restart_device_switch_id: ${friendly_id}_Restart_Device
+
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor
 bh1750_01_name: $friendly_name BH1750 Illuminance 01
 bh1750_01_address: !secret BH1750_0X23_ADDRESS
 bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
 bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
-
-# offline sensors
-binary_template_sensor_01_name: $friendly_name BIN_TEMPL 01
-binary_template_sensor_01_id: ${friendly_id}_BIN_TEMPL_01
-binary_template_sensor_02_name: $friendly_name BIN_TEMPL 02
-binary_template_sensor_02_id: ${friendly_id}_BIN_TEMPL_02
 # DHT sensors
 dht01_name: $friendly_name DHT 01
 dht01_name_temperature: ${dht01_name} Temp

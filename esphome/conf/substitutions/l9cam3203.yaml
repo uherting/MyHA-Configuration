@@ -14,6 +14,19 @@ wifi_static_ip: 192.168.178.183
 friendly_name: L9 Cam32 03
 friendly_id: L9Cam3203
 
+# LED
+cam_light_name: $friendly_name CamLight
+cam_light_id: ${friendly_id}_CamLight
+
+# PIR
+pir01_name: $friendly_name PIR 01
+pir01_id: ${friendly_id}_PIR_01
+
+
+# ------------------------------------------------------------------
+# standard substitutions follow
+
+# log_level
 log_level: !secret LOG_LEVEL_INFO
 
 # wifi settings
@@ -32,23 +45,14 @@ wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 mqtt_user: mqtt_${device_name}
 mqtt_pw: mqtt_${device_name}
 
-#
-# DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-#
-
-# ------------------------------------------------------------------
-# non standard substitutions
-
-# LED
-cam_light_name: $friendly_name CamLight
-cam_light_id: ${friendly_id}_CamLight
 
 # PIR
 pir01_name: $friendly_name PIR 01
 pir01_id: ${friendly_id}_PIR_01
 
-# ------------------------------------------------------------------
-# standard substitutions follow
+# restart switch
+restart_device_switch_name: $friendly_name Restart Device
+restart_device_switch_id: ${friendly_id}_Restart_Device
 
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor

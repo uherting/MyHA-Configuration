@@ -30,7 +30,9 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l9camttgo02.yaml
+substitutions: 
+  <<: !include conf/substitutions/l9camttgo02.yaml
+  <<: !include conf/substitutions/common01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

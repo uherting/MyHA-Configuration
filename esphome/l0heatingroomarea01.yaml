@@ -49,7 +49,9 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l0heatingroomarea01.yaml
+substitutions: 
+  <<: !include conf/substitutions/l0heatingroomarea01.yaml
+  <<: !include conf/substitutions/common01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
@@ -62,13 +64,13 @@ packages:
   # device_base: !include conf/common/packages/device_base.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
-
 # change the log level temporary for this very device
-#logger:
-#  # see secrets.yaml for log level definitions
-#  level: !secret LOG_LEVEL_DEBUG
-#  # uncomment the following line for custom component logging
-#   esp8266_store_log_strings_in_flash: False
+
+# logger:
+#   # see secrets.yaml for log level definitions
+#   level: !secret LOG_LEVEL_DEBUG
+#   # # uncomment the following line for custom component logging
+#   # esp8266_store_log_strings_in_flash: False
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
