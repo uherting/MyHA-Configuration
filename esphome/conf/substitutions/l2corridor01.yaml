@@ -18,6 +18,14 @@ dallas_01c01_address: !secret DALLAS_01_L2CORRIDOR01_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
 dallas_01e01_address: !secret DALLAS_01_L2CORRIDOR01_ENVSENSOR_01_ADDRESS
 
+# virtual light (used to trigger device l2wled01)
+light_virtual_01_name: $friendly_name lightvirt 01
+light_virtual_01_id: ${friendly_id}_lightvirt_01
+
+# Power Supply Component
+power_supply_name: $friendly_name PSU01
+power_supply_id: ${friendly_id}_PSU_1
+
 
 # ------------------------------------------------------------------
 # standard substitutions follow

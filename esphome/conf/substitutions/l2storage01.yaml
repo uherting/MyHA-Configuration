@@ -20,12 +20,14 @@ dallas_01c01_address: !secret DALLAS_01_L2STORAGE01_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
 dallas_01e01_address: !secret DALLAS_01_L2STORAGE01_ENVSENSOR_01_ADDRESS
 
-# connected sensors / interfaces
-# BH1750 Ambient Light Sensor
-bh1750_01_name: $friendly_name BH1750 Illuminance 01
-bh1750_01_address: !secret BH1750_0X23_ADDRESS
-bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
-bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
+# touch buttons
+touchbutton02_name: $friendly2_name TB 02
+touchbutton02_id: ${friendly2_id}_TB_02
+
+# kitchen main light
+ssr02_name: $friendly2_name SSR 09
+ssr02_id: ${friendly2_id}_SSR09
+
 
 
 # ------------------------------------------------------------------
@@ -54,6 +56,12 @@ mqtt_pw: mqtt_${device_name}
 restart_device_switch_name: $friendly_name Restart Device
 restart_device_switch_id: ${friendly_id}_Restart_Device
 
+# connected sensors / interfaces
+# BH1750 Ambient Light Sensor
+bh1750_01_name: $friendly_name BH1750 Illuminance 01
+bh1750_01_address: !secret BH1750_0X23_ADDRESS
+bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
+bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
 # other template sensors
 binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
 binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
@@ -88,16 +96,11 @@ reed_contact04_id: ${friendly_id}_REED_04
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01
-# kitchen main light
-ssr02_name: $friendly2_name SSR 09
-ssr02_id: ${friendly2_id}_SSR09
 ssr03_name: $friendly_name SSR 03
 ssr03_id: ${friendly_id}_SSR03
 # touch buttons
 touchbutton01_name: $friendly_name TB 01
 touchbutton01_id: ${friendly_id}_TB_01
-touchbutton02_name: $friendly2_name TB 02
-touchbutton02_id: ${friendly2_id}_TB_02
 ####################################################################
 # EOF
 ####################################################################

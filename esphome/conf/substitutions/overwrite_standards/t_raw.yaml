@@ -850,14 +850,6 @@ touchbutton01_id: ${friendly_id}_TB_01
 touchbutton02_name: $friendly_name TB 02
 touchbutton02_id: ${friendly_id}_TB_02
 
-# virtual light (used to trigger device l2wled01)
-light_virtual_01_name: $friendly_name lightvirt 01
-light_virtual_01_id: ${friendly_id}_lightvirt_01
-
-# Power Supply Component
-power_supply_name: $friendly_name PSU01
-power_supply_id: ${friendly_id}_PSU_1
-
 ####################################################################
 # EOF
 ####################################################################
@@ -912,14 +904,6 @@ pir01_id: ${friendly_id}_PIR_01
 pir02_name: $friendly_name PIR 02
 pir02_id: ${friendly_id}_PIR_02
 # local reed relays
-reed_contact01_name: $friendly_name Door
-reed_contact01_id: ${friendly_id}_REED_01
-reed_contact02_name: $friendly_name REED 01
-reed_contact02_id: ${friendly_id}_REED_02
-reed_contact03_name: $friendly_name REED 03
-reed_contact03_id: ${friendly_id}_REED_03
-reed_contact04_name: $friendly_name REED 04
-reed_contact04_id: ${friendly_id}_REED_04
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01

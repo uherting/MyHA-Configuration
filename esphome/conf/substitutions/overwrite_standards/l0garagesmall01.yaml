@@ -47,16 +47,6 @@ pir02_id: ${friendly_id}_PIR_02
 pir03_name: $friendly_name PIR 03
 pir03_id: ${friendly_id}_PIR_03
 # local reed relays
-reed_contact01_name: $friendly_name Door Sml
-reed_contact01_id: ${friendly_id}_REED_01
-reed_contact02_name: $friendly_name Door right
-reed_contact02_id: ${friendly_id}_REED_02
-reed_contact03_name: $friendly_name Door left
-reed_contact03_id: ${friendly_id}_REED_03
-reed_contact04_name: $friendly_name REED 04
-reed_contact04_id: ${friendly_id}_REED_04
-# remote reed relays
-# (none so far)
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01

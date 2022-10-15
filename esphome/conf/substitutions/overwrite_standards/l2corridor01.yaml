@@ -45,16 +45,16 @@ pir01_id: ${friendly_id}_PIR_01
 pir02_name: $friendly_name PIR 02
 pir02_id: ${friendly_id}_PIR_02
 # local reed relays
-reed_contact01_name: $friendly_name Door
+reed_contact01_name: $friendly_name Door Kitchen
 reed_contact01_id: ${friendly_id}_REED_01
-reed_contact02_name: $friendly_name REED 01
+reed_contact02_name: $friendly_name Door Flat
 reed_contact02_id: ${friendly_id}_REED_02
-reed_contact03_name: $friendly_name REED 03
+reed_contact03_name: $friendly_name Door Bathroom
 reed_contact03_id: ${friendly_id}_REED_03
-reed_contact04_name: $friendly_name REED 04
+reed_contact04_name: $friendly_name Door Bedroom
 reed_contact04_id: ${friendly_id}_REED_04
-# remote reed relays
-# (none so far)
+reed_contact05_name: $friendly_name Door Lounge
+reed_contact05_id: ${friendly_id}_REED_05
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01

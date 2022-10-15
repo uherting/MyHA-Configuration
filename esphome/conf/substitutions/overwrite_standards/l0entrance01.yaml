@@ -45,7 +45,7 @@ pir01_id: ${friendly_id}_PIR_01
 pir02_name: $friendly_name PIR 02
 pir02_id: ${friendly_id}_PIR_02
 # local reed relays
-reed_contact01_name: $friendly_name Door
+reed_contact01_name: $friendly_name Door Entrance
 reed_contact01_id: ${friendly_id}_REED_01
 reed_contact02_name: $friendly_name REED 01
 reed_contact02_id: ${friendly_id}_REED_02
