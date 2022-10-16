@@ -50,6 +50,9 @@
 #
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
+# 1) device specific information
+# 2) common definitions
+# 3) overwrite the standards with custom definitions
 
 substitutions: 
   <<: !include conf/substitutions/l0corridor02.yaml
