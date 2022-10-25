@@ -2,11 +2,8 @@
 # DALLAS 18B20 SENSORS
 ####################################################################
 
-  - pin: !secret DALLAS_PIN_01
-    update_interval: !secret DALLAS_UPDATE_INTERVAL_001M
-
-
+- pin: !secret DALLAS_PIN_01
+  update_interval: !secret DALLAS_UPDATE_INTERVAL_001M
 # ############################################################
 #  END OF FILE
 # ############################################################
-
