@@ -73,7 +73,7 @@ time: !include conf/common/time.yaml
 
 i2c: !include conf/common/device/i2c_v2.yaml
 # dallas: !include conf/common/device/_update_5min.yaml
-dallas: !include conf/common/device/dallas_update_1min.yaml
+dallas: !include conf/common/device/dallas_update_5min.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
