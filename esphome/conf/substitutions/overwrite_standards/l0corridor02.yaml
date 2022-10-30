@@ -1,0 +1,4 @@
+####################################################################
+# OVERWRITE COMMON SUBSTITUTIONS
+
+dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN

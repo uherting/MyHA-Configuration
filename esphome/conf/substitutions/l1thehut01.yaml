@@ -1,5 +1,5 @@
 ####################################################################
-# SUBSTITUTIONS
+# DEVICE SPECIFIC SUBSTITUTIONS
 
 device_name: l1thehut01
 device_comment: Level 1 TheHut device 01
@@ -16,6 +16,27 @@ friendly_id: L1TheHut01
 # friendly_name_l0corridor01: L0 Corridor01
 # friendly_id_l0corridor01: L0Corridor01
 
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L1THEHUT01_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L1THEHUT01_ENVSENSOR_01_ADDRESS
+
+servo01_name: ${friendly_id}_SERVO_NAME_01
+servo01_id: ${friendly_id}_SERVO_ID_01
+servo01_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
+servo02_name: ${friendly_id}_SERVO_NAME_01
+servo02_id: ${friendly_id}_SERVO_ID_01
+servo02_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
+
+pca9685_output1_id: ${friendly_id}_PCA9685_ID_01
+pca9685_output2_id: ${friendly_id}_PCA9685_ID_02
+
+
+# ------------------------------------------------------------------
+# standard substitutions follow
+
+# log_level
 log_level: !secret LOG_LEVEL_INFO
 
 # wifi settings
@@ -34,35 +55,10 @@ wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 mqtt_user: mqtt_${device_name}
 mqtt_pw: mqtt_${device_name}
 
-# details for DALLAS sensors connected to the device
-dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L1THEHUT01_CASESENSOR_01_ADDRESS
-dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L1THEHUT01_ENVSENSOR_01_ADDRESS
-
-#
-# DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-#
-
-# ------------------------------------------------------------------
-# non standard substitutions
-
-servo01_name: ${friendly_id}_SERVO_NAME_01
-servo01_id: ${friendly_id}_SERVO_ID_01
-servo01_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
-servo02_name: ${friendly_id}_SERVO_NAME_01
-servo02_id: ${friendly_id}_SERVO_ID_01
-servo02_pwm_output_id: ${friendly_id}_SERVO_PWM_OUTPUT_ID_01
-
-pca9685_output1_id: ${friendly_id}_PCA9685_ID_01
-pca9685_output2_id: ${friendly_id}_PCA9685_ID_02
-
-# ------------------------------------------------------------------
-# standard substitutions follow
-
 # restart switch
 restart_device_switch_name: $friendly_name Restart Device
 restart_device_switch_id: ${friendly_id}_Restart_Device
+
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor
 bh1750_01_name: $friendly_name BH1750 Illuminance 01
@@ -97,9 +93,6 @@ reed_contact03_name: $friendly_name REED 03
 reed_contact03_id: ${friendly_id}_REED_03
 reed_contact04_name: $friendly_name REED 04
 reed_contact04_id: ${friendly_id}_REED_04
-# remote reed relays
-# reed_contact90_name: $friendly_name_l0corridor01 REED 90
-# reed_contact90_id: ${friendly_id_l0corridor01}_REED_90
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01

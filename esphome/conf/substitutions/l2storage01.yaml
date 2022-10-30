@@ -14,6 +14,26 @@ friendly_id: L2Storage01
 friendly2_name: L2 Kitchen01
 friendly2_id: L2Kitchen01
 
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L2STORAGE01_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L2STORAGE01_ENVSENSOR_01_ADDRESS
+
+# touch buttons
+touchbutton02_name: $friendly2_name TB 02
+touchbutton02_id: ${friendly2_id}_TB_02
+
+# kitchen main light
+ssr02_name: $friendly2_name SSR 09
+ssr02_id: ${friendly2_id}_SSR09
+
+
+
+# ------------------------------------------------------------------
+# standard substitutions follow
+
+# log_level
 log_level: !secret LOG_LEVEL_INFO
 
 # wifi settings
@@ -32,38 +52,16 @@ wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 mqtt_user: mqtt_${device_name}
 mqtt_pw: mqtt_${device_name}
 
-# details for DALLAS sensors connected to the device
-dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L2STORAGE01_CASESENSOR_01_ADDRESS
-dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L2STORAGE01_ENVSENSOR_01_ADDRESS
-
-#
-# DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-#
-
-# ------------------------------------------------------------------
-# non standard substitutions
-
-# none so far
-
-# ------------------------------------------------------------------
-# standard substitutions follow
-
 # restart switch
 restart_device_switch_name: $friendly_name Restart Device
 restart_device_switch_id: ${friendly_id}_Restart_Device
+
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor
 bh1750_01_name: $friendly_name BH1750 Illuminance 01
 bh1750_01_address: !secret BH1750_0X23_ADDRESS
 bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
 bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
-# offline sensors
-binary_template_sensor_01_name: $friendly_name BIN_TEMPL 01
-binary_template_sensor_01_id: ${friendly_id}_BIN_TEMPL_01
-binary_template_sensor_02_name: $friendly_name BIN_TEMPL 02
-binary_template_sensor_02_id: ${friendly_id}_BIN_TEMPL_02
 # other template sensors
 binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
 binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
@@ -98,16 +96,11 @@ reed_contact04_id: ${friendly_id}_REED_04
 # SSRs
 ssr01_name: $friendly_name SSR 01
 ssr01_id: ${friendly_id}_SSR01
-# kitchen main light
-ssr02_name: $friendly2_name SSR 09
-ssr02_id: ${friendly2_id}_SSR09
 ssr03_name: $friendly_name SSR 03
 ssr03_id: ${friendly_id}_SSR03
 # touch buttons
 touchbutton01_name: $friendly_name TB 01
 touchbutton01_id: ${friendly_id}_TB_01
-touchbutton02_name: $friendly2_name TB 02
-touchbutton02_id: ${friendly2_id}_TB_02
 ####################################################################
 # EOF
 ####################################################################

@@ -1,5 +1,5 @@
 ####################################################################
-# SUBSTITUTIONS
+# DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
 device_name: l0garagebig01
@@ -17,6 +17,17 @@ devicename_l0corridor01: l0corridor01
 friendly_name_l0corridor01: L0 Corridor01
 friendly_id_l0corridor01: L0Corridor01
 
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L0GARAGEBIG01_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L0GARAGEBIG01_ENVSENSOR_01_ADDRESS
+
+
+# ------------------------------------------------------------------
+# standard substitutions follow
+
+# log_level
 log_level: !secret LOG_LEVEL_INFO
 
 # wifi settings
@@ -35,27 +46,10 @@ wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 mqtt_user: mqtt_${device_name}
 mqtt_pw: mqtt_${device_name}
 
-# details for DALLAS sensors connected to the device
-dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L0GARAGEBIG01_CASESENSOR_01_ADDRESS
-dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L0GARAGEBIG01_ENVSENSOR_01_ADDRESS
-
-#
-# DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-#
-
-# ------------------------------------------------------------------
-# non standard substitutions
-
-# none so far
-
-# ------------------------------------------------------------------
-# standard substitutions follow
-
 # restart switch
 restart_device_switch_name: $friendly_name Restart Device
 restart_device_switch_id: ${friendly_id}_Restart_Device
+
 # connected sensors / interfaces
 # BH1750 Ambient Light Sensor
 bh1750_01_name: $friendly_name BH1750 Illuminance 01

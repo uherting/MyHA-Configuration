@@ -48,8 +48,14 @@
 #
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
+# 1) device specific information
+# 2) common definitions
+# 3) overwrite the standards with custom definitions
 
-substitutions: !include conf/substitutions/l0laundryfloor01.yaml
+substitutions: 
+  <<: !include conf/substitutions/l0laundryfloor01.yaml
+  <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/overwrite_standards/l0laundryfloor01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
@@ -61,13 +67,13 @@ packages:
   device_base: !include conf/common/packages/device_base.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
-
 # change the log level temporary for this very device
+
 # logger:
-#  # see secrets.yaml for log level definitions
-  # level: !secret LOG_LEVEL_DEBUG
-#  # uncomment the following line for custom component logging
-#   esp8266_store_log_strings_in_flash: False
+#   # see secrets.yaml for log level definitions
+#   level: !secret LOG_LEVEL_DEBUG
+#   # # uncomment the following line for custom component logging
+#   # esp8266_store_log_strings_in_flash: False
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 

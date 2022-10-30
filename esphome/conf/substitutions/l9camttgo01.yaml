@@ -1,51 +1,46 @@
 ####################################################################
 # SUBSTITUTIONS
 
-  # substitutions unique to the device
-  device_name: l9camttgo01
-  device_comment: Level 9 TTGO-cam device 01
-  device_platform: ESP32
-  device_board: esp-wrover-kit
-  wifi_static_ip: 192.168.178.188
+# substitutions unique to the device
+device_name: l9camttgo01
+device_comment: Level 9 TTGO-cam device 01
+device_platform: ESP32
+device_board: esp-wrover-kit
+wifi_static_ip: 192.168.178.188
 
-  # the friendly name / id
-  friendly_name: L9 Cam Ttgo 01
-  friendly_id: L9CamTtgo01
+# the friendly name / id
+friendly_name: L9 Cam Ttgo 01
+friendly_id: L9CamTtgo01
 
-  log_level: !secret LOG_LEVEL_INFO
+font_times_new_roman_ttf: "fonts/times-new-roman.ttf"
+display_id: ${friendly_id}_DISP_01
 
-  # WiFi related stuff
-  wifi_status_name: ${friendly_name} Status
-  wifi_status_id: ${friendly_id}Status
-  wifi_uptime_name: ${friendly_name} Uptime
-  wifi_uptime_id: ${friendly_id}Uptime
-  wifi_uptime_human_name: ${friendly_name} Uptime human readable
-  wifi_uptime_human_id: ${friendly_id}UptimeHumanReadable
-  wifi_signal_name: ${friendly_name} WiFi Signal
-  wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
-  wifi_conn_ssid_name: ${friendly_name} Conn SSID
-  wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 
-  # mqtt user / password
-  mqtt_user: mqtt_${device_name}
-  mqtt_pw: mqtt_${device_name}
+# ------------------------------------------------------------------
+# standard substitutions follow
 
-  #
-  # DO _NOT_ EDIT THE FOLLOWING SUBSTITUTIONS!!!
-  #
+# log_level
+log_level: !secret LOG_LEVEL_INFO
 
-  # ------------------------------------------------------------------
-  # non standard substitutions
-  font_times_new_roman_ttf: "fonts/times-new-roman.ttf"
-  display_id: ${friendly_id}_DISP_01
+# WiFi related stuff
+wifi_status_name: ${friendly_name} Status
+wifi_status_id: ${friendly_id}Status
+wifi_uptime_name: ${friendly_name} Uptime
+wifi_uptime_id: ${friendly_id}Uptime
+wifi_uptime_human_name: ${friendly_name} Uptime human readable
+wifi_uptime_human_id: ${friendly_id}UptimeHumanReadable
+wifi_signal_name: ${friendly_name} WiFi Signal
+wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
+wifi_conn_ssid_name: ${friendly_name} Conn SSID
+wifi_conn_bssid_name: ${friendly_name} Conn BSSID
 
-  # ------------------------------------------------------------------
-  # standard substitutions follow
+# mqtt user / password
+mqtt_user: mqtt_${device_name}
+mqtt_pw: mqtt_${device_name}
 
-  # connected sensors / interfaces
-
-  # none so far
-
+# restart switch
+restart_device_switch_name: $friendly_name Restart Device
+restart_device_switch_id: ${friendly_id}_Restart_Device
 ####################################################################
 # EOF
 ####################################################################

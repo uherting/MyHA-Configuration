@@ -31,7 +31,9 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l9cam3205.yaml
+substitutions: 
+  <<: !include conf/substitutions/l9cam3205.yaml
+  <<: !include conf/substitutions/common01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 

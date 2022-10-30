@@ -53,7 +53,9 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: !include conf/substitutions/l0garagesmall01.yaml
+substitutions: 
+  <<: !include conf/substitutions/l0garagesmall01.yaml
+  <<: !include conf/substitutions/common01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 
