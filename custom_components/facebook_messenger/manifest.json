@@ -1,0 +1,14 @@
+{
+  "domain": "facebook_messenger",
+  "name": "Facebook Messenger",
+  "documentation": "https://github.com/emes30/facebook_messenger",
+  "issue_tracker": "https://github.com/emes30/facebook_messenger/issues",
+  "dependencies": [],
+  "after_dependencies": [],
+  "codeowners": ["@emes30"],
+  "requirements": [],
+  "quality_scale": "platinum",
+  "iot_class": "cloud_push",
+  "loggers": [],
+  "version": "1.0.2"
+}
