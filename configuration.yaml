@@ -31,10 +31,12 @@ system_log:
 
 homeassistant:
   name: Home431
+  country: DE
   latitude: !secret HA_LOCATION_LATITUDE
   longitude: !secret HA_LOCATION_LONGITUDE
   elevation: !secret HA_LOCATION_ELEVATION
   unit_system: metric
+  language: en
   time_zone: !secret HA_LOCATION_TIME_ZONE
   currency: EUR
   external_url: !secret HA_EXTERNAL_URL
