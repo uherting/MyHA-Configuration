@@ -176,8 +176,8 @@ device_tracker: !include_dir_merge_list conf/device_tracker
 
 group: !include_dir_merge_list conf/groups
 
-#telegram_bot: !include conf/telegram_bot.yaml
-#notify: !include conf/notify.yaml
+telegram_bot: !include conf/telegram_bot.yaml
+notify: !include conf/notify.yaml
 
 tankerkoenig: !include conf/tankerkoenig.yaml
 
