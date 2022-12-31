@@ -5,6 +5,13 @@ phone_uh:
   picture:
   track: true
 
+phone_uht:
+  name: phone_uht
+  mac: 00:13:0d:3a:dd:b7
+  icon: mdi:account
+  picture:
+  track: true
+
 phone_gh:
   name: phone_gh
   mac: 2C:D0:66:E1:F0:98
