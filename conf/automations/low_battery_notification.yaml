@@ -12,7 +12,13 @@
   description: "This automation sends a low battery level notification for all battery sensors"
   mode: single
   initial_state: true
-
+  # -------------------- CONDITIONS -------------------
+  # is the BLE interface microcontroller online?
+  condition:
+    condition: state
+    entity_id: binary_sensor.l2_ble01_status
+    state:
+      - "on"
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
     path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
