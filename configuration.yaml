@@ -182,9 +182,11 @@ group: !include_dir_merge_list conf/groups
 telegram_bot: !include conf/telegram_bot.yaml
 notify: !include conf/notify.yaml
 
-tankerkoenig: !include conf/tankerkoenig.yaml
+# should be done in the UI from some pre 2023.1 releases onwards
+# tankerkoenig: !include conf/tankerkoenig.yaml
 
-pi_hole: !include conf/pi_holes/pi_holes.yaml
+# should be done in the UI from 2023.1 release onwards
+# pi_hole: !include conf/pi_holes/pi_holes.yaml
 
 # uncommenting results in error while checking the configuration.
 # rest_command: !include conf/rest_command.yaml
