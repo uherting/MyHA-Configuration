@@ -8,10 +8,9 @@
 icon: mdi:cellphone
 title: Overview
 path: smartphones
-badges: [ ]
+badges: []
 
 cards:
-  
   - type: entities
     title: Smartphone UH Note10pro
     show_header_toggle: false
@@ -47,6 +46,17 @@ cards:
       - binary_sensor.bdf_x20_is_charging
 
   - type: entities
+    title: Smartphone UH Trucking
+    show_header_toggle: false
+    entities:
+      - device_tracker.reno8_pro
+      - sensor.reno8_pro_battery_state
+      - sensor.reno8_pro_battery_level
+      - sensor.reno8_pro_battery_temperature
+      - sensor.reno8_pro_charger_type
+      - binary_sensor.reno8_pro_is_charging
+
+  - type: entities
     title: Smartphone UH VNS
     show_header_toggle: false
     entities:
@@ -56,7 +66,6 @@ cards:
       - sensor.spuhvns_l31_battery_temperature
       - sensor.spuhvns_l31_charger_type
       - binary_sensor.spuhvns_l31_is_charging
-
 ####################################################################
 # EOF
 ####################################################################
