@@ -30,18 +30,17 @@ exclude:
   domains:
     - updater
     - automation
-    - device_tracker
     - group
     - scene
     - script
     - weblink
+  #  - device_tracker
   entities:
     - sensor.basics_of_sikhi
     - sensor.beat
     - sensor.clock_am_pm
     - sensor.clock_date
     - sensor.clock_day
-    - sensor.clock_stacey_alarm_time
     - sensor.clock_time
     - sensor.date
     - sensor.date_time
