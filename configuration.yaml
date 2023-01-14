@@ -75,6 +75,12 @@ homeassistant:
         192.168.178.54: !secret AUTHPROVIDER_USERID_UWETRUCKING
         192.168.178.69: !secret AUTHPROVIDER_USERID_TABBY
 
+http:
+  # for cloudflare.com / freenom.com:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+
 # additional icons on the side bar
 panel_custom:
   # setttings replaced the neccessivity to have this side menu item
