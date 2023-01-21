@@ -124,20 +124,20 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   # ==============
-  # - <<: !include conf/sensor/l0heatingroomarea01_case.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01_case.yaml
   # - <<: !include conf/sensor/l0heatingroomarea01_env_01.yaml
   # - <<: !include conf/sensor/l0heatingroomarea01_env_02.yaml
   # - <<: !include conf/sensor/l0heatingroomarea01_env_03.yaml
   # heating room Dallas 18B20
   # =========================
   # Raumtemperatur
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_10.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01_env_10.yaml
   # Vorlauf
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_11.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01_env_11.yaml
   # Ruecklauf
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_12.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01_env_12.yaml
   # Abgas
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_13.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01_env_13.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
