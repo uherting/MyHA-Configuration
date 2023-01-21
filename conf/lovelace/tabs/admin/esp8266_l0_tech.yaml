@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# esp8266 level l0 tab --- lovelace configuration
+# esp8266_l0_tech tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
@@ -22,6 +22,8 @@ cards:
       - sensor.l0_entrance01_uptime_human_readable
       - binary_sensor.l0_entrance01_status
       - sensor.l0_entrance01_esphome_version
+      - entity: switch.l0entrance01_internet_access
+        name: Internet Access
       - switch.l0_entrance01_restart_device
 
   - type: entities
@@ -36,6 +38,8 @@ cards:
       - sensor.l0_corridor01_uptime_human_readable
       - binary_sensor.l0_corridor01_status
       - sensor.l0_corridor01_esphome_version
+      - entity: switch.l0corridor01_internet_access
+        name: Internet Access
       - switch.l0_corridor01_restart_device
 
   - type: entities
@@ -50,6 +54,8 @@ cards:
       - sensor.l0_corridor02_uptime_human_readable
       - binary_sensor.l0_corridor02_status
       - sensor.l0_corridor02_esphome_version
+      - entity: switch.l0corridor02_internet_access
+        name: Internet Access
       - switch.l0_corridor02_restart_device
 
   - type: entities
@@ -64,14 +70,9 @@ cards:
       - sensor.l0_heatingroomarea01_uptime_human_readable
       - binary_sensor.l0_heatingroomarea01_status
       - sensor.l0_heatingroomarea01_esphome_version
+      - entity: switch.l0heatingroomarea01_internet_access
+        name: Internet Access
       - switch.l0_heatingroomarea01_restart_device
-
-  # - type: entities
-  #   title: L0 GarageBig 01
-  #     ...
-  # - type: entities
-  #   title: L0 GarageSmall 01
-  #     ...
 ####################################################################
 # EOF
 ####################################################################

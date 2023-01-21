@@ -1,0 +1,25 @@
+####################################################################
+####################################################################
+#
+# esp8266_l0_details tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l0 Details
+path: esp8266_l0_details
+badges: []
+cards:
+  - type: entities
+    title: l0heatingroomarea01
+    entities:
+      - sensor.l0_heatingroomarea01_tempcase_01
+      - sensor.l0_heatingroomarea01_heating_room
+      - sensor.l0_heatingroomarea01_heating_rl
+      - sensor.l0_heatingroomarea01_heating_vl
+      - sensor.l0_heatingroomarea01_heating_exhaust_pipe
+      - binary_sensor.l0_heatingroomarea01_pir_01
+      - switch.l0_heatingroomarea01_ssr_01
+####################################################################
+# EOF
+####################################################################
