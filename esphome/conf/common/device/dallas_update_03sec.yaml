@@ -3,9 +3,7 @@
 ####################################################################
 
 - pin: !secret DALLAS_PIN_01
-  update_interval: ${dallas_upd}
-  # update_interval: !secret DALLAS_UPDATE_INTERVAL_010S
-  # update_interval: !secret DALLAS_UPDATE_INTERVAL_005M
+  update_interval: !secret DALLAS_UPDATE_INTERVAL_003S
 # ############################################################
 #  END OF FILE
 # ############################################################

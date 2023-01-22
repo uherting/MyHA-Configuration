@@ -19,7 +19,6 @@ dallas_01e01_name: $friendly_name TempEnv 01
 dallas_01e01_address: !secret DALLAS_01_L0HEATINGROOMAREA01_ENVSENSOR_01_ADDRESS
 dallas_01e02_name: $friendly_name TempEnv 02
 dallas_01e02_address: !secret DALLAS_01_L0HEATINGROOMAREA01_ENVSENSOR_02_ADDRESS
-# heating room
 dallas_01e10_name: $friendly_name Heating Room
 dallas_01e10_address: !secret DALLAS_01_L0HEATINGROOMAREA01_HEATING_ROOM_ADDRESS
 dallas_01e11_name: $friendly_name Heating VL
@@ -32,7 +31,6 @@ dallas_01e13_address: !secret DALLAS_01_L0HEATINGROOMAREA01_HEATING_EXHAUST_PIPE
 # other template sensors
 binary_template_sensor_heating_gas_burns_name: $friendly_name Heating Gas Burns
 binary_template_sensor_heating_gas_burns_id: ${friendly_id}_Heating_Gas_Burns
-
 
 # ------------------------------------------------------------------
 # standard substitutions follow
@@ -111,4 +109,3 @@ touchbutton02_id: ${friendly_id}_TB_02
 ####################################################################
 # EOF
 ####################################################################
-

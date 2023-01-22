@@ -85,7 +85,11 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 i2c: !include conf/common/device/i2c_v2.yaml
-dallas: !include conf/common/device/dallas.yaml
+# the 2nd assignment of substitution is simply ignored, so the idea of having a default in common.yaml and an overwrite here does not work!!!
+# maybe my post in the HA community will bring up some ideas, see https://community.home-assistant.io/t/how-to-redefine-substitutions/523127
+# temporary solution: several dallas.yaml files with different update duration
+# dallas: !include conf/common/device/dallas.yaml
+dallas: !include conf/common/device/dallas_update_03sec.yaml 
 mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
