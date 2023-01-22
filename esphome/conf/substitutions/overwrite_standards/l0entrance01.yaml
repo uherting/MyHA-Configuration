@@ -2,3 +2,6 @@
 # OVERWRITE COMMON SUBSTITUTIONS
 
 reed_contact01_name: $friendly_name Door Entrance
+####################################################################
+# EOF
+####################################################################

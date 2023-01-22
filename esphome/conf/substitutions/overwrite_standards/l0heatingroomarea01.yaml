@@ -1,4 +1,10 @@
 ####################################################################
 # OVERWRITE COMMON SUBSTITUTIONS
 
+# the 2nd assignment of substitution is simply ignored, so the idea of having a default in common.yaml and an overwrite here does not work!!!
+# maybe my post in the HA community will bring up some ideas, see https://community.home-assistant.io/t/how-to-redefine-substitutions/523127
 dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
+# dallas_upd: !secret DALLAS_UPDATE_INTERVAL_003S
+####################################################################
+# EOF
+####################################################################
