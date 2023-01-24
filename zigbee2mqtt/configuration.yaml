@@ -1,0 +1,2 @@
+# Optional: Home Assistant integration (MQTT discovery) (default: false)
+homeassistant: true
