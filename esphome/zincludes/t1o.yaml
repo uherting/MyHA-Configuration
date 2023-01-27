@@ -1,2 +1,2 @@
 substitutions:
-  dallas_upd: 9M
+  dallas_upd: !secret DHT_UPDATE_INTERVAL_01MIN

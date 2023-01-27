@@ -1,6 +1,6 @@
-substitutions:
-  node_name: mydevice
-
+# substitutions:
+#   <<: !include zincludes/t1c.yaml
+#     # node_name: mydevice
 packages:
   common: !include zincludes/t1c.yaml
   room_a_overrides: !include zincludes/t1o.yaml
