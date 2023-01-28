@@ -1,0 +1,22 @@
+substitutions:
+  node_name: !secret device
+
+packages:
+  common: !include package.yaml
+
+# ======================================================================
+
+# # file package.yaml:
+# substitutions:
+#   node_name: !secret package
+
+# # file secrets.yaml
+# device: devnamedev
+# package: devnamepkg
+
+# ======================================================================
+
+esphome:
+  name: ${node_name}
+  platform: ESP32
+  board: wemos_d1_mini32

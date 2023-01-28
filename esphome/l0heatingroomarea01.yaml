@@ -47,34 +47,23 @@
 #   - 1 SSR via I2C / MCP23017
 #
 
-############### GETTING THE NAMING CONVENTIONS SET UP #############
-# 1) device specific information
-# 2) common definitions
-# 3) overwrite the standards with custom definitions
-
-substitutions: 
-  <<: !include conf/substitutions/l0heatingroomarea01.yaml
-  <<: !include conf/substitutions/common01.yaml
-  <<: !include conf/substitutions/overwrite_standards/l0heatingroomarea01.yaml
-
 ###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
 
 packages:
+  # getting the naming conventions set up aka substitutions:
+  # 1) device specific information
+  # 2) common definitions (based on device specific information)
+  # 3) overwrite the standards with custom definitions
+  substitutions_base: !include conf/packages/substitutions/l0heatingroomarea01.yaml
+  substitutions_common: !include conf/packages/substitutions/common.yaml
+  substitutions_override: !include conf/packages/substitutions/overrides/l0heatingroomarea01.yaml
+  # setting up the device with the information given at this point in time
   wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
-  # esphome: and logger:
-  device_base: !include conf/packages/device_base_l0heatingroomarea01.yaml
-  # device_base: !include conf/common/packages/device_base.yaml
-
-################# CUSTOMISED LOGGING (if necessary) ################
-# change the log level temporary for this very device
-
-logger:
-  # see secrets.yaml for log level definitions
-  level: !secret LOG_LEVEL_DEBUG
-#   # # uncomment the following line for custom component logging
-#   # esp8266_store_log_strings_in_flash: False
+  device_base_common: !include conf/packages/device_base/common.yaml
+  device_base_device_specific: !include conf/packages/device_base/l0heatingroomarea01.yaml
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 

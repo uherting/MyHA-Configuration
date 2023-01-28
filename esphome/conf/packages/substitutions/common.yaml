@@ -44,7 +44,7 @@ dht01_id_temperature: ${friendly_id}_DHT_01_Temp
 dht01_name: $friendly_name DHT 01
 dht01_name_humidity: ${dht01_name} Humidity
 dht01_name_temperature: ${dht01_name} Temp
-dht01_upd: !secret DHT_UPDATE_INTERVAL_15MIN
+dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 
 # LED on ESP32Cam modules
 ESP_ONBOARD_LED_PIN_ID: "${friendly_id}_Onboard_LED"

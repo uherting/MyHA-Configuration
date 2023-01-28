@@ -1,0 +1,2 @@
+substitutions:
+  node_name: !secret device
