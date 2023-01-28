@@ -1,0 +1,61 @@
+substitutions:
+  node_name: mydevice
+  device_verbose_name: "My Device"
+
+packages:
+  common: !include zincludes/common01.yaml
+  room_a_overrides: !include zincludes/room_a.yaml
+
+# ======================================================================
+
+# # common01.yaml
+# substitutions:
+#   kbd_name: "qwertz"
+
+# # zincludes/room_a.yaml
+# substitutions:
+#   kbd_name: "qwerty"
+
+# # secrets.yaml
+# device: devnamedev
+# package: devnamepkg
+
+# ======================================================================
+# ======================================================================
+
+esphome:
+  name: ${node_name}
+  comment: $device_verbose_name
+
+esp8266:
+  board: esp01_1m
+
+# ======================================================================
+
+# substitutions:
+#   node_name: mydevice
+#   device_verbose_name: "My Device"
+
+# # Enable logging
+# logger:
+
+# # Enable Home Assistant API
+# api:
+#   encryption:
+#     key: "IWu9mSSVdd7qsPMGcNszJgNs/D5Mkdc58zBwYsTb6oI="
+
+# ota:
+#   password: "747bfe35fe2fb421738d84ac88a85f81"
+
+# wifi:
+#   ssid: !secret wifi_ssid
+#   password: !secret wifi_password
+
+#   # Enable fallback hotspot (captive portal) in case wifi connection fails
+#   ap:
+#     ssid: "Testtest Fallback Hotspot"
+#     password: "BJN09OSsOefU"
+
+# captive_portal:
+
+

@@ -1,0 +1,6 @@
+substitutions:
+  node_name: !secret package
+# esphome:
+#   name: ${node_name}
+#   platform: ESP32
+#   board: wemos_d1_mini32
