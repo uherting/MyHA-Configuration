@@ -1,2 +1,0 @@
-substitutions:
-  dallas_upd: !secret DHT_UPDATE_INTERVAL_15MIN
