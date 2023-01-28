@@ -1,9 +1,0 @@
-####################################################################
-# PACKAGES --- CONFIGURATION FOR DEVICE l0heatingroomarea01
-
-# if there are no overrides the dummy value comes in handy ;-)
-substitutions:
-  dummy_value: "dummy value"
-####################################################################
-# EOF
-####################################################################

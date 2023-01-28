@@ -48,22 +48,20 @@
 #
 
 ###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
+substitutions: 
+  <<: !include conf/substitutions/device_specific/l0heatingroomarea01.yaml
+  <<: !include conf/substitutions/overwrites/l0heatingroomarea01.yaml
+
+###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
 
 packages:
-  # getting the naming conventions set up aka substitutions:
-  # 1) device specific information
-  # 2) common definitions (based on device specific information)
-  # 3) overwrite the standards with custom definitions
-  substitutions_base: !include conf/packages/substitutions/l0heatingroomarea01.yaml
-  substitutions_common: !include conf/packages/substitutions/common.yaml
-  substitutions_override: !include conf/packages/substitutions/overrides/l0heatingroomarea01.yaml
-  # setting up the device with the information given at this point in time
-  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
-  device_base_common: !include conf/packages/device_base/common.yaml
-  device_base_device_specific: !include conf/packages/device_base/l0heatingroomarea01.yaml
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 

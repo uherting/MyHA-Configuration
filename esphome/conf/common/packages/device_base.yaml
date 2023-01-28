@@ -18,6 +18,7 @@ esphome:
 #  - see secrets.yaml for definitions
 logger:
   level: ${log_level}
+
 ####################################################################
 # Switches (central setup)
 #
