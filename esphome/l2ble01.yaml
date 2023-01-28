@@ -32,24 +32,42 @@
 #   - the device reports to HA only 
 #
 
-############### GETTING THE NAMING CONVENTIONS SET UP #############
-# 1) device specific information
-# 2) common definitions
-# 3) overwrite the standards with custom definitions
+###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
 
 substitutions: 
-  <<: !include conf/substitutions/l2ble01.yaml
-  <<: !include conf/substitutions/common01.yaml
-  <<: !include conf/substitutions/overwrite_standards/l2ble01.yaml
+  <<: !include conf/substitutions/device_specific/l2ble01.yaml
+  <<: !include conf/substitutions/overwrites/l2ble01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
+# log_level can be overwritten in overwrites/<device_name>.yaml
 
 packages:
-  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
-  # esphome: and logger:
-  device_base: !include conf/common/packages/device_base.yaml
+
+# ############### GETTING THE NAMING CONVENTIONS SET UP #############
+# # 1) device specific information
+# # 2) common definitions
+# # 3) overwrite the standards with custom definitions
+
+# substitutions: 
+#   <<: !include conf/substitutions/l2ble01.yaml
+#   <<: !include conf/substitutions/common01.yaml
+#   <<: !include conf/substitutions/overwrite_standards/l2ble01.yaml
+
+# ###################### PACKAGES CONFIGURATION ######################
+
+# packages:
+#   wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+#   # captive_portal: conf/common/networking/captive_portal.yaml
+#   ota: !include conf/common/networking/ota.yaml
+#   # esphome: and logger:
+#   device_base: !include conf/common/packages/device_base.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 # change the log level temporary for this very device

@@ -45,6 +45,9 @@ substitutions:
   binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
   binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
 
+  # Dallas sensors update time
+  dallas_upd: !secret DALLAS_UPDATE_INTERVAL_005M
+
   # DHT sensors
   dht01_id_humidity: ${friendly_id}_DHT_01_Hum
   dht01_id_temperature: ${friendly_id}_DHT_01_Temp
