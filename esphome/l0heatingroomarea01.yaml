@@ -49,6 +49,7 @@
 
 ###################### PACKAGES CONFIGURATION ######################
 # naming conventions which override common behaviour
+
 substitutions: 
   <<: !include conf/substitutions/device_specific/l0heatingroomarea01.yaml
   <<: !include conf/substitutions/overwrites/l0heatingroomarea01.yaml
