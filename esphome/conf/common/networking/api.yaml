@@ -3,8 +3,10 @@
 ####################################################################
 
 #api:
-  password: !secret HA_API_PW
-
+encryption:
+  key: zM4KYwr9rOeIIrQybuJsp1qByTMmc8JAFHUJfS5lUpY=
+# deprecated, see https://esphome.io/components/api.html?highlight=password#configuration-variables
+# password: !secret HA_API_PW
 # ############################################################
 #  END OF FILE
 # ############################################################
