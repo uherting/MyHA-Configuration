@@ -13,7 +13,8 @@
   mode: single
   initial_state: true
   # -------------------- CONDITIONS -------------------
-  # is the BLE interface microcontroller online?
+  # if the BLE interface microcontroller is online
+  # (actually only important for bluetooth devices by Xiaomi with batteries)
   condition:
     condition: state
     entity_id: binary_sensor.l2_ble01_status
@@ -21,17 +22,38 @@
       - "on"
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
-    path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
+    path: itn3rd77/low-battery-detection-notification.yaml
+    # path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
     input:
-      time: "19:00:00"
-      day: 4
+      # execute at given time only
+      time: "20:58:00"
+      # every day
+      # day: 0
+      weekday:
+        - fri
+      #   - mon
+      #   - tue
+      #   - wed
+      #   - thu
+      #   - fri
+      #   - sat
+      #   - sun
+      # batteries listed will hold less than threshold percent of capacity
       threshold: 10
+      # bullet form for blueprint from itn3rd77
+      bullet: "-"
       # --------------------- ACTIONS ---------------------
+      # actions:
+      #   - service: script.tg_txt
+      #     data_template:
+      #       msg_title: "Low battery level notification"
+      #       msg_text: "The following devices have a low bat condition:\n- {{ sensors |replace(',', ',\n-') }}\n"
+      #       msg_receiver: "admin"
       actions:
         - service: script.tg_txt
           data_template:
             msg_title: "Low battery level notification"
-            msg_text: "The following devices have a low bat condition:\n- {{ sensors |replace(',', ',\n-') }}\n"
+            msg_text: "The following devices have a low bat condition:\n{{ sensors |replace(',', ',\n-') }}\n"
             msg_receiver: "admin"
 ############################################################
 #  END OF FILE
