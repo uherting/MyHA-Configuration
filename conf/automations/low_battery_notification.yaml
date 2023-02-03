@@ -26,7 +26,7 @@
     # path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
     input:
       # execute at given time only
-      time: "20:58:00"
+      time: "19:00:00"
       # every day
       # day: 0
       weekday:
