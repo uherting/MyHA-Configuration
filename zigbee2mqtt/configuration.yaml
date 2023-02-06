@@ -1,2 +1,16 @@
-# Optional: Home Assistant integration (MQTT discovery) (default: false)
 homeassistant: true
+mqtt:
+  server: mqtt://core-mosquitto:1883
+  user: mqtt_user
+  password: lifetec
+serial:
+  port: /dev/ttyUSB0
+frontend:
+  port: 8099
+advanced:
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
+device_options:
+  legacy: false
+permit_join: true
