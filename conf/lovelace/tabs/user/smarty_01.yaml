@@ -207,6 +207,17 @@ cards:
             entity: sensor.l2_thermo01_tempenv_01
             name: "Thermo"
             show_state: true
+
+      - type: grid
+        square: false
+        columns: 3
+        cards:
+          - type: thermostat
+            entity: climate.bedroom_l2
+          - type: thermostat
+            entity: climate.lounge_l2
+          - type: thermostat
+            entity: climate.kitchen_l2
 ####################################################################
 # EOF
 ####################################################################
