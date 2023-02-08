@@ -210,7 +210,7 @@ cards:
 
       - type: grid
         square: false
-        columns: 3
+        columns: 1
         cards:
           - type: thermostat
             entity: climate.bedroom_l2
