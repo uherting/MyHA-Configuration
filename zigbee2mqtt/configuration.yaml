@@ -19,3 +19,5 @@ devices:
     friendly_name: Bedroom_L2
   '0x1c34f1fffe095fa9':
     friendly_name: Kitchen_L2
+  '0x1c34f1fffe095fc2':
+    friendly_name: Lounge_L2
