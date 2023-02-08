@@ -3,7 +3,7 @@
         "min_temperature": 5,
         "max_temperature": 25,
         "current_heating_setpoint": 21,
-        "local_temperature": 21.5,
+        "local_temperature": 21,
         "preset": "manual",
         "away_mode": "OFF",
         "child_lock": "UNLOCK",
@@ -92,12 +92,12 @@
         "window_open": false,
         "auto_lock": "MANUAL",
         "away_preset_days": 1,
-        "linkquality": 54
+        "linkquality": 48
     },
     "0x1c34f1fffe095fa9": {
         "min_temperature": 5,
         "max_temperature": 25,
-        "current_heating_setpoint": 17,
+        "current_heating_setpoint": 16,
         "local_temperature": 19,
         "preset": "manual",
         "away_mode": "OFF",
