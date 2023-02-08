@@ -14,3 +14,8 @@ advanced:
 device_options:
   legacy: false
 permit_join: true
+devices:
+  '0x1c34f1fffe0d319c':
+    friendly_name: Bedroom_L2
+  '0x1c34f1fffe095fa9':
+    friendly_name: Kitchen_L2
