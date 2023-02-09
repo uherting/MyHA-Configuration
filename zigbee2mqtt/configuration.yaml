@@ -21,3 +21,6 @@ devices:
     friendly_name: Kitchen_L2
   '0x1c34f1fffe095fc2':
     friendly_name: Lounge_L2
+groups:
+  '1':
+    friendly_name: level_2
