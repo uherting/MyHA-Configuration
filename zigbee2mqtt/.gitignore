@@ -4,6 +4,13 @@
 
 # all zigbee2mqtt log files
 log/**/log.txt
+
+# the files which contain changing data follow here:
+# 1) the database database.db and a snapshot of database.db
+database.db
+database.db.txt
+# 2) the state of the devices
+state.json
 # ############################################################
 #  EOF
 # ############################################################
