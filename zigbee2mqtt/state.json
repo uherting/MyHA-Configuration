@@ -2,9 +2,9 @@
     "0x1c34f1fffe0d319c": {
         "min_temperature": 5,
         "max_temperature": 25,
-        "current_heating_setpoint": 22,
-        "local_temperature": 20.5,
-        "preset": "manual",
+        "current_heating_setpoint": 17,
+        "local_temperature": 19.5,
+        "preset": "eco",
         "away_mode": "OFF",
         "child_lock": "UNLOCK",
         "local_temperature_calibration": -1,
@@ -18,8 +18,8 @@
         "force": "normal",
         "comfort_temperature": 21,
         "eco_temperature": 17,
-        "position": 10,
-        "running_state": "heat",
+        "position": 0,
+        "running_state": "idle",
         "battery_low": false,
         "week": "7",
         "workdays": [
@@ -92,14 +92,19 @@
         "window_open": false,
         "auto_lock": "MANUAL",
         "away_preset_days": 1,
-        "linkquality": 54
+        "linkquality": 54,
+        "update": {
+            "state": "available",
+            "installed_version": 85,
+            "latest_version": 87
+        }
     },
     "0x1c34f1fffe095fa9": {
         "min_temperature": 5,
         "max_temperature": 25,
-        "current_heating_setpoint": 16,
-        "local_temperature": 19.5,
-        "preset": "manual",
+        "current_heating_setpoint": 17,
+        "local_temperature": 17,
+        "preset": "eco",
         "away_mode": "OFF",
         "child_lock": "UNLOCK",
         "local_temperature_calibration": -1,
@@ -187,13 +192,18 @@
         "window_open": false,
         "auto_lock": "MANUAL",
         "away_preset_days": 1,
-        "linkquality": 69
+        "linkquality": 69,
+        "update": {
+            "state": "available",
+            "installed_version": 85,
+            "latest_version": 87
+        }
     },
     "0x1c34f1fffe095fc2": {
         "min_temperature": 5,
         "max_temperature": 25,
-        "current_heating_setpoint": 17,
-        "local_temperature": 21,
+        "current_heating_setpoint": 21,
+        "local_temperature": 22,
         "preset": "manual",
         "away_mode": "OFF",
         "child_lock": "UNLOCK",
@@ -208,8 +218,8 @@
         "force": "normal",
         "comfort_temperature": 20,
         "eco_temperature": 17,
-        "position": 0,
-        "running_state": "idle",
+        "position": 10,
+        "running_state": "heat",
         "battery_low": false,
         "week": "5+2",
         "workdays": [
@@ -281,6 +291,12 @@
         "away_preset_temperature": 15,
         "window_open": false,
         "auto_lock": "MANUAL",
-        "away_preset_days": 1
+        "away_preset_days": 1,
+        "linkquality": 42,
+        "update": {
+            "state": "available",
+            "installed_version": 85,
+            "latest_version": 87
+        }
     }
 }
