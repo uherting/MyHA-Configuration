@@ -137,7 +137,7 @@
   condition: []
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
-    path: uh/zigbee_trv_schedules.yaml
+    path: uh/zigbee2mqtt_trv_settemp.yaml
     input:
       # execute at given time only
       time: "08:00:00"
