@@ -18,7 +18,7 @@
         "force": "normal",
         "comfort_temperature": 21,
         "eco_temperature": 17,
-        "position": 40,
+        "position": 35,
         "running_state": "heat",
         "battery_low": false,
         "week": "7",
@@ -292,7 +292,7 @@
         "window_open": false,
         "auto_lock": "MANUAL",
         "away_preset_days": 1,
-        "linkquality": 30,
+        "linkquality": 36,
         "update": {
             "state": "idle",
             "installed_version": 87,
