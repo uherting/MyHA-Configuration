@@ -1,0 +1,44 @@
+# ############################################################
+#
+#  Schedule for Zigbee TRVs
+#
+# ############################################################
+
+# ############################################################
+#  Schedule for Zigbee TRV Kitchen_L2
+# ############################################################
+- alias: Schedule for Zigbee TRV Kitchen_L2
+  id: "0a89d66b-a7d8-4cc6-b43b-fb706ca82cd6"
+  description: "This automation emulates a schedule for Zigbee TRV Kitchen_L2"
+  mode: single
+  initial_state: true
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: uh/zigbee_trv_schedules.yaml
+    input:
+      # execute at given time only
+      time: "08:00:00"
+      # every day
+      # day: 0
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+      sensors: "{% set result = namespace(sensors=[]) %}{{ns.sensors}}"
+      # --------------------- ACTIONS ---------------------
+      actions:
+        - service: script.tg_txt
+          data_template:
+            msg_title: "Schedule for Zigbee TRV Kitchen_L2 notification"
+            msg_text: "foo bar\n"
+            msg_receiver: "admin"
+############################################################
+#  END OF FILE
+# ############################################################
