@@ -11,16 +11,6 @@ path: playground
 badges: []
 
 cards:
-  - type: custom:scheduler-card
-    title: Normal schedule
-    tags: weekdays
-    # domains:
-    # ...
-    # entities:
-    # ...
-    # groups:
-    # ...
-
   - type: entities
     title: l0entrance01 Sensors
     entities:

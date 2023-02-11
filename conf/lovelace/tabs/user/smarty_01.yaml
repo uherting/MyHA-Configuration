@@ -218,6 +218,75 @@ cards:
             entity: climate.lounge_l2
           - type: thermostat
             entity: climate.kitchen_l2
+
+      - type: grid
+        square: false
+        columns: 1
+        cards:
+          - type: custom:scheduler-card
+            title: Weekdays schedule
+            tags: none
+            customize:
+              climate.my_tuya_thermostat:
+                exclude_actions:
+                  - heat # hide the built-in action to avoid duplicates
+                  - set mode # we won't use this
+                  - set preset # we won't use this
+                actions: # add the custom actions
+                  - service: set_temperature
+                    service_data:
+                      hvac_mode: auto
+                    variables:
+                      temperature:
+                        min: 5
+                        max: 25
+                        step: 0.5
+                        unit: "°C"
+                    icon: "hass:fire"
+                    name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
+            # domains:
+            # ...
+            # entities:
+            # ...
+            # groups:
+            # ...
+            groups:
+              - name: "Radiators"
+                icon: "hass:radiator"
+                include:
+                  - climate
+          - type: custom:scheduler-card
+            title: Weekend schedule
+            tags: weekend
+            customize:
+              climate.my_tuya_thermostat:
+                exclude_actions:
+                  - heat # hide the built-in action to avoid duplicates
+                  - set mode # we won't use this
+                  - set preset # we won't use this
+                actions: # add the custom actions
+                  - service: set_temperature
+                    service_data:
+                      hvac_mode: auto
+                    variables:
+                      temperature:
+                        min: 5
+                        max: 25
+                        step: 0.5
+                        unit: "°C"
+                    icon: "hass:fire"
+                    name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
+            # domains:
+            # ...
+            # entities:
+            # ...
+            # groups:
+            # ...
+            groups:
+              - name: "Radiators"
+                icon: "hass:radiator"
+                include:
+                  - climate
 ####################################################################
 # EOF
 ####################################################################

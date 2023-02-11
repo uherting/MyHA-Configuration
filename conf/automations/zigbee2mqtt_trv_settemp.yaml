@@ -7,7 +7,7 @@
 # ############################################################
 # Bedroom_L2 Temp 17
 # ############################################################
-- alias: Schedule for Zigbee TRV Bedroom_L2 Temp 17
+- alias: Zigbee TRV Bedroom_L2 Temp 17
   id: "5f8d0926-b4dd-4bdc-8a4c-66397823212a"
   description: "This automation emulates a schedule for Zigbee Bedroom_L2 Temp 17"
   mode: single
@@ -31,7 +31,7 @@
 # ############################################################
 # Bedroom_L2 Temp 22
 # ############################################################
-- alias: Schedule for Zigbee TRV Bedroom_L2 Temp 22
+- alias: Zigbee TRV Bedroom_L2 Temp 22
   id: "ac137980-e564-47e3-9600-62549ddc72bb"
   description: "This automation emulates a schedule for Zigbee Bedroom_L2 Temp 22"
   mode: single
@@ -55,8 +55,8 @@
 # ############################################################
 # Kitchen_L2 Temp 22
 # ############################################################
-- alias: Schedule for Zigbee TRV Kitchen_L2 Temp 22
-  id: "5f8d0926-b4dd-4bdc-8a4c-66397823212a"
+- alias: Zigbee TRV Kitchen_L2 Temp 22
+  id: "f3217b12-3094-4691-a2d6-f592a9f8bd27"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 22"
   mode: single
   initial_state: true
@@ -79,8 +79,32 @@
 # ############################################################
 # Kitchen_L2 Temp 17
 # ############################################################
-- alias: Schedule for Zigbee TRV Kitchen_L2 Temp 17
+- alias: Zigbee TRV Kitchen_L2 Temp 17
   id: "2ea3c8c1-0d49-469e-99b2-85cf7f3e2304"
+  description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "10:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 17
+      target:
+        entity_id: climate.kitchen_l2
+
+# ############################################################
+# Kitchen_L2 Temp 17
+# ############################################################
+- alias: Zigbee TRV Kitchen_L2 Temp 17
+  id: "0f988451-3df8-4bf6-9b7a-4372caf5aeb7"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
   mode: single
   initial_state: true
@@ -103,7 +127,7 @@
 # ############################################################
 # Kitchen_L2 Temp 17
 # ############################################################
-- alias: Schedule for Zigbee TRV Kitchen_L2 Temp 17
+- alias: Zigbee TRV Kitchen_L2 Temp 17
   id: "8983b2a9-5ded-4222-98bb-97a1985055f2"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
   mode: single
@@ -125,9 +149,9 @@
         entity_id: climate.kitchen_l2
 
 # ############################################################
-#  Schedule for Zigbee TRV Kitchen_L2
+#  Zigbee TRV Kitchen_L2
 # ############################################################
-- alias: Schedule for Zigbee TRV Kitchen_L2
+- alias: Zigbee TRV Kitchen_L2
   id: "0a89d66b-a7d8-4cc6-b43b-fb706ca82cd6"
   description: "This automation emulates a schedule for Zigbee TRV Kitchen_L2"
   mode: single
@@ -156,7 +180,7 @@
       actions:
         - service: script.tg_txt
           data_template:
-            msg_title: "Schedule for Zigbee TRV Kitchen_L2 notification"
+            msg_title: "Zigbee TRV Kitchen_L2 notification"
             msg_text: "foo bar\n"
             msg_receiver: "admin"
 ############################################################

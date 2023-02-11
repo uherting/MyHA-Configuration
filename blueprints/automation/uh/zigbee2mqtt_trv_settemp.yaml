@@ -3,7 +3,7 @@ blueprint:
   name: Setting temperature of zigbee devices
   description: >-
     Set the temperature of zigbee devices depending on time / day of week (DOW)
-  source_url: sdfsdf
+  # source_url: sdfsdf
   input:
     time:
       name: Time to run change of temperature on
@@ -42,6 +42,14 @@ blueprint:
               value: sat
             - label: Sunday
               value: sun
+    exclude:
+      name: Excluded sensors (optional)
+      description: Sensors to exclude from detection.
+      default: []
+      selector:
+        entity:
+          device_class: battery
+          multiple: true
     message:
       name: Detection message
       description: |
@@ -58,7 +66,7 @@ blueprint:
       name: Actions
       description:
         Notifications or similar to be run. {{sensors}} is replaced with
-        the names of sensors being low on battery and {{threshold}} is replaced with the threshold warning value.
+        the names of sensors being.
       selector:
         action: {}
 variables:
