@@ -3,6 +3,7 @@
 #  Count Home Assistant errors and warnings (counting and notifications)
 #
 #   from: https://community.home-assistant.io/t/counter-warning-error-issue/85490/11
+#   notification part see https://community.home-assistant.io/t/trigger-automation-if-numeric-state-increases-1/368926/6?u=uwe.ha
 #
 # ############################################################
 
@@ -70,7 +71,7 @@
     - service: script.tg_txt
       data_template:
         msg_title: "Home Assistant errors"
-        msg_text: "Since the last restart of HA {{ states(trigger.entity_id) | string }} error(s) occured.\n"
+        msg_text: "Since the last restart of HA {{ states('counter.homeassistant_errors') | string }} error(s) occured.\n"
         msg_receiver: "admin"
 
 # ############################################################
@@ -95,7 +96,7 @@
     - service: script.tg_txt
       data_template:
         msg_title: "Home Assistant warnings"
-        msg_text: "Since the last restart of HA {{ states(trigger.entity_id) | string }} warning(s) occured.\n"
+        msg_text: "Since the last restart of HA {{ states('counter.homeassistant_warnings') | string }} warning(s) occured.\n"
         msg_receiver: "admin"
 # ############################################################
 #  END OF FILE
