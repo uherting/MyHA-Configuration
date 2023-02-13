@@ -21,6 +21,7 @@ badges:
 cards:
   - type: vertical-stack
     cards:
+      # Kitchen L2
       - type: grid
         square: false
         # title: Kitchen
@@ -46,6 +47,7 @@ cards:
             entity: switch.l2_kitchen01_ssr_01
             color: yellow
 
+      # Storage L2
       - type: grid
         square: false
         # title: Storage
@@ -87,6 +89,7 @@ cards:
               service_data:
                 entity_id: automation.l2_storage_motion_detected_ssr01_on
 
+      # Lounge L2
       - type: grid
         square: false
         # title: Lounge
@@ -111,6 +114,7 @@ cards:
             name: " "
             show_state: true
 
+      # Bedroom L2
       - type: grid
         square: false
         # title: Bedroom
@@ -135,6 +139,7 @@ cards:
             name: " "
             show_state: true
 
+      # Bathroom L2
       - type: grid
         square: false
         # title: Bathroom
@@ -160,6 +165,7 @@ cards:
             color: yellow
             show_state: true
 
+      # North L2
       - type: grid
         square: false
         # title: OutNorth
@@ -184,6 +190,7 @@ cards:
             name: ""
             show_state: true
 
+      # South L2
       - type: grid
         square: false
         # title: OutSouth
@@ -208,6 +215,7 @@ cards:
             name: "Thermo"
             show_state: true
 
+      # TRVs L2
       - type: grid
         square: false
         columns: 1
@@ -223,8 +231,9 @@ cards:
         square: false
         columns: 1
         cards:
+          # Scheduler "Normal" for TRV L2
           - type: custom:scheduler-card
-            title: Weekdays schedule
+            title: Normal schedule
             tags: none
             customize:
               climate.my_tuya_thermostat:
@@ -255,6 +264,8 @@ cards:
                 icon: "hass:radiator"
                 include:
                   - climate
+
+          # Scheduler "Normal" for TRV L2
           - type: custom:scheduler-card
             title: Weekend schedule
             tags: weekend
