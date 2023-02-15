@@ -11,7 +11,7 @@
   id: "5f8d0926-b4dd-4bdc-8a4c-66397823212a"
   description: "This automation emulates a schedule for Zigbee Bedroom_L2 Temp 17"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
@@ -35,7 +35,7 @@
   id: "ac137980-e564-47e3-9600-62549ddc72bb"
   description: "This automation emulates a schedule for Zigbee Bedroom_L2 Temp 21"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
@@ -59,7 +59,7 @@
   id: "f3217b12-3094-4691-a2d6-f592a9f8bd27"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 21"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
@@ -83,12 +83,12 @@
   id: "2ea3c8c1-0d49-469e-99b2-85cf7f3e2304"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
     - platform: time
-      at: "09:45:00"
+      at: "10:00:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
@@ -107,7 +107,7 @@
   id: "0f988451-3df8-4bf6-9b7a-4372caf5aeb7"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
@@ -131,7 +131,7 @@
   id: "8983b2a9-5ded-4222-98bb-97a1985055f2"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
@@ -155,7 +155,7 @@
   id: "4d2c5659-1483-41d6-a8ec-9f58bbe51b58"
   description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # time based execution
   trigger:
