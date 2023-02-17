@@ -223,10 +223,13 @@ cards:
         cards:
           - type: thermostat
             entity: climate.bedroom_l2
+            name: Bedroom
           - type: thermostat
             entity: climate.lounge_l2
+            name: Lounge
           - type: thermostat
             entity: climate.kitchen_l2
+            name: Kitchen
 
       # # Better Thermostat
       # - type: grid

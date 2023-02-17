@@ -93,15 +93,15 @@ panel_custom:
     require_admin: true
     config:
       ingress: core_configurator
-  - name: srv_restart
-    sidebar_title: Restart
-    sidebar_icon: mdi:restart
-    js_url: /api/hassio/app/entrypoint.js
-    url_path: "developer-tools/yaml"
-    embed_iframe: true
-    require_admin: true
-    config:
-      ingress: core_configurator
+  # - name: srv_restart
+  #   sidebar_title: Restart
+  #   sidebar_icon: mdi:restart
+  #   js_url: /api/hassio/app/entrypoint.js
+  #   url_path: "developer-tools/yaml"
+  #   embed_iframe: true
+  #   require_admin: true
+  #   config:
+  #     ingress: core_configurator
 
 # updater:
 

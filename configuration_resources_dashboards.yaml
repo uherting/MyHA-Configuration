@@ -42,7 +42,7 @@ resources:
   # - url: /hacsfiles/lovelace-header-cards/lovelace-header-cards.js
   #   type: module
 
-  # huge clickable title --- too huge for most cases!!! - used at .../uilovelace-adm-ovw-all/system_monitor
+  # huge clickable title --- ugly and too huge for most cases!!! - used at .../uilovelace-adm-ovw-all/system_monitor
   - url: /hacsfiles/banner-card/banner-card.js
     type: module
 
@@ -50,9 +50,9 @@ resources:
   - url: /hacsfiles/scheduler-card/scheduler-card.js
     type: module
 
-  # Better Thermostat
-  - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
-    type: module
+  # # Better Thermostat
+  # - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
+  #   type: module
 
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
