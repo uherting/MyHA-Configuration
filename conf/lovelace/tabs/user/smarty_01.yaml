@@ -215,6 +215,7 @@ cards:
             name: "Thermo"
             show_state: true
 
+      # ordinary thermostat
       # TRVs L2
       - type: grid
         square: false
@@ -227,6 +228,25 @@ cards:
           - type: thermostat
             entity: climate.kitchen_l2
 
+      # # Better Thermostat
+      # - type: grid
+      #   square: false
+      #   columns: 1
+      #   cards:
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Bedroom
+      #       entity: climate.bedroom_l2
+      #       eco_temperature: 17
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Lounge
+      #       entity: climate.lounge_l2
+      #       eco_temperature: 17
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Kitchen
+      #       entity: climate.kitchen_l2
+      #       eco_temperature: 17
+
+      # scheduler cards
       - type: grid
         square: false
         columns: 1
@@ -265,7 +285,7 @@ cards:
                 include:
                   - climate
 
-          # Scheduler "Normal" for TRV L2
+          # Scheduler "Weekend" for TRV L2
           - type: custom:scheduler-card
             title: Weekend schedule
             tags: weekend
