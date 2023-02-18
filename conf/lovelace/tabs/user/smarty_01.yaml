@@ -215,21 +215,48 @@ cards:
             name: "Thermo"
             show_state: true
 
-      # ordinary thermostat
-      # TRVs L2
+      # # ordinary thermostat
+      # # TRVs L2
+      # - type: grid
+      #   square: false
+      #   columns: 1
+      #   cards:
+      #     - type: thermostat
+      #       entity: climate.bedroom_l2
+      #       name: Bedroom
+      #     - type: thermostat
+      #       entity: climate.lounge_l2
+      #       name: Lounge
+      #     - type: thermostat
+      #       entity: climate.kitchen_l2
+      #       name: Kitchen
+
+      # Simple Thermostat
       - type: grid
         square: false
         columns: 1
         cards:
-          - type: thermostat
+          - type: custom:simple-thermostat
             entity: climate.bedroom_l2
-            name: Bedroom
-          - type: thermostat
+            header:
+              name: Bedroom
+              icon: mdi.bed
+            control: false
+            # label ui.card.climate.preset_mode: Preset
+          - type: custom:simple-thermostat
             entity: climate.lounge_l2
-            name: Lounge
-          - type: thermostat
+            header:
+              name: Lounge
+              icon: mdi.sofa
+            control: false
+            # label ui.card.climate.preset_mode: Preset
+          - type: custom:simple-thermostat
             entity: climate.kitchen_l2
-            name: Kitchen
+            header:
+              name: Kitchen
+              icon: mdi.stove
+            control: false
+            # label ui.card.climate.preset_mode: Preset
 
       # # Better Thermostat
       # - type: grid

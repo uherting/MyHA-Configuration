@@ -54,6 +54,9 @@ resources:
   # - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
   #   type: module
 
+  - url: /hacsfiles/simple-thermostat/simple-thermostat.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
