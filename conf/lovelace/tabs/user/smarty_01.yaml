@@ -222,14 +222,14 @@ cards:
         columns: 1
         cards:
           - type: thermostat
-            entity: climate.bedroom_l2
-            name: Bedroom
+            entity: climate.kitchen_l2
+            name: Kitchen
           - type: thermostat
             entity: climate.lounge_l2
             name: Lounge
           - type: thermostat
-            entity: climate.kitchen_l2
-            name: Kitchen
+            entity: climate.bedroom_l2
+            name: Bedroom
 
       # # Simple Thermostat
       # - type: grid
