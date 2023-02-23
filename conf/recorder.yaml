@@ -63,6 +63,7 @@ exclude:
     - sensor.l0_garagebig01_uptime_human_readable
     - sensor.l0_garagebig02_uptime_human_readable
     - sensor.l1_thehut01_uptime_human_readable
+    - sensor.l2_ble01_uptime_human_readable
     - sensor.l2_corridor01_uptime_human_readable
     - sensor.l2_kitchen01_uptime_human_readable
     - sensor.l2_storage01_uptime_human_readable
