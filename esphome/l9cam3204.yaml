@@ -31,18 +31,30 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
+# substitutions: 
+#   <<: !include conf/substitutions/l9cam3204.yaml
+#   <<: !include conf/substitutions/common01.yaml
 substitutions: 
-  <<: !include conf/substitutions/l9cam3204.yaml
-  <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/device_specific/l9cam3204.yaml
+  <<: !include conf/substitutions/overwrites/l9cam3204.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
+# log_level can be overwritten in overwrites/<device_name>.yaml
 
 packages:
-  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
-  # esphome: and logger:
-  device_base: !include conf/common/packages/device_base.yaml
+
+# packages:
+#   wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+#   # captive_portal: conf/common/networking/captive_portal.yaml
+#   ota: !include conf/common/networking/ota.yaml
+#   # esphome: and logger:
+#   device_base: !include conf/common/packages/device_base.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
