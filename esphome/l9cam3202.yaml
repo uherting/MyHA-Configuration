@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l9cam3207
+# DEVICE: l9cam3202
 #
 ####################################################################
 ####################################################################
@@ -32,26 +32,26 @@
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
 substitutions: 
-  <<: !include conf/substitutions/l9cam3207.yaml
-  <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/device_specific/l9cam3202.yaml
+  <<: !include conf/substitutions/overwrites/l9cam3202.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
+# log_level can be overwritten in overwrites/<device_name>.yaml
 
 packages:
-  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
-  # esphome: and logger:
-  device_base: !include conf/common/packages/device_base.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-#logger:
-#  # see secrets.yaml for log level definitions
-#  level: !secret LOG_LEVEL_DEBUG
-#  # uncomment the following line for custom component logging
-#   esp8266_store_log_strings_in_flash: False
+
+# this has to be done in conf/substitutions/overwrites/l9cam3202.yaml
+# by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
@@ -97,7 +97,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l9cam3207.yaml
+  # - <<: !include conf/sensor/l9cam3202.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp32_GPIO14_upd_01min.yaml
 
@@ -127,7 +127,8 @@ text_sensor:
 #################### DETAILED CONFIGURATION CAM ######################
 
 # cam device
-esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
+esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
+# esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
 
 # web server on cam device
 esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
