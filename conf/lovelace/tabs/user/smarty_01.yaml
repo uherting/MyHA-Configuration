@@ -39,9 +39,10 @@ cards:
             # entity: sensor.l2_storage
             name: " "
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
+            entity: switch.zb_plug_02
             name: " "
-            show_state: true
+            color: yellow
+            # show_state: true
           - type: "custom:button-card"
             name: "KitchenA"
             entity: switch.l2_kitchen01_ssr_01
@@ -106,9 +107,10 @@ cards:
             entity: sensor.xiaomi_l2_lounge_humidity
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
+            entity: switch.zb_plug_01
             name: " "
-            show_state: true
+            color: yellow
+            # show_state: true
           - type: "custom:button-card"
             # entity: sensor.l2_storage
             name: " "
