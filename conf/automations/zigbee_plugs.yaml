@@ -1,0 +1,28 @@
+# ############################################################
+#
+#  automation for Zigbee plugs
+#
+# ############################################################
+
+# ############################################################
+# Zigbee plug 02 off after x minutes
+# ############################################################
+- alias: Zigbee Plug 02 Timer
+  id: "f7124d47-174f-4c08-9c2a-d36f492d9ead"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # after the plug was on for x minutes the switch goes off
+  trigger:
+    - platform: state
+      entity_id: switch.zb_plug_02
+      to: "on"
+      for:
+        minutes: 6
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SSR OFF ---------------------
+    service: switch.turn_off
+    entity_id: switch.zb_plug_02
+# ############################################################
+#  END OF FILE
+# ############################################################
