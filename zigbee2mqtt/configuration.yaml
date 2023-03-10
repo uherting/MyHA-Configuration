@@ -37,6 +37,8 @@ devices:
     friendly_name: ZB_Plug_01
   '0xa4c13804488a21e2':
     friendly_name: ZB_Plug_02
+  '0xa4c13818bd119ece':
+    friendly_name: ZB_Plug_03
 groups:
   '1':
     friendly_name: level_2
