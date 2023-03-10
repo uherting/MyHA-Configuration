@@ -26,3 +26,39 @@
 # ############################################################
 #  END OF FILE
 # ############################################################
+
+# # ############################################################
+# #
+# #  automation for Zigbee plugs
+# #
+# # ############################################################
+
+# # ############################################################
+# # Zigbee plug 02 off after x minutes
+# # ############################################################
+# - alias: Zigbee Plug 02 Timer
+#   id: "f7124d47-174f-4c08-9c2a-d36f492d9ead"
+#   initial_state: true
+#   # --------------------- TRIGGER ---------------------
+#   # after the plug was on for x minutes the switch goes off
+#   trigger:
+#     platform: state
+#     entity_id: switch.zb_plug_02
+# to: "on"
+# for:  problem is that it gets triggered after 6 min not when _at_least_!!!!!
+#   minutes: 6
+#   # -------------------- CONDITIONS -------------------
+#   condition:
+#     - and:
+#         - condition: template
+#           value_template: "{{ states(trigger.entity_id) != 'on'}}"
+#         - condition: template
+#           value_template: "{{ (states(sensor.zb_plug_02_power) | int(0) ) < 1}}"
+#   # --------------------- ACTIONS ---------------------
+#   action:
+#     # --------------------- SSR OFF ---------------------
+#     service: switch.turn_off
+#     entity_id: switch.zb_plug_02
+# # ############################################################
+# #  END OF FILE
+# # ############################################################
