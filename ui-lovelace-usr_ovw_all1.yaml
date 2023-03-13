@@ -27,7 +27,7 @@ views:
   - !include /config/conf/lovelace/tabs/user/covid19_rki_graphs.yaml
 
   # playground for testing
-  - !include /config/conf/lovelace/tabs/user/l0testing.yaml
+  # - !include /config/conf/lovelace/tabs/user/l0testing.yaml
 ####################################################################
 # EOF
 ####################################################################
