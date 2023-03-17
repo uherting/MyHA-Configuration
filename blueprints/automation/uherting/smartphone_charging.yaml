@@ -13,6 +13,14 @@ blueprint:
   domain: automation
   source_url: https://gist.github.com/networkingcat/a1876d7e706e07c8bdcf974113940fb8
   input:
+    # necessary input for this blueprint
+    # zigbee_plug_id (string)
+    # zigbee_plug_id_friendly_name v
+    # connected_device (array, string)
+    # connected_device_charging_state (array, string)
+    # connected_device_charged_percentage_id (array, string)
+    # max_charging_target (array)
+    # max_charging_duration (array)
     motion_entity:
       name: Motion Sensor
       description: Motion Sensor or a group with Motion Sensors (But can be anything
