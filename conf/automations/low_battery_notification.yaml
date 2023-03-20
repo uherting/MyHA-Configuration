@@ -53,7 +53,7 @@
         - service: script.tg_txt
           data_template:
             msg_title: "#Low battery level notification#"
-            msg_text: "#The following devices have a low bat condition:\n{{ sensors | replace(',', ',\n-') }}\n#"
+            msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
             msg_receiver: "admin"
             msg_optinal_string: "{{ sensors | replace(',', ',\n-') }}"
             msg_optinal_number: "{{ sensors | replace(',', ',\n-') | length }}"
