@@ -1,0 +1,37 @@
+####################################################################
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL DEVICES
+
+####################################################################
+# DEVICE DEFINITION
+esphome:
+  name: $device_name
+  friendly_name: $device_name
+  comment: $device_comment
+  platform: $device_platform
+  board: $device_board
+  build_path: ./build/${device_name}
+  on_boot:
+    priority: -100
+    then:
+      - output.turn_off:
+          id: ${cam_light_id}
+
+####################################################################
+# LOGGING (central setup)
+#
+# according to:
+#  - https://esphome.io/components/logger.html?highlight=logger#log-levels
+#  - see secrets.yaml for definitions
+logger:
+  level: ${log_level}
+
+####################################################################
+# Switches (central setup)
+#
+switch:
+  - platform: restart
+    name: ${restart_device_switch_name}
+    id: ${restart_device_switch_id}
+####################################################################
+# EOF
+####################################################################

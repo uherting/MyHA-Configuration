@@ -5,10 +5,14 @@
 device_name: l9cam3205
 device_comment: Level 9 ESP32-cam device 04
 device_platform: ESP32
-# from the french guy @ 20190712
-# - https://www.youtube.com/watch?v=fHgqFuGaTGE)
-device_board: nodemcu-32s
 wifi_static_ip: 192.168.178.185
+
+# # from the french guy @ 20190712
+# # - https://www.youtube.com/watch?v=fHgqFuGaTGE)
+# device_board: nodemcu-32s
+# from docu about ESP32-cam @20230322 (ESP32-S)
+#   https://www.esphome-devices.com/devices/ESP32-CAM
+device_board: esp32dev
 
 # the friendly name / id
 friendly_name: L9 Cam32 05

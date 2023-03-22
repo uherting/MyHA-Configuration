@@ -31,7 +31,7 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions: 
+substitutions:
   <<: !include conf/substitutions/device_specific/l9cam3207.yaml
   <<: !include conf/substitutions/overwrites/l9cam3207.yaml
 
@@ -41,7 +41,7 @@ substitutions:
 
 packages:
   substitutions_common: !include conf/common/packages/substitutions/common.yaml
-  device_base_common: !include conf/common/packages/device_base.yaml
+  device_base_common: !include conf/common/packages/device_base_espcam32.yaml
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
@@ -78,7 +78,6 @@ i2c: !include conf/common/device/i2c_esp32_v1.yaml
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1.yaml
 
-
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
@@ -111,8 +110,8 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 # switch:
-  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+# - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
+# - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -140,7 +139,6 @@ output: !include conf/common/esp32_camera/esp32cam_output.yaml
 #-------------------------------------------------------------------
 # cam light
 light: !include conf/common/esp32_camera/esp32cam_light.yaml
-
 ####################################################################
 # EOF
 ####################################################################
