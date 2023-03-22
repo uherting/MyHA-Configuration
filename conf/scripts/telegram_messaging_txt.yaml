@@ -36,13 +36,13 @@ tg_txt:
       required: false
       example: "admin"
       default: "admin"
-    msg_optinal_string:
+    msg_optional_string:
       description: "An optional string"
       advanced: true
       required: false
       example: "the optional example string"
       default: "not_existant"
-    msg_optinal_number:
+    msg_optional_number:
       description: "The receiver of the message"
       advanced: true
       required: false
@@ -60,7 +60,7 @@ tg_txt:
               data_template:
                 title: "*DEBUG {{ msg_title }}*"
                 message: >
-                  Length / String: #{{ msg_optinal_number }}# / #{{ msg_optinal_string }}# @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+                  Length / String: #{{ msg_optional_number }}# / #{{ msg_optional_string }}# @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
             - service: notify.tg_admin_grp
               data_template:
                 title: "*{{ msg_title }}*"
