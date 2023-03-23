@@ -5,7 +5,8 @@
 # DEVICE DEFINITION
 esphome:
   name: $device_name
-  friendly_name: $device_name
+  # might cause renaming entities by prefixing them with ${friendly_name}
+  # friendly_name: $device_name
   comment: $device_comment
 
   platform: $device_platform

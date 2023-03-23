@@ -5,7 +5,9 @@
 # DEVICE DEFINITION
 esphome:
   name: $device_name
-  friendly_name: $device_name
+  # might cause renaming entities by prefixing them with ${friendly_name}
+  # seems to apply for an odd reason to ESP32-cams only
+  # friendly_name: $device_name
   comment: $device_comment
 
   platform: $device_platform
