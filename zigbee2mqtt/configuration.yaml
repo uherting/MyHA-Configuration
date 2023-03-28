@@ -43,5 +43,14 @@ devices:
     friendly_name: ZB_Plug_04
 groups:
   '1':
-    friendly_name: level_2
+    friendly_name: level2-TRVs
+    devices:
+      - 0x1c34f1fffe0d319c/1
+      - 0x1c34f1fffe095fa9/1
+      - 0x1c34f1fffe095fc2/1
+  '2':
+    friendly_name: level2-Plugs
+    devices:
+      - 0xa4c1382e5e523972/1
+      - 0xa4c13804488a21e2/1
 availability: true
