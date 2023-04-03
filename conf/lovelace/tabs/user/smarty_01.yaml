@@ -11,6 +11,7 @@ path: overview1
 badges:
   [
     sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
+    sensor.tankerkoenig_star_tankstelle_diesel,
     sensor.tankerkoenig_gulf_bad_lauterberg_diesel,
     sun.sun,
     binary_sensor.sun_dwn_twilight,

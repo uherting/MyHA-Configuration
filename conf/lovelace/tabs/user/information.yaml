@@ -9,19 +9,18 @@
 icon: mdi:information-outline
 title: Information
 path: information
-badges: []
+badges:
+  [
+    sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
+    sensor.tankerkoenig_star_tankstelle_diesel,
+    sensor.tankerkoenig_gulf_bad_lauterberg_diesel,
+    sun.sun,
+    binary_sensor.sun_dwn_twilight,
+    sensor.abfall,
+    sensor.ics_1,
+  ]
 
 cards:
-  # # Holidays
-  # - type: entities
-  #   title: TEST Holidays
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.holiday_new_year
-  #       # attribute: display
-  #     - sensor.holiday_new_years_eve
-  #       # attribute: display
-
   # Full / new moon
   - type: entities
     title: Full / New Moon
@@ -56,23 +55,6 @@ cards:
     sort:
       method: state
       numeric: true
-
-  # # Holidays
-  # - type: entities
-  #   title: Holidays
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.new_year
-  #     - sensor.easter_sunday
-  #     - sensor.halloween
-  #     - sensor.first_advent
-  #     - sensor.xmas
-  #     - sensor.new_years_eve
-  #     # - sensor.ics_900
-  #     # - sensor.ics_950
-  #     # - sensor.ics_990
-  #     # - sensor.ics_991
-  #     # - sensor.ics_992
 ####################################################################
 # EOF
 ####################################################################
