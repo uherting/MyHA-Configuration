@@ -56,6 +56,34 @@ tg_txt:
             - condition: template
               value_template: "{{ msg_receiver == 'admin' }}"
           sequence:
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ msg_optional_number == '' }}"
+                  sequence:
+                    - service: notify.tg_admin_grp
+                      data_template:
+                        title: "*DEBUG CMP NUM*"
+                        message: >
+                          Number equals empty string @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+                - conditions:
+                    - condition: template
+                      value_template: "{{ msg_optional_number == 0 }}"
+                  sequence:
+                    - service: notify.tg_admin_grp
+                      data_template:
+                        title: "*DEBUG CMP NUM*"
+                        message: >
+                          Number equals zero @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+                - conditions:
+                    - condition: template
+                      value_template: "{{ msg_optional_number > 0 }}"
+                  sequence:
+                    - service: notify.tg_admin_grp
+                      data_template:
+                        title: "*DEBUG CMP NUM*"
+                        message: >
+                          Number greater than zero @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
             - service: notify.tg_admin_grp
               data_template:
                 title: "*DEBUG {{ msg_title }}*"
