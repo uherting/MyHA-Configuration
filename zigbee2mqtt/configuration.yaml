@@ -22,7 +22,7 @@ advanced:
     protocol: udp4
     type: '5424'
   last_seen: ISO_8601_local
-  log_level: error
+  log_level: info
 device_options:
   legacy: false
 permit_join: false
