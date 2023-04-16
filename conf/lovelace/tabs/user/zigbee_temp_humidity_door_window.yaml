@@ -1,0 +1,101 @@
+####################################################################
+#
+# zigbee temperature and humidity status tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:zigbee
+title: Zigbee Data
+path: zigbee_data
+badges: []
+
+cards:
+  - type: vertical-stack
+    cards:
+      # TH_01
+      - type: grid
+        square: false
+        columns: 4
+        cards:
+          - type: "custom:button-card"
+            name: "Kitchen"
+          - type: "custom:button-card"
+            entity: sensor.th_01_temperature
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.th_01_humidity
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.th_01_battery
+            name: " "
+            show_state: true
+      # TH_02
+      - type: grid
+        square: false
+        columns: 4
+        cards:
+          - type: "custom:button-card"
+            name: "Storage"
+          - type: "custom:button-card"
+            entity: sensor.th_02_temperature
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.th_02_humidity
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.th_02_battery
+            name: " "
+            show_state: true
+      # TH_03
+      - type: grid
+        square: false
+        columns: 4
+        cards:
+          - type: "custom:button-card"
+            name: "Lounge"
+          - type: "custom:button-card"
+            entity: sensor.th_03_temperature
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.th_03_humidity
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.th_03_battery
+            name: " "
+            show_state: true
+      # DW_01
+      - type: grid
+        square: false
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            name: "DW_01"
+          - type: "custom:button-card"
+            entity: binary_sensor.dw_01_contact
+            name: " "
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: binary_sensor.dw_01_tamper
+            name: " "
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.dw_01_battery
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: binary_sensor.dw_01_battery_low
+            name: " "
+            color: yellow
+            show_state: true
+####################################################################
+# EOF
+####################################################################
