@@ -22,7 +22,7 @@ advanced:
     protocol: udp4
     type: '5424'
   last_seen: ISO_8601_local
-  log_level: info
+  log_level: error
 device_options:
   legacy: false
 permit_join: false
@@ -41,6 +41,12 @@ devices:
     friendly_name: ZB_Plug_03
   '0xa4c138d094eebae0':
     friendly_name: ZB_Plug_04
+  '0xa4c138973cb5fed6':
+    friendly_name: TH_01
+  '0xa4c13896310b0036':
+    friendly_name: TH_02
+  '0xa4c138a59865fee9':
+    friendly_name: TH_03
 groups:
   '1':
     friendly_name: level2-TRVs
