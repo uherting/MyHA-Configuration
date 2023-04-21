@@ -1,0 +1,43 @@
+# ############################################################
+#
+#  Washing machine status (via photo)
+#
+# ############################################################
+
+# ############################################################
+# Send a photo with the current status of the washing machine
+# ############################################################
+# automation:
+- alias: Washing machine status
+  id: "0d8dd325-1c19-4f36-9aa6-30fb7885c103"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time_pattern
+      # You can also match on interval. This will match every 5 minutes
+      minutes: "/5"
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - condition: state
+      entity_id:
+        - binary_sensor.l9_cam32_03_status
+      state: "on"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- CREATE SNAPSHOTS -------------------
+    #      - delay: '00:00:02'
+    - service: camera.snapshot
+      data:
+        entity_id: camera.l9_cam32_03_cam
+        filename: "/config/var/opt/tg/l9esp32cam03/1.jpg"
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_file_notification
+      data:
+        msg_filename_1: "/config/var/opt/tg/l9esp32cam03/1.jpg"
+        msg_caption_1: "Washing machine on L0"
+        msg_receiver: "notify"
+# ############################################################
+#  END OF FILE
+# ############################################################
