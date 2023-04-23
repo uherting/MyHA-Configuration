@@ -10,19 +10,31 @@
 # ############################################################
 
 # --------------------------------------------------------------
-# sending a file to the TG notification group
+# sending three files to the TG notification group
 # --------------------------------------------------------------
-tg_file_notification:
+tg_send_three_files:
   alias: Send file via Telegram
-  icon: mdi:file
+  icon: mdi:file-multiple
   description: This script sends a file given as a parameter
   fields:
-    msg_filename:
-      description: "The name of the file"
+    msg_filename_1:
+      description: "The name of file #1"
       example: "/config/var/opt/tg/l9ttgocam01/1.jpg"
-    msg_caption:
-      description: "The caption which goes along with the file"
+    msg_caption_1:
+      description: "The caption which goes along with file #1"
       example: "L901, photo 1"
+    msg_filename_2:
+      description: "The name of file #2"
+      example: "/config/var/opt/tg/l9ttgocam01/2.jpg"
+    msg_caption_2:
+      description: "The caption which goes along with file #2"
+      example: "L901, photo 2"
+    msg_filename_3:
+      description: "The name of file #3"
+      example: "/config/var/opt/tg/l9ttgocam01/3.jpg"
+    msg_caption_3:
+      description: "The caption which goes along with file #3"
+      example: "L901, photo 3"
     msg_receiver:
       description: "The receiver of the message"
       advanced: true
@@ -44,8 +56,12 @@ tg_file_notification:
                 message: "m_msg"
                 data:
                   photo:
-                    - file: "{{ msg_filename }}"
-                      caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                    - file: "{{ msg_filename_1 }}"
+                      caption: "{{ msg_caption_1 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                    - file: "{{ msg_filename_2 }}"
+                      caption: "{{ msg_caption_2 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                    - file: "{{ msg_filename_3 }}"
+                      caption: "{{ msg_caption_3 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
         # general notification group
         - conditions:
             - condition: template
@@ -58,16 +74,21 @@ tg_file_notification:
                 message: "m_msg"
                 data:
                   photo:
-                    - file: "{{ msg_filename }}"
-                      caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                    - file: "{{ msg_filename_1 }}"
+                      caption: "{{ msg_caption_1 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                    - file: "{{ msg_filename_2 }}"
+                      caption: "{{ msg_caption_2 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                    - file: "{{ msg_filename_3 }}"
+                      caption: "{{ msg_caption_3 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
       # receiver does not exist
       default:
         - service: notify.tg_admin_grp
           data_template:
             title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
             message: >
-              {{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+              {{ msg_caption_1 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
 
 # ############################################################
 #  END OF FILE
 # ############################################################
+

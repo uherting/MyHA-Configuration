@@ -12,7 +12,7 @@
 # --------------------------------------------------------------
 # sending a text message to a TG group
 # --------------------------------------------------------------
-tg_txt:
+tg_send_txt:
   alias: Send text message via Telegram
   icon: mdi:text
   description: This script sends a text message given as a parameter
