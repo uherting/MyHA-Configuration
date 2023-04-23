@@ -31,7 +31,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- SEND NOTIFICATION ---------------
-    # - service: script.tg_txt
+    # - service: script.tg_send_txt
     #   data_template:
     #     msg_title: "Home Assistant errors"
     #     msg_text: >-
@@ -69,7 +69,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- SEND NOTIFICATION ---------------
-    # - service: script.tg_txt
+    # - service: script.tg_send_txt
     #   data_template:
     #     msg_title: "Home Assistant errors"
     #     msg_text: >-
@@ -102,7 +102,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- SEND NOTIFICATION ---------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Home Assistant errors"
         msg_text: "Since the last restart of HA {{ states('counter.homeassistant_errors') | string }} error(s) occured.\n"
@@ -128,7 +128,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- SEND NOTIFICATION ---------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Home Assistant warnings"
         msg_text: "Since the last restart of HA {{ states('counter.homeassistant_warnings') | string }} warning(s) occured.\n"

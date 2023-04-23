@@ -201,7 +201,7 @@
 #       sensors: "{% set result = namespace(sensors=[]) %}{{ns.sensors}}"
 #       # --------------------- ACTIONS ---------------------
 #       actions:
-#         - service: script.tg_txt
+#         - service: script.tg_send_txt
 #           data_template:
 #             msg_title: "Zigbee TRV Kitchen_L2 notification"
 #             msg_text: "foo bar\n"

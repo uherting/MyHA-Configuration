@@ -23,7 +23,7 @@
     value_template: "{{ trigger.event.data.repository is defined }}"
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "New repository in HACS"
         msg_text: >-

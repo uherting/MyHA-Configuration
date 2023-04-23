@@ -18,7 +18,7 @@
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Home Assistant"
         msg_text: "Up and running"
@@ -43,7 +43,7 @@
 # --------------------- ACTIONS ---------------------
   action:
 # --------------------- NOTIFY ---------------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Home Assistant"
         msg_text: "Shut down"

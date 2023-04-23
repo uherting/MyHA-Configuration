@@ -19,7 +19,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data:
         msg_title: "TTGO cam L9 01 online again"
         msg_text: ""
@@ -40,7 +40,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data:
         msg_title: "TTGO cam L9 01 went offline"
         msg_text: ""
@@ -76,7 +76,7 @@
         entity_id: camera.l9_cam_ttgo_01_cam
         filename: "/config/var/opt/tg/l9ttgocam01/3.jpg"
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data:
         msg_title: "MOTION DETECTED"
         msg_text: "Motion was detected in L901, 3 photos follow."

@@ -34,7 +34,7 @@ esphome_notify_about_unavailable_devices:
       default: "admin"
   mode: queued
   sequence:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "*{{ msg_title }}*"
         msg_text: "{{ msg_text }} {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') }}"
@@ -51,7 +51,7 @@ esphome_notify_about_unavailable_devices:
     #       {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
     #       {% endfor %}
     #       {{ ns.devices | unique | list | length }}
-    # - service: script.tg_txt
+    # - service: script.tg_send_txt
     #   data_template:
     #     msg_title: "*{{ msg_title }}*"
     #     msg_text: "DEBUG: {{ msg_text }} {{ states('input_text.esphome_unavailable_devices_text') }} devices offline."

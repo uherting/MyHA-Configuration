@@ -22,7 +22,7 @@
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data:
         msg_title: "Pihole offline"
         msg_text: "It was detected that pihole is offline."
@@ -46,7 +46,7 @@
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data:
         msg_title: "Pihole unavailable"
         msg_text: "It was detected that pihole is not available."
@@ -70,7 +70,7 @@
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data:
         msg_title: "Pihole online"
         msg_text: "It was detected that pihole is online again."

@@ -21,7 +21,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Google Drive Backup"
         msg_text: "Snapshots of Google Drive Backup are stale. Please visit the <a href='/cebe7a76_hassio_google_drive_backup'>Hass.io Google Drive Backup</a> add-on status page for details.\n"

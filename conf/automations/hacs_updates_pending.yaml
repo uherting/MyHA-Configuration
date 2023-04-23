@@ -23,7 +23,7 @@
       value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
   # --------------------- ACTIONS ---------------------
   action:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Updates pending in HACS"
         msg_text: >-

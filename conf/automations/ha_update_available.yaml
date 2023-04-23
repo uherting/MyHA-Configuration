@@ -23,7 +23,7 @@
   condition: []
 # --------------------- ACTIONS ---------------------
   action:
-    - service: script.tg_txt
+    - service: script.tg_send_txt
       data_template:
         msg_title: "Home Assistant"
         msg_text: "HA {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
