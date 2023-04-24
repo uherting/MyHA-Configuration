@@ -1,0 +1,42 @@
+# ############################################################
+#
+#  Washing machine status (via photo)
+#
+# ############################################################
+
+# ############################################################
+# Send a photo with the current status of the washing machine
+#   This is done:
+#     - every x minutes
+#     - if the camera is not disconnected
+# ############################################################
+# automation:
+- alias: Setting datetime washing_machine_L0
+  id: "7802c113-7196-457a-99c7-5f1370a415d3"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l9_cam32_03_status
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SET DATETIME ---------------------
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.washing_machine_l0
+      data:
+        datetime: "{{ states.binary_sensor.l9_cam32_03_status.last_changed }}"
+    # --------------------- ADDITIONAL DEBUG MSG ---------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "#Setting datetime washing_machine_L0#"
+        msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
+        msg_receiver: "admin"
+# ############################################################
+#  END OF FILE
+# ############################################################

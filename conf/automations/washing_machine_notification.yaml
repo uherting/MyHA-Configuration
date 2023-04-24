@@ -6,6 +6,9 @@
 
 # ############################################################
 # Send a photo with the current status of the washing machine
+#   This is done:
+#     - every x minutes
+#     - if the camera is not disconnected
 # ############################################################
 # automation:
 - alias: Washing machine status
@@ -19,25 +22,39 @@
       # You can also match on interval. This will match every 5 minutes
       minutes: "/5"
   # -------------------- CONDITIONS -------------------
-  condition:
-    - condition: state
-      entity_id:
-        - binary_sensor.l9_cam32_03_status
+  condition: and
+  conditions:
+    # only if the cam is online
+    - condition:
+      platform: state
+      entity_id: binary_sensor.l9_cam32_03_status
       state: "on"
+    # ... and online longer than x minutes
+    - condition: template
+      value_template: "{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}"
   # --------------------- ACTIONS ---------------------
   action:
+    # --------------------- CAM LIGHT ON ---------------------
+    - service: switch.turn_on
+      data:
+        entity_id: light.l9_cam32_03_camlight
+    - delay: "00:00:01"
     # ------------------- CREATE SNAPSHOTS -------------------
-    #      - delay: '00:00:02'
     - service: camera.snapshot
       data:
         entity_id: camera.l9_cam32_03_cam
         filename: "/config/var/opt/tg/l9esp32cam03/1.jpg"
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_file_notification
+    - service: script.tg_send_one_file
       data:
         msg_filename_1: "/config/var/opt/tg/l9esp32cam03/1.jpg"
         msg_caption_1: "Washing machine on L0"
-        msg_receiver: "notify"
+        msg_receiver: "admin"
+        # msg_receiver: "notify"
+    # --------------------- CAM LIGHT OFF ---------------------
+    - service: switch.turn_off
+      data:
+        entity_id: light.l9_cam32_03_camlight
 # ############################################################
 #  END OF FILE
 # ############################################################
