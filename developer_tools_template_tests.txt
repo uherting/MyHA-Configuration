@@ -1,5 +1,42 @@
 # content of: /config/developer_tools_template_tests.txt
 
+# only if the cam is online and online longer than x minutes
+{{ states("binary_sensor.l9_cam32_03_status") }}
+{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}
+
+{{ states.binary_sensor.l9_cam32_03_status.last_changed }}
+{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed)  }}
+
+{{ timedelta(hours = 0, minutes = 10) }}
+{{ now() - states.binary_sensor.l9_cam32_03_status.last_changed }}
+{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}
+
+{{ now() }}
+{{ now().timestamp() }}
+
+{{ "\n123" | length }}
+
+{{ states("counter.homeassistant_warnings") }}
+{{ states("counter.homeassistant_errors") }}
+
+{{ (state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | length()) > 1 }}
+
+{{ states.sensor.unavailable_esphome_devices_info.last_updated }}
+{{ states.sensor.unavailable_esphome_devices_info.last_changed }}
+
+{% if is_state("sun.sun", "above_horizon") -%}
+  The sun rose {{ relative_time(states.sun.sun.last_changed) }} ago.
+{%- else -%}
+  The sun will rise at {{ as_timestamp(state_attr("sun.sun", "next_rising")) | timestamp_local }}.
+{%- endif %}
+
+For loop example getting entity values in the weather domain:
+
+{% for state in states.weather -%}
+  {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
+  {{ state.name | lower }} is {{state.state_with_unit}}
+{%- endfor %}.
+
 # using a regex
 # from https://community.home-assistant.io/t/jinja-template-regex-to-narrow-list-of-sensors/271402/2
 ###########################################################################
