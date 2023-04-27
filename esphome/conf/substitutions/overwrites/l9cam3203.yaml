@@ -6,8 +6,7 @@ dummy_value: "dummy value"
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 
 # see secrets.yaml for log level definitions
-# log_level: !secret LOG_LEVEL_DEBUG
-
+log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
 # EOF
 ####################################################################
