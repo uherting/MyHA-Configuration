@@ -24,17 +24,18 @@ cards:
   #     - sensor.l9_cam_ttgo_01_esphome_version
   #     - sensor.l9_cam_ttgo_01_wifi_signal
 
-  # - type: picture-glance
-  #   title: ESP32Cam 02
-  #   camera_image: camera.l9_cam32_02_cam
-  #   camera_view: live
-  #   tap_action: none
-  #   entities:
-  #     - light.l9_cam32_02_camlight
-  #     # - binary_sensor.l9_cam32_02_pir_01
-  #     - binary_sensor.l9_cam32_02_status
-  #     - sensor.l9_cam32_02_esphome_version
-  #     - sensor.l9_cam32_02_wifi_signal
+  - type: picture-glance
+    title: ESP32Cam 02
+    camera_image: camera.l9_cam32_02_cam
+    camera_view: live
+    tap_action: none
+    entities:
+      - light.l9_cam32_02_camlight
+      # - binary_sensor.l9_cam32_02_pir_01
+      - binary_sensor.l9_cam32_02_status
+      - sensor.l9_cam32_02_esphome_version
+      - sensor.l9_cam32_02_wifi_signal
+      - sensor.l9_cam32_02_uptime
 
   - type: picture-glance
     title: ESP32Cam 03
@@ -47,6 +48,7 @@ cards:
       - binary_sensor.l9_cam32_03_status
       - sensor.l9_cam32_03_esphome_version
       - sensor.l9_cam32_03_wifi_signal
+      - sensor.l9_cam32_03_uptime
 ####################################################################
 # EOF
 ####################################################################
