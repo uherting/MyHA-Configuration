@@ -110,6 +110,26 @@ tg_send_txt:
                 title: "*{{ msg_title }}*"
                 message: >
                   {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+        # cams inside group
+        - conditions:
+            - condition: template
+              value_template: "{{ msg_receiver == 'cams_inside' }}"
+          sequence:
+            - service: notify.tg_cam_entrance_inside_grp
+              data_template:
+                title: "*{{ msg_title }}*"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+        # cams outside notification group
+        - conditions:
+            - condition: template
+              value_template: "{{ msg_receiver == 'cams_outside' }}"
+          sequence:
+            - service: notify.tg_cam_entrance_outside_grp
+              data_template:
+                title: "*{{ msg_title }}*"
+                message: >
+                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
       # receiver does not exist
       default:
         - service: notify.tg_admin_grp

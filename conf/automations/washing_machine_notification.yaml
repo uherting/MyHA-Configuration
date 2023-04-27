@@ -49,8 +49,7 @@
       data:
         msg_filename_1: "/config/var/opt/tg/l9esp32cam03/1.jpg"
         msg_caption_1: "Washing machine on L0"
-        msg_receiver: "admin"
-        # msg_receiver: "notify"
+        msg_receiver: "cams_inside"
     # --------------------- CAM LIGHT OFF ---------------------
     - service: switch.turn_off
       data:

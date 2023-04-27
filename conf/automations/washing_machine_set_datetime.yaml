@@ -34,8 +34,8 @@
     # --------------------- ADDITIONAL DEBUG MSG ---------------------
     - service: script.tg_send_txt
       data_template:
-        msg_title: "#Setting datetime washing_machine_L0#"
-        msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
+        msg_title: "input_datetime.washing_machine_l0 was set"
+        msg_text: "input_datetime.washing_machine_l0 was set to {{ states.binary_sensor.l9_cam32_03_status.last_changed }}\n"
         msg_receiver: "admin"
 # ############################################################
 #  END OF FILE

@@ -2,38 +2,10 @@
 #  setup of notify services
 # ############################################################
 
-# --------------------- device_tracker ---------------------
-- name: device_tracker_gh
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
-
-- name: device_tracker_life360_info
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
-
-# --------------------- cameras ---------------------
-- name: l9_cam_esp32
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
-
-- name: l9_cam_ttgo
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
-
-# ------------------ General Notification ------------------
-- name: tg_notification_grp
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
-
 # ------------------ Admin Notification ------------------
 - name: tg_admin_grp
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_ADMINS_CHAT_ID
-
-# ------------------ Warning Notification ------------------
-- name: tg_warning_grp
-  platform: telegram
-  chat_id: !secret TELEGRAM_NOTIFY_GRP_WARNINGS_CHAT_ID
 
 # ------------------ Alert Notification ------------------
 - name: tg_alert_grp
@@ -45,6 +17,11 @@
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_CAMS_CHAT_ID
 
+# ------------------ Debug Notification ------------------
+- name: tg_debug_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_DEBUG_CHAT_ID
+
 # ---------- Cam Notification Entrance outside ----------
 - name: tg_cam_entrance_outside_grp
   platform: telegram
@@ -54,6 +31,16 @@
 - name: tg_cam_entrance_inside_grp
   platform: telegram
   chat_id: !secret TELEGRAM_NOTIFY_GRP_CAM_ENTRANCE_INSIDE_CHAT_ID
+
+# ------------------ General Notification ------------------
+- name: tg_notification_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_NOTIFICATIONS_CHAT_ID
+
+# ------------------ Warning Notification ------------------
+- name: tg_warning_grp
+  platform: telegram
+  chat_id: !secret TELEGRAM_NOTIFY_GRP_WARNINGS_CHAT_ID
 # ############################################################
 #  END OF FILE
 # ############################################################
