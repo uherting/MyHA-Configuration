@@ -34,8 +34,7 @@ cards:
       # - binary_sensor.l9_cam32_02_pir_01
       - binary_sensor.l9_cam32_02_status
       - sensor.l9_cam32_02_esphome_version
-      - sensor.l9_cam32_02_wifi_signal
-      - sensor.l9_cam32_02_uptime
+      - switch.l9_cam32_02_restart_device
 
   - type: picture-glance
     title: ESP32Cam 03
@@ -47,8 +46,7 @@ cards:
       # - binary_sensor.l9_cam32_03_pir_01
       - binary_sensor.l9_cam32_03_status
       - sensor.l9_cam32_03_esphome_version
-      - sensor.l9_cam32_03_wifi_signal
-      - sensor.l9_cam32_03_uptime
+      - switch.l9_cam32_03_restart_device
 ####################################################################
 # EOF
 ####################################################################
