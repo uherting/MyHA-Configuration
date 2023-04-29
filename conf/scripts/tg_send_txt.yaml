@@ -59,7 +59,7 @@ tg_send_txt:
             - choose:
                 - conditions:
                     - condition: template
-                      value_template: "{{ msg_optional_number == '' }}"
+                      value_template: "{{ (msg_optional_number == '') && (input_boolean.system_notify_debugging == true) }}"
                   sequence:
                     - service: notify.tg_admin_grp
                       data_template:
@@ -68,7 +68,7 @@ tg_send_txt:
                           Number equals empty string @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
                 - conditions:
                     - condition: template
-                      value_template: "{{ (msg_optional_number | int(0)) == 0 }}"
+                      value_template: "{{ (msg_optional_number | int(0) == 0)) && (input_boolean.system_notify_debugging == true) }}"
                   sequence:
                     - service: notify.tg_admin_grp
                       data_template:
@@ -77,7 +77,7 @@ tg_send_txt:
                           Number equals zero @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
                 - conditions:
                     - condition: template
-                      value_template: "{{ (msg_optional_number | int(0)) > 0 }}"
+                      value_template: "{{ (msg_optional_number | int(0) > 0)) && (input_boolean.system_notify_debugging == true) }}"
                   sequence:
                     - service: notify.tg_admin_grp
                       data_template:
@@ -85,11 +85,20 @@ tg_send_txt:
                         message: >
                           Number greater than zero @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
               default:
-                - service: notify.tg_admin_grp
-                  data_template:
-                    title: "*DEBUG CMP NUM DEFAULT BRANCH*"
-                    message: >
-                      DEFAULT BRANCH was hit. Not GOOD! @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+                - choose:
+                    - conditions:
+                        - condition: template
+                          value_template: "{{ (input_boolean.system_notify_debugging == true) }}"
+                      sequence:
+                        - service: system_log.write
+                          data:
+                            message: "DEBUG CMP NUM DEFAULT BRANCH was hit @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                            level: info
+                # - service: notify.tg_admin_grp
+                #   data_template:
+                #     title: "*DEBUG CMP NUM DEFAULT BRANCH*"
+                #     message: >
+                #       DEFAULT BRANCH was hit. Not GOOD! @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
             - service: notify.tg_admin_grp
               data_template:
                 title: "*DEBUG {{ msg_title }}*"
