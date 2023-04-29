@@ -1,0 +1,63 @@
+# ############################################################
+#
+#  Count Home Assistant errors and warnings --- notifications
+#
+#   from: https://community.home-assistant.io/t/counter-warning-error-issue/85490/11
+#   notification part see https://community.home-assistant.io/t/trigger-automation-if-numeric-state-increases-1/368926/6?u=uwe.ha
+#
+# ############################################################
+
+# ############################################################
+# Inform admin about Home Assistant errors
+# ############################################################
+- alias: Inform admin about Home Assistant errors
+  id: "a9671476-d4e8-48be-a1d8-ff994e1078cb"
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "08:00:00"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition:
+    - condition: numeric_state
+      entity_id: counter.homeassistant_errors
+      above: "0"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ---------------- SEND NOTIFICATION ---------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Home Assistant errors"
+        msg_text: "Since the last restart of HA {{ states('counter.homeassistant_errors') | string }} error(s) occured.\n"
+        msg_receiver: "admin"
+    - service: script.homeassistant_reset_error_counter
+
+# ############################################################
+# Inform admin about Home Assistant warnings
+# ############################################################
+- alias: Inform admin about Home Assistant warnings
+  id: "c4a32259-0632-4155-a923-6f5462bbc45e"
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "08:00:00"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition:
+    - condition: numeric_state
+      entity_id: counter.homeassistant_warnings
+      above: "0"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ---------------- SEND NOTIFICATION ---------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Home Assistant warnings"
+        msg_text: "Since the last restart of HA {{ states('counter.homeassistant_warnings') | string }} warning(s) occured.\n"
+        msg_receiver: "admin"
+    - service: script.homeassistant_reset_warning_counter
+# ############################################################
+#  END OF FILE
+# ############################################################
