@@ -21,11 +21,12 @@ cards:
       - input_boolean.system_notify_general
       - input_boolean.system_notify_debugging
 
-  - type: entities
-    title: SpeeddotNet Test trigger
-    show_header_toggle: false
-    entities:
-      - input_boolean.speedtestdotnet
+  # no such service available
+  # - type: entities
+  #   title: SpeeddotNet Test trigger
+  #   show_header_toggle: false
+  #   entities:
+  #     - input_boolean.speedtestdotnet
 
   - type: entities
     title: L2 Bathroom openWindow alert
@@ -33,13 +34,14 @@ cards:
     entities:
       - input_number.l2_bathroom_alert_below_temp
 
-  - type: entities
-    title: Set themes sunrise / sunset
-    show_header_toggle: false
-    entities:
-      - input_select.set_sunrise_theme
-      - input_select.set_sunset_theme
-      - input_select.theme
+  # no more switch as the theme is set in profile
+  # - type: entities
+  #   title: Set themes sunrise / sunset
+  #   show_header_toggle: false
+  #   entities:
+  #     - input_select.set_sunrise_theme
+  #     - input_select.set_sunset_theme
+  #     - input_select.theme
 ####################################################################
 # EOF
 ####################################################################
