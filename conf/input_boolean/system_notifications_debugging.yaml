@@ -5,12 +5,11 @@
 # ############################################################
 
 #input_boolean
-  notify_system:
-    name: Allow System notifications
-    icon: mdi:bell
-    # no need to define an initial value as it will be reloaded
-    # initial: off 
-
+system_notify_debugging:
+  name: Allow System notifications (debuging)
+  icon: mdi:bell
+  # no need to define an initial value as it will be reloaded
+  # initial: off
 # ############################################################
 #  END OF FILE
 # ############################################################

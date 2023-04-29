@@ -18,7 +18,8 @@ cards:
     title: General Notifications
     show_header_toggle: false
     entities:
-      - input_boolean.notify_system
+      - input_boolean.system_notify_general
+      - input_boolean.system_notify_debugging
 
   - type: entities
     title: SpeeddotNet Test trigger
@@ -39,7 +40,6 @@ cards:
       - input_select.set_sunrise_theme
       - input_select.set_sunset_theme
       - input_select.theme
-
 ####################################################################
 # EOF
 ####################################################################

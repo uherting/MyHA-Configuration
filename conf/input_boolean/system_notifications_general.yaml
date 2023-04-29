@@ -1,0 +1,16 @@
+# ############################################################
+#
+#  Input boolean
+#
+# ############################################################
+
+#input_boolean
+system_notify_general:
+  name: Allow System notifications (general)
+  icon: mdi:bell
+  # no need to define an initial value as it will be reloaded
+  # initial: off
+# ############################################################
+#  END OF FILE
+# ############################################################
+
