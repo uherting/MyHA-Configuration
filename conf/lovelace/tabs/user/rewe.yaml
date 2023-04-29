@@ -23,14 +23,14 @@ cards:
     cards:
       - type: markdown
         content: |
-          **Süßes und Salziges**
+          # **Süßes und Salziges**
           |            |        |       |
           | :------------: |:------------- | -----:|
-          {%- set product_list_loop =  state_attr('sensor.rewe_440421', 'discounts') -%}
+          {{ state_attr('sensor.rewe_440421', 'discounts') }}
+          {%- set product_list_loop =  state_attr('sensor.rewe_1465740', 'discounts') -%}
 
           {%- for product in product_list_loop -%} {% if 'Süßes & Salziges' in product.category and product.product != '' %}
           | <img src="{{product.picture_link[0] }}" width="50" height="50"/> | {{product.product }} 
           | ![badge](https://badgen.net/badge/{{ product.price.price | urlencode }}€/{{ product.price.regularPrice | urlencode }}{%- if 'Statt' in product.price.regularPrice -%}€{%- endif -%}/red)  
           |  {%- endif -%} 
           {%- endfor -%}
-          Hello again!
