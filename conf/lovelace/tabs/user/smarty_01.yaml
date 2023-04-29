@@ -14,7 +14,6 @@ badges:
     sensor.tankerkoenig_star_tankstelle_diesel,
     sensor.tankerkoenig_gulf_bad_lauterberg_diesel,
     sun.sun,
-    binary_sensor.sun_dwn_twilight,
     sensor.abfall,
     sensor.ics_1,
   ]
