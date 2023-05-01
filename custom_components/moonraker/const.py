@@ -6,7 +6,7 @@ from homeassistant.const import Platform
 # Base component constants
 DOMAIN = "moonraker"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 MANIFACTURER = "@marcolivierarsenault"
 
 # Platforms
@@ -16,6 +16,7 @@ PLATFORMS = [
     Platform.BUTTON,
     Platform.BINARY_SENSOR,
     Platform.SWITCH,
+    Platform.NUMBER,
 ]
 
 CONF_API_KEY = "api_key"

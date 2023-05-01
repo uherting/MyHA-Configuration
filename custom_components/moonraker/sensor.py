@@ -9,7 +9,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
 )
-from homeassistant.const import DEGREE, PERCENTAGE, TIME_SECONDS, UnitOfLength
+from homeassistant.const import DEGREE, PERCENTAGE, UnitOfLength, UnitOfTime
 from homeassistant.core import callback
 
 from .const import DOMAIN, METHODS, PRINTERSTATES, PRINTSTATES
@@ -141,7 +141,7 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
             ("display_status", "progress"),
         ],
         icon="mdi:timer",
-        unit=TIME_SECONDS,
+        unit=UnitOfTime.SECONDS,
         device_class=SensorDeviceClass.DURATION,
     ),
     MoonrakerSensorDescription(
@@ -164,7 +164,7 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
             ("display_status", "progress"),
         ],
         icon="mdi:timer",
-        unit=TIME_SECONDS,
+        unit=UnitOfTime.SECONDS,
         device_class=SensorDeviceClass.DURATION,
     ),
     MoonrakerSensorDescription(
@@ -187,7 +187,7 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
         subscriptions=[],
         icon="mdi:timer",
         device_class=SensorDeviceClass.DURATION,
-        unit=TIME_SECONDS,
+        unit=UnitOfTime.SECONDS,
     ),
     MoonrakerSensorDescription(
         key="slicer_print_time_left_estimate",
@@ -199,7 +199,7 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
         subscriptions=[("print_stats", "print_duration")],
         icon="mdi:timer",
         device_class=SensorDeviceClass.DURATION,
-        unit=TIME_SECONDS,
+        unit=UnitOfTime.SECONDS,
     ),
     MoonrakerSensorDescription(
         key="print_duration",
@@ -212,7 +212,7 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
         ),
         subscriptions=[("print_stats", "print_duration")],
         icon="mdi:timer",
-        unit=TIME_SECONDS,
+        unit=UnitOfTime.MINUTES,
         device_class=SensorDeviceClass.DURATION,
     ),
     MoonrakerSensorDescription(
@@ -279,9 +279,9 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
     MoonrakerSensorDescription(
         key="toolhead_position_x",
         name="Toolhead position X",
-        value_fn=lambda sensor: sensor.coordinator.data["status"]["toolhead"][
-            "position"
-        ][0],
+        value_fn=lambda sensor: round(
+            sensor.coordinator.data["status"]["toolhead"]["position"][0], 2
+        ),
         subscriptions=[("toolhead", "position")],
         icon="mdi:axis-x-arrow",
         unit=UnitOfLength.MILLIMETERS,
@@ -289,9 +289,9 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
     MoonrakerSensorDescription(
         key="toolhead_position_y",
         name="Toolhead position Y",
-        value_fn=lambda sensor: sensor.coordinator.data["status"]["toolhead"][
-            "position"
-        ][1],
+        value_fn=lambda sensor: round(
+            sensor.coordinator.data["status"]["toolhead"]["position"][1], 2
+        ),
         subscriptions=[("toolhead", "position")],
         icon="mdi:axis-x-arrow",
         unit=UnitOfLength.MILLIMETERS,
@@ -299,9 +299,9 @@ SENSORS: tuple[MoonrakerSensorDescription, ...] = [
     MoonrakerSensorDescription(
         key="toolhead_position_z",
         name="Toolhead position Z",
-        value_fn=lambda sensor: sensor.coordinator.data["status"]["toolhead"][
-            "position"
-        ][2],
+        value_fn=lambda sensor: round(
+            sensor.coordinator.data["status"]["toolhead"]["position"][2], 2
+        ),
         subscriptions=[("toolhead", "position")],
         icon="mdi:axis-x-arrow",
         unit=UnitOfLength.MILLIMETERS,
@@ -469,13 +469,13 @@ class MoonrakerSensor(BaseMoonrakerEntity, SensorEntity):
         self._attr_native_value = self.entity_description.value_fn(self)
         self.async_write_ha_state()
 
-    def empty_result_when_not_printing(self, value: str = "") -> str:
+    def empty_result_when_not_printing(self, value=""):
         """Return empty string when not printing"""
         if (
             self.coordinator.data["status"]["print_stats"]["state"]
             != PRINTSTATES.PRINTING.value
         ):
-            return ""
+            return "" if isinstance(value, str) else 0.0
         return value
 
 
@@ -522,7 +522,7 @@ def calculate_current_layer(data):
         data["status"]["print_stats"]["state"] != PRINTSTATES.PRINTING.value
         or data["status"]["print_stats"]["filename"] == ""
     ):
-        return ""
+        return 0
 
     # layer = (current_z - first_layer_height) / layer_height + 1
     return (

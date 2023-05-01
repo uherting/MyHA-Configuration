@@ -4,6 +4,7 @@ Moonraker integration for Home Assistant
 import asyncio
 from datetime import timedelta
 import logging
+import os.path
 
 import async_timeout
 from homeassistant.config_entries import ConfigEntry
@@ -147,21 +148,35 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
         }
         if gcode_filename is None or gcode_filename == "":
             return return_gcode
+
+        # Get prefix of the filename to get the appropriate thumbnail
+        dirname = os.path.dirname(gcode_filename)
+
         query_object = {"filename": gcode_filename}
         gcode = await self._async_fetch_data(
             METHODS.SERVER_FILES_METADATA, query_object
         )
-        try:
-            return_gcode["estimated_time"] = gcode["estimated_time"]
-            return_gcode["filament_total"] = gcode["filament_total"]
-            return_gcode["layer_count"] = gcode["layer_count"]
-            return_gcode["layer_height"] = gcode["layer_height"]
-            return_gcode["first_layer_height"] = gcode["first_layer_height"]
+        return_gcode["estimated_time"] = (
+            gcode["estimated_time"] if "estimated_time" in gcode else 0
+        )
+        return_gcode["filament_total"] = (
+            gcode["filament_total"] if "filament_total" in gcode else 0
+        )
+        return_gcode["layer_count"] = (
+            gcode["layer_count"] if "layer_count" in gcode else 0
+        )
+        return_gcode["layer_height"] = (
+            gcode["layer_height"] if "layer_height" in gcode else 0
+        )
+        return_gcode["first_layer_height"] = (
+            gcode["first_layer_height"] if "first_layer_height" in gcode else 0
+        )
 
+        try:
             # Keep last since this can fail but, we still want the other data
-            return_gcode["thumbnails_path"] = gcode["thumbnails"][
-                len(gcode["thumbnails"]) - 1
-            ]["relative_path"]
+            path = gcode["thumbnails"][len(gcode["thumbnails"]) - 1]["relative_path"]
+
+            return_gcode["thumbnails_path"] = os.path.join(dirname, path)
             return return_gcode
         except Exception as ex:
             _LOGGER.error("failed to get thumbnails  {%s}", ex)
@@ -169,7 +184,9 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.error("gcode {%s}", gcode)
             return return_gcode
 
-    async def _async_fetch_data(self, query_path: METHODS, query_object):
+    async def _async_fetch_data(
+        self, query_path: METHODS, query_object, quiet: bool = False
+    ):
         if not self.moonraker.client.is_connected:
             _LOGGER.warning("connection to moonraker down, restarting")
             await self.moonraker.start()
@@ -180,7 +197,8 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
                 result = await self.moonraker.client.call_method(
                     query_path.value, **query_object
                 )
-            _LOGGER.debug(result)
+            if not quiet:
+                _LOGGER.debug(result)
             return result
         except Exception as exception:
             raise UpdateFailed() from exception
@@ -198,10 +216,10 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed() from exception
 
     async def async_fetch_data(
-        self, query_path: METHODS, query_obj: dict[str:any] = None
+        self, query_path: METHODS, query_obj: dict[str:any] = None, quiet: bool = False
     ):
         """Fetch data from moonraker"""
-        return await self._async_fetch_data(query_path, query_obj)
+        return await self._async_fetch_data(query_path, query_obj, quiet=quiet)
 
     async def async_send_data(
         self, query_path: METHODS, query_obj: dict[str:any] = None
