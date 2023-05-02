@@ -14,7 +14,7 @@
 - alias: Washing machine status
   id: "0d8dd325-1c19-4f36-9aa6-30fb7885c103"
   mode: single
-  initial_state: true
+  initial_state: false
 
   # --------------------- TRIGGER ---------------------
   trigger:
@@ -22,16 +22,16 @@
       # You can also match on interval. This will match every 5 minutes
       minutes: "/5"
   # -------------------- CONDITIONS -------------------
-  condition: and
-  conditions:
-    # only if the cam is online
-    - condition:
-      platform: state
-      entity_id: binary_sensor.l9_cam32_03_status
-      state: "on"
-    # ... and online longer than x minutes
-    - condition: template
-      value_template: "{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}"
+  condition:
+    condition: and
+    conditions:
+      # only if the cam is online
+      - condition: state
+        entity_id: binary_sensor.l9_cam32_03_status
+        state: "on"
+      # ... and online longer than x minutes
+      - condition: template
+        value_template: "{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > (timedelta(hours = 0, minutes = 10)) }}"
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- CAM LIGHT ON ---------------------
