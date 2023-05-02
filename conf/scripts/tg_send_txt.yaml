@@ -59,7 +59,7 @@ tg_send_txt:
             - choose:
                 - conditions:
                     - condition: template
-                      value_template: "{{ (msg_optional_number == '') && (input_boolean.system_notify_debugging == true) }}"
+                      value_template: "{{ (msg_optional_number == '') && (input_boolean.system_notify_debugging == 'on') }}"
                   sequence:
                     - service: notify.tg_admin_grp
                       data_template:
@@ -68,7 +68,7 @@ tg_send_txt:
                           Number equals empty string @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
                 - conditions:
                     - condition: template
-                      value_template: "{{ (msg_optional_number | int(0) == 0)) && (input_boolean.system_notify_debugging == true) }}"
+                      value_template: "{{ (msg_optional_number | int(0) == 0) && (input_boolean.system_notify_debugging == 'on') }}"
                   sequence:
                     - service: notify.tg_admin_grp
                       data_template:
@@ -77,7 +77,7 @@ tg_send_txt:
                           Number equals zero @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
                 - conditions:
                     - condition: template
-                      value_template: "{{ (msg_optional_number | int(0) > 0)) && (input_boolean.system_notify_debugging == true) }}"
+                      value_template: "{{ (msg_optional_number | int(0) > 0) && (input_boolean.system_notify_debugging == 'on') }}"
                   sequence:
                     - service: notify.tg_admin_grp
                       data_template:
@@ -88,7 +88,7 @@ tg_send_txt:
                 - choose:
                     - conditions:
                         - condition: template
-                          value_template: "{{ (input_boolean.system_notify_debugging == true) }}"
+                          value_template: "{{ (input_boolean.system_notify_debugging == 'on') }}"
                       sequence:
                         - service: system_log.write
                           data:
