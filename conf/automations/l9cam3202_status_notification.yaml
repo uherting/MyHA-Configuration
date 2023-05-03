@@ -1,0 +1,56 @@
+# ############################################################
+#
+#  ESP32-cam status notification
+#
+# ############################################################
+
+# ############################################################
+# ESP32-cam l9cam3202 offline
+# ############################################################
+- alias: ESP32-cam l9cam3202 offline
+  id: "6f90796c-ecda-4b30-b086-41a67740323f"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l9_cam32_02_status
+      to: "unavailable"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "ESP32-cam status"
+        msg_text: "ESP32-cam l9cam3202 offline"
+        msg_receiver: "notify"
+
+# ############################################################
+# ESP32-cam l9cam3202 online
+# ############################################################
+- alias: ESP32-cam l9cam3202 online
+  id: "75fff9f3-210f-491b-84f7-0d031d406e1f"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l9_cam32_02_status
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "ESP32-cam status"
+        msg_text: "ESP32-cam l9cam3202 online"
+        msg_receiver: "notify"
+# ############################################################
+#  END OF FILE
+# ############################################################
