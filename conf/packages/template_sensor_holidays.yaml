@@ -8,7 +8,7 @@ template:
       #  Full / New Moon
       # -----------------------------------------------------------------------------
       - name: "Full Moon"
-        unit_of_measurement: ""
+        # unit_of_measurement: ""
         unique_id: "a775b3cd-8d50-4583-9ffa-e4c6fbb6c322"
         icon: mdi:moon-full
         state: >
@@ -20,7 +20,7 @@ template:
           {{ s }}
 
       - name: "New Moon"
-        unit_of_measurement: ""
+        # unit_of_measurement: ""
         unique_id: "6596dc5d-0046-4ab5-9431-f7a9216070c6"
         icon: mdi:moon-new
         state: >
@@ -35,7 +35,7 @@ template:
       #  DST
       # -----------------------------------------------------------------------------
       - name: "DST"
-        unit_of_measurement: ""
+        # unit_of_measurement: ""
         unique_id: "59c38ceb-de0a-40e3-8d23-eaeda538259c"
         icon: mdi:weather-sunset-up
         state: >
@@ -50,7 +50,7 @@ template:
       #  Halloween (display)
       # -----------------------------------------------------------------------------
       - name: "Halloween display"
-        unit_of_measurement: ""
+        # unit_of_measurement: ""
         unique_id: "2375c6d1-fee0-469f-aafd-4c830d9c8af1"
         icon: mdi:halloween
         state: >

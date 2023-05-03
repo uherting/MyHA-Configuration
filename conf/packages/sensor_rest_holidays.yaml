@@ -12,7 +12,7 @@ sensor:
     name: Full Moon date
     resource: !secret WOLFRAMALPHA_API_FULLMOON_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -26,7 +26,7 @@ sensor:
     name: New Moon date
     resource: !secret WOLFRAMALPHA_API_NEWMOON_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -42,7 +42,7 @@ sensor:
     name: New Year date
     resource: !secret WOLFRAMALPHA_API_NEWYEAR_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -56,7 +56,7 @@ sensor:
     name: DST date
     resource: !secret WOLFRAMALPHA_API_DST_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -70,7 +70,7 @@ sensor:
     name: Easter Sunday date
     resource: !secret WOLFRAMALPHA_API_EASTER_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -84,7 +84,7 @@ sensor:
     name: Halloween date
     resource: !secret WOLFRAMALPHA_API_HALLOWEEN_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -98,7 +98,7 @@ sensor:
     name: First Advent date
     resource: !secret WOLFRAMALPHA_API_FIRST_ADVENT_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -112,7 +112,7 @@ sensor:
     name: Xmas date
     resource: !secret WOLFRAMALPHA_API_XMAS_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
@@ -126,7 +126,7 @@ sensor:
     name: New Years eve date
     resource: !secret WOLFRAMALPHA_API_NEWYEARSEVE_DATE
     value_template: "{{ (value|replace('on ', '')) }}"
-    unit_of_measurement: ""
+    # unit_of_measurement: ""
     scan_interval: 43200
 
   - platform: rest
