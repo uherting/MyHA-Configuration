@@ -21,10 +21,11 @@ views:
   - !include /config/conf/lovelace/tabs/user/smartphone_status.yaml
 
   # covid entities
-  - !include /config/conf/lovelace/tabs/user/covid19_world_numbers.yaml
-  - !include /config/conf/lovelace/tabs/user/covid19_world_graphs.yaml
-  - !include /config/conf/lovelace/tabs/user/covid19_rki_numbers.yaml
-  - !include /config/conf/lovelace/tabs/user/covid19_rki_graphs.yaml
+  # the integration coronavirus does not get data anymore so the next tabs are useless
+  # - !include /config/conf/lovelace/tabs/user/covid19_world_numbers.yaml
+  # - !include /config/conf/lovelace/tabs/user/covid19_world_graphs.yaml
+  # - !include /config/conf/lovelace/tabs/user/covid19_rki_numbers.yaml
+  # - !include /config/conf/lovelace/tabs/user/covid19_rki_graphs.yaml
 
   # playground for testing
   # - !include /config/conf/lovelace/tabs/user/l0testing.yaml
