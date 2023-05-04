@@ -7,13 +7,15 @@
 #binary_sensor:
 
 # workday sensor
+# disabled as it is now configured in the UI
+
 # from: https://www.home-assistant.io/integrations/workday/
-- platform: workday
-  name: workday
-  country: DE
-  province: NI
-  workdays: [mon, tue, wed, thu, fri]
-  excludes: [sat, sun, holiday]
+# - platform: workday
+#   name: workday
+#   country: DE
+#   province: NI
+#   workdays: [mon, tue, wed, thu, fri]
+#   excludes: [sat, sun, holiday]
 # ############################################################
 #  END OF FILE
 # ############################################################
