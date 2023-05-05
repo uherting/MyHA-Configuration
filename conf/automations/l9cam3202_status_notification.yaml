@@ -1,6 +1,6 @@
 # ############################################################
 #
-#  ESP32-cam status notification
+#  ESP32-cam status notification l9cam3202
 #
 # ############################################################
 
@@ -8,7 +8,7 @@
 # ESP32-cam l9cam3202 offline
 # ############################################################
 - alias: ESP32-cam l9cam3202 offline
-  id: "6f90796c-ecda-4b30-b086-41a67740323f"
+  id: "d8a88ab9-9cf0-42d6-bcec-74ac4a04ace1"
   mode: single
   initial_state: true
 
@@ -32,7 +32,7 @@
 # ESP32-cam l9cam3202 online
 # ############################################################
 - alias: ESP32-cam l9cam3202 online
-  id: "75fff9f3-210f-491b-84f7-0d031d406e1f"
+  id: "02453a05-346d-49c9-b401-5c31af17051b"
   mode: single
   initial_state: true
 
