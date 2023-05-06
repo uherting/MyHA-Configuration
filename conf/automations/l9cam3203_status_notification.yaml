@@ -8,7 +8,7 @@
 # ESP32-cam l9cam3203 offline
 # ############################################################
 - alias: ESP32-cam l9cam3203 offline
-  id: "6f90796c-ecda-4b30-b086-41a67740323f"
+  id: "4ddd957a-c720-47e4-8f4f-a7b980d05d06"
   mode: single
   initial_state: true
 
@@ -32,7 +32,7 @@
 # ESP32-cam l9cam3203 online
 # ############################################################
 - alias: ESP32-cam l9cam3203 online
-  id: "75fff9f3-210f-491b-84f7-0d031d406e1f"
+  id: "21f66f17-ddd5-488c-bff6-93c5ce3d2437"
   mode: single
   initial_state: true
 
