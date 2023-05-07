@@ -22,7 +22,7 @@ class AutoArea(object):
     """An area managed by AutoAreas"""
 
     def __init__(self, hass: HomeAssistant, area: AreaEntry, config: dict) -> None:
-        self.hass: HomeAssistant = hass
+        self.hass = hass
         self.area = area
         self.area_name = area.name
         self.area_id = area.id
@@ -41,10 +41,10 @@ class AutoArea(object):
         _LOGGER.info("AutoArea '%s' (config %s)", self.area_name, self.config)
 
         entity_registry: EntityRegistry = (
-            await self.hass.helpers.entity_registry.async_get_registry()
+            self.hass.helpers.entity_registry.async_get(self.hass)
         )
         device_registry: DeviceRegistry = (
-            await self.hass.helpers.device_registry.async_get_registry()
+            self.hass.helpers.device_registry.async_get(self.hass)
         )
 
         # Collect entities for this area
