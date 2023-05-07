@@ -30,17 +30,6 @@
   #     value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
   # --------------------- ACTIONS ---------------------
   action:
-    # ---------------- SEND NOTIFICATION ---------------
-    # - service: script.tg_send_txt
-    #   data_template:
-    #     msg_title: "Home Assistant errors"
-    #     msg_text: >-
-    #       {% set repo = trigger.event.data %}
-    #       IM: Error occured in HA:
-    #       [{{ repo }}]
-    #       \n
-    #     # msg_text: "IM: Error occured in HA {{ states('counter.homeassistant_errors') | string }} error(s) occured.\n"
-    #     msg_receiver: "admin"
     # ---------------- INCREASE COUNTER ----------------
     - service: counter.increment
       entity_id: counter.homeassistant_errors
@@ -68,18 +57,6 @@
   #     value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
   # --------------------- ACTIONS ---------------------
   action:
-    # ---------------- SEND NOTIFICATION ---------------
-    # - service: script.tg_send_txt
-    #   data_template:
-    #     msg_title: "Home Assistant errors"
-    #     msg_text: >-
-    #       {% set repo = trigger.event.data %}
-    #       IM: Error occured in HA:
-    #       [{{ repo }}]
-    #       \n
-    #     # msg_text: "IM: Warning occured in HA {{ states('counter.homeassistant_errors') | string }} error(s) occured.\n"
-    #     msg_receiver: "admin"
-    # ---------------- INCREASE COUNTER ----------------
     - service: counter.increment
       entity_id: counter.homeassistant_warnings
 # ############################################################
