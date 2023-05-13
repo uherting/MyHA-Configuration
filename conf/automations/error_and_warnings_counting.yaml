@@ -12,7 +12,7 @@
 # ############################################################
 - alias: Count Home Assistant errors
   id: "e15c4d86-ab37-4ac3-9e7a-556b73b66a11"
-  initial_state: false
+  initial_state: true
   mode: parallel
   # --------------------- TRIGGER ---------------------
   trigger:
@@ -39,7 +39,7 @@
 # ############################################################
 - alias: Count Home Assistant warnings
   id: "18261659-3d0e-48e5-b262-a05fdfbe8010"
-  initial_state: false
+  initial_state: true
   mode: parallel
   # --------------------- TRIGGER ---------------------
   trigger:

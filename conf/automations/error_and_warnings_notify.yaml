@@ -12,7 +12,7 @@
 # ############################################################
 - alias: Inform admin about Home Assistant errors
   id: "a9671476-d4e8-48be-a1d8-ff994e1078cb"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: time
@@ -38,7 +38,7 @@
 # ############################################################
 - alias: Inform admin about Home Assistant warnings
   id: "c4a32259-0632-4155-a923-6f5462bbc45e"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: time

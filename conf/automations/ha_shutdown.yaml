@@ -1,0 +1,33 @@
+# ############################################################
+#
+#  Home assistant shutdown info
+#
+# ############################################################
+
+# ############################################################
+# ha_shutdown_notification
+# ############################################################
+- alias: HA shutdown notification
+  id: "72f3feb9-f1ac-4491-814b-e956f08c0c47"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: homeassistant
+      event: shutdown
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- NOTIFY ---------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Home Assistant"
+        msg_text: "Shut down"
+        msg_receiver: "admin"
+    # - service: automation.turn_off
+    #   data:
+    #     entity_id: automation.ha_shutdown_notification
+# ############################################################
+#  END OF FILE
+# ############################################################
