@@ -8,12 +8,12 @@
 # ha_startup_notification
 # ############################################################
 - alias: HA startup notification
-  id: "f2f804c3-e943-41c3-8416-1af3b03dfd10"
+  id: "e458a617-8837-4213-9452-26942f9c487f"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: homeassistant
-      event: start
+    - platform: event
+      event_type: homeassistant_started
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- NOTIFY ---------------------

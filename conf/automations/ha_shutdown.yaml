@@ -12,8 +12,8 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: homeassistant
-      event: shutdown
+    - platform: event
+      event_type: homeassistant_stop
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
