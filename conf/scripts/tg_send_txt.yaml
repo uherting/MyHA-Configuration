@@ -2,7 +2,7 @@
 #
 #  Telegram messaging
 #
-#  Purpose: sending text into a Telegram group
+#  Purpose: sending text into a Telegram group or to the systems log
 #
 #  Attention: not all notification groups as defined in
 #  conf/notify.yaml are implemented yet
@@ -56,44 +56,59 @@ tg_send_txt:
             - condition: template
               value_template: "{{ msg_receiver == 'admin' }}"
           sequence:
-            - service: system_log.write
+            - service: script.log_write
               data:
-                message: "msg_receiver == admin @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-                level: info
+                lw_message: "msg_receiver == admin, Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                lw_level: error
         # general notification group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'notify' }}"
           sequence:
-            - service: notify.tg_notification_grp
-              data_template:
-                title: "*{{ msg_title }}*"
-                message: >
-                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+            - service: script.log_write
+              data:
+                lw_message:
+                lw_level: warning
+            # - service: notify.tg_notification_grp
+            #   data_template:
+            #     title: "*{{ msg_title }}*"
+            #     message: "{{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
         # cams inside group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'cams_inside' }}"
           sequence:
-            - service: notify.tg_cam_entrance_inside_grp
-              data_template:
-                title: "*{{ msg_title }}*"
-                message: >
-                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+            - service: script.log_write
+              data:
+                lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                lw_level: info
+            # - service: notify.tg_cam_entrance_inside_grp
+            #   data_template:
+            #     title: "*{{ msg_title }}*"
+            #     message: "{{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
         # cams outside notification group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'cams_outside' }}"
           sequence:
-            - service: notify.tg_cam_entrance_outside_grp
-              data_template:
-                title: "*{{ msg_title }}*"
-                message: >
-                  {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+            - service: script.log_write
+              data:
+                lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                lw_level: info
+            # - service: notify.tg_cam_entrance_outside_grp
+            #   data_template:
+            #     title: "*{{ msg_title }}*"
+            #     message: "{{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
       # receiver does not exist
       default:
-        - service: notify.tg_admin_grp
-          data_template:
-            title: "receiver '{{ msg_receiver }}' does not exist. Title: *{{ msg_title }}*"
-            message: >
-              {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
+        - service: script.log_write
+          data:
+            lw_message: "receiver '{{ msg_receiver }}' does not exist. Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            lw_level: error
+        # - service: notify.tg_admin_grp
+        #   data_template:
+        #     title: "receiver '{{ msg_receiver }}' does not exist. Title: *{{ msg_title }}*"
+        #     message: "{{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+# ############################################################
+#  END OF FILE
+# ############################################################
