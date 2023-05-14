@@ -7,7 +7,7 @@
 # --------------------------------------------------------------
 # writing to the system log (general)
 # --------------------------------------------------------------
-tg_send_txt:
+log_write2halog:
   alias: Send text message to the system log
   icon: mdi:text
   description: This script sends a text message given as a parameter to the HA log
@@ -18,6 +18,12 @@ tg_send_txt:
       required: true
       example: "The light is on!"
       default: "default msg text"
+    lw_message_receiver:
+      description: "The message receiver"
+      advanced: true
+      required: true
+      example: "admin"
+      default: "default msg receiver"
     lw_level:
       description: "The level of logging"
       advanced: true
@@ -28,8 +34,8 @@ tg_send_txt:
   sequence:
     - service: system_log.write
       data:
-        message: "msg_receiver == admin, Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-        level: error
+        message: "msg_receiver == {{lw_message_receiver}}, {{ lw_message }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+        level: "{{ lw_level }}"
         logger: "system_log.external"
 # ############################################################
 #  END OF FILE
