@@ -1,0 +1,36 @@
+# ############################################################
+#
+#  Central writing to the system log
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# writing to the system log (general)
+# --------------------------------------------------------------
+tg_send_txt:
+  alias: Send text message to the system log
+  icon: mdi:text
+  description: This script sends a text message given as a parameter to the HA log
+  fields:
+    lw_message:
+      description: "The message content"
+      advanced: true
+      required: true
+      example: "The light is on!"
+      default: "default msg text"
+    lw_level:
+      description: "The level of logging"
+      advanced: true
+      required: true
+      example: "error"
+      default: "warning"
+  mode: queued
+  sequence:
+    - service: system_log.write
+      data:
+        message: "msg_receiver == admin, Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+        level: error
+        logger: "system_log.external"
+# ############################################################
+#  END OF FILE
+# ############################################################
