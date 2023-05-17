@@ -43,7 +43,7 @@ cards:
     entities:
       - input_number.l2_charger01_tgt
       - input_number.l2_charger01_if_below
-      - switch.zb_plug_03
+      - switch.zb_charger_01
 
   - type: entities
     title: At Home
