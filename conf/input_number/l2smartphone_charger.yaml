@@ -1,0 +1,39 @@
+# ############################################################
+#
+#  L2 smartphone charger with Zigbee Plug #3 helper input
+#
+# ############################################################
+
+# ############################################################
+#  L2 smartphone charger with Zigbee Plug #3
+# ############################################################
+# input_number:
+l2_charger01_tgt:
+  name: L2Charger01 chg tgt
+  min: 50
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+l2_charger01_if_below:
+  name: L2Charger01 chg if below
+  min: 10
+  max: 90
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+l2_charger01_max_on_time:
+  name: L2Charger01 max on time
+  min: 5
+  max: 180
+  step: 1
+  unit_of_measurement: "minutes"
+  mode: slider
+  icon: mdi:timer
+# ############################################################
+#  END OF FILE
+# ############################################################

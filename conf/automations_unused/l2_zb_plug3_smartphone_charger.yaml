@@ -1,0 +1,34 @@
+# ############################################################
+#
+#  L2 smartphone charger with Zigbee Plug #3
+#
+# ############################################################
+
+# ############################################################
+# Check
+# ############################################################
+- alias: HA update available
+  id: "55a9676d-defa-4f69-9e2b-3e9bbcf97666"
+  initial_state: false
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: sensor.spuhnote10pro_battery_level
+      above: "{{ input_number.l2_zbplug03_charge_tgt }}"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Home Assistant"
+        msg_text: "HA {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
+        msg_receiver: "admin"
+    - service: rest_command.github_create_issue_on_new_ha_version
+      data_template:
+        version: "Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
+############################################################
+#  END OF FILE
+# ############################################################

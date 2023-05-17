@@ -1,0 +1,28 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# shall the bathroom window be considered open?
+- binary_sensor:
+    - name: "Home: Uwe is here"
+      unique_id: "at home uwe yn"
+      state: >
+        {{ is_state('person.uwe', 'home') }}
+    - name: "Home: Gillian is here"
+      unique_id: "at home gillian yn"
+      state: >
+        {{ is_state('person.gillian', 'home') }}
+    - name: "Home: all family members are here"
+      unique_id: "at home all yn"
+      state: >
+        {{
+          (is_state('person.uwe', 'home'))
+          and
+          (is_state('person.gillian', 'home'))
+        }}
+
+####################################################################
+# EOF
+####################################################################

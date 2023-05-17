@@ -4,20 +4,45 @@
 #
 # ############################################################
 
-
 # ############################################################
 #  Bathroom window open conditions
 # ############################################################
 # input_number:
-  l2_bathroom_alert_below_temp:
-    name: L2 bathroom alert temp below
-    min: 1
-    max: 30
-    step: 0.5
-    unit_of_measurement: °C
-    mode: box
-    icon: mdi:thermometer-lines
+l2_bathroom_alert_below_temp:
+  name: L2 bathroom alert temp below
+  min: 1
+  max: 30
+  step: 1
+  unit_of_measurement: °C
+  mode: slider
+  icon: mdi:thermometer-lines
 
+l2_bathroom_alert_delay_time_1:
+  name: L2 bathroom alert delay 1
+  min: 5
+  max: 60
+  step: 1
+  unit_of_measurement: Min
+  mode: slider
+  icon: mdi:timer
+
+l2_bathroom_alert_delay_time_2:
+  name: L2 bathroom alert delay 2
+  min: 5
+  max: 60
+  step: 1
+  unit_of_measurement: Min
+  mode: slider
+  icon: mdi:timer
+
+l2_bathroom_alert_delay_time_3:
+  name: L2 bathroom alert delay 3
+  min: 5
+  max: 60
+  step: 1
+  unit_of_measurement: Min
+  mode: slider
+  icon: mdi:timer
 # ############################################################
 #  END OF FILE
 # ############################################################

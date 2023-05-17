@@ -29,19 +29,28 @@ cards:
   #     - input_boolean.speedtestdotnet
 
   - type: entities
-    title: L2 Bathroom openWindow alert
+    title: L2 Bathroom openWindow alert temp
     show_header_toggle: false
     entities:
       - input_number.l2_bathroom_alert_below_temp
+      - input_number.l2_bathroom_alert_delay_time_1
+      - input_number.l2_bathroom_alert_delay_time_2
+      - input_number.l2_bathroom_alert_delay_time_3
 
-  # no more switch as the theme is set in profile
-  # - type: entities
-  #   title: Set themes sunrise / sunset
-  #   show_header_toggle: false
-  #   entities:
-  #     - input_select.set_sunrise_theme
-  #     - input_select.set_sunset_theme
-  #     - input_select.theme
+  - type: entities
+    title: L2 Charger 01
+    show_header_toggle: false
+    entities:
+      - input_number.l2_charger01_tgt
+      - input_number.l2_charger01_if_below
+      - switch.zb_plug_03
+
+  - type: entities
+    title: At Home
+    entities:
+      - binary_sensor.home_all_are_here
+      - binary_sensor.home_gillian_is_here
+      - binary_sensor.home_uwe_is_here
 ####################################################################
 # EOF
 ####################################################################

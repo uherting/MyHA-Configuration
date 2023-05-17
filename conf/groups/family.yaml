@@ -2,13 +2,11 @@
 # Group for tracing people
 ###########################################################################
 
-  family:
-    name: Family
-    entities:
-      - person.uwe
-      - person.gillian
-    #all: false
-
+family:
+  name: Family members
+  entities:
+    - person.uwe
+    - person.gillian
 # ############################################################
 #  END OF FILE
 # ############################################################
