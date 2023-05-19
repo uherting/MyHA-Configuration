@@ -1,6 +1,6 @@
 # ############################################################
 #
-#  automation for ZB Charger 01 to switch it ON
+#  automation for ZB Charger 01 to switch it ON based on battery percentage
 #
 # ############################################################
 
@@ -11,20 +11,23 @@
   id: "e7ddfee3-d661-4618-b4ba-eb43950ce068"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # after the plug was on for x minutes the switch goes off
+  # if the phone is below x per cent ...
   trigger:
     - platform: template
-      value_template: '{% if (states("sensor.spuhnote10pro_battery_level") | float(0)) < (states("input_number.l2_charger01_max_percentage") | float(0)) %}true{% endif %}'
+      value_template: '{% if (states("sensor.spuhnote10pro_battery_level") | float(0)) < (states("input_number.l2_charger01_min_percentage") | float(0)) %}true{% endif %}'
   # -------------------- CONDITIONS -------------------
   condition:
     - and:
+        # make sure that the owner of the switch is at home
+        - condition: template
+          value_template: "{{ states('binary_sensor.home_uwe_is_here') == 'on' }}"
         # switch is OFF
         - condition: template
           value_template: "{{ states('switch.zb_charger_01') != 'on' }}"
         # charger functionalitity enabled
         - condition: template
           value_template: "{{ is_state('input_boolean.zb_charger_01_functionality', 'on') }}"
-        # delayed charging disabled
+        # no delayed start of charging
         - condition: template
           value_template: "{{ is_state('input_boolean.zb_charger_01_force_delayed', 'off') }}"
   # --------------------- ACTIONS ---------------------
