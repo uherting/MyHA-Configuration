@@ -8,8 +8,8 @@
 #  L2 smartphone charger with Zigbee Plug #3
 # ############################################################
 # input_number:
-l2_charger01_tgt:
-  name: L2Charger01 chg tgt
+l2_charger01_max_percentage:
+  name: Charging max
   min: 50
   max: 100
   step: 1
@@ -17,8 +17,8 @@ l2_charger01_tgt:
   mode: slider
   icon: mdi:percent
 
-l2_charger01_if_below:
-  name: L2Charger01 chg if below
+l2_charger01_below_percentage:
+  name: Charging below
   min: 10
   max: 90
   step: 1
@@ -27,9 +27,9 @@ l2_charger01_if_below:
   icon: mdi:percent
 
 l2_charger01_max_on_time:
-  name: L2Charger01 max on time
+  name: Charger max ON time
   min: 5
-  max: 180
+  max: 90
   step: 1
   unit_of_measurement: "minutes"
   mode: slider
