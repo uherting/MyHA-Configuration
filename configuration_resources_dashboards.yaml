@@ -54,6 +54,10 @@ resources:
   - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
     type: module
 
+  # Time Picker card
+  - url: /hacsfiles/lovelace-time-picker-card/time-picker-card.js
+    type: module
+
   # - url: /hacsfiles/simple-thermostat/simple-thermostat.js
   #   type: module
 
