@@ -69,15 +69,6 @@ cards:
             show_state: true
           - type: "custom:button-card"
             name: ""
-            # name: "ESPHome"
-            # entity: binary_sensor.l2_storage01_bin_templ_spymode
-            # color: yellow
-            # show_state: false
-            # icon: mdi:incognito-circle
-            # tap_action:
-            #   action: call-service
-            #   service: script.l2_storage01_bin_templ_spymode_control
-            #   service_data: {}
           - type: "custom:button-card"
             name: "SpyMod"
             entity: binary_sensor.l2storage_spymode
@@ -201,16 +192,17 @@ cards:
           - type: "custom:button-card"
             name: "OutSouth"
           - type: "custom:button-card"
-            entity: sensor.l2_storage01_dht_01_temp
+            # entity: sensor.l2_storage01_dht_01_temp
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.l2_storage01_dht_01_humidity
+            # entity: sensor.l2_storage01_dht_01_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: switch.zb_charger_01
+            name: "Charger 1"
+            color: yellow
             show_state: true
           - type: "custom:button-card"
             entity: sensor.l2_thermo01_tempenv_01
@@ -316,40 +308,6 @@ cards:
                 icon: "hass:radiator"
                 include:
                   - climate
-
-          # # Scheduler "Weekend" for TRV L2
-          # - type: custom:scheduler-card
-          #   title: Weekend schedule
-          #   tags: weekend
-          #   customize:
-          #     climate.my_tuya_thermostat:
-          #       exclude_actions:
-          #         - heat # hide the built-in action to avoid duplicates
-          #         - set mode # we won't use this
-          #         - set preset # we won't use this
-          #       actions: # add the custom actions
-          #         - service: set_temperature
-          #           service_data:
-          #             hvac_mode: auto
-          #           variables:
-          #             temperature:
-          #               min: 5
-          #               max: 25
-          #               step: 0.5
-          #               unit: "°C"
-          #           icon: "hass:fire"
-          #           name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
-          #   # domains:
-          #   # ...
-          #   # entities:
-          #   # ...
-          #   # groups:
-          #   # ...
-          #   groups:
-          #     - name: "Radiators"
-          #       icon: "hass:radiator"
-          #       include:
-          #         - climate
 ####################################################################
 # EOF
 ####################################################################
