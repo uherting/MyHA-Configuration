@@ -5,6 +5,10 @@
 # ############################################################
 
 #input_boolean
+zb_charger_01_functionality:
+  name: Charging Functionality
+  icon: mdi:connection
+
 zb_charger_01_force_immediately:
   name: Charging starts immediately
   icon: mdi:battery-charging
@@ -12,10 +16,6 @@ zb_charger_01_force_immediately:
 zb_charger_01_force_delayed:
   name: Charging starts delayed
   icon: mdi:clock
-
-zb_charger_01_functionality:
-  name: Charging Functionality
-  icon: mdi:connection
 # ############################################################
 #  END OF FILE
 # ############################################################

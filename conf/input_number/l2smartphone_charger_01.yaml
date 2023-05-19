@@ -17,8 +17,8 @@ l2_charger01_max_percentage:
   mode: slider
   icon: mdi:percent
 
-l2_charger01_below_percentage:
-  name: Charging below
+l2_charger01_min_percentage:
+  name: Charging min
   min: 10
   max: 90
   step: 1
