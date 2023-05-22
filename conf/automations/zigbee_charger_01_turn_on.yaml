@@ -7,7 +7,7 @@
 # ############################################################
 # ZB Charger 01 turn on
 # ############################################################
-- alias: Zigbee Charger 01 ON
+- alias: Zigbee Charger 01 ON low percentage
   id: "e7ddfee3-d661-4618-b4ba-eb43950ce068"
   initial_state: true
   # --------------------- TRIGGER ---------------------

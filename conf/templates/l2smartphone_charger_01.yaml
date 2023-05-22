@@ -6,8 +6,8 @@
 
 # we run the normal
 - binary_sensor:
-    - name: "Trigger ZB charger 01 charging based on "
-      unique_id: "trigger zb charger 01 charging based on percentage"
+    - name: "trigger zb charger 01 charging based on percentage"
+      unique_id: "trigger_zb_charger_01_charging_based_on_percentage"
       state: >
         {{ (states("sensor.spuhnote10pro_battery_level") | float(0)) < (states("input_number.l2_charger01_min_percentage_low_percentage") | float(0)) }}
 
