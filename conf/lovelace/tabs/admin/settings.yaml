@@ -43,11 +43,13 @@ cards:
     entities:
       - switch.zb_charger_01
       - input_boolean.zb_charger_01_functionality
-      - input_boolean.zb_charger_01_force_immediately
+      - input_number.l2_charger01_min_percentage_low_percentage
+      - input_number.l2_charger01_max_percentage_low_percentage
       - input_boolean.zb_charger_01_force_delayed
-      - input_datetime.zb_charger_01_charging_starts_at_time
-      - input_number.l2_charger01_max_percentage
-      - input_number.l2_charger01_min_percentage
+      - input_datetime.zb_charger_01_charging_start_time
+      - input_number.l2_charger01_max_percentage_delayed
+      - input_number.l2_charger01_min_percentage_emergency
+      - input_number.l2_charger01_max_percentage_emergency
 
   - type: entities
     title: At Home

@@ -5,7 +5,7 @@
 # ############################################################
 
 # input_datetime:
-zb_charger_01_charging_starts_at_time:
+zb_charger_01_charging_start_time:
   name: Charging starts at time
   has_time: true
 # ############################################################

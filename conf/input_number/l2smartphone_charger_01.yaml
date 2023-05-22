@@ -8,16 +8,9 @@
 #  L2 smartphone charger with Zigbee Plug #3
 # ############################################################
 # input_number:
-l2_charger01_max_percentage:
-  name: Charging max
-  min: 50
-  max: 100
-  step: 1
-  unit_of_measurement: "%"
-  mode: slider
-  icon: mdi:percent
 
-l2_charger01_min_percentage:
+# charge if below x% (normal charging)
+l2_charger01_min_percentage_low_percentage:
   name: Charging min
   min: 10
   max: 90
@@ -26,6 +19,47 @@ l2_charger01_min_percentage:
   mode: slider
   icon: mdi:percent
 
+# charge up to x% (normal charging)
+l2_charger01_max_percentage_low_percentage:
+  name: Charging max
+  min: 50
+  max: 100
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+# charge up to x% b/c of delayed charging is enabled and performed
+l2_charger01_max_percentage_delayed:
+  name: Charging max delayed
+  min: 30
+  max: 49
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+# charge below x% b/c of delayed charging is enabled and battery falls below x%)
+l2_charger01_min_percentage_emergency:
+  name: Charging min emergency
+  min: 5
+  max: 19
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+# charge up to x% b/c of delayed charging is enabled and battery falls below l2_charger01_min_percentage_emergency)
+l2_charger01_max_percentage_emergency:
+  name: Charging max emergency
+  min: 30
+  max: 49
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+# how long shall the charger stay on? important to know when to switch it off
 l2_charger01_max_on_time:
   name: Charger max ON time
   min: 5
