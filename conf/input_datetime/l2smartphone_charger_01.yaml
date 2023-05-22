@@ -5,8 +5,8 @@
 # ############################################################
 
 # input_datetime:
-zb_charger_01_charging_start_time:
-  name: Charging starts at time
+zb_charger_01_charging_delayed_start_at:
+  name: Charging delayed starts at
   has_time: true
 # ############################################################
 #  END OF FILE
