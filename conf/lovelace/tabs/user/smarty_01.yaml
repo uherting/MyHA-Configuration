@@ -36,11 +36,12 @@ cards:
             entity: sensor.l2_kitchen01_tempenv_01
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
-          - type: "custom:button-card"
             entity: switch.zb_plug_02
-            name: " "
+            name: "Microw"
+            color: yellow
+          - type: "custom:button-card"
+            entity: switch.zb_plug_04
+            name: "Fridge"
             color: yellow
             # show_state: true
           - type: "custom:button-card"
@@ -99,7 +100,7 @@ cards:
             show_state: true
           - type: "custom:button-card"
             entity: switch.zb_plug_01
-            name: " "
+            name: "Light"
             color: yellow
             # show_state: true
           - type: "custom:button-card"
@@ -203,7 +204,7 @@ cards:
             entity: switch.zb_charger_01
             name: "Charger 1"
             color: yellow
-            show_state: true
+            show_state: false
           - type: "custom:button-card"
             entity: sensor.l2_thermo01_tempenv_01
             name: "Thermo"

@@ -5,14 +5,13 @@
 # ############################################################
 
 #input_boolean
+
+# use the plug as a charger only?
 zb_charger_01_functionality:
   name: Charging Functionality
   icon: mdi:connection
 
-zb_charger_01_force_immediately:
-  name: Charging starts immediately
-  icon: mdi:battery-charging
-
+# enable delayed charging
 zb_charger_01_force_delayed:
   name: Charging starts delayed
   icon: mdi:clock
