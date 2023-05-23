@@ -1,0 +1,54 @@
+# ############################################################
+#
+#  automation for ZB Charger 01 to switch it ON based on battery percentage
+#
+# ############################################################
+
+# ############################################################
+#  ZB Charger 01 turn on
+# ############################################################
+- alias: Zigbee Charger 01 ON low percentage (normal charging)
+  id: "e5738429-af58-4d7a-91cf-a18756e61c8b"
+  description: "This automation for ZB Charger 01 is to switch it ON based on battery percentage (normal low)."
+  mode: single
+  initial_state: false
+  # -------------------- CONDITIONS -------------------
+  condition: []
+    # condition: state
+    # entity_id: binary_sensor.l2_ble01_status
+    # state:
+    #   - "on"
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: uherting/smartphone_charging.yaml
+    input:
+
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        the following does not make sense. 
+        the way to trigger based on template values has to be found!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      # # execute at given time only
+      # time: "19:00:00"
+      # # every day
+      # # day: 0
+      # weekday:
+      #   - fri
+      # # batteries listed will hold less than threshold percent of capacity
+      # threshold: 10
+      # # bullet form for blueprint from itn3rd77
+      # bullet: "-"
+      # --------------------- ACTIONS ---------------------
+      actions:
+        - service: script.tg_send_txt
+          data_template:
+            msg_title: "#Low battery level notification#"
+            msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
+            msg_receiver: "admin"
+            msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
+            msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
+############################################################
+#  END OF FILE
+# ############################################################

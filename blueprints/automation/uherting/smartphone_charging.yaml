@@ -14,159 +14,159 @@ blueprint:
   source_url: https://gist.github.com/networkingcat/a1876d7e706e07c8bdcf974113940fb8
   input:
     # necessary input for this blueprint
-    # zigbee_plug_id (string)
-    # zigbee_plug_id_friendly_name v
-    # connected_device (array, string)
-    # connected_device_charging_state (array, string)
-    # connected_device_charged_percentage_id (array, string)
-    # max_charging_target (array)
-    # max_charging_duration (array)
-    motion_entity:
-      name: Motion Sensor
-      description: Motion Sensor or a group with Motion Sensors (But can be anything
-        switching between "on" and "off")
-      selector:
-        entity: {}
-    light_target:
-      name: Light
-      selector:
-        target:
-          entity:
-            domain: light
-    no_motion_wait:
-      name: Wait time
-      description: Time to leave the light on after last motion is detected.
-      default: 120
-      selector:
-        number:
-          min: 0.0
-          max: 3600.0
-          unit_of_measurement: seconds
-          step: 1.0
-          mode: slider
-    automation_blocker:
-      name: Automation Blocker (Optional)
-      description: Only run if this boolean is in desired state (see next input)
-      default:
-      selector:
-        entity: {}
-    automation_blocker_boolean:
-      name: Automation Blocker Chooser (Optional)
-      description: Desired state of automation blocker, choose on for on and off for
-        off
-      default: false
-      selector:
-        boolean: {}
-    no_motion_blocker:
-      name: No Motion Blocker (Optional)
-      description: No motion sequence is not run if this boolean is in desired state
-        (see next input)
-      default:
-      selector:
-        entity: {}
-    no_motion_blocker_boolean:
-      name: No Motion Chooser (Optional)
-      description: Desired state of no motion blocker, choose on for on and off for
-        off
-      default: false
-      selector:
-        boolean: {}
-    elevation_check:
-      name: Sun elevation check (Optional)
-      description: This is the angle between the sun and the horizon. Negative values
-        mean the sun is BELOW the horizon.
-      default: none
-      selector:
-        number:
-          min: -90.0
-          max: 90.0
-          unit_of_measurement: degrees
-          step: 1.0
-          mode: slider
-    scene_ambient:
-      name: Ambient Scene (Optional)
-      description: Scene for ambient state. Will be activated when no motion is detected.
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_ambient_start:
-      name: Ambient time frame start (Optional)
-      description: Time from which on ambient scene will be activated
-      default: 00:00:00
-      selector:
-        time: {}
-    time_scene_ambient_end:
-      name: Ambient time frame end (Optional)
-      description: Time from which on ambient scene will be not activated
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_morning:
-      name: Scene for the morning (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_morning:
-      name: Time for the morning scene (Optional)
-      description: A time input which defines the time from which on the scene will
-        be activated if motion is detected.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_day:
-      name: Scene for the bright day (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_day:
-      name: Time for the day scene (Optional)
-      description: A time input which defines the time from which on the scene will
-        be activated if motion is detected.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_evening:
-      name: Scene for the evening (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_evening:
-      name: Time for the evening scene (Optional)
-      description: A time input which defines the time from which on the scene will
-        be activated if motion is detected.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_night:
-      name: Scene for the dark night (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_night:
-      name: Time for the night scene (Optional)
-      description: A time input which defines the time from which on the scene will
-        be activated if motion is detectedd.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_no_motion:
-      name: Default scene for no motion (Optional)
-      description: Set this Scene if you want to activate a scene if motion stops
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       to be defined
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    # motion_entity:
+    #   name: Motion Sensor
+    #   description: Motion Sensor or a group with Motion Sensors (But can be anything
+    #     switching between "on" and "off")
+    #   selector:
+    #     entity: {}
+    # light_target:
+    #   name: Light
+    #   selector:
+    #     target:
+    #       entity:
+    #         domain: light
+    # no_motion_wait:
+    #   name: Wait time
+    #   description: Time to leave the light on after last motion is detected.
+    #   default: 120
+    #   selector:
+    #     number:
+    #       min: 0.0
+    #       max: 3600.0
+    #       unit_of_measurement: seconds
+    #       step: 1.0
+    #       mode: slider
+    # automation_blocker:
+    #   name: Automation Blocker (Optional)
+    #   description: Only run if this boolean is in desired state (see next input)
+    #   default:
+    #   selector:
+    #     entity: {}
+    # automation_blocker_boolean:
+    #   name: Automation Blocker Chooser (Optional)
+    #   description: Desired state of automation blocker, choose on for on and off for
+    #     off
+    #   default: false
+    #   selector:
+    #     boolean: {}
+    # no_motion_blocker:
+    #   name: No Motion Blocker (Optional)
+    #   description: No motion sequence is not run if this boolean is in desired state
+    #     (see next input)
+    #   default:
+    #   selector:
+    #     entity: {}
+    # no_motion_blocker_boolean:
+    #   name: No Motion Chooser (Optional)
+    #   description: Desired state of no motion blocker, choose on for on and off for
+    #     off
+    #   default: false
+    #   selector:
+    #     boolean: {}
+    # elevation_check:
+    #   name: Sun elevation check (Optional)
+    #   description: This is the angle between the sun and the horizon. Negative values
+    #     mean the sun is BELOW the horizon.
+    #   default: none
+    #   selector:
+    #     number:
+    #       min: -90.0
+    #       max: 90.0
+    #       unit_of_measurement: degrees
+    #       step: 1.0
+    #       mode: slider
+    # scene_ambient:
+    #   name: Ambient Scene (Optional)
+    #   description: Scene for ambient state. Will be activated when no motion is detected.
+    #   default: scene.none
+    #   selector:
+    #     entity:
+    #       domain: scene
+    #       multiple: false
+    # time_scene_ambient_start:
+    #   name: Ambient time frame start (Optional)
+    #   description: Time from which on ambient scene will be activated
+    #   default: 00:00:00
+    #   selector:
+    #     time: {}
+    # time_scene_ambient_end:
+    #   name: Ambient time frame end (Optional)
+    #   description: Time from which on ambient scene will be not activated
+    #   default: 00:00:00
+    #   selector:
+    #     time: {}
+    # scene_morning:
+    #   name: Scene for the morning (Optional)
+    #   default: scene.none
+    #   selector:
+    #     entity:
+    #       domain: scene
+    #       multiple: false
+    # time_scene_morning:
+    #   name: Time for the morning scene (Optional)
+    #   description: A time input which defines the time from which on the scene will
+    #     be activated if motion is detected.
+    #   default: 00:00:00
+    #   selector:
+    #     time: {}
+    # scene_day:
+    #   name: Scene for the bright day (Optional)
+    #   default: scene.none
+    #   selector:
+    #     entity:
+    #       domain: scene
+    #       multiple: false
+    # time_scene_day:
+    #   name: Time for the day scene (Optional)
+    #   description: A time input which defines the time from which on the scene will
+    #     be activated if motion is detected.
+    #   default: 00:00:00
+    #   selector:
+    #     time: {}
+    # scene_evening:
+    #   name: Scene for the evening (Optional)
+    #   default: scene.none
+    #   selector:
+    #     entity:
+    #       domain: scene
+    #       multiple: false
+    # time_scene_evening:
+    #   name: Time for the evening scene (Optional)
+    #   description: A time input which defines the time from which on the scene will
+    #     be activated if motion is detected.
+    #   default: 00:00:00
+    #   selector:
+    #     time: {}
+    # scene_night:
+    #   name: Scene for the dark night (Optional)
+    #   default: scene.none
+    #   selector:
+    #     entity:
+    #       domain: scene
+    #       multiple: false
+    # time_scene_night:
+    #   name: Time for the night scene (Optional)
+    #   description: A time input which defines the time from which on the scene will
+    #     be activated if motion is detectedd.
+    #   default: 00:00:00
+    #   selector:
+    #     time: {}
+    # scene_no_motion:
+    #   name: Default scene for no motion (Optional)
+    #   description: Set this Scene if you want to activate a scene if motion stops
+    #   default: scene.none
+    #   selector:
+    #     entity:
+    #       domain: scene
+    #       multiple: false
 mode: restart
 max_exceeded: silent
 variables:

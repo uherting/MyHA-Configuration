@@ -1,20 +1,20 @@
 # ############################################################
 #
-#  automation for ZB Charger 01 to switch it ON based on battery percentage
+#  automation for ZB Charger 01 to switch it ON based on battery percentage (normal low)
 #
 # ############################################################
 
 # ############################################################
 # ZB Charger 01 turn on
 # ############################################################
-- alias: Zigbee Charger 01 ON low percentage
+- alias: Zigbee Charger 01 ON low percentage (normal charging)
   id: "e7ddfee3-d661-4618-b4ba-eb43950ce068"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # if the phone's battery is below x% ...
   trigger:
     - platform: template
-      value_template: "{{ states('binary_sensor.trigger_zb_charger_01_charging_based_on_percentage') == 'on' }}"
+      value_template: "{{ states('binary_sensor.trigger_zb_charger_01_charging_based_on_normal_percentage') == 'on' }}"
   # -------------------- CONDITIONS -------------------
   condition:
     - and:
