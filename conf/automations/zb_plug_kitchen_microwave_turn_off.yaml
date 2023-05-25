@@ -14,7 +14,7 @@
   # after the plug was on for x minutes the switch goes off
   trigger:
     - platform: state
-      entity_id: switch.zb_plug_02
+      entity_id: switch.zb_plug_l2_kitchen_microwave
       to: "on"
       for:
         minutes: 6
@@ -24,12 +24,12 @@
         - condition: template
           value_template: "{{ states(trigger.entity_id) != 'on'}}"
         - condition: template
-          value_template: '{{ (states("sensor.zb_plug_02_power") | float(0)) < 1 }}'
+          value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave") | float(0)) < 1 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
     service: switch.turn_off
-    entity_id: switch.zb_plug_02
+    entity_id: switch.zb_plug_l2_kitchen_microwave
 # ############################################################
 #  END OF FILE
 # ############################################################

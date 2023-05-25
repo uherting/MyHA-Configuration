@@ -36,11 +36,11 @@ cards:
             entity: sensor.l2_kitchen01_tempenv_01
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_02
+            entity: switch.zb_plug_l2_kitchen_microwave
             name: "Microw"
             color: yellow
           - type: "custom:button-card"
-            entity: switch.zb_plug_04
+            entity: switch.zb_plug_l2_kitchen_fridge
             name: "Fridge"
             color: yellow
             # show_state: true
@@ -99,7 +99,7 @@ cards:
             entity: sensor.xiaomi_l2_lounge_humidity
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_01
+            entity: switch.zb_plug_l2_lounge_light_corner
             name: "Light"
             color: yellow
             # show_state: true
@@ -204,7 +204,7 @@ cards:
             entity: switch.zb_charger_01
             name: "Charger 1"
             color: yellow
-            show_state: false
+            show_state: true
           - type: "custom:button-card"
             entity: sensor.l2_thermo01_tempenv_01
             name: "Thermo"
