@@ -48,7 +48,7 @@ devices:
   '0xa4c138a59865fee9':
     friendly_name: TH_03
   '0xa4c1389480d75a5f':
-    friendly_name: DW_01
+    friendly_name: DW_L2_Bathroom
 groups:
   '1':
     friendly_name: level2-TRVs
