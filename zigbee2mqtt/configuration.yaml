@@ -34,7 +34,7 @@ devices:
   '0x1c34f1fffe095fc2':
     friendly_name: Lounge_L2
   '0xa4c1382e5e523972':
-    friendly_name: ZB_Plug_01
+    friendly_name: ZB_Plug_L2_Microwave
   '0xa4c13804488a21e2':
     friendly_name: ZB_Plug_02
   '0xa4c13818bd119ece':
