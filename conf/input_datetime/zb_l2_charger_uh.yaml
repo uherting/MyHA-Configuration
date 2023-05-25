@@ -1,21 +1,13 @@
 # ############################################################
 #
-#  Input boolean
+#  Input datetime
 #
 # ############################################################
 
-#input_boolean
-
-# use the plug as a charger only?
-zb_charger_01_functionality:
-  name: Charging Functionality
-  icon: mdi:connection
-
-# enable delayed charging
-zb_charger_01_force_delayed:
-  name: Charging starts delayed
-  icon: mdi:clock
+# input_datetime:
+zb_l2_charger_uh_charging_delayed_start_at:
+  name: Charging delayed starts at
+  has_time: true
 # ############################################################
 #  END OF FILE
 # ############################################################
-

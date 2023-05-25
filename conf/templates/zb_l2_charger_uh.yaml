@@ -1,0 +1,26 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# we run the normal
+- binary_sensor:
+    - name: "trigger zb charger uh charging based on percentage"
+      unique_id: "trigger_zb_l2_charger_uh_charging_based_on_percentage"
+      state: >
+        {{ (states("sensor.spuhnote10pro_battery_level") | float(0)) < (states("input_number.zb_l2_charger_uh_min_percentage_low_percentage") | float(0)) }}
+
+    # - name: "Trigger ZB charger 01 charging based on zb_l2_charger_uh_force_delayed"
+    #   unique_id: "trigger zb charger 01 charging based delayed charging"
+    #   state: >
+    #     {{ (states("binary_sensor.zb_l2_charger_uh_force_delayed")) && (now() == input_datetime.zb_l2_charger_uh_charging_start_time) }}
+
+    - name: "Trigger ZB charger uh emergency charging based on zb_l2_charger_uh_force_delayed / zb_l2_charger_uh_min_percentage_emergency"
+      unique_id: "trigger zb charger uh emergency charging"
+      state: >
+        {{ (states("binary_sensor.zb_l2_charger_uh_force_delayed")) and ((states("sensor.spuhnote10pro_battery_level") | float(0)) < (states("input_number.zb_l2_charger_uh_min_percentage_emergency") | float(0))) }}
+
+####################################################################
+# EOF
+####################################################################
