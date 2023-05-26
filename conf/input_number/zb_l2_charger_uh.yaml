@@ -19,21 +19,11 @@ zb_l2_charger_uh_min_percentage_low_percentage:
   mode: slider
   icon: mdi:percent
 
-# charge up to x% (normal charging)
-zb_l2_charger_uh_max_percentage_low_percentage:
+# charge up to x%
+zb_l2_charger_uh_max_percentage:
   name: Charging max
   min: 50
   max: 100
-  step: 1
-  unit_of_measurement: "%"
-  mode: slider
-  icon: mdi:percent
-
-# charge up to x% b/c of delayed charging is enabled and performed
-zb_l2_charger_uh_max_percentage_delayed:
-  name: Charging max delayed
-  min: 30
-  max: 49
   step: 1
   unit_of_measurement: "%"
   mode: slider

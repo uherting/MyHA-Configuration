@@ -45,10 +45,9 @@ cards:
       - input_boolean.zb_l2_charger_uh_functionality
       - sensor.spuhnote10pro_battery_level
       - input_number.zb_l2_charger_uh_min_percentage_low_percentage
-      - input_number.zb_l2_charger_uh_max_percentage_low_percentage
+      - input_number.zb_l2_charger_uh_max_percentage
       - input_boolean.zb_l2_charger_uh_force_delayed
       - input_datetime.zb_l2_charger_uh_charging_delayed_start_at
-      - input_number.zb_l2_charger_uh_max_percentage_delayed
       - input_number.zb_l2_charger_uh_min_percentage_emergency
       - input_number.zb_l2_charger_uh_max_percentage_emergency
 
