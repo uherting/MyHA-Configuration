@@ -82,6 +82,7 @@ cards:
             name: " "
             color: yellow
             show_state: true
+            icon: mdi:window-open-variant
           - type: "custom:button-card"
             entity: binary_sensor.dw_l2_bathroom_tamper
             name: " "
