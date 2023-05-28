@@ -173,12 +173,12 @@ cards:
             show_state: true
           - type: "custom:button-card"
             entity: switch.zb_l2_charger_uh
-            name: "Batt UH"
+            name: "PSU UH"
             color: yellow
             show_state: true
           - type: "custom:button-card"
             entity: switch.zb_l2_charger_gh
-            name: "Batt UH"
+            name: "PSU GH"
             color: yellow
             show_state: true
           - type: "custom:button-card"
