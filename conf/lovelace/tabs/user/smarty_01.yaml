@@ -172,12 +172,14 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: switch.zb_l2_charger_uh
+            name: "Batt UH"
+            color: yellow
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_thermo01_dht_01_temp
-            name: ""
+            entity: switch.zb_l2_charger_gh
+            name: "Batt UH"
+            color: yellow
             show_state: true
           - type: "custom:button-card"
             # entity: sensor.l2_thermo01_dht_01_humidity
@@ -197,12 +199,13 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage01_dht_01_humidity
-            name: " "
+            entity: sensor.spuhnote10pro_battery_level
+            name: "Batt UH"
+            color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_l2_charger_uh
-            name: "Charger 1"
+            entity: sensor.spghnote8pro_battery_level
+            name: "Batt GH"
             color: yellow
             show_state: true
           - type: "custom:button-card"

@@ -38,7 +38,7 @@ cards:
       - input_number.l2_bathroom_alert_delay_time_3
 
   - type: entities
-    title: L2 Charger 01
+    title: L2 Charger UH
     show_header_toggle: false
     entities:
       - switch.zb_l2_charger_uh
@@ -50,6 +50,20 @@ cards:
       - input_datetime.zb_l2_charger_uh_charging_delayed_start_at
       - input_number.zb_l2_charger_uh_min_percentage_emergency
       - input_number.zb_l2_charger_uh_max_percentage_emergency
+
+  - type: entities
+    title: L2 Charger GH
+    show_header_toggle: false
+    entities:
+      - switch.zb_l2_charger_gh
+      - input_boolean.zb_l2_charger_gh_functionality
+      - sensor.spghnote8pro_battery_level
+      - input_number.zb_l2_charger_gh_min_percentage_low_percentage
+      - input_number.zb_l2_charger_gh_max_percentage
+      - input_boolean.zb_l2_charger_gh_force_delayed
+      - input_datetime.zb_l2_charger_gh_charging_delayed_start_at
+      - input_number.zb_l2_charger_gh_min_percentage_emergency
+      - input_number.zb_l2_charger_gh_max_percentage_emergency
 
   - type: entities
     title: At Home
