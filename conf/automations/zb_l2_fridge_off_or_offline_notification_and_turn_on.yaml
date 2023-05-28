@@ -5,7 +5,8 @@
 # ############################################################
 
 # ############################################################
-# the ZB plug L2 kitchen fridge off / offline
+# the ZB plug L2 kitchen fridge was detected as off / offline
+#   make a persistant notification and switch the plug on again
 # ############################################################
 - alias: ZB plug L2 kitchen fridge off / offline
   id: "0e7043d3-dee7-4351-9784-f993c93f7936"
@@ -24,7 +25,10 @@
     - service: persistent_notification.create
       data:
         title: "Fridge L2 kitchen off(line)"
-        message: "The fridge in the kitchen on level L2 is either off or offline"
+        message: "Please check that the plug is online and on."
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: switch.turn_on
+      entity_id: switch.zb_plug_l2_kitchen_fridge
 # ############################################################
 #  END OF FILE
 # ############################################################
