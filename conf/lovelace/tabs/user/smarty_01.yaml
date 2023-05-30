@@ -223,7 +223,7 @@ cards:
             color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_l2_charger_gh
+            entity: switch.zb_charger_gh
             name: "PSU GH"
             color: yellow
             show_state: true
@@ -233,7 +233,7 @@ cards:
             color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_l2_charger_uh
+            entity: switch.zb_charger_uh
             name: "PSU UH"
             color: yellow
             show_state: true

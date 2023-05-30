@@ -30,14 +30,10 @@ blueprint:
     zigbee_plug_id:
       name: zigbee plug id
       description: The zigbee plug id
-    # related smartphone id
-    related_smartphone_id:
-      name: related smartphone id
-      description: The related smartphone id
     # related device charged percentage id
-    related_device_charged_percentage_id:
-      name: related device charged percentage id
-      description: The related device charged percentage id
+    smartphone_charged_percentage_now:
+      name: smartphone charged percentage now
+      description: The percentage up to which the smartphone is charged at the moment
     # max charging duration (0 = no end)
     max_charging_duration:
       name: max charging duration
@@ -78,7 +74,7 @@ variables:
   charging_mode: !input charging_mode
   zigbee_plug_id: !input zigbee_plug_id
   related_smartphone_id: !input related_smartphone_id
-  related_device_charged_percentage_id: !input related_device_charged_percentage_id
+  smartphone_charged_percentage_now: !input smartphone_charged_percentage_now
   max_charging_duration: !input max_charging_duration
   min_charging_percentage: !input min_charging_percentage
   max_charging_percentage: !input max_charging_percentage

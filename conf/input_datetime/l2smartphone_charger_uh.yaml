@@ -1,0 +1,19 @@
+# ############################################################
+#
+#  Input datetime
+#
+# ############################################################
+
+# input_datetime:
+zb_charger_uh_charging_delayed_start_at:
+  name: Charging delayed starts at
+  has_time: true
+  has_date: false
+
+zb_charger_gh_max_charging_duration:
+  name: max charging duration
+  has_time: true
+  has_date: false
+# ############################################################
+#  END OF FILE
+# ############################################################
