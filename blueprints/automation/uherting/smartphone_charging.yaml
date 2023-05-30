@@ -89,7 +89,11 @@ variables:
 
 # --------------------- TRIGGERS ---------------------
 
+# !!! dummy trigger !!!
 trigger:
+  - platform: time_pattern
+    # You can also match on interval. This will match every 5 minutes
+    minutes: "/10"
 
 # --------------------- CONDITIONS ---------------------
 condition:
