@@ -13,12 +13,9 @@
   mode: single
   initial_state: true
   # -------------------- CONDITIONS -------------------
-  # if the BLE interface microcontroller is online
-  # (actually only important for bluetooth devices by Xiaomi with batteries)
   condition:
     condition: state
     entity_id: switch.zb_charger_gh
-    # entity_id: switch.zb_charger_uh
     state:
       - "on"
   # --------------------- BLUEPRINT --------------------

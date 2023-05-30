@@ -13,12 +13,9 @@
   mode: single
   initial_state: true
   # -------------------- CONDITIONS -------------------
-  # if the BLE interface microcontroller is online
-  # (actually only important for bluetooth devices by Xiaomi with batteries)
   condition:
     condition: state
-    entity_id: switch.zb_charger_gh
-    # entity_id: switch.zb_charger_uh
+    entity_id: switch.zb_charger_uh
     state:
       - "on"
   # --------------------- BLUEPRINT --------------------
@@ -52,16 +49,6 @@
       delayed_charging_start_time:
         entity_id: input_datetime.zb_charger_gh_charging_delayed_start_at
         # entity_id: input_datetime.zb_charger_uh_charging_delayed_start_at
-
-      # --------------------- ACTIONS ---------------------
-      actions:
-        - service: script.tg_send_txt
-          data_template:
-            msg_title: "#Low battery level notification#"
-            msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
-            msg_receiver: "admin"
-            msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
-            msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
 ############################################################
 #  END OF FILE
 # ############################################################
