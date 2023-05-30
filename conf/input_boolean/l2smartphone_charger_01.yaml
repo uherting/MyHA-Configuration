@@ -7,12 +7,22 @@
 #input_boolean
 
 # use the plug as a charger only?
-zb_charger_01_functionality:
+zb_charger_gh_functionality:
   name: Charging Functionality
   icon: mdi:connection
 
 # enable delayed charging
-zb_charger_01_force_delayed:
+zb_charger_gh_force_delayed:
+  name: Charging starts delayed
+  icon: mdi:clock
+
+# use the plug as a charger only?
+zb_charger_uh_functionality:
+  name: Charging Functionality
+  icon: mdi:connection
+
+# enable delayed charging
+zb_charger_uh_force_delayed:
   name: Charging starts delayed
   icon: mdi:clock
 # ############################################################

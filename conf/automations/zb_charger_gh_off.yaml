@@ -1,0 +1,68 @@
+# ############################################################
+#
+#  Turn the ZB plug off
+#
+# ############################################################
+
+# ############################################################
+#  Turn the ZB plug off GH
+#  Turn the ZB plug off UH
+# ############################################################
+- alias: Turn the ZB plug GH off
+  # - alias: Turn the ZB plug UH off
+  id: "b350e9a3-4cfa-4786-a472-7151a7d53891"
+  # id: "91b35840-d6e6-4c70-9558-271b878b86ca"
+  description: "This automation turns off the ZB plug GH"
+  # description: "This automation turns off the ZB plug UH"
+  mode: single
+  initial_state: false
+  # -------------------- CONDITIONS -------------------
+  # if the BLE interface microcontroller is online
+  # (actually only important for bluetooth devices by Xiaomi with batteries)
+  condition:
+    condition: state
+    entity_id: switch.zb_l2_charger_gh
+    # entity_id: switch.zb_l2_charger_uh
+    state:
+      - "on"
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: uherting/smartphone_charging.yaml
+    # ---------------------- INPUT ----------------------
+    input:
+      charging_mode: "off"
+      zigbee_plug_id: switch.zb_l2_charger_gh
+      related_smartphone_id:
+      related_device_charged_percentage_id:
+      max_charging_duration:
+      min_charging_percentage:
+        entity_id: input_number.zb_l2_charger_gh_min_percentage
+        # entity_id: input_number.zb_l2_charger_uh_min_percentage
+      max_charging_percentage:
+        entity_id: input_number.zb_l2_charger_gh_max_percentage
+        # entity_id: input_number.zb_l2_charger_uh_max_percentage
+      min_percentage_emergency_charging:
+        entity_id: input_number.zb_l2_charger_gh_max_percentage
+        # entity_id: input_number.zb_l2_charger_uh_max_percentage
+      max_percentage_emergency_charging:
+        entity_id: input_number.zb_l2_charger_gh_max_percentage_emergency
+        # entity_id: input_number.zb_l2_charger_gh_max_percentage_emergency
+      delayed_charging_yn:
+        entity_id: input_boolean.zb_l2_charger_gh_force_delayed
+        # entity_id: input_boolean.zb_l2_charger_uh_force_delayed
+      delayed_charging_start_time:
+        entity_id: input_datetime.zb_l2_charger_gh_charging_delayed_start_at
+        # entity_id: input_datetime.zb_l2_charger_uh_charging_delayed_start_at
+
+      # --------------------- ACTIONS ---------------------
+      actions:
+        - service: script.tg_send_txt
+          data_template:
+            msg_title: "#Low battery level notification#"
+            msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
+            msg_receiver: "admin"
+            msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
+            msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
+############################################################
+#  END OF FILE
+# ############################################################

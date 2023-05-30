@@ -23,252 +23,112 @@ blueprint:
   input:
     # necessary input for this blueprint
     # charging mode (off | charging)
-    # zigbee plug id (string)
-    # zigbee plug id friendly name v
-    # connected device (entity id)
-    # connected device charged percentage (entity id)
-    # max charging target (entity id)
+    charging_mode:
+      name: charging mode
+      description: The charging mode
+    # zigbee_plug_id
+    zigbee_plug_id:
+      name: zigbee plug id
+      description: The zigbee plug id
+    # related smartphone id
+    related_smartphone_id:
+      name: related smartphone id
+      description: The related smartphone id
+    # related device charged percentage id
+    related_device_charged_percentage_id:
+      name: related device charged percentage id
+      description: The related device charged percentage id
     # max charging duration (0 = no end)
-    motion_entity:
-      name: Motion Sensor
-      description:
-        Motion Sensor or a group with Motion Sensors (But can be anything
-        switching between "on" and "off")
-      selector:
-        entity: {}
-    light_target:
-      name: Light
-      selector:
-        target:
-          entity:
-            domain: light
-    no_motion_wait:
-      name: Wait time
-      description: Time to leave the light on after last motion is detected.
-      default: 120
-      selector:
-        number:
-          min: 0.0
-          max: 3600.0
-          unit_of_measurement: seconds
-          step: 1.0
-          mode: slider
-    automation_blocker:
-      name: Automation Blocker (Optional)
-      description: Only run if this boolean is in desired state (see next input)
-      default:
-      selector:
-        entity: {}
-    automation_blocker_boolean:
-      name: Automation Blocker Chooser (Optional)
-      description:
-        Desired state of automation blocker, choose on for on and off for
-        off
-      default: false
-      selector:
-        boolean: {}
-    no_motion_blocker:
-      name: No Motion Blocker (Optional)
-      description:
-        No motion sequence is not run if this boolean is in desired state
-        (see next input)
-      default:
-      selector:
-        entity: {}
-    no_motion_blocker_boolean:
-      name: No Motion Chooser (Optional)
-      description:
-        Desired state of no motion blocker, choose on for on and off for
-        off
-      default: false
-      selector:
-        boolean: {}
-    elevation_check:
-      name: Sun elevation check (Optional)
-      description:
-        This is the angle between the sun and the horizon. Negative values
-        mean the sun is BELOW the horizon.
-      default: none
-      selector:
-        number:
-          min: -90.0
-          max: 90.0
-          unit_of_measurement: degrees
-          step: 1.0
-          mode: slider
-    scene_ambient:
-      name: Ambient Scene (Optional)
-      description: Scene for ambient state. Will be activated when no motion is detected.
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_ambient_start:
-      name: Ambient time frame start (Optional)
-      description: Time from which on ambient scene will be activated
-      default: 00:00:00
-      selector:
-        time: {}
-    time_scene_ambient_end:
-      name: Ambient time frame end (Optional)
-      description: Time from which on ambient scene will be not activated
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_morning:
-      name: Scene for the morning (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_morning:
-      name: Time for the morning scene (Optional)
-      description:
-        A time input which defines the time from which on the scene will
-        be activated if motion is detected.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_day:
-      name: Scene for the bright day (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_day:
-      name: Time for the day scene (Optional)
-      description:
-        A time input which defines the time from which on the scene will
-        be activated if motion is detected.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_evening:
-      name: Scene for the evening (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_evening:
-      name: Time for the evening scene (Optional)
-      description:
-        A time input which defines the time from which on the scene will
-        be activated if motion is detected.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_night:
-      name: Scene for the dark night (Optional)
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-    time_scene_night:
-      name: Time for the night scene (Optional)
-      description:
-        A time input which defines the time from which on the scene will
-        be activated if motion is detectedd.
-      default: 00:00:00
-      selector:
-        time: {}
-    scene_no_motion:
-      name: Default scene for no motion (Optional)
-      description: Set this Scene if you want to activate a scene if motion stops
-      default: scene.none
-      selector:
-        entity:
-          domain: scene
-          multiple: false
+    max_charging_duration:
+      name: max charging duration
+      description: The max charging duration
+    # min_charging_percentage
+    min_charging_percentage:
+      name: min charging percentage
+      description: min charging percentage
+    # max charging percentage id
+    max_charging_percentage:
+      name: max charging percentage
+      description: The max charging percentage
+    # min percentage emergency charging
+    min_percentage_emergency_charging:
+      name: min percentage emergency charging
+      description: min percentage emergency charging
+    # max percentage emergency charging
+    max_percentage_emergency_charging:
+      name: max percentage emergency charging
+      description: max percentage emergency charging
+    # delayed charging yn
+    delayed_charging_yn:
+      name: delayed charging yn
+      description: delayed charging y/n
+    #delayed charging_start time
+    delayed_charging_start_time:
+      name: delayed charging_start time
+      description: delayed charging_start time
+
+# ----------------------- MODE -----------------------
 mode: restart
+
+# ------------------- MAX EXCEEDED -------------------
 max_exceeded: silent
+
+# --------------------- VARIABLES ---------------------
 variables:
-  scene_ambient: !input scene_ambient
-  scene_morning: !input scene_morning
-  scene_day: !input scene_day
-  scene_evening: !input scene_evening
-  scene_night: !input scene_night
-  automation_blocker: !input automation_blocker
-  automation_blocker_boolean: !input automation_blocker_boolean
-  no_motion_blocker: !input no_motion_blocker
-  no_motion_blocker_boolean: !input no_motion_blocker_boolean
-  elevation_check: !input elevation_check
-  scene_no_motion: !input scene_no_motion
-  motion_entity: !input motion_entity
+  charging_mode: !input charging_mode
+  zigbee_plug_id: !input zigbee_plug_id
+  related_smartphone_id: !input related_smartphone_id
+  related_device_charged_percentage_id: !input related_device_charged_percentage_id
+  max_charging_duration: !input max_charging_duration
+  min_charging_percentage: !input min_charging_percentage
+  max_charging_percentage: !input max_charging_percentage
+  min_percentage_emergency_charging: !input min_percentage_emergency_charging
+  max_percentage_emergency_charging: !input max_percentage_emergency_charging
+  delayed_charging_yn: !input delayed_charging_yn
+  delayed_charging_start_time: !input delayed_charging_start_time
+
+# --------------------- TRIGGERS ---------------------
+
 trigger:
-  - platform: state
-    entity_id: !input motion_entity
-    from: "off"
-    to: "on"
-  - platform: state
-    entity_id: !input motion_entity
-    from: "on"
-    to: "off"
-    for: !input no_motion_wait
+
+# --------------------- CONDITIONS ---------------------
 condition:
-  - condition: or
-    conditions:
-      - "{{ automation_blocker == none }}"
-      - "{{ automation_blocker_boolean and states[automation_blocker].state == 'on'
-        }}"
-      - "{{ not automation_blocker_boolean and states[automation_blocker].state == 'off'
-        }}"
-  - condition: template
-    value_template:
-      "{{ (elevation_check == none) or (state_attr('sun.sun','elevation')
-      <= elevation_check | float(90)) }}"
+  []
+
+  # - condition: template
+  #   value_template: "{{ is_state('binary_sensor.sun_dwn_twilight', 'on') }}"
+
+# --------------------- ACTIONS ---------------------
 action:
   - choose:
       - conditions:
           - condition: template
-            value_template: "{{ trigger.to_state.state == 'on' }}"
+            value_template: "{{ charging_mode != 'charging' }}"
         sequence:
           - choose:
               - conditions:
-                  - "{{ scene_morning != 'scene.none'}}"
+                  - "{{  }}"
                   - condition: time
                     after: !input time_scene_morning
                     before: !input time_scene_day
                 sequence:
                   - scene: !input scene_morning
               - conditions:
-                  - "{{ scene_day != 'scene.none'}}"
+                  - "{{ charging_mode != 'off'}}"
                   - condition: time
                     after: !input time_scene_day
                     before: !input time_scene_evening
                 sequence:
                   - scene: !input scene_day
-              - conditions:
-                  - "{{ scene_evening != 'scene.none'}}"
-                  - condition: time
-                    after: !input time_scene_evening
-                    before: !input time_scene_night
-                sequence:
-                  - scene: !input scene_evening
-              - conditions:
-                  - "{{ scene_night != 'scene.none'}}"
-                  - condition: time
-                    after: !input time_scene_night
-                    before: !input time_scene_morning
-                sequence:
-                  - scene: !input scene_night
             default:
-              - service: light.turn_on
-                target: !input light_target
+              - service: script.log_write2halog
+                data:
+                  lw_message: "Title: *Smartphone charging via Zigbee plug*: default action was hit (001)) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                  lw_message_receiver: "{{ msg_receiver }}"
+                  lw_level: error
       - conditions:
           - condition: template
             value_template: "{{ trigger.to_state.state == 'off' }}"
-          - condition: or
-            conditions:
-              - "{{ no_motion_blocker == none }}"
-              - "{{ no_motion_blocker_boolean and states[no_motion_blocker].state == 'on'
-                }}"
-              - "{{ not no_motion_blocker_boolean and states[no_motion_blocker].state == 'off'
-                }}"
         sequence:
           - choose:
               - conditions:
@@ -283,8 +143,11 @@ action:
                 sequence:
                   - scene: !input scene_no_motion
             default:
-              - service: light.turn_off
-                target: !input light_target
+              - service: script.log_write2halog
+                data:
+                  lw_message: "Title: *Smartphone charging via Zigbee plug*: default action was hit (002)) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+                  lw_message_receiver: "{{ msg_receiver }}"
+                  lw_level: error
 # ############################################################
 #  END OF FILE
 # ############################################################
