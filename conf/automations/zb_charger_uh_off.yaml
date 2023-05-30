@@ -5,11 +5,11 @@
 # ############################################################
 
 # ############################################################
-#  Turn the ZB plug off GH
+#  Turn the ZB plug off UH
 # ############################################################
-- alias: Turn the ZB plug GH off
-  id: "b350e9a3-4cfa-4786-a472-7151a7d53891"
-  description: "This automation turns off the ZB plug GH"
+- alias: Turn the ZB plug UH off
+  id: "46f7051c-9f7b-4448-a267-5920c67ff814"
+  description: "This automation turns off the ZB plug UH"
   mode: single
   initial_state: true
   # -------------------- CONDITIONS -------------------
