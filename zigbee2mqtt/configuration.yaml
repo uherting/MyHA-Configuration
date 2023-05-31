@@ -34,13 +34,13 @@ devices:
   '0x1c34f1fffe095fc2':
     friendly_name: Lounge_L2
   '0xa4c1382e5e523972':
-    friendly_name: ZB_Plug_01
+    friendly_name: ZB_Plug_L2_Lounge_Light_Corner
   '0xa4c13804488a21e2':
-    friendly_name: ZB_Plug_02
+    friendly_name: ZB_Plug_L2_Kitchen_Microwave
   '0xa4c13818bd119ece':
-    friendly_name: ZB_Charger_01
+    friendly_name: ZB_Charger_UH
   '0xa4c138d094eebae0':
-    friendly_name: ZB_Plug_04
+    friendly_name: ZB_Plug_L2_Kitchen_Fridge
   '0xa4c138973cb5fed6':
     friendly_name: TH_01
   '0xa4c13896310b0036':
@@ -48,7 +48,17 @@ devices:
   '0xa4c138a59865fee9':
     friendly_name: TH_03
   '0xa4c1389480d75a5f':
-    friendly_name: DW_01
+    friendly_name: DW_L2_Bathroom
+  '0xa4c138633bdc9ba2':
+    friendly_name: ZB_Plug_A
+  '0xa4c13854b0d251be':
+    friendly_name: ZB_Plug_B
+  '0xa4c1383418264404':
+    friendly_name: ZB_Plug_C
+  '0xa4c1384f31b8d0f9':
+    friendly_name: ZB_Plug_D
+  '0xa4c138f6331b5916':
+    friendly_name: ZB_Charger_GH
 groups:
   '1':
     friendly_name: level2-TRVs
@@ -61,4 +71,6 @@ groups:
     devices:
       - 0xa4c1382e5e523972/1
       - 0xa4c13804488a21e2/1
+      - 0xa4c13818bd119ece/1
+      - 0xa4c138d094eebae0/1
 availability: true
