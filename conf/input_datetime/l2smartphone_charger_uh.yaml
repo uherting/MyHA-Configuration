@@ -10,7 +10,7 @@ zb_charger_uh_charging_delayed_start_at:
   has_time: true
   has_date: false
 
-zb_charger_gh_max_charging_duration:
+zb_charger_uh_max_charging_duration:
   name: max charging duration
   has_time: true
   has_date: false

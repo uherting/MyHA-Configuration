@@ -12,6 +12,9 @@
   description: "This automation turns off the ZB plug GH"
   mode: single
   initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # see blueprint
+
   # -------------------- CONDITIONS -------------------
   condition:
     condition: state
@@ -24,13 +27,12 @@
     # ---------------------- INPUT ----------------------
     input:
       charging_mode: "off"
-      zigbee_plug_id:
-        entitiy_id: switch.zb_charger_gh
       smartphone_charged_percentage_now:
         entity_id: sensor.spghnote8pro_battery_level
         # entity_id: sensor.spuhnote10pro_battery_level
       max_charging_duration:
-        entity_id: input_date
+        # entity_id: input_datetime.zb_charger_gh_max_charging_duration
+        entity_id: input_datetime.
       min_charging_percentage:
         entity_id: input_number.zb_charger_gh_min_percentage
         # entity_id: input_number.zb_charger_uh_min_percentage
@@ -49,16 +51,9 @@
       delayed_charging_start_time:
         entity_id: input_datetime.zb_charger_gh_charging_delayed_start_at
         # entity_id: input_datetime.zb_charger_uh_charging_delayed_start_at
-
-      # --------------------- ACTIONS ---------------------
       actions:
-        - service: script.tg_send_txt
-          data_template:
-            msg_title: "#Low battery level notification#"
-            msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
-            msg_receiver: "admin"
-            msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
-            msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
+        service: switch.turn_off
+        entity_id: switch.zb_charger_uh
 ############################################################
 #  END OF FILE
 # ############################################################

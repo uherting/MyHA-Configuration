@@ -10,8 +10,7 @@ blueprint:
   description: "# Smartphone charging via a Zigbee plug\n\n
     This blueprint controls Smartphone charging via a Zigbee plug\n"
   domain: automation
-  # source_url: https://gist.github.com/networkingcat/a1876d7e706e07c8bdcf974113940fb8
-  source_url: https://github.com/uherting/MyHA-Configuration/blob/master/blueprints/automation/uherting/smartphone_charging.yaml
+  source_url: https://github.com/uherting/MyHA-Configuration/blob/master/blueprints/automation/uherting/test.yaml
   input:
     # necessary input for this blueprint
     # charging mode (off | charging)
@@ -79,7 +78,7 @@ variables:
 trigger:
   - platform: time_pattern
     # You can also match on interval. This will match every 5 minutes
-    minutes: "/10"
+    minutes: "/1"
 
 # --------------------- CONDITIONS ---------------------
 condition:

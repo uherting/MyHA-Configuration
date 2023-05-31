@@ -11,7 +11,7 @@
   id: "46f7051c-9f7b-4448-a267-5920c67ff814"
   description: "This automation turns off the ZB plug UH"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # see blueprint
 
@@ -23,7 +23,7 @@
       - "on"
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
-    path: uherting/smartphone_charging.yaml
+    path: uherting/test.yaml
     # ---------------------- INPUT ----------------------
     input:
       charging_mode: "off"
@@ -52,7 +52,7 @@
         # entity_id: input_datetime.zb_charger_uh_charging_delayed_start_at
       actions:
         service: switch.turn_off
-        entity_id: switch.zb_charger_uh
+        entity_id: switch.zb_charger_gh
 ############################################################
 #  END OF FILE
 # ############################################################

@@ -13,7 +13,8 @@
   mode: single
   initial_state: false
   # -------------------- CONDITIONS -------------------
-  condition: []
+  condition:
+    []
     # condition: state
     # entity_id: binary_sensor.l2_ble01_status
     # state:
@@ -22,13 +23,12 @@
   use_blueprint:
     path: uherting/smartphone_charging.yaml
     input:
-
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        the following does not make sense. 
-        the way to trigger based on template values has to be found!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      #   the following does not make sense.
+      #   the way to trigger based on template values has to be found!!!
+      # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       # # execute at given time only
       # time: "19:00:00"

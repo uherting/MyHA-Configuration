@@ -9,7 +9,7 @@
 # ############################################################
 - alias: Zigbee Charger 01 OFF low percentage
   id: "29322f0c-002b-41c9-991c-be1aff542f1b"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # after the plug was on for x minutes the switch goes off
   trigger:
