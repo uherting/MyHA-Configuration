@@ -12,7 +12,6 @@ blueprint:
   domain: automation
   source_url: https://github.com/uherting/MyHA-Configuration/blob/master/blueprints/automation/uherting/test.yaml
   input:
-    # necessary input for this blueprint
     # charging mode (off | charging)
     charging_mode:
       name: charging mode
