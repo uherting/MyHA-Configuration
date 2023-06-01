@@ -5,11 +5,11 @@
 # ############################################################
 
 # ############################################################
-#  Turn the ZB plug off UH test
+#  Turn the ZB plug off GH test
 # ############################################################
-- alias: Turn the ZB plug UH off test
+- alias: Turn the ZB plug GH off test
   id: "93f0c082-ba3e-43ca-a10f-10c7ce266951"
-  description: "This automation turns off the ZB plug UH"
+  description: "This automation turns off the ZB plug GH"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
@@ -28,13 +28,13 @@
     input:
       charging_mode: "off"
       smartphone_charged_percentage_now:
-        # entity_id: sensor.spghnote8pro_battery_level
-        entity_id: sensor.spuhnote10pro_battery_level
+        entity_id: sensor.spghnote8pro_battery_level
+        # entity_id: sensor.spuhnote10pro_battery_level
       max_charging_duration:
         entity_id: input_date
       min_charging_percentage:
-        # entity_id: input_number.zb_charger_gh_min_percentage
-        entity_id: input_number.zb_charger_uh_min_percentage
+        entity_id: input_number.zb_charger_gh_min_percentage
+        # entity_id: input_number.zb_charger_uh_min_percentage
       max_charging_percentage:
         entity_id: input_number.zb_charger_gh_max_percentage
         # entity_id: input_number.zb_charger_uh_max_percentage
@@ -42,17 +42,17 @@
         entity_id: input_number.zb_charger_gh_max_percentage
         # entity_id: input_number.zb_charger_uh_max_percentage
       max_percentage_emergency_charging:
-        # entity_id: input_number.zb_charger_gh_max_percentage_emergency
         entity_id: input_number.zb_charger_gh_max_percentage_emergency
+        # entity_id: input_number.zb_charger_gh_max_percentage_emergency
       delayed_charging_yn:
-        # entity_id: input_boolean.zb_charger_gh_force_delayed
-        entity_id: input_boolean.zb_charger_uh_force_delayed
+        entity_id: input_boolean.zb_charger_gh_force_delayed
+        # entity_id: input_boolean.zb_charger_uh_force_delayed
       delayed_charging_start_time:
-        # entity_id: input_datetime.zb_charger_gh_charging_delayed_start_at
-        entity_id: input_datetime.zb_charger_uh_charging_delayed_start_at
+        entity_id: input_datetime.zb_charger_gh_charging_delayed_start_at
+        # entity_id: input_datetime.zb_charger_uh_charging_delayed_start_at
       actions:
         service: switch.turn_off
-        entity_id: switch.zb_charger_uh
+        entity_id: switch.zb_charger_gh
 ############################################################
 #  END OF FILE
 # ############################################################
