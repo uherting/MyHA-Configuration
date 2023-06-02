@@ -8,25 +8,25 @@
 #  Turn the ZB plug off UH test
 # ############################################################
 - alias: Turn the ZB plug UH off test
-  id: "93f0c082-ba3e-43ca-a10f-10c7ce266951"
+  id: "c8914562-7396-4753-9005-fd6bdef829ef"
   description: "This automation turns off the ZB plug UH"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # see blueprint
+  # moved to blueprint
 
   # -------------------- CONDITIONS -------------------
-  condition:
-    condition: state
-    entity_id: switch.zb_charger_uh
-    state:
-      - "on"
+  # moved to blueprint
+
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
     path: uherting/smartphone_charging.yaml
     # ---------------------- INPUT ----------------------
     input:
-      charging_mode: "off"
+      target_mode: "off"
+      state_of_the_charger:
+        entity: switch.zb_charger_uh
+      required_state_of_the_charger: "on"
       smartphone_charged_percentage_now:
         # entity_id: sensor.spghnote8pro_battery_level
         entity_id: sensor.spuhnote10pro_battery_level

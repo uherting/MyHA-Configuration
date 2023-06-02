@@ -14,10 +14,16 @@ blueprint:
   source_url: https://github.com/uherting/MyHA-Configuration/blob/master/blueprints/automation/uherting/smartphone_charging.yaml
   input:
     # necessary input for this blueprint
-    # charging mode (off | charging)
-    charging_mode:
-      name: charging mode
-      description: The charging mode
+    # target mode (off | charging)
+    target_mode:
+      name: target mode
+      description: The target mode (off | charging)
+    state_of_the_charger:
+      name: state of the charger
+      description: The state of the charger
+    required_state_of_the_charger:
+      name: required state of the charger
+      description: The required state of the charger
     # related device charged percentage id
     smartphone_charged_percentage_now:
       name: smartphone charged percentage now
@@ -65,7 +71,9 @@ max_exceeded: error
 
 # --------------------- VARIABLES ---------------------
 variables:
-  charging_mode: !input charging_mode
+  target_mode: !input target_mode
+  state_of_the_charger: !input state_of_the_charger
+  required_state_of_the_charger: !input required_state_of_the_charger
   smartphone_charged_percentage_now: !input smartphone_charged_percentage_now
   max_charging_duration: !input max_charging_duration
   min_charging_percentage: !input min_charging_percentage
@@ -79,21 +87,38 @@ variables:
 trigger:
   - platform: time_pattern
     # You can also match on interval. This will match every x minutes
-    minutes: "/10"
+    minutes: "/1"
 
 # --------------------- CONDITIONS ---------------------
 condition:
-  []
+  - or:
+      - condition: template
+        value_template: "{{ (target_mode == 'off') and \
+          (required_state_of_the_charger == state_of_the_charger) and \
+          ((smartphone_charged_percentage_now | int(0)) >= (max_charging_percentage | int(0))) }}"
 
-  # - condition: template
-  #   value_template: "{{ is_state('binary_sensor.sun_dwn_twilight', 'on') }}"
+# nested conditions src: https://www.home-assistant.io/docs/scripts/conditions/#and-condition
+# condition:
+#   condition: and
+#   conditions:
+#     - condition: state
+#       entity_id: "device_tracker.paulus"
+#       state: "home"
+#     - condition: or
+#       conditions:
+#         - condition: state
+#           entity_id: sensor.weather_precip
+#           state: "rain"
+#         - condition: numeric_state
+#           entity_id: "sensor.temperature"
+#           below: 20
 
 # --------------------- ACTIONS ---------------------
 # action:
 #   - choose:
 #       - conditions:
 #           - condition: template
-#             value_template: "{{ charging_mode != 'charging' }}"
+#             value_template: "{{ target_mode != 'charging' }}"
 #         sequence:
 #           - choose:
 #               - conditions:
@@ -104,7 +129,7 @@ condition:
 #                 sequence:
 #                   - scene: !input scene_morning
 #               - conditions:
-#                   - "{{ charging_mode != 'off'}}"
+#                   - "{{ target_mode != 'off'}}"
 #                   - condition: time
 #                     after: !input time_scene_day
 #                     before: !input time_scene_evening

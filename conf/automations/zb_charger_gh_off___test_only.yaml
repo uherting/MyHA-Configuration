@@ -13,20 +13,20 @@
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # see blueprint
+  # moved to blueprint
 
   # -------------------- CONDITIONS -------------------
-  condition:
-    condition: state
-    entity_id: switch.zb_charger_uh
-    state:
-      - "on"
+  # moved to blueprint
+
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
     path: uherting/smartphone_charging.yaml
     # ---------------------- INPUT ----------------------
     input:
-      charging_mode: "off"
+      target_mode: "off"
+      state_of_the_charger:
+        entity: switch.zb_charger_gh
+      required_state_of_the_charger: "on"
       smartphone_charged_percentage_now:
         entity_id: sensor.spghnote8pro_battery_level
         # entity_id: sensor.spuhnote10pro_battery_level
