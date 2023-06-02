@@ -21,11 +21,9 @@
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
     path: uherting/smartphone_charging.yaml
-    # ---------------------- INPUT ----------------------
     input:
       target_mode: "off"
-      state_of_the_charger:
-        entity: switch.zb_charger_uh
+      state_of_the_charger: "switch.zb_charger_uh"
       required_state_of_the_charger: "on"
       smartphone_charged_percentage_now:
         # entity_id: sensor.spghnote8pro_battery_level
