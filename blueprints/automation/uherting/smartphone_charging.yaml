@@ -78,7 +78,7 @@ variables:
 # ---------------------- TRIGGER -----------------------
 trigger:
   - platform: time_pattern
-    # You can also match on interval. This will match every 5 minutes
+    # You can also match on interval. This will match every x minutes
     minutes: "/10"
 
 # --------------------- CONDITIONS ---------------------
