@@ -91,9 +91,12 @@ trigger:
 
 # --------------------- CONDITIONS ---------------------
 condition:
-  - condition: template
-    value_template: "{{ (v_target_mode == 'off') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage) | int(0))) }}"
-
+  condition: or
+  conditions:
+    - condition: template
+      value_template: "{{ (v_target_mode == 'off') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage) | int(0))) }}"
+    - condition: template
+      value_template: "{{ (v_target_mode == 'on') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_min_charging_percentage) | int(0))) }}"
 # nested conditions src: https://www.home-assistant.io/docs/scripts/conditions/#and-condition
 # condition:
 #   condition: and

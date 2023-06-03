@@ -1,0 +1,41 @@
+# ############################################################
+#
+#  Turn the ZB plug off
+#
+# ############################################################
+
+# ############################################################
+#  Turn the ZB plug off UH test
+# ############################################################
+- alias: Turn the ZB plug UH off test
+  id: "c8914562-7396-4753-9005-fd6bdef829ef"
+  description: "This automation turns off the ZB plug UH"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # moved to blueprint
+
+  # -------------------- CONDITIONS -------------------
+  # moved to blueprint
+
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: uherting/smartphone_charging.yaml
+    input:
+      target_mode: "on"
+      state_of_the_charger: "switch.zb_charger_uh"
+      required_state_of_the_charger: "off"
+      smartphone_charged_percentage_now: "sensor.spuhnote10pro_battery_level"
+      max_charging_duration: "input_number.zb_charger_uh_max_on_time"
+      min_charging_percentage: "input_number.zb_charger_uh_min_percentage"
+      max_charging_percentage: "input_number.zb_charger_uh_max_percentage"
+      min_percentage_emergency_charging: "input_number.zb_charger_uh_max_percentage"
+      max_percentage_emergency_charging: "input_number.zb_charger_uh_max_percentage_emergency"
+      delayed_charging_yn: "input_boolean.zb_charger_uh_force_delayed"
+      delayed_charging_start_time: "input_datetime.zb_charger_uh_charging_delayed_start_at"
+      actions:
+        service: switch.turn_on
+        entity_id: switch.zb_charger_uh
+############################################################
+#  END OF FILE
+# ############################################################
