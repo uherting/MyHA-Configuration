@@ -1,15 +1,15 @@
 # ############################################################
 #
-#  Turn the ZB plug off
+#  Turn the ZB plug on
 #
 # ############################################################
 
 # ############################################################
-#  Turn the ZB plug off UH test
+#  Turn the ZB plug on UH test
 # ############################################################
-- alias: Turn the ZB plug UH off test
-  id: "c8914562-7396-4753-9005-fd6bdef829ef"
-  description: "This automation turns off the ZB plug UH"
+- alias: Turn the ZB plug UH on test
+  id: "9cc9c837-10b9-4733-9f62-ce58789f233f"
+  description: "This automation turns on the ZB plug UH"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
