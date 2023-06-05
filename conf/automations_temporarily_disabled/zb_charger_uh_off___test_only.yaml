@@ -11,7 +11,7 @@
   id: "c8914562-7396-4753-9005-fd6bdef829ef"
   description: "This automation turns off the ZB plug UH"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   # moved to blueprint
 

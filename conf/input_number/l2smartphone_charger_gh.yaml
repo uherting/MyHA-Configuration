@@ -58,16 +58,6 @@ zb_charger_gh_max_percentage_emergency:
   unit_of_measurement: "%"
   mode: slider
   icon: mdi:percent
-
-# how long shall the charger stay on? important to know when to switch it off
-zb_charger_gh_max_on_time:
-  name: Charger max ON time
-  min: 5
-  max: 90
-  step: 1
-  unit_of_measurement: "minutes"
-  mode: slider
-  icon: mdi:timer
 # ############################################################
 #  END OF FILE
 # ############################################################

@@ -14,6 +14,13 @@ zb_charger_gh_max_charging_duration:
   name: max charging duration
   has_time: true
   has_date: false
+
+# how long shall the charger stay on? important to know when to switch it off
+zb_charger_gh_max_on_time:
+  name: Charger max ON time
+  has_time: true
+  has_date: false
+  icon: mdi:timer
 # ############################################################
 #  END OF FILE
 # ############################################################
