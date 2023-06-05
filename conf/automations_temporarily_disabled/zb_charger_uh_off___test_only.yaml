@@ -25,6 +25,8 @@
       target_mode: "off"
       state_of_the_charger: "switch.zb_charger_uh"
       required_state_of_the_charger: "on"
+      at_home: "binary_sensor.home_uwe_is_here"
+      # at_home: "binary_sensor.home_gillian_is_here"
       smartphone_charged_percentage_now: "sensor.spuhnote10pro_battery_level"
       max_charging_duration: "input_number.zb_charger_uh_max_on_time"
       min_charging_percentage_low_percentage: "input_number.zb_charger_uh_min_percentage_low_percentage"
