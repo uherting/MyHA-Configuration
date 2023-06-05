@@ -87,16 +87,16 @@ variables:
 trigger:
   - platform: template
     id: "low_percentage_on"
-    value_template: "{% if (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_charging_percentage_low_percentage) | int(0))) %}true{% endif %}"
+    value_template: "{{ (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_charging_percentage_low_percentage) | int(0))) }}"
   - platform: template
     id: "low_percentage_off"
-    value_template: "{% if (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage_low_percentage) | int(0))) %}true{% endif %}"
+    value_template: "{{ (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage_low_percentage) | int(0))) }}"
   - platform: template
     id: "emergency_charging_on"
-    value_template: "{% if (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_percentage_emergency_charging) | int(0))) %}true{% endif %}"
+    value_template: "{{ (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_percentage_emergency_charging) | int(0))) }}"
   - platform: template
     id: "emergency_charging_off"
-    value_template: "{% if (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_percentage_emergency_charging) | int(0))) %}true{% endif %}"
+    value_template: "{{ (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_percentage_emergency_charging) | int(0))) }}"
 
   # - platform: time_pattern
   #   # You can also match on interval. This will match every x minutes
@@ -107,8 +107,10 @@ condition:
   condition: or
   conditions:
     - condition: template
+      # low_percentage_off
       value_template: "{{ (v_target_mode == 'off') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage_low_percentage) | int(0))) }}"
     - condition: template
+      # low_percentage_on
       value_template: "{{ (v_target_mode == 'on') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_charging_percentage_low_percentage) | int(0))) }}"
 
 # nested conditions src: https://www.home-assistant.io/docs/scripts/conditions/#and-condition
