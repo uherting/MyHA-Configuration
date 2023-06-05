@@ -74,18 +74,18 @@ max_exceeded: error
 
 # --------------------- VARIABLES ---------------------
 variables:
-  v_target_mode: !input target_mode
-  v_state_of_the_charger: !input state_of_the_charger
-  v_required_state_of_the_charger: !input required_state_of_the_charger
-  v_at_home: !input at_home
-  v_smartphone_charged_percentage_now: !input smartphone_charged_percentage_now
-  v_max_charging_duration: !input max_charging_duration
-  v_min_charging_percentage_low_percentage: !input min_charging_percentage_low_percentage
-  v_max_charging_percentage_low_percentage: !input max_charging_percentage_low_percentage
-  v_min_percentage_emergency_charging: !input min_percentage_emergency_charging
-  v_max_percentage_emergency_charging: !input max_percentage_emergency_charging
-  v_delayed_charging_yn: !input delayed_charging_yn
-  v_delayed_charging_start_time: !input delayed_charging_start_time
+  target_mode: !input target_mode
+  state_of_the_charger: !input state_of_the_charger
+  required_state_of_the_charger: !input required_state_of_the_charger
+  at_home: !input at_home
+  smartphone_charged_percentage_now: !input smartphone_charged_percentage_now
+  max_charging_duration: !input max_charging_duration
+  min_charging_percentage_low_percentage: !input min_charging_percentage_low_percentage
+  max_charging_percentage_low_percentage: !input max_charging_percentage_low_percentage
+  min_percentage_emergency_charging: !input min_percentage_emergency_charging
+  max_percentage_emergency_charging: !input max_percentage_emergency_charging
+  delayed_charging_yn: !input delayed_charging_yn
+  delayed_charging_start_time: !input delayed_charging_start_time
 
 # ---------------------- TRIGGER -----------------------
 trigger:
@@ -94,7 +94,7 @@ trigger:
   #   value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_charging_percentage_low_percentage) | int(0))) }}"
   - platform: template
     id: "low_percentage_off"
-    value_template: "{{ (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage_low_percentage) | int(0))) }}"
+    value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) >= (states(max_charging_percentage_low_percentage) | int(0))) }}"
   # - platform: template
   #   id: "emergency_charging_on"
   #   value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_percentage_emergency_charging) | int(0))) }}"
@@ -112,13 +112,13 @@ condition:
   conditions:
     # - condition: template
     # # low_percentage_on
-    # value_template: "{{ is_state(v_at_home, 'on') and (v_target_mode == 'off') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_charging_percentage_low_percentage) | int(0))) }}"
+    # value_template: "{{ is_state(at_home, 'on') and (target_mode == 'off') and (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_charging_percentage_low_percentage) | int(0))) }}"
     - condition: template
       # low_percentage_off
-      value_template: "{{ is_state(v_at_home, 'on') and (v_target_mode == 'off') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) >= (states(v_max_charging_percentage_low_percentage) | int(0))) }}"
+      value_template: "{{ is_state(at_home, 'on') and (target_mode == 'off') and (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) >= (states(max_charging_percentage_low_percentage) | int(0))) }}"
     # - condition: template
     #   # low_percentage_on
-    #   value_template: "{{ is_state(at_home, 'on') and (v_target_mode == 'on') and (is_state(v_state_of_the_charger, v_required_state_of_the_charger)) and ((states(v_smartphone_charged_percentage_now) | int(0)) <= (states(v_min_charging_percentage_low_percentage) | int(0))) }}"
+    #   value_template: "{{ is_state(at_home, 'on') and (target_mode == 'on') and (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_charging_percentage_low_percentage) | int(0))) }}"
 
 # nested conditions src: https://www.home-assistant.io/docs/scripts/conditions/#and-condition
 # condition:
