@@ -53,6 +53,8 @@ devices:
     friendly_name: ZB_Charger_GH
   '0xa4c138633bdc9ba2':
     friendly_name: ZB_Plug_A
+  '0xa4c1384f31b8d0f9':
+    friendly_name: ZB_Plug_L2_Kitchen_Coffeemachine
 groups:
   '1':
     friendly_name: level2-TRVs
