@@ -201,13 +201,13 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
+            entity: sensor.l2_thermo01_tempenv_01
+            name: "Thermo"
+            show_state: true
+          - type: "custom:button-card"
             entity: switch.zb_plug_a
             name: "Scanner"
             color: yellow
-            show_state: true
-          - type: "custom:button-card"
-            entity: sensor.l2_thermo01_tempenv_01
-            name: "Thermo"
             show_state: true
 
       # PSU
