@@ -51,6 +51,8 @@ devices:
     friendly_name: DW_L2_Bathroom
   '0xa4c138f6331b5916':
     friendly_name: ZB_Charger_GH
+  '0xa4c138633bdc9ba2':
+    friendly_name: ZB_Plug_A
 groups:
   '1':
     friendly_name: level2-TRVs
