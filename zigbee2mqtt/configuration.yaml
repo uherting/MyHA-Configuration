@@ -52,7 +52,7 @@ devices:
   '0xa4c138f6331b5916':
     friendly_name: ZB_Charger_GH
   '0xa4c138633bdc9ba2':
-    friendly_name: ZB_Plug_A
+    friendly_name: ZB_Plug_L2_Lounge_Scanner
   '0xa4c1384f31b8d0f9':
     friendly_name: ZB_Plug_L2_Kitchen_Coffeemachine
 groups:

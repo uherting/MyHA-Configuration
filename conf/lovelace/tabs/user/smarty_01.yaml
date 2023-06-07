@@ -36,14 +36,11 @@ cards:
             entity: sensor.l2_kitchen01_tempenv_01
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_microwave
-            name: "Microw"
-            color: yellow
+            # entity: switch.zb_plug_l2_kitchen_microwave
+            name: " "
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_fridge
-            name: "Fridge"
-            color: yellow
-            # show_state: true
+            # entity:
+            name: " "
           - type: "custom:button-card"
             name: "KitchenA"
             entity: switch.l2_kitchen01_ssr_01
@@ -205,8 +202,37 @@ cards:
             name: "Thermo"
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_a
+            # entity: switch.zb_plug_l2_lounge_scanner
+            name: " "
+            color: yellow
+            show_state: true
+
+      # Energy L2
+      - type: grid
+        square: false
+        # title: Energy
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            name: "Energy"
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_coffeemachine
+            name: "Senseo"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_microwave
+            name: "Microwave"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_lounge_scanner
             name: "Scanner"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_fridge
+            name: "Fridge"
             color: yellow
             show_state: true
 
