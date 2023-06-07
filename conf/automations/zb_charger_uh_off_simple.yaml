@@ -8,10 +8,10 @@
 #  Turn the ZB plug off UH test
 # ############################################################
 - alias: Turn the ZB plug UH off simple
-  id: "66f5545b-9cf9-4693-9cdb-98d20b3a4e41"
+  id: "5334d948-e9d6-4f8f-8303-9720fd2f1ef4"
   description: "This automation turns off the ZB plug UH the simple way"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: template
