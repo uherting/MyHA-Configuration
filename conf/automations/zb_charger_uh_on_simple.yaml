@@ -1,0 +1,58 @@
+# ############################################################
+#
+#  Turn the ZB plug UH on
+#
+# ############################################################
+
+# ############################################################
+#  Turn the ZB plug on UH test
+# ############################################################
+- alias: Turn the ZB plug UH on simple
+  id: "ff716105-8398-4292-ad51-d69de18ac007"
+  description: "This automation turns on the ZB plug UH the simple way"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: template
+      id: "low_percentage_on"
+      value_template: "{% if (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'off')) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) <= (states('input_number.zb_charger_uh_min_percentage_low_percentage') | int(0))) %}true{% endif %}"
+    - platform: template
+      id: "emergency_charging_on"
+      value_template: "{% if (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) <= (states('input_number.zb_charger_uh_min_percentage_emergency') | int(0))) %}true{% endif %}"
+    - platform: template
+      id: "delayed_charging_on"
+      value_template: "{% if (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() >= today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) %}true{% endif %}"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: "low_percentage_on"
+          sequence:
+            - service: switch.turn_on
+              entity_id: switch.zb_charger_uh
+        - conditions:
+            - condition: trigger
+              id: "emergency_charging_on"
+          sequence:
+            - service: switch.turn_on
+              entity_id: switch.zb_charger_uh
+        - conditions:
+            - condition: trigger
+              id: "delayed_charging_on"
+          sequence:
+            - service: switch.turn_on
+              entity_id: switch.zb_charger_uh
+      default:
+        - service: system_log.write
+          data:
+            message: "ZB plug UH on default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            level: "error"
+            logger: "system_log.external"
+############################################################
+#  END OF FILE
+# ############################################################
