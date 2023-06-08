@@ -207,14 +207,14 @@ cards:
             color: yellow
             show_state: true
 
-      # Energy L2
+      # ZB Plugs L2
       - type: grid
         square: false
-        # title: Energy
+        # title: ZB Plugs
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: "Energy"
+            name: "ZB Plugs"
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_coffeemachine
             name: "Senseo"
