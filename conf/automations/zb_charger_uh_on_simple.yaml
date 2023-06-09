@@ -35,18 +35,30 @@
           sequence:
             - service: switch.turn_on
               entity_id: switch.zb_charger_uh
+            - service: persistent_notification.create
+              data:
+                title: "ZB Plug UH switched on (low_percentage_on)"
+                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
         - conditions:
             - condition: trigger
               id: "emergency_charging_on"
           sequence:
             - service: switch.turn_on
               entity_id: switch.zb_charger_uh
+            - service: persistent_notification.create
+              data:
+                title: "ZB Plug UH switched on (emergency_charging_on)"
+                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
         - conditions:
             - condition: trigger
               id: "delayed_charging_on"
           sequence:
             - service: switch.turn_on
               entity_id: switch.zb_charger_uh
+            - service: persistent_notification.create
+              data:
+                title: "ZB Plug UH switched on (delayed_charging_on)"
+                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
       default:
         - service: system_log.write
           data:
