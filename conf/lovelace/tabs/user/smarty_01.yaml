@@ -202,8 +202,8 @@ cards:
             name: "Thermo"
             show_state: true
           - type: "custom:button-card"
-            # entity: switch.zb_plug_l2_lounge_scanner
-            name: " "
+            entity: switch.zb_plug_l2_kitchen_dishwasher
+            name: "Dishw"
             color: yellow
             show_state: true
 
