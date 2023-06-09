@@ -55,6 +55,8 @@ devices:
     friendly_name: ZB_Plug_L2_Lounge_Scanner
   '0xa4c1384f31b8d0f9':
     friendly_name: ZB_Plug_L2_Kitchen_Coffeemachine
+  '0xa4c13854b0d251be':
+    friendly_name: ZB_Plug_L2_Kitchen_DishWasher
 groups:
   '1':
     friendly_name: level2-TRVs
