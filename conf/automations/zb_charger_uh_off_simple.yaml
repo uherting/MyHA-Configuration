@@ -1,11 +1,11 @@
 # ############################################################
 #
-#  Turn the ZB plug UH off
+#  Turn the ZB plug UH off simple
 #
 # ############################################################
 
 # ############################################################
-#  Turn the ZB plug off UH test
+#  Turn the ZB plug off UH simple
 # ############################################################
 - alias: Turn the ZB plug UH off simple
   id: "5334d948-e9d6-4f8f-8303-9720fd2f1ef4"
