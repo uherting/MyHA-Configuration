@@ -16,13 +16,13 @@
   trigger:
     - platform: template
       id: "low_percentage_off"
-      value_template: "{% if (is_state('input_boolean.zb_charger_uh_functionality', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'off')) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_low_percentage') | int(0))) %}true{% endif %}"
+      value_template: "{% if (is_state('binary_sensor.zb_charger_uh_low_percentage_off_trigger', 'on')) %}true{% endif %}"
     - platform: template
       id: "emergency_charging_off"
-      value_template: "{% if (is_state('input_boolean.zb_charger_uh_functionality', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_emergency') | int(0))) %}true{% endif %}"
+      value_template: "{% if (is_state('binary_sensor.zb_charger_uh_emergency_charging_off_trigger', 'on')) %}true{% endif %}"
     - platform: template
       id: "delayed_charging_off"
-      value_template: "{% if (is_state('input_boolean.zb_charger_uh_functionality', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() > today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_delayed') | int(0))) %}true{% endif %}"
+      value_template: "{% if (is_state('binary_sensor.zb_charger_uh_delayed_charging_off_trigger', 'on')) %}true{% endif %}"
 
       #
       # (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at')))
