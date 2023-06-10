@@ -1,0 +1,21 @@
+##########################################################################################
+#
+# Drop down (input select)
+#
+##########################################################################################
+
+# input_select:
+zb_charger_uh_state_current:
+  name: "Current state of the charger"
+  icon: mdi:strategy
+  options:
+    - "the current state is undefined"
+    - "ordinary charging in progress"
+    - "awaiting delayed charging"
+    - "delayed charging in progress"
+    - "emergency charging in progress"
+    - "the current state is undefined"
+  initial: "the current state is undefined"
+####################################################################
+# EOF
+####################################################################

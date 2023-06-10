@@ -1,13 +1,13 @@
 # ############################################################
 #
-#  automation for Zigbee plug 02
+#  automation for Zigbee plug zb_plug_l2_kitchen_microwave_power
 #
 # ############################################################
 
 # ############################################################
-# Zigbee plug 02 turn off after x minutes
+# Zigbee plug zb_plug_l2_kitchen_microwave_power turn off after x minutes
 # ############################################################
-- alias: Zigbee Plug 02 Timer
+- alias: Zigbee Plug zb_plug_l2_kitchen_microwave_power
   id: "f7124d47-174f-4c08-9c2a-d36f492d9ead"
   initial_state: true
   # --------------------- TRIGGER ---------------------
@@ -24,12 +24,12 @@
         - condition: template
           value_template: "{{ states(trigger.entity_id) != 'on'}}"
         - condition: template
-          value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 10 }}'
+          value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 25 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
     service: switch.turn_off
-    entity_id: switch.zb_plug_02
+    entity_id: switch.zb_plug_l2_kitchen_microwave
 # ############################################################
 #  END OF FILE
 # ############################################################

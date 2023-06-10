@@ -51,6 +51,7 @@ cards:
       - input_number.zb_charger_gh_max_percentage_delayed
       - input_number.zb_charger_gh_min_percentage_emergency
       - input_number.zb_charger_gh_max_percentage_emergency
+      - input_select.zb_charger_gh_state_current
 
   - type: entities
     title: L2 Charger UH
@@ -66,6 +67,7 @@ cards:
       - input_number.zb_charger_uh_max_percentage_delayed
       - input_number.zb_charger_uh_min_percentage_emergency
       - input_number.zb_charger_uh_max_percentage_emergency
+      - input_select.zb_charger_uh_state_current
 
   - type: entities
     title: At Home
