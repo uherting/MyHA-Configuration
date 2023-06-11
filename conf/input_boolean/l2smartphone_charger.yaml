@@ -6,6 +6,8 @@
 
 #input_boolean
 
+# GH
+# -------------------------------
 # use the plug as a charger only?
 zb_charger_gh_functionality:
   name: Charging Functionality
@@ -16,6 +18,8 @@ zb_charger_gh_force_delayed:
   name: Charging starts delayed
   icon: mdi:clock
 
+# UH
+# -------------------------------
 # use the plug as a charger only?
 zb_charger_uh_functionality:
   name: Charging Functionality

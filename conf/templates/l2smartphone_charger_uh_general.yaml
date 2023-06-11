@@ -9,7 +9,7 @@
     - name: "zb_charger_uh_functionality_athome"
       unique_id: "zb_charger_uh_functionality_athome"
       state: >
-        "{{ (is_state('input_boolean.zb_charger_uh_functionality', 'on')) and (is_state('binary_sensor.home_uwe_is_here', 'on')) }}"
+        {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and is_state('binary_sensor.home_uwe_is_here', 'on') }}
 
 ####################################################################
 # EOF

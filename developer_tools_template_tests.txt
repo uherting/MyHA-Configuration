@@ -1,5 +1,16 @@
 # content of: /config/developer_tools_template_tests.txt
+---------------
+Test ZB UH
+input_boolean.zb_charger_uh_functionality: {{ states('input_boolean.zb_charger_uh_functionality') }}
+binary_sensor.home_uwe_is_here: {{ states('binary_sensor.home_uwe_is_here') }}
+AND: {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and is_state('binary_sensor.home_uwe_is_here', 'on') }}
+result: {{ states('binary_sensor.zb_charger_uh_functionality_athome') }}
 
+
+
+
+
+---------------
 # only if the cam is online and online longer than x minutes
 {{ states("binary_sensor.l9_cam32_03_status") }}
 {{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}
