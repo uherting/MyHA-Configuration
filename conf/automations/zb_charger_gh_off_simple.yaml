@@ -1,28 +1,28 @@
 # ############################################################
 #
-#  Turn the ZB plug UH off simple
+#  Turn the ZB plug GH off simple
 #
 # ############################################################
 
 # ############################################################
-#  Turn the ZB plug off UH simple
+#  Turn the ZB plug off GH simple
 # ############################################################
-- alias: Turn the ZB plug UH off simple
-  id: "5334d948-e9d6-4f8f-8303-9720fd2f1ef4"
-  description: "This automation turns off the ZB plug UH the simple way"
+- alias: Turn the ZB plug GH off simple
+  id: "2e1c885c-ce12-4e7a-9b36-8aed1d8f7a70"
+  description: "This automation turns off the ZB plug GH the simple way"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: template
       id: "low_percentage_off"
-      value_template: "{{ (is_state('binary_sensor.zb_charger_uh_low_percentage_off_trigger', 'on')) }}"
+      value_template: "{{ (is_state('binary_sensor.zb_charger_gh_low_percentage_off_trigger', 'on')) }}"
     - platform: template
       id: "emergency_charging_off"
-      value_template: "{{ (is_state('binary_sensor.zb_charger_uh_emergency_charging_off_trigger', 'on')) }}"
+      value_template: "{{ (is_state('binary_sensor.zb_charger_gh_emergency_charging_off_trigger', 'on')) }}"
     - platform: template
       id: "delayed_charging_off"
-      value_template: "{{ (is_state('binary_sensor.zb_charger_uh_delayed_charging_off_trigger', 'on')) }}"
+      value_template: "{{ (is_state('binary_sensor.zb_charger_gh_delayed_charging_off_trigger', 'on')) }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -37,8 +37,8 @@
               entity_id: switch.zb_charger_uh
             - service: persistent_notification.create
               data:
-                title: "ZB Plug UH switched off (low_percentage_off)"
-                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+                title: "ZB Plug GH switched off (low_percentage_off)"
+                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
         - conditions:
             - condition: trigger
               id: "emergency_charging_off"
@@ -47,8 +47,8 @@
               entity_id: switch.zb_charger_uh
             - service: persistent_notification.create
               data:
-                title: "ZB Plug UH switched off (emergency_charging_off)"
-                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+                title: "ZB Plug GH switched off (emergency_charging_off)"
+                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
         - conditions:
             - condition: trigger
               id: "delayed_charging_off"
@@ -57,12 +57,12 @@
               entity_id: switch.zb_charger_uh
             - service: persistent_notification.create
               data:
-                title: "ZB Plug UH switched off (delayed_charging_off)"
-                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+                title: "ZB Plug GH switched off (delayed_charging_off)"
+                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
       default:
         - service: system_log.write
           data:
-            message: "ZB plug UH off default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            message: "ZB plug GH off default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
 ############################################################

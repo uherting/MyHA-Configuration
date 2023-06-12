@@ -1,28 +1,28 @@
 # ############################################################
 #
-#  Turn the ZB plug UH on simple
+#  Turn the ZB plug GH on simple
 #
 # ############################################################
 
 # ############################################################
-#  Turn the ZB plug on UH simple
+#  Turn the ZB plug on GH simple
 # ############################################################
-- alias: Turn the ZB plug UH on simple
-  id: "ff716105-8398-4292-ad51-d69de18ac007"
-  description: "This automation turns on the ZB plug UH the simple way"
+- alias: Turn the ZB plug GH on simple
+  id: "d7241af0-3816-43b4-8642-47499504882c"
+  description: "This automation turns on the ZB plug GH the simple way"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: template
       id: "low_percentage_on"
-      value_template: "{{ (is_state('binary_sensor.zb_charger_uh_low_percentage_on_trigger', 'on')) }}"
+      value_template: "{{ (is_state('binary_sensor.zb_charger_gh_low_percentage_on_trigger', 'on')) }}"
     - platform: template
       id: "emergency_charging_on"
-      value_template: "{{ (is_state('binary_sensor.zb_charger_uh_emergency_charging_on_trigger', 'on')) }}"
+      value_template: "{{ (is_state('binary_sensor.zb_charger_gh_emergency_charging_on_trigger', 'on')) }}"
     - platform: template
       id: "delayed_charging_on"
-      value_template: "{{ (is_state('binary_sensor.zb_charger_uh_delayed_charging_on_trigger', 'on')) }}"
+      value_template: "{{ (is_state('binary_sensor.zb_charger_gh_delayed_charging_on_trigger', 'on')) }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -34,35 +34,35 @@
               id: "low_percentage_on"
           sequence:
             - service: switch.turn_on
-              entity_id: switch.zb_charger_uh
+              entity_id: switch.zb_charger_gh
             - service: persistent_notification.create
               data:
-                title: "ZB Plug UH switched on (low_percentage_on)"
-                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+                title: "ZB Plug GH switched on (low_percentage_on)"
+                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
         - conditions:
             - condition: trigger
               id: "emergency_charging_on"
           sequence:
             - service: switch.turn_on
-              entity_id: switch.zb_charger_uh
+              entity_id: switch.zb_charger_gh
             - service: persistent_notification.create
               data:
-                title: "ZB Plug UH switched on (emergency_charging_on)"
-                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+                title: "ZB Plug GH switched on (emergency_charging_on)"
+                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
         - conditions:
             - condition: trigger
               id: "delayed_charging_on"
           sequence:
             - service: switch.turn_on
-              entity_id: switch.zb_charger_uh
+              entity_id: switch.zb_charger_gh
             - service: persistent_notification.create
               data:
-                title: "ZB Plug UH switched on (delayed_charging_on)"
-                message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+                title: "ZB Plug GH switched on (delayed_charging_on)"
+                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
       default:
         - service: system_log.write
           data:
-            message: "ZB plug UH on default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            message: "ZB plug GH on default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
 ############################################################
