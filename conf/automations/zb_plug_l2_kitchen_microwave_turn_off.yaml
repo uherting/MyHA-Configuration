@@ -7,8 +7,8 @@
 # ############################################################
 # Zigbee plug zb_plug_l2_kitchen_microwave_power turn off after x minutes
 # ############################################################
-- alias: Zigbee Plug zb_plug_l2_kitchen_microwave_power
-  id: "f7124d47-174f-4c08-9c2a-d36f492d9ead"
+- alias: Zigbee plug kitchen microwave off timer
+  id: "f82631d9-628e-4afa-a224-2fe4b9bf15ed"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # after the plug was on for x minutes the switch goes off
@@ -20,11 +20,8 @@
         minutes: 6
   # -------------------- CONDITIONS -------------------
   condition:
-    - and:
-        - condition: template
-          value_template: "{{ states(trigger.entity_id) != 'on'}}"
-        - condition: template
-          value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 25 }}'
+    - condition: template
+      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 25 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
