@@ -9,11 +9,13 @@ zb_charger_uh_state_current:
   name: "Current state of the charger"
   icon: mdi:strategy
   options:
-    - "the current state is undefined"
     - "ordinary charging in progress"
+    - "ordinary charging finished"
+    - "emergency charging in progress"
+    - "emergency charging finished"
     - "awaiting delayed charging"
     - "delayed charging in progress"
-    - "emergency charging in progress"
+    - "delayed charging finished"
     - "the current state is undefined"
   initial: "the current state is undefined"
 ####################################################################

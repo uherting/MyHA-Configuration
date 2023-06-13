@@ -39,6 +39,11 @@
               data:
                 title: "ZB Plug UH switched on (low_percentage_on)"
                 message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.zb_charger_uh_state_current
+              data:
+                option: "{{ states('input_text.zb_charger_state_current_ordinary_charging_in_progress') }}"
         - conditions:
             - condition: trigger
               id: "emergency_charging_on"
@@ -49,6 +54,11 @@
               data:
                 title: "ZB Plug UH switched on (emergency_charging_on)"
                 message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.zb_charger_uh_state_current
+              data:
+                option: "{{ states('input_text.zb_charger_state_current_emergency_charging_in_progress') }}"
         - conditions:
             - condition: trigger
               id: "delayed_charging_on"
@@ -59,6 +69,11 @@
               data:
                 title: "ZB Plug UH switched on (delayed_charging_on)"
                 message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.zb_charger_uh_state_current
+              data:
+                option: "{{ states('input_text.zb_charger_state_current_delayed_charging_in_progress') }}"
       default:
         - service: system_log.write
           data:

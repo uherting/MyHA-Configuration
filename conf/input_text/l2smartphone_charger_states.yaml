@@ -5,24 +5,36 @@
 ##########################################################################################
 
 # input_text:
-zb_charger_uh_state_current_ordinary_charging_in_progress:
-  name: "zb charger uh state current ordinary charging in progress"
+zb_charger_state_current_ordinary_charging_in_progress:
+  name: "zb charger state current ordinary charging in progress"
   initial: "ordinary charging in progress"
 
-zb_charger_uh_state_currentawaiting_delayed_charging:
-  name: "zb charger uh state current awaiting delayed charging"
-  initial: "awaiting delayed charging"
+zb_charger_state_current_ordinary_charging_finished:
+  name: "zb charger state current ordinary charging finished"
+  initial: "ordinary charging finished"
 
-zb_charger_uh_state_current_delayed_charging_in_progress:
-  name: "zb charger uh state current delayed charging in progress"
-  initial: "delayed charging in progress"
-
-zb_charger_uh_state_current_emergency_charging_in_progress:
-  name: "zb charger uh state current emergency charging in progress"
+zb_charger_state_current_emergency_charging_in_progress:
+  name: "zb charger state current emergency charging in progress"
   initial: "emergency charging in progress"
 
-zb_charger_uh_state_current_state_is_undefined:
-  name: "zb charger uh state current the current state is undefined"
+zb_charger_state_current_emergency_charging_finished:
+  name: "zb charger state current emergency charging finished"
+  initial: "emergency charging finished"
+
+zb_charger_state_current_awaiting_delayed_charging:
+  name: "zb charger state current awaiting delayed charging"
+  initial: "awaiting delayed charging"
+
+zb_charger_state_current_delayed_charging_in_progress:
+  name: "zb charger state current delayed charging in progress"
+  initial: "delayed charging in progress"
+
+zb_charger_state_current_delayed_charging_finished:
+  name: "zb charger state current delayed charging finished"
+  initial: "delayed charging finished"
+
+zb_charger_state_current_state_is_undefined:
+  name: "zb charger state current the current state is undefined"
   initial: "the current state is undefined"
 ####################################################################
 # EOF

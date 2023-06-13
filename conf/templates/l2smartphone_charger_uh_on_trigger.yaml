@@ -3,8 +3,6 @@
 ##########################################################################################
 
 # template:
-
-# we run the normal
 - binary_sensor:
     - name: "zb_charger_uh_low_percentage_on_trigger"
       unique_id: "zb_charger_uh_low_percentage_on_trigger"
