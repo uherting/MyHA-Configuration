@@ -1,7 +1,24 @@
 ---------------
 # content of: /config/developer_tools_template_ZB_tests.txt
 ---------------
+========================================================================
+now: {{ now() }}
+now plus timedelta: {{ now() + timedelta(hours = 3, minutes = 0) }}
+
+check whether we are after the delayed start time: {{ (now() >= today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) }}
+check whether we are before assumed delayed finish time: {{ (now() <= (today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at')) + timedelta(hours = 8, minutes = 0))) }}
+
+within time frame: {{ (now() >= today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and (now() <= (today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at')) + timedelta(hours = 8, minutes = 0))) }}
+========================================================================
+
 ZB tests
+============
+ON UH
+============
+- name: "zb_charger_uh_low_percentage_on_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'off')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'off')) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) <= (states('input_number.zb_charger_uh_min_percentage_low_percentage') | int(0))) }}
+- name: "zb_charger_uh_emergency_charging_on_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'off')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) <= (states('input_number.zb_charger_uh_min_percentage_emergency') | int(0))) }}
+- name: "zb_charger_uh_delayed_charging_on_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'off')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() >= today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) }}
+
 ============
 OFF UH
 ============
@@ -11,22 +28,6 @@ OFF UH
 - name: "zb_charger_uh_emergency_charging_off_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_emergency') | int(0))) }}
 - name: "zb_charger_uh_delayed_charging_off_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() > today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_delayed') | int(0))) }}
 
-============
-ON UH
-============
-- name: "zb_charger_uh_low_percentage_on_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'off')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'off')) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) <= (states('input_number.zb_charger_uh_min_percentage_low_percentage') | int(0))) }}
-- name: "zb_charger_uh_emergency_charging_on_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'off')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) <= (states('input_number.zb_charger_uh_min_percentage_emergency') | int(0))) }}
-- name: "zb_charger_uh_delayed_charging_on_trigger": {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'off')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (now() >= today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) }}
-
-
-============
-OFF GH
-============
-- GH battery_level: {{ states('sensor.spghnote8pro_battery_level') }}
-- name: "zb_charger_gh_functionality_athome": {{ is_state('input_boolean.zb_charger_gh_functionality', 'on') and is_state('binary_sensor.home_gillian_is_here', 'on') }}
-- name: "zb_charger_gh_low_percentage_off_trigger": {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'on')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'off')) and ((states('sensor.spghnote8pro_battery_level') | int(0)) >= (states('input_number.zb_charger_gh_max_percentage_low_percentage') | int(0))) }}
-- name: "zb_charger_gh_emergency_charging_off_trigger": {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'on')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at'))) and ((states('sensor.spghnote8pro_battery_level') | int(0)) >= (states('input_number.zb_charger_gh_max_percentage_emergency') | int(0))) }}
-- name: "zb_charger_gh_delayed_charging_off_trigger": {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'on')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and (now() > today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at'))) and ((states('sensor.spghnote8pro_battery_level') | int(0)) >= (states('input_number.zb_charger_gh_max_percentage_delayed') | int(0))) }}
 
 ============
 ON GH
@@ -48,6 +49,15 @@ ON GH
 - detail name: 
 - detail name: 
 - detail name: 
+
+============
+OFF GH
+============
+- GH battery_level: {{ states('sensor.spghnote8pro_battery_level') }}
+- name: "zb_charger_gh_functionality_athome": {{ is_state('input_boolean.zb_charger_gh_functionality', 'on') and is_state('binary_sensor.home_gillian_is_here', 'on') }}
+- name: "zb_charger_gh_low_percentage_off_trigger": {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'on')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'off')) and ((states('sensor.spghnote8pro_battery_level') | int(0)) >= (states('input_number.zb_charger_gh_max_percentage_low_percentage') | int(0))) }}
+- name: "zb_charger_gh_emergency_charging_off_trigger": {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'on')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and (now() < today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at'))) and ((states('sensor.spghnote8pro_battery_level') | int(0)) >= (states('input_number.zb_charger_gh_max_percentage_emergency') | int(0))) }}
+- name: "zb_charger_gh_delayed_charging_off_trigger": {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'on')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and (now() > today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at'))) and ((states('sensor.spghnote8pro_battery_level') | int(0)) >= (states('input_number.zb_charger_gh_max_percentage_delayed') | int(0))) }}
 
 ---------------
 # content of: /config/developer_tools_template_ZB_tests.txt
