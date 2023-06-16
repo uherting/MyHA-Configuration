@@ -1,0 +1,194 @@
+# ############################################################
+#
+#  Smartphone charging via Zigbee plug
+#
+#   actions based on charging mode: off | charging
+#
+# ############################################################
+blueprint:
+  name: Smartphone charging via Zigbee plug
+  description: "# Smartphone charging via a Zigbee plug\n\n
+    This blueprint controls Smartphone charging via a Zigbee plug\n"
+  domain: automation
+  # source_url: https://gist.github.com/networkingcat/a1876d7e706e07c8bdcf974113940fb8
+  source_url: https://github.com/uherting/MyHA-Configuration/blob/master/blueprints/automation/uherting/smartphone_charging.yaml
+  input:
+    # necessary input for this blueprint
+    # target mode (off | charging)
+    target_mode:
+      name: target mode
+      description: The target mode (off | charging)
+    state_of_the_charger:
+      name: state of the charger
+      description: The state of the charger
+    required_state_of_the_charger:
+      name: required state of the charger
+      description: The required state of the charger
+    at_home:
+      name: at_home yn
+      description: Is the owner of the smartphone at home yn
+    # related device charged percentage id
+    smartphone_charged_percentage_now:
+      name: smartphone charged percentage now
+      description: The percentage up to which the smartphone is charged at the moment
+    # max charging duration (0 = no end)
+    max_charging_duration:
+      name: max charging duration
+      description: The max charging duration
+    # min_charging_percentage_low_percentage
+    min_charging_percentage_low_percentage:
+      name: min charging percentage
+      description: min charging percentage
+    # max charging percentage id
+    max_charging_percentage_low_percentage:
+      name: max charging percentage
+      description: The max charging percentage
+    # min percentage emergency charging
+    min_percentage_emergency_charging:
+      name: min percentage emergency charging
+      description: min percentage emergency charging
+    # max percentage emergency charging
+    max_percentage_emergency_charging:
+      name: max percentage emergency charging
+      description: max percentage emergency charging
+    # delayed charging yn
+    delayed_charging_yn:
+      name: delayed charging yn
+      description: delayed charging y/n
+    # delayed charging_start time
+    delayed_charging_start_time:
+      name: delayed charging_start time
+      description: delayed charging_start time
+    # actions to be performed
+    actions:
+      name: actions to be performed
+      description: actions to be performed by the blueprint
+
+# ----------------------- MODE -----------------------
+# for details see https://www.home-assistant.io/docs/automation/modes/
+mode: queued
+
+# ------------------- MAX EXCEEDED -------------------
+# for details see https://www.home-assistant.io/docs/automation/modes/
+max_exceeded: error
+
+# --------------------- VARIABLES ---------------------
+variables:
+  target_mode: !input target_mode
+  state_of_the_charger: !input state_of_the_charger
+  required_state_of_the_charger: !input required_state_of_the_charger
+  at_home: !input at_home
+  smartphone_charged_percentage_now: !input smartphone_charged_percentage_now
+  max_charging_duration: !input max_charging_duration
+  min_charging_percentage_low_percentage: !input min_charging_percentage_low_percentage
+  max_charging_percentage_low_percentage: !input max_charging_percentage_low_percentage
+  min_percentage_emergency_charging: !input min_percentage_emergency_charging
+  max_percentage_emergency_charging: !input max_percentage_emergency_charging
+  delayed_charging_yn: !input delayed_charging_yn
+  delayed_charging_start_time: !input delayed_charging_start_time
+
+# ---------------------- TRIGGER -----------------------
+trigger:
+  # - platform: template
+  #   id: "low_percentage_on"
+  #   value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_charging_percentage_low_percentage) | int(0))) }}"
+  - platform: template
+    id: "low_percentage_off"
+    value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) >= (states(max_charging_percentage_low_percentage) | int(0))) }}"
+  # - platform: template
+  #   id: "emergency_charging_on"
+  #   value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_percentage_emergency_charging) | int(0))) }}"
+  # - platform: template
+  #   id: "emergency_charging_off"
+  #   value_template: "{{ (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) >= (states(max_percentage_emergency_charging) | int(0))) }}"
+
+  # - platform: time_pattern
+  #   # You can also match on interval. This will match every x minutes
+  #   minutes: "/1"
+
+# --------------------- CONDITIONS ---------------------
+condition:
+  condition: or
+  conditions:
+    # - condition: template
+    # # low_percentage_on
+    # value_template: "{{ is_state(at_home, 'on') and (target_mode == 'off') and (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_charging_percentage_low_percentage) | int(0))) }}"
+    - condition: template
+      # low_percentage_off
+      value_template: "{{ is_state(at_home, 'on') and (target_mode == 'off') and (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) >= (states(max_charging_percentage_low_percentage) | int(0))) }}"
+    # - condition: template
+    #   # low_percentage_on
+    #   value_template: "{{ is_state(at_home, 'on') and (target_mode == 'on') and (is_state(state_of_the_charger, required_state_of_the_charger)) and ((states(smartphone_charged_percentage_now) | int(0)) <= (states(min_charging_percentage_low_percentage) | int(0))) }}"
+
+# nested conditions src: https://www.home-assistant.io/docs/scripts/conditions/#and-condition
+# condition:
+#   condition: and
+#   conditions:
+#     - condition: state
+#       entity_id: "device_tracker.paulus"
+#       state: "home"
+#     - condition: or
+#       conditions:
+#         - condition: state
+#           entity_id: sensor.weather_precip
+#           state: "rain"
+#         - condition: numeric_state
+#           entity_id: "sensor.temperature"
+#           below: 20
+
+# --------------------- ACTIONS ---------------------
+# action:
+#   - choose:
+#       - conditions:
+#           - condition: template
+#             value_template: "{{ target_mode != 'charging' }}"
+#         sequence:
+#           - choose:
+#               - conditions:
+#                   - "{{  }}"
+#                   - condition: time
+#                     after: !input time_scene_morning
+#                     before: !input time_scene_day
+#                 sequence:
+#                   - scene: !input scene_morning
+#               - conditions:
+#                   - "{{ target_mode != 'off'}}"
+#                   - condition: time
+#                     after: !input time_scene_day
+#                     before: !input time_scene_evening
+#                 sequence:
+#                   - scene: !input scene_day
+#             default:
+#               - service: script.log_write2halog
+#                 data:
+#                   lw_message: "Title: *Smartphone charging via Zigbee plug*: default action was hit (001)) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+#                   lw_message_receiver: "{{ msg_receiver }}"
+#                   lw_level: error
+#       - conditions:
+#           - condition: template
+#             value_template: "{{ trigger.to_state.state == 'off' }}"
+#         sequence:
+#           - choose:
+#               - conditions:
+#                   - "{{ scene_ambient != 'scene.none' }}"
+#                   - condition: time
+#                     after: !input time_scene_ambient_start
+#                     before: !input time_scene_ambient_end
+#                 sequence:
+#                   - scene: !input scene_ambient
+#               - conditions:
+#                   - "{{ scene_no_motion != 'scene.none' }}"
+#                 sequence:
+#                   - scene: !input scene_no_motion
+#             default:
+#               - service: script.log_write2halog
+#                 data:
+#                   lw_message: "Title: *Smartphone charging via Zigbee plug*: default action was hit (002)) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+#                   lw_message_receiver: "{{ msg_receiver }}"
+#                   lw_level: error
+action:
+  - choose: []
+    default: !input actions
+# ############################################################
+#  END OF FILE
+# ############################################################

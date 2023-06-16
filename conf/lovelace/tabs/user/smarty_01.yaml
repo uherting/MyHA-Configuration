@@ -195,7 +195,7 @@ cards:
           - type: "custom:button-card"
             name: "OutSouth"
           - type: "custom:button-card"
-            # entity: sensor.l2_storage01_dht_01_temp
+            # entity:
             name: " "
             show_state: true
           - type: "custom:button-card"
@@ -211,6 +211,69 @@ cards:
           - type: "custom:button-card"
             entity: sensor.l2_thermo01_tempenv_01
             name: "Thermo"
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_dishwasher
+            name: "Dishw"
+            color: yellow
+            show_state: true
+
+      # ZB Plugs L2
+      - type: grid
+        square: false
+        # title: ZB Plugs
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            name: "ZB Plugs"
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_coffeemachine
+            name: "Senseo"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_microwave
+            name: "Microwave"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_lounge_scanner
+            name: "Scanner"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_fridge
+            name: "Fridge"
+            color: yellow
+            show_state: true
+
+      # PSU
+      - type: grid
+        square: false
+        # title: PSU
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            name: "PSU"
+          - type: "custom:button-card"
+            entity: sensor.spghnote8pro_battery_level
+            name: "Batt GH"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_charger_gh
+            name: "PSU GH"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.spuhnote10pro_battery_level
+            name: "Batt UH"
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_charger_uh
+            name: "PSU UH"
+            color: yellow
             show_state: true
 
       # # ordinary thermostat

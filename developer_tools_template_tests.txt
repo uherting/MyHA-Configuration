@@ -1,5 +1,6 @@
+---------------
 # content of: /config/developer_tools_template_tests.txt
-
+---------------
 # only if the cam is online and online longer than x minutes
 {{ states("binary_sensor.l9_cam32_03_status") }}
 {{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}
@@ -165,3 +166,6 @@ For loop example getting entity values in the weather domain:
   {%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}
   {{ state.name | lower }} is {{state.state_with_unit}}
 {%- endfor %}.
+---------------
+# content of: /config/developer_tools_template_tests.txt
+---------------
