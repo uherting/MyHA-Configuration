@@ -48,7 +48,6 @@ class DailyScheduleCard extends HTMLElement {
       const entity = entry.entity || entry;
       const row = document.createElement("DIV");
       row._entity = entity;
-      row._template_value = entry.template || this._config.template;
       row.classList.add("card-content");
       if (this._hass.states[entity]) {
         const content = this._createCardRow(
@@ -58,7 +57,6 @@ class DailyScheduleCard extends HTMLElement {
           entity
         );
         row._content = content;
-        this._setCardRowValue(row);
         row.appendChild(content);
       } else {
         row.innerText = "Entity not found: " + entry.entity;
@@ -72,7 +70,7 @@ class DailyScheduleCard extends HTMLElement {
   _updateContent() {
     for (const row of this._content._rows) {
       row._content._icon.stateObj = this._hass.states[row._entity];
-      this._setCardRowValue(row);
+      this._setCardRowValue(row._content, this._getStateSchedule(row._entity));
     }
   }
 
@@ -95,6 +93,7 @@ class DailyScheduleCard extends HTMLElement {
     value_element.style.marginLeft = "auto";
     value_element.style.textAlign = "right";
     content._value_element = value_element;
+    this._setCardRowValue(content, this._getStateSchedule(entity));
     content.appendChild(value_element);
     content.onclick = () => {
       this._dialog._entity = entity;
@@ -113,45 +112,16 @@ class DailyScheduleCard extends HTMLElement {
     return !state ? [] : state.attributes.schedule || [];
   }
 
-  _rowEntityChanged(row) {
-    const entity_data = this._hass.states[row._entity] ? JSON.stringify(
-      (({ state, attributes }) => ({ state, attributes }))(this._hass.states[row._entity])
-    ) : null;
-    const changed = (row._entity_data !== entity_data);
-    row._entity_data = entity_data;
-    return changed;
-  }
-
-  _rowTemplateValue(row) {
-    const subscribed = this._hass.connection.subscribeMessage(
-      (message) => {
-        row._content._value_element.innerHTML = 
-          message.result.length ? message.result : "&empty;";
-        subscribed.then((unsub) => unsub());
-      },
-      {
-        type: "render_template",
-        template: row._template_value,
-        variables: { entity_id: row._entity },
-      }
-    );
-  }
-
-  _setCardRowValue(row) {
-    if (!this._rowEntityChanged(row)) {
-      return;
+  _setCardRowValue(content, state) {
+    let value = state
+      .filter((range) => !range.disabled)
+      .map((range) => range.from.slice(0, -3) + "-" + range.to.slice(0, -3))
+      .join(", ");
+    if (!value.length) {
+      value = "&empty;";
     }
-    if (!row._template_value) {
-      let value = this._getStateSchedule(row._entity)
-        .filter((range) => !range.disabled)
-        .map((range) => range.from.slice(0, -3) + "-" + range.to.slice(0, -3))
-        .join(", ");
-      if (!value.length) {
-        value = "&empty;";
-      }
-      row._content._value_element.innerHTML = value;
-    } else {
-      this._rowTemplateValue(row);
+    if (content._value_element.innerHTML !== value) {
+      content._value_element.innerHTML = value;
     }
   }
 
@@ -231,7 +201,7 @@ class DailyScheduleCard extends HTMLElement {
         cancelable: false,
         composed: true,
       });
-      event.detail = { entityId: this._dialog._entity };
+      event.detail = {entityId: this._dialog._entity};
       this.dispatchEvent(event);
     };
     header.appendChild(more_info);
@@ -312,7 +282,6 @@ class DailyScheduleCard extends HTMLElement {
 
     const toggle = document.createElement("ha-switch");
     toggle.style.marginLeft = "auto";
-    toggle.style.paddingLeft = "16px";
     toggle.checked = !range.disabled;
     toggle.addEventListener("change", () => {
       range.disabled = !range.disabled;

@@ -11,8 +11,7 @@
                 "description": "Create a binary sensor which turns on according to a daily schedule.",
                 "data": {
                     "name": "Name",
-                    "add_range": "Add a time range",
-                    "utc": "UTC time instead of local (don't use if unsure)"
+                    "add_range": "Add a time range"
                 }
             },
             "time_range": {
@@ -38,8 +37,7 @@
                 "data": {
                     "add_range": "Add a new time range",
                     "from": "From (new)",
-                    "to": "To (new)",
-                    "utc": "UTC time instead of local (don't use if unsure)"
+                    "to": "To (new)"
                 }
             }
         }

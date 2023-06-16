@@ -67,7 +67,7 @@ template:
 
       - name: "Holiday New Year"
         unique_id: "b15a7dad-8526-4617-8fcd-6f224f8a95df"
-        # unit_of_measurement: ""
+        unit_of_measurement: ""
         icon: mdi:rocket-launch
         state: >
           {% set s = states("sensor.New_Year_days_until") %}
@@ -82,7 +82,7 @@ template:
 
       - name: "Holiday Easter Sunday"
         unique_id: "57d20650-8413-45d7-acce-7aa64a084a16"
-        # unit_of_measurement: ""
+        unit_of_measurement: ""
         icon: mdi:rabbit
         state: >
           {% set s = states("sensor.Easter_Sunday_days_until") %}
@@ -97,7 +97,7 @@ template:
 
       - name: "Holiday Halloween"
         unique_id: "b8e73363-6464-44cf-9407-2ac82855d370"
-        # unit_of_measurement: ""
+        unit_of_measurement: ""
         icon: mdi:halloween
         state: >
           {% set s = states("sensor.Halloween_days_until") %}
@@ -112,7 +112,7 @@ template:
 
       - name: "Holiday First Advent"
         unique_id: "980a50c8-2ca8-4782-9e69-d596e492be1b"
-        # unit_of_measurement: ""
+        unit_of_measurement: ""
         icon: mdi:candle
         state: >
           {% set s = states("sensor.First_Advent_days_until") %}
@@ -127,7 +127,7 @@ template:
 
       - name: "Holiday Xmas"
         unique_id: "e00f2da1-7ccc-4e9a-8908-e344f5bb24e3"
-        # unit_of_measurement: ""
+        unit_of_measurement: ""
         icon: mdi:pine-tree
         state: >
           {% set s = states("sensor.Xms_days_until") %}
@@ -142,7 +142,7 @@ template:
 
       - name: "Holiday New Years Eve"
         unique_id: "53bb9a14-6dc0-4d5a-867c-74198f092e90"
-        # unit_of_measurement: ""
+        unit_of_measurement: ""
         icon: mdi:rabbit
         state: >
           {% set s = states("sensor.New_Years_eve_days_until") %}

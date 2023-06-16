@@ -16,7 +16,7 @@ cards:
       # TH_01
       - type: grid
         square: false
-        columns: 5
+        columns: 4
         cards:
           - type: "custom:button-card"
             name: "Kitchen"
@@ -35,7 +35,7 @@ cards:
       # TH_02
       - type: grid
         square: false
-        columns: 5
+        columns: 4
         cards:
           - type: "custom:button-card"
             name: "Storage"
@@ -54,7 +54,7 @@ cards:
       # TH_03
       - type: grid
         square: false
-        columns: 5
+        columns: 4
         cards:
           - type: "custom:button-card"
             name: "Lounge"
@@ -70,30 +70,29 @@ cards:
             entity: sensor.th_03_battery
             name: " "
             show_state: true
-      # DW_L2_BATHROOM
+      # DW_01
       - type: grid
         square: false
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: "Bathroom"
+            name: "DW_01"
           - type: "custom:button-card"
-            entity: binary_sensor.dw_l2_bathroom_contact
-            name: " "
-            color: yellow
-            show_state: true
-            icon: mdi:window-open-variant
-          - type: "custom:button-card"
-            entity: binary_sensor.dw_l2_bathroom_tamper
+            entity: binary_sensor.dw_01_contact
             name: " "
             color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.dw_l2_bathroom_battery
+            entity: binary_sensor.dw_01_tamper
+            name: " "
+            color: yellow
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.dw_01_battery
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: binary_sensor.dw_l2_bathroom_battery_low
+            entity: binary_sensor.dw_01_battery_low
             name: " "
             color: yellow
             show_state: true
