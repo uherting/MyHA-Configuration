@@ -1,0 +1,45 @@
+# ############################################################
+#
+#  Set the state of the ZB plug GH to undefined
+#
+# ############################################################
+
+# ############################################################
+#  Set the state of the ZB plug GH to undefined
+# ############################################################
+- alias: Set the state of the ZB plug GH to undefined
+  id: "082f3aa7-1fdc-47a2-a6d3-44e91679c4ac"
+  description: "This automation sets the state of the ZB plug GH to undefined"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: template
+      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_ordinary_charging_finished') }}"
+      for:
+        minutes: 60
+    - platform: template
+      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_emergency_charging_finished') }}"
+      for:
+        minutes: 60
+    - platform: template
+      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_delayed_charging_finished') }}"
+      for:
+        minutes: 60
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "The state of the ZB plug GH was set to undefined"
+        message: "After a timeout the state of the ZB plug GH was set to undefined. Time: {{ now() }}"
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.zb_charger_gh_state_current
+      data:
+        option: "{{ states('input_text.zb_charger_state_current_state_is_undefined') }}"
+############################################################
+#  END OF FILE
+# ############################################################
