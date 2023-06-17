@@ -19,7 +19,7 @@
       state: >
         {% set time_start = today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at')) %}
         {% set time_stop = today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at')) + timedelta(hours = states('input_number.zb_charger_gh_timeframe_length') | int(1), minutes = 0) %}
-        {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'off')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and ((now() >= time_start) and (now() <= time_stop)) }}
+        {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'off')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and ((now() >= time_start) and (now() <= time_stop)) and ((states('sensor.spghnote8pro_battery_level') | int(0)) < (states('input_number.zb_charger_gh_max_percentage_delayed') | int(0)))}}
 
 ####################################################################
 # EOF
