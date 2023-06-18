@@ -26,6 +26,8 @@
       value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_delayed_charging_finished') }}"
       for:
         minutes: 60
+    - platform: template
+      value_template: "{{ (states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_delayed_charging_in_progress')) and (is_state('binary_sensor.zb_charger_gh_timeframe_in', 'off')) }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []

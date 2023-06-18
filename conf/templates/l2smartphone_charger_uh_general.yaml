@@ -11,6 +11,13 @@
       state: >
         {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and is_state('binary_sensor.home_uwe_is_here', 'on') }}
 
+    - name: "zb_charger_uh_timeframe_in"
+      unique_id: "zb_charger_uh_timeframe_in"
+      state: >
+        {% set time_start = today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at')) %}
+        {% set time_stop = today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at')) + timedelta(hours = states('input_number.zb_charger_uh_timeframe_length') | int(1), minutes = 0) %}
+        {{ (now() >= time_start) and (now() <= time_stop) }}
+
 ####################################################################
 # EOF
 ####################################################################
