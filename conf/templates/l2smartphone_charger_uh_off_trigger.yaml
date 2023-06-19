@@ -17,7 +17,7 @@
     - name: "zb_charger_uh_delayed_charging_off_trigger"
       unique_id: "zb_charger_uh_delayed_charging_off_trigger"
       state: >
-        {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (states('zb_charger_uh_state_current') == states('zb_charger_state_current_awaiting_delayed_charging')) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_delayed') | int(0))) }}
+        {{ ((is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and (is_state('switch.zb_charger_uh', 'on')) and (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and (states('zb_charger_uh_state_current') == states('zb_charger_state_current_awaiting_delayed_charging')) and ((states('sensor.spuhnote10pro_battery_level') | int(0)) >= (states('input_number.zb_charger_uh_max_percentage_delayed') | int(0)))) or ((is_state('zb_charger_uh_timeframe_in', 'off')) and (states('zb_charger_uh_state_current') == states('zb_charger_state_current_awaiting_delayed_charging'))) }}
 
 ####################################################################
 # EOF
