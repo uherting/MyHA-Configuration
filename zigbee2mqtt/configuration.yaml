@@ -57,6 +57,8 @@ devices:
     friendly_name: ZB_Plug_L2_Kitchen_Coffeemachine
   '0xa4c13854b0d251be':
     friendly_name: ZB_Plug_L2_Kitchen_DishWasher
+  '0xa4c138c0a8b9f56c':
+    friendly_name: ZB_TH01_L2_Storage_Out
 groups:
   '1':
     friendly_name: level2-TRVs
