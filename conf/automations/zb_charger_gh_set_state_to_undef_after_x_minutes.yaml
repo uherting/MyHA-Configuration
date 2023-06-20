@@ -11,7 +11,7 @@
   id: "082f3aa7-1fdc-47a2-a6d3-44e91679c4ac"
   description: "This automation sets the state of the ZB plug GH to undefined"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: template
