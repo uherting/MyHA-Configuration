@@ -13,7 +13,7 @@ badges: []
 cards:
   - type: vertical-stack
     cards:
-      # TH_01
+      # Kitchen
       - type: grid
         square: false
         columns: 4
@@ -21,18 +21,18 @@ cards:
           - type: "custom:button-card"
             name: "Kitchen"
           - type: "custom:button-card"
-            entity: sensor.th_01_temperature
+            entity: sensor.zb_th_l2_kitchen_temperature
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.th_01_humidity
+            entity: sensor.zb_th_l2_kitchen_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.th_01_battery
+            entity: sensor.zb_th_l2_kitchen_battery
             name: " "
             show_state: true
-      # TH_02
+      # Storage
       - type: grid
         square: false
         columns: 4
@@ -40,18 +40,37 @@ cards:
           - type: "custom:button-card"
             name: "Storage"
           - type: "custom:button-card"
-            entity: sensor.th_02_temperature
+            entity: sensor.zb_th_l2_storage_temperature
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.th_02_humidity
+            entity: sensor.zb_th_l2_storage_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.th_02_battery
+            entity: sensor.zb_th_l2_storage_battery
             name: " "
             show_state: true
-      # TH_03
+      # Storage
+      - type: grid
+        square: false
+        columns: 4
+        cards:
+          - type: "custom:button-card"
+            name: "Out South"
+          - type: "custom:button-card"
+            entity: sensor.zb_th_l2_storage_out_temperature
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.zb_th_l2_storage_out_humidity
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            entity: sensor.zb_th_l2_storage_out_battery
+            name: " "
+            show_state: true
+      # Lounge
       - type: grid
         square: false
         columns: 4
@@ -59,15 +78,15 @@ cards:
           - type: "custom:button-card"
             name: "Lounge"
           - type: "custom:button-card"
-            entity: sensor.th_03_temperature
+            entity: sensor.zb_th_l2_lounge_temperature
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.th_03_humidity
+            entity: sensor.zb_th_l2_lounge_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.th_03_battery
+            entity: sensor.zb_th_l2_lounge_battery
             name: " "
             show_state: true
       # DW_01
@@ -76,23 +95,23 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: "DW_01"
+            name: "Bathroom DW"
           - type: "custom:button-card"
-            entity: binary_sensor.dw_01_contact
+            entity: binary_sensor.zb_dw_l2_bathroom_contact
             name: " "
             color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: binary_sensor.dw_01_tamper
+            entity: binary_sensor.zb_dw_l2_bathroom_tamper
             name: " "
             color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.dw_01_battery
+            entity: sensor.zb_dw_l2_bathroom_battery
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: binary_sensor.dw_01_battery_low
+            entity: binary_sensor.zb_dw_l2_bathroom_battery_low
             name: " "
             color: yellow
             show_state: true
