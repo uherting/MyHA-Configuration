@@ -41,14 +41,8 @@ devices:
     friendly_name: ZB_Charger_UH
   '0xa4c138d094eebae0':
     friendly_name: ZB_Plug_L2_Kitchen_Fridge
-  '0xa4c138973cb5fed6':
-    friendly_name: TH_01
-  '0xa4c13896310b0036':
-    friendly_name: TH_02
-  '0xa4c138a59865fee9':
-    friendly_name: TH_03
   '0xa4c1389480d75a5f':
-    friendly_name: DW_L2_Bathroom
+    friendly_name: ZB_DW_L2_Bathroom
   '0xa4c138f6331b5916':
     friendly_name: ZB_Charger_GH
   '0xa4c138633bdc9ba2':
@@ -58,7 +52,13 @@ devices:
   '0xa4c13854b0d251be':
     friendly_name: ZB_Plug_L2_Kitchen_DishWasher
   '0xa4c138c0a8b9f56c':
-    friendly_name: ZB_TH01_L2_Storage_Out
+    friendly_name: ZB_TH_L2_Storage_Out
+  '0xa4c138973cb5fed6':
+    friendly_name: ZB_TH_L2_Lounge
+  '0xa4c13896310b0036':
+    friendly_name: ZB_TH_L2_Storage
+  '0xa4c138a59865fee9':
+    friendly_name: ZB_TH_L2_Kitchen
 groups:
   '1':
     friendly_name: level2-TRVs
