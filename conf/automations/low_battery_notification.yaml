@@ -52,11 +52,18 @@
       actions:
         - service: script.tg_send_txt
           data_template:
-            msg_title: "#Low battery level notification#"
-            msg_text: "#The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n#"
+            msg_title: "Low battery level notification"
+            msg_text: "The following devices have a low bat condition:\n- {{ sensors | replace(',', ', ') }}\n"
             msg_receiver: "admin"
             msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
             msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
+        # - service: script.tg_send_txt
+        #   data_template:
+        #     msg_title: "Low battery level notification"
+        #     msg_text: "The following devices have a low bat condition:\n- {{ sensors | replace(',', '\n- ') }}\n"
+        #     msg_receiver: "admin"
+        #     msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
+        #     msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
 ############################################################
 #  END OF FILE
 # ############################################################
