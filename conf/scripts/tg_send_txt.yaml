@@ -56,21 +56,29 @@ tg_send_txt:
             - condition: template
               value_template: "{{ msg_receiver == 'admin' }}"
           sequence:
-            - service: script.log_write2halog
+            - service: persistent_notification.create
               data:
-                lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-                lw_message_receiver: "{{ msg_receiver }}"
-                lw_level: error
+                title: "{{ msg_title }}"
+                message: "{{ msg_text }}. Time: {{ now() }}"
+            # - service: script.log_write2halog
+            #   data:
+            #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            #     lw_message_receiver: "{{ msg_receiver }}"
+            #     lw_level: error
         # general notification group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'notify' }}"
           sequence:
-            - service: script.log_write2halog
+            - service: persistent_notification.create
               data:
-                lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-                lw_message_receiver: "{{ msg_receiver }}"
-                lw_level: warning
+                title: "{{ msg_title }}"
+                message: "{{ msg_text }}. Time: {{ now() }}"
+            # - service: script.log_write2halog
+            #   data:
+            #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            #     lw_message_receiver: "{{ msg_receiver }}"
+            #     lw_level: warning
             # - service: notify.tg_notification_grp
             #   data_template:
             #     title: "*{{ msg_title }}*"
@@ -80,11 +88,15 @@ tg_send_txt:
             - condition: template
               value_template: "{{ msg_receiver == 'cams_inside' }}"
           sequence:
-            - service: script.log_write2halog
+            - service: persistent_notification.create
               data:
-                lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-                lw_message_receiver: "{{ msg_receiver }}"
-                lw_level: info
+                title: "{{ msg_title }}"
+                message: "{{ msg_text }}. Time: {{ now() }}"
+            # - service: script.log_write2halog
+            #   data:
+            #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            #     lw_message_receiver: "{{ msg_receiver }}"
+            #     lw_level: info
             # - service: notify.tg_cam_entrance_inside_grp
             #   data_template:
             #     title: "*{{ msg_title }}*"
@@ -94,22 +106,30 @@ tg_send_txt:
             - condition: template
               value_template: "{{ msg_receiver == 'cams_outside' }}"
           sequence:
-            - service: script.log_write2halog
+            - service: persistent_notification.create
               data:
-                lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-                lw_message_receiver: "{{ msg_receiver }}"
-                lw_level: info
+                title: "{{ msg_title }}"
+                message: "{{ msg_text }}. Time: {{ now() }}"
+            # - service: script.log_write2halog
+            #   data:
+            #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            #     lw_message_receiver: "{{ msg_receiver }}"
+            #     lw_level: info
             # - service: notify.tg_cam_entrance_outside_grp
             #   data_template:
             #     title: "*{{ msg_title }}*"
             #     message: "{{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
       # receiver does not exist
       default:
-        - service: script.log_write2halog
+        - service: persistent_notification.create
           data:
-            lw_message: "The receiver of the message does not exist. Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-            lw_message_receiver: "{{ msg_receiver }}"
-            lw_level: error
+            title: "{{ msg_title }}"
+            message: "{{ msg_text }}. Time: {{ now() }}"
+        # - service: script.log_write2halog
+        #   data:
+        #     lw_message: "The receiver of the message does not exist. Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+        #     lw_message_receiver: "{{ msg_receiver }}"
+        #     lw_level: error
         # - service: notify.tg_admin_grp
         #   data_template:
         #     title: "receiver '{{ msg_receiver }}' does not exist. Title: *{{ msg_title }}*"

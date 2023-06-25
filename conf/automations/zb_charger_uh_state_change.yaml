@@ -8,7 +8,7 @@
 #  Turn the ZB plug on UH simple
 # ############################################################
 - alias: Turn the ZB plug UH on simple
-  id: "ff716105-8398-4292-ad51-d69de18ac007"
+  id: "0a0f59aa-52c7-4f79-8b8c-9478d102b172"
   description: "This automation turns on the ZB plug UH the simple way"
   mode: single
   initial_state: true
