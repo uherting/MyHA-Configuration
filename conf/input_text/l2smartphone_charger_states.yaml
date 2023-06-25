@@ -33,6 +33,10 @@ zb_charger_state_current_delayed_charging_finished:
   name: "zb charger state current delayed charging finished"
   initial: "delayed charging finished"
 
+zb_charger_state_current_state_manually_triggered_charging_in_process:
+  name: "zb charger state current manual triggered charging in process"
+  initial: "manual triggered charging in process"
+
 zb_charger_state_current_state_is_undefined:
   name: "zb charger state current the current state is undefined"
   initial: "the current state is undefined"
