@@ -1,0 +1,35 @@
+# ############################################################
+#
+#  Take care that the ZB plug L2 kitchen dish washer after being offline or being switched off accidentenly
+#
+# ############################################################
+
+# ############################################################
+#
+# ############################################################
+- alias: Take care that the ZB plug L2 kitchen dish washer is on ASAP
+  id: "f2448d7b-2097-4443-b287-a773bc5c6d75"
+  description: "This automation turns on the ZB plug L2 kitchen dish washer after being offline or being switched off accidentenly"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: switch.zb_plug_l2_kitchen_dishwasher
+      to: "off"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # -------------------- SWITCH ZB PLUG ON --------------------
+    - service: switch.turn_on
+      entity_id: switch.zb_plug_l2_kitchen_dishwasher
+    # ------------------- CREATE NOTIFICATION -------------------
+    - service: persistent_notification.create
+      data:
+        title: "ZB plug L2 kitchen dish washer on"
+        message: "The ZB plug L2 kitchen dish washer was switched on by an automation. This happened at {{ now() }}"
+############################################################
+#  END OF FILE
+# ############################################################
