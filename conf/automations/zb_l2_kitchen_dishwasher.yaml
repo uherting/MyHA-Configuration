@@ -1,11 +1,11 @@
 # ############################################################
 #
-#  Take care that the ZB plug L2 kitchen dish washer after being offline or being switched off accidentenly
+#  Take care that the ZB plug L2 kitchen dish washer
 #
 # ############################################################
 
 # ############################################################
-#
+# Take care that the ZB plug L2 kitchen dish washer is on ASAP
 # ############################################################
 - alias: Take care that the ZB plug L2 kitchen dish washer is on ASAP
   id: "f2448d7b-2097-4443-b287-a773bc5c6d75"
@@ -30,6 +30,32 @@
       data:
         title: "ZB plug L2 kitchen dish washer on"
         message: "The ZB plug L2 kitchen dish washer was switched on by an automation. This happened at {{ now() }}"
+
+# ############################################################
+# Create a notification that the Z2M addon needs to be restarted
+# ############################################################
+- alias: Create a notification that the Z2M addon needs to be restarted
+  id: "c5dc3560-a958-4350-ae99-e0dd427f5b2b"
+  description: "This automation creates a notification that the Z2M addon needs to be restarted"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: switch.zb_plug_l2_kitchen_dishwasher
+      to: "unavailable"
+      for:
+        minutes: 30
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- CREATE NOTIFICATION -------------------
+    - service: persistent_notification.create
+      data:
+        title: "The Z2M addon needs to be restarted"
+        message: "The he Z2M addon needs to be restarted. Time: {{ now() }}"
 ############################################################
 #  END OF FILE
 # ############################################################
