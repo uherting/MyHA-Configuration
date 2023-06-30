@@ -1,27 +1,26 @@
 ####################################################################
 ####################################################################
 #
-# esp8266 level l9 tab --- lovelace configuration
+# ESP cams L9 tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
 
-title: ESP8266 l9
-path: esp8266_l9
-badges: [ ]
+title: ESP cams L9
+path: esp_cams_l9
+badges: []
 cards:
-
-  - type: entities
-    title: L9 Cam32 01
-    show_header_toggle: false
-    entities:
-      - sensor.l9_cam32_01_conn_ip_addr
-      - sensor.l9_cam32_01_wifi_signal
-      - sensor.l9_cam32_01_conn_ssid
-      - sensor.l9_cam32_01_conn_bssid
-      - sensor.l9_cam32_01_uptime
-      - sensor.l9_cam32_01_uptime_human_readable
-      - sensor.l9_cam32_01_esphome_version
+  # - type: entities
+  #   title: L9 Cam32 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_cam32_01_conn_ip_addr
+  #     - sensor.l9_cam32_01_wifi_signal
+  #     - sensor.l9_cam32_01_conn_ssid
+  #     - sensor.l9_cam32_01_conn_bssid
+  #     - sensor.l9_cam32_01_uptime
+  #     - sensor.l9_cam32_01_uptime_human_readable
+  #     - sensor.l9_cam32_01_esphome_version
   - type: entities
     title: L9 Cam32 02
     show_header_toggle: false
@@ -32,7 +31,9 @@ cards:
       - sensor.l9_cam32_02_conn_bssid
       - sensor.l9_cam32_02_uptime
       - sensor.l9_cam32_02_uptime_human_readable
+      - binary_sensor.l9_cam32_02_status
       - sensor.l9_cam32_02_esphome_version
+      - switch.l9_cam32_02_restart_device
   - type: entities
     title: L9 Cam32 03
     show_header_toggle: false
@@ -43,74 +44,75 @@ cards:
       - sensor.l9_cam32_03_conn_bssid
       - sensor.l9_cam32_03_uptime
       - sensor.l9_cam32_03_uptime_human_readable
+      - binary_sensor.l9_cam32_03_status
       - sensor.l9_cam32_03_esphome_version
-  - type: entities
-    title: L9 Cam32 04
-    show_header_toggle: false
-    entities:
-      - sensor.l9_cam32_04_conn_ip_addr
-      - sensor.l9_cam32_04_wifi_signal
-      - sensor.l9_cam32_04_conn_ssid
-      - sensor.l9_cam32_04_conn_bssid
-      - sensor.l9_cam32_04_uptime
-      - sensor.l9_cam32_04_uptime_human_readable
-      - sensor.l9_cam32_04_esphome_version
-  - type: entities
-    title: L9 Cam32 05
-    show_header_toggle: false
-    entities:
-      - sensor.l9_cam32_05_conn_ip_addr
-      - sensor.l9_cam32_05_wifi_signal
-      - sensor.l9_cam32_05_conn_ssid
-      - sensor.l9_cam32_05_conn_bssid
-      - sensor.l9_cam32_05_uptime
-      - sensor.l9_cam32_05_uptime_human_readable
-      - sensor.l9_cam32_05_esphome_version
-  - type: entities
-    title: L9 Cam32 06
-    show_header_toggle: false
-    entities:
-      - sensor.l9_cam32_06_conn_ip_addr
-      - sensor.l9_cam32_06_wifi_signal
-      - sensor.l9_cam32_06_conn_ssid
-      - sensor.l9_cam32_06_conn_bssid
-      - sensor.l9_cam32_06_uptime
-      - sensor.l9_cam32_06_uptime_human_readable
-      - sensor.l9_cam32_06_esphome_version
-  - type: entities
-    title: L9 Cam32 07
-    show_header_toggle: false
-    entities:
-      - sensor.l9_cam32_07_conn_ip_addr
-      - sensor.l9_cam32_07_wifi_signal
-      - sensor.l9_cam32_07_conn_ssid
-      - sensor.l9_cam32_07_conn_bssid
-      - sensor.l9_cam32_07_uptime
-      - sensor.l9_cam32_07_uptime_human_readable
-      - sensor.l9_cam32_07_esphome_version
-  - type: entities
-    title: L9 Cam Ttgo 01
-    show_header_toggle: false
-    entities:
-      - sensor.l9_camttgo_01_conn_ip_addr
-      - sensor.l9_camttgo_01_wifi_signal
-      - sensor.l9_camttgo_01_conn_ssid
-      - sensor.l9_camttgo_01_conn_bssid
-      - sensor.l9_camttgo_01_uptime
-      - sensor.l9_camttgo_01_uptime_human_readable
-      - sensor.l9_camttgo_01_esphome_version
-  - type: entities
-    title: L9 Cam Ttgo 02
-    show_header_toggle: false
-    entities:
-      - sensor.l9_camttgo_02_conn_ip_addr
-      - sensor.l9_camttgo_02_wifi_signal
-      - sensor.l9_camttgo_02_conn_ssid
-      - sensor.l9_camttgo_02_conn_bssid
-      - sensor.l9_camttgo_02_uptime
-      - sensor.l9_camttgo_02_uptime_human_readable
-      - sensor.l9_camttgo_02_esphome_version
-
+      - switch.l9_cam32_03_restart_device
+  # - type: entities
+  #   title: L9 Cam32 04
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_cam32_04_conn_ip_addr
+  #     - sensor.l9_cam32_04_wifi_signal
+  #     - sensor.l9_cam32_04_conn_ssid
+  #     - sensor.l9_cam32_04_conn_bssid
+  #     - sensor.l9_cam32_04_uptime
+  #     - sensor.l9_cam32_04_uptime_human_readable
+  #     - sensor.l9_cam32_04_esphome_version
+  # - type: entities
+  #   title: L9 Cam32 05
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_cam32_05_conn_ip_addr
+  #     - sensor.l9_cam32_05_wifi_signal
+  #     - sensor.l9_cam32_05_conn_ssid
+  #     - sensor.l9_cam32_05_conn_bssid
+  #     - sensor.l9_cam32_05_uptime
+  #     - sensor.l9_cam32_05_uptime_human_readable
+  #     - sensor.l9_cam32_05_esphome_version
+  # - type: entities
+  #   title: L9 Cam32 06
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_cam32_06_conn_ip_addr
+  #     - sensor.l9_cam32_06_wifi_signal
+  #     - sensor.l9_cam32_06_conn_ssid
+  #     - sensor.l9_cam32_06_conn_bssid
+  #     - sensor.l9_cam32_06_uptime
+  #     - sensor.l9_cam32_06_uptime_human_readable
+  #     - sensor.l9_cam32_06_esphome_version
+  # - type: entities
+  #   title: L9 Cam32 07
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_cam32_07_conn_ip_addr
+  #     - sensor.l9_cam32_07_wifi_signal
+  #     - sensor.l9_cam32_07_conn_ssid
+  #     - sensor.l9_cam32_07_conn_bssid
+  #     - sensor.l9_cam32_07_uptime
+  #     - sensor.l9_cam32_07_uptime_human_readable
+  #     - sensor.l9_cam32_07_esphome_version
+  # - type: entities
+  #   title: L9 Cam Ttgo 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_camttgo_01_conn_ip_addr
+  #     - sensor.l9_camttgo_01_wifi_signal
+  #     - sensor.l9_camttgo_01_conn_ssid
+  #     - sensor.l9_camttgo_01_conn_bssid
+  #     - sensor.l9_camttgo_01_uptime
+  #     - sensor.l9_camttgo_01_uptime_human_readable
+  #     - sensor.l9_camttgo_01_esphome_version
+  # - type: entities
+  #   title: L9 Cam Ttgo 02
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l9_camttgo_02_conn_ip_addr
+  #     - sensor.l9_camttgo_02_wifi_signal
+  #     - sensor.l9_camttgo_02_conn_ssid
+  #     - sensor.l9_camttgo_02_conn_bssid
+  #     - sensor.l9_camttgo_02_uptime
+  #     - sensor.l9_camttgo_02_uptime_human_readable
+  #     - sensor.l9_camttgo_02_esphome_version
 ####################################################################
 # EOF
 ####################################################################
