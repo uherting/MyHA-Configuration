@@ -55,7 +55,7 @@
     - service: persistent_notification.create
       data:
         title: "The Z2M addon needs to be restarted"
-        message: "The he Z2M addon needs to be restarted. Time: {{ now() }}"
+        message: "The Z2M addon needs to be restarted. Time: {{ now() }}"
 ############################################################
 #  END OF FILE
 # ############################################################
