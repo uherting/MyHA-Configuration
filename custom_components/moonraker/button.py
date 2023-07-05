@@ -64,7 +64,7 @@ BUTTONS: tuple[MoonrakerButtonDescription, ...] = [
         key="host_restart",
         name="Host Restart",
         press_fn=lambda button: button.coordinator.async_send_data(
-            METHODS.PRINTER_RESTART
+            METHODS.HOST_RESTART
         ),
         icon="mdi:restart",
     ),
@@ -73,6 +73,14 @@ BUTTONS: tuple[MoonrakerButtonDescription, ...] = [
         name="Firmware Restart",
         press_fn=lambda button: button.coordinator.async_send_data(
             METHODS.PRINTER_FIRMWARE_RESTART
+        ),
+        icon="mdi:restart",
+    ),
+    MoonrakerButtonDescription(
+        key="host_shutdown",
+        name="Host Shutdown",
+        press_fn=lambda button: button.coordinator.async_send_data(
+            METHODS.HOST_SHUTDOWN
         ),
         icon="mdi:restart",
     ),
@@ -97,8 +105,9 @@ async def async_setup_macros(coordinator, entry, async_add_entities):
 
     macros = []
     for cmd, desc in cmds.items():
-        if desc != "G-Code macro":
-            continue
+        enable_by_default = False
+        if desc == "G-Code macro":
+            enable_by_default = True
 
         macros.append(
             MoonrakerButtonDescription(
@@ -108,6 +117,7 @@ async def async_setup_macros(coordinator, entry, async_add_entities):
                     METHODS.PRINTER_GCODE_SCRIPT, {"script": button.invoke_name}
                 ),
                 icon="mdi:play",
+                entity_registry_enabled_default=enable_by_default,
             )
         )
 
