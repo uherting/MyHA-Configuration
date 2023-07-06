@@ -1,15 +1,57 @@
 # ############################################################
 #
-#  Take care that the ZB plug L2 kitchen coffee machine after being offline or being switched off accidentenly
+#  Take care that the ZB plug L2 kitchen coffee machine
 #
 # ############################################################
 
 # ############################################################
-#
+# ZB plug L2 kitchen coffee machine is switched on at a certain time
 # ############################################################
-- alias: Take care that the ZB plug L2 kitchen coffee machine is on ASAP
+- alias: Take care that the ZB plug L2 kitchen coffee machine is on at a certain time
+  id: "1c9c3109-46e5-44e5-8aa0-da961d72c5ce"
+  description: "This automation turns on the ZB plug L2 kitchen coffee machine at a certain time"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: sun
+      event: sunrise
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # -------------------- SWITCH ZB PLUG ON --------------------
+    - service: switch.turn_on
+      entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+
+# ############################################################
+# ZB plug L2 kitchen coffee machine is switched off at a certain time
+# ############################################################
+- alias: Take care that the ZB plug L2 kitchen coffee machine is off at a certain time
+  id: "88354895-2909-4b98-bcc3-4de5f4a44376"
+  description: "This automation turns off the ZB plug L2 kitchen coffee machine at a certain time"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "22:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # -------------------- SWITCH ZB PLUG ON --------------------
+    - service: switch.turn_off
+      entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+
+# ############################################################
+# Accidental switched off / being unavailable
+# ############################################################
+- alias: Take care that the ZB plug L2 kitchen coffee machine is on ASAP after being unavailable
   id: "0228810f-539f-44a1-b8ff-759b7d512e0a"
-  description: "This automation turns on the ZB plug L2 kitchen coffee machine after being offline or being switched off accidentenly"
+  description: "This automation turns on the ZB plug L2 kitchen coffee machine after being offline or being switched off accidentenly or after being unavailable"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
@@ -19,7 +61,14 @@
       to: "off"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition: []
+  condition:
+    condition: and
+    conditions:
+      - condition: sun
+        after: sunrise
+      - condition: time
+        before: "22:30:00"
+
   # --------------------- ACTIONS ---------------------
   action:
     # -------------------- SWITCH ZB PLUG ON --------------------
@@ -33,3 +82,4 @@
 ############################################################
 #  END OF FILE
 # ############################################################
+
