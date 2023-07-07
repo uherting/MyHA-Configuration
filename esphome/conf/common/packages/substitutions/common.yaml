@@ -60,8 +60,8 @@ substitutions:
   ESP_ONBOARD_LED_PIN_ID: "${friendly_id}_Onboard_LED"
   ESP_ONBOARD_LED_PIN_NAME: "${friendly_name} Onboard LED"
   ESP_ONBOARD_LED_PIN_NUMBER: "2"
-  ESP_ONBOARD_RESTART_ID: "${friendly_id}_Restart"
-  ESP_ONBOARD_RESTART_NAME: "${friendly_name} Restart"
+  # ESP_ONBOARD_RESTART_ID: "${friendly_id}_Restart"
+  # ESP_ONBOARD_RESTART_NAME: "${friendly_name} Restart"
 
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
