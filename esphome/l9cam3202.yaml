@@ -82,7 +82,7 @@ i2c: !include conf/common/device/i2c_esp32_v1.yaml
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
-  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  - <<: !include conf/common/binary_sensor/wifi_status_espcam.yaml
   # - <<: !include conf/common/binary_sensor/pir01.yaml
   # - <<: !include conf/common/binary_sensor/pir02.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml

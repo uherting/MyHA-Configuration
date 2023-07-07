@@ -1,0 +1,21 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# WiFi status
+
+#binary_sensor:
+# this sensor is true if the device is connected to HA _or_
+# (not mentioned in the docs) the logs are read.
+- platform: status
+  name: ${wifi_status_name}
+  id: ${wifi_status_id}
+  on_click:
+    min_length: 600s
+    then:
+      - switch.turn_on: ${restart_device_switch_id}
+####################################################################
+# EOF
+####################################################################
