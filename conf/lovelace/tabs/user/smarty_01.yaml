@@ -66,18 +66,24 @@ cards:
             entity: sensor.xiaomi_l2_storage_humidity
             show_state: true
           - type: "custom:button-card"
-            name: ""
+            name: " "
+            entity: sensor.zb_th_l2_storage_out_temperature
+            show_state: true
           - type: "custom:button-card"
-            name: "SpyMod"
-            entity: binary_sensor.l2storage_spymode
-            color: yellow
-            show_state: false
-            icon: mdi:incognito-circle
-            tap_action:
-              action: call-service
-              service: automation.toggle
-              service_data:
-                entity_id: automation.l2_storage_motion_detected_ssr01_on
+            entity: sensor.zb_th_l2_storage_out_humidity
+            name: " "
+            show_state: true
+          # - type: "custom:button-card"
+          #   name: "SpyMod"
+          #   entity: binary_sensor.l2storage_spymode
+          #   color: yellow
+          #   show_state: false
+          #   icon: mdi:incognito-circle
+          #   tap_action:
+          #     action: call-service
+          #     service: automation.toggle
+          #     service_data:
+          #       entity_id: automation.l2_storage_motion_detected_ssr01_on
 
       # Lounge L2
       - type: grid
@@ -177,9 +183,16 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_thermo01_dht_01_humidity
-            name: ""
-            show_state: true
+            name: "SpyMod"
+            entity: binary_sensor.l2storage_spymode
+            color: yellow
+            show_state: false
+            icon: mdi:incognito-circle
+            tap_action:
+              action: call-service
+              service: automation.toggle
+              service_data:
+                entity_id: automation.l2_storage_motion_detected_ssr01_on
 
       # South L2
       - type: grid
