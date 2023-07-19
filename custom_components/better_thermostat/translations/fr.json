@@ -19,13 +19,19 @@
       "advanced": {
         "description": "Advanced configuration\n\n**Info about calibration types: https://better-thermostat.org/configuration#second-step** ",
         "data": {
-          "calibration_round": "L'étalonnage doit-il être arrondi à la valeur la plus proche",
           "heat_auto_swapped": "Si auto signifie chauffer pour votre TRV et que vous voulez l'inverser (pour les utilisateurs de Google Home)",
           "child_lock": "Ignorer toutes les entrées sur le TRV comme un vérouillage enfant",
           "homaticip": "If you use HomaticIP, you should enable this to slow down the requests to prevent the duty cycle",
           "valve_maintenance": "Si votre thermostat n'a pas de mode de maintenance intégré, vous pouvez utiliser celui-ci",
           "calibration": "The sort of calibration",
-          "fix_calibration": "If your TRV has trouble with not recheating the target temperature or overheating, this option can help"
+          "no_off_system_mode": "Si votre TRV ne peut pas gérer le mode arrêt, vous pouvez l'activer pour utiliser la température cible de 5 °C à la place",
+          "calibration_mode": "Mode d'étalonnage",
+          "protect_overheating": "Protection contre la surchauffe ?"
+        },
+        "data_description": {
+          "protect_overheating": "Certaines VTR ferment complètement la vanne lorsque la température est atteinte. Ou le radiateur a beaucoup de chaleur résiduelle. Cela peut provoquer une surchauffe. Cette option peut empêcher cela.",
+          "calibration_mode": "Le type de calcul de l'étalonnage\n***Normal*** : Dans ce mode, le capteur de température interne TRV est fixé par le capteur de température externe.\n***Agressif*** : dans ce mode, le capteur de température interne TRV est fixé par le capteur de température externe mais réglé beaucoup plus bas/plus haut pour obtenir une accélération plus rapide.\n*** AI Time Based *** : Dans ce mode, le capteur de température interne TRV est fixé par le capteur de température externe, mais la valeur est calculée par un algorithme personnalisé pour améliorer l'algorithme interne TRV.",
+          "calibration": "Comment l'étalonnage doit être appliqué sur la VTR (température cible ou décalage)\n***Basé sur la température cible*** : Appliquez l'étalonnage à la température cible.\n***Basé sur le décalage*** : Appliquez l'étalonnage au décalage."
         }
       },
       "confirm": {
@@ -34,6 +40,7 @@
       }
     },
     "error": {
+      "no_name": "Veuillez entrer un nom.",
       "failed": "quelque chose s'est mal passé.",
       "no_outside_temp": "Vous devez définir un capteur de température extérieure ou une entité météorologique.",
       "no_off_mode": "You device is very special and has no off mode :(\nIt work anyway, but you have to create a automation to fit your specials based on the device events"
@@ -57,7 +64,6 @@
           "valve_maintenance": "Si votre thermostat n'a pas de mode de maintenance intégré, vous pouvez utiliser celui-ci",
           "calibration": "The sort of calibration https://better-thermostat.org/configuration#second-step",
           "weather": "Votre entité météo pour obtenir la température extérieure",
-          "calibration_round": "L'étalonnage doit-il être arrondi à la valeur la plus proche",
           "heat_auto_swapped": "Si auto signifie chauffer pour votre TRV et que vous voulez l'inverser",
           "child_lock": "Ignorer toutes les entrées sur le TRV comme un vérouillage enfant",
           "homaticip": "If you use HomaticIP, you should enable this to slow down the requests to prevent the duty cycle"
@@ -66,13 +72,11 @@
       "advanced": {
         "description": "Advanced configuration\n\n**Info about calibration types: https://better-thermostat.org/configuration#second-step** ",
         "data": {
-          "calibration_round": "L'étalonnage doit-il être arrondi à la valeur la plus proche",
           "heat_auto_swapped": "Si auto signifie chauffer pour votre TRV et que vous voulez l'inverser",
           "child_lock": "Ignorer toutes les entrées sur le TRV comme un vérouillage enfant",
           "homaticip": "If you use HomaticIP, you should enable this to slow down the requests to prevent the duty cycle",
           "valve_maintenance": "Si votre thermostat n'a pas de mode de maintenance intégré, vous pouvez utiliser celui-ci",
-          "calibration": "The sort of calibration",
-          "fix_calibration": "If your TRV has trouble with not recheating the target temperature or overheating, this option can help"
+          "calibration": "The sort of calibration"
         }
       }
     }

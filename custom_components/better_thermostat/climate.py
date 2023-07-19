@@ -20,7 +20,7 @@ from .utils.bridge import (
 
 from .utils.model_quirks import load_model_quirks
 
-from .utils.helpers import convert_to_float
+from .utils.helpers import convert_to_float, find_battery_entity
 from homeassistant.helpers import entity_platform
 from homeassistant.core import callback, CoreState, Context, ServiceCall
 import json
@@ -771,13 +771,26 @@ class BetterThermostat(ClimateEntity, RestoreEntity, ABC):
             self.async_write_ha_state()
             #
             await asyncio.sleep(5)
-            await check_all_entities(self)
+
+            # try to find battery entities for all related entities
+            for entity in self.all_entities:
+                if entity is not None:
+                    battery_id = await find_battery_entity(self, entity)
+                    if battery_id is not None:
+                        self.devices_states[entity] = {
+                            "battery_id": battery_id,
+                            "battery": None,
+                        }
+
             # update_hvac_action(self)
             # Add listener
             if self.outdoor_sensor is not None:
+                self.all_entities.append(self.outdoor_sensor)
                 self.async_on_remove(
                     async_track_time_change(self.hass, self._trigger_time, 5, 0, 0)
                 )
+
+            await check_all_entities(self)
 
             self.async_on_remove(
                 async_track_time_interval(
