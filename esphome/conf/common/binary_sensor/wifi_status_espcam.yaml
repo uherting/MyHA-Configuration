@@ -12,10 +12,9 @@
 - platform: status
   name: ${wifi_status_name}
   id: ${wifi_status_id}
-  on_click:
-    min_length: 600s
-    then:
-      - switch.turn_on: ${restart_device_switch_id}
+  # on_release:
+  #   then:
+  #     - switch.turn_on: ${restart_device_switch_id}
 ####################################################################
 # EOF
 ####################################################################

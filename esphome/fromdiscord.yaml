@@ -1,0 +1,37 @@
+substitutions:
+  device: cam-1
+  name: Cam 1
+  comment: "DEV: Camera"
+  
+esphome:
+  name: mcu-${device}
+  comment: ${comment}
+
+esp32:
+  board: esp32cam
+  framework:
+    type: arduino
+
+packages:
+  common: !include common/common.yaml
+
+esp32_camera:
+  name: My Camera
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+
+esp32_camera_web_server:
+  - port: 8080
+    mode: stream
+  - port: 8081
+    mode: snapshot
+    

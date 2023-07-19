@@ -1,0 +1,31 @@
+esphome:
+  name: tttt
+  friendly_name: tttt
+
+esp32:
+  board: esp32-s2-saola-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "1FzqJTGKEdBokdeJ5n4NrH+KM7wvPwo5Upoy2aG6h4c="
+
+ota:
+  password: "4360fe48a9e6158d44af38e732a445ed"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Tttt Fallback Hotspot"
+    password: "DScsyYPzc09V"
+
+captive_portal:
+    
