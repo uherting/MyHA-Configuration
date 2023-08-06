@@ -73,17 +73,6 @@ cards:
             entity: sensor.zb_th_l2_storage_out_humidity
             name: " "
             show_state: true
-          # - type: "custom:button-card"
-          #   name: "SpyMod"
-          #   entity: binary_sensor.l2storage_spymode
-          #   color: yellow
-          #   show_state: false
-          #   icon: mdi:incognito-circle
-          #   tap_action:
-          #     action: call-service
-          #     service: automation.toggle
-          #     service_data:
-          #       entity_id: automation.l2_storage_motion_detected_ssr01_on
 
       # Lounge L2
       - type: grid
@@ -185,9 +174,9 @@ cards:
           - type: "custom:button-card"
             name: "SpyMod"
             entity: binary_sensor.l2storage_spymode
+            icon: mdi:incognito-circle
             color: yellow
             show_state: false
-            icon: mdi:incognito-circle
             tap_action:
               action: call-service
               service: automation.toggle
@@ -219,6 +208,12 @@ cards:
             name: "Dishw"
             color: yellow
             show_state: true
+            tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+            double_tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_dishwasher
 
       # ZB Plugs L2
       - type: grid
@@ -233,6 +228,12 @@ cards:
             name: "Senseo"
             color: yellow
             show_state: true
+            tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
+            double_tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_microwave
             name: "Microwave"
@@ -248,6 +249,12 @@ cards:
             name: "Fridge"
             color: yellow
             show_state: true
+            tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_fridge
+            double_tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_fridge
 
       # PSU
       - type: grid

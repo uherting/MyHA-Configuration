@@ -1,0 +1,23 @@
+# ############################################################
+#
+#  Customised scripts for zb_plug_l2_kitchen_coffeemachine
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# This script executes a dummy action to make sure that no action is executed after hitting the button in lovelace
+# --------------------------------------------------------------
+lovelace_zb_plug_l2_kitchen_coffeemachine:
+  alias: Make sure that no action is executed after hitting the button in lovelace kitchen_coffeemachine
+  icon: mdi:text
+  description: This script executes a dummy action to make sure that no action is executed after hitting the button in lovelace
+  mode: queued
+  sequence:
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Unwanted activity"
+        msg_text: "Button card used for blocked device kitchen_coffeemachine"
+        msg_receiver: "notify"
+# ############################################################
+#  END OF FILE
+# ############################################################
