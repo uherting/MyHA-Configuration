@@ -66,11 +66,11 @@ cards:
             entity: sensor.xiaomi_l2_storage_humidity
             show_state: true
           - type: "custom:button-card"
+            # entity:
             name: " "
-            entity: sensor.zb_th_l2_storage_out_temperature
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.zb_th_l2_storage_out_humidity
+            # entity:
             name: " "
             show_state: true
 
@@ -192,11 +192,11 @@ cards:
           - type: "custom:button-card"
             name: "OutSouth"
           - type: "custom:button-card"
-            # entity:
             name: " "
+            entity: sensor.zb_th_l2_storage_out_temperature
             show_state: true
           - type: "custom:button-card"
-            # entity:
+            entity: sensor.zb_th_l2_storage_out_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
