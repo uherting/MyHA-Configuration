@@ -45,6 +45,10 @@ substitutions:
   binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
   binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
 
+  # main light kitchen trigger
+  binary_template_sensor_main_light_id: ${friendly_id}_BIN_TEMPL_MAINLIGHT
+  binary_template_sensor_main_light_name: friendly_name BIN_TEMPL MAINLIGHT
+
   # Dallas sensors update time
   dallas_upd: !secret DALLAS_UPDATE_INTERVAL_005M
 
@@ -103,6 +107,8 @@ substitutions:
   ssr02_name: $friendly_name SSR 02
   ssr03_id: ${friendly_id}_SSR03
   ssr03_name: $friendly_name SSR 03
+  ssr09_id: ${friendly_id}_SSR09
+  ssr09_name: $friendly_name SSR 09
 
   # touch buttons
   touchbutton01_id: ${friendly_id}_TB_01

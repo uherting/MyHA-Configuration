@@ -2,22 +2,17 @@
 # SCRIPTS
 
 #script:
-  # on_multi_click action of TB A4 (long click)
-  - id: tb_01_click_long
-    mode: restart
-    then:
-      # - logger.log: "script tb_01_click_long action."
-      - if:
-          condition:
-            # execute this script only if we are offline
-            # lambda: 'return (!id(isDeviceConnected);'
-            
-            # execute this script anyway (TM) for debugging purposes
-            lambda: 'return (true);'
-          then:
-            - logger.log: "script tb_01_click_long action."
-            # - script.execute: lightbar_script_oc_trigger_on_off
-
+# on_multi_click action of TB A4 (long click)
+- id: tb_01_click_long
+  mode: restart
+  then:
+    # - logger.log: "script tb_01_click_long action."
+    - if:
+        condition:
+          # execute this script no matter what
+          lambda: "return (true);"
+        then:
+          - logger.log: "script tb_01_click_long action."
 ####################################################################
 # EOF
 ####################################################################

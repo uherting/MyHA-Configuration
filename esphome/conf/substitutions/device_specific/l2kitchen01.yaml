@@ -28,6 +28,8 @@ dallas_01e10_address: !secret DALLAS_01_L2BATHROOM01_ENVSENSOR_02_ADDRESS
 reed_contact10_name: $friendly_name_bathroom Window
 reed_contact10_id: ${friendly_id_bathroom}_REED_10
 
+binary_template_sensor_main_light_name: $friendly_name MainLight
+binary_template_sensor_main_light_id: ${friendly_id_bathroom}_MainLight
 ####################################################################
 # EOF
 ####################################################################

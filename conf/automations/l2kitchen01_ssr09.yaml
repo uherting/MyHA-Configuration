@@ -1,0 +1,25 @@
+# ############################################################
+#
+#  automation for l2kitchen01 (SSR9, l2kitchen main light)
+#
+# ############################################################
+
+# ############################################################
+# L2 Kitchen: SSR09 off after there is no motion for x minutes
+# ############################################################
+- alias: L2 Kitchen toggle ssr09 main light
+  id: "15fb5124-9eb5-4b9d-af2f-d08f21818c13"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l2_kitchen01_mainlight
+      to: "on"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SSR OFF ---------------------
+    service: switch.toggle
+    entity_id: switch.l2_kitchen01_ssr_09
+# ############################################################
+#  END OF FILE
+# ############################################################

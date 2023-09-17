@@ -1,0 +1,16 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# Template Binary Sensor
+# see https://esphome.io/components/binary_sensor/template.html
+
+# kitchen main light connected to l2storage SSR
+- platform: template
+  name: ${binary_template_sensor_main_light_name}
+  id: ${binary_template_sensor_main_light_id}
+# ############################################################
+#  END OF FILE
+# ############################################################
