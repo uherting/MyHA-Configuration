@@ -11,6 +11,7 @@
           "humidity_sensor": "Luftfeuchtigkeitssensor",
           "window_sensors": "Fenstersensor(en)",
           "off_temperature": "Außentemperatur, bei welcher das Thermostat abgeschaltet wird.",
+          "tolerance": "Toleranz, um zu verhindern, dass das Thermostat zu oft ein- und ausgeschaltet wird.",
           "window_off_delay": "Wartezeit, bevor das Thermostat bei geöffnetem Fenster abgeschaltet bzw. bei geschlossendem Fenter angeschaltet wird.",
           "outdoor_sensor": "Wenn ein Außentemperaturssensor vorhanden ist, kann dieser anstelle der Wetter-Entität genutzt werden.",
           "weather": "Die Wetter-Entität für die Außentemperatur."
@@ -61,6 +62,7 @@
           "humidity_sensor": "Luftfeuchtigkeitssensor",
           "window_sensors": "Fenstersensor(en)",
           "off_temperature": "Außentemperatur, bei welcher das Thermostat abgeschaltet wird.",
+          "tolerance": "Toleranz, um zu verhindern, dass das Thermostat zu oft ein- und ausgeschaltet wird.",
           "window_off_delay": "Wartezeit, bevor das Thermostat bei geöffnetem Fenster abgeschaltet bzw. bei geschlossenem Fenter angeschaltet wird.",
           "outdoor_sensor": "Wenn ein Außentemperatursensor vorhanden ist, kann dieser anstelle der Wetter-Entität genutzt werden.",
           "weather": "Die Wetter-Entität für die Außentemperatur.",
@@ -93,15 +95,33 @@
   },
   "issues": {
     "missing_entity": {
-      "title": "BT: {name} - related entity is missing",
+      "title": "BT: {name} – zugehörige Entität fehlt",
       "fix_flow": {
         "step": {
           "confirm": {
-            "title": "The related entity {entity} is missing",
-            "description": "The reason for this is that the entity ({entity}) is not available in your Home Assistant.\n\nYou can fix this by checking if the batterie of the device is full or reconnect it to HA. Make sure that the entity is back in HA before you continue."
+            "title": "Die zugehörige Entität {entity} fehlt",
+            "description": "Der Grund dafür ist, dass die Entität ({entity}) in Ihrem Home Assistant nicht verfügbar ist.\n\nSie können dies beheben, indem Sie prüfen, ob der Akku des Geräts voll ist, oder es erneut an HA anschließen. Stellen Sie sicher, dass sich die Entität wieder in HA befindet, bevor Sie fortfahren."
           }
         }
       }
+    }
+  },
+  "services": {
+    "save_current_target_temperature": {
+      "name": "Speichere die aktuelle Zieltemperatur",
+      "description": "Speichert die aktuelle Zieltemperatur um sie zu einem späteren Zeitpunkt wiederherzustellen."
+    },
+    "restore_saved_target_temperature": {
+      "name": "Stelle die Zieltemperatur wieder her",
+      "description": "Stellt die Zieltemperatur aus dem letzen gespeicherten wert wieder zurück."
+    },
+    "reset_heating_power": {
+      "name": "Setze 'Heating Power' zurück",
+      "description": "Stellt die Heating Power auf den startwert zurück."
+    },
+    "set_temp_target_temperature": {
+      "name": "Setzte die Temperatur für ECO",
+      "description": "Speichert eine ECO Temperatur, die für den ECO Modus genutzt wird."
     }
   }
 }
