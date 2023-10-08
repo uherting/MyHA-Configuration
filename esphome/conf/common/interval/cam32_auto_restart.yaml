@@ -1,12 +1,11 @@
 ####################################################################
 # INTERVAL
 
-#interval:
-- interval: 1min
+# interval:
+- interval: 1440min
   then:
-    - globals.set:
-        id: isDeviceConnected
-        value: !lambda return(id(${wifi_status_id}).state);
+    - switch.turn_on:
+        id: ${restart_device_switch_id}
 ####################################################################
 # EOF
 ####################################################################
