@@ -13,7 +13,10 @@ wifi_static_ip: 192.168.178.182
 
 # from docu about ESP32-cam @20230322 (ESP32-S)
 #   https://www.esphome-devices.com/devices/ESP32-CAM
-device_board: esp32dev
+# device_board: esp32dev
+
+# from the add new device wizard
+device_board: esp32cam
 
 # the friendly name / id
 friendly_name: L9 Cam32 02
