@@ -80,7 +80,6 @@ interval:
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1.yaml
 
-
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:

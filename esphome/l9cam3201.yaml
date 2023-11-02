@@ -73,8 +73,10 @@ i2c: !include conf/common/device/i2c_esp32_v1.yaml
 #-------------------------------------------------------------------
 # MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
 
-# globals: !include conf/common/globals/connectivity.yaml
-# interval: !include conf/common/interval/connectivity.yaml
+globals: !include conf/common/globals/connectivity.yaml
+interval: 
+  - <<: !include conf/common/interval/connectivity.yaml
+  # - <<: !include conf/common/interval/cam32_auto_restart.yaml
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1.yaml
 
@@ -110,8 +112,8 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 # switch:
-# - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-# - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
+  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -126,11 +128,11 @@ text_sensor:
 #################### DETAILED CONFIGURATION CAM ######################
 
 # cam device
-esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
-# esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
+# esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
+esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
 
 # web server on cam device
-esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
+# esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
 
 #-------------------------------------------------------------------
 # flashlight
@@ -139,6 +141,7 @@ output: !include conf/common/esp32_camera/esp32cam_output.yaml
 #-------------------------------------------------------------------
 # cam light
 light: !include conf/common/esp32_camera/esp32cam_light.yaml
+
 ####################################################################
 # EOF
 ####################################################################
