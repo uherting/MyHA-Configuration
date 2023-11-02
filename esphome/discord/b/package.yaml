@@ -1,2 +1,0 @@
-substitutions:
-  node_name: !secret package
