@@ -129,8 +129,8 @@ text_sensor:
 #################### DETAILED CONFIGURATION CAM ######################
 
 # cam device
-esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
-# esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
+# esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
+esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
 
 # web server on cam device
 # esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
