@@ -199,9 +199,13 @@ cards:
             entity: sensor.zb_th_l2_storage_out_humidity
             name: " "
             show_state: true
+          # - type: "custom:button-card"
+          #   entity: sensor.l2_thermo01_tempenv_01
+          #   name: "Thermo"
+          #   show_state: true
           - type: "custom:button-card"
-            entity: sensor.l2_thermo01_tempenv_01
-            name: "Thermo"
+            # entity: sensor.l2_storage
+            name: " "
             show_state: true
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_dishwasher
