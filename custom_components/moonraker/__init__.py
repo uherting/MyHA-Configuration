@@ -1,15 +1,15 @@
-"""
-Moonraker integration for Home Assistant
-"""
+"""Moonraker integration for Home Assistant."""
 import asyncio
-from datetime import timedelta
 import logging
 import os.path
+import uuid
+from datetime import timedelta
 
 import async_timeout
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -18,6 +18,7 @@ from .const import (
     CONF_API_KEY,
     CONF_PORT,
     CONF_PRINTER_NAME,
+    CONF_TLS,
     CONF_URL,
     DOMAIN,
     HOSTNAME,
@@ -40,18 +41,38 @@ async def async_setup(_hass: HomeAssistant, _config: Config):
     return True
 
 
+def get_user_name(hass: HomeAssistant, entry: ConfigEntry):
+    """Get username."""
+    device_registry = dr.async_get(hass)
+    device_entries = dr.async_entries_for_config_entry(device_registry, entry.entry_id)
+
+    if len(device_entries) < 1:
+        return None
+
+    return device_entries[0].name_by_user
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
 
+    custom_name = get_user_name(hass, entry)
+
     url = entry.data.get(CONF_URL)
     port = entry.data.get(CONF_PORT)
+    tls = entry.data.get(CONF_TLS)
     api_key = entry.data.get(CONF_API_KEY)
-    printer_name = entry.data.get(CONF_PRINTER_NAME)
+    printer_name = (
+        entry.data.get(CONF_PRINTER_NAME) if custom_name is None else custom_name
+    )
 
     api = MoonrakerApiClient(
-        url, async_get_clientsession(hass, verify_ssl=False), port=port, api_key=api_key
+        url,
+        async_get_clientsession(hass, verify_ssl=False),
+        port=port,
+        api_key=api_key,
+        tls=tls,
     )
 
     try:
@@ -103,9 +124,11 @@ async def _gcode_file_detail_updater(coordinator):
     data = await coordinator._async_fetch_data(
         METHODS.PRINTER_OBJECTS_QUERY, coordinator.query_obj
     )
-    return await coordinator._async_get_gcode_file_detail(
-        data["status"]["print_stats"]["filename"]
-    )
+    filename = ""
+    if "status" in data:
+        filename = data["status"]["print_stats"]["filename"]
+
+    return await coordinator._async_get_gcode_file_detail(filename)
 
 
 class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
@@ -136,7 +159,7 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Update data via library."""
-        data = dict()
+        data = {}
 
         for updater in self.updaters:
             data.update(await updater(self))
@@ -185,6 +208,11 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             # Keep last since this can fail but, we still want the other data
             path = gcode["thumbnails"][len(gcode["thumbnails"]) - 1]["relative_path"]
+            thumbnailSize = 0
+            for t in gcode["thumbnails"]:
+                if t["size"] > thumbnailSize:
+                    thumbnailSize = t["size"]
+                    path = t["relative_path"]
 
             return_gcode["thumbnails_path"] = os.path.join(dirname, path)
             return return_gcode
@@ -197,6 +225,9 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_fetch_data(
         self, query_path: METHODS, query_object, quiet: bool = False
     ):
+        myuuid = str(uuid.uuid4())
+        _LOGGER.debug(f"fetching data, uuid: {myuuid}, from: {query_path.value}")
+        _LOGGER.debug(f"fetching, uuid: {myuuid}, object: {query_object}")
         if not self.moonraker.client.is_connected:
             _LOGGER.warning("connection to moonraker down, restarting")
             await self.moonraker.start()
@@ -208,7 +239,7 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
                     query_path.value, **query_object
                 )
             if not quiet:
-                _LOGGER.debug(result)
+                _LOGGER.debug(f"Query Result, uuid: {myuuid}: {result}")
             return result
         except Exception as exception:
             raise UpdateFailed() from exception
@@ -228,26 +259,27 @@ class MoonrakerDataUpdateCoordinator(DataUpdateCoordinator):
     async def async_fetch_data(
         self, query_path: METHODS, query_obj: dict[str:any] = None, quiet: bool = False
     ):
-        """Fetch data from moonraker"""
+        """Fetch data from moonraker."""
         return await self._async_fetch_data(query_path, query_obj, quiet=quiet)
 
     async def async_send_data(
         self, query_path: METHODS, query_obj: dict[str:any] = None
     ):
-        """Send data to moonraker"""
+        """Send data to moonraker."""
         return await self._async_send_data(query_path, query_obj)
 
     def add_data_updater(self, updater):
+        """Update the data."""
         self.updaters.append(updater)
 
     def load_sensor_data(self, sensor_list):
-        """Loading sensor data, so we can poll the right object"""
+        """Load sensor data, so we can poll the right object."""
         for sensor in sensor_list:
             for subscriptions in sensor.subscriptions:
                 self.add_query_objects(subscriptions[0], subscriptions[1])
 
     def add_query_objects(self, query_object: str, result_key: str):
-        """Building the list of object we want to retreive from the server"""
+        """Build the list of object we want to retreive from the server."""
         if query_object not in self.query_obj[OBJ]:
             self.query_obj[OBJ][query_object] = []
         if result_key not in self.query_obj[OBJ][query_object]:

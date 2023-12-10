@@ -1,17 +1,17 @@
 {
-  "domain": "metnowcast",
-  "name": "Met.no Nowcast",
-  "codeowners": [
-    "@toringer"
-  ],
-  "config_flow": true,
-  "dependencies": [],
-  "documentation": "https://github.com/toringer/home-assistant-metnowcast",
-  "homekit": {},
-  "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/toringer/home-assistant-metnowcast/issues",
-  "requirements": [],
-  "ssdp": [],
-  "version": "2.2.0",
-  "zeroconf": []
+    "codeowners": [
+        "@toringer"
+    ],
+    "config_flow": true,
+    "dependencies": [],
+    "documentation": "https://github.com/toringer/home-assistant-metnowcast",
+    "domain": "metnowcast",
+    "homekit": {},
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/toringer/home-assistant-metnowcast/issues",
+    "name": "Met.no Nowcast",
+    "requirements": [],
+    "ssdp": [],
+    "version": "v2.3.1",
+    "zeroconf": []
 }

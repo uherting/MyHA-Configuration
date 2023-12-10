@@ -15,6 +15,19 @@ from .const import CONF_URL, DOMAIN, METHODS, PRINTSTATES
 
 _LOGGER = logging.getLogger(__name__)
 
+hardcoded_camera = {
+    "name": "webcam",
+    "location": "printer",
+    "service": "mjpegstreamer-adaptive",
+    "target_fps": "15",
+    "stream_url": "/webcam/?action=stream",
+    "snapshot_url": "/webcam/?action=snapshot",
+    "flip_horizontal": False,
+    "flip_vertical": False,
+    "rotation": 0,
+    "source": "database",
+}
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -24,11 +37,22 @@ async def async_setup_entry(
     """Set up the available Moonraker camera."""
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    cameras = await coordinator.async_fetch_data(METHODS.SERVER_WEBCAMS_LIST)
+    camera_cnt = 0
 
-    for camera_id, camera in enumerate(cameras["webcams"]):
+    try:
+        cameras = await coordinator.async_fetch_data(METHODS.SERVER_WEBCAMS_LIST)
+        for camera_id, camera in enumerate(cameras["webcams"]):
+            async_add_entities(
+                [MoonrakerCamera(config_entry, coordinator, camera, camera_id)]
+            )
+            camera_cnt += 1
+    except Exception:
+        _LOGGER.info("Could not add any cameras from the API list")
+
+    if camera_cnt == 0:
+        _LOGGER.info("No Camera in the list, trying hardcoded")
         async_add_entities(
-            [MoonrakerCamera(config_entry, coordinator, camera, camera_id)]
+            [MoonrakerCamera(config_entry, coordinator, hardcoded_camera, 0)]
         )
 
     async_add_entities(
@@ -73,7 +97,7 @@ class PreviewCamera(Camera):
     _attr_is_streaming = False
 
     def __init__(self, config_entry, coordinator, session) -> None:
-        """Initialize as a subclass of Camera for the Thumbnail Preview"""
+        """Initialize as a subclass of Camera for the Thumbnail Preview."""
 
         super().__init__()
         self._attr_device_info = DeviceInfo(
@@ -90,28 +114,41 @@ class PreviewCamera(Camera):
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None
     ) -> bytes | None:
-        """Return current camera image"""
+        """Return current camera image."""
+        _LOGGER.debug("Trying to get thumbnail ")
         if (
             self.coordinator.data["status"]["print_stats"]["state"]
             != PRINTSTATES.PRINTING.value
         ):
+            _LOGGER.debug("Not printing, no thumbnail")
             return None
 
         del width, height
 
         new_path = self.coordinator.data["thumbnails_path"]
+        _LOGGER.debug(f"Thumbnail new_path: {new_path}")
         if self._current_path == new_path and self._current_pic is not None:
+            _LOGGER.debug("no change in thumbnail, returning cached")
             return self._current_pic
 
         if new_path == "" or new_path is None:
             self._current_pic = None
             self._current_path = ""
+            _LOGGER.debug("Empty path, no thumbnail")
             return None
+
+        _LOGGER.debug(
+            f"Fetching new thumbnail: http://{self.url}/server/files/gcodes/{new_path}"
+        )
         response = await self._session.get(
             f"http://{self.url}/server/files/gcodes/{new_path}"
         )
 
         self._current_path = new_path
         self._current_pic = await response.read()
+
+        _LOGGER.debug(
+            f"Size of thumbnail: {self._current_pic.width} x {self._current_pic.height}"
+        )
 
         return self._current_pic
