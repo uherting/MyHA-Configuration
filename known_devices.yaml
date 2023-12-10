@@ -1,27 +1,6 @@
-phone_uh:
-  name: phone_uh
-  mac: 8C:EB:C6:7A:BB:66
-  icon: mdi:account
-  picture:
-  track: true
-
 phone_uht:
   name: phone_uht
   mac: 00:13:0d:3a:dd:b7
   icon: mdi:account
-  picture:
-  track: true
-
-phone_gh:
-  name: phone_gh
-  mac: 2C:D0:66:E1:F0:98
-  icon: mdi:account
-  picture:
-  track: true
-
-tablet_tabby:
-  name: phone_tabby
-  mac: 00:08:22:8E:A6:74
-  icon: mdi:tablet-android
   picture:
   track: true
