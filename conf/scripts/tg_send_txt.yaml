@@ -30,6 +30,18 @@ tg_send_txt:
       required: true
       example: "The light is on!"
       default: "default msg text"
+    msg_text_prefix:
+      description: "The message prefix content"
+      advanced: true
+      required: false
+      example: "The light "
+      default: ""
+    msg_text_suffix:
+      description: "The message suffix content"
+      advanced: true
+      required: false
+      example: "is on!"
+      default: ""
     msg_receiver:
       description: "The receiver of the message"
       advanced: true
@@ -59,7 +71,7 @@ tg_send_txt:
             - service: persistent_notification.create
               data:
                 title: "{{ msg_title }}"
-                message: "{{ msg_text }}. Time: {{ now() }}"
+                message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text suffix}}. Time: {{ now() }}"
             # - service: script.log_write2halog
             #   data:
             #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
@@ -73,7 +85,7 @@ tg_send_txt:
             - service: persistent_notification.create
               data:
                 title: "{{ msg_title }}"
-                message: "{{ msg_text }}. Time: {{ now() }}"
+                message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text suffix}}. Time: {{ now() }}"
             # - service: script.log_write2halog
             #   data:
             #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
@@ -91,7 +103,7 @@ tg_send_txt:
             - service: persistent_notification.create
               data:
                 title: "{{ msg_title }}"
-                message: "{{ msg_text }}. Time: {{ now() }}"
+                message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text suffix}}. Time: {{ now() }}"
             # - service: script.log_write2halog
             #   data:
             #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
@@ -109,7 +121,7 @@ tg_send_txt:
             - service: persistent_notification.create
               data:
                 title: "{{ msg_title }}"
-                message: "{{ msg_text }}. Time: {{ now() }}"
+                message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text suffix}}. Time: {{ now() }}"
             # - service: script.log_write2halog
             #   data:
             #     lw_message: "Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
@@ -124,7 +136,7 @@ tg_send_txt:
         - service: persistent_notification.create
           data:
             title: "{{ msg_title }}"
-            message: "{{ msg_text }}. Time: {{ now() }}"
+            message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text suffix}}. Time: {{ now() }}"
         # - service: script.log_write2halog
         #   data:
         #     lw_message: "The receiver of the message does not exist. Title: *{{ msg_title }}*: {{ msg_text }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
