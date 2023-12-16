@@ -199,7 +199,8 @@ group: !include_dir_merge_list conf/groups
 automation: !include_dir_merge_list conf/automations
 
 # include all active alerts
-alert: !include_dir_merge_named conf/alerts
+# TG is no longer used so alerts are not send out 20231216152600
+# alert: !include_dir_merge_named conf/alerts
 
 binary_sensor: !include_dir_merge_list conf/binary_sensors
 sensor: !include_dir_merge_list conf/sensors
