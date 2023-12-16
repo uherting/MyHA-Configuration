@@ -5,8 +5,14 @@
 #api:
 encryption:
   key: zM4KYwr9rOeIIrQybuJsp1qByTMmc8JAFHUJfS5lUpY=
-# deprecated, see https://esphome.io/components/api.html?highlight=password#configuration-variables
+# from https://esphome.io/components/api.html?highlight=encryption#configuration-variables :
+#   encryption (Optional): Enable transport encryption of the API layer.
+#     key (Required, string): The pre-shared key for the encryption. This is a 32-byte base64 encoded string.
+
 # password: !secret HA_API_PW
+# deprecated, see https://esphome.io/components/api.html?highlight=password#configuration-variables for details
+# password (Optional, Deprecated, string): The password to protect the API Server with. Defaults to no password.
+# It is recommended to use the encryption -> key above instead of the the password.
 # ############################################################
 #  END OF FILE
 # ############################################################
