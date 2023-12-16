@@ -31,14 +31,12 @@ tg_send_txt:
       example: "The light is on!"
       default: "default msg text"
     msg_text_prefix:
-      # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
       description: "The message prefix content"
       advanced: true
       required: false
       example: "The light "
       default: ""
     msg_text_suffix:
-      # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
       description: "The message suffix content"
       advanced: true
       required: false
