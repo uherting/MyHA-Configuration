@@ -1,0 +1,38 @@
+####################################################################
+# SWITCHES
+
+#############################
+# relay module
+- platform: gpio
+  # id: relay
+  # name: Doorbell_d1 Chime
+  name: ${relay01_name}
+  id: ${relay01_id}
+  pin:
+    number: D1
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: OUTPUT
+    inverted: False
+  restore_mode: ALWAYS_OFF
+  icon: mdi:magnet
+
+  # - platform: gpio
+  # name: ${ssr01_name}
+  # id: ${ssr01_id}
+  # pin:
+  #   mcp23xxx: ${mcp23017_hub01_id}
+  #   number: !secret MCP23017_PIN_B0
+  #   # mode can be INPUT, INPUT_PULLUP or OUTPUT
+  #   mode: OUTPUT
+  #   # high triggered SSR
+  #   # inverted: false
+  #   # ---
+  #   # low triggered SSR
+  #   inverted: true
+  # restore_mode: ALWAYS_OFF
+  # # for AppDaemon
+  # icon: mdi:lamp
+# ############################################################
+#  END OF FILE
+# ############################################################
+

@@ -1,0 +1,34 @@
+####################################################################
+# SUBSTITUTIONS
+
+# device definitions
+device_name: l2storage01a
+device_comment: Level 2 Storage device 01
+device_platform: ESP8266
+device_board: d1_mini
+wifi_static_ip: 192.168.178.224
+
+# the friendly name and id
+friendly_name: L2 Storage01a
+friendly_id: L2Storage01a
+
+relay01_name: $friendly_name Relay 01
+relay01_id: ${friendly_id}_relay_01
+#
+# # details for DALLAS sensors connected to the device
+# dallas_01c01_name: $friendly_name TempCase 01
+# dallas_01c01_address: !secret DALLAS_01_L2STORAGE01_CASESENSOR_01_ADDRESS
+# dallas_01e01_name: $friendly_name TempEnv 01
+# dallas_01e01_address: !secret DALLAS_01_L2STORAGE01_ENVSENSOR_01_ADDRESS
+
+# # touch buttons
+# touchbutton02_name: $friendly2_name TB 02
+# touchbutton02_id: ${friendly2_id}_TB_02
+
+# # kitchen main light
+# ssr02_name: $friendly2_name SSR 09
+# ssr02_id: ${friendly2_id}_SSR09
+####################################################################
+# EOF
+####################################################################
+
