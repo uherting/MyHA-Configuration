@@ -289,21 +289,21 @@ cards:
             color: yellow
             show_state: true
 
-      # # ordinary thermostat
-      # # TRVs L2
-      # - type: grid
-      #   square: false
-      #   columns: 1
-      #   cards:
-      #     - type: thermostat
-      #       entity: climate.kitchen_l2
-      #       name: Kitchen
-      #     - type: thermostat
-      #       entity: climate.lounge_l2
-      #       name: Lounge
-      #     - type: thermostat
-      #       entity: climate.bedroom_l2
-      #       name: Bedroom
+      # ordinary thermostat
+      # TRVs L2
+      - type: grid
+        square: false
+        columns: 1
+        cards:
+          - type: thermostat
+            entity: climate.kitchen_l2
+            name: Kitchen
+          - type: thermostat
+            entity: climate.lounge_l2
+            name: Lounge
+          - type: thermostat
+            entity: climate.bedroom_l2
+            name: Bedroom
 
       # # Simple Thermostat
       # - type: grid
@@ -332,23 +332,23 @@ cards:
       #       control: false
       #       # label ui.card.climate.preset_mode: Preset
 
-      # Better Thermostat
-      - type: grid
-        square: false
-        columns: 1
-        cards:
-          - type: custom:better-thermostat-ui-card
-            name: Bedroom
-            entity: climate.bedroom_l2
-            eco_temperature: 17
-          - type: custom:better-thermostat-ui-card
-            name: Lounge
-            entity: climate.lounge_l2
-            eco_temperature: 17
-          - type: custom:better-thermostat-ui-card
-            name: Kitchen
-            entity: climate.kitchen_l2
-            eco_temperature: 17
+      # # Better Thermostat
+      # - type: grid
+      #   square: false
+      #   columns: 1
+      #   cards:
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Bedroom
+      #       entity: climate.bedroom_l2
+      #       eco_temperature: 17
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Lounge
+      #       entity: climate.lounge_l2
+      #       eco_temperature: 17
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Kitchen
+      #       entity: climate.kitchen_l2
+      #       eco_temperature: 17
 
       # scheduler cards
       - type: grid
