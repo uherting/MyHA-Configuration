@@ -31,43 +31,43 @@ cards:
       # - sensor.l2_storage01_bh1750_illuminance_01
       - binary_sensor.l2_storage01_pir_01
       # - binary_sensor.l2_storage01_pir_02
-      - binary_sensor.l2_storage01_door
+      - binary_sensor.l2_storage01_door_storage
       - switch.l2_storage01_ssr_01
       - binary_sensor.l2_kitchen01_tb_02
       - switch.l2_kitchen01_ssr_09
 
-  - type: entities
-    title: L2 Thermo 01
-    show_header_toggle: false
-    entities:
-      - sensor.l2_thermo01_tempcase_01
-      - sensor.l2_thermo01_tempenv_01
-      # - sensor.l2_thermo01_dht_01_temp
-      # - sensor.l2_thermo01_dht_01_humidity
-      # - binary_sensor.l2_thermo01_pir_01
-      # - binary_sensor.l2_thermo01_pir_02
-      # - binary_sensor.l2_thermo01_door
-      # - switch.l2_thermo01_ssr_01
-      # - switch.l2_thermo01_ssr_02
-      # - switch.l2_thermo01_tde_boostbutton_01
-      # - switch.l2_thermo01_tde_rotaryencoder_01
-      # - switch.l2_thermo01_tde_rotaryencoder_02
+  # - type: entities
+  #   title: L2 Thermo 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l2_thermo01_tempcase_01
+  #     - sensor.l2_thermo01_tempenv_01
+  #     # - sensor.l2_thermo01_dht_01_temp
+  #     # - sensor.l2_thermo01_dht_01_humidity
+  #     # - binary_sensor.l2_thermo01_pir_01
+  #     # - binary_sensor.l2_thermo01_pir_02
+  #     # - binary_sensor.l2_thermo01_door
+  #     # - switch.l2_thermo01_ssr_01
+  #     # - switch.l2_thermo01_ssr_02
+  #     # - switch.l2_thermo01_tde_boostbutton_01
+  #     # - switch.l2_thermo01_tde_rotaryencoder_01
+  #     # - switch.l2_thermo01_tde_rotaryencoder_02
 
-  - type: custom:mini-graph-card
-    title: Temperatures (L2Thermo01)
-    entities:
-      - sensor.l2_thermo01_tempcase_01
-      - sensor.l2_thermo01_tempenv_01
-      # - sensor.l2_thermo01_dht_01_temp
-    hours_to_show: 72
-    hour24: true
-    show_legend: true
-    line_width: 2
-    font_size: 75
-    # lower_bound: 0
-    # upper_bound: 50
-    points_per_hour: 1
-    height: 250
+  # - type: custom:mini-graph-card
+  #   title: Temperatures (L2Thermo01)
+  #   entities:
+  #     - sensor.l2_thermo01_tempcase_01
+  #     - sensor.l2_thermo01_tempenv_01
+  #     # - sensor.l2_thermo01_dht_01_temp
+  #   hours_to_show: 72
+  #   hour24: true
+  #   show_legend: true
+  #   line_width: 2
+  #   font_size: 75
+  #   # lower_bound: 0
+  #   # upper_bound: 50
+  #   points_per_hour: 1
+  #   height: 250
 
   # - type: custom:mini-graph-card
   #   title: Temperatures (L2Thermo01)
