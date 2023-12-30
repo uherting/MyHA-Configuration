@@ -1,5 +1,5 @@
 ####################################################################
-# SUBSTITUTIONS
+# DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
 device_name: l2kitchen01
