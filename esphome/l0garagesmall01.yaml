@@ -54,26 +54,26 @@
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
 substitutions: 
-  <<: !include conf/substitutions/l0garagesmall01.yaml
-  <<: !include conf/substitutions/common01.yaml
+  <<: !include conf/substitutions/device_specific/l0garagesmall01.yaml
+  <<: !include conf/substitutions/overwrites/l0garagesmall01.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
+# log_level can be overwritten in overwrites/<device_name>.yaml
 
 packages:
-  wifi: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
-  # esphome: and logger:
-  device_base: !include conf/common/packages/device_base.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
-#logger:
-#  # see secrets.yaml for log level definitions
-#  level: !secret LOG_LEVEL_DEBUG
-#  # uncomment the following line for custom component logging
-#   esp8266_store_log_strings_in_flash: False
+
+# this has to be done in conf/substitutions/overwrites/l9cam3202.yaml
+# by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
@@ -97,19 +97,21 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir1_to_ssr1.yaml
-
+  - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
+  # - <<: !include conf/common/script/touch_button_A4_on_press.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A4_double.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A4_short.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A4_long.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir01.yaml
-  # - <<: !include conf/common/binary_sensor/pir02.yaml
-  # - <<: !include conf/common/binary_sensor/reed01.yaml
-  # - <<: !include conf/common/binary_sensor/reed02.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  # the touch button
+  - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  # device location (not used so far)
+  # - <<: !include conf/binary_sensor/l0garagesmall01.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -118,8 +120,9 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
+  # temp sensors
   # - <<: !include conf/sensor/l0garagesmall01_case.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
+  # - <<: !include conf/sensor/l0garagesmall01_env01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -131,8 +134,9 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 switch:
-  - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+  - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

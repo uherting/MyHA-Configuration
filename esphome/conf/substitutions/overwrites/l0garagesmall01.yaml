@@ -2,8 +2,16 @@
 # OVERWRITE COMMON SUBSTITUTIONS
 
 # if there are no overrides the dummy value comes in handy ;-)
-dummy_value: "dummy value"
+# dummy_value: "dummy value"
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
+
+# remote reed relays
+reed_contact01_id: ${friendly_id}_garagesmall_door
+reed_contact01_name: ${friendly_name} GarageSmall Door
+reed_contact02_id: ${friendly_id}_garagesmall_gate
+reed_contact02_name: ${friendly_name} GarageSmall Gate
+reed_contact03_id: ${friendly_id}_garagesmall_gatesecured
+reed_contact03_name: ${friendly_name} GarageSmall GateSecured
 ####################################################################
 # EOF
 ####################################################################
