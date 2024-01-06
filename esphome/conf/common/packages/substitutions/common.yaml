@@ -70,6 +70,16 @@ substitutions:
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
 
+  # MotorDrvs
+  motordrv01_id: ${friendly_id}_MotorDrv01
+  motordrv01_name: $friendly_name MotorDrv 01
+  motordrv02_id: ${friendly_id}_MotorDrv02
+  motordrv02_name: $friendly_name MotorDrv 02
+  motordrv03_id: ${friendly_id}_MotorDrv03
+  motordrv03_name: $friendly_name MotorDrv 03
+  motordrv04_id: ${friendly_id}_MotorDrv04
+  motordrv04_name: $friendly_name MotorDrv 04
+
   # opto couplers
   opto_cpl01_id: ${friendly_id}_OC01
   opto_cpl01_name: ${friendly_name} OptoCoupler 01
