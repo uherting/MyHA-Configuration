@@ -6,12 +6,14 @@
 - id: tb_01_click_dbl
   mode: restart
   then:
+    # - logger.log: "script tb_01_click_dbl action."
+    # - switch.toggle: ${ssr01_id}
     - if:
         condition:
           # execute this script only if we are offline
           # lambda: 'return (!id(isDeviceConnected);'
 
-          # execute this script anyway (TM) for debugging purposes
+          # execute this script anyway (TM) for purposes known to the programmer
           lambda: "return (true);"
         then:
           - delay: !secret DELAY_01SEC

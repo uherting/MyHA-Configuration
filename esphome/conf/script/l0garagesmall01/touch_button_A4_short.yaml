@@ -9,12 +9,11 @@
     # - logger.log: "script tb_01_click_short action."
     # - switch.toggle: ${ssr01_id}
     - if:
-        # execution only: the light bar is off
         condition:
           # execute this script only if we are offline
           # lambda: 'return (!id(isDeviceConnected);'
 
-          # execute this script anyway (TM) for debugging purposes
+          # execute this script anyway (TM) for purposes known to the programmer
           lambda: "return (true);"
         then:
           - delay: !secret DELAY_01SEC
