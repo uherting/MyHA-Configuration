@@ -15,7 +15,7 @@
           lambda: "return (true);"
         then:
           - delay: !secret DELAY_01SEC
-          # - logger.log: "script tb_01_click_dbl action."
+          - logger.log: "script tb_01_click_dbl action."
 ####################################################################
 # EOF
 ####################################################################

@@ -137,6 +137,8 @@ switch:
   - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
   - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
   - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/common/switch/motordrv01_B4_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/common/switch/motordrv02_B5_via_bjt_or_optocoupler.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
