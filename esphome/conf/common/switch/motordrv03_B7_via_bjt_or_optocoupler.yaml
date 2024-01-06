@@ -10,7 +10,7 @@
   id: ${motordrv02_id}
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
-    number: !secret MCP23017_PIN_B5
+    number: !secret MCP23017_PIN_B7
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: OUTPUT
     # high triggered MotorDrv
