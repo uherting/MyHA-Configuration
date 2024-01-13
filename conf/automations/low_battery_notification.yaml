@@ -42,6 +42,16 @@
       threshold: 10
       # bullet form for blueprint from itn3rd77
       bullet: "-"
+      message:
+        "[% bullet %] [% sensor %] ([% state %]%) in area [% area %]"
+        # Detection message shown for a detected low battery sensor.
+        # The message can be freely formatted and supports the following placeholders:
+
+        # [% bullet %] - is replaced with the choosen bullet point icon
+        # [% sensor %] - is replaced with the name of the sensor
+        # [% state %]  - is replaced with the battery state in percent ('0' for binary sensors)
+        # [% area %]   - is replaced by the area (Unknown if sensor has no area)
+
       # --------------------- ACTIONS ---------------------
       actions:
         - service: script.tg_send_txt
