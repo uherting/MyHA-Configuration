@@ -8,10 +8,17 @@
 # remote reed relays
 reed_contact01_id: ${friendly_id}_garagesmall_door
 reed_contact01_name: ${friendly_name} GarageSmall Door
-reed_contact02_id: ${friendly_id}_garagesmall_gate
-reed_contact02_name: ${friendly_name} GarageSmall Gate
-reed_contact03_id: ${friendly_id}_garagesmall_gatesecured
-reed_contact03_name: ${friendly_name} GarageSmall GateSecured
+
+# temporarily disabled until further notice
+# reed_contact02_id: ${friendly_id}_garagesmall_gate
+# reed_contact02_name: ${friendly_name} GarageSmall Gate
+# reed_contact03_id: ${friendly_id}_garagesmall_gatesecured
+# reed_contact03_name: ${friendly_name} GarageSmall GateSecured
+
+reed_contact06_id: ${friendly_id}_EndStop_Open_06
+reed_contact06_name: $friendly_name EndStop_Open 06
+reed_contact07_id: ${friendly_id}_EndStop_Close_07
+reed_contact07_name: $friendly_name EndStop_Close 07
 ####################################################################
 # EOF
 ####################################################################

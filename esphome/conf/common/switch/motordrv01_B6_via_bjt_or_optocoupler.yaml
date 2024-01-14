@@ -6,11 +6,11 @@
 #############################
 # MotorDrv
 - platform: gpio
-  name: ${motordrv02_name}
-  id: ${motordrv02_id}
+  name: ${motordrvctrl1_in2_name}
+  id: ${motordrvctrl1_in2_id}
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
-    number: !secret MCP23017_PIN_B6
+    number: !secret MCP23017_PIN_B5
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: OUTPUT
     # high triggered MotorDrv

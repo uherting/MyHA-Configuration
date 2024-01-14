@@ -1,0 +1,28 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# ENDSTOP / REED CONTACT
+
+- platform: gpio
+  name: $reed_contact06_name
+  id: ${reed_contact06_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A6
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT_PULLUP
+    inverted: false
+  # debouncing
+  filters:
+    - delayed_on: 100ms
+    - delayed_off: 100ms
+  device_class: window
+  # on_release:
+  #   then:
+  #     - script.execute: ssr_script_reed_10
+# ############################################################
+#  END OF FILE
+# ############################################################

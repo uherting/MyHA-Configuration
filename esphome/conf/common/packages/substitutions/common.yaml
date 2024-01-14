@@ -70,19 +70,29 @@ substitutions:
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
 
-  # MotorDrv DRV8833 settings for two motors (3 pins/'switches' per motor)
-  motordrv01_in1_id: ${friendly_id}_MotorDrv01
-  motordrv01_in1_name: $friendly_name MotorDrv 01
-  motordrv02_in2_id: ${friendly_id}_MotorDrv02
-  motordrv02_in2_name: $friendly_name MotorDrv 02
-  motordrv03_en_id: ${friendly_id}_MotorDrv03
-  motordrv03_en_name: $friendly_name MotorDrv 03
-  motordrv04_in1_id: ${friendly_id}_MotorDrv04
-  motordrv04_in1_name: $friendly_name MotorDrv 04
-  motordrv05_in2_id: ${friendly_id}_MotorDrv05
-  motordrv05_in2_name: $friendly_name MotorDrv 05
-  motordrv06_en_id: ${friendly_id}_MotorDrv06
-  motordrv06_en_name: $friendly_name MotorDrv 06
+  # MotorDrv DRV8833 settings, each motor has 'I/O for control (INx/INx+1) / ENABLE / endstops)
+  # motor 1
+  motordrvctrl1_in1_id: ${friendly_id}_MotorDrvCtrl_1_In1
+  motordrvctrl1_in1_name: $friendly_name MotorDrvCtrl_1_In1
+  motordrvctrl1_in2_id: ${friendly_id}_MotorDrvCtrl_1_In2
+  motordrvctrl1_in2_name: $friendly_name MotorDrvCtrl_1_In2
+  motordrvctrl1_en_id: ${friendly_id}_MotorDrvCtrl_1_Enable
+  motordrvctrl1_en_name: $friendly_name MotorDrvCtrl_1_Enable
+  motordrv_endstop1_open_id: ${friendly_id}_MotorDrvEndstop_1_Open
+  motordrv_endstop1_open_name: $friendly_name MotorDrvEndstop_1_Open
+  motordrv_endstop1_close_id: ${friendly_id}_MotorDrvEndstop_1_Close
+  motordrv_endstop1_close_name: $friendly_name MotorDrvEndstop_1_Close
+  # motor2
+  motordrvctrl2_in1_id: ${friendly_id}_MotorDrvCtrl_2_In1
+  motordrvctrl2_in1_name: $friendly_name MotorDrvCtrl_2_In1
+  motordrvctrl2_in2_id: ${friendly_id}_MotorDrvCtrl_2_In2
+  motordrvctrl2_in2_name: $friendly_name MotorDrvCtrl_2_In2
+  motordrvctrl2_en_id: ${friendly_id}_MotorDrvCtrl_2_Enable
+  motordrvctrl2_en_name: $friendly_name MotorDrvCtrl_2_Enable
+  motordrv_endstop2_open_id: ${friendly_id}_MotorDrvEndstop_2_Open
+  motordrv_endstop2_open_name: $friendly_name MotorDrvEndstop_2_Open
+  motordrv_endstop2_close_id: ${friendly_id}_MotorDrvEndstop_2_Close
+  motordrv_endstop2_close_name: $friendly_name MotorDrvEndstop_2_Close
 
   # opto couplers
   opto_cpl01_id: ${friendly_id}_OC01
@@ -113,6 +123,12 @@ substitutions:
   reed_contact03_name: $friendly_name REED 03
   reed_contact04_id: ${friendly_id}_REED_04
   reed_contact04_name: $friendly_name REED 04
+  reed_contact05_id: ${friendly_id}_REED_05
+  reed_contact05_name: $friendly_name REED 05
+  reed_contact06_id: ${friendly_id}_REED_06
+  reed_contact06_name: $friendly_name REED 06
+  reed_contact07_id: ${friendly_id}_REED_07
+  reed_contact07_name: $friendly_name REED 07
 
   # SSRs
   ssr01_id: ${friendly_id}_SSR01

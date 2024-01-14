@@ -6,8 +6,8 @@
 #############################
 # MotorDrv
 - platform: gpio
-  name: ${motordrv02_name}
-  id: ${motordrv02_id}
+  name: ${motordrvctrl1_en_name}
+  id: ${motordrvctrl1_en_id}
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
     number: !secret MCP23017_PIN_B7
@@ -20,7 +20,7 @@
     # inverted: true
   restore_mode: ALWAYS_OFF
   # for AppDaemon
-  icon: mdi:engine
+  icon: mdi:clover
 # ############################################################
 #  END OF FILE
 # ############################################################

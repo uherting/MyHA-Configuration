@@ -1,0 +1,30 @@
+####################################################################
+# COVERS
+
+# cover:
+
+#############################
+# MotorDrv DRV8833 configured as cover with endstop sensors
+- platform: feedback
+  name: "MotorDrv 01"
+
+  open_action:
+    - switch.turn_on: ${motordrvctrl1_in1_id}
+    - switch.turn_off: ${motordrvctrl1_in2_id}
+  open_duration: 2.1min
+  open_endstop: ${reed_contact06_id}
+  # open_sensor: open_movement_binary_sensor
+
+  close_action:
+    - switch.turn_off: ${motordrvctrl1_in1_id}
+    - switch.turn_on: ${motordrvctrl1_in2_id}
+  close_duration: 2min
+  close_endstop: ${reed_contact07_id}
+  # close_sensor: close_movement_binary_sensor
+
+  stop_action:
+    - switch.turn_off: ${motordrvctrl1_in1_id}
+    - switch.turn_off: ${motordrvctrl1_in2_id}
+# ############################################################
+#  END OF FILE
+# ############################################################
