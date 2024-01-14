@@ -2,7 +2,7 @@ blueprint:
   domain: automation
   name: Test TRVs on runaway condition
   description: >-
-    Regularly test all climate devices if the 'as is ' temperature is higher than the target temperature.
+    Regularly test all climate devices if the 'as is' temperature is higher than the target temperature.
 
     ***Blueprint Revision:*** *0 / 2024-01-013*
   source_url: https://gist.github.com/uherting/...
@@ -12,14 +12,14 @@ blueprint:
       description:
         Battery sensors below threshold are assumed to be low-battery (as
         well as binary battery sensors with value 'on').
-      default: 20
+      default: 3
       selector:
         number:
-          min: 5.0
-          max: 100.0
-          unit_of_measurement: "%"
+          min: 0.5
+          max: 10
+          unit_of_measurement: "°"
           mode: slider
-          step: 5.0
+          step: 0.5
     time:
       name: Time to run detection on
       description: "Detection is run at configured time"
@@ -76,21 +76,19 @@ blueprint:
       description: |
         Detection message shown for a detected runaway condition.
         The message can be freely formatted and supports the following placeholders:
-
-        [% bullet %] - is replaced with the choosen bullet point icon
-        [% sensor %] - is replaced with the name of the sensor
-        [% state %]  - is replaced with the battery state in percent ('0' for binary sensors)
-        [% area %]   - is replaced by the area (Unknown if sensor has no area)
-      default: "[% bullet %] [% sensor %] ([% state %]%) in area [% area %]"
+        !!bullet!! - is replaced with the choosen bullet point icon
+        !!sensor!! - is replaced with the name of the sensor
+        !!state!!  - is replaced with the battery state in percent
+        !!temp_tgt!!  - is replaced with the target temperature 
+        !!temp_tgt!!  - is replaced with the current temperature
+      default: "!!bullet!! !!sensor!! (mode:!!state!!): target temp=!!temp_tgt!! / current temp=!!temp_as_is!!"
       selector:
         text:
     order:
       name: Sorting of messages
       description: |
         Sorting of messages is posible by the following criteria:
-
         Alphabetical   - sort alphabetical by sensor name
-        Area           - sort by area
       default: "name"
       selector:
         select:
@@ -100,8 +98,6 @@ blueprint:
           options:
             - label: Alphabetical
               value: name
-            - label: Area
-              value: area
     actions:
       name: Actions
       description:
@@ -121,8 +117,7 @@ variables:
     {% set domain = 'climate' %}
     {% for sensor in states[domain] %}
     {% set result.sensors =
-    result.sensors +
-    [dict(
+    result.sensors + [dict(
     name = sensor.name,
     entity_id= sensor.entity_id,
     state = sensor.state,
@@ -132,15 +127,21 @@ variables:
     %}
     {% endfor %}
     {% set sensors = result.sensors | sort(attribute=order) %}
-    {% set ns = namespace(sensors ='') %}
+    {% set ns = namespace(sensors ='', line_cnt=0) %}
     {% for sensor in sensors  %}
-    {% set ns.sensors  = ns.sensors + (message
-    | replace('[% bullet %]', bullet)
-    | replace('[% sensor %]', sensor.name)
-    | replace('[% state %]', sensor.state)
-    | replace('[% area %]', sensor.area) ~ '\n') %}
+    {% set ns.sensors  =
+    ns.sensors + (message
+    | replace('!!bullet!!', bullet)
+    | replace('!!sensor!!', sensor.name)
+    | replace('!!state!!', sensor.state)
+    | replace('!!temp_tgt!!', sensor.temperature_tgt)
+    | replace('!!temp_as_is!!', sensor.temperature_as_is)
+    ~ '\n')
+    %}
+    {% set ns.line_cnt = ns.line_cnt + 1 %}
     {% endfor %}
-    {{ns.sensors}}"
+    {{ns.sensors}}
+    "
 trigger:
   - platform: time
     at: !input time
