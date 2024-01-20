@@ -72,6 +72,8 @@ substitutions:
 
   # MotorDrv DRV8833 settings, each motor has 'I/O for control (INx/INx+1) / ENABLE / endstops)
   # motor 1
+  motordrv_cover_1_id: ${friendly_id}_MotorDrvCover1
+  motordrv_cover_1_name: $friendly_name MotorDrvCover1
   motordrvctrl1_in1_id: ${friendly_id}_MotorDrvCtrl_1_In1
   motordrvctrl1_in1_name: $friendly_name MotorDrvCtrl_1_In1
   motordrvctrl1_in2_id: ${friendly_id}_MotorDrvCtrl_1_In2
@@ -83,6 +85,8 @@ substitutions:
   motordrv_endstop1_close_id: ${friendly_id}_MotorDrvEndstop_1_Close
   motordrv_endstop1_close_name: $friendly_name MotorDrvEndstop_1_Close
   # motor2
+  motordrv_cover_2_id: ${friendly_id}_MotorDrvCover2
+  motordrv_cover_2_name: $friendly_name MotorDrvCover2
   motordrvctrl2_in1_id: ${friendly_id}_MotorDrvCtrl_2_In1
   motordrvctrl2_in1_name: $friendly_name MotorDrvCtrl_2_In1
   motordrvctrl2_in2_id: ${friendly_id}_MotorDrvCtrl_2_In2

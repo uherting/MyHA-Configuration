@@ -102,14 +102,16 @@ script:
   - <<: !include conf/script/l0garagesmall01/touch_button_A4_double.yaml
   - <<: !include conf/script/l0garagesmall01/touch_button_A4_short.yaml
   - <<: !include conf/script/l0garagesmall01/touch_button_A4_long.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A5_on_press.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir_A0.yaml
-  # the touch button
+  # the touch buttons
   - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
   # device specific
   - <<: !include conf/binary_sensor/l0garagesmall_endstop_A6_open.yaml
   - <<: !include conf/binary_sensor/l0garagesmall_endstop_A7_close.yaml
@@ -155,7 +157,7 @@ text_sensor:
 #-------------------------------------------------------------------
 # covers
 cover:
-  - <<: !include conf/common/cover/motordrv1.yaml
+  - <<: !include conf/common/cover/motordrv_with_endstops.yaml
 
 ####################################################################
 # EOF

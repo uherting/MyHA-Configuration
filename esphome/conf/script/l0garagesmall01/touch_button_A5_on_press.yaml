@@ -1,0 +1,52 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_press action of TB A5
+- id: tb_02_click_on_press
+  mode: restart
+  then:
+    # - logger.log: "script tb_02_click_on_press action."
+    # - if:
+    #     condition:
+    #       # execute this script only if we are offline
+    #       # lambda: 'return (!id(isDeviceConnected);'
+
+    #       # execute this script anyway (TM) for debugging purposes
+    #       lambda: 'return (true);'
+    #     then:
+    #       - logger.log: "script tb_02_click_on_press action."
+
+    # the lambda was copied from https://esphome.io/cookbook/lambda_magic#one-button-cover-control
+    - lambda: |
+        if (id(${motordrv_cover_1_id}).current_operation == COVER_OPERATION_IDLE) {
+          // Cover is idle, check current state and either open or close cover.
+          if (id(${motordrv_cover_1_id}).is_fully_closed()) {
+            // deprecated:
+            // id(${motordrv_cover_1_id}).open();
+            // current:
+            auto call = id(${motordrv_cover_1_id}).make_call();
+            call.set_command_open();
+            call.perform();
+
+          } else {
+            // deprecated:
+            // id(${motordrv_cover_1_id}).close();
+            // current:
+            auto call = id(${motordrv_cover_1_id}).make_call();
+            call.set_command_close();
+            call.perform();
+          }
+        } else {
+          // Cover is opening/closing. Stop it.
+          // deprecated
+          // id(${motordrv_cover_1_id}).stop();
+          // current:
+          auto call = id(${motordrv_cover_1_id}).make_call();
+          call.set_command_stop();
+          call.perform();
+        }
+
+####################################################################
+# EOF
+####################################################################

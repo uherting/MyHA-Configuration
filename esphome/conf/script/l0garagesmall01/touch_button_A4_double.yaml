@@ -8,7 +8,7 @@
   then:
     # - logger.log: "script tb_01_click_dbl action."
     # - switch.toggle: ${ssr01_id}
-    - switch.toggle: ${ssr01_id}
+    - delay: !secret DELAY_01SEC
     # - if:
     #     condition:
     #       # execute this script only if we are offline
