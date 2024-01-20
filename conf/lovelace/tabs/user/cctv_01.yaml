@@ -25,6 +25,22 @@ cards:
   #     - sensor.l9_cam_ttgo_01_wifi_signal
 
   - type: picture-glance
+    title: RWorld Big Pic
+    camera_image: camera.rworld1_fluent_lens_0
+    camera_view: live
+    tap_action: none
+    entities:
+      - binary_sensor.l9_cam32_02_status
+
+  - type: picture-glance
+    title: RWorld Detail Pic
+    camera_image: camera.rworld1_fluent_lens_1
+    camera_view: live
+    tap_action: none
+    entities:
+      - binary_sensor.l9_cam32_02_status
+
+  - type: picture-glance
     title: ESP32Cam 02
     camera_image: camera.l9_cam32_02_cam
     camera_view: live

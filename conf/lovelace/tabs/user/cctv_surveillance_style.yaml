@@ -23,6 +23,8 @@ cards:
     # string 	“live” will show the live view if the stream integration is enabled.
     camera_view: "live"
     cameras:
+      - entity: camera.rworld1_fluent_lens_0
+      - entity: camera.rworld1_fluent_lens_1
       - entity: camera.l9_cam32_02_cam
       - entity: camera.l9_cam32_03_cam
       - entity: camera.ipcam_ker01_mainstream
