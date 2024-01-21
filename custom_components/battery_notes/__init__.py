@@ -10,19 +10,21 @@ from datetime import datetime
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+import re
 
 from awesomeversion.awesomeversion import AwesomeVersion
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers import device_registry as dr
+from homeassistant.util import dt as dt_util
+
+from .config_flow import CONFIG_VERSION
 
 from .discovery import DiscoveryManager
-from .library_coordinator import BatteryNotesLibraryUpdateCoordinator
 from .library_updater import (
-    LibraryUpdaterClient,
+    LibraryUpdater,
 )
 from .coordinator import BatteryNotesCoordinator
 from .store import (
@@ -34,13 +36,18 @@ from .const import (
     DOMAIN_CONFIG,
     PLATFORMS,
     CONF_ENABLE_AUTODISCOVERY,
-    CONF_LIBRARY,
-    DATA_UPDATE_COORDINATOR,
+    CONF_USER_LIBRARY,
+    DATA_LIBRARY_UPDATER,
     CONF_SHOW_ALL_DEVICES,
+    CONF_ENABLE_REPLACED,
     SERVICE_BATTERY_REPLACED,
     SERVICE_BATTERY_REPLACED_SCHEMA,
     DATA_COORDINATOR,
     ATTR_REMOVE,
+    ATTR_DEVICE_ID,
+    ATTR_DATE_TIME_REPLACED,
+    CONF_BATTERY_TYPE,
+    CONF_BATTERY_QUANTITY,
 )
 
 MIN_HA_VERSION = "2023.7"
@@ -53,16 +60,15 @@ CONFIG_SCHEMA = vol.Schema(
             vol.Schema(
                 {
                     vol.Optional(CONF_ENABLE_AUTODISCOVERY, default=True): cv.boolean,
-                    vol.Optional(CONF_LIBRARY, default="library.json"): cv.string,
+                    vol.Optional(CONF_USER_LIBRARY, default=""): cv.string,
                     vol.Optional(CONF_SHOW_ALL_DEVICES, default=False): cv.boolean,
+                    vol.Optional(CONF_ENABLE_REPLACED, default=True): cv.boolean,
                 },
             ),
         ),
     },
     extra=vol.ALLOW_EXTRA,
 )
-
-ATTR_SERVICE_DEVICE_ID = "device_id"
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Integration setup."""
@@ -79,6 +85,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     domain_config: ConfigType = config.get(DOMAIN) or {
         CONF_ENABLE_AUTODISCOVERY: True,
         CONF_SHOW_ALL_DEVICES: False,
+        CONF_ENABLE_REPLACED: True,
     }
 
     hass.data[DOMAIN] = {
@@ -90,12 +97,11 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     coordinator = BatteryNotesCoordinator(hass, store)
     hass.data[DOMAIN][DATA_COORDINATOR] = coordinator
 
-    library_coordinator = BatteryNotesLibraryUpdateCoordinator(
-        hass=hass,
-        client=LibraryUpdaterClient(session=async_get_clientsession(hass)),
-    )
+    library_updater = LibraryUpdater(hass)
 
-    hass.data[DOMAIN][DATA_UPDATE_COORDINATOR] = library_coordinator
+    await library_updater.get_library_updates(dt_util.utcnow())
+
+    hass.data[DOMAIN][DATA_LIBRARY_UPDATER] = library_updater
 
     await coordinator.async_refresh()
 
@@ -106,7 +112,6 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _LOGGER.debug("Auto discovery disabled")
 
     return True
-
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up a config entry."""
@@ -129,13 +134,51 @@ async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
 
     device_id = config_entry.data["device_id"]
 
-    coordinator = hass.data[DOMAIN][DATA_COORDINATOR]
+    coordinator: BatteryNotesCoordinator = hass.data[DOMAIN][DATA_COORDINATOR]
     data = {ATTR_REMOVE: True}
 
     coordinator.async_update_device_config(device_id=device_id, data=data)
 
     _LOGGER.debug("Removed Device %s", device_id)
 
+
+async def async_migrate_entry(hass, config_entry: ConfigEntry):
+    """Migrate old config."""
+    new_version = CONFIG_VERSION
+
+    if config_entry.version == 1:
+        # Version 1 had a single config for qty & type, split them
+        _LOGGER.debug("Migrating config entry from version %s", config_entry.version)
+
+        matches: re.Match = re.search(
+            r"^(\d+)(?=x)(?:x\s)(\w+$)|([\s\S]+)", config_entry.data[CONF_BATTERY_TYPE]
+        )
+        if matches:
+            _qty = matches.group(1) if matches.group(1) is not None else "1"
+            _type = (
+                matches.group(2) if matches.group(2) is not None else matches.group(3)
+            )
+        else:
+            _qty = 1
+            _type = config_entry.data[CONF_BATTERY_TYPE]
+
+        new_data = {**config_entry.data}
+        new_data[CONF_BATTERY_TYPE] = _type
+        new_data[CONF_BATTERY_QUANTITY] = _qty
+
+        config_entry.version = new_version
+
+        hass.config_entries.async_update_entry(
+            config_entry, title=config_entry.title, data=new_data
+        )
+
+        _LOGGER.info(
+            "Entry %s successfully migrated to version %s.",
+            config_entry.entry_id,
+            new_version,
+        )
+
+    return True
 
 @callback
 async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -154,7 +197,13 @@ def register_services(hass):
 
     async def handle_battery_replaced(call):
         """Handle the service call."""
-        device_id = call.data.get(ATTR_SERVICE_DEVICE_ID, "")
+        device_id = call.data.get(ATTR_DEVICE_ID, "")
+        datetime_replaced_entry = call.data.get(ATTR_DATE_TIME_REPLACED)
+
+        if datetime_replaced_entry:
+            datetime_replaced = dt_util.as_utc(datetime_replaced_entry).replace(tzinfo=None)
+        else:
+            datetime_replaced = datetime.utcnow()
 
         device_registry = dr.async_get(hass)
 
@@ -166,20 +215,18 @@ def register_services(hass):
             if (
                 entry := hass.config_entries.async_get_entry(entry_id)
             ) and entry.domain == DOMAIN:
-                date_replaced = datetime.utcnow()
 
-                coordinator = hass.data[DOMAIN][DATA_COORDINATOR]
-                device_entry = {"battery_last_replaced": date_replaced}
+                coordinator: BatteryNotesCoordinator = hass.data[DOMAIN][DATA_COORDINATOR]
+                device_entry = {"battery_last_replaced": datetime_replaced}
 
                 coordinator.async_update_device_config(
                     device_id=device_id, data=device_entry
                 )
 
-                await coordinator._async_update_data()
                 await coordinator.async_request_refresh()
 
                 _LOGGER.debug(
-                    "Device %s battery replaced on %s", device_id, str(date_replaced)
+                    "Device %s battery replaced on %s", device_id, str(datetime_replaced)
                 )
 
     hass.services.async_register(
