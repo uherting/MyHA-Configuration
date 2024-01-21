@@ -16,7 +16,7 @@ views:
   # the following tab make no sense (yet)
   # - !include /config/conf/lovelace/tabs/user/cctv_02.yaml
   # the following tab make no sense (yet) in regards of switching between cams because of motion
-  - !include /config/conf/lovelace/tabs/user/cctv_surveillance_style.yaml
+  # - !include /config/conf/lovelace/tabs/user/cctv_surveillance_style.yaml
 ####################################################################
 # EOF
 ####################################################################

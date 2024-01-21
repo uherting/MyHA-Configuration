@@ -10,53 +10,69 @@ title: ESP8266 l0 Tech
 path: esp8266_l0_tech
 badges: []
 cards:
-  - type: entities
-    title: L0 Entrance 01
-    show_header_toggle: false
-    entities:
-      - sensor.l0_entrance01_conn_ip_addr
-      - sensor.l0_entrance01_wifi_signal
-      - sensor.l0_entrance01_conn_ssid
-      - sensor.l0_entrance01_conn_bssid
-      - sensor.l0_entrance01_uptime
-      - sensor.l0_entrance01_uptime_human_readable
-      - binary_sensor.l0_entrance01_status
-      - sensor.l0_entrance01_esphome_version
-      - entity: switch.l0entrance01_internet_access
-        name: Internet Access
-      - switch.l0_entrance01_restart_device
+  # - type: entities
+  #   title: L0 Entrance 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l0_entrance01_conn_ip_addr
+  #     - sensor.l0_entrance01_wifi_signal
+  #     - sensor.l0_entrance01_conn_ssid
+  #     - sensor.l0_entrance01_conn_bssid
+  #     - sensor.l0_entrance01_uptime
+  #     - sensor.l0_entrance01_uptime_human_readable
+  #     - binary_sensor.l0_entrance01_status
+  #     - sensor.l0_entrance01_esphome_version
+  #     - entity: switch.l0entrance01_internet_access
+  #       name: Internet Access
+  #     - switch.l0_entrance01_restart_device
+
+  # - type: entities
+  #   title: L0 Corridor 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l0_corridor01_conn_ip_addr
+  #     - sensor.l0_corridor01_wifi_signal
+  #     - sensor.l0_corridor01_conn_ssid
+  #     - sensor.l0_corridor01_conn_bssid
+  #     - sensor.l0_corridor01_uptime
+  #     - sensor.l0_corridor01_uptime_human_readable
+  #     - binary_sensor.l0_corridor01_status
+  #     - sensor.l0_corridor01_esphome_version
+  #     - entity: switch.l0corridor01_internet_access
+  #       name: Internet Access
+  #     - switch.l0_corridor01_restart_device
+
+  # - type: entities
+  #   title: L0 Corridor 02
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l0_corridor02_conn_ip_addr
+  #     - sensor.l0_corridor02_wifi_signal
+  #     - sensor.l0_corridor02_conn_ssid
+  #     - sensor.l0_corridor02_conn_bssid
+  #     - sensor.l0_corridor02_uptime
+  #     - sensor.l0_corridor02_uptime_human_readable
+  #     - binary_sensor.l0_corridor02_status
+  #     - sensor.l0_corridor02_esphome_version
+  #     - entity: switch.l0corridor02_internet_access
+  #       name: Internet Access
+  #     - switch.l0_corridor02_restart_device
 
   - type: entities
-    title: L0 Corridor 01
+    title: L0 HeatingRoGarageSmall 01
     show_header_toggle: false
     entities:
-      - sensor.l0_corridor01_conn_ip_addr
-      - sensor.l0_corridor01_wifi_signal
-      - sensor.l0_corridor01_conn_ssid
-      - sensor.l0_corridor01_conn_bssid
-      - sensor.l0_corridor01_uptime
-      - sensor.l0_corridor01_uptime_human_readable
-      - binary_sensor.l0_corridor01_status
-      - sensor.l0_corridor01_esphome_version
-      - entity: switch.l0corridor01_internet_access
+      - sensor.l0_garagesmall01_conn_ip_addr
+      - sensor.l0_garagesmall01_wifi_signal
+      - sensor.l0_garagesmall01_conn_ssid
+      - sensor.l0_garagesmall01_conn_bssid
+      - sensor.l0_garagesmall01_uptime
+      - sensor.l0_garagesmall01_uptime_human_readable
+      - binary_sensor.l0_garagesmall01_status
+      - sensor.l0_garagesmall01_esphome_version
+      - entity: switch.l0heatingroomarea01_internet_access
         name: Internet Access
-      - switch.l0_corridor01_restart_device
-
-  - type: entities
-    title: L0 Corridor 02
-    show_header_toggle: false
-    entities:
-      - sensor.l0_corridor02_conn_ip_addr
-      - sensor.l0_corridor02_wifi_signal
-      - sensor.l0_corridor02_conn_ssid
-      - sensor.l0_corridor02_conn_bssid
-      - sensor.l0_corridor02_uptime
-      - sensor.l0_corridor02_uptime_human_readable
-      - binary_sensor.l0_corridor02_status
-      - sensor.l0_corridor02_esphome_version
-      - entity: switch.l0corridor02_internet_access
-        name: Internet Access
-      - switch.l0_corridor02_restart_device
+      - switch.l0_garagesmall01_restart_device
 
   - type: entities
     title: L0 HeatingRoomArea 01

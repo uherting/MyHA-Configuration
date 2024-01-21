@@ -11,6 +11,23 @@ path: esp8266_l0_details
 badges: []
 cards:
   - type: entities
+    title: l0garagesmall01
+    entities:
+      - sensor.l0_garagesmall01_tempcase_01
+      - cover.l0_garagesmall01_motordrvcover1
+      - switch.l0_garagesmall01_motordrvctrl_1_enable
+      - switch.l0_garagesmall01_motordrvctrl_1_in1
+      - switch.l0_garagesmall01_motordrvctrl_1_in2
+      - binary_sensor.l0_garagesmall01_tb_01
+      - binary_sensor.l0_garagesmall01_tb_02
+      - binary_sensor.l0_garagesmall01_pir_01
+      - binary_sensor.l0_garagesmall01_endstop_close_07
+      - binary_sensor.l0_garagesmall01_endstop_open_06
+      - switch.l0_garagesmall01_ssr_01
+      - switch.l0_garagesmall01_ssr_02
+      - switch.l0_garagesmall01_ssr_03
+
+  - type: entities
     title: l0heatingroomarea01
     entities:
       - sensor.l0_heatingroomarea01_tempcase_01
