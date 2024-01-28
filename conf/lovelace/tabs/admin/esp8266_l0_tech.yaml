@@ -59,7 +59,7 @@ cards:
   #     - switch.l0_corridor02_restart_device
 
   - type: entities
-    title: L0 HeatingRoGarageSmall 01
+    title: l0_garagesmall01
     show_header_toggle: false
     entities:
       - sensor.l0_garagesmall01_conn_ip_addr
@@ -75,7 +75,7 @@ cards:
       - switch.l0_garagesmall01_restart_device
 
   - type: entities
-    title: L0 HeatingRoomArea 01
+    title: l0_heatingroomarea01
     show_header_toggle: false
     entities:
       - sensor.l0_heatingroomarea01_conn_ip_addr

@@ -12,6 +12,7 @@ badges: []
 cards:
   - type: entities
     title: l0garagesmall01
+    show_header_toggle: false
     entities:
       - sensor.l0_garagesmall01_tempcase_01
       - cover.l0_garagesmall01_motordrvcover1
@@ -29,6 +30,7 @@ cards:
 
   - type: entities
     title: l0heatingroomarea01
+    show_header_toggle: false
     entities:
       - sensor.l0_heatingroomarea01_tempcase_01
       - sensor.l0_heatingroomarea01_heating_room
