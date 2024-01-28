@@ -8,22 +8,20 @@
 - platform: feedback
   name: $motordrv_cover_1_name
   id: ${motordrv_cover_1_id}
-  max_duration: 7s
 
   open_action:
     - switch.turn_on: ${motordrvctrl1_en_id}
     - switch.turn_on: ${motordrvctrl1_in1_id}
     - switch.turn_off: ${motordrvctrl1_in2_id}
   open_duration: 6s
-  open_endstop: ${reed_contact06_id}
+  # open_endstop: ${reed_contact06_id}
   # open_sensor: open_movement_binary_sensor
 
   close_action:
-    - switch.turn_on: ${motordrvctrl1_en_id}
     - switch.turn_off: ${motordrvctrl1_in1_id}
     - switch.turn_on: ${motordrvctrl1_in2_id}
   close_duration: 6s
-  close_endstop: ${reed_contact07_id}
+  # close_endstop: ${reed_contact07_id}
   # close_sensor: close_movement_binary_sensor
 
   stop_action:

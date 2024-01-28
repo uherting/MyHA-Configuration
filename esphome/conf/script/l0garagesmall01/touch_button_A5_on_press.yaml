@@ -28,7 +28,6 @@
             auto call = id(${motordrv_cover_1_id}).make_call();
             call.set_command_open();
             call.perform();
-
           } else {
             // deprecated:
             // id(${motordrv_cover_1_id}).close();

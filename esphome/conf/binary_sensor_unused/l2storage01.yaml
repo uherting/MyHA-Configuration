@@ -1,13 +1,12 @@
 ####################################################################
 # BINARY SENSORS
 
-
 ####################################################################
 # WiFi status
 
-  - platform: status
-    name: ${wifi_status_name}
-    id: ${wifi_status_id}
+- platform: status
+  name: ${wifi_status_name}
+  id: ${wifi_status_id}
 
 ####################################################################
 # Template Binary Sensor
@@ -28,39 +27,38 @@
 ####################################################################
 # PIR
 
-  - platform: gpio
-    name: $pir01_name
-    id: ${pir01_id}
-    pin:
-      mcp23xxx: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_A0
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: INPUT
-      inverted: false
-    device_class: motion
-    # fallback automation while the device is offline:
-    on_press:
-      then:
-        - script.execute: ssr_script_01
+- platform: gpio
+  name: $pir01_name
+  id: ${pir01_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A0
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    inverted: false
+  device_class: motion
+  # fallback automation while the device is offline:
+  on_press:
+    then:
+      - script.execute: ssr_script_01
 
 ####################################################################
 # REED CONTACTS
 
-  - platform: gpio
-    name: $reed_contact01_name
-    id: ${reed_contact01_id}
-    pin:
-      mcp23xxx: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_A2
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: INPUT_PULLUP
-      inverted: false
-    # debouncing
-    filters:
-      - delayed_on: 100ms
-      - delayed_off: 100ms
-    device_class: door
-
+- platform: gpio
+  name: $reed_contact01_name
+  id: ${reed_contact01_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A2
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT_PULLUP
+    inverted: true
+  # debouncing
+  filters:
+    - delayed_on: 100ms
+    - delayed_off: 100ms
+  device_class: door
 ####################################################################
 # TOUCH BUTTON
 

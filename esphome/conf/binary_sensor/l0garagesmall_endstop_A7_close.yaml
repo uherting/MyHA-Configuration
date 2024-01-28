@@ -17,8 +17,8 @@
     inverted: false
   # debouncing
   filters:
-    - delayed_on: 100ms
-    - delayed_off: 100ms
+    - delayed_on: 50ms
+    - delayed_off: 50ms
   device_class: window
   # on_release:
   #   then:
