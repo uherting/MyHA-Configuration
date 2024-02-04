@@ -1,5 +1,6 @@
 import logging
 import aiohttp
+import asyncio
 import async_timeout
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.helpers.entity import Entity
@@ -12,6 +13,9 @@ _LOGGER = logging.getLogger(__name__)
 # Constants
 URL = "https://api.cloudflare.com/client/v4/accounts/{}/cfd_tunnel?is_deleted=false"
 TIMEOUT = 10
+RETRY_DELAY = 20
+MAX_RETRIES = 5
+session = aiohttp.ClientSession()
 
 def create_headers(api_key):
     """Create headers for API requests."""
@@ -20,11 +24,12 @@ def create_headers(api_key):
         'Content-Type': 'application/json',
     }
 
-async def fetch_tunnels(api_key, account_id, hass):
+async def fetch_tunnels(api_key, account_id, hass, entry_id, retries=0):
     """Retrieve Cloudflare tunnel status using aiohttp."""
     headers = create_headers(api_key)
     url = URL.format(account_id)
-
+    
+    _LOGGER.debug(f"Attempt {retries + 1} to fetch tunnels from URL: {url}")
     async with aiohttp.ClientSession() as session:
         try:
             with async_timeout.timeout(TIMEOUT):
@@ -32,14 +37,24 @@ async def fetch_tunnels(api_key, account_id, hass):
                     _LOGGER.debug(f"Response status: {response.status}")
                     if response.status == 200:
                         json_response = await response.json()
-                        _LOGGER.debug(f"Response data: {json_response}")
+                        _LOGGER.debug(f"Received data: {json_response}")
                         return json_response['result']
                     else:
-                        _LOGGER.error(f"Error fetching Cloudflare tunnels: {response.status}")
-                        return None
+                        _LOGGER.error(f"Error fetching Cloudflare tunnels: {response.status}, {response.reason}")
+                        if response.status == 504:
+                            raise UpdateFailed("Gateway timeout error")
+                        else:
+                            raise UpdateFailed("Error fetching Cloudflare tunnels")
         except Exception as err:
             _LOGGER.error(f"Error fetching data: {err}")
-            return None
+            if retries < MAX_RETRIES:
+                _LOGGER.info(f"Retrying in {RETRY_DELAY} seconds...")
+                await asyncio.sleep(RETRY_DELAY)
+                return await fetch_tunnels(api_key, account_id, hass, retries + 1)
+            else:
+                _LOGGER.error("Maximum number of retries reached, scheduling integration reload")
+                await schedule_integration_reload(hass, entry_id)
+            raise UpdateFailed("Maximum retries reached, integration reload scheduled")
 
 class CloudflareTunnelsDevice(Entity):
     """Representation of the Cloudflare Tunnels device."""
@@ -108,16 +123,20 @@ class CloudflareTunnelSensor(Entity):
 
     async def async_update(self):
         """Update the state of the sensor."""
+        _LOGGER.debug(f"Requesting refresh for tunnel {self._tunnel['id']}")
         await self.coordinator.async_request_refresh()
         if self.coordinator.data is not None:
+            _LOGGER.debug(f"Coordinator data is not None. Searching for updated tunnel data for {self._tunnel['id']}")
+
             updated_tunnel = next((tunnel for tunnel in self.coordinator.data if tunnel.get('id') == self._tunnel.get('id')), None)
             if updated_tunnel is not None:
+                _LOGGER.debug(f"Found updated data for tunnel {self._tunnel['id']}")
                 self._tunnel = updated_tunnel
                 _LOGGER.debug("Tunnel updated data: %s", self._tunnel)
             else:
                 _LOGGER.error("Tunnel with ID %s not found in the updated data", self._tunnel.get('id'))
         else:
-            _LOGGER.error("No data received in coordinator during update")
+            _LOGGER.error("No data received in coordinator during update, maintaining previous state")
 
 class CloudflareTunnelManager:
     """Manages Cloudflare Tunnel Sensor entities."""
@@ -145,19 +164,23 @@ class CloudflareTunnelManager:
             sensor_id = f"{self._device._domain}_{tunnel['id']}"
             if sensor_id in self._sensors:
                 _LOGGER.info(f"Removing sensor for tunnel: {sensor_id}")
-                sensor = self._sensors.pop(sensor_id)
-                await self._hass.async_create_task(sensor.async_remove())
+                try:
+                    sensor = self._sensors.pop(sensor_id)
+                    await self._hass.async_create_task(sensor.async_remove())
+                except Exception as e:
+                    _LOGGER.error(f"Error removing sensor for tunnel {sensor_id}: {e}")
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Cloudflare tunnel sensor."""
     api_key = config_entry.data["api_key"]
     account_id = config_entry.data["account_id"]
     device = CloudflareTunnelsDevice(account_id, DOMAIN)
+    global session
 
     async def async_update_data():
         """Fetch data from API endpoint and detect changes in tunnels."""
         _LOGGER.debug("Fetching new tunnel data from Cloudflare")
-        new_data = await fetch_tunnels(api_key, account_id, hass)
+        new_data = await fetch_tunnels(api_key, account_id, hass, config_entry.entry_id)
         if new_data is None:
             new_data = []
 
@@ -199,3 +222,16 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 tunnel_manager._sensors[sensor_id] = sensor
                 async_add_entities([sensor], True)
         tunnel_manager.initialized = True
+
+    hass.bus.async_listen_once("homeassistant_stop", async_shutdown)
+
+async def async_shutdown(event):
+    """Close aiohttp global session."""
+    if session:
+        await session.close()
+    _LOGGER.debug("Cloudflare Tunnel Monitor - aiohttp session closed")
+
+async def schedule_integration_reload(hass, entry_id):
+    """Schedule a reload of the integration."""
+    _LOGGER.info(f"Scheduling reload of integration with entry_id {entry_id}")
+    await hass.config_entries.async_reload(entry_id)
