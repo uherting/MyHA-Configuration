@@ -34,6 +34,17 @@ cards:
       - binary_sensor.spghnote8pro_is_charging
 
   - type: entities
+    title: FireHD10
+    show_header_toggle: false
+    entities:
+      - device_tracker.firehd10
+      - sensor.firehd10_battery_state
+      - sensor.firehd10_battery_level
+      - sensor.firehd10_battery_temperature
+      - sensor.firehd10_charger_type
+      - binary_sensor.firehd10_is_charging
+
+  - type: entities
     title: Tablet Tabby
     show_header_toggle: false
     entities:
