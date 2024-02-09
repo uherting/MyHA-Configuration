@@ -1,0 +1,69 @@
+# ############################################################
+#
+#  Check which TRV whose current temperature is ...
+#    - way above the target temperature. action: switch it's mode to 'off'
+#    - below target temperature. action: switch it's mode to 'auto'
+#
+# ############################################################
+
+# ############################################################
+#  TRV whose current temperature is way above the target temperature. action: switch it's mode to 'off'
+# ############################################################
+- alias: TRV mode changes to off for the TRV whose current temperature is above target temperature
+  id: "8d9a9b34-6fec-46f4-be6d-7bcc9e112c56"
+  description: "This automation sets the TRVs mode to 'off' if it's current temperature is way above target temperature"
+  mode: single
+  initial_state: true
+  # -------------------- CONDITIONS -------------------
+  # no condition to start with
+  condition: []
+  # condition:
+  #   condition: state
+  #   entity_id: binary_sensor.l2_ble01_status
+  #   state:
+  #     - "on"
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: uh/climate_runaway_test.yaml
+    input:
+      # execute at given time only
+      time: "19:00:00"
+      # every day
+      # day: 0
+      weekday:
+        - fri
+      #   - mon
+      #   - tue
+      #   - wed
+      #   - thu
+      #   - fri
+      #   - sat
+      #   - sun
+      # batteries listed will hold less than threshold percent of capacity
+      threshold: 10
+      # bullet form for blueprint from itn3rd77
+      bullet: "-"
+      message:
+        "[% bullet %] [% sensor %] ([% state %]%) in area [% area %]"
+        # Detection message shown for a detected low battery sensor.
+        # The message can be freely formatted and supports the following placeholders:
+
+        # [% bullet %] - is replaced with the choosen bullet point icon
+        # [% sensor %] - is replaced with the name of the sensor
+        # [% state %]  - is replaced with the battery state in percent ('0' for binary sensors)
+        # [% area %]   - is replaced by the area (Unknown if sensor has no area)
+
+      # --------------------- ACTIONS ---------------------
+      actions:
+        - service: script.tg_send_txt
+          data_template:
+            msg_title: "Low battery level notification"
+            msg_text_prefix: "The following devices have a low bat condition:\n- "
+            msg_text_suffix: "\n"
+            msg_text: "{{ sensors | replace(',', ', ') }}"
+            msg_receiver: "admin"
+            msg_optional_string: "{{ sensors | replace(',', ',\n-') }}"
+            msg_optional_number: "{{ sensors | replace(',', ',\n-') | length }}"
+############################################################
+#  END OF FILE
+# ############################################################
