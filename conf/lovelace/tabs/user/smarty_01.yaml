@@ -293,17 +293,38 @@ cards:
       # TRVs L2
       - type: grid
         square: false
-        columns: 1
+        columns: 2
         cards:
           - type: thermostat
             entity: climate.kitchen_l2
             name: Kitchen
+          - type: "custom:button-card"
+            # entity:
+            name: " "
           - type: thermostat
             entity: climate.lounge_l2
             name: Lounge
+          - type: "custom:button-card"
+            # entity:
+            name: " "
           - type: thermostat
             entity: climate.bedroom_l2
             name: Bedroom
+          - type: "custom:button-card"
+            # entity:
+            name: " "
+          - type: thermostat
+            entity: climate.bathroom_l2
+            name: Bathroom
+          - type: "custom:button-card"
+            # entity:
+            name: " "
+          - type: thermostat
+            entity: climate.storage_l2
+            name: Storage
+          - type: "custom:button-card"
+            # entity:
+            name: " "
 
       # # Simple Thermostat
       # - type: grid

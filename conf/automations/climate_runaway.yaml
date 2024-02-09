@@ -13,7 +13,7 @@
   id: "8d9a9b34-6fec-46f4-be6d-7bcc9e112c56"
   description: "This automation sets the TRVs mode to 'off' if it's current temperature is way above target temperature"
   mode: single
-  initial_state: true
+  initial_state: false
   # -------------------- CONDITIONS -------------------
   # no condition to start with
   condition: []
@@ -44,7 +44,7 @@
       # bullet form for blueprint from itn3rd77
       bullet: "-"
       message:
-        "[% bullet %] [% sensor %] ([% state %]%) in area [% area %]"
+        "!!bullet!! !!entity_id!! !!sensor_name!!: TGT=!!temp_tgt!! IS:!!temp_as_is!! next mode = !!next_mode!!"
         # Detection message shown for a detected low battery sensor.
         # The message can be freely formatted and supports the following placeholders:
 

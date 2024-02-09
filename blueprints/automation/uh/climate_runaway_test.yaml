@@ -1,23 +1,21 @@
 blueprint:
   domain: automation
-  name: Test TRVs on runaway condition
+  name: Test TRVs on runaway condition (This is still considered to be a alpha version!!!)
   description: >-
-    Regularly test all climate devices if the 'as is' temperature is higher than the target temperature.
+    Regularly test all climate devices if the 'as is' temperature is way higher than the target temperature.
 
-    ***Blueprint Revision:*** *0 / 2024-01-013*
+    ***Blueprint Revision:*** *1 / 2024-02-05*
   source_url: https://gist.github.com/uherting/...
   input:
     threshold:
-      name: Battery warning level threshold
-      description:
-        Battery sensors below threshold are assumed to be low-battery (as
-        well as binary battery sensors with value 'on').
-      default: 3
+      name: TRV warning level threshold in percent
+      description: Test TRVs on runaway condition. The runaway condition might be that the 'as is' temperature is way higher than the target temperature or way to low.
+      default: 22
       selector:
         number:
-          min: 0.5
-          max: 10
-          unit_of_measurement: "°"
+          min: 5
+          max: 30
+          unit_of_measurement: "%"
           mode: slider
           step: 0.5
     time:
@@ -80,8 +78,8 @@ blueprint:
         !!sensor!! - is replaced with the name of the sensor
         !!state!!  - is replaced with the battery state in percent
         !!temp_tgt!!  - is replaced with the target temperature 
-        !!temp_tgt!!  - is replaced with the current temperature
-      default: "!!bullet!! !!sensor!! (mode:!!state!!): target temp=!!temp_tgt!! / current temp=!!temp_as_is!!"
+        !!temp_as_is!!  - is replaced with the current temperature
+      default: "!!bullet!! !!entity_id!! !!sensor_name!!: TGT=!!temp_tgt!! IS:!!temp_as_is!! next mode = !!next_mode!!"
       selector:
         text:
     order:
@@ -113,34 +111,58 @@ variables:
   message: !input message
   order: !input order
   sensors: "
-    {% set result = namespace(sensors=[]) %}
+    {# preparation #}
+    {% set mode_caller = 'off' %}
+    {% set accpted_incr = (threshold / 100) + 1.0 %}
+
+    {# go through all entities of the domain X #}
     {% set domain = 'climate' %}
+    {% set result = namespace(sensors=[]) %}
     {% for sensor in states[domain] %}
-    {% set result.sensors =
-    result.sensors + [dict(
-    name = sensor.name,
-    entity_id= sensor.entity_id,
-    state = sensor.state,
-    temperature_tgt = state_attr(sensor.entity_id, 'temperature'),
-    temperature_as_is = state_attr(sensor.entity_id, 'current_temperature')
-    )]
+    {% set temperature_tgt = state_attr(sensor.entity_id, 'temperature') %}
+    {% set temperature_as_is = state_attr(sensor.entity_id, 'current_temperature') %}
+    {# only add the entity to the result var if certain conditions apply #}
+    {% if
+    (
+    (mode_caller == 'off' )
+    and
+    ((temperature_tgt * accpted_incr) < temperature_as_is)
+    )
     %}
+      {% set result.sensors =
+      result.sensors + [dict(
+      name = sensor.name,
+      entity_id= sensor.entity_id,
+      state = sensor.state,
+      temperature_tgt = state_attr(sensor.entity_id, 'temperature'),
+      temperature_as_is = state_attr(sensor.entity_id, 'current_temperature'),
+      next_mode = mode_caller
+      )]
+      %}
+    {% endif %}
     {% endfor %}
     {% set sensors = result.sensors | sort(attribute=order) %}
-    {% set ns = namespace(sensors ='', line_cnt=0) %}
+
+    {# sort the sensors according the sort attribute #}
+    {% set sensors = result.sensors | sort(attribute=order) %}
+
+    {# do the formatting #}
+    {% set ns = namespace(sensor_names ='', line_cnt=0) %}
     {% for sensor in sensors  %}
-    {% set ns.sensors  =
-    ns.sensors + (message
+    {% set ns.sensor_names  =
+    ns.sensor_names + (message
     | replace('!!bullet!!', bullet)
-    | replace('!!sensor!!', sensor.name)
+    | replace('!!entity_id!!', sensor.entity_id)
+    | replace('!!sensor_name!!', sensor.name)
     | replace('!!state!!', sensor.state)
     | replace('!!temp_tgt!!', sensor.temperature_tgt)
     | replace('!!temp_as_is!!', sensor.temperature_as_is)
+    | replace('!!next_mode!!', sensor.next_mode)
     ~ '\n')
     %}
     {% set ns.line_cnt = ns.line_cnt + 1 %}
     {% endfor %}
-    {{ns.sensors}}
+    {{ ns.sensor_names }}
     "
 trigger:
   - platform: time
