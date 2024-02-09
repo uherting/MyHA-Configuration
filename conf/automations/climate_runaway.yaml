@@ -13,7 +13,7 @@
   id: "8d9a9b34-6fec-46f4-be6d-7bcc9e112c56"
   description: "This automation sets the TRVs mode to 'off' if it's current temperature is way above target temperature"
   mode: single
-  initial_state: false
+  initial_state: true
   # -------------------- CONDITIONS -------------------
   # no condition to start with
   condition: []
