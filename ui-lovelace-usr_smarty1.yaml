@@ -15,7 +15,7 @@ views:
   - !include /config/conf/lovelace/tabs/user/smarty_01.yaml
   # - !include /config/conf/lovelace/tabs/user/smarty_02.yaml
   - !include /config/conf/lovelace/tabs/user/information.yaml
-  - !include /config/conf/lovelace/tabs/user/zigbee_temp_humidity_door_window.yaml
+  # - !include /config/conf/lovelace/tabs/user/zigbee_temp_humidity_door_window.yaml
   - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
   - !include /config/conf/lovelace/tabs/user/cctv_01.yaml
   # - !include /config/conf/lovelace/tabs/user/cctv_surveillance_style.yaml
