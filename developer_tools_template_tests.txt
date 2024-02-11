@@ -1,6 +1,11 @@
 ---------------
 # content of: /config/developer_tools_template_tests.txt
 ---------------
+
+# check whether we are in summer
+{% set cold_season = is_state('sensor.season', 'summer') %}
+{{ cold_season }}
+
 # only if the cam is online and online longer than x minutes
 {{ states("binary_sensor.l9_cam32_03_status") }}
 {{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > timedelta(hours = 0, minutes = 10) }}

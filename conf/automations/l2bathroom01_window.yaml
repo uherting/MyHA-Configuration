@@ -1,0 +1,38 @@
+# ############################################################
+#
+#  automation for l2bathroom01 (window open)
+#
+# ############################################################
+
+# ############################################################
+# l2bathroom01 (window open)
+# ############################################################
+- alias: l2bathroom01 - window open
+  id: "2fb4b738-3f97-40ad-8571-7014a55f5bf5"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time_pattern
+      minutes: /10
+
+  # -------------------- CONDITIONS -------------------
+  condition:
+    # if both window sensors are open and it is below a certain
+    # temperature (see definition of binary_sensor.l2_bathroom_window_generic_cold)
+    - condition: state
+      entity_id: binary_sensor.l2_bathroom_window_generic_cold
+      state: "true"
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Bathroom window"
+        msg_text: "The bathroom window is open for *a while* already. Please consider closing it ASAP."
+        msg_receiver: "notify"
+# ############################################################
+#  END OF FILE
+# ############################################################

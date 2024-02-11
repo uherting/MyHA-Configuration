@@ -92,28 +92,23 @@ cards:
       # DW_01
       - type: grid
         square: false
-        columns: 5
+        columns: 4
         cards:
           - type: "custom:button-card"
-            name: "Bathroom DW"
+            name: "Bathroom"
           - type: "custom:button-card"
             entity: binary_sensor.zb_dw_l2_bathroom_contact
             name: " "
             color: yellow
             show_state: true
           - type: "custom:button-card"
-            entity: binary_sensor.zb_dw_l2_bathroom_tamper
+            entity: binary_sensor.zb_dw_l2_bathroom_battery_low
             name: " "
             color: yellow
             show_state: true
           - type: "custom:button-card"
             entity: sensor.zb_dw_l2_bathroom_battery
             name: " "
-            show_state: true
-          - type: "custom:button-card"
-            entity: binary_sensor.zb_dw_l2_bathroom_battery_low
-            name: " "
-            color: yellow
             show_state: true
 ####################################################################
 # EOF

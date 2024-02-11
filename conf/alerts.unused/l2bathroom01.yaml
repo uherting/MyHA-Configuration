@@ -4,30 +4,28 @@
 #
 # ############################################################
 
-
 # ############################################################
 #  Bathroom window open
 # ############################################################
 #alert:
-  l2_bathroom_window_open:
-    name: 'L2 Bathroom window is open'
-    # title: 'L2 Bathroom title'
-    done_message: 'L2 Bathroom window was closed'
-    entity_id: binary_sensor.l2_bathroom_window_generic
-    state: "on"
-    repeat: 
-      - 10
-      - 25
-      - 60
+l2_bathroom_window_open:
+  name: "L2 Bathroom window is open"
+  # title: 'L2 Bathroom title'
+  done_message: "L2 Bathroom window was closed"
+  entity_id: binary_sensor.l2_bathroom_window_generic_cold
+  state: "on"
+  repeat:
+    - 10
+    - 25
+    - 60
 
-    can_acknowledge: true
-    skip_first: true
-    data:
-      inline_keyboard:
-        - 'Acknowledge:/L2BathroomWindow_ack'
-    notifiers:
-      - tg_notification_grp
-
+  can_acknowledge: true
+  skip_first: true
+  data:
+    inline_keyboard:
+      - "Acknowledge:/L2BathroomWindow_ack"
+  notifiers:
+    - tg_notification_grp
 # ############################################################
 #  END OF FILE
 # ############################################################
