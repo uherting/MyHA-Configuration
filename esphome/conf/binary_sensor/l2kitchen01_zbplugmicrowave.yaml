@@ -1,0 +1,16 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# Template Binary Sensor
+# see https://esphome.io/components/binary_sensor/template.html
+
+# sensor ZB plug microwave in L2 kitchen
+- platform: template
+  name: ${binary_template_sensor_zb_plug_microwave_name}
+  id: ${binary_template_sensor_zb_plug_microwave_id}
+# ############################################################
+#  END OF FILE
+# ############################################################

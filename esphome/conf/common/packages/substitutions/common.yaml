@@ -45,6 +45,10 @@ substitutions:
   binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
   binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
 
+  # zb_plug_microwave (switching on the plug)
+  binary_template_sensor_zb_plug_microwave_id: ${friendly_id}_BIN_TEMPL_ZBPLUGMICROWAVE
+  binary_template_sensor_zb_plug_microwave_name: $friendly_name BIN_TEMPL ZBPLUGMICROWAVE
+
   # main light kitchen trigger
   binary_template_sensor_main_light_id: ${friendly_id}_BIN_TEMPL_MAINLIGHT
   binary_template_sensor_main_light_name: friendly_name BIN_TEMPL MAINLIGHT

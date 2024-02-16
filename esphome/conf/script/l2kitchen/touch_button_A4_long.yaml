@@ -12,7 +12,15 @@
           # execute this script no matter what
           lambda: "return (true);"
         then:
-          - logger.log: "script tb_01_click_long action."
+          # - logger.log: "script tb_01_click_long action."
+          - binary_sensor.template.publish:
+              id: ${binary_template_sensor_zb_plug_microwave_id}
+              state: true
+          - delay: !secret DELAY_03SEC
+          - binary_sensor.template.publish:
+              id: ${binary_template_sensor_zb_plug_microwave_id}
+              state: false
+          # - logger.log: "script tb_01_click_long action."
 ####################################################################
 # EOF
 ####################################################################
