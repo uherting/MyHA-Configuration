@@ -81,7 +81,9 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
+            entity: switch.zb_plug_l2_lounge_light_corner
             name: Lounge
+            color: yellow
           - type: "custom:button-card"
             name: " "
             entity: sensor.xiaomi_l2_lounge_temperature
@@ -91,9 +93,9 @@ cards:
             entity: sensor.xiaomi_l2_lounge_humidity
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_lounge_light_corner
-            name: "Light"
-            color: yellow
+            # entity: switch.zb_plug_l2_lounge_light_corner
+            # name: "Light"
+            # color: yellow
             # show_state: true
           - type: "custom:button-card"
             # entity: sensor.l2_storage

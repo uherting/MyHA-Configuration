@@ -3,19 +3,18 @@
 
 #############################
 # SSR
-  - platform: gpio
-    name: ${ssr01_name}
-    id: ${ssr01_id}
-    pin:
-      mcp23xxx: ${mcp23017_hub01_id}
-      number: !secret MCP23017_PIN_B0
-      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-      mode: OUTPUT
-#      inverted: false
-      inverted: true
-    restore_mode: ALWAYS_OFF
-    icon: mdi:lamp
-
+- platform: gpio
+  name: ${ssr01_name}
+  id: ${ssr01_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_B0
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: OUTPUT
+    #      inverted: false
+    inverted: true
+  restore_mode: ALWAYS_OFF
+  icon: mdi:ceiling-light
 #############################
 # opto coupler
 #  - platform: gpio
