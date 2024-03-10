@@ -12,8 +12,8 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
-  - !include /config/conf/lovelace/tabs/user/smarty_01.yaml
-  # - !include /config/conf/lovelace/tabs/user/smarty_02.yaml
+  - !include /config/conf/lovelace/tabs/user/smarty_temperatures.yaml
+  - !include /config/conf/lovelace/tabs/user/smarty_heating.yaml
   - !include /config/conf/lovelace/tabs/user/information.yaml
   # - !include /config/conf/lovelace/tabs/user/zigbee_temp_humidity_door_window.yaml
   - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
@@ -21,9 +21,6 @@ views:
   # - !include /config/conf/lovelace/tabs/user/cctv_surveillance_style.yaml
   - !include /config/conf/lovelace/tabs/user/youtube.yaml
   - !include /config/conf/lovelace/tabs/user/weather.yaml
-  # - !include /config/conf/lovelace/tabs/user/smarty_02.yaml
-  # - !include /config/conf/lovelace/tabs/user/smarty_03.yaml
-  # - !include /config/conf/lovelace/tabs/user/smarty_04.yaml
 ####################################################################
 # EOF
 ####################################################################

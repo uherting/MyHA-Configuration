@@ -5,9 +5,9 @@
 ####################################################################
 ####################################################################
 
-icon: mdi:cellphone
-title: Overview 1
-path: overview1
+icon: mdi:thermometer
+title: Temperatures and quick access
+path: tempAndQuckAccess
 badges:
   [
     sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
@@ -290,127 +290,6 @@ cards:
             name: "PSU UH"
             color: yellow
             show_state: true
-
-      # ordinary thermostat
-      # TRVs L2
-      - type: grid
-        square: false
-        columns: 2
-        cards:
-          - type: thermostat
-            entity: climate.kitchen_l2
-            name: Kitchen
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-          - type: thermostat
-            entity: climate.lounge_l2
-            name: Lounge
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-          - type: thermostat
-            entity: climate.bedroom_l2
-            name: Bedroom
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-          - type: thermostat
-            entity: climate.bathroom_l2
-            name: Bathroom
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-          - type: thermostat
-            entity: climate.storage_l2
-            name: Storage
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-
-      # # Simple Thermostat
-      # - type: grid
-      #   square: false
-      #   columns: 1
-      #   cards:
-      #     - type: custom:simple-thermostat
-      #       entity: climate.bedroom_l2
-      #       header:
-      #         name: Bedroom
-      #         icon: mdi.bed
-      #       control: false
-      #       # label ui.card.climate.preset_mode: Preset
-      #     - type: custom:simple-thermostat
-      #       entity: climate.lounge_l2
-      #       header:
-      #         name: Lounge
-      #         icon: mdi.sofa
-      #       control: false
-      #       # label ui.card.climate.preset_mode: Preset
-      #     - type: custom:simple-thermostat
-      #       entity: climate.kitchen_l2
-      #       header:
-      #         name: Kitchen
-      #         icon: mdi.stove
-      #       control: false
-      #       # label ui.card.climate.preset_mode: Preset
-
-      # # Better Thermostat
-      # - type: grid
-      #   square: false
-      #   columns: 1
-      #   cards:
-      #     - type: custom:better-thermostat-ui-card
-      #       name: Bedroom
-      #       entity: climate.bedroom_l2
-      #       eco_temperature: 17
-      #     - type: custom:better-thermostat-ui-card
-      #       name: Lounge
-      #       entity: climate.lounge_l2
-      #       eco_temperature: 17
-      #     - type: custom:better-thermostat-ui-card
-      #       name: Kitchen
-      #       entity: climate.kitchen_l2
-      #       eco_temperature: 17
-
-      # scheduler cards
-      - type: grid
-        square: false
-        columns: 1
-        cards:
-          # Scheduler "Normal" for TRV L2
-          - type: custom:scheduler-card
-            title: Schedules
-            tags: none
-            customize:
-              climate.my_tuya_thermostat:
-                exclude_actions:
-                  - heat # hide the built-in action to avoid duplicates
-                  - set mode # we won't use this
-                  - set preset # we won't use this
-                actions: # add the custom actions
-                  - service: set_temperature
-                    service_data:
-                      hvac_mode: auto
-                    variables:
-                      temperature:
-                        min: 5
-                        max: 25
-                        step: 0.5
-                        unit: "°C"
-                    icon: "hass:fire"
-                    name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
-            # domains:
-            # ...
-            # entities:
-            # ...
-            # groups:
-            # ...
-            groups:
-              - name: "Radiators"
-                icon: "hass:radiator"
-                include:
-                  - climate
 ####################################################################
 # EOF
 ####################################################################
