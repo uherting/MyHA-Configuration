@@ -96,6 +96,12 @@
                     },
                     "battery_last_reported_level": {
                         "name": "Dernier niveau de batterie signalé"
+                    },
+                    "device_id": {
+                        "name": "ID de l’appareil"
+                    },
+                    "device_name": {
+                        "name": "Nom de l'appareil"
                     }
                 }
             },
@@ -138,11 +144,11 @@
                     "name": "Jours"
                 }
             },
-            "name": "Check battery last reported"
+            "name": "Batterie signalée pour la dernière fois"
         },
         "check_battery_low": {
-            "description": "Raise events for devices that have a low battery.",
-            "name": "Check battery low"
+            "description": "Déclenche des événements pour les appareils qui ont une batterie faible.",
+            "name": "Vérifier si batterie faible"
         }
     }
 }

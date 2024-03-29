@@ -18,7 +18,7 @@ along with Entity Controller.  If not, see <https://www.gnu.org/licenses/>.
 """
 Entity controller component for Home Assistant.
 Maintainer:       Daniel Mason
-Version:          v9.7.2
+Version:          v9.7.3
 Project Page:     https://danielbkr.net/projects/entity-controller/
 Documentation:    https://github.com/danobot/entity-controller
 """
@@ -107,7 +107,7 @@ from .entity_services import (
 
 
 
-VERSION = '9.7.2'
+VERSION = '9.7.3'
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -172,6 +172,11 @@ PLATFORM_SCHEMA = cv.schema_with_slug_keys(ENTITY_SCHEMA)
 
 async def async_setup(hass, config):
     """Load graph configurations."""
+
+    if(str(((datetime.now()).astimezone()).tzinfo) != str(dt.as_local(dt.now()).tzname())):
+        _LOGGER.error("Timezones do not Match. Mismatched timezones may cause unintended behaviours.")
+        _LOGGER.error("System DateTime: %s", ((datetime.now()).astimezone()).tzinfo )
+        _LOGGER.error("Home Assistant DateTime: %s", dt.as_local(dt.now()).tzname())
 
     component = EntityComponent(_LOGGER, DOMAIN, hass)
 
@@ -769,7 +774,8 @@ class Model:
                         e, ex
                     )
                 )
-                return None
+                
+                continue
 
             if self.matches(state, self.OVERRIDE_ON_STATE):
                 self.log.debug("Override entities are ON. [%s]", e)
@@ -799,7 +805,8 @@ class Model:
                         e, ex
                     )
                 )
-                return None
+                
+                continue
 
             if self.matches(state, self.SENSOR_ON_STATE):
                 self.log.debug("Sensor entities are ON. [%s]", e)
@@ -825,8 +832,8 @@ class Model:
                         e, ex
                     )
                 )
-                state = 'off'
-                return None
+                
+                continue
 
             if self.matches(state, self.STATE_ON_STATE):
                 self.log.debug("State entities are ON. [%s]", e)
