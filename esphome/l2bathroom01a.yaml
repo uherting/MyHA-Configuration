@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l2storage01a
+# DEVICE: l2bathroom01a
 #
 ####################################################################
 ####################################################################
@@ -11,22 +11,29 @@
 ####################################################################
 #
 # Purpose:
-#   - This microcontroller takes care of the esp32cam in l2storage01
-#     by cutting off the power supply with the help of a relay board
-#     if the cam becomes unavailable (a sort of hard reset)
+#   - This microcontroller takes care of the relay in the L2 bathroom
+#     by cutting off the power supply to the relay controlling the 
+#     water flow to the water with the help of a relay board.
+#
+#     Short term solution: using a touch button to  give the water 
+#                           relay power for x seconds
+#     Long term solution: using a touch button to  give the water 
+#                           relay power until a sensor detects the 
+#                           water hight in the container
 #
 # Hardware:
 #   - 1 Wemos D1 mini
 #   - 1 relay module
+#   - 1 touch button
 #
 # Automation:
-#   - undetermined, will take place most likely from the HA server
+#   - undetermined
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - none
+#   - TB to trigger the start of filling the container
 #
 # Output
 #   - 1 relay module
@@ -35,9 +42,9 @@
 ###################### PACKAGES CONFIGURATION ######################
 # naming conventions which override common behaviour
 
-substitutions: 
-  <<: !include conf/substitutions/device_specific/l2storage01a.yaml
-  <<: !include conf/substitutions/overwrites/l2storage01a.yaml
+substitutions:
+  <<: !include conf/substitutions/device_specific/l2bathroom01a.yaml
+  <<: !include conf/substitutions/overwrites/l2bathroom01a.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -54,11 +61,6 @@ packages:
 # # 1) device specific information
 # # 2) common definitions
 # # 3) overwrite the standards with custom definitions
-
-# substitutions: 
-#   <<: !include conf/substitutions/l2storage01a.yaml
-#   <<: !include conf/substitutions/common01.yaml
-#   <<: !include conf/substitutions/overwrite_standards/l2storage01a.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 # change the log level temporary for this very device
@@ -91,26 +93,24 @@ time: !include conf/common/time.yaml
 
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
-# no scripts atm!
-# script:
+script:
+  - <<: !include conf/script/l2bathroom01a/touch_button_D5_on_press.yaml
+#   - <<: !include conf/script/l2bathroom01a/touch_button_A5_on_press.yaml
+#   - <<: !include conf/script/l2bathroom01a/touch_button_A5_double.yaml
+#   - <<: !include conf/script/l2bathroom01a/touch_button_A5_long.yaml
+#   - <<: !include conf/script/l2bathroom01a/touch_button_A5_short.yaml
 #   - <<: !include conf/common/script/pir1_to_ssr1_offline.yaml
 #   - <<: !include conf/common/script/reed1_to_ssr1.yaml
-#   - <<: !include conf/script/l2storage/touch_button_A4_on_press.yaml
-#   - <<: !include conf/script/l2storage/touch_button_A5_double.yaml
-#   - <<: !include conf/script/l2storage/touch_button_A5_long.yaml
-#   - <<: !include conf/script/l2storage/touch_button_A5_short.yaml
-#   # - <<: !include conf/script/l2storage/touch_button_A5_on_press.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # - <<: !include conf/common/binary_sensor/reed_A2.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
-  # - <<: !include conf/binary_sensor/l2storage01a.yaml
-  # # - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
+  # - <<: !include conf/binary_sensor/l2bathroom01a.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -119,7 +119,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l2storage01a_case.yaml
+  # - <<: !include conf/sensor/l2bathroom01a_case.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
 
@@ -133,7 +133,7 @@ sensor:
 #-------------------------------------------------------------------
 # SWITCHES
 switch:
-  - <<: !include conf/switch/l2storage01a.yaml
+  - <<: !include conf/switch/l2bathroom01a.yaml
 # - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
 #   - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
 #   - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml
@@ -147,7 +147,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
 ####################################################################
 # EOF
 ####################################################################

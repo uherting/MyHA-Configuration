@@ -18,7 +18,7 @@ dallas_01c01_address: !secret DALLAS_01_L0ENTRANCE01_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
 dallas_01e01_address: !secret DALLAS_01_L0ENTRANCE01_ENVSENSOR_01_ADDRESS
 # dallas_01e10_name: $friendly_name_bathroom TempEnv 02
-# dallas_01e10_address: !secret DALLAS_01_L2BATHROOM01_ENVSENSOR_02_ADDRESS
+# dallas_01e10_address: !secret DALLAS_01_L0ENTRANCE01_ENVSENSOR_02_ADDRESS
 
 # Ultrasonic sensor
 postbox_newspaper_name: $friendly_name US 01

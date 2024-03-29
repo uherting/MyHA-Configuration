@@ -10,13 +10,7 @@
   name: $touchbutton01_name
   id: ${touchbutton01_id}
   pin:
-    mcp23xxx: ${mcp23017_hub01_id}
-    number: !secret MCP23017_PIN_A4
-    #
-    # TODO: before installation change settings for mode / inverted
-    # production => inverted: false / mode: INPUT
-    # before installation => inverted: true / mode: INPUT_PULLUP
-    #
+    number: !secret GPIO_PIN_D5
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: INPUT
     # mode: INPUT_PULLUP
@@ -25,7 +19,7 @@
   device_class: power
   on_press:
     # - logger.log: "TB on_press without any action due to lack of time."
-    - script.execute: tb_01_click_on_press
+    - script.execute: tb_d5_click_on_press
 # ############################################################
 #  END OF FILE
 # ############################################################

@@ -2,15 +2,15 @@
 # SUBSTITUTIONS
 
 # device definitions
-device_name: l2storage01a
-device_comment: Level 2 Storage device 01
+device_name: l2bathroom01a
+device_comment: Level 2 Bathroom device 01a
 device_platform: ESP8266
 device_board: d1_mini
 wifi_static_ip: 192.168.178.224
 
 # the friendly name and id
-friendly_name: L2 Storage01a
-friendly_id: L2Storage01a
+friendly_name: L2 Bathroom01a
+friendly_id: L2Bathroom01a
 
 relay01_name: $friendly_name Relay 01
 relay01_id: ${friendly_id}_relay_01
