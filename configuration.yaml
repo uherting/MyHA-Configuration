@@ -109,7 +109,7 @@ cloud:
 
 logger: !include conf/logger.yaml
 recorder: !include conf/recorder.yaml
-history: !include conf/history.yaml
+# history: !include conf/history.yaml
 # influxdb: !include conf/influxdb.yaml
 
 #mqtt: !include conf/mqtt.yaml
