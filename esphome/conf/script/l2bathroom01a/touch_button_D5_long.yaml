@@ -1,0 +1,13 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_multi_click action of TB (long click)
+- id: tb_d5_click_long
+  mode: restart
+  then:
+    # - logger.log: "script ssr_script_tb_01_click_long action."
+    - logger.log: "script tb_d5_click_long action."
+####################################################################
+# EOF
+####################################################################

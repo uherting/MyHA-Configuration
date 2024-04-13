@@ -1,0 +1,15 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_multi_click action of TB (short click)
+- id: tb_d5_click_short
+  mode: restart
+  then:
+    # - logger.log: "script ssr_script_tb_01_click_short action."
+    - switch.turn_on: ${relay01_id}
+    - delay: !secret DELAY_60SEC
+    - switch.turn_off: ${relay01_id}
+####################################################################
+# EOF
+####################################################################
