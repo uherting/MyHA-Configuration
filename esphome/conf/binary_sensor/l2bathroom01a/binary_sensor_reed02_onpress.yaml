@@ -1,0 +1,27 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# REED CONTACTS
+
+- platform: gpio
+  name: $reed_contact02_name
+  id: ${reed_contact02_id}
+  pin:
+    number: !secret GPIO_PIN_D6
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT_PULLUP
+    inverted: false
+  # debouncing
+  filters:
+    - delayed_on: 100ms
+    - delayed_off: 100ms
+  device_class: moving
+  on_press:
+    then:
+      - script.execute: reed02_click_on_press
+# ############################################################
+#  END OF FILE
+# ############################################################
