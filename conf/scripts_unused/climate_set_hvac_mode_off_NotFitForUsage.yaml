@@ -1,0 +1,11 @@
+service: climate.set_hvac_mode
+data:
+  hvac_mode: "off"
+  # kitchen: 798d40b10f6bbb99fb085eecb3fcb8b8
+  # lounge: 9ccc63cff442425e7e7b4e8a8ec92a3f
+  # bedroom: f4e1a1e5687466b93bfb2b7f1e30405a
+target:
+  device_id:
+    - f4e1a1e5687466b93bfb2b7f1e30405a
+    - 9ccc63cff442425e7e7b4e8a8ec92a3f
+    - 798d40b10f6bbb99fb085eecb3fcb8b8

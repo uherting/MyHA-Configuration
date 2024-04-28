@@ -55,6 +55,9 @@ homeassistant:
     - /config/var/opt/tg/l9ttgocam01
     - /config/var/opt/tg/l9ttgocam02
     - /config/var/opt/tg/ipcam_ker01
+    - /config/var/opt/tg/real_world01
+    - /config/var/opt/tg/real_world02
+    - /config/var/opt/tg/real_world03
   customize:
     person.uwe:
       entity_picture: "/local/avatars/uh.jpg"
