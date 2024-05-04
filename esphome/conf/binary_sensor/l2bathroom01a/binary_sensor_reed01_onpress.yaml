@@ -18,10 +18,10 @@
   filters:
     - delayed_on: 100ms
     - delayed_off: 100ms
-  device_class: door
-  on_release:
+  device_class: moving
+  on_press:
     then:
-      - script.execute: switch_script_reed_01
+      - script.execute: reed01_click_on_press
 # ############################################################
 #  END OF FILE
 # ############################################################

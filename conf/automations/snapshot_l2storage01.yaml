@@ -42,7 +42,7 @@
     - service: script.tg_send_txt
       data:
         msg_title: "MOTION DETECTED"
-        msg_text: "Motion was detected in area RealWorld1."
+        msg_text: "Motion was detected in area RealWorld1"
         msg_receiver: "admin"
 
     # - service: script.tg_send_txt

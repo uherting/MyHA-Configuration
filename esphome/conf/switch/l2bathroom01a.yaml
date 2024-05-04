@@ -1,19 +1,25 @@
 ####################################################################
 # SWITCHES
 
+# switch:
+
 #############################
-# relay module
+# SSR
 - platform: gpio
-  name: ${relay01_name}
-  id: ${relay01_id}
+  name: ${ssr01_name}
+  id: ${ssr01_id}
   pin:
     number: !secret GPIO_PIN_D1
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: OUTPUT
-    inverted: False
+    # high triggered SSR
+    inverted: false
+    # ---
+    # low triggered SSR
+    # inverted: true
   restore_mode: ALWAYS_OFF
-  icon: mdi:magnet
+  # for AppDaemon
+  icon: mdi:ceiling-light
 # ############################################################
 #  END OF FILE
 # ############################################################
-

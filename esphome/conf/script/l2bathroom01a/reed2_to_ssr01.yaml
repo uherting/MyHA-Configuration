@@ -2,8 +2,8 @@
 # SCRIPTS
 
 #script:
-# on_press action of reed relay #01
-- id: tb_d5_click_on_press
+# on_press action of reed relay #02
+- id: reed02_click_on_press
   mode: restart
   then:
     # I cannot tell why the following lines were inserted...
@@ -13,11 +13,9 @@
     #     then:
     #       - script.stop: tb_d5_click_on_press
 
-    # the following should avoid action while the toilet is still getting flushed
-    - delay: !secret DELAY_10SEC
-    - lambda: id(${relay01_id}).turn_on();
+    - lambda: id(${ssr01_id}).turn_on();
     - delay: !secret DELAY_60SEC
-    - lambda: id(${relay01_id}).turn_off();
+    - lambda: id(${ssr01_id}).turn_off();
 ####################################################################
 # EOF
 ####################################################################
