@@ -1,6 +1,7 @@
 # ############################################################
 #
-#  automation for L9_TTGO cam #01 notify with text / pics
+#  automation for l2storage01: notify with text / pics on
+#    motion detected by cam RealWorld01
 #
 # ############################################################
 
@@ -45,7 +46,7 @@
         msg_text: "Motion was detected in area RealWorld1"
         msg_receiver: "admin"
 
-    # - service: script.tg_send_txt
+    # - service: script.tg_files3_notification
     #   data:
     #     msg_title: "MOTION DETECTED"
     #     msg_message: "Motion was detected in area #1, 3 photos follow."
