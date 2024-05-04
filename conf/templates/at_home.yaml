@@ -14,13 +14,21 @@
       unique_id: "at home gillian yn"
       state: >
         {{ is_state('person.gillian', 'home') }}
-    - name: "Home: all family members are here"
+    - name: "Home: all are here"
       unique_id: "at home all yn"
       state: >
         {{
           (is_state('person.uwe', 'home'))
           and
           (is_state('person.gillian', 'home'))
+        }}
+    - name: "Home: all are gone"
+      unique_id: "at home all gone"
+      state: >
+        {{
+          (not is_state('person.uwe', 'home'))
+          and
+          (not is_state('person.gillian', 'home'))
         }}
 
 ####################################################################

@@ -48,6 +48,7 @@ cards:
     title: At Home
     entities:
       - binary_sensor.home_all_are_here
+      - binary_sensor.home_all_are_gone
       - binary_sensor.home_gillian_is_here
       - binary_sensor.home_uwe_is_here
 ####################################################################
