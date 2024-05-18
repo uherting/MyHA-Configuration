@@ -59,10 +59,6 @@ devices:
     friendly_name: ZB_TH_L2_Storage
   '0xa4c138a59865fee9':
     friendly_name: ZB_TH_L2_Kitchen
-  '0x84ba20fffe2a4636':
-    friendly_name: Bathroom_L2
-  '0x003c84fffec93dd7':
-    friendly_name: Storage_L2
 groups:
   '1':
     friendly_name: level2-TRVs
@@ -70,8 +66,6 @@ groups:
       - 0x1c34f1fffe0d319c/1
       - 0x1c34f1fffe095fa9/1
       - 0x1c34f1fffe095fc2/1
-      - 0x84ba20fffe2a4636/1
-      - 0x003c84fffec93dd7/1
   '2':
     friendly_name: level2-Plugs
     devices:
