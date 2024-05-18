@@ -11,3 +11,4 @@
 **/partitions.csv
 **/build/
 /secrets.yaml
+./trash
