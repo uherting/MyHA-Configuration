@@ -19,7 +19,7 @@ cards:
         cards:
           # all TRVs off
           - type: "custom:button-card"
-            name: "SpyMod"
+            name: "Off"
             entity:
             icon: mdi:radiator-off
             color: yellow
@@ -29,7 +29,7 @@ cards:
               service: script.switch_trv_to_mode_off
           # all TRVs auto
           - type: "custom:button-card"
-            name: "SpyMod"
+            name: "Auto"
             entity:
             icon: mdi:heating-coil
             color: yellow
