@@ -1,0 +1,44 @@
+# ############################################################
+#
+#  Customised scripts for L2Storage01
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# This script switches all TRVs HVAC mode to off
+# --------------------------------------------------------------
+switch_trv_to_mode_off:
+  alias: Switch all TRVs HVAC mode to off
+  icon: mdi:text
+  description: This script switches all TRVs HVAC mode to off
+  mode: queued
+  sequence:
+    - service: climate.set_hvac_mode
+      data:
+        hvac_mode: "off"
+      target:
+        device_id:
+          - f4e1a1e5687466b93bfb2b7f1e30405a
+          - 9ccc63cff442425e7e7b4e8a8ec92a3f
+          - 798d40b10f6bbb99fb085eecb3fcb8b8
+
+# --------------------------------------------------------------
+# This script switches all TRVs HVAC mode to auto
+# --------------------------------------------------------------
+switch_trv_to_mode_auto:
+  alias: Switch all TRVs HVAC mode to auto
+  icon: mdi:text
+  description: This script switches all TRVs HVAC mode to auto
+  mode: queued
+  sequence:
+    - service: climate.set_hvac_mode
+      data:
+        hvac_mode: "auto"
+      target:
+        device_id:
+          - f4e1a1e5687466b93bfb2b7f1e30405a
+          - 9ccc63cff442425e7e7b4e8a8ec92a3f
+          - 798d40b10f6bbb99fb085eecb3fcb8b8
+# ############################################################
+#  END OF FILE
+# ############################################################

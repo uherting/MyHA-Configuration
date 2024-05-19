@@ -13,6 +13,30 @@ badges: []
 cards:
   - type: vertical-stack
     cards:
+      - type: grid
+        square: false
+        columns: 2
+        cards:
+          # all TRVs off
+          - type: "custom:button-card"
+            name: "SpyMod"
+            entity:
+            icon: mdi:radiator-off
+            color: yellow
+            show_state: false
+            tap_action:
+              action: call-service
+              service: script.switch_trv_to_mode_off
+          # all TRVs auto
+          - type: "custom:button-card"
+            name: "SpyMod"
+            entity:
+            icon: mdi:heating-coil
+            color: yellow
+            show_state: false
+            tap_action:
+              action: call-service
+              service: script.switch_trv_to_mode_auto
       # TRVs L2
       # ordinary thermostat
       - type: grid
