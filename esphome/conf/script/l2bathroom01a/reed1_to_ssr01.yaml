@@ -6,13 +6,6 @@
 - id: reed01_click_on_press
   mode: restart
   then:
-    # I cannot tell why the following lines were inserted...
-    # - if:
-    #     condition:
-    #       - script.is_running: tb_d5_click_on_press
-    #     then:
-    #       - script.stop: tb_d5_click_on_press
-
     - lambda: id(${ssr01_id}).turn_on();
     - delay: !secret DELAY_60SEC
     - lambda: id(${ssr01_id}).turn_off();

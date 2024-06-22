@@ -7,39 +7,39 @@
 # Dallas Temperature sensors
 
   # case sensor
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01c01_name}
 #    address: ${dallas_01c01_address}
 
   # external sensors
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e01_name}
 #    address: ${dallas_01e01_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e02_name}
 #    address: ${dallas_01e02_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e03_name}
 #    address: ${dallas_01e03_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e04_name}
 #    address: ${dallas_01e04_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e05_name}
 #    address: ${dallas_01e05_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e06_name}
 #    address: ${dallas_01e06_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e07_name}
 #    address: ${dallas_01e07_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e08_name}
 #    address: ${dallas_01e08_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e09_name}
 #    address: ${dallas_01e09_address}
-#  - platform: dallas
+#  - platform: dallas_temp
 #    name: ${dallas_01e10_name}
 #    address: ${dallas_01e10_address}
 

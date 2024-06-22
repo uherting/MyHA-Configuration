@@ -85,7 +85,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 i2c: !include conf/common/device/i2c_v2.yaml
-dallas: !include conf/common/device/dallas.yaml
+one_wire: !include conf/common/device/dallas.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################

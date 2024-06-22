@@ -6,6 +6,7 @@
 ####################################################################
 # REED CONTACTS
 
+# grosse Taste
 - platform: gpio
   name: $reed_contact01_name
   id: ${reed_contact01_id}
@@ -13,7 +14,7 @@
     number: !secret GPIO_PIN_D5
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: INPUT_PULLUP
-    inverted: false
+    inverted: true
   # debouncing
   filters:
     - delayed_on: 100ms

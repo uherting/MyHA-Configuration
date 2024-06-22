@@ -5,7 +5,7 @@
 # Dallas Temperature sensors
 
   # case sensor
-  - platform: dallas
+  - platform: dallas_temp
     name: ${dallas_01c01_name}
     address: ${dallas_01c01_address}
 

@@ -6,6 +6,7 @@
 ####################################################################
 # REED CONTACTS
 
+# kleine Taste
 - platform: gpio
   name: $reed_contact02_name
   id: ${reed_contact02_id}
@@ -13,7 +14,7 @@
     number: !secret GPIO_PIN_D6
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: INPUT_PULLUP
-    inverted: false
+    inverted: true
   # debouncing
   filters:
     - delayed_on: 100ms

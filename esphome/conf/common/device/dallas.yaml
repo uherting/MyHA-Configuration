@@ -2,8 +2,9 @@
 # DALLAS 18B20 SENSORS
 ####################################################################
 
-- pin: !secret DALLAS_PIN_01
-  update_interval: ${dallas_upd}
+- platform: gpio
+  pin: !secret DALLAS_PIN_01
+  # update_interval: ${dallas_upd}
 # ############################################################
 #  END OF FILE
 # ############################################################

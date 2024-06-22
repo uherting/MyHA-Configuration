@@ -37,10 +37,12 @@ cards:
       - switch.l2_kitchen01_ssr_09
 
   - type: entities
-    title: L2 Storage 01a
+    title: L2 Bathroom 01a
     show_header_toggle: false
     entities:
-      - switch.l2_storage01a_relay_01
+      - switch.l2_bathroom01a_ssr_01
+      - binary_sensor.l2_bathroom01a_reed_01
+      - binary_sensor.l2_bathroom01a_reed_02
 
   # - type: entities
   #   title: L2 Thermo 01

@@ -39,18 +39,18 @@ cards:
       - switch.l2_storage01_restart_device
 
   - type: entities
-    title: L2 Storage 01a
+    title: L2 Bathroom 01a
     show_header_toggle: false
     entities:
-      - sensor.l2_storage01a_conn_ip_addr
-      - sensor.l2_storage01a_wifi_signal
-      - sensor.l2_storage01a_conn_ssid
-      - sensor.l2_storage01a_conn_bssid
-      - sensor.l2_storage01a_uptime
-      - sensor.l2_storage01a_uptime_human_readable
-      - binary_sensor.l2_storage01a_status
-      - sensor.l2_storage01a_esphome_version
-      - switch.l2_storage01a_restart_device
+      - sensor.l2_bathroom01a_conn_ip_addr
+      - sensor.l2_bathroom01a_wifi_signal
+      - sensor.l2_bathroom01a_conn_ssid
+      - sensor.l2_bathroom01a_conn_bssid
+      - sensor.l2_bathroom01a_uptime
+      - sensor.l2_bathroom01a_uptime_human_readable
+      - binary_sensor.l2_bathroom01a_status
+      - sensor.l2_bathroom01a_esphome_version
+      - switch.l2_bathroom01a_restart_device
 
   - type: entities
     title: L2 Corridor 01

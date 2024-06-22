@@ -5,7 +5,7 @@
 # Dallas Temperature sensors
 
   # external sensors
-  - platform: dallas
+  - platform: dallas_temp
     name: ${dallas_01e13_name}
     address: ${dallas_01e13_address}
 
