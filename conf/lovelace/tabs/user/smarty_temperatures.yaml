@@ -144,8 +144,9 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: switch.l2_bathroom01a_ssr_01
+            name: "Fill up"
+            color: yellow
             show_state: true
           - type: "custom:button-card"
             entity: binary_sensor.l2_bathroom01_window
