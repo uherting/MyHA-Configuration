@@ -2,7 +2,7 @@
 # OVERWRITE COMMON SUBSTITUTIONS
 
 dallas_upd: !secret DALLAS_UPDATE_INTERVAL_005M
-log_level: !secret LOG_LEVEL_DEBUG
+# log_level: !secret LOG_LEVEL_DEBUG
 
 # if there are no overrides the dummy value comes in handy ;-)
 # dummy_value: "dummy value"

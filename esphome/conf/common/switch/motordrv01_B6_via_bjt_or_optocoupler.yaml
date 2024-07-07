@@ -10,7 +10,7 @@
   id: ${motordrvctrl1_in2_id}
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
-    number: !secret MCP23017_PIN_B5
+    number: !secret MCP23017_PIN_B6
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: OUTPUT
     # high triggered MotorDrv
@@ -20,7 +20,7 @@
     # inverted: true
   restore_mode: ALWAYS_OFF
   # for AppDaemon
-  icon: mdi:engine
+  icon: mdi:autorenew
 # ############################################################
 #  END OF FILE
 # ############################################################
