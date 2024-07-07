@@ -4,7 +4,7 @@
 #script:
 # on_press action of reed relay #02
 - id: reed02_click_on_press
-  mode: restart
+  mode: queued
   then:
     - lambda: id(${ssr01_id}).turn_on();
     - delay: !secret DELAY_30SEC
