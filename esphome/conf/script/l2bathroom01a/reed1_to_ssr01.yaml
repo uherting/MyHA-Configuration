@@ -7,7 +7,7 @@
   mode: queued
   then:
     - lambda: id(${ssr01_id}).turn_on();
-    - delay: !secret DELAY_60SEC
+    - delay: !secret DELAY_70SEC
     - lambda: id(${ssr01_id}).turn_off();
 ####################################################################
 # EOF
