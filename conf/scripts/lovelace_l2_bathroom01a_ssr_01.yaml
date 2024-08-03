@@ -1,0 +1,27 @@
+# ############################################################
+#
+#  Customised scripts for l2_bathroom01a
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# This script switches on the valve of the toilet on for a certain period of time so the water container is filled up
+# --------------------------------------------------------------
+lovelace_l2_bathroom01a_ssr_01:
+  alias: Switch on the valve of the toilet on for a certain period of time so the water container is filled up
+  icon: mdi:text
+  description: This script switches on the valve of the toilet on for a certain period of time after hitting the button in lovelace
+  mode: queued
+  sequence:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.l2_bathroom01a_ssr_01
+      data: {}
+    - delay: 00:00:10
+    - service: switch.turn_off
+      target:
+        entity_id: switch.l2_bathroom01a_ssr_01
+      data: {}
+# ############################################################
+#  END OF FILE
+# ############################################################
