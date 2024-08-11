@@ -9,7 +9,7 @@ icon: mdi:thermometer
 title: Temperatures and quick access
 path: tempAndQuckAccess
 badges:
-  []
+  [sensor.abfall, sensor.ics_1, sun.sun]
   # [
   #   sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel,
   #   sensor.tankerkoenig_star_tankstelle_diesel,
