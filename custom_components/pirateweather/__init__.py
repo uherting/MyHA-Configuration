@@ -53,7 +53,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     forecast_hours = _get_config_value(entry, CONF_HOURLY_FORECAST)
     pw_entity_platform = _get_config_value(entry, PW_PLATFORM)
     pw_entity_rounding = _get_config_value(entry, PW_ROUND)
-    pw_scan_Int = entry.data[CONF_SCAN_INTERVAL]
+    pw_scan_Int = _get_config_value(entry, CONF_SCAN_INTERVAL)
+
+    if not pw_scan_Int:
+        pw_scan_Int = entry.data[CONF_SCAN_INTERVAL]
+
+    pw_scan_Int = max(pw_scan_Int, 60)
 
     # Extract list of int from forecast days/ hours string if present
     # _LOGGER.warning('forecast_days_type: ' + str(type(forecast_days)))
@@ -109,6 +114,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         CONF_SCAN_INTERVAL: pw_scan_Int,
     }
 
+    # Setup platforms
     # If both platforms
     if (PW_PLATFORMS[0] in pw_entity_platform) and (
         PW_PLATFORMS[1] in pw_entity_platform
@@ -116,10 +122,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # If only sensor
     elif PW_PLATFORMS[0] in pw_entity_platform:
-        await hass.config_entries.async_forward_entry_setup(entry, PLATFORMS[0])
+        await hass.config_entries.async_forward_entry_setups(entry, [PLATFORMS[0]])
     # If only weather
     elif PW_PLATFORMS[1] in pw_entity_platform:
-        await hass.config_entries.async_forward_entry_setup(entry, PLATFORMS[1])
+        await hass.config_entries.async_forward_entry_setups(entry, [PLATFORMS[1]])
 
     update_listener = entry.add_update_listener(async_update_options)
     hass.data[DOMAIN][entry.entry_id][UPDATE_LISTENER] = update_listener
@@ -163,7 +169,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 def _get_config_value(config_entry: ConfigEntry, key: str) -> Any:
-    if config_entry.options:
+    if config_entry.options and key in config_entry.options:
         return config_entry.options[key]
     return config_entry.data[key]
 
