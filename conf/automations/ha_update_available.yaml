@@ -4,34 +4,33 @@
 #
 # ############################################################
 
-
 # ############################################################
 # ha_update_available notification and GitHub issue creation
 # ############################################################
 - alias: HA update available
-  id: '34f21f84-a67c-11eb-a2ec-07e7a0fc6b5d'
+  id: "34f21f84-a67c-11eb-a2ec-07e7a0fc6b5d"
   initial_state: true
 
-# --------------------- TRIGGER ---------------------
+  # --------------------- TRIGGER ---------------------
   trigger:
-  - platform: state
-    entity_id: binary_sensor.updater
-#    from: 'unavailable'
-    to: 'on'
-# -------------------- CONDITIONS -------------------
+    - platform: state
+      entity_id: binary_sensor.updater
+      #    from: 'unavailable'
+      to: "on"
+  # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
-# --------------------- ACTIONS ---------------------
+  # --------------------- ACTIONS ---------------------
   action:
     - service: script.tg_send_txt
       data_template:
         msg_title: "Home Assistant"
         msg_text: "HA {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
         msg_receiver: "admin"
-    - service: rest_command.github_create_issue_on_new_ha_version
-      data_template:
-        version: "Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
-
+    # the folowing service call is unknown as stated by spooky
+    # - service: rest_command.github_create_issue_on_new_ha_version
+    #   data_template:
+    #     version: "Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }} is available."
 ############################################################
 #  END OF FILE
 # ############################################################
