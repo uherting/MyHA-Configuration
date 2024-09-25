@@ -52,19 +52,19 @@ cards:
       - sensor.l2_bathroom01a_esphome_version
       - switch.l2_bathroom01a_restart_device
 
-  - type: entities
-    title: L2 Corridor 01
-    show_header_toggle: false
-    entities:
-      - sensor.l2_corridor01_conn_ip_addr
-      - sensor.l2_corridor01_wifi_signal
-      - sensor.l2_corridor01_conn_ssid
-      - sensor.l2_corridor01_conn_bssid
-      - sensor.l2_corridor01_uptime
-      - sensor.l2_corridor01_uptime_human_readable
-      - binary_sensor.l2_corridor01_status
-      - sensor.l2_corridor01_esphome_version
-      - switch.l2_corridor01_restart_device
+  # - type: entities
+  #   title: L2 Corridor 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l2_corridor01_conn_ip_addr
+  #     - sensor.l2_corridor01_wifi_signal
+  #     - sensor.l2_corridor01_conn_ssid
+  #     - sensor.l2_corridor01_conn_bssid
+  #     - sensor.l2_corridor01_uptime
+  #     - sensor.l2_corridor01_uptime_human_readable
+  #     - binary_sensor.l2_corridor01_status
+  #     - sensor.l2_corridor01_esphome_version
+  #     - switch.l2_corridor01_restart_device
 
   # - type: entities
   #   title: L2 Bathroom 01

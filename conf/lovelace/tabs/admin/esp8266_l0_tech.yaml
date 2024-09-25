@@ -74,21 +74,21 @@ cards:
         name: Internet Access
       - switch.l0_garagesmall01_restart_device
 
-  - type: entities
-    title: l0_heatingroomarea01
-    show_header_toggle: false
-    entities:
-      - sensor.l0_heatingroomarea01_conn_ip_addr
-      - sensor.l0_heatingroomarea01_wifi_signal
-      - sensor.l0_heatingroomarea01_conn_ssid
-      - sensor.l0_heatingroomarea01_conn_bssid
-      - sensor.l0_heatingroomarea01_uptime
-      - sensor.l0_heatingroomarea01_uptime_human_readable
-      - binary_sensor.l0_heatingroomarea01_status
-      - sensor.l0_heatingroomarea01_esphome_version
-      - entity: switch.l0heatingroomarea01_internet_access
-        name: Internet Access
-      - switch.l0_heatingroomarea01_restart_device
+  # - type: entities
+  #   title: l0_heatingroomarea01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l0_heatingroomarea01_conn_ip_addr
+  #     - sensor.l0_heatingroomarea01_wifi_signal
+  #     - sensor.l0_heatingroomarea01_conn_ssid
+  #     - sensor.l0_heatingroomarea01_conn_bssid
+  #     - sensor.l0_heatingroomarea01_uptime
+  #     - sensor.l0_heatingroomarea01_uptime_human_readable
+  #     - binary_sensor.l0_heatingroomarea01_status
+  #     - sensor.l0_heatingroomarea01_esphome_version
+  #     - entity: switch.l0heatingroomarea01_internet_access
+  #       name: Internet Access
+  #     - switch.l0_heatingroomarea01_restart_device
 ####################################################################
 # EOF
 ####################################################################

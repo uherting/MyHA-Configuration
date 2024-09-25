@@ -1,0 +1,26 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l1 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l1
+path: esp8266_l1
+badges: []
+cards:
+  - type: entities
+    title: L2 TheHut 01
+      - sensor.l1_thehut01_conn_ip_addr
+      - sensor.l1_thehut01_wifi_signal
+      - sensor.l1_thehut01_conn_ssid
+      - sensor.l1_thehut01_conn_bssid
+      - sensor.l1_thehut01_uptime
+      - sensor.l1_thehut01_uptime_human_readable
+      # - binary_sensor.l1_thehut01_status
+      - sensor.l1_thehut01_esphome_version
+      - switch.l1_thehut01_restart_device
+####################################################################
+# EOF
+####################################################################
