@@ -90,9 +90,14 @@ cards:
             # color: yellow
             # show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: switch.zb_plug_l2_misc_01
+            name: "Misc 01"
+            color: yellow
             show_state: true
+          # - type: "custom:button-card"
+          #   # entity: sensor.l2_storage
+          #   name: " "
+          #   show_state: true
 
       # Bedroom L2
       - type: grid
@@ -115,9 +120,14 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
+            entity: switch.zb_plug_l2_misc_02
+            name: "Misc 02"
+            color: yellow
             show_state: true
+          # - type: "custom:button-card"
+          #   # entity: sensor.l2_storage
+          #   name: " "
+          #   show_state: true
 
       # Bathroom L2
       - type: grid
