@@ -152,10 +152,10 @@ cards:
             show_state: true
             tap_action:
               action: call-service
-              service: script.lovelace_l2_bathroom01a_ssr_01
+              service: script.lovelace_l2_bathroom01a_ssr_01_01
             double_tap_action:
               action: call-service
-              service: script.lovelace_l2_bathroom01a_ssr_01
+              service: script.lovelace_l2_bathroom01a_ssr_01_01
           - type: "custom:button-card"
             entity: binary_sensor.l2_bathroom01_window
             name: " "
@@ -178,10 +178,21 @@ cards:
             # entity:
             name: " "
             show_state: true
+          # - type: "custom:button-card"
+          #   # entity:
+          #   name: " "
+          #   show_state: true
           - type: "custom:button-card"
-            # entity:
-            name: " "
+            entity: switch.l2_bathroom01a_ssr_01
+            name: "Stop fill up"
+            color: yellow
             show_state: true
+            tap_action:
+              action: call-service
+              service: script.lovelace_l2_bathroom01a_ssr_01_02
+            double_tap_action:
+              action: call-service
+              service: script.lovelace_l2_bathroom01a_ssr_01_02
           - type: "custom:button-card"
             name: "SpyMod"
             entity: binary_sensor.l2storage_spymode
