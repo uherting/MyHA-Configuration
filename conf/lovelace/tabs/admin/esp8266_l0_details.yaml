@@ -28,17 +28,17 @@ cards:
       - switch.l0_garagesmall01_ssr_02
       - switch.l0_garagesmall01_ssr_03
 
-  - type: entities
-    title: l0heatingroomarea01
-    show_header_toggle: false
-    entities:
-      - sensor.l0_heatingroomarea01_tempcase_01
-      - sensor.l0_heatingroomarea01_heating_room
-      - sensor.l0_heatingroomarea01_heating_rl
-      - sensor.l0_heatingroomarea01_heating_vl
-      - sensor.l0_heatingroomarea01_heating_exhaust_pipe
-      - binary_sensor.l0_heatingroomarea01_pir_01
-      - switch.l0_heatingroomarea01_ssr_01
+  # - type: entities
+  #   title: l0heatingroomarea01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l0_heatingroomarea01_tempcase_01
+  #     - sensor.l0_heatingroomarea01_heating_room
+  #     - sensor.l0_heatingroomarea01_heating_rl
+  #     - sensor.l0_heatingroomarea01_heating_vl
+  #     - sensor.l0_heatingroomarea01_heating_exhaust_pipe
+  #     - binary_sensor.l0_heatingroomarea01_pir_01
+  #     - switch.l0_heatingroomarea01_ssr_01
 ####################################################################
 # EOF
 ####################################################################
