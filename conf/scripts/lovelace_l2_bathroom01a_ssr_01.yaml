@@ -11,7 +11,7 @@
 lovelace_l2_bathroom01a_ssr_01_01:
   icon: mdi:text
   description: This script switches the valve of the toilet on/off after hitting the button in lovelace
-  mode: queued
+  mode: restart
   sequence:
     - service: switch.turn_on
       target:
@@ -29,7 +29,7 @@ lovelace_l2_bathroom01a_ssr_01_01:
 lovelace_l2_bathroom01a_ssr_01_02:
   icon: mdi:text
   description: This script switches the valve of the toilet on/off after hitting the button in lovelace
-  mode: queued
+  mode: restart
   sequence:
     - service: switch.turn_off
       target:
@@ -50,7 +50,7 @@ lovelace_l2_bathroom01a_ssr_01_NoLongerInUse:
       required: true
       example: "off"
       default: "onoff"
-  mode: queued
+  mode: restart
   sequence:
     - choose:
         - conditions:
