@@ -4,7 +4,7 @@
 
 # template:
 
-# shall the bathroom window be considered open?
+# who is at home?
 - binary_sensor:
     - name: "Home: Uwe is here"
       unique_id: "at home uwe yn"

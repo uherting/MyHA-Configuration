@@ -4,7 +4,7 @@
 #
 # ############################################################
 
-#input_boolean
+#input_boolean:
 system_notify_debugging:
   name: Allow System notifications (debugging)
   icon: mdi:bell

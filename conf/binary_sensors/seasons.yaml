@@ -5,7 +5,8 @@
 # ############################################################
 
 #binary_sensor:
-# xiaomi low battery alert is based on this sensors
+
+# warm / cold seasons
 - platform: template
   sensors:
     season_is_warm:

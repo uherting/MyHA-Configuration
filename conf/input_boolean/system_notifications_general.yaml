@@ -4,7 +4,7 @@
 #
 # ############################################################
 
-#input_boolean
+#input_boolean:
 system_notify_general:
   name: Allow System notifications (general)
   icon: mdi:bell
