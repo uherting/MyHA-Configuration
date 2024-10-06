@@ -44,19 +44,19 @@ cards:
         columns: 2
         cards:
           - type: thermostat
-            entity: climate.kitchen_l2
+            entity: climate.zb_trv_kitchen_l2
             name: Kitchen
           - type: "custom:button-card"
             # entity:
             name: " "
           - type: thermostat
-            entity: climate.lounge_l2
+            entity: climate.zb_trv_lounge_l2
             name: Lounge
           - type: "custom:button-card"
             # entity:
             name: " "
           - type: thermostat
-            entity: climate.bedroom_l2
+            entity: climate.zb_trv_bedroom_l2
             name: Bedroom
           - type: "custom:button-card"
             # entity:
@@ -80,21 +80,21 @@ cards:
       #   columns: 1
       #   cards:
       #     - type: custom:simple-thermostat
-      #       entity: climate.bedroom_l2
+      #       entity: climate.zb_trv_bedroom_l2
       #       header:
       #         name: Bedroom
       #         icon: mdi.bed
       #       control: false
       #       # label ui.card.climate.preset_mode: Preset
       #     - type: custom:simple-thermostat
-      #       entity: climate.lounge_l2
+      #       entity: climate.zb_trv_lounge_l2
       #       header:
       #         name: Lounge
       #         icon: mdi.sofa
       #       control: false
       #       # label ui.card.climate.preset_mode: Preset
       #     - type: custom:simple-thermostat
-      #       entity: climate.kitchen_l2
+      #       entity: climate.zb_trv_kitchen_l2
       #       header:
       #         name: Kitchen
       #         icon: mdi.stove
@@ -108,15 +108,15 @@ cards:
       #   cards:
       #     - type: custom:better-thermostat-ui-card
       #       name: Bedroom
-      #       entity: climate.bedroom_l2
+      #       entity: climate.zb_trv_bedroom_l2
       #       eco_temperature: 17
       #     - type: custom:better-thermostat-ui-card
       #       name: Lounge
-      #       entity: climate.lounge_l2
+      #       entity: climate.zb_trv_lounge_l2
       #       eco_temperature: 17
       #     - type: custom:better-thermostat-ui-card
       #       name: Kitchen
-      #       entity: climate.kitchen_l2
+      #       entity: climate.zb_trv_kitchen_l2
       #       eco_temperature: 17
 
       # scheduler cards

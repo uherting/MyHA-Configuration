@@ -28,11 +28,11 @@ device_options:
 permit_join: true
 devices:
   '0x1c34f1fffe0d319c':
-    friendly_name: Bedroom_L2
+    friendly_name: ZB_TRV_Bedroom_L2
   '0x1c34f1fffe095fa9':
-    friendly_name: Kitchen_L2
+    friendly_name: ZB_TRV_Kitchen_L2
   '0x1c34f1fffe095fc2':
-    friendly_name: Lounge_L2
+    friendly_name: ZB_TRV_Lounge_L2
   '0xa4c1382e5e523972':
     friendly_name: ZB_Plug_L2_Lounge_Light_Corner
   '0xa4c13804488a21e2':
