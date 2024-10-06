@@ -124,6 +124,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   # - <<: !include conf/sensor/l2bathroom01a_case.yaml
+  # - <<: !include conf/sensor/l2bathroom01a_env01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
 

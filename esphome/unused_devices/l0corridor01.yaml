@@ -13,7 +13,7 @@
 # Purpose:
 #   - Based on one / more PIR/RCWL sensor ...
 #       - lamp(s) will be switched on using a SSR
-#   - One temperature sensor to measure the temperature in the case and 
+#   - One temperature sensor to measure the temperature in the case and
 #     x temperature sensors to measure the environment temperatures
 #
 # Future feature:
@@ -43,7 +43,7 @@
 #   - x temperature sensors (for the case / environment)
 #   - 2 PIR/RCWL sensor via I2C / MCP23017
 #   - 1 TP223 touch button for toggling light
-#      disabling motion detection if switch is 'on' 
+#      disabling motion detection if switch is 'on'
 #
 # Output
 #   - 1 SSR via I2C / MCP23017
@@ -54,7 +54,7 @@
 # 2) common definitions
 # 3) overwrite the standards with custom definitions
 
-substitutions: 
+substitutions:
   <<: !include conf/substitutions/l0corridor01.yaml
   <<: !include conf/substitutions/common01.yaml
   <<: !include conf/substitutions/overwrite_standards/l0corridor01.yaml
@@ -116,11 +116,11 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/sensor/l0corridor01_case.yaml
-  # - <<: !include conf/sensor/l0corridor01_case.yaml
-  # - <<: !include conf/sensor/l0corridor01_env_01.yaml
-  # - <<: !include conf/sensor/l0corridor01_env_02.yaml
-  # - <<: !include conf/sensor/l0corridor01_env_03.yaml
+  - <<: !include conf/sensor/l0corridor01/l0corridor01_case.yaml
+  # - <<: !include conf/sensor/l0corridor01/l0corridor01_case.yaml
+  # - <<: !include conf/sensor/l0corridor01/l0corridor01_env_01.yaml
+  # - <<: !include conf/sensor/l0corridor01/l0corridor01_env_02.yaml
+  # - <<: !include conf/sensor/l0corridor01/l0corridor01_env_03.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -143,7 +143,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
 ####################################################################
 # EOF
 ####################################################################

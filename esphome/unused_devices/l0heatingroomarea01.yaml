@@ -13,7 +13,7 @@
 # Purpose:
 #   - Based on one / more PIR/RCWL sensor ...
 #       - lamp(s) will be switched on using a SSR
-#   - One temperature sensor to measure the temperature in the case and 
+#   - One temperature sensor to measure the temperature in the case and
 #     x temperature sensors to measure the environment temperatures
 #
 # Future feature:
@@ -51,7 +51,7 @@
 # naming conventions which override common behaviour
 # log_level can be overwritten in overwrites/<device_name>.yaml
 
-substitutions: 
+substitutions:
   <<: !include conf/substitutions/device_specific/l0heatingroomarea01.yaml
   <<: !include conf/substitutions/overwrites/l0heatingroomarea01.yaml
 
@@ -113,20 +113,20 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   # ==============
-  - <<: !include conf/sensor/l0heatingroomarea01_case.yaml
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_01.yaml
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_02.yaml
-  # - <<: !include conf/sensor/l0heatingroomarea01_env_03.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_case.yaml
+  # - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_01.yaml
+  # - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_02.yaml
+  # - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_03.yaml
   # heating room Dallas 18B20
   # =========================
   # Raumtemperatur
-  - <<: !include conf/sensor/l0heatingroomarea01_env_10.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_10.yaml
   # Vorlauf
-  - <<: !include conf/sensor/l0heatingroomarea01_env_11.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_11.yaml
   # Ruecklauf
-  - <<: !include conf/sensor/l0heatingroomarea01_env_12.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_12.yaml
   # Abgas
-  - <<: !include conf/sensor/l0heatingroomarea01_env_13.yaml
+  - <<: !include conf/sensor/l0heatingroomarea01/l0heatingroomarea01_env_13.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -151,7 +151,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
 ####################################################################
 # EOF
 ####################################################################

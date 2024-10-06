@@ -99,7 +99,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l9cam3203.yaml
+  # - <<: !include conf/sensor/l9cam3203/l9cam3203.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp32_GPIO14_upd_01min.yaml
 

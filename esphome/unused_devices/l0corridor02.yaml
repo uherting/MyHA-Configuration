@@ -13,7 +13,7 @@
 # Purpose:
 #   - Based on one / more PIR/RCWL sensor ...
 #       - lamp(s) will be switched on using a SSR
-#   - One temperature sensor to measure the temperature in the case and 
+#   - One temperature sensor to measure the temperature in the case and
 #     x temperature sensors to measure the environment temperatures
 #
 # Future feature:
@@ -54,7 +54,7 @@
 # 2) common definitions
 # 3) overwrite the standards with custom definitions
 
-substitutions: 
+substitutions:
   <<: !include conf/substitutions/l0corridor02.yaml
   <<: !include conf/substitutions/common01.yaml
   <<: !include conf/substitutions/overwrite_standards/l0corridor02.yaml
@@ -116,15 +116,15 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l0corridor02_case.yaml
-  # - <<: !include conf/sensor/l0corridor02_env_01.yaml
-  # - <<: !include conf/sensor/l0corridor02_env_02.yaml
-  # - <<: !include conf/sensor/l0corridor02_env_03.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_case.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_01.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_02.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_03.yaml
   # heating room Dallas 18B20
-  # - <<: !include conf/sensor/l0corridor02_env_10.yaml
-  # - <<: !include conf/sensor/l0corridor02_env_11.yaml
-  # - <<: !include conf/sensor/l0corridor02_env_12.yaml
-  # - <<: !include conf/sensor/l0corridor02_env_13.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_10.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_11.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_12.yaml
+  # - <<: !include conf/sensor/l0corridor02/l0corridor02_env_13.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
@@ -147,7 +147,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
 ####################################################################
 # EOF
 ####################################################################

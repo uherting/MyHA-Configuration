@@ -132,10 +132,10 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  - <<: !include conf/sensor/l2ble01_01.yaml
-  - <<: !include conf/sensor/l2ble01_02.yaml
-  - <<: !include conf/sensor/l2ble01_03.yaml
-  - <<: !include conf/sensor/l2ble01_04.yaml
+  - <<: !include conf/sensor/l2ble01/l2ble01_01.yaml
+  - <<: !include conf/sensor/l2ble01/l2ble01_02.yaml
+  - <<: !include conf/sensor/l2ble01/l2ble01_03.yaml
+  - <<: !include conf/sensor/l2ble01/l2ble01_04.yaml
 #-------------------------------------------------------------------
 # SERVOS
 # servo:

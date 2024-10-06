@@ -126,8 +126,8 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   # temp sensors
-  - <<: !include conf/sensor/l0garagesmall01_case.yaml
-  # - <<: !include conf/sensor/l0garagesmall01_env01.yaml
+  - <<: !include conf/sensor/l0garagesmall01/l0garagesmall01_case.yaml
+  # - <<: !include conf/sensor/l0garagesmall01/l0garagesmall01_env01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
