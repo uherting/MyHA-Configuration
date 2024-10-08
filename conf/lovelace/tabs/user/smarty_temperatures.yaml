@@ -220,7 +220,7 @@ cards:
           #   show_state: true
           - type: "custom:button-card"
             entity: switch.l2_bathroom01a_ssr_01
-            name: "Stop fill up"
+            name: "Stop fill"
             color: yellow
             show_state: false
             tap_action:
@@ -233,7 +233,7 @@ cards:
             entity: switch.zb_plug_l2_kitchen_dishwasher
             name: "Dishw"
             color: yellow
-            show_state: true
+            show_state: false
             tap_action:
               action: call-service
               service: script.lovelace_zb_plug_l2_kitchen_dishwasher
@@ -253,7 +253,7 @@ cards:
             entity: switch.zb_plug_l2_kitchen_coffeemachine
             name: "Senseo"
             color: yellow
-            show_state: true
+            show_state: false
             tap_action:
               action: call-service
               service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
@@ -264,17 +264,17 @@ cards:
             entity: switch.zb_plug_l2_kitchen_microwave
             name: "Microwave"
             color: yellow
-            show_state: true
+            show_state: false
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_lounge_scanner
             name: "Scanner"
             color: yellow
-            show_state: true
+            show_state: false
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_fridge
             name: "Fridge"
             color: yellow
-            show_state: true
+            show_state: false
             tap_action:
               action: call-service
               service: script.lovelace_zb_plug_l2_kitchen_fridge
@@ -294,22 +294,22 @@ cards:
             entity: sensor.spghnote8pro_battery_level
             name: "Batt GH"
             color: yellow
-            show_state: true
+            show_state: false
           - type: "custom:button-card"
             entity: switch.zb_charger_gh
             name: "PSU GH"
             color: yellow
-            show_state: true
+            show_state: false
           - type: "custom:button-card"
             entity: sensor.spuhnote10pro_battery_level
             name: "Batt UH"
             color: yellow
-            show_state: true
+            show_state: false
           - type: "custom:button-card"
             entity: switch.zb_charger_uh
             name: "PSU UH"
             color: yellow
-            show_state: true
+            show_state: false
 ####################################################################
 # EOF
 ####################################################################
