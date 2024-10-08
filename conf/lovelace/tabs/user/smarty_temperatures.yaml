@@ -51,11 +51,11 @@ cards:
             show_state: false
           - type: "custom:button-card"
             name: " "
-            entity: sensor.xiaomi_l2_storage_temperature
+            entity: sensor.temperature_humidity_sensor_d59f_temperature
             show_state: true
           - type: "custom:button-card"
             name: " "
-            entity: sensor.xiaomi_l2_storage_humidity
+            entity: sensor.temperature_humidity_sensor_d59f_humidity
             show_state: true
           - type: "custom:button-card"
             # entity:
@@ -78,11 +78,11 @@ cards:
             color: yellow
           - type: "custom:button-card"
             name: " "
-            entity: sensor.xiaomi_l2_lounge_temperature
+            entity: sensor.temperature_humidity_sensor_3592_temperature
             show_state: true
           - type: "custom:button-card"
             name: " "
-            entity: sensor.xiaomi_l2_lounge_humidity
+            entity: sensor.temperature_humidity_sensor_3592_humidity
             show_state: true
           - type: "custom:button-card"
             # entity: switch.zb_plug_l2_lounge_light_corner
@@ -93,7 +93,7 @@ cards:
             entity: switch.zb_plug_l2_misc_01
             name: "Misc 01"
             color: yellow
-            show_state: true
+            show_state: false
           # - type: "custom:button-card"
           #   # entity: sensor.l2_storage
           #   name: " "
@@ -108,11 +108,11 @@ cards:
           - type: "custom:button-card"
             name: Bedroom
           - type: "custom:button-card"
-            entity: sensor.xiaomi_l2_bedroom_temperature
+            entity: sensor.temperature_humidity_sensor_8eec_temperature
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.xiaomi_l2_bedroom_humidity
+            entity: sensor.temperature_humidity_sensor_8eec_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
@@ -123,7 +123,7 @@ cards:
             entity: switch.zb_plug_l2_misc_02
             name: "Misc 02"
             color: yellow
-            show_state: true
+            show_state: false
           # - type: "custom:button-card"
           #   # entity: sensor.l2_storage
           #   name: " "
@@ -138,11 +138,11 @@ cards:
           - type: "custom:button-card"
             name: Bathroom
           - type: "custom:button-card"
-            entity: sensor.xiaomi_l2_bathroom_temperature
+            entity: sensor.temperature_humidity_sensor_e3c3_temperature
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: sensor.xiaomi_l2_bathroom_humidity
+            entity: sensor.temperature_humidity_sensor_e3c3_humidity
             name: " "
             show_state: true
           - type: "custom:button-card"
