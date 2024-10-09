@@ -19,7 +19,7 @@ cards:
         cards:
           # all TRVs off
           - type: "custom:button-card"
-            name: "Off"
+            name: "All TRV off mode"
             entity:
             icon: mdi:radiator-off
             color: yellow
@@ -29,7 +29,7 @@ cards:
               service: script.switch_trv_to_mode_off
           # all TRVs auto
           - type: "custom:button-card"
-            name: "Auto"
+            name: "All TRV auto mode"
             entity:
             icon: mdi:heating-coil
             color: yellow
@@ -46,9 +46,26 @@ cards:
           - type: thermostat
             entity: climate.zb_trv_kitchen_l2
             name: Kitchen
-          - type: "custom:button-card"
-            # entity:
-            name: " "
+          - type: grid
+            square: false
+            columns: 1
+            cards:
+              - type: "custom:button-card"
+                entity: input_boolean.l2_trv_emergency_handling_yn
+                name: "L2 TRV problem handling"
+              - type: "custom:button-card"
+                entity: input_boolean.l2_trv_emergency_handling_in_progress_bedroom
+                name: "L2 SZ TRV problem handling "
+              - type: grid
+                square: false
+                columns: 1
+                cards:
+                  - type: entities
+                    title: " "
+                    show_header_toggle: false
+                    entities:
+                      - input_number.l2_trv_threshold_low
+                      - input_number.l2_trv_threshold_high
           - type: thermostat
             entity: climate.zb_trv_lounge_l2
             name: Lounge

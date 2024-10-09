@@ -1,0 +1,30 @@
+# ############################################################
+#
+#  TRV related
+#
+# ############################################################
+
+# ############################################################
+#  TRV
+# ############################################################
+# input_number:
+l2_trv_threshold_low:
+  name: L2 TRV threshold low
+  min: 0
+  max: 3
+  step: 0.5
+  unit_of_measurement: °C
+  mode: slider
+  icon: mdi:thermometer-lines
+
+l2_trv_threshold_high:
+  name: L2 TRV threshold high
+  min: 0
+  max: 3
+  step: 0.5
+  unit_of_measurement: °C
+  mode: slider
+  icon: mdi:thermometer-lines
+# ############################################################
+#  END OF FILE
+# ############################################################

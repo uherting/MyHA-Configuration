@@ -18,8 +18,11 @@ switch_trv_to_mode_off:
         hvac_mode: "off"
       target:
         device_id:
+          # bedroom
           - f4e1a1e5687466b93bfb2b7f1e30405a
+          # lounge
           - 9ccc63cff442425e7e7b4e8a8ec92a3f
+          # kitchen
           - 798d40b10f6bbb99fb085eecb3fcb8b8
 
 # --------------------------------------------------------------
@@ -36,8 +39,11 @@ switch_trv_to_mode_auto:
         hvac_mode: "auto"
       target:
         device_id:
+          # bedroom
           - f4e1a1e5687466b93bfb2b7f1e30405a
+          # lounge
           - 9ccc63cff442425e7e7b4e8a8ec92a3f
+          # kitchen
           - 798d40b10f6bbb99fb085eecb3fcb8b8
 # ############################################################
 #  END OF FILE
