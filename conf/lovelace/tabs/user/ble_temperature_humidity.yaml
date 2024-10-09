@@ -14,10 +14,10 @@ cards:
   - type: custom:mini-graph-card
     title: Room Temperatures
     entities:
-      - sensor.xiaomi_l2_bathroom_temperature
-      - sensor.xiaomi_l2_bedroom_temperature
-      - sensor.xiaomi_l2_lounge_temperature
-      - sensor.xiaomi_l2_storage_temperature
+      - sensor.temperature_humidity_sensor_8eec_temperature
+      - sensor.temperature_humidity_sensor_3592_temperature
+      - sensor.temperature_humidity_sensor_d59f_temperature
+      - sensor.temperature_humidity_sensor_e3c3_temperature
     hours_to_show: 72
     hour24: true
     show_legend: true
@@ -31,10 +31,10 @@ cards:
   - type: custom:mini-graph-card
     title: Room Humidity
     entities:
-      - sensor.xiaomi_l2_bathroom_humidity
-      - sensor.xiaomi_l2_bedroom_humidity
-      - sensor.xiaomi_l2_lounge_humidity
-      - sensor.xiaomi_l2_storage_humidity
+      - sensor.temperature_humidity_sensor_8eec_humidity
+      - sensor.temperature_humidity_sensor_3592_humidity
+      - sensor.temperature_humidity_sensor_d59f_humidity
+      - sensor.temperature_humidity_sensor_e3c3_humidity
     hours_to_show: 72
     hour24: true
     show_legend: true
@@ -44,7 +44,6 @@ cards:
     # upper_bound: 60
     points_per_hour: 5
     height: 250
-
 ####################################################################
 # EOF
 ####################################################################
