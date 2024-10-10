@@ -20,7 +20,7 @@
 (
   (is_state('input_boolean.l2_trv_emergency_handling_in_progress_bedroom', 'off'))
 and 
-  ((state_attr('climate.zb_trv_bedroom_l2', 'hvac_action')) == 'heating' )
+  ((state_attr('climate.zb_trv_bedroom_l2', 'hvac_action')) == 'idle' )
 and
   (
     (
