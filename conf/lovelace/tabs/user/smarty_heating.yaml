@@ -44,8 +44,8 @@ cards:
         columns: 2
         cards:
           - type: thermostat
-            entity: climate.zb_trv_kitchen_l2
-            name: Kitchen
+            entity: climate.zb_trv_bedroom_l2
+            name: Bedroom
           - type: grid
             square: false
             columns: 1
@@ -73,8 +73,8 @@ cards:
             # entity:
             name: " "
           - type: thermostat
-            entity: climate.zb_trv_bedroom_l2
-            name: Bedroom
+            entity: climate.zb_trv_kitchen_l2
+            name: Kitchen
           - type: "custom:button-card"
             # entity:
             name: " "
