@@ -18,35 +18,43 @@
       id: "l2_trv_runaway_high_bedroom"
       value_template: "{{
 (
+  (is_state('input_boolean.l2_trv_emergency_handling_yn', 'on'))
+and
   (is_state('input_boolean.l2_trv_emergency_handling_in_progress_bedroom', 'off'))
-and 
-  ((state_attr('climate.zb_trv_bedroom_l2', 'hvac_action')) == 'idle' )
 and
   (
     (
       (
         (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) + 
-        (states('input_number.l2_trv_threshold_low') | float(0))
+        (states('input_number.l2_trv_threshold_high') | float(0))
       ) 
       > (state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0))
     )
   )
 )
-        }}"
-    # - platform: template
-    #   id: "l2_trv_runaway_low"
-    #   value_template:
-    #     "{{ (is_state('input_boolean.l2_trv_emergency_handling_yn', 'on'))
-    #     and
-    #     (is_state('input_boolean.l2_trv_emergency_handling_in_progress', 'on'))
-    #     and
-    #     (1==0)
-    #     }}"
+}}"
+    - platform: template
+      id: "l2_trv_runaway_low"
+      value_template: "{{
+(
+  (is_state('input_boolean.l2_trv_emergency_handling_yn', 'on'))
+and
+  (is_state('input_boolean.l2_trv_emergency_handling_in_progress_bedroom', 'on'))
+and
+  (
+    (
+      (
+        (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) -
+        (states('input_number.l2_trv_threshold_low') | float(0))
+      ) 
+      < (state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0))
+    )
+  )
+)
+}}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition:
-    condition: template
-    value_template: "{{ (is_state('input_boolean.l2_trv_emergency_handling_yn', 'on')) }}"
+  condition: []
   # --------------------- ACTIONS ---------------------
   action:
     - choose:
@@ -72,8 +80,28 @@ and
             - service: input_boolean.turn_on
               target:
                 entity_id: input_boolean.l2_trv_emergency_handling_in_progress_bedroom
-              # data:
-              #   option: "{{ states('input_text.zb_charger_state_current_ordinary_charging_finished') }}"
+        - conditions:
+            - condition: trigger
+              id: "l2_trv_runaway_low"
+          sequence:
+            - service: climate.set_hvac_mode
+              data:
+                hvac_mode: "auto"
+              target:
+                device_id:
+                  # bedroom
+                  - f4e1a1e5687466b93bfb2b7f1e30405a
+                  # lounge
+                  # - 9ccc63cff442425e7e7b4e8a8ec92a3f
+                  # kitchen
+                  # - 798d40b10f6bbb99fb085eecb3fcb8b8
+            - service: persistent_notification.create
+              data:
+                title: "L2 TRV run away conditions handled"
+                message: "L2 TRV run away conditions resetted to normal for the bedroom. Time: {{ now() }}"
+            - service: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.l2_trv_emergency_handling_in_progress_bedroom
       default:
         - service: system_log.write
           data:
