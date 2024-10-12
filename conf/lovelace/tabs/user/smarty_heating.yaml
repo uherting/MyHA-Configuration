@@ -52,10 +52,10 @@ cards:
             cards:
               - type: "custom:button-card"
                 entity: input_boolean.l2_trv_runaway_handling_yn
-                name: "L2 TRV problem handling"
+                name: "L2 TRV handle runaway"
               - type: "custom:button-card"
                 entity: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
-                name: "L2 SZ TRV problem handling "
+                name: "L2 SZ TRV problem handled"
               - type: grid
                 square: false
                 columns: 1
