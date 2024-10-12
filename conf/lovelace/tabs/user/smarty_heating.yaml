@@ -51,10 +51,10 @@ cards:
             columns: 1
             cards:
               - type: "custom:button-card"
-                entity: input_boolean.l2_trv_emergency_handling_yn
+                entity: input_boolean.l2_trv_runaway_handling_yn
                 name: "L2 TRV problem handling"
               - type: "custom:button-card"
-                entity: input_boolean.l2_trv_emergency_handling_in_progress_bedroom
+                entity: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
                 name: "L2 SZ TRV problem handling "
               - type: grid
                 square: false

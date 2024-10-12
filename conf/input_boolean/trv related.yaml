@@ -5,14 +5,14 @@
 # ############################################################
 
 #input_boolean:
-l2_trv_emergency_handling_yn:
-  name: Allow handling of TRV emergencies
+l2_trv_runaway_handling_yn:
+  name: Allow handling of TRV run away situations
   icon: mdi:exit-run
   # no need to define an initial value as it will be reloaded
   # initial: off
 
-l2_trv_emergency_handling_in_progress_bedroom:
-  name: L2 TRV emergency in bedroom is taken care of
+l2_trv_runaway_handling_in_progress_bedroom:
+  name: L2 TRV run away in bedroom is taken care of
   icon: mdi:progress-check
   # no need to define an initial value as it will be reloaded
   # initial: off
