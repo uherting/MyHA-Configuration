@@ -5,23 +5,25 @@
 # template:
 
 - binary_sensor:
+    # general precondition to processing run away high temp condition
     - name: "L2 TRV runaway precondition high"
       unique_id: "l2_trv_runaway_precondition_high"
       state: >
         {{
-          is_state('input_boolean.l2_trv_emergency_handling_yn', 'on')
+          is_state('input_boolean.l2_trv_runaway_handling_yn', 'on')
           and
-          is_state('input_boolean.l2_trv_emergency_handling_in_progress_bedroom', 'off')
+          is_state('input_boolean.l2_trv_runaway_handling_in_progress_bedroom', 'off')
         }}
+    # general precondition to processing run away low temp condition
     - name: "L2 TRV runaway precondition low"
       unique_id: "l2_trv_runaway_precondition_low"
       state: >
         {{
-          is_state('input_boolean.l2_trv_emergency_handling_yn', 'on')
+          is_state('input_boolean.l2_trv_runaway_handling_yn', 'on')
           and
-          is_state('input_boolean.l2_trv_emergency_handling_in_progress_bedroom', 'on')
+          is_state('input_boolean.l2_trv_runaway_handling_in_progress_bedroom', 'on')
         }}
-- binary_sensor:
+    # condition to processing run away high temp condition
     - name: "L2 TRV runaway condition bedroom high"
       unique_id: "l2_trv_runaway_condition_bedroom_high"
       state: >
@@ -36,7 +38,7 @@
             )
           )
         }}
-- binary_sensor:
+    # condition to processing run away low temp condition
     - name: "L2 TRV runaway condition bedroom low"
       unique_id: "l2_trv_runaway_condition_bedroom_low"
       state: >
