@@ -21,7 +21,7 @@
   # -------------------- CONDITIONS -------------------
   condition:
     - condition: template
-      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 25 }}'
+      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 35 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
