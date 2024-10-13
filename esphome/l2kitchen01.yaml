@@ -51,8 +51,9 @@
 #   - 1 SSR via I2C / MCP23017
 #
 
-###################### PACKAGES CONFIGURATION ######################
-# naming conventions which override common behaviour
+############### GETTING THE NAMING CONVENTIONS SET UP #############
+# 1) device specific information
+# 2) overwrite the standards with custom definitions
 
 substitutions: 
   <<: !include conf/substitutions/device_specific/l2kitchen01.yaml
