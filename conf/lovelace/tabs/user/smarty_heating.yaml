@@ -43,9 +43,21 @@ cards:
         square: false
         columns: 2
         cards:
+          # - type: thermostat
+          #   entity: climate.zb_trv_bedroom_l2
+          #   name: Bedroom
+          # - type: custom:better-thermostat-ui-card
+          #   name: Bedroom
+          #   entity: climate.zb_trv_bedroom_l2
+          #   eco_temperature: 17
           - type: thermostat
-            entity: climate.zb_trv_bedroom_l2
-            name: Bedroom
+            entity: climate.l2_bedroom
+            features:
+              - style: icons
+                type: climate-hvac-modes
+                hvac_modes:
+                  - heat
+                  - "off"
           - type: grid
             square: false
             columns: 1
@@ -66,30 +78,42 @@ cards:
                     entities:
                       - input_number.l2_trv_threshold_low
                       - input_number.l2_trv_threshold_high
+          # - type: thermostat
+          #   entity: climate.zb_trv_lounge_l2
+          #   name: Lounge
+          # - type: custom:better-thermostat-ui-card
+          #   name: Lounge
+          #   entity: climate.zb_trv_lounge_l2
+          #   eco_temperature: 17
           - type: thermostat
-            entity: climate.zb_trv_lounge_l2
-            name: Lounge
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-          - type: thermostat
-            entity: climate.zb_trv_kitchen_l2
-            name: Kitchen
+            entity: climate.l2_lounge
+            features:
+              - style: icons
+                type: climate-hvac-modes
+                hvac_modes:
+                  - heat
+                  - "off"
           - type: "custom:button-card"
             # entity:
             name: " "
           # - type: thermostat
-          #   entity: climate.bathroom_l2
-          #   name: Bathroom
-          # - type: "custom:button-card"
-          #   # entity:
-          #   name: " "
-          # - type: thermostat
-          #   entity: climate.storage_l2
-          #   name: Storage
-          # - type: "custom:button-card"
-          #   # entity:
-          #   name: " "
+          #   entity: climate.zb_trv_kitchen_l2
+          #   name: Kitchen
+          # - type: custom:better-thermostat-ui-card
+          #   name: Kitchen
+          #   entity: climate.zb_trv_kitchen_l2
+          #   eco_temperature: 17
+          - type: thermostat
+            entity: climate.l2_kitchen
+            features:
+              - style: icons
+                type: climate-hvac-modes
+                hvac_modes:
+                  - heat
+                  - "off"
+          - type: "custom:button-card"
+            # entity:
+            name: " "
 
       # # Simple Thermostat
       # - type: grid

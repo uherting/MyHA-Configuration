@@ -5,13 +5,13 @@
 # ############################################################
 
 # ############################################################
-#  L2 TRV run away handling by switching hvac_mode
+#  L2 TRV run away handling by switching hvac_mode (bedroom)
 # ############################################################
-- alias: L2 TRV run away handling by switching hvac_mode
+- alias: L2 TRV run away handling by switching hvac_mode (bedroom)
   id: "251c4a95-6635-448e-90e5-c2795d3b7722"
-  description: "This automation handles L2 TRV run away conditions"
+  description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: template
@@ -62,7 +62,7 @@
           sequence:
             - service: climate.set_hvac_mode
               data:
-                hvac_mode: "auto"
+                hvac_mode: "heat"
               target:
                 device_id:
                   # bedroom
@@ -85,13 +85,13 @@
             level: "error"
             logger: "system_log.external"
 # ############################################################
-#  L2 TRV run away handling by switching hvac_mode
+#  L2 TRV run away handling by switching hvac_mode (bedroom)
 # ############################################################
-- alias: L2 TRV run away handling reset after x hours
+- alias: L2 TRV run away handling reset after x hours (bedroom)
   id: "5168e288-e54d-4c2e-acc6-cc285b922ef6"
-  description: "This automation resets run away handling after x hours"
+  description: "This automation resets run away handling after x hours in the L2 bedroom"
   mode: single
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
@@ -107,7 +107,7 @@
   action:
     service: climate.set_hvac_mode
     data:
-      hvac_mode: "auto"
+      hvac_mode: "heat"
     target:
       device_id:
         # bedroom
