@@ -13,36 +13,18 @@ badges: []
 cards:
   - type: vertical-stack
     cards:
-      - type: grid
-        square: false
-        columns: 2
-        cards:
-          # all TRVs off
-          - type: "custom:button-card"
-            name: "All TRV off mode"
-            entity:
-            icon: mdi:radiator-off
-            color: yellow
-            show_state: false
-            tap_action:
-              action: call-service
-              service: script.switch_trv_to_mode_off
-          # all TRVs auto
-          - type: "custom:button-card"
-            name: "All TRV auto mode"
-            entity:
-            icon: mdi:heating-coil
-            color: yellow
-            show_state: false
-            tap_action:
-              action: call-service
-              service: script.switch_trv_to_mode_auto
+      # ==============================================================================
       # TRVs L2
+      # ==============================================================================
+
       # ordinary thermostat
       - type: grid
         square: false
-        columns: 2
+        columns: 1
         cards:
+          # ========================================
+          # L2 Bedroom
+          # ========================================
           # - type: thermostat
           #   entity: climate.zb_trv_bedroom_l2
           #   name: Bedroom
@@ -50,71 +32,67 @@ cards:
           #   name: Bedroom
           #   entity: climate.zb_trv_bedroom_l2
           #   eco_temperature: 17
-          - type: thermostat
-            entity: climate.l2_bedroom
-            features:
-              - style: icons
-                type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - "off"
-          - type: grid
-            square: false
-            columns: 1
-            cards:
-              - type: "custom:button-card"
-                entity: input_boolean.l2_trv_runaway_handling_yn
-                name: "L2 TRV handle runaway"
-              - type: "custom:button-card"
-                entity: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
-                name: "L2 SZ TRV problem handled"
-              - type: grid
-                square: false
-                columns: 1
-                cards:
-                  - type: entities
-                    title: " "
-                    show_header_toggle: false
-                    entities:
-                      - input_number.l2_trv_threshold_low
-                      - input_number.l2_trv_threshold_high
-          # - type: thermostat
-          #   entity: climate.zb_trv_lounge_l2
-          #   name: Lounge
-          # - type: custom:better-thermostat-ui-card
-          #   name: Lounge
-          #   entity: climate.zb_trv_lounge_l2
-          #   eco_temperature: 17
-          - type: thermostat
-            entity: climate.l2_lounge
-            features:
-              - style: icons
-                type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - "off"
-          - type: "custom:button-card"
-            # entity:
-            name: " "
-          # - type: thermostat
-          #   entity: climate.zb_trv_kitchen_l2
-          #   name: Kitchen
-          # - type: custom:better-thermostat-ui-card
-          #   name: Kitchen
-          #   entity: climate.zb_trv_kitchen_l2
-          #   eco_temperature: 17
-          - type: thermostat
-            entity: climate.l2_kitchen
-            features:
-              - style: icons
-                type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - "off"
-          - type: "custom:button-card"
-            # entity:
-            name: " "
 
+          # - type: thermostat
+          - type: custom:better-thermostat-ui-card
+            name: "L2 Bedroom"
+            eco_temperature: 17
+            set_current_as_main: false
+            disable_buttons: true
+            entity: climate.l2_bedroom
+            # features:
+            #   - style: icons
+            #     type: climate-hvac-modes
+            #     hvac_modes:
+            #       - heat
+            #       - "off"
+            #       - auto
+
+          # ========================================
+          # L2 Lounge
+          # ========================================
+          # - type: thermostat
+          #   entity: climate.zb_trv_lounge_l2
+          #   name: Lounge
+          # - type: custom:better-thermostat-ui-card
+          #   name: Lounge
+          #   entity: climate.zb_trv_lounge_l2
+          #   eco_temperature: 17
+          # - type: thermostat
+          - type: custom:better-thermostat-ui-card
+            name: L2 Lounge
+            eco_temperature: 17
+            set_current_as_main: false
+            disable_buttons: true
+            entity: climate.l2_lounge
+
+          # ========================================
+          # L2 Kitchen
+          # ========================================
+          # - type: thermostat
+          #   entity: climate.zb_trv_kitchen_l2
+          #   name: Kitchen
+          # - type: custom:better-thermostat-ui-card
+          #   name: Kitchen
+          #   entity: climate.zb_trv_kitchen_l2
+          #   eco_temperature: 17
+          # - type: thermostat
+          - type: custom:better-thermostat-ui-card
+            entity: climate.l2_kitchen
+            name: "L2 Kitchen"
+            eco_temperature: 17
+            set_current_as_main: false
+            disable_buttons: true
+            # features:
+            #   - style: icons
+            #     type: climate-hvac-modes
+            #     hvac_modes:
+            #       - heat
+            #       - "off"
+
+      # ==============================================================================
+      # some unused / unfit(?) examples
+      # ==============================================================================
       # # Simple Thermostat
       # - type: grid
       #   square: false
@@ -160,7 +138,9 @@ cards:
       #       entity: climate.zb_trv_kitchen_l2
       #       eco_temperature: 17
 
-      # scheduler cards
+      # ==============================================================================
+      # scheduler card
+      # ==============================================================================
       - type: grid
         square: false
         columns: 1
@@ -186,7 +166,8 @@ cards:
                         step: 0.5
                         unit: "°C"
                     icon: "hass:fire"
-                    name: "heat[ to {temperature}]" # replace with local translation for 'heat' and 'to' if desired
+                    name: "heat[ to {temperature}]"
+                    # replace with local translation for 'heat' and 'to' if desired
             # domains:
             # ...
             # entities:
@@ -198,6 +179,57 @@ cards:
                 icon: "hass:radiator"
                 include:
                   - climate
+      # ==============================================================================
+      # Switching modes for all TRVs on L2  off/auto
+      # ==============================================================================
+      - type: grid
+        square: false
+        columns: 2
+        cards:
+          # all TRVs off
+          - type: "custom:button-card"
+            name: "All TRV off mode"
+            entity:
+            icon: mdi:radiator-off
+            color: yellow
+            show_state: false
+            tap_action:
+              action: call-service
+              service: script.switch_trv_to_mode_off
+          # all TRVs auto
+          - type: "custom:button-card"
+            name: "All TRV auto mode"
+            entity:
+            icon: mdi:heating-coil
+            color: yellow
+            show_state: false
+            tap_action:
+              action: call-service
+              service: script.switch_trv_to_mode_auto
+
+      # ==============================================================================
+      # run away handling (more or less debugging only)
+      # ==============================================================================
+      - type: grid
+        square: false
+        columns: 2
+        cards:
+          - type: "custom:button-card"
+            entity: input_boolean.l2_trv_runaway_handling_yn
+            name: "L2 TRV RA"
+          - type: "custom:button-card"
+            entity: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+            name: "L2 SZ RA pi"
+      - type: grid
+        square: false
+        columns: 1
+        cards:
+          - type: entities
+            title: " "
+            show_header_toggle: false
+            entities:
+              - input_number.l2_trv_threshold_low
+              - input_number.l2_trv_threshold_high
 ####################################################################
 # EOF
 ####################################################################
