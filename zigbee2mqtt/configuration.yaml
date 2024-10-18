@@ -27,8 +27,6 @@ device_options:
   legacy: false
 permit_join: true
 devices:
-  '0x1c34f1fffe0d319c':
-    friendly_name: ZB_TRV_Bedroom_L2
   '0x1c34f1fffe095fa9':
     friendly_name: ZB_TRV_Kitchen_L2
   '0x1c34f1fffe095fc2':
@@ -63,11 +61,12 @@ devices:
     friendly_name: ZB_Plug_L2_Misc_01
   '0xa4c1384ba5b443f0':
     friendly_name: ZB_Plug_L2_Misc_02
+  '0x1c34f1fffe0d319c':
+    friendly_name: ZB_TRV_Bedroom_L2
 groups:
   '1':
     friendly_name: level2-TRVs
     devices:
-      - 0x1c34f1fffe0d319c/1
       - 0x1c34f1fffe095fa9/1
       - 0x1c34f1fffe095fc2/1
   '2':
