@@ -14,6 +14,7 @@
           and
           is_state('input_boolean.l2_trv_runaway_handling_in_progress_bedroom', 'off')
         }}
+
     # general precondition to processing run away low temp condition
     - name: "L2 TRV runaway precondition low"
       unique_id: "l2_trv_runaway_precondition_low"
@@ -23,6 +24,7 @@
           and
           is_state('input_boolean.l2_trv_runaway_handling_in_progress_bedroom', 'on')
         }}
+
     # condition to processing run away high temp condition
     - name: "L2 TRV runaway condition bedroom high"
       unique_id: "l2_trv_runaway_condition_bedroom_high"
@@ -38,6 +40,7 @@
             )
           )
         }}
+
     # condition to processing run away low temp condition
     - name: "L2 TRV runaway condition bedroom low"
       unique_id: "l2_trv_runaway_condition_bedroom_low"

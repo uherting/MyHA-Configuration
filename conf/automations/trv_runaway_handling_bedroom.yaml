@@ -11,7 +11,7 @@
   id: "251c4a95-6635-448e-90e5-c2795d3b7722"
   description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: template
@@ -62,7 +62,7 @@
           sequence:
             - service: climate.set_hvac_mode
               data:
-                hvac_mode: "heat"
+                hvac_mode: "auto"
               target:
                 device_id:
                   # bedroom

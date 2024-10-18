@@ -21,7 +21,8 @@ resources:
   # card-tools is likely a prerequisite for card-mod
   - url: /hacsfiles/lovelace-card-tools/card-tools.js
     type: module
-  # card-mod is a prerequisite for search card (probably !?!?)
+
+    # card-mod is a prerequisite for search card (probably !?!?)
   - url: /hacsfiles/lovelace-card-mod/card-mod.js
     type: module
   - url: /hacsfiles/search-card/search-card.js
@@ -34,36 +35,32 @@ resources:
   - url: /hacsfiles/surveillance-card/surveillance-card.js
     type: module
 
-  # mushroom card
-  - url: /hacsfiles/lovelace-mushroom/mushroom.js
-    type: module
-
-  # # header cards (not used so far)
-  # - url: /hacsfiles/lovelace-header-cards/lovelace-header-cards.js
-  #   type: module
-
-  # huge clickable title --- ugly and too huge for most cases!!! - used at .../uilovelace-adm-ovw-all/system_monitor
-  - url: /hacsfiles/banner-card/banner-card.js
-    type: module
-
   # scheduler card
   - url: /hacsfiles/scheduler-card/scheduler-card.js
     type: module
-
-  # Better Thermostat
-  # - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
-  #   type: module
 
   # Time Picker card
   - url: /hacsfiles/lovelace-time-picker-card/time-picker-card.js
     type: module
 
-  # - url: /hacsfiles/simple-thermostat/simple-thermostat.js
-  #   type: module
+  # huge clickable title --- ugly and too huge for most cases!!! - used at .../uilovelace-adm-ovw-all/system_monitor
+  - url: /hacsfiles/banner-card/banner-card.js
+    type: module
 
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
+  # # Better Thermostat
+  # - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
+  #   type: module
+  # # mushroom card
+  # - url: /hacsfiles/lovelace-mushroom/mushroom.js
+  #   type: module
+  # # header cards (not used so far)
+  # - url: /hacsfiles/lovelace-header-cards/lovelace-header-cards.js
+  #   type: module
+  # - url: /hacsfiles/simple-thermostat/simple-thermostat.js
+  #   type: module
   # - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
   #   type: module
   # - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
