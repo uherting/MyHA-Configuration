@@ -27,38 +27,80 @@ cards:
           # ========================================
           # L2 Bedroom
           # ========================================
-          - type: thermostat
-            entity: climate.zb_trv_bedroom_l2
-            features:
-              - type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - auto
-                  - "off"
+          - type: custom:better-thermostat-ui-card
+            entity: climate.l2_bedroom
+            name: "L2 Bedroom"
+            eco_temperature: 17
+            set_current_as_main: false
+            disable_buttons: true
 
           # ========================================
           # L2 Lounge
           # ========================================
-          - type: thermostat
-            entity: climate.zb_trv_lounge_l2
-            features:
-              - type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - auto
-                  - "off"
+          - type: custom:better-thermostat-ui-card
+            name: L2 Lounge
+            eco_temperature: 17
+            set_current_as_main: false
+            disable_buttons: true
+            entity: climate.l2_lounge
 
           # ========================================
           # L2 Kitchen
           # ========================================
-          - type: thermostat
-            entity: climate.zb_trv_kitchen_l2
-            features:
-              - type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - auto
-                  - "off"
+          - type: custom:better-thermostat-ui-card
+            entity: climate.l2_kitchen
+            name: "L2 Kitchen"
+            eco_temperature: 17
+            set_current_as_main: false
+            disable_buttons: true
+
+      # ==============================================================================
+      # some unused / unfit(?) examples
+      # ==============================================================================
+      # # Simple Thermostat
+      # - type: grid
+      #   square: false
+      #   columns: 1
+      #   cards:
+      #     - type: custom:simple-thermostat
+      #       entity: climate.zb_trv_bedroom_l2
+      #       header:
+      #         name: Bedroom
+      #         icon: mdi.bed
+      #       control: false
+      #       # label ui.card.climate.preset_mode: Preset
+      #     - type: custom:simple-thermostat
+      #       entity: climate.zb_trv_lounge_l2
+      #       header:
+      #         name: Lounge
+      #         icon: mdi.sofa
+      #       control: false
+      #       # label ui.card.climate.preset_mode: Preset
+      #     - type: custom:simple-thermostat
+      #       entity: climate.zb_trv_kitchen_l2
+      #       header:
+      #         name: Kitchen
+      #         icon: mdi.stove
+      #       control: false
+      #       # label ui.card.climate.preset_mode: Preset
+
+      # # Better Thermostat
+      # - type: grid
+      #   square: false
+      #   columns: 1
+      #   cards:
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Bedroom
+      #       entity: climate.zb_trv_bedroom_l2
+      #       eco_temperature: 17
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Lounge
+      #       entity: climate.zb_trv_lounge_l2
+      #       eco_temperature: 17
+      #     - type: custom:better-thermostat-ui-card
+      #       name: Kitchen
+      #       entity: climate.zb_trv_kitchen_l2
+      #       eco_temperature: 17
 
       # ==============================================================================
       # scheduler card

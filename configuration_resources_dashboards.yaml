@@ -35,10 +35,6 @@ resources:
   - url: /hacsfiles/surveillance-card/surveillance-card.js
     type: module
 
-  # Better Thermostat
-  - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
-    type: module
-
   # scheduler card
   - url: /hacsfiles/scheduler-card/scheduler-card.js
     type: module
@@ -54,6 +50,9 @@ resources:
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
+  # # Better Thermostat
+  # - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
+  #   type: module
   # # mushroom card
   # - url: /hacsfiles/lovelace-mushroom/mushroom.js
   #   type: module

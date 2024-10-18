@@ -1,0 +1,49 @@
+# ############################################################
+#
+#  TRV for HASmartThermostat (https://github.com/ScratMan/HASmartThermostat)
+#
+# ############################################################
+
+# climate: !include_dir_merge_list conf/climates
+
+# climate:
+- platform: smart_thermostat
+  name: TRV L2 Bedroom
+  unique_id: ST_TRV_L2_Bedroom
+  heater:
+    - climate.zb_trv_bedroom_l2
+  target_sensor: sensor.temperature_humidity_sensor_8eec_temperature
+  min_temp: 5
+  max_temp: 25
+  ac_mode: False
+  target_temp: 19
+  keep_alive:
+    seconds: 60
+  away_temp: 14
+  autotune: "ziegler-nichols"
+  #kp: 5
+  #ki: 0.01
+  #kd: 500
+  #output_min: 0
+  #output_max: 99
+  #pwm: 0
+# -------------------------
+# - platform: smart_thermostat
+#   name: TRV L2 Bedroom
+#   unique_id: ST_TRV_L2_Bedroom
+#   heater:
+#     - climate.zb_trv_bedroom_l2
+#   target_sensor: sensor.temperature_humidity_sensor_8eec_temperature
+#   min_temp: 5
+#   max_temp: 25
+#   ac_mode: False
+#   target_temp: 19
+#   keep_alive:
+#     seconds: 60
+#   away_temp: 14
+#   kp: 5
+#   ki: 0.01
+#   kd: 500
+#   # output_min: 0
+#   # output_max: 99
+#   # pwm: 0
