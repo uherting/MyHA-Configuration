@@ -44,8 +44,8 @@
 #   - wire
 #
 # GPIO (as taken from configuration @ 20210103_151500):
-#   - D2: PIR1
-#   - D3: PIR2
+#   - D2: PIR/RCWL (if RCWL maybe 1 RCWL is enough)
+#   - D3: PIR/RCWL (if RCWL maybe 1 RCWL is enough)
 #   - D4: TB1
 #   - D5: PSU1
 #
