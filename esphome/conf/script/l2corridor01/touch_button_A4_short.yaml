@@ -1,0 +1,24 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_multi_click action of TB A4 (short click)
+- id: tb_01_click_short
+  mode: restart
+  then:
+    # - logger.log: "script tb_01_click_short action."
+    # - switch.toggle: ${ssr01_id}
+    - if:
+        # execution only: the light bar is off
+        condition:
+          # execute this script only if we are offline
+          # lambda: 'return (!id(isDeviceConnected);'
+
+          # execute this script anyway (TM) for debugging purposes
+          lambda: "return (true);"
+        then:
+          # - logger.log: "script tb_01_click_dbl action."
+          - delay: !secret DELAY_01SEC
+####################################################################
+# EOF
+####################################################################

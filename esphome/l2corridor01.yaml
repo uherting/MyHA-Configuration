@@ -49,7 +49,7 @@
 # Input:
 #   - 1 temperatur sensors for the case
 #   - 1 PIR/RCWL sensor via I2C / MCP23017
-#   - 1 TP223 touch button for ???
+#   - 2 TP223 touch button for ???
 #
 # Output
 #   - 1 SSR via I2C / MCP23017
@@ -104,14 +104,14 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir2_noaction_01.yaml
-  - <<: !include conf/common/script/pir2_noaction_02.yaml
-  # - <<: !include conf/common/script/touch_button_A4_double.yaml
-  # - <<: !include conf/common/script/touch_button_A4_short.yaml
-  # - <<: !include conf/common/script/touch_button_A4_long.yaml
-  # - <<: !include conf/common/script/touch_button_A5_double.yaml
-  # - <<: !include conf/common/script/touch_button_A5_short.yaml
-  # - <<: !include conf/common/script/touch_button_A5_long.yaml
+  - <<: !include conf/script/l2corridor01/pir2_noaction_01.yaml
+  - <<: !include conf/script/l2corridor01/pir2_noaction_02.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A4_double.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A4_short.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A4_long.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A5_double.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A5_short.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A5_long.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -121,9 +121,9 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/pir_A0.yaml
   - <<: !include conf/common/binary_sensor/pir_A1.yaml
   # the touch buttons
-  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
 
 #-------------------------------------------------------------------
