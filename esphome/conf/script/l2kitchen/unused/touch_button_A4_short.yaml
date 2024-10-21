@@ -20,7 +20,7 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          # - logger.log: "script tb_01_click_short action."
+          - logger.log: "script tb_01_click_short action."
           - binary_sensor.template.publish:
               id: ${binary_template_sensor_main_light_id}
               state: true

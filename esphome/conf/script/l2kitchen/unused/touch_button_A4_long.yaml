@@ -9,13 +9,7 @@
     # - logger.log: "script tb_01_click_long action."
     - if:
         condition:
-          # execute this script only if we are offline
-          # lambda: 'return (!id(isDeviceConnected);'
-
-          # execute only if the lightbar is on
-          # lambda: 'return (!id(isLightBarOn));'
-
-          # execute this script anyway (TM) for debugging purposes
+          # execute this script no matter what
           lambda: "return (true);"
         then:
           # - logger.log: "script tb_01_click_long action."
