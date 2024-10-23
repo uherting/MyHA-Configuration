@@ -10,7 +10,7 @@
 - alias: L2 TRV run away handling by switching hvac_mode (bedroom)
   id: "251c4a95-6635-448e-90e5-c2795d3b7722"
   description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
-  mode: single
+  mode: restart
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
@@ -28,6 +28,9 @@
         and
         is_state('binary_sensor.l2_trv_runaway_condition_bedroom_low', 'on')
       }}"
+    - platform: time
+      at: "21:30:00"
+      id: "l2_trv_runaway_low_bedroom_time"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -78,6 +81,28 @@
             - service: input_boolean.turn_off
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+        - conditions:
+            - condition: trigger
+              id: "l2_trv_runaway_low_bedroom_time"
+          sequence:
+            - service: climate.set_hvac_mode
+              data:
+                hvac_mode: "auto"
+              target:
+                device_id:
+                  # bedroom
+                  - f4e1a1e5687466b93bfb2b7f1e30405a
+                  # lounge
+                  # - 9ccc63cff442425e7e7b4e8a8ec92a3f
+                  # kitchen
+                  # - 798d40b10f6bbb99fb085eecb3fcb8b8
+            - service: persistent_notification.create
+              data:
+                title: "L2 TRV run away conditions handled"
+                message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time. Time: {{ now() }}"
+            - service: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
       default:
         - service: system_log.write
           data:
@@ -107,7 +132,7 @@
   action:
     service: climate.set_hvac_mode
     data:
-      hvac_mode: "heat"
+      hvac_mode: "auto"
     target:
       device_id:
         # bedroom
