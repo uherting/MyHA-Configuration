@@ -10,7 +10,9 @@
 - alias: L2 TRV run away handling by switching hvac_mode (bedroom)
   id: "251c4a95-6635-448e-90e5-c2795d3b7722"
   description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
-  mode: restart
+  mode: single
+  max_exceeded: silent
+
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
@@ -19,7 +21,7 @@
       value_template: "{{
         is_state('binary_sensor.l2_trv_runaway_precondition_high', 'on')
         and
-        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_high', 'off')
+        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_high', 'on')
       }}"
     - platform: template
       id: "l2_trv_runaway_low_bedroom"
@@ -37,6 +39,8 @@
   # --------------------- ACTIONS ---------------------
   action:
     - choose:
+        #
+        # --------------------- l2_trv_runaway_high_bedroom
         - conditions:
             - condition: trigger
               id: "l2_trv_runaway_high_bedroom"
@@ -52,13 +56,16 @@
                   # - 9ccc63cff442425e7e7b4e8a8ec92a3f
                   # kitchen
                   # - 798d40b10f6bbb99fb085eecb3fcb8b8
-            - service: persistent_notification.create
-              data:
-                title: "L2 TRV run away conditions handled"
-                message: "L2 TRV run away conditions (high) handled for the bedroom. Time: {{ now() }}"
             - service: input_boolean.turn_on
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+            - service: persistent_notification.create
+              data:
+                title: "L2 TRV run away conditions handled"
+                message: "L2 TRV run away conditions (high) handled for the bedroom. Temperatures (as is/theshold): {{ states('sensor.l2_trv_runaway_temp_bedroom_as_is') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_high') }}°C.Time: {{ now() }}"
+
+        #
+        # --------------------- l2_trv_runaway_low_bedroom
         - conditions:
             - condition: trigger
               id: "l2_trv_runaway_low_bedroom"
@@ -81,6 +88,9 @@
             - service: input_boolean.turn_off
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+
+        #
+        # --------------------- l2_trv_runaway_low_bedroom_time
         - conditions:
             - condition: trigger
               id: "l2_trv_runaway_low_bedroom_time"
@@ -103,6 +113,9 @@
             - service: input_boolean.turn_off
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+
+      #
+      # --------------------- default branch of choose:
       default:
         - service: system_log.write
           data:
@@ -123,7 +136,7 @@
       entity_id: binary_sensor.l2_trv_runaway_condition_bedroom_low
       to: "on"
       for:
-        hours: 3
+        hours: 1
         minutes: 0
   # -------------------- CONDITIONS -------------------
   # none whatsoever

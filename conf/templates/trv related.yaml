@@ -57,6 +57,29 @@
           )
         }}
 
+- sensor:
+    - name: "L2 TRV runaway temp bedroom high"
+      unit_of_measurement: "°"
+      state: >
+        {% set ics_num = 
+                (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) +
+                (states('input_number.l2_trv_threshold_high') | float(0)) %}
+        {{ ics_num }}
+
+    - name: "L2 TRV runaway temp bedroom low"
+      unit_of_measurement: "°"
+      state: >
+        {% set ics_num = 
+                (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) +
+                (states('input_number.l2_trv_threshold_low') | float(0)) %}
+        {{ ics_num }}
+
+    - name: "L2 TRV runaway temp bedroom as is"
+      unit_of_measurement: "°"
+      state: >
+        {% set ics_num = state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0) %}
+        {{ ics_num }}
+
 ####################################################################
 # EOF
 ####################################################################
