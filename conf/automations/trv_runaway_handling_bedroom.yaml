@@ -81,13 +81,13 @@
                   # - 9ccc63cff442425e7e7b4e8a8ec92a3f
                   # kitchen
                   # - 798d40b10f6bbb99fb085eecb3fcb8b8
+            - service: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
             - service: persistent_notification.create
               data:
                 title: "L2 TRV run away conditions handled"
                 message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
-            - service: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
 
         #
         # --------------------- l2_trv_runaway_low_bedroom_time
@@ -106,13 +106,13 @@
                   # - 9ccc63cff442425e7e7b4e8a8ec92a3f
                   # kitchen
                   # - 798d40b10f6bbb99fb085eecb3fcb8b8
+            - service: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
             - service: persistent_notification.create
               data:
                 title: "L2 TRV run away conditions handled"
                 message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time. Time: {{ now() }}"
-            - service: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
 
       #
       # --------------------- default branch of choose:
@@ -122,6 +122,11 @@
             message: "Automation L2 TRV run away handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
+        - service: persistent_notification.create
+          data:
+            title: "L2 TRV run away automation unknown activity"
+            message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
+
 # ############################################################
 #  L2 TRV run away handling by switching hvac_mode (bedroom)
 # ############################################################
@@ -136,24 +141,28 @@
       entity_id: binary_sensor.l2_trv_runaway_condition_bedroom_low
       to: "on"
       for:
-        hours: 1
+        hours: 2
         minutes: 0
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    service: climate.set_hvac_mode
-    data:
-      hvac_mode: "auto"
-    target:
-      device_id:
-        # bedroom
-        - f4e1a1e5687466b93bfb2b7f1e30405a
-        # lounge
-        # - 9ccc63cff442425e7e7b4e8a8ec92a3f
-        # kitchen
-        # - 798d40b10f6bbb99fb085eecb3fcb8b8
+    - service: climate.set_hvac_mode
+      data:
+        hvac_mode: "auto"
+      target:
+        device_id:
+          # bedroom
+          - f4e1a1e5687466b93bfb2b7f1e30405a
+          # lounge
+          # - 9ccc63cff442425e7e7b4e8a8ec92a3f
+          # kitchen
+          # - 798d40b10f6bbb99fb085eecb3fcb8b8
+    - service: persistent_notification.create
+      data:
+        title: "L2 TRV run away changed havac mode"
+        message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time restraint. Time: {{ now() }}"
 
 ############################################################
 #  END OF FILE
