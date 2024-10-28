@@ -13,17 +13,21 @@ switch_trv_to_mode_off:
   description: This script switches all TRVs HVAC mode to off
   mode: queued
   sequence:
-    - service: climate.set_hvac_mode
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
       data:
         hvac_mode: "off"
+    - action: climate.set_hvac_mode
       target:
-        device_id:
-          # bedroom
-          - f4e1a1e5687466b93bfb2b7f1e30405a
-          # lounge
-          - 9ccc63cff442425e7e7b4e8a8ec92a3f
-          # kitchen
-          - 798d40b10f6bbb99fb085eecb3fcb8b8
+        entity_id: climate.zb_trv_lounge_l2
+      data:
+        hvac_mode: "off"
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+      data:
+        hvac_mode: "off"
 
 # --------------------------------------------------------------
 # This script switches all TRVs HVAC mode to auto
@@ -34,17 +38,21 @@ switch_trv_to_mode_auto:
   description: This script switches all TRVs HVAC mode to auto
   mode: queued
   sequence:
-    - service: climate.set_hvac_mode
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
       data:
         hvac_mode: "auto"
+    - action: climate.set_hvac_mode
       target:
-        device_id:
-          # bedroom
-          - f4e1a1e5687466b93bfb2b7f1e30405a
-          # lounge
-          - 9ccc63cff442425e7e7b4e8a8ec92a3f
-          # kitchen
-          - 798d40b10f6bbb99fb085eecb3fcb8b8
+        entity_id: climate.zb_trv_lounge_l2
+      data:
+        hvac_mode: "auto"
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+      data:
+        hvac_mode: "auto"
 # ############################################################
 #  END OF FILE
 # ############################################################

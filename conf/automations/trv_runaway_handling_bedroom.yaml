@@ -45,17 +45,11 @@
             - condition: trigger
               id: "l2_trv_runaway_high_bedroom"
           sequence:
-            - service: climate.set_hvac_mode
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
               data:
                 hvac_mode: "off"
-              target:
-                device_id:
-                  # bedroom
-                  - f4e1a1e5687466b93bfb2b7f1e30405a
-                  # lounge
-                  # - 9ccc63cff442425e7e7b4e8a8ec92a3f
-                  # kitchen
-                  # - 798d40b10f6bbb99fb085eecb3fcb8b8
             - service: input_boolean.turn_on
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
@@ -70,17 +64,11 @@
             - condition: trigger
               id: "l2_trv_runaway_low_bedroom"
           sequence:
-            - service: climate.set_hvac_mode
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
               data:
                 hvac_mode: "auto"
-              target:
-                device_id:
-                  # bedroom
-                  - f4e1a1e5687466b93bfb2b7f1e30405a
-                  # lounge
-                  # - 9ccc63cff442425e7e7b4e8a8ec92a3f
-                  # kitchen
-                  # - 798d40b10f6bbb99fb085eecb3fcb8b8
             - service: input_boolean.turn_off
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
@@ -95,17 +83,11 @@
             - condition: trigger
               id: "l2_trv_runaway_low_bedroom_time"
           sequence:
-            - service: climate.set_hvac_mode
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
               data:
                 hvac_mode: "auto"
-              target:
-                device_id:
-                  # bedroom
-                  - f4e1a1e5687466b93bfb2b7f1e30405a
-                  # lounge
-                  # - 9ccc63cff442425e7e7b4e8a8ec92a3f
-                  # kitchen
-                  # - 798d40b10f6bbb99fb085eecb3fcb8b8
             - service: input_boolean.turn_off
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
@@ -148,17 +130,11 @@
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_hvac_mode
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
       data:
         hvac_mode: "auto"
-      target:
-        device_id:
-          # bedroom
-          - f4e1a1e5687466b93bfb2b7f1e30405a
-          # lounge
-          # - 9ccc63cff442425e7e7b4e8a8ec92a3f
-          # kitchen
-          # - 798d40b10f6bbb99fb085eecb3fcb8b8
     - service: persistent_notification.create
       data:
         title: "L2 TRV run away changed havac mode"
