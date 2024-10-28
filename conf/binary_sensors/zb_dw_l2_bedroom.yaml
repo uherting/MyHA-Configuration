@@ -1,0 +1,31 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+###########################################################################
+# group the DW sensors in L2 bedroom
+###########################################################################
+- platform: group
+  name: ZB_DW_L2_bedroom_contact
+  entities:
+    - binary_sensor.zb_dw_l2_bedroom_01_contact
+    - binary_sensor.zb_dw_l2_bedroom_02_contact
+
+- platform: group
+  name: ZB_DW_L2_bedroom_tamper
+  entities:
+    - binary_sensor.zb_dw_l2_bedroom_01_tamper
+    - binary_sensor.zb_dw_l2_bedroom_02_tamper
+
+- platform: group
+  name: ZB_DW_L2_bedroom_battery_low
+  entities:
+    - binary_sensor.zb_dw_l2_bedroom_01_battery_low
+    - binary_sensor.zb_dw_l2_bedroom_02_battery_low
+# ############################################################
+#  END OF FILE
+# ############################################################
