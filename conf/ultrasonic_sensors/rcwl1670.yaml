@@ -1,0 +1,10 @@
+# Works really well. Despite what you might find in the Internet, it actually does not require 5V, but can run quite well on 3,3V and interface directly with, say, an ESP32. A stable power source is necessary. For using this module with ESPhome, I found the following configuration options to work (replace tx_pin with the Trigger pin, rx_pin with the Echo pin):
+
+# sensor:
+- platform: ultrasonic
+  name: "Distance"
+  trigger_pin: ${tx_pin}
+  echo_pin: ${rx_pin}
+  update_interval: 1s
+  timeout: 20m
+  pulse_time: 50us
