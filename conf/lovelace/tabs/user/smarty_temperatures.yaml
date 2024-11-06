@@ -25,7 +25,8 @@ cards:
             color: yellow
           - type: "custom:button-card"
             name: " "
-            entity: sensor.l2_kitchen01_tempenv_01
+            # entity: sensor.l2_kitchen01_tempenv_01
+            entity: sensor.zb_th_l2_kitchen_temperature
             show_state: true
           - type: "custom:button-card"
             # entity: switch.zb_plug_l2_kitchen_microwave
