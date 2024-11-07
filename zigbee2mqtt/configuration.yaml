@@ -20,65 +20,68 @@ advanced:
     pid: process.pid
     port: 514
     protocol: udp4
-    type: '5424'
+    type: "5424"
   last_seen: ISO_8601_local
   log_level: warning
 device_options:
   legacy: false
-permit_join: true
+permit_join: false
 devices:
-  '0x1c34f1fffe095fa9':
+  "0x1c34f1fffe095fa9":
     friendly_name: ZB_TRV_Kitchen_L2
-  '0x1c34f1fffe095fc2':
+  "0x1c34f1fffe095fc2":
     friendly_name: ZB_TRV_Lounge_L2
-  '0xa4c1382e5e523972':
+  "0xa4c1382e5e523972":
     friendly_name: ZB_Plug_L2_Lounge_Light_Corner
-  '0xa4c13804488a21e2':
+  "0xa4c13804488a21e2":
     friendly_name: ZB_Plug_L2_Kitchen_Microwave
-  '0xa4c13818bd119ece':
+  "0xa4c13818bd119ece":
     friendly_name: ZB_Charger_UH
-  '0xa4c138d094eebae0':
+  "0xa4c138d094eebae0":
     friendly_name: ZB_Plug_L2_Kitchen_Fridge
-  '0xa4c1389480d75a5f':
+  "0xa4c1389480d75a5f":
     friendly_name: ZB_DW_L2_Bathroom
-  '0xa4c138633bdc9ba2':
+  "0xa4c138633bdc9ba2":
     friendly_name: ZB_Plug_L2_Lounge_Scanner
-  '0xa4c1384f31b8d0f9':
+  "0xa4c1384f31b8d0f9":
     friendly_name: ZB_Plug_L2_Kitchen_Coffeemachine
-  '0xa4c13854b0d251be':
+  "0xa4c13854b0d251be":
     friendly_name: ZB_Plug_L2_Kitchen_DishWasher
-  '0xa4c138c0a8b9f56c':
+  "0xa4c138c0a8b9f56c":
     friendly_name: ZB_TH_L2_Storage_Out
-  '0xa4c138973cb5fed6':
+  "0xa4c138973cb5fed6":
     friendly_name: ZB_TH_L2_Lounge
-  '0xa4c13896310b0036':
+  "0xa4c13896310b0036":
     friendly_name: ZB_TH_L2_Storage
-  '0xa4c138a59865fee9':
+  "0xa4c138a59865fee9":
     friendly_name: ZB_TH_L2_Kitchen
-  '0xa4c138f6331b5916':
+  "0xa4c138f6331b5916":
     friendly_name: ZB_Charger_GH
-  '0xa4c1383418264404':
+  "0xa4c1383418264404":
     friendly_name: ZB_Plug_L2_Misc_01
-  '0xa4c1384ba5b443f0':
+  "0xa4c1384ba5b443f0":
     friendly_name: ZB_Plug_L2_Misc_02
-  '0x003c84fffec93dd7':
+  "0x003c84fffec93dd7":
     friendly_name: ZB_TRV_Bedroom_L2
-  '0xa4c138cb4a160c30':
+  "0xa4c138cb4a160c30":
     friendly_name: ZB_DW_L2_Bedroom_01
-  '0xa4c138b55bafbf81':
+  "0xa4c138b55bafbf81":
     friendly_name: ZB_DW_L2_Bedroom_02
 groups:
-  '1':
+  "1":
     friendly_name: level2-TRVs
     devices:
       - 0x1c34f1fffe095fa9/1
       - 0x1c34f1fffe095fc2/1
       - 0x003c84fffec93dd7/1
-  '2':
+  "2":
     friendly_name: level2-Plugs
     devices:
       - 0xa4c1382e5e523972/1
       - 0xa4c13804488a21e2/1
       - 0xa4c13818bd119ece/1
       - 0xa4c138d094eebae0/1
+      - 0xa4c138f6331b5916/1
+      - 0xa4c138633bdc9ba2/1
+      - 0xa4c1383418264404/1
 availability: true
