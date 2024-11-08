@@ -7,7 +7,7 @@ device_comment: Level 2 BT Proxy Bedroom
 device_platform: ESP32
 device_board: esp32doit-devkit-v1
 # alternative: device_board: esp32dev
-wifi_static_ip: 192.168.178.228
+wifi_static_ip: 192.168.178.232
 
 # the friendly name and id
 friendly_name: L2 BTPROXY_BEDROOM
