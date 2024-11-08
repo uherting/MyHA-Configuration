@@ -84,15 +84,15 @@ cards:
     title: L2 BLE Proxy 01
     show_header_toggle: false
     entities:
-      - sensor.l2_btproxy01_conn_ip_addr
-      - sensor.l2_btproxy01_wifi_signal
-      - sensor.l2_btproxy01_conn_ssid
-      - sensor.l2_btproxy01_conn_bssid
-      - sensor.l2_btproxy01_uptime
-      - sensor.l2_btproxy01_uptime_human_readable
-      - binary_sensor.l2_btproxy01_status
-      - sensor.l2_btproxy01_esphome_version
-      - switch.l2_btproxy01_restart_device
+      - sensor.l2_btproxy_kitchen_conn_ip_addr
+      - sensor.l2_btproxy_kitchen_wifi_signal
+      - sensor.l2_btproxy_kitchen_conn_ssid
+      - sensor.l2_btproxy_kitchen_conn_bssid
+      - sensor.l2_btproxy_kitchen_uptime
+      - sensor.l2_btproxy_kitchen_uptime_human_readable
+      - binary_sensor.l2_btproxy_kitchen_status
+      - sensor.l2_btproxy_kitchen_esphome_version
+      - switch.l2_btproxy_kitchen_restart_device
 
   # - type: entities
   #   title: L2 BLE 01

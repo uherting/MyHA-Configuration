@@ -42,7 +42,7 @@ cards:
       # - binary_sensor.l9_cam_ttgo_01_status
       # - binary_sensor.l9_cam_ttgo_02_status
       # misc stuff
-      - binary_sensor.l2_btproxy01_status
+      - binary_sensor.l2_btproxy_kitchen_status
 ####################################################################
 # EOF
 ####################################################################
