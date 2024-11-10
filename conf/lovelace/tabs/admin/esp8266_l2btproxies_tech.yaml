@@ -1,0 +1,70 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l2 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l2 BT Proxies Tech
+path: esp8266_l2btproxies_tech
+badges: []
+cards:
+  - type: entities
+    title: L2 BLE Proxy Bathroom
+    show_header_toggle: false
+    entities:
+      - sensor.l2_btproxy_bathroom_conn_ip_addr
+      - sensor.l2_btproxy_bathroom_wifi_signal
+      - sensor.l2_btproxy_bathroom_conn_ssid
+      - sensor.l2_btproxy_bathroom_conn_bssid
+      - sensor.l2_btproxy_bathroom_uptime
+      - sensor.l2_btproxy_bathroom_uptime_human_readable
+      - binary_sensor.l2_btproxy_bathroom_status
+      - sensor.l2_btproxy_bathroom_esphome_version
+      - switch.l2_btproxy_bathroom_restart_device
+
+  - type: entities
+    title: L2 BLE Proxy Bedroom
+    show_header_toggle: false
+    entities:
+      - sensor.l2_btproxy_bedroom_conn_ip_addr
+      - sensor.l2_btproxy_bedroom_wifi_signal
+      - sensor.l2_btproxy_bedroom_conn_ssid
+      - sensor.l2_btproxy_bedroom_conn_bssid
+      - sensor.l2_btproxy_bedroom_uptime
+      - sensor.l2_btproxy_bedroom_uptime_human_readable
+      - binary_sensor.l2_btproxy_bedroom_status
+      - sensor.l2_btproxy_bedroom_esphome_version
+      - switch.l2_btproxy_bedroom_restart_device
+
+  - type: entities
+    title: L2 BLE Proxy Kitchen
+    show_header_toggle: false
+    entities:
+      - sensor.l2_btproxy_kitchen_conn_ip_addr
+      - sensor.l2_btproxy_kitchen_wifi_signal
+      - sensor.l2_btproxy_kitchen_conn_ssid
+      - sensor.l2_btproxy_kitchen_conn_bssid
+      - sensor.l2_btproxy_kitchen_uptime
+      - sensor.l2_btproxy_kitchen_uptime_human_readable
+      - binary_sensor.l2_btproxy_kitchen_status
+      - sensor.l2_btproxy_kitchen_esphome_version
+      - switch.l2_btproxy_kitchen_restart_device
+
+  - type: entities
+    title: L2 BLE Proxy Lounge
+    show_header_toggle: false
+    entities:
+      - sensor.l2_btproxy_lounge_conn_ip_addr
+      - sensor.l2_btproxy_lounge_wifi_signal
+      - sensor.l2_btproxy_lounge_conn_ssid
+      - sensor.l2_btproxy_lounge_conn_bssid
+      - sensor.l2_btproxy_lounge_uptime
+      - sensor.l2_btproxy_lounge_uptime_human_readable
+      - binary_sensor.l2_btproxy_lounge_status
+      - sensor.l2_btproxy_lounge_esphome_version
+      - switch.l2_btproxy_lounge_restart_device
+####################################################################
+# EOF
+####################################################################
