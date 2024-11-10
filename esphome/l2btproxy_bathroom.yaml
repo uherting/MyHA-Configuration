@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l2bleproxy01
+# DEVICE: l2btproxy_bathroom
 #
 ####################################################################
 ####################################################################
@@ -36,8 +36,8 @@
 # naming conventions which override common behaviour
 
 substitutions: 
-  <<: !include conf/substitutions/device_specific/l2bleproxy01.yaml
-  <<: !include conf/substitutions/overwrites/l2bleproxy01.yaml
+  <<: !include conf/substitutions/device_specific/l2btproxy_bathroom.yaml
+  <<: !include conf/substitutions/overwrites/l2btproxy_bathroom.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base

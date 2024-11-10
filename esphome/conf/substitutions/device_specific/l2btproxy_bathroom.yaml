@@ -1,0 +1,23 @@
+####################################################################
+# DEVICE SPECIFIC SUBSTITUTIONS
+
+# device definitions
+device_name: l2btproxy_bathroom
+device_comment: Level 2 BT Proxy Bathroom
+device_platform: ESP32
+device_board: esp32doit-devkit-v1
+# alternative: device_board: esp32dev
+wifi_static_ip: 192.168.178.231
+
+# the friendly name and id
+friendly_name: L2 BTPROXY_BATHROOM
+friendly_id: L2BTPROXY_BATHROOM
+
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L2BTPROXY_BATHROOM_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L2BTPROXY_BATHROOM_ENVSENSOR_01_ADDRESS
+####################################################################
+# EOF
+####################################################################

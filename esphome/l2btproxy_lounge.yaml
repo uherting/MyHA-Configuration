@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l2ble01
+# DEVICE: l2btproxy_lounge
 #
 ####################################################################
 ####################################################################
@@ -11,10 +11,10 @@
 ####################################################################
 #
 # Purpose:
-#   - collecting temperature and humidity from Xiaomi devices
+#   - BT proxy for all thingies on L2
 #
 # Future feature:
-#   - device tracker for presence detection
+#   - unknown
 #
 # Hardware:
 #   - 1 ESP32
@@ -36,8 +36,8 @@
 # naming conventions which override common behaviour
 
 substitutions: 
-  <<: !include conf/substitutions/device_specific/l2ble01.yaml
-  <<: !include conf/substitutions/overwrites/l2ble01.yaml
+  <<: !include conf/substitutions/device_specific/l2btproxy_lounge.yaml
+  <<: !include conf/substitutions/overwrites/l2btproxy_lounge.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -104,11 +104,8 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  # xiaomi T/H devices
-  - <<: !include conf/sensor/l2ble01/l2ble01_01.yaml
-  - <<: !include conf/sensor/l2ble01/l2ble01_02.yaml
-  - <<: !include conf/sensor/l2ble01/l2ble01_03.yaml
-  - <<: !include conf/sensor/l2ble01/l2ble01_04.yaml
+  # non so far...
+
 #-------------------------------------------------------------------
 # SERVOS
 # servo:
@@ -136,7 +133,7 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # Enable the BLE Tracker
-esp32_ble_tracker:
+bluetooth_proxy:
 
 ####################################################################
 # EOF
