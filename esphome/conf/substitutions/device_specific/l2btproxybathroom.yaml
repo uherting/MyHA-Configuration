@@ -2,7 +2,7 @@
 # DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
-device_name: l2btproxy_bathroom
+device_name: l2btproxybathroom
 device_comment: Level 2 BT Proxy Bathroom
 device_platform: ESP32
 device_board: esp32doit-devkit-v1

@@ -2,7 +2,7 @@
 # DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
-device_name: l2btproxy_bedroom
+device_name: l2btproxybedroom
 device_comment: Level 2 BT Proxy Bedroom
 device_platform: ESP32
 device_board: esp32doit-devkit-v1
