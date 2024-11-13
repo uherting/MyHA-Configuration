@@ -44,4 +44,4 @@ function rename_dirs {
 # rename_dirs
 # rename_files
 
-rename_resources
+# rename_resources
