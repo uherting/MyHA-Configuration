@@ -35,7 +35,7 @@
         #   data:
         #     entity_id: automation.<nameOfAutomation>
     - timing:
-        - ON for 2s to 4s
+        - ON for 1s to 7s
         - OFF for at least 0.4s
       then:
         # - logger.log: "Single long clicked, no further action."
