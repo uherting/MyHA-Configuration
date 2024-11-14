@@ -5,8 +5,7 @@
 device_name: l2btproxykitchen
 device_comment: Level 2 BT Proxy Kitchen
 device_platform: ESP32
-device_board: esp32doit-devkit-v1
-# alternative: device_board: esp32dev
+device_board: esp32dev
 wifi_static_ip: 192.168.178.233
 
 # the friendly name and id
