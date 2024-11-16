@@ -13,6 +13,9 @@ fi
 if [ "${HN}" == "delta" ];then
   SRC_DIR="/home/uwe/Git/UH/MyHAConfig/shell_scripts"
 fi
+if [ "${HN}" == "winnipeg" ];then
+  SRC_DIR="/home/uwe/Git/UH/MyHAConfig/shell_scripts"
+fi
 
 if [ "${SRC_DIR}" == "" ];then
   echo "ERROR: hostname not in the list"
@@ -34,16 +37,16 @@ else
 fi
 
 # now replace every file with a symlink
-for i in [a-z]*
+for i in ${SRC_DIR}/[a-z]*
 do
-  SRC_FILE="${SRC_DIR}/${i}"
-  if [ -f ${i} ];then
-    if [ -f ${SRC_FILE} ];then
-      echo "FILE: $i"
-      rm ${i}
-      ln -s ${SRC_FILE}
+    f=`basename ${i}`
+    echo "Processing ${f}"
+    if [ -f ${f} ];then
+      echo "delete existing file: ${f}"
+      rm ${f}
     fi
-  fi
+    echo "Make symlink: ${f}"
+    ln -s ${i}
 done
 
 # go back where we started
