@@ -28,7 +28,7 @@ cards:
       # - binary_sensor.l0_entrance01_status
       # - binary_sensor.l0_laundryfloor01_status
       # - binary_sensor.l0_garagebig01_status
-      - binary_sensor.l0_garagesmall01_status
+      # - binary_sensor.l0_garagesmall01_status
       # - binary_sensor.l1_thehut01_status
       - binary_sensor.l2_kitchen01_status
       - binary_sensor.l2_storage01_status
