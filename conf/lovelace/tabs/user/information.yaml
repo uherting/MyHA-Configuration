@@ -16,8 +16,9 @@ badges:
     sensor.tankerkoenig_gulf_bad_lauterberg_diesel,
     sun.sun,
     binary_sensor.sun_dwn_twilight,
-    sensor.abfall,
-    sensor.ics_1,
+    sensor.abholung_altpapier_d,
+    sensor.abholung_restabfall_d,
+    sensor.abholung_abfall_d,
   ]
 
 cards:

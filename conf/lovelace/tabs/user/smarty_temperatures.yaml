@@ -8,7 +8,7 @@
 icon: mdi:thermometer
 title: Temperatures and quick access
 path: tempAndQuckAccess
-badges: [sensor.ics_1, sun.sun]
+badges: [sun.sun, sensor.ics_11, sensor.ics_12, sensor.ics_9]
 
 cards:
   - type: vertical-stack

@@ -5,6 +5,66 @@
 # ############################################################
 
 # ############################################################
+# Abholung-Altpapier
+# ############################################################
+- alias: ICS - Abholung-Altpapier - 2 days to go
+  id: "0b802998-b86a-4c61-87a4-356991392199"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "19:01:00"
+
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.abholung_altpapier_d
+      # attribute: remaining
+      below: "3"
+      above: "1"
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Used paper collection"
+        msg_text: "Used paper collection is due the day *after tomorrow*"
+        msg_receiver: "notify"
+
+# ############################################################
+# Abholung-Restabfall
+# ############################################################
+- alias: ICS - Abholung-Restabfall - 2 days to go
+  id: "04ea46ea-fd14-4951-ba71-35b34bd0bd20"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "19:02:00"
+
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.abholung_restabfall_d
+      # attribute: remaining
+      below: "3"
+      above: "1"
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Rubbish collection"
+        msg_text: "Rubbish collection is due the day *after tomorrow*"
+        msg_receiver: "notify"
+
+# ############################################################
 # Rubbish collection due notifications
 # ############################################################
 - alias: ICS - First rubbish collection notification
@@ -15,12 +75,12 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: time
-      at: "19:00:00"
+      at: "19:09:00"
 
   # -------------------- CONDITIONS -------------------
   condition:
     - condition: numeric_state
-      entity_id: sensor.abfall
+      entity_id: sensor.abholung_abfall_d
       # attribute: remaining
       below: "3"
       above: "1"
