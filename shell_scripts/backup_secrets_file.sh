@@ -2,7 +2,7 @@
 
 ##########################################################################################
 #
-#  this script exports the secrets.yaml file to uwe@beta
+#  this script exports the secrets.yaml file to uwe@${TARGET_MACHINE}
 #
 ##########################################################################################
 
@@ -12,8 +12,11 @@ if [ "$DNAME" == "." ];then
  DNAME="`pwd`"
 fi
 
+# beta
+# TARGET_MACHINE="192.168.178.32"
+# winnipeg
+TARGET_MACHINE="192.168.178.33"
 
 TS=`date +%Y%m%d_%H%M%S`
-# scp /usr/share/hassio/homeassistant/esphome/secrets.yaml uwe@beta.local:/home/uwe/Desktop/HA/secrets_${TS}.yaml
-scp /usr/share/hassio/homeassistant/esphome/secrets.yaml uwe@192.168.178.32:/home/uwe/Desktop/HA/secrets_${TS}.yaml
+scp /usr/share/hassio/homeassistant/esphome/secrets.yaml uwe@${TARGET_MACHINE}:/home/uwe/Desktop/secrets_${TS}.yaml
 
