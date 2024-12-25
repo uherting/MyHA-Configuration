@@ -12,10 +12,6 @@
   name: ${binary_template_sensor_zb_plug_microwave_name}
   id: ${binary_template_sensor_zb_plug_microwave_id}
 
-# sensor ZB plug coffeemachine in L2 kitchen
-- platform: template
-  name: ${binary_template_sensor_zb_plug_coffeemachine_name}
-  id: ${binary_template_sensor_zb_plug_coffeemachine_id}
 # ############################################################
 #  END OF FILE
 # ############################################################

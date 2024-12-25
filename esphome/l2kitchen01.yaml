@@ -124,7 +124,8 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
   # kitchen 
   - <<: !include conf/binary_sensor/l2kitchen01_mainlight.yaml
-  - <<: !include conf/binary_sensor/l2kitchen01_zbplugs.yaml
+  - <<: !include conf/binary_sensor/l2kitchen01_zbplug_coffee.yaml
+  - <<: !include conf/binary_sensor/l2kitchen01_zbplug_microwave.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
