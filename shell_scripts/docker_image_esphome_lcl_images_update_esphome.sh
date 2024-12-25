@@ -18,4 +18,3 @@ read c
 
 # update the image to the latest version
 sudo docker pull esphome/esphome:latest
-sudo docker pull esphome/esphome-lint:latest
