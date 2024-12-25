@@ -7,7 +7,7 @@
 # ############################################################
 # Zigbee plug turn off after x minutes if power consumption is below x watts
 # ############################################################
-- alias: Zigbee plug kitchen coffee machine auto off timer
+- alias: ZB plug kitchen coffee machine auto off timer
   id: "0229adb7-ba47-47bf-ad42-8f1c4c18916a"
   initial_state: true
   # --------------------- TRIGGER ---------------------

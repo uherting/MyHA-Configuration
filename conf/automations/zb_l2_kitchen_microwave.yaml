@@ -7,7 +7,7 @@
 # ############################################################
 # Zigbee plug turn off after x minutes if power consumption is below x watts
 # ############################################################
-- alias: Zigbee plug kitchen microwave auto off timer
+- alias: ZB plug kitchen microwave auto off timer
   id: "f82631d9-628e-4afa-a224-2fe4b9bf15ed"
   initial_state: true
   # --------------------- TRIGGER ---------------------
