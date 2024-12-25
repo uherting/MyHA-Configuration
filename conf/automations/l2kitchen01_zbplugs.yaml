@@ -5,7 +5,7 @@
 # ############################################################
 
 # ############################################################
-# L2 Kitchen: toggle ZB plug microwave based on TB01 at l2kitchen1
+# L2 Kitchen: toggle ZB plugs microwave based on TB at l2kitchen1
 # ############################################################
 - alias: L2 Kitchen toggle ZB plug microwave
   id: "696ef8c8-3ce5-4300-a0fe-322aa5be9b8c"
@@ -21,6 +21,24 @@
     # --------------- AUTOMATION TOGGLE ---------------
     service: switch.toggle
     entity_id: switch.zb_plug_l2_kitchen_microwave
+
+# ############################################################
+# L2 Kitchen: toggle ZB plug coffeemachine based on TB at l2kitchen1
+# ############################################################
+- alias: L2 Kitchen toggle ZB plug coffeemachine
+  id: "0ccac286-5a41-41f5-9677-efdaec8d1af0"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # long click on TB01 l2kitchen01 binary_template_sensor_zb_plug_coffeemachine_id
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.l2_kitchen01_bin_templ_zbplugcoffeemachine
+      to: "on"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------- AUTOMATION TOGGLE ---------------
+    service: switch.toggle
+    entity_id: switch.zb_plug_l2_kitchen_coffeemachine
 # ############################################################
 #  END OF FILE
 # ############################################################

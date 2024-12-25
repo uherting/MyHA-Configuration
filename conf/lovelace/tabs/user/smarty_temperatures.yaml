@@ -8,12 +8,13 @@
 icon: mdi:thermometer
 title: Temperatures and quick access
 path: tempAndQuckAccess
-badges: [
-    sun.sun, 
+badges:
+  [
+    sun.sun,
     sensor.abholung_altpapier_d,
     sensor.abholung_restabfall_d,
     sensor.abholung_abfall_d,
-]
+  ]
 
 cards:
   - type: vertical-stack
@@ -260,12 +261,12 @@ cards:
             name: "Senseo"
             color: yellow
             show_state: false
-            tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
-            double_tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
+            # tap_action:
+            #   action: call-service
+            #   service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
+            # double_tap_action:
+            #   action: call-service
+            #   service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_microwave
             name: "Microwave"
