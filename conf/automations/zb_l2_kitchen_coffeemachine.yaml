@@ -22,7 +22,7 @@
   # if power consumption is below x watts
   condition:
     - condition: template
-      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_coffeemachine_power") | float(0)) < 35 }}'
+      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_coffeemachine_power") | float(0)) < 10 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------

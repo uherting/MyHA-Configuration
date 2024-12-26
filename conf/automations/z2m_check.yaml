@@ -1,34 +1,34 @@
 # ############################################################
 #
-#  Take care that the ZB plug L2 kitchen dishwasher
+#  Take care that the ZB plug L2 kitchen dish washer
 #
 # ############################################################
 
 # ############################################################
-# Zigbee plug turn off after x minutes if power consumption is below x watts
+# Create a notification that the Z2M addon needs to be restarted
 # ############################################################
-- alias: ZB plug kitchen dishwasher auto off timer
-  id: "edf283ff-f16e-4902-9fbd-bac5b0b1ad29"
+- alias: Create a notification that the Z2M addon needs to be restarted
+  id: "c5dc3560-a958-4350-ae99-e0dd427f5b2b"
+  description: "This automation creates a notification that the Z2M addon needs to be restarted"
+  mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # after the plug was on for x minutes the switch goes off
   trigger:
     - platform: state
       entity_id: switch.zb_plug_l2_kitchen_dishwasher
-      to: "on"
+      to: "unavailable"
       for:
-        hours: 4
-        minutes: 0
+        minutes: 30
   # -------------------- CONDITIONS -------------------
-  # if power consumption is below x watts
-  condition:
-    - condition: template
-      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_dishwasher_power") | float(0)) < 10 }}'
+  # none whatsoever
+  condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    # ------------------ ZB Plug OFF ------------------
-    service: switch.turn_off
-    entity_id: switch.zb_plug_l2_kitchen_dishwasher
+    # ------------------- CREATE NOTIFICATION -------------------
+    - service: persistent_notification.create
+      data:
+        title: "The Z2M addon needs to be restarted"
+        message: "The Z2M addon needs to be restarted. Time: {{ now() }}"
 ############################################################
 #  END OF FILE
 # ############################################################

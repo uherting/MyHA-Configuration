@@ -237,16 +237,16 @@ cards:
               action: call-service
               service: script.lovelace_l2_bathroom01a_ssr_01_02
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_dishwasher
-            name: "Dishw"
+            entity: switch.zb_plug_l2_kitchen_fridge
+            name: "Fridge"
             color: yellow
             show_state: false
             tap_action:
               action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+              service: script.lovelace_zb_plug_l2_kitchen_fridge
             double_tap_action:
               action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+              service: script.lovelace_zb_plug_l2_kitchen_fridge
 
       # ZB Plugs L2
       - type: grid
@@ -273,21 +273,21 @@ cards:
             color: yellow
             show_state: false
           - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_dishwasher
+            name: "Dishw"
+            color: yellow
+            show_state: false
+            # tap_action:
+            #   action: call-service
+            #   service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+            # double_tap_action:
+            #   action: call-service
+            #   service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+          - type: "custom:button-card"
             entity: switch.zb_plug_l2_lounge_scanner
             name: "Scanner"
             color: yellow
             show_state: false
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_fridge
-            name: "Fridge"
-            color: yellow
-            show_state: false
-            tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_fridge
-            double_tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_fridge
 
       # PSU
       - type: grid
