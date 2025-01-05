@@ -1,5 +1,4 @@
-homeassistant:
-  enabled: true
+homeassistant: true
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt_user
@@ -70,6 +69,5 @@ groups:
     friendly_name: level2-TRVs
   '2':
     friendly_name: level2-Plugs
-availability:
-  enabled: true
-version: 4
+availability: true
+version: 2

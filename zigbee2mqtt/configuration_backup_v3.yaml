@@ -72,4 +72,4 @@ groups:
     friendly_name: level2-Plugs
 availability:
   enabled: true
-version: 4
+version: 3

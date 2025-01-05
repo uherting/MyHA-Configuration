@@ -1,0 +1,5 @@
+[ADDITION] Migrated settings to version 2
+
+[REMOVAL] Removed configuring group members through configuration.yaml (groups.xyz.devices setting). This will not impact current group members; however, you will no longer be able to add or remove devices from a group through the configuration.yaml.
+
+For more details, see https://github.com/Koenkk/zigbee2mqtt/discussions/24198
