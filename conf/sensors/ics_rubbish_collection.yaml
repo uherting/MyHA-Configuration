@@ -30,16 +30,6 @@
   force_update: 3600
   id: 12
   icon: mdi:delete-empty
-
-# Abfall-Abholung (outdated from 202501)
-- platform: ics
-  url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
-  name: Abfall_G
-  startswith: Abfall
-  lookahead: 60
-  force_update: 3600
-  id: 9
-  icon: mdi:delete-empty
 ####################################################################
 # EOF
 ####################################################################

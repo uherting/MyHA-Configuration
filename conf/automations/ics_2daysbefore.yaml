@@ -63,36 +63,6 @@
         msg_title: "Rubbish collection"
         msg_text: "Rubbish collection is due the day *after tomorrow*"
         msg_receiver: "notify"
-
-# ############################################################
-# Rubbish collection due notifications
-# ############################################################
-- alias: ICS - First rubbish collection notification
-  id: "02f21f84-a67c-11eb-a2ec-07e7a0fc6b5d"
-  mode: single
-  initial_state: true
-
-  # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: time
-      at: "19:09:30"
-
-  # -------------------- CONDITIONS -------------------
-  condition:
-    - condition: numeric_state
-      entity_id: sensor.abholung_abfall_d
-      # attribute: remaining
-      below: "3"
-      above: "1"
-
-  # --------------------- ACTIONS ---------------------
-  action:
-    # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
-      data_template:
-        msg_title: "Rubbish collection"
-        msg_text: "Rubbish collection is due the day *after tomorrow*"
-        msg_receiver: "notify"
 # ############################################################
 #  END OF FILE
 # ############################################################
