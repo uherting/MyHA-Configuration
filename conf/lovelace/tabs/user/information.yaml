@@ -16,9 +16,9 @@ badges:
     sensor.tankerkoenig_gulf_bad_lauterberg_diesel,
     sun.sun,
     binary_sensor.sun_dwn_twilight,
+    sensor.ics_13,
     sensor.ics_11,
     sensor.ics_12,
-    sensor.ics_13,
   ]
 
 cards:

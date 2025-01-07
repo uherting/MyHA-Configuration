@@ -11,9 +11,9 @@ path: tempAndQuckAccess
 badges:
   [
     sun.sun,
+    sensor.abholung_gelbetonne_d,
     sensor.abholung_altpapier_d,
     sensor.abholung_restabfall_d,
-    sensor.abholung_gelbetonne_d,
   ]
 
 cards:
