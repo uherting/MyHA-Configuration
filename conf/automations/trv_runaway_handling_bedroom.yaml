@@ -55,8 +55,8 @@
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
             - service: persistent_notification.create
               data:
-                title: "L2 TRV run away conditions handled"
-                message: "L2 TRV run away conditions (high) handled for the bedroom. Temperatures (as is/theshold): {{ states('sensor.l2_trv_runaway_temp_bedroom_as_is') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_high') }}°C.Time: {{ now() }}"
+                title: "L2 TRV bedroom: turned off"
+                message: "L2 TRV run away conditions (high temp) handled for the bedroom. Temperatures (as is/theshold): {{ states('sensor.l2_trv_runaway_temp_bedroom_as_is') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_high') }}°C.Time: {{ now() }}"
 
         #
         # --------------------- l2_trv_runaway_low_bedroom
@@ -74,7 +74,7 @@
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
             - service: persistent_notification.create
               data:
-                title: "L2 TRV run away conditions handled"
+                title: "L2 TRV bedroom: auto resumed"
                 message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
 
         #
@@ -93,7 +93,7 @@
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
             - service: persistent_notification.create
               data:
-                title: "L2 TRV run away conditions handled"
+                title: "L2 TRV bedroom: forced auto (time)"
                 message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time. Time: {{ now() }}"
 
       #
@@ -137,7 +137,7 @@
         hvac_mode: "auto"
     - service: persistent_notification.create
       data:
-        title: "L2 TRV run away changed havac mode"
+        title: "L2 TRV bedroom: auto (max time)"
         message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time restraint. Time: {{ now() }}"
 
 ############################################################
