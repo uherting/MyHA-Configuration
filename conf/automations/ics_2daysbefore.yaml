@@ -63,6 +63,36 @@
         msg_title: "Rubbish collection"
         msg_text: "Rubbish collection is due the day *after tomorrow*"
         msg_receiver: "notify"
+
+# ############################################################
+# Abholung-GelbeTonne
+# ############################################################
+- alias: ICS - Abholung-GelbeTonne - 2 days to go
+  id: "c37c69f3-e5d6-4e21-9d3d-27c732f5ad6a"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "19:03:30"
+
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.abholung_gelbetonne_d
+      # attribute: remaining
+      below: "3"
+      above: "1"
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data_template:
+        msg_title: "Gelbe Tonne collection"
+        msg_text: "Gelbe Tonne collection is due the day *after tomorrow*"
+        msg_receiver: "notify"
 # ############################################################
 #  END OF FILE
 # ############################################################

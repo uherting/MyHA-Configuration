@@ -6,11 +6,6 @@
 
 # how many days till rubbish gets collected?
 - sensor:
-    - name: "Abholung-Abfall-D"
-      unit_of_measurement: "d"
-      state: >
-        {% set ics_num = state_attr("sensor.ics_9", "remaining") | int(-1000) %}
-        {{ ics_num }}
     - name: "Abholung-Altpapier-D"
       unit_of_measurement: "d"
       state: >
@@ -20,6 +15,11 @@
       unit_of_measurement: "d"
       state: >
         {% set ics_num = state_attr("sensor.ics_12", "remaining") | int(-1000) %}
+        {{ ics_num }}
+    - name: "Abholung-GelbeTonne-D"
+      unit_of_measurement: "d"
+      state: >
+        {% set ics_num = state_attr("sensor.ics_13", "remaining") | int(-1000) %}
         {{ ics_num }}
 
 ####################################################################
