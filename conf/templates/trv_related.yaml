@@ -5,7 +5,11 @@
 # template:
 
 - binary_sensor:
+    #--------------------------------------------------------------------------
+    # high level
+    #--------------------------------------------------------------------------
     # general precondition to processing run away high temp condition
+    # l2_trv_runaway_precondition_high
     - name: "L2 TRV runaway precondition high"
       unique_id: "l2_trv_runaway_precondition_high"
       state: >
@@ -16,6 +20,7 @@
         }}
 
     # general precondition to processing run away low temp condition
+    # l2_trv_runaway_precondition_low
     - name: "L2 TRV runaway precondition low"
       unique_id: "l2_trv_runaway_precondition_low"
       state: >
@@ -26,6 +31,7 @@
         }}
 
     # condition to processing run away high temp condition
+    # l2_trv_runaway_condition_bedroom_high
     - name: "L2 TRV runaway condition bedroom high"
       unique_id: "l2_trv_runaway_condition_bedroom_high"
       state: >
@@ -33,15 +39,16 @@
           (
             (
               (
-                (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) + 
+                (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) + 
                 (states('input_number.l2_trv_threshold_high') | float(0))
               ) 
-              > (state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0))
+              > (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
             )
           )
         }}
 
     # condition to processing run away low temp condition
+    # l2_trv_runaway_condition_bedroom_low
     - name: "L2 TRV runaway condition bedroom low"
       unique_id: "l2_trv_runaway_condition_bedroom_low"
       state: >
@@ -49,15 +56,38 @@
           (
             (
               (
-                (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) +
+                (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) -
                 (states('input_number.l2_trv_threshold_low') | float(0))
               ) 
-              < (state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0))
+              < (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
             )
           )
         }}
 
 - sensor:
+    # current temp
+    # l2_trv_runaway_temp_bedroom_current
+    - name: "L2 TRV runaway temp bedroom current"
+      unit_of_measurement: "°"
+      # new: state is room temperature
+      state: >
+        {% set ics_num = (states('temperature_humidity_sensor_8eec_temperature')) | float(0) %}
+        {{ ics_num }}
+      # old: state is current temperature at TRV
+      # state: >
+      #   {% set ics_num = state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0) %}
+      #   {{ ics_num }}
+
+    # target temp
+    # l2_trv_runaway_temp_bedroom_target
+    - name: "L2 TRV runaway temp bedroom target"
+      unit_of_measurement: "°"
+      state: >
+        {% set ics_num = state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0) %}
+        {{ ics_num }}
+
+    # target temp high
+    # l2_trv_runaway_temp_bedroom_high
     - name: "L2 TRV runaway temp bedroom high"
       unit_of_measurement: "°"
       state: >
@@ -66,18 +96,14 @@
                 (states('input_number.l2_trv_threshold_high') | float(0)) %}
         {{ ics_num }}
 
+    # target temp low
+    # l2_trv_runaway_temp_bedroom_low
     - name: "L2 TRV runaway temp bedroom low"
       unit_of_measurement: "°"
       state: >
         {% set ics_num = 
                 (state_attr('climate.zb_trv_bedroom_l2', 'current_temperature') | float(0)) +
                 (states('input_number.l2_trv_threshold_low') | float(0)) %}
-        {{ ics_num }}
-
-    - name: "L2 TRV runaway temp bedroom as is"
-      unit_of_measurement: "°"
-      state: >
-        {% set ics_num = state_attr('climate.zb_trv_bedroom_l2', 'temperature') | float(0) %}
         {{ ics_num }}
 
 ####################################################################
