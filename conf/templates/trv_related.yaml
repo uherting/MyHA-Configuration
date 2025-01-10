@@ -42,7 +42,7 @@
                 (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) + 
                 (states('input_number.l2_trv_threshold_high') | float(0))
               ) 
-              > (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
+              >= (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
             )
           )
         }}
@@ -59,7 +59,7 @@
                 (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) -
                 (states('input_number.l2_trv_threshold_low') | float(0))
               ) 
-              < (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
+              <= (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
             )
           )
         }}
@@ -71,7 +71,7 @@
       unit_of_measurement: "°"
       # new: state is room temperature
       state: >
-        {% set ics_num = (states('temperature_humidity_sensor_8eec_temperature')) | float(0) %}
+        {% set ics_num = (states('sensor.temperature_humidity_sensor_8eec_temperature')) | float(0) %}
         {{ ics_num }}
       # old: state is current temperature at TRV
       # state: >
