@@ -56,7 +56,7 @@
           (
             (
               (
-                (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) -
+                (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) +
                 (states('input_number.l2_trv_threshold_low') | float(0))
               ) 
               <= (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))

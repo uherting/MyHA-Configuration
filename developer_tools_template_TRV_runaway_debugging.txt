@@ -1,0 +1,39 @@
+binary_sensor.l2_trv_runaway_precondition_high: {{ states('binary_sensor.l2_trv_runaway_precondition_high') }}
+1) {{ is_state('input_boolean.l2_trv_runaway_handling_yn', 'on') }}
+2) {{ is_state('input_boolean.l2_trv_runaway_handling_in_progress_bedroom', 'off') }}
+binary_sensor.l2_trv_runaway_precondition_low: {{ states('binary_sensor.l2_trv_runaway_precondition_low') }}
+1) {{ is_state('input_boolean.l2_trv_runaway_handling_yn', 'on') }}
+2) {{ is_state('input_boolean.l2_trv_runaway_handling_in_progress_bedroom', 'on') }}
+
+binary_sensor.l2_trv_runaway_condition_bedroom_high: {{ states('binary_sensor.l2_trv_runaway_condition_bedroom_high') }}
+binary_sensor.l2_trv_runaway_condition_bedroom_low: {{ states('binary_sensor.l2_trv_runaway_condition_bedroom_low') }}
+
+high temp condition: {{             (
+              (
+                (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) + 
+                (states('input_number.l2_trv_threshold_high') | float(0))
+              ) 
+              >= (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
+            )
+}}
+high incl threshold: {{ 
+              (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) + 
+              (states('input_number.l2_trv_threshold_high') | float(0))
+}}
+low temp condition: {{             (
+              (
+                (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) +
+                (states('input_number.l2_trv_threshold_low') | float(0))
+              ) 
+              <= (states('sensor.l2_trv_runaway_temp_bedroom_target') | float(0))
+            )
+}}
+low incl threshold: {{                 (states('sensor.l2_trv_runaway_temp_bedroom_current') | float(0)) -
+                (states('input_number.l2_trv_threshold_low') | float(0))
+}}
+
+sensor.l2_trv_runaway_temp_bedroom_current: {{ states('sensor.l2_trv_runaway_temp_bedroom_current') }}
+sensor.l2_trv_runaway_temp_bedroom_target: {{ states('sensor.l2_trv_runaway_temp_bedroom_target') }}
+sensor.l2_trv_runaway_temp_bedroom_high: {{ states('sensor.l2_trv_runaway_temp_bedroom_high') }}
+sensor.l2_trv_runaway_temp_bedroom_low: {{ states('sensor.l2_trv_runaway_temp_bedroom_low') }}
+
