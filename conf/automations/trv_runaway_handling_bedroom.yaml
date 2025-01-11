@@ -56,7 +56,7 @@
             - service: persistent_notification.create
               data:
                 title: "L2 TRV bedroom: turned off"
-                message: "L2 TRV run away conditions (high temp) handled for the bedroom. Temperatures (as is/target): {{ states('sensor.l2_trv_runaway_temp_bedroom_as_is') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_high') }}°C.Time: {{ now() }}"
+                message: "L2 TRV run away conditions (high temp) handled for the bedroom. Temperatures (current/target): {{ states('sensor.l2_trv_runaway_temp_bedroom_current') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_target') }}°C.Time: {{ now() }}"
 
         #
         # --------------------- l2_trv_runaway_low_bedroom
