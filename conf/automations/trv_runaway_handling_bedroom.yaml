@@ -30,9 +30,6 @@
         and
         is_state('binary_sensor.l2_trv_runaway_condition_bedroom_low', 'on')
       }}"
-    - platform: time
-      at: "21:30:00"
-      id: "l2_trv_runaway_low_bedroom_time"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -76,25 +73,6 @@
               data:
                 title: "L2 TRV bedroom: auto resumed"
                 message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
-
-        #
-        # --------------------- l2_trv_runaway_low_bedroom_time
-        - conditions:
-            - condition: trigger
-              id: "l2_trv_runaway_low_bedroom_time"
-          sequence:
-            - action: climate.set_hvac_mode
-              target:
-                entity_id: climate.zb_trv_bedroom_l2
-              data:
-                hvac_mode: "auto"
-            - service: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
-            - service: persistent_notification.create
-              data:
-                title: "L2 TRV bedroom: forced auto (time)"
-                message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time. Time: {{ now() }}"
 
       #
       # --------------------- default branch of choose:
