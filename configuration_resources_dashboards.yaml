@@ -47,6 +47,13 @@ resources:
   - url: /hacsfiles/banner-card/banner-card.js
     type: module
 
+  # Thermal Comfort Icons (for the HACS integration Thermal Comfort)
+  # for details see
+  #   - https://github.com/dolezsa/thermal_comfort?tab=readme-ov-file
+  #   - https://github.com/rautesamtr/thermal_comfort_icons
+  - url: /hacsfiles/thermal_comfort_icons/thermal_comfort_icons.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
