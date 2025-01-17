@@ -16,12 +16,25 @@ badges:
     sensor.tankerkoenig_gulf_bad_lauterberg_diesel,
     sun.sun,
     binary_sensor.sun_dwn_twilight,
-    sensor.ics_13,
-    sensor.ics_11,
-    sensor.ics_12,
   ]
 
 cards:
+  # Recycling / rubbish
+  - type: "custom:auto-entities"
+    card:
+      type: entities
+      title: Recycling / rubbish
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: "sensor.ics_1*"
+    show_empty: true
+    unique: false
+    sort:
+      method: attribute
+      attribute: remaining
+      numeric: true
+
   # Full / new moon
   - type: entities
     title: Full / New Moon

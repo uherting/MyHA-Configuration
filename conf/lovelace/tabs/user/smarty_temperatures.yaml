@@ -8,17 +8,26 @@
 icon: mdi:thermometer
 title: Temperatures and quick access
 path: tempAndQuckAccess
-badges:
-  [
-    sun.sun,
-    sensor.abholung_gelbetonne_d,
-    sensor.abholung_altpapier_d,
-    sensor.abholung_restabfall_d,
-  ]
+badges: []
 
 cards:
   - type: vertical-stack
     cards:
+      # Recycling / rubbish
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: Recycling / rubbish
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "sensor.abholung_*"
+        show_empty: true
+        unique: false
+        sort:
+          method: state
+          numeric: true
+
       # Kitchen L2
       - type: grid
         square: false
