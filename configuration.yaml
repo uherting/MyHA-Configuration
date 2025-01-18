@@ -222,6 +222,12 @@ switch: !include_dir_merge_list conf/switches
 # DOODS
 #image_processing: !include conf/doods/image_processing.yaml
 
+battery_notes:
+  enable_autodiscovery: true
+  default_battery_low_threshold: 10
+  battery_increase_threshold: 25
+  hide_battery: false
+  round_battery: true
 ####################################################################
 # EOF
 ####################################################################
