@@ -54,6 +54,10 @@ resources:
   - url: /hacsfiles/thermal_comfort_icons/thermal_comfort_icons.js
     type: module
 
+  # Battery State Card
+  - url: /hacsfiles/battery-state-card/battery-state-card.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
