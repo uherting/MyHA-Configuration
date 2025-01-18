@@ -13,21 +13,6 @@ badges: []
 cards:
   - type: vertical-stack
     cards:
-      # Recycling / rubbish
-      - type: "custom:auto-entities"
-        card:
-          type: entities
-          title: Recycling / rubbish
-          show_header_toggle: false
-        filter:
-          include:
-            - entity_id: "sensor.abholung_*"
-        show_empty: true
-        unique: false
-        sort:
-          method: state
-          numeric: true
-
       # Kitchen L2
       - type: grid
         square: false
@@ -326,6 +311,20 @@ cards:
             name: "PSU UH"
             color: yellow
             show_state: false
+      # Recycling / rubbish
+      - type: "custom:auto-entities"
+        card:
+          type: entities
+          title: Recycling / rubbish
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "sensor.abholung_*"
+        show_empty: true
+        unique: false
+        sort:
+          method: state
+          numeric: true
 ####################################################################
 # EOF
 ####################################################################
