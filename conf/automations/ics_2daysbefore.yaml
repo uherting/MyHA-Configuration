@@ -30,7 +30,7 @@
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_txt
       data_template:
-        msg_title: "Used paper collection"
+        msg_title: "Used paper collection info"
         msg_text: "Used paper collection is due the day *after tomorrow*"
         msg_receiver: "notify"
 
@@ -60,7 +60,7 @@
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_txt
       data_template:
-        msg_title: "Rubbish collection"
+        msg_title: "Rubbish collection info"
         msg_text: "Rubbish collection is due the day *after tomorrow*"
         msg_receiver: "notify"
 
@@ -90,7 +90,7 @@
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_txt
       data_template:
-        msg_title: "Gelbe Tonne collection"
+        msg_title: "Gelbe Tonne collection information"
         msg_text: "Gelbe Tonne collection is due the day *after tomorrow*"
         msg_receiver: "notify"
 # ############################################################
