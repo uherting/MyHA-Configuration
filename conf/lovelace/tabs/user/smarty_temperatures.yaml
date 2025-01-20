@@ -158,7 +158,13 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: binary_sensor.l2_bathroom01_window
+            entity: binary_sensor.zb_dw_l2_bathroom_contact
+            # currently (20250120094400) out of order:
+            # entity: binary_sensor.l2_bathroom01_window
+            # the following is a combination of ...
+            #   - binary_sensor.zb_dw_l2_bathroom_contact
+            #   - binary_sensor.l2_bathroom01_window
+            # entity: l2_bathroom_window_generic
             name: " "
             color: yellow
             show_state: true
