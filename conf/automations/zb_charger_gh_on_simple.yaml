@@ -35,10 +35,10 @@
           sequence:
             - service: switch.turn_on
               entity_id: switch.zb_charger_gh
-            - service: persistent_notification.create
-              data:
-                title: "ZB Plug GH switched on (low_percentage_on)"
-                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "ZB Plug GH switched on (low_percentage_on)"
+            #     message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
             - service: input_select.select_option
               target:
                 entity_id: input_select.zb_charger_gh_state_current
@@ -50,10 +50,10 @@
           sequence:
             - service: switch.turn_on
               entity_id: switch.zb_charger_gh
-            - service: persistent_notification.create
-              data:
-                title: "ZB Plug GH switched on (emergency_charging_on)"
-                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "ZB Plug GH switched on (emergency_charging_on)"
+            #     message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
             - service: input_select.select_option
               target:
                 entity_id: input_select.zb_charger_gh_state_current
@@ -65,10 +65,10 @@
           sequence:
             - service: switch.turn_on
               entity_id: switch.zb_charger_gh
-            - service: persistent_notification.create
-              data:
-                title: "ZB Plug GH switched on (delayed_charging_on)"
-                message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "ZB Plug GH switched on (delayed_charging_on)"
+            #     message: "The phone is at {{ states('sensor.spghnote8pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
             - service: input_select.select_option
               target:
                 entity_id: input_select.zb_charger_gh_state_current

@@ -33,10 +33,10 @@
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: persistent_notification.create
-      data:
-        title: "The state of the ZB plug UH was set to undefined"
-        message: "After a timeout the state of the ZB plug UH was set to undefined. Time: {{ now() }}"
+    # - service: persistent_notification.create
+    #   data:
+    #     title: "The state of the ZB plug UH was set to undefined"
+    #     message: "After a timeout the state of the ZB plug UH was set to undefined. Time: {{ now() }}"
     - service: input_select.select_option
       target:
         entity_id: input_select.zb_charger_uh_state_current
