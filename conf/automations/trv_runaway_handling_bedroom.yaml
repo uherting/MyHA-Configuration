@@ -69,10 +69,10 @@
             - service: input_boolean.turn_off
               target:
                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
-            - service: persistent_notification.create
-              data:
-                title: "L2 TRV bedroom: auto resumed"
-                message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "L2 TRV bedroom: auto resumed"
+            #     message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
 
       #
       # --------------------- default branch of choose:
@@ -82,10 +82,10 @@
             message: "Automation L2 TRV run away handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
-        - service: persistent_notification.create
-          data:
-            title: "L2 TRV run away automation unknown activity"
-            message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
+        # - service: persistent_notification.create
+        #   data:
+        #     title: "L2 TRV run away automation unknown activity"
+        #     message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
 
 # ############################################################
 #  L2 TRV run away handling by switching hvac_mode (bedroom)
@@ -113,10 +113,10 @@
         entity_id: climate.zb_trv_bedroom_l2
       data:
         hvac_mode: "auto"
-    - service: persistent_notification.create
-      data:
-        title: "L2 TRV bedroom: auto (max time)"
-        message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time restraint. Time: {{ now() }}"
+    # - service: persistent_notification.create
+    #   data:
+    #     title: "L2 TRV bedroom: auto (max time)"
+    #     message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time restraint. Time: {{ now() }}"
 
 ############################################################
 #  END OF FILE
