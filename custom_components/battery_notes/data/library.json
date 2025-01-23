@@ -1106,7 +1106,7 @@
             "model": "U200",
             "model_id": "Aqara Smart Lock U200 (10242)",
             "hw_version": "1.0.0.0",
-            "battery_type": "Rechargable"
+            "battery_type": "Rechargeable"
         },
         {
             "manufacturer": "Aqara",
@@ -2202,6 +2202,11 @@
         },
         {
             "manufacturer": "eQ-3",
+            "model": "HmIP-ASIR-O",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "eQ-3",
             "model": "HmIP-DLD",
             "battery_type": "AA",
             "battery_quantity": 4
@@ -2296,6 +2301,12 @@
             "manufacturer": "eQ-3",
             "model": "HmIP-RC8",
             "battery_type": "AAA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "eQ-3",
+            "model": "HmIP-SAM",
+            "battery_type": "AA",
             "battery_quantity": 2
         },
         {
@@ -2401,6 +2412,12 @@
         },
         {
             "manufacturer": "eQ-3",
+            "model": "HmIP-SWDM-2",
+            "battery_type": "AAA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "eQ-3",
             "model": "HmIP-SWDM-B2",
             "battery_type": "AAA",
             "battery_quantity": 2
@@ -2438,6 +2455,12 @@
             "model": "HmIP-SWO-PR",
             "battery_type": "AA",
             "battery_quantity": 3
+        },
+        {
+            "manufacturer": "eQ-3",
+            "model": "HmIP-SWSD",
+            "battery_type": "FDK CR17450E-N (3V)",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "eQ-3",
@@ -2886,6 +2909,11 @@
             "manufacturer": "Fyta",
             "model": "Plant",
             "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Gardena",
+            "model": "GARDENA smart Mower",
+            "battery_type": "Rechargeable"
         },
         {
             "manufacturer": "GE",
@@ -4132,6 +4160,11 @@
         },
         {
             "manufacturer": "Lutron",
+            "model": "Lutron Aurora (Z3-1BRL)",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Lutron",
             "model": "Z3-1BRL",
             "battery_type": "CR2032"
         },
@@ -4396,6 +4429,16 @@
             "battery_quantity": 2
         },
         {
+            "manufacturer": "Nexturn",
+            "model": "Door_Sensor",
+            "battery_type": "CR123A"
+        },
+        {
+            "manufacturer": "Nexturn",
+            "model": "Leak_Sensor",
+            "battery_type": "CR123A"
+        },
+        {
             "manufacturer": "Nortek Security & Control LLC",
             "model": "NGD00Z-4",
             "battery_type": "CR2032"
@@ -4499,6 +4542,12 @@
             "manufacturer": "Oculus",
             "model": "Quest",
             "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "Omlet",
+            "model": "Autodoor",
+            "battery_type": "AA",
+            "battery_quantity": 4
         },
         {
             "manufacturer": "OnePlus",
@@ -4637,6 +4686,13 @@
         },
         {
             "manufacturer": "OSRAM",
+            "model": "SMART+ Motion Sensor",
+            "model_id": "AC01353010G",
+            "hw_version": "1",
+            "battery_type": "CR2"
+        },
+        {
+            "manufacturer": "OSRAM",
             "model": "SMART+ Motion Sensor (AC01353010G)",
             "battery_type": "CR2"
         },
@@ -4662,6 +4718,11 @@
             "model": "THS317-ET",
             "battery_type": "AAA",
             "battery_quantity": 2
+        },
+        {
+            "manufacturer": "Panasonic",
+            "model": "VR220",
+            "battery_type": "Rechargeable"
         },
         {
             "manufacturer": "Paulmann",
@@ -4703,6 +4764,13 @@
             "manufacturer": "Philips",
             "model": "Hue dimmer switch (929002398602)",
             "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Philips",
+            "model": "Hue motion outdoor sensor",
+            "model_id": "9290019758",
+            "battery_type": "AA",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "Philips",
@@ -6182,6 +6250,11 @@
             "battery_quantity": 3
         },
         {
+            "manufacturer": "Tedee",
+            "model": "Tedee PRO",
+            "battery_type": "Rechargeable"
+        },
+        {
             "manufacturer": "ThermoBeacon",
             "model": "16",
             "battery_type": "CR2477"
@@ -6766,6 +6839,12 @@
             "battery_type": "CR2450"
         },
         {
+            "manufacturer": "Tuya",
+            "model": "Security Camera",
+            "model_id": "ggleaxvadac3z3mc",
+            "battery_type": "Rechargeable"
+        },
+        {
             "manufacturer": "TuYa",
             "model": "Security remote control (TS0215A_remote)",
             "battery_type": "CR2032"
@@ -7019,6 +7098,12 @@
             "model": "Temperature and humidity sensor (ZTH08-E)",
             "battery_type": "AAA",
             "battery_quantity": 3
+        },
+        {
+            "manufacturer": "Tuya",
+            "model": "TH01Z",
+            "battery_type": "AAA",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "Tuya",
@@ -7788,6 +7873,12 @@
         },
         {
             "manufacturer": "Xiaomi",
+            "model": "lumi.sensor_magnet",
+            "model_id": "MCCGQ01LM",
+            "battery_type": "CR1632"
+        },
+        {
+            "manufacturer": "Xiaomi",
             "model": "LYWSD02",
             "battery_type": "CR2032",
             "battery_quantity": 2
@@ -7892,6 +7983,11 @@
             "manufacturer": "Xiaomi",
             "model": "Mi/Aqara smart home cube (MFKZQ01LM)",
             "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "Xiaomi",
+            "model": "miaomiaoce.sensor_ht.t2",
+            "battery_type": "CR2032"
         },
         {
             "manufacturer": "Xiaomi",
