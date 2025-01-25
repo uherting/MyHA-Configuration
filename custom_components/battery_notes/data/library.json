@@ -719,6 +719,11 @@
         },
         {
             "manufacturer": "Amazon",
+            "model": "KFMAWI",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "Amazon",
             "model": "KFONWI",
             "battery_type": "Rechargeable"
         },
@@ -950,6 +955,13 @@
         {
             "manufacturer": "Aqara",
             "model": "Motion sensor (RTCGQ11LM)",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "Aqara",
+            "model": "Motion Sensor P1",
+            "model_id": "Aqara Motion Sensor P1",
+            "hw_version": "1.0",
             "battery_type": "CR2450"
         },
         {
@@ -2040,6 +2052,12 @@
             "model": "HM-PB-2-WM55-2",
             "battery_type": "AAA",
             "battery_quantity": 2
+        },
+        {
+            "manufacturer": "eQ-3",
+            "model": "HM-PB-4Dis-WM-2",
+            "battery_type": "AAA",
+            "battery_quantity": 3
         },
         {
             "manufacturer": "eQ-3",
@@ -5056,6 +5074,12 @@
             "battery_type": "Rechargeable"
         },
         {
+            "manufacturer": "Roborock",
+            "model": "roborock.vacuum.s5e",
+            "model_id": "roborock.vacuum.s5e",
+            "battery_type": "Rechargeable"
+        },
+        {
             "manufacturer": "rtl_433",
             "model": "Acurite-515",
             "battery_type": "AA",
@@ -5193,6 +5217,11 @@
         {
             "manufacturer": "Samsung",
             "model": "SM-A525F",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "Samsung",
+            "model": "SM-A528B",
             "battery_type": "Rechargeable"
         },
         {
@@ -5658,6 +5687,14 @@
             "model": "LM4110ZB",
             "battery_type": "AA",
             "battery_quantity": 3
+        },
+        {
+            "manufacturer": "Siterwell",
+            "model": "Radiator valve with thermostat",
+            "model_id": "GS361A-H04",
+            "hw_version": "1",
+            "battery_type": "AA",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "Siterwell",
@@ -6433,6 +6470,11 @@
         },
         {
             "manufacturer": "Tractive GmbH",
+            "model": "TG5",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "Tractive GmbH",
             "model": "TRNJA4",
             "battery_type": "Rechargeable"
         },
@@ -6665,6 +6707,13 @@
             "model": "LCZ030",
             "battery_type": "AA",
             "battery_quantity": 2
+        },
+        {
+            "manufacturer": "Tuya",
+            "model": "Luminance door sensor",
+            "model_id": "ZG-102ZL",
+            "hw_version": "1",
+            "battery_type": "CR2032"
         },
         {
             "manufacturer": "TuYa",
@@ -6981,6 +7030,20 @@
             "manufacturer": "TuYa",
             "model": "Temperature & humidity LCD sensor (ZG-227ZL)",
             "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Tuya",
+            "model": "Temperature & humidity sensor",
+            "model_id": "IH-K009",
+            "hw_version": "1",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "Tuya",
+            "model": "Temperature & humidity sensor",
+            "model_id": "RSH-HS06_1",
+            "hw_version": "1",
+            "battery_type": "CR2450"
         },
         {
             "manufacturer": "Tuya",
@@ -7438,6 +7501,13 @@
         {
             "manufacturer": "unk_manufacturer",
             "model": "lumi.remote.b28ac1",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "uya",
+            "model": "Temperature & humidity sensor",
+            "model_id": "RSH-HS06_1",
+            "hw_version": "1",
             "battery_type": "CR2450"
         },
         {
@@ -8061,6 +8131,13 @@
         },
         {
             "manufacturer": "Xiaomi",
+            "model": "temperature and humidity sensor",
+            "model_id": "WSDCGQ01LM",
+            "hw_version": "30",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Xiaomi",
             "model": "Temperature/Humidity sensor",
             "battery_type": "CR2032"
         },
@@ -8291,6 +8368,11 @@
             "manufacturer": "Zipato",
             "model": "HS1SA",
             "battery_type": "CR123A"
+        },
+        {
+            "manufacturer": "ZONKO",
+            "model": "K150",
+            "battery_type": "Rechargeable"
         },
         {
             "manufacturer": "Zooz",
