@@ -1,0 +1,49 @@
+# ############################################################
+#
+#  Customised scripts for zb_plug_l2_kitchen_dishwasher
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# This script executes a dummy action to make sure that no action is executed after hitting the button in lovelace
+# --------------------------------------------------------------
+lovelace_zb_plug_l2_kitchen_dishwasher:
+  alias: Make sure that no action is executed after hitting the button in lovelace kitchen_dishwasher
+  icon: mdi:text
+  description: This script executes a dummy action to make sure that no action is executed after hitting the button in lovelace
+  mode: queued
+  sequence:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'off')) }}"
+          sequence:
+            - service: switch.turn_on
+              target:
+                entity_id: switch.zb_plug_l2_kitchen_dishwasher
+              data: {}
+        - conditions:
+            - condition: template
+              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= 0.15) and  ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > (20*60))  }}"
+              # (20*60))seconds ==> safety, so that the dishwasher cannot be switched off while it is
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.zb_plug_l2_kitchen_dishwasher
+              data: {}
+        - conditions:
+            - condition: template
+              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) > 0.0) }}"
+          sequence:
+            - service: persistent_notification.create
+              data:
+                title: "{{ 'L2 Dishwasher: GUI tried to switch it off while it was still running.' }}"
+                message: "Time: {{ now() }}"
+      default:
+        - service: persistent_notification.create
+          data:
+            title: "{{ 'L2 Dishwasher: conditions not met' }}"
+            message: "Time: {{ now() }}"
+# ############################################################
+#  END OF FILE
+# ############################################################

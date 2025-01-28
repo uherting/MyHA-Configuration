@@ -277,12 +277,12 @@ cards:
             name: "Dishw"
             color: yellow
             show_state: false
-            # tap_action:
-            #   action: call-service
-            #   service: script.lovelace_zb_plug_l2_kitchen_dishwasher
-            # double_tap_action:
-            #   action: call-service
-            #   service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+            tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+            double_tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_dishwasher
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_lounge_scanner
             name: "Scanner"
