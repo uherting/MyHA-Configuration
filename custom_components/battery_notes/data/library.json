@@ -931,6 +931,12 @@
         },
         {
             "manufacturer": "Aqara",
+            "model": "Door and window sensor T1",
+            "model_id": "MCCGQ12LM",
+            "battery_type": "CR1632"
+        },
+        {
+            "manufacturer": "Aqara",
             "model": "Door and window sensor T1 (MCCGQ12LM)",
             "battery_type": "CR2032"
         },
@@ -4084,6 +4090,11 @@
         {
             "manufacturer": "LUMI",
             "model": "lumi.curtain.acn002",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "LUMI",
+            "model": "lumi.curtain.agl001",
             "battery_type": "Rechargeable"
         },
         {
