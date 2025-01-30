@@ -1784,6 +1784,12 @@
         },
         {
             "manufacturer": "Danfoss",
+            "model": "LCZ251",
+            "battery_type": "AA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "Danfoss",
             "model": "TRV001",
             "battery_type": "AA",
             "battery_quantity": 2
@@ -3595,6 +3601,13 @@
         },
         {
             "manufacturer": "IKEA",
+            "model": "TRADFRI shortcut button",
+            "model_id": "E1812",
+            "hw_version": "1",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "IKEA",
             "model": "TRADFRI shortcut button (E1812)",
             "battery_type": "CR2032"
         },
@@ -4000,6 +4013,14 @@
             "manufacturer": "Lidl",
             "model": "Silvercrest smart motion sensor (HG06335/HG07310)",
             "battery_type": "MANUAL"
+        },
+        {
+            "manufacturer": "Lidl",
+            "model": "Silvercrest smart window and door sensor",
+            "model_id": "HG06336",
+            "hw_version": "1",
+            "battery_type": "AAA",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "Lidl",
