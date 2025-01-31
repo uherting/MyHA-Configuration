@@ -3490,14 +3490,42 @@
             "battery_type": "Rechargeable"
         },
         {
+            "manufacturer": "IKEA",
+            "model": "FYRTUR roller blind, block-out",
+            "model_id": "E1757",
+            "hw_version": "1",
+            "battery_type": "IKEA BRAUNIT"
+        },
+        {
             "manufacturer": "Ikea",
             "model": "FYRTUR roller blind, block-out (E1757)",
             "battery_type": "Rechargeable"
         },
         {
+            "manufacturer": "IKEA",
+            "model": "FYRTUR roller blind, block-out (E1757)",
+            "model_id": "E1757",
+            "hw_version": "1",
+            "battery_type": "IKEA BRAUNIT"
+        },
+        {
+            "manufacturer": "IKEA",
+            "model": "KADRILJ roller blind",
+            "model_id": "E1926",
+            "hw_version": "1",
+            "battery_type": "IKEA BRAUNIT"
+        },
+        {
             "manufacturer": "Ikea",
             "model": "KADRILJ roller blind (E1926)",
             "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "IKEA",
+            "model": "KADRILJ roller blind (E1926)",
+            "model_id": "E1926",
+            "hw_version": "1",
+            "battery_type": "IKEA BRAUNIT"
         },
         {
             "manufacturer": "IKEA",
@@ -5404,6 +5432,13 @@
         {
             "manufacturer": "Schneider Electric",
             "model": "FLS/SYSTEM-M/4",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Schneider Electric",
+            "model": "LK FUGA wiser wireless battery 4 button switch",
+            "model_id": "550D6001",
+            "hw_version": "1",
             "battery_type": "CR2032"
         },
         {
