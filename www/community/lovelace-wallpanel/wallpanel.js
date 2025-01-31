@@ -205,7 +205,7 @@ class CameraMotionDetection {
 	}
 }
 
-const version = "4.36.0";
+const version = "4.36.1";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -489,7 +489,7 @@ function updateConfig() {
 	let oldConfig = config;
 	config = {};
 	mergeConfig(config, defaultConfig);
-
+	
 	if (Object.keys(dashboardConfig).length === 0) {
 		dashboardConfig = getHaPanelLovelaceConfig();
 	}
@@ -630,15 +630,24 @@ function getHaPanelLovelace() {
 function getHaPanelLovelaceConfig(keys = []) {
 	let pl = getHaPanelLovelace();
 	let conf = {};
-	if (pl && pl.lovelace && pl.lovelace.config && pl.lovelace.config.wallpanel) {
-		if (keys.length === 0) {
-			keys = Object.keys(pl.lovelace.config.wallpanel);
+	if (pl && pl.lovelace) {
+		let wallpanelConfig;
+		if (pl.lovelace.config && pl.lovelace.config.wallpanel) {
+			wallpanelConfig = pl.lovelace.config.wallpanel;
 		}
-		keys.forEach(key => {
-			if (key in defaultConfig) {
-				conf[key] = pl.lovelace.config.wallpanel[key];
+		else if (pl.lovelace.rawConfig && pl.lovelace.rawConfig.wallpanel) {
+			wallpanelConfig = pl.lovelace.rawConfig.wallpanel;
+		}
+		if (wallpanelConfig) {
+			if (keys.length === 0) {
+				keys = Object.keys(wallpanelConfig);
 			}
-		});
+			keys.forEach(key => {
+				if (key in defaultConfig) {
+					conf[key] = wallpanelConfig[key];
+				}
+			});
+		}
 	}
 	return conf;
 }
@@ -2834,8 +2843,8 @@ class WallpanelView extends HuiView {
 		if (screenWakeLock.enabled) {
 			screenWakeLock.disable();
 		}
-
-		this.setScreensaverEntityState();
+		
+		setTimeout(this.setScreensaverEntityState.bind(this), 25);
 	}
 
 	updateScreensaver() {
