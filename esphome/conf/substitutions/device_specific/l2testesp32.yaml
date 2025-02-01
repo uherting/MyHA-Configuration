@@ -14,9 +14,9 @@ friendly_id: L2TESTESP32
 
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L2BTPROXY_BATHROOM_CASESENSOR_01_ADDRESS
+dallas_01c01_address: !secret DALLAS_01_L2TESTESP32_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L2BTPROXY_BATHROOM_ENVSENSOR_01_ADDRESS
+dallas_01e01_address: !secret DALLAS_01_L2TESTESP32_ENVSENSOR_01_ADDRESS
 ####################################################################
 # EOF
 ####################################################################

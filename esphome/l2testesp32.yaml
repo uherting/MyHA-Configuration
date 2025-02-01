@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l2btproxybathroom
+# DEVICE: l2testesp32
 #
 ####################################################################
 ####################################################################
@@ -11,7 +11,7 @@
 ####################################################################
 #
 # Purpose:
-#   - BT proxy for all thingies on L2
+#   - Test device based on a ESP32
 #
 # Future feature:
 #   - unknown
@@ -37,7 +37,7 @@
 
 substitutions:
   <<: !include conf/substitutions/device_specific/l2testesp32.yaml
-  <<: !include conf/substitutions/overwrites/l2btproxybathroom.yaml
+  <<: !include conf/substitutions/overwrites/l2testesp32.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -132,8 +132,8 @@ text_sensor:
   # none so far
 
 #-------------------------------------------------------------------
-# Enable the BLE Tracker
-bluetooth_proxy:
+# Enable the BT proxy
+# bluetooth_proxy:
 ####################################################################
 # EOF
 ####################################################################
