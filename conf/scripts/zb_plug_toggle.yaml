@@ -1,0 +1,26 @@
+# ############################################################
+#
+#  Toggle a ZB plug triggered by a ESPHome device
+#
+# ############################################################
+
+zb_plug_toggle_by_esphome:
+  alias: Toggle a ZB plug triggered by a ESPHome device
+  # icon: mdi:
+  description: This script toggles a ZB plug triggered by a ESPHome device
+  fields:
+    zb_plug_id:
+      description: "The receiver of the message"
+      advanced: true
+      required: true
+      example: "admin"
+      default: "admin"
+  mode: queued
+  sequence:
+    - action: switch.toggle
+      data_template:
+        entity_id: '{{ zb_plug_id }}'
+
+# ############################################################
+#  END OF FILE
+# ############################################################
