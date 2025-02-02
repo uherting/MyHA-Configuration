@@ -1,0 +1,31 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# TOUCH BUTTON
+
+- platform: gpio
+  name: $touchbutton04_name
+  id: ${touchbutton04_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A4
+    #
+    # TODO: before installation change settings for mode / inverted
+    # production => inverted: false / mode: INPUT
+    # before installation => inverted: true / mode: INPUT_PULLUP
+    #
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    # mode: INPUT_PULLUP
+    inverted: false
+    # inverted: true
+  device_class: power
+  on_press:
+    # - logger.log: "TB on_press without any action due to lack of time."
+    - script.execute: tb_04_click_on_press
+# ############################################################
+#  END OF FILE
+# ############################################################

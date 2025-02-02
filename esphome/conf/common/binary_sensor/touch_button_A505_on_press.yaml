@@ -7,8 +7,8 @@
 # TOUCH BUTTON
 
 - platform: gpio
-  name: $touchbutton02_name
-  id: ${touchbutton02_id}
+  name: $touchbutton05_name
+  id: ${touchbutton05_id}
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
     number: !secret MCP23017_PIN_A5
@@ -25,7 +25,7 @@
   device_class: power
   on_press:
     # - logger.log: "TB on_press without any action due to lack of time."
-    - script.execute: tb_02_click_on_press
+    - script.execute: tb_05_click_on_press
 # ############################################################
 #  END OF FILE
 # ############################################################
