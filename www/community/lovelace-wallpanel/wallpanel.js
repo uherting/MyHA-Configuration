@@ -3,6 +3,238 @@
  * Released under the GNU General Public License v3.0
  */
 
+const version = "4.38.0";
+const defaultConfig = {
+	enabled: false,
+	enabled_on_tabs: [],
+	debug: false,
+	wait_for_browser_mod_time: 0.25,
+	log_level_console: "info",
+	hide_toolbar: false,
+	keep_toolbar_space: false,
+	hide_toolbar_action_icons: false,
+	hide_toolbar_on_subviews: false,
+	hide_sidebar: false,
+	fullscreen: false,
+	z_index: 1000,
+	idle_time: 15,
+	fade_in_time: 3.0,
+	fade_out_time_motion_detected: 1.0,
+	fade_out_time_screensaver_entity: 3.0,
+	fade_out_time_browser_mod_popup: 1.0,
+	fade_out_time_interaction: 0.3,
+	crossfade_time: 3.0,
+	display_time: 15.0,
+	keep_screen_on_time: 0,
+	black_screen_after_time: 0,
+	control_reactivation_time: 1.0,
+	screensaver_stop_navigation_path: '',
+	screensaver_stop_close_browser_mod_popup: false,
+	screensaver_entity: '',
+	stop_screensaver_on_mouse_move: true,
+	stop_screensaver_on_mouse_click: true,
+	stop_screensaver_on_key_down: true,
+	stop_screensaver_on_location_change: true,
+	disable_screensaver_on_browser_mod_popup: false,
+	disable_screensaver_on_browser_mod_popup_func: '',
+	show_images: true,
+	image_url: "https://picsum.photos/${width}/${height}?random=${timestamp}",
+	image_url_entity: '',
+	immich_api_key: '',
+	immich_album_names: [],
+	immich_shared_albums: true,
+	immich_resolution: "preview",
+	image_fit: 'cover', // cover / contain / fill
+	image_list_update_interval: 3600,
+	image_order: 'sorted', // sorted / random
+	image_excludes: [],
+	image_background: 'color', // color / image
+	video_loop: false,
+	touch_zone_size_next_image: 15,
+	touch_zone_size_previous_image: 15,
+	show_progress_bar: false,
+	show_image_info: false,
+	fetch_address_data: false,
+	image_info_template: '${DateTimeOriginal}',
+	info_animation_duration_x: 0,
+	info_animation_duration_y: 0,
+	info_animation_timing_function_x: 'ease',
+	info_animation_timing_function_y: 'ease',
+	info_move_pattern: 'random',
+	info_move_interval: 0,
+	info_move_fade_duration: 2.0,
+	image_animation_ken_burns: false,
+	image_animation_ken_burns_zoom: 1.3,
+	image_animation_ken_burns_delay: 0,
+	camera_motion_detection_enabled: false,
+	camera_motion_detection_facing_mode: "user",
+	camera_motion_detection_threshold: 5,
+	camera_motion_detection_capture_width: 64,
+	camera_motion_detection_capture_height: 48,
+	camera_motion_detection_capture_interval: 0.3,
+	camera_motion_detection_capture_visible: false,
+	style: {},
+	badges: [],
+	cards: [
+		{type: 'weather-forecast', entity: 'weather.home', show_forecast: true}
+	],
+	views: [],
+	card_interaction: false,
+	profile: '',
+	profile_entity: '',
+	profiles: {}
+};
+
+let dashboardConfig = {};
+let config = {};
+let activePanel = null;
+let activeTab = null;
+let fullscreen = false;
+let wallpanel = null;
+let skipDisableScreensaverOnLocationChanged = false;
+let classStyles = {
+	"wallpanel-screensaver-image-background": {
+		"filter": "blur(15px)",
+		"background": "#00000000",
+		"background-position": "center",
+		"background-size": "cover"
+	},
+	"wallpanel-screensaver-image-info": {
+		"position": "absolute",
+		"bottom": "0.5em",
+		"right": "0.5em",
+		"padding": "0.1em 0.5em 0.1em 0.5em",
+		"font-size": "2em",
+		"background": "#00000055",
+		"backdrop-filter": "blur(2px)",
+		"border-radius": "0.1em"
+	},
+	"wallpanel-progress": {
+		"position": "absolute",
+		"bottom": "0",
+		"height": "2px",
+		"width": "100%",
+	},
+	"wallpanel-progress-inner": {
+		"height": "100%",
+		"background-color": "white"
+	}
+}
+const imageInfoCacheMaxSize = 1000;
+let imageInfoCache = {};
+let imageInfoCacheKeys = [];
+let configEntityStates = {};
+let elHass = null;
+let elHaMain = null;
+let browserId = null;
+let userId = null;
+let userName = null;
+let userDisplayname = null;
+
+const HuiView = customElements.get("hui-view");
+if (!HuiView) {
+	const error = "Failed to get hui-view from customElements";
+	console.error(error, customElements);
+	throw new Error(error);
+}
+
+
+function isObject(item) {
+	return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+
+function stringify(obj) {
+	let processedObjects = [];
+	let json = JSON.stringify(obj, function(key, value) {
+		if (typeof value === "object" && value !== null) {
+			if (processedObjects.indexOf(value) !== -1) {
+				// Circular reference found, discard key
+				return;
+			}
+			processedObjects.push(value);
+		}
+		return value;
+	});
+	return json;
+}
+
+
+const logger = {
+	messages: [],
+	addMessage: function(level, args) {
+		if (!config.debug) {
+			return;
+		}
+		let msg = {
+			"level": level,
+			"date": (new Date()).toISOString(),
+			"text": "",
+			"objs": [],
+			"stack": ""
+		}
+		const err = new Error();
+		if (err.stack) {
+			msg.stack = err.stack.toString().replace(/^Error\r?\n/, '');
+		}
+		for (let i = 0; i < args.length; i++) {
+			if (i == 0 && (typeof args[0] === 'string' || args[0] instanceof String)) {
+				msg.text = args[i];
+			}
+			else {
+				msg.objs.push(args[i]);
+			}
+		}
+		logger.messages.push(msg);
+		if (logger.messages.length > 1000) {
+			// Max 1000 messages
+			logger.messages.shift();
+		}
+	},
+	downloadMessages: function() {
+		const data = new Blob([stringify(logger.messages)], {type: 'text/plain'});
+		const url = window.URL.createObjectURL(data);
+		const el = document.createElement('a');
+		el.href = url;
+		el.target = '_blank';
+		el.download = 'wallpanel_log.txt';
+		el.click();
+	},
+	purgeMessages: function() {
+		logger.messages = [];
+	},
+	log: function(text){
+		console.log.apply(this, arguments);
+		logger.addMessage("info", arguments);
+	},
+	debug: function (text) {
+		if (["debug"].includes(config.log_level_console)) {
+			console.debug.apply(this, arguments);
+		}
+		logger.addMessage("debug", arguments);
+	},
+	info: function (text) {
+		if (["debug", "info"].includes(config.log_level_console)) {
+			console.info.apply(this, arguments);
+		}
+		logger.addMessage("info", arguments);
+	},
+	warn: function (text) {
+		const logLevel = config.log_level_console || "warn";
+		if (["debug", "info", "warn"].includes(logLevel)) {
+			console.warn.apply(this, arguments);
+		}
+		logger.addMessage("warn", arguments);
+	},
+	error: function (text) {
+		const logLevel = config.log_level_console || "warn";
+		if (["debug", "info", "warn", "error"].includes(logLevel)) {
+			console.error.apply(this, arguments);
+		}
+		logger.addMessage("error", arguments);
+	}
+};
+
 
 class ScreenWakeLock {
 	constructor() {
@@ -122,7 +354,9 @@ class CameraMotionDetection {
 
 		this.canvasElement = document.createElement("canvas");
 		this.canvasElement.setAttribute("id", "wallpanelMotionDetectionCanvas");
-		
+		this.canvasElement.style.display = 'none';
+		document.body.appendChild(this.canvasElement);
+
 		this.context = this.canvasElement.getContext('2d', { willReadFrequently: true });
 	}
 
@@ -180,9 +414,14 @@ class CameraMotionDetection {
 			this.canvasElement.style.display = 'none';
 		}
 
-		navigator.mediaDevices.getUserMedia(
-			{ audio: false, video: { facingMode: { acceptable: "user" }, width: this.width, height: this.height } }
-		).then((stream) => {
+		navigator.mediaDevices.getUserMedia({
+			audio: false,
+			video: {
+				facingMode: { ideal: config.camera_motion_detection_facing_mode },
+				width: this.width,
+				height: this.height
+			}
+		}).then((stream) => {
 			this.videoElement.srcObject = stream
 			this.videoElement.play();
 			if (this.enabled) {
@@ -205,242 +444,6 @@ class CameraMotionDetection {
 	}
 }
 
-const version = "4.36.1";
-const defaultConfig = {
-	enabled: false,
-	enabled_on_tabs: [],
-	debug: false,
-	wait_for_browser_mod_time: 0.25,
-	log_level_console: "info",
-	hide_toolbar: false,
-	keep_toolbar_space: false,
-	hide_toolbar_action_icons: false,
-	hide_sidebar: false,
-	fullscreen: false,
-	z_index: 1000,
-	idle_time: 15,
-	fade_in_time: 3.0,
-	fade_out_time_motion_detected: 1.0,
-	fade_out_time_screensaver_entity: 3.0,
-	fade_out_time_browser_mod_popup: 1.0,
-	fade_out_time_interaction: 0.3,
-	crossfade_time: 3.0,
-	display_time: 15.0,
-	keep_screen_on_time: 0,
-	black_screen_after_time: 0,
-	control_reactivation_time: 1.0,
-	screensaver_stop_navigation_path: '',
-	screensaver_stop_close_browser_mod_popup: false,
-	screensaver_entity: '',
-	stop_screensaver_on_mouse_move: true,
-	stop_screensaver_on_mouse_click: true,
-	stop_screensaver_on_key_down: true,
-	stop_screensaver_on_location_change: true,
-	disable_screensaver_on_browser_mod_popup: false,
-	disable_screensaver_on_browser_mod_popup_func: '',
-	show_images: true,
-	image_url: "https://picsum.photos/${width}/${height}?random=${timestamp}",
-	image_url_entity: '',
-	immich_api_key: '',
-	immich_album_names: [],
-	immich_shared_albums: true,
-	immich_resolution: "preview",
-	image_fit: 'cover', // cover / contain / fill
-	image_list_update_interval: 3600,
-	image_order: 'sorted', // sorted / random
-	image_excludes: [],
-	image_background: 'color', // color / image
-	video_loop: false,
-	touch_zone_size_next_image: 15,
-	touch_zone_size_previous_image: 15,
-	show_progress_bar: false,
-	show_image_info: false,
-	fetch_address_data: false,
-	image_info_template: '${DateTimeOriginal}',
-	info_animation_duration_x: 0,
-	info_animation_duration_y: 0,
-	info_animation_timing_function_x: 'ease',
-	info_animation_timing_function_y: 'ease',
-	info_move_pattern: 'random',
-	info_move_interval: 0,
-	info_move_fade_duration: 2.0,
-	image_animation_ken_burns: false,
-	image_animation_ken_burns_zoom: 1.3,
-	image_animation_ken_burns_delay: 0,
-	camera_motion_detection_enabled: false,
-	camera_motion_detection_threshold: 5,
-	camera_motion_detection_capture_width: 64,
-	camera_motion_detection_capture_height: 48,
-	camera_motion_detection_capture_interval: 0.3,
-	camera_motion_detection_capture_visible: false,
-	style: {},
-	badges: [],
-	cards: [
-		{type: 'weather-forecast', entity: 'weather.home', show_forecast: true}
-	],
-	views: [],
-	card_interaction: false,
-	profile: '',
-	profile_entity: '',
-	profiles: {}
-};
-
-let dashboardConfig = {};
-let config = {};
-let activePanel = null;
-let activeTab = null;
-let fullscreen = false;
-let screenWakeLock = new ScreenWakeLock();
-let cameraMotionDetection = new CameraMotionDetection();
-let wallpanel = null;
-let skipDisableScreensaverOnLocationChanged = false;
-let classStyles = {
-	"wallpanel-screensaver-image-background": {
-		"filter": "blur(15px)",
-		"background": "#00000000",
-		"background-position": "center",
-		"background-size": "cover"
-	},
-	"wallpanel-screensaver-image-info": {
-		"position": "absolute",
-		"bottom": "0.5em",
-		"right": "0.5em",
-		"padding": "0.1em 0.5em 0.1em 0.5em",
-		"font-size": "2em",
-		"background": "#00000055",
-		"backdrop-filter": "blur(2px)",
-		"border-radius": "0.1em"
-	},
-	"wallpanel-progress": {
-		"position": "absolute",
-		"bottom": "0",
-		"height": "2px",
-		"width": "100%",
-	},
-	"wallpanel-progress-inner": {
-		"height": "100%",
-		"background-color": "white"
-	}
-}
-let imageInfoCache = {};
-let imageInfoCacheKeys = [];
-const imageInfoCacheMaxSize = 1000;
-let configEntityStates = {};
-
-const LitElement = Object.getPrototypeOf(customElements.get("hui-masonry-view"));
-const HuiView = customElements.get("hui-view");
-let elHass = null;
-let elHaMain = null;
-let browserId = null;
-let userId = null;
-let userName = null;
-let userDisplayname = null;
-
-
-function getActiveBrowserModPopup() {
-	if (!browserId) {
-		return null;
-	}
-	const bmp = document.getElementsByTagName("browser-mod-popup");
-	if (!bmp || !bmp[0] || !bmp[0].shadowRoot || bmp[0].shadowRoot.children.length == 0) {
-		return null;
-	}
-	return bmp[0];
-}
-
-function isObject(item) {
-	return (item && typeof item === 'object' && !Array.isArray(item));
-}
-
-function stringify(obj) {
-	let processedObjects = [];
-	let json = JSON.stringify(obj, function(key, value) {
-		if (typeof value === "object" && value !== null) {
-			if (processedObjects.indexOf(value) !== -1) {
-				// Circular reference found, discard key
-				return;
-			}
-			processedObjects.push(value);
-		}
-		return value;
-	});
-	return json;
-}
-
-const logger = {
-	messages: [],
-	addMessage: function(level, args) {
-		if (!config.debug) {
-			return;
-		}
-		let msg = {
-			"level": level,
-			"date": (new Date()).toISOString(),
-			"text": "",
-			"objs": [],
-			"stack": ""
-		}
-		const err = new Error();
-		if (err.stack) {
-			msg.stack = err.stack.toString().replace(/^Error\r?\n/, '');
-		}
-		for (let i = 0; i < args.length; i++) {
-			if (i == 0 && (typeof args[0] === 'string' || args[0] instanceof String)) {
-				msg.text = args[i];
-			}
-			else {
-				msg.objs.push(args[i]);
-			}
-		}
-		logger.messages.push(msg);
-		if (logger.messages.length > 1000) {
-			// Max 1000 messages
-			logger.messages.shift();
-		}
-	},
-	downloadMessages: function() {
-		const data = new Blob([stringify(logger.messages)], {type: 'text/plain'});
-		const url = window.URL.createObjectURL(data);
-		const el = document.createElement('a');
-		el.href = url;
-		el.target = '_blank';
-		el.download = 'wallpanel_log.txt';
-		el.click();
-	},
-	purgeMessages: function() {
-		logger.messages = [];
-	},
-	log: function(text){
-		console.log.apply(this, arguments);
-		logger.addMessage("info", arguments);
-	},
-	debug: function (text) {
-		if (["debug"].includes(config.log_level_console)) {
-			console.debug.apply(this, arguments);
-		}
-		logger.addMessage("debug", arguments);
-	},
-	info: function (text) {
-		if (["debug", "info"].includes(config.log_level_console)) {
-			console.info.apply(this, arguments);
-		}
-		logger.addMessage("info", arguments);
-	},
-	warn: function (text) {
-		const logLevel = config.log_level_console || "warn";
-		if (["debug", "info", "warn"].includes(logLevel)) {
-			console.warn.apply(this, arguments);
-		}
-		logger.addMessage("warn", arguments);
-	},
-	error: function (text) {
-		const logLevel = config.log_level_console || "warn";
-		if (["debug", "info", "warn", "error"].includes(logLevel)) {
-			console.error.apply(this, arguments);
-		}
-		logger.addMessage("error", arguments);
-	}
-};
 
 function mergeConfig(target, ...sources) {
 	// https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
@@ -581,6 +584,18 @@ function updateConfig() {
 }
 
 
+function getActiveBrowserModPopup() {
+	if (!browserId) {
+		return null;
+	}
+	const bmp = document.getElementsByTagName("browser-mod-popup");
+	if (!bmp || !bmp[0] || !bmp[0].shadowRoot || bmp[0].shadowRoot.children.length == 0) {
+		return null;
+	}
+	return bmp[0];
+}
+
+
 function isActive() {
 	const params = new URLSearchParams(window.location.search);
 	if (params.get("edit") == "1") {
@@ -613,6 +628,7 @@ function imageSourceType() {
 	if (config.image_url.startsWith("media-source://")) return "media-source";
 	if (config.image_url.startsWith("https://api.unsplash")) return "unsplash-api";
 	if (config.image_url.startsWith("immich+")) return "immich-api";
+	if (config.image_url.startsWith("iframe+")) return "iframe";
 	return "url";
 }
 
@@ -847,6 +863,9 @@ class WallpanelView extends HuiView {
 		this.lastEnergyCollectionUpdate = 0;
 		this.screensaverStopNavigationPathTimeout = null;
 		this.disable_screensaver_on_browser_mod_popup_function = null;
+
+		this.screenWakeLock = new ScreenWakeLock();
+		this.cameraMotionDetection = new CameraMotionDetection();
 
 		this.lovelace = null;
 		this.__hass = elHass.__hass;
@@ -1829,11 +1848,11 @@ class WallpanelView extends HuiView {
 		if (config.disable_screensaver_on_browser_mod_popup_func) {
 			this.disable_screensaver_on_browser_mod_popup_function = new Function('bmp', config.disable_screensaver_on_browser_mod_popup_func);
 		}
-		if (config.camera_motion_detection_enabled) {
-			cameraMotionDetection.start();
+		if (config.enabled && config.camera_motion_detection_enabled) {
+			this.cameraMotionDetection.start();
 		}
 		else {
-			cameraMotionDetection.stop();
+			this.cameraMotionDetection.stop();
 		}
 	}
 
@@ -2320,7 +2339,7 @@ class WallpanelView extends HuiView {
 			}
 			else {
 				// Setting the src attribute on an img works better because cross-origin requests aren't blocked
-				const loadEventName = { IMG: "load", VIDEO: "loadeddata" }[elem.tagName];
+				const loadEventName = { IMG: "load", VIDEO: "loadeddata", IFRAME: "load" }[elem.tagName];
 				if (!loadEventName) {
 					throw new Error(`Unsupported element tag "${elem.tagName}"`);
 				}
@@ -2347,9 +2366,11 @@ class WallpanelView extends HuiView {
 			}
 		};
 
-		const createFallbackElement = (currentElem) => {
-			const fallbackTag = currentElem.tagName === "IMG" ? "VIDEO" : "IMG";
-			const fallbackElem = document.createElement(fallbackTag);
+		const createFallbackElement = (currentElem, tagName = null) => {
+			if (!tagName) {
+				tagName = currentElem.tagName === "IMG" ? "VIDEO" : "IMG";
+			}
+			const fallbackElem = document.createElement(tagName);
 
 			// Clone all custom and HTML attributes except 'src', it will be set later.
 			Object.entries(currentElem)
@@ -2360,7 +2381,7 @@ class WallpanelView extends HuiView {
 				.filter((attr) => attr.name !== "src")
 				.forEach((attr) => fallbackElem.setAttribute(attr.name, attr.value));
 
-			if (fallbackTag === "VIDEO") {
+			if (tagName === "VIDEO") {
 				Object.assign(fallbackElem, { preload: "auto", muted: true });
 			}
 			return fallbackElem;
@@ -2372,12 +2393,12 @@ class WallpanelView extends HuiView {
 			currentElem.replaceWith(newElem);
 		};
 
-		const handleFallback = async (currentElem, url, originalError = null) => {
+		const handleFallback = async (currentElem, url, mediaType = null, originalError = null) => {
 			let fallbackSuccessful = false;
-			const fallbackElem = createFallbackElement(currentElem);
+			const fallbackElem = createFallbackElement(currentElem, mediaType);
+			replaceElementWith(currentElem, fallbackElem);
 			try {
 				await loadMediaWithElement(fallbackElem, url);
-				replaceElementWith(currentElem, fallbackElem);
 				fallbackSuccessful = true;
 			} catch (e) {
 				this.handleMediaError(currentElem, originalError || e);
@@ -2394,7 +2415,7 @@ class WallpanelView extends HuiView {
 				loadSuccessful = true;
 			} catch (e) {
 				if (withFallback) {
-					await handleFallback(currentElem, url, e);
+					await handleFallback(currentElem, url, null, e);
 				} else {
 					this.handleMediaError(currentElem, e);
 				}
@@ -2409,7 +2430,7 @@ class WallpanelView extends HuiView {
 		} else if (mediaType === curElem.tagName) {
 			await loadOrFallback(curElem, sourceUrl, false);
 		} else {
-			await handleFallback(curElem, sourceUrl);
+			await handleFallback(curElem, sourceUrl, mediaType);
 		}
 	}
 
@@ -2522,6 +2543,9 @@ class WallpanelView extends HuiView {
 		}
 		else if (imageSourceType() == "media-entity") {
 			this.updateImageFromMediaEntity(img);
+		}
+		else if (imageSourceType() == "iframe") {
+			this.updateImageFromUrl(img, config.image_url.replace(/^iframe\+/, ""), "IFRAME");
 		}
 		else {
 			this.updateImageFromUrl(img, config.image_url);
@@ -2742,8 +2766,8 @@ class WallpanelView extends HuiView {
 
 	setupScreensaver() {
 		logger.debug("Setup screensaver");
-		if (config.keep_screen_on_time > 0 && !screenWakeLock.enabled) {
-			screenWakeLock.enable();
+		if (config.keep_screen_on_time > 0 && !this.screenWakeLock.enabled) {
+			this.screenWakeLock.enable();
 		}
 		if (config.fullscreen && !fullscreen) {
 			enterFullscreen();
@@ -2768,7 +2792,7 @@ class WallpanelView extends HuiView {
 		if (config.keep_screen_on_time > 0) {
 			let wp = this;
 			setTimeout(function() {
-				if (wp.screensaverRunning() && !screenWakeLock.enabled) {
+				if (wp.screensaverRunning() && !this.screenWakeLock.enabled) {
 					logger.error("Keep screen on will not work because the user didn't interact with the document first. https://goo.gl/xX8pDD");
 					wp.displayMessage("Please interact with the screen for a moment to request wake lock.", 15000)
 				}
@@ -2840,8 +2864,8 @@ class WallpanelView extends HuiView {
 		this.infoBoxPosY.style.animation = '';
 
 		this.idleSince = Date.now();
-		if (screenWakeLock.enabled) {
-			screenWakeLock.disable();
+		if (this.screenWakeLock.enabled) {
+			this.screenWakeLock.disable();
 		}
 		
 		setTimeout(this.setScreensaverEntityState.bind(this), 25);
@@ -2923,9 +2947,9 @@ class WallpanelView extends HuiView {
 			html += `<b>Config:</b> ${JSON.stringify(conf)}<br/>`;
 			html += `<b>Fullscreen:</b> ${fullscreen}<br/>`;
 			html += `<b>Screensaver started at:</b> ${wallpanel.screensaverStartedAt}<br/>`;
-			html += `<b>Screen wake lock:</b> enabled=${screenWakeLock.enabled} native=${screenWakeLock.nativeWakeLockSupported} lock=${screenWakeLock._lock} player=${screenWakeLock._player} error=${screenWakeLock.error}<br/>`;
-			if (screenWakeLock._player) {
-				let p = screenWakeLock._player;
+			html += `<b>Screen wake lock:</b> enabled=${this.screenWakeLock.enabled} native=${this.screenWakeLock.nativeWakeLockSupported} lock=${this.screenWakeLock._lock} player=${this.screenWakeLock._player} error=${this.screenWakeLock.error}<br/>`;
+			if (this.screenWakeLock._player) {
+				let p = this.screenWakeLock._player;
 				html += `<b>Screen wake lock video</b>: readyState=${p.readyState} currentTime=${p.currentTime} paused=${p.paused} ended=${p.ended}<br/>`;
 			}
 			const activeImage = this.getActiveImageElement();
@@ -2946,9 +2970,9 @@ class WallpanelView extends HuiView {
 			);
 			this.debugBox.scrollTop = this.debugBox.scrollHeight;
 		}
-		if (screenWakeLock.enabled && now - this.screensaverStartedAt >= config.keep_screen_on_time*1000) {
+		if (this.screenWakeLock.enabled && now - this.screensaverStartedAt >= config.keep_screen_on_time*1000) {
 			logger.info(`Disable wake lock after ${config.keep_screen_on_time} seconds`);
-			screenWakeLock.disable();
+			this.screenWakeLock.disable();
 		}
 	}
 
@@ -3109,7 +3133,22 @@ class WallpanelView extends HuiView {
 }
 
 function activateWallpanel() {
-	setToolbarHidden(config.hide_toolbar);
+	let hideToolbar = config.hide_toolbar;
+	if (hideToolbar && !config.hide_toolbar_on_subviews && activeTab) {
+		const pl = getHaPanelLovelace();
+		if (pl && pl.lovelace && pl.lovelace.rawConfig && pl.lovelace.rawConfig.views) {
+			for (let i=0; i<pl.lovelace.rawConfig.views.length; i++) {
+				if (pl.lovelace.rawConfig.views[i].path == activeTab) {
+					if (pl.lovelace.rawConfig.views[i].subview) {
+						// Current tab is a subview
+						hideToolbar = false;
+					}
+					break;
+				}
+			}
+		}
+	}
+	setToolbarHidden(hideToolbar);
 	setSidebarHidden(config.hide_sidebar);
 }
 
@@ -3220,9 +3259,10 @@ function startup() {
 		customElements.define("wallpanel-view", WallpanelView);
 		wallpanel = document.createElement("wallpanel-view");
 		elHaMain.shadowRoot.appendChild(wallpanel);
-		window.addEventListener("location-changed", event => {
-			logger.debug("location-changed", event);
-			locationChanged();
+		// Using navigate event because a back button on a sub-view will not produce a location-changed event
+		navigation.addEventListener("navigate", event => {
+			logger.debug("navigate", event);
+			setTimeout(locationChanged, 0);
 		});
 		elHass.__hass.connection.subscribeEvents(
 			function(event) {
