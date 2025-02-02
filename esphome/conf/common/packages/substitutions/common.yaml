@@ -157,6 +157,16 @@ substitutions:
   touchbutton01_name: $friendly_name TB 01
   touchbutton02_id: ${friendly_id}_TB_02
   touchbutton02_name: $friendly_name TB 02
+  touchbutton03_id: ${friendly_id}_TB_03
+  touchbutton03_name: $friendly_name TB 03
+  touchbutton04_id: ${friendly_id}_TB_04
+  touchbutton04_name: $friendly_name TB 04
+  touchbutton05_id: ${friendly_id}_TB_05
+  touchbutton05_name: $friendly_name TB 05
+  touchbutton06_id: ${friendly_id}_TB_06
+  touchbutton06_name: $friendly_name TB 06
+  touchbutton07_id: ${friendly_id}_TB_07
+  touchbutton07_name: $friendly_name TB 07
 ####################################################################
 # EOF
 ####################################################################

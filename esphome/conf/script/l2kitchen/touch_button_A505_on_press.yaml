@@ -1,0 +1,28 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of TB A5
+  - id: tb_05_click_on_press
+    mode: restart
+    then:
+      # - logger.log: "script tb_05_click_on_press action."
+      - if:
+          condition:
+            # execute this script only if we are offline
+            # lambda: 'return (!id(isDeviceConnected);'
+            
+            # execute this script anyway (TM) for debugging purposes
+            lambda: 'return (true);'
+          then:
+            - homeassistant.action:
+                action: script.zb_plug_toggle_by_esphome
+                data:
+                  zb_plug_id: 'switch.zb_plug_l2_kitchen_microwave'
+                  # light_name: 'my_light'
+            # - switch.toggle: switch.zb_plug_l2_kitchen_microwave
+            # - logger.log: "script tb_05_click_on_press action."
+
+####################################################################
+# EOF
+####################################################################
