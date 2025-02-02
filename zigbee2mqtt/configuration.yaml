@@ -7,6 +7,7 @@ mqtt:
 serial:
   port: >-
     /dev/serial/by-id/usb-Silicon_Labs_Sonoff_Zigbee_3.0_USB_Dongle_Plus_0001-if00-port0
+  adapter: zstack
 frontend:
   enabled: true
   port: 8099
@@ -65,6 +66,8 @@ devices:
     friendly_name: ZB_DW_L2_Bedroom_01
   '0xa4c138b55bafbf81':
     friendly_name: ZB_DW_L2_Bedroom_02
+  '0xa4c1388148217706':
+    friendly_name: ZB_Plug_L2_Kitchen_Kettle
 groups:
   '1':
     friendly_name: level2-TRVs
