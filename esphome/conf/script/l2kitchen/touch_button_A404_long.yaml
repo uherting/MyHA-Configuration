@@ -2,10 +2,11 @@
 # SCRIPTS
 
 #script:
-# on_multi_click action of TB A4 (double click)
-- id: tb_01_click_dbl
+# on_multi_click action of TB A4 (long click)
+- id: tb_04_click_long
   mode: restart
   then:
+    # - logger.log: "script tb_04_click_long action."
     - if:
         condition:
           # execute this script only if we are offline
@@ -17,14 +18,25 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          # - logger.log: "script tb_01_click_dbl action."
+          # - logger.log: "script tb_04_click_long action."
+
           - binary_sensor.template.publish:
-              id: ${binary_template_sensor_main_light_id}
+              id: ${binary_template_sensor_zb_plug_microwave_id}
               state: true
-          - delay: !secret DELAY_01SEC
           - binary_sensor.template.publish:
-              id: ${binary_template_sensor_main_light_id}
+              id: ${binary_template_sensor_zb_plug_coffeemachine_id}
+              state: true
+
+          - delay: !secret DELAY_01SEC
+
+          - binary_sensor.template.publish:
+              id: ${binary_template_sensor_zb_plug_microwave_id}
               state: false
+          - binary_sensor.template.publish:
+              id: ${binary_template_sensor_zb_plug_coffeemachine_id}
+              state: false
+
+          # - logger.log: "script tb_04_click_long action."
 ####################################################################
 # EOF
 ####################################################################

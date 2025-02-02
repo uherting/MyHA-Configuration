@@ -3,10 +3,10 @@
 
 #script:
 # on_multi_click action of TB A4 (short click)
-- id: tb_01_click_short
+- id: tb_04_click_short
   mode: restart
   then:
-    # - logger.log: "script tb_01_click_short action."
+    # - logger.log: "script tb_04_click_short action."
     # - switch.toggle: ${ssr01_id}
     - if:
         # execution only: the light bar is off
@@ -20,7 +20,7 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          # - logger.log: "script tb_01_click_short action."
+          # - logger.log: "script tb_04_click_short action."
           - binary_sensor.template.publish:
               id: ${binary_template_sensor_main_light_id}
               state: true
