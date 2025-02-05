@@ -244,9 +244,14 @@ cards:
               action: call-service
               service: script.lovelace_l2_bathroom01a_ssr_01_02
           - type: "custom:button-card"
-            # entity:
-            name: " "
-            show_state: true
+            entity: switch.zb_plug_l2_lounge_scanner
+            name: "Scanner"
+            color: yellow
+            show_state: false
+          # - type: "custom:button-card"
+          #   # entity:
+          #   name: " "
+          #   show_state: true
 
       # ZB Plugs L2
       - type: grid
@@ -256,6 +261,16 @@ cards:
         cards:
           - type: "custom:button-card"
             name: "ZB Plugs"
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_microwave
+            name: "Microwave"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_kitchen_kettle
+            name: "Kettle"
+            color: yellow
+            show_state: false
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_coffeemachine
             name: "Senseo"
@@ -268,11 +283,6 @@ cards:
             #   action: call-service
             #   service: script.lovelace_zb_plug_l2_kitchen_coffeemachine
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_microwave
-            name: "Microwave"
-            color: yellow
-            show_state: false
-          - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_dishwasher
             name: "Dishw"
             color: yellow
@@ -283,11 +293,6 @@ cards:
             double_tap_action:
               action: call-service
               service: script.lovelace_zb_plug_l2_kitchen_dishwasher
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_lounge_scanner
-            name: "Scanner"
-            color: yellow
-            show_state: false
 
       # PSU
       - type: grid
