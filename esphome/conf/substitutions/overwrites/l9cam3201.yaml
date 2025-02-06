@@ -7,7 +7,6 @@ dummy_value: "dummy value"
 
 # see secrets.yaml for log level definitions
 # log_level: !secret LOG_LEVEL_DEBUG
-
 ####################################################################
 # EOF
 ####################################################################
