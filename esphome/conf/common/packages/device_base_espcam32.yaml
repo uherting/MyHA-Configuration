@@ -21,9 +21,10 @@ esphome:
 esp32:
   board: $device_board
   # both frameworks seem to work at 20250208_221700 but is recommended according ssieb on discord
+  # framework esp-idf is throwing a compile error. switching back to arduino
   framework:
-    type: esp-idf
-    # type: arduino
+    # type: esp-idf
+    type: arduino
 
 ####################################################################
 # LOGGING (central setup)
