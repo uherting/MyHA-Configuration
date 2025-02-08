@@ -2,11 +2,11 @@
 # SCRIPTS
 
 #script:
-  # on_press action of TB A6
-  - id: tb_06_click_on_press
+  # on_press action of TB A5
+  - id: tb_05_click_on_press
     mode: restart
     then:
-      # - logger.log: "script tb_06_click_on_press action."
+      # - logger.log: "script tb_05_click_on_press action."
       - if:
           condition:
             # execute this script only if we are offline
@@ -15,13 +15,11 @@
             # execute this script anyway (TM) for debugging purposes
             lambda: 'return (true);'
           then:
+            # - logger.log: "script tb_05_click_on_press action."
             - homeassistant.action:
-                action: script.zb_plug_toggle_by_esphome
+                action: script.switch_toggle_by_esphome
                 data:
-                  zb_plug_id: 'switch.zb_plug_l2_kitchen_kettle'
-                  # light_name: 'my_light'
-            # - switch.toggle: switch.zb_plug_l2_kitchen_kettle
-            # - logger.log: "script tb_06_click_on_press action."
+                  switch_id: 'switch.zb_plug_l2_kitchen_microwave'
 
 ####################################################################
 # EOF
