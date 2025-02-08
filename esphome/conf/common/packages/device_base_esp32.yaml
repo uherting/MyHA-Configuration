@@ -1,5 +1,5 @@
 ####################################################################
-# PACKAGES --- GENERAL CONFIGURATION FOR ALL ESP8266 DEVICES
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL ESP32CAM DEVICES
 
 ####################################################################
 # DEVICE DEFINITION
@@ -9,14 +9,15 @@ esphome:
   build_path: ./build/${device_name}
   # platform: $device_platform
 
-# edited due to changes ahead 
+# edited due to changes ahead
 # for details see https://github.com/esphome/esphome/pull/8118
-# taken from https://esphome.io/components/esp8266
-esp8266:
+# taken from https://esphome.io/components/esp32
+esp32:
   board: $device_board
+  # both frameworks seem to work at 20250208_221700 but is recommended according ssieb on discord
   framework:
-    version: recommended
-
+    type: esp-idf
+    # type: arduino
 
 ####################################################################
 # LOGGING (central setup)

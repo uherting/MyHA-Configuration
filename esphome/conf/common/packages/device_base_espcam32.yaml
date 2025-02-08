@@ -1,23 +1,29 @@
 ####################################################################
-# PACKAGES --- GENERAL CONFIGURATION FOR ALL DEVICES
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL ESP32CAM DEVICES
 
 ####################################################################
 # DEVICE DEFINITION
 esphome:
   name: $device_name
-  # might cause renaming entities by prefixing them with ${friendly_name}
-  # friendly_name: $device_name
   comment: $device_comment
-
-  platform: $device_platform
-  board: $device_board
   build_path: ./build/${device_name}
+  # platform: $device_platform
 
   on_boot:
     priority: -100
     then:
       - output.turn_off:
           id: ${cam_light_id}
+
+# edited due to changes ahead
+# for details see https://github.com/esphome/esphome/pull/8118
+# taken from https://esphome.io/components/esp32
+esp32:
+  board: $device_board
+  # both frameworks seem to work at 20250208_221700 but is recommended according ssieb on discord
+  framework:
+    type: esp-idf
+    # type: arduino
 
 ####################################################################
 # LOGGING (central setup)
