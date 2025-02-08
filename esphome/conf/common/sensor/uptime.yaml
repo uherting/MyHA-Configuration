@@ -24,13 +24,6 @@
             int minutes = seconds /  60;
             seconds = seconds % 60;
 
-            /*
-            int upt = id(${wifi_uptime_id}).state;
-            ESP_LOGI("main", "INFO: uptime: is %u", upt);
-            ESP_LOGI("main", "INFO: isDeviceConnected is: %s", id(isDeviceConnected) ? "True" : "False");
-            ESP_LOGI("main", "INFO: Status .......... is: %s", id(${wifi_status_id}).state ? "True" : "False");
-            */
-
             return (
               (days ? String(days) + "d " : "") +
               (hours ? String(hours) + "h " : "") +
