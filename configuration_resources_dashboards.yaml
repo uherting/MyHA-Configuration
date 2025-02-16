@@ -58,6 +58,10 @@ resources:
   - url: /hacsfiles/battery-state-card/battery-state-card.js
     type: module
 
+  # Zigbee map card
+  - url: /hacsfiles/homed-zigbee-networkmap/homed-zigbee-networkmap.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
