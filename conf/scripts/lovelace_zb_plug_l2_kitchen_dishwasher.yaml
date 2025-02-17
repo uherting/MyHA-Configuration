@@ -25,7 +25,7 @@ lovelace_zb_plug_l2_kitchen_dishwasher:
         - conditions:
             - condition: template
               value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= 0.15) and  ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > (20*60))  }}"
-              # (20*60))seconds ==> safety, so that the dishwasher cannot be switched off while it is
+              # (20*60))seconds ==> safety, so that the dishwasher cannot be switched off while it is still working
           sequence:
             - service: switch.turn_off
               target:

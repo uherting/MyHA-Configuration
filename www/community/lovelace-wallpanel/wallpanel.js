@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.39.0";
+const version = "4.40.0";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -41,6 +41,7 @@ const defaultConfig = {
 	show_images: true,
 	image_url: "https://picsum.photos/${width}/${height}?random=${timestamp}",
 	image_url_entity: "",
+	media_entity_load_unchanged: true,
 	immich_api_key: "",
 	immich_album_names: [],
 	immich_shared_albums: true,
@@ -602,9 +603,11 @@ function getActiveBrowserModPopup() {
 function isActive() {
 	const params = new URLSearchParams(window.location.search);
 	if (params.get("edit") == "1") {
+		logger.debug("Edit mode active");
 		return false;
 	}
 	if (!config.enabled) {
+		logger.debug("Wallpanel not enabled in config");
 		return false;
 	}
 	if (
@@ -613,6 +616,7 @@ function isActive() {
 		activeTab &&
 		!config.enabled_on_tabs.includes(activeTab)
 	) {
+		logger.debug(`Wallpanel not enabled on current tab ${activeTab}`);
 		return false;
 	}
 	if (
@@ -621,9 +625,11 @@ function isActive() {
 		getActiveBrowserModPopup() &&
 		wallpanel.disable_screensaver_on_browser_mod_popup_function(getActiveBrowserModPopup())
 	) {
+		logger.debug("Browser mod popup function returned true, wallpanel disabled");
 		return false;
 	}
 	if (config.disable_screensaver_on_browser_mod_popup && getActiveBrowserModPopup()) {
+		logger.debug("Browser mod popup active, wallpanel disabled");
 		return false;
 	}
 	return true;
@@ -676,17 +682,16 @@ function getHaPanelLovelaceConfig(keys = []) {
 function setSidebarVisibility(hidden) {
 	try {
 		const panelLovelace = elHaMain.shadowRoot.querySelector("ha-panel-lovelace");
-		if (!panelLovelace) {
-			return;
-		}
-		const huiRoot = panelLovelace.shadowRoot.querySelector("hui-root");
-		if (huiRoot) {
-			const menuButton = huiRoot.shadowRoot.querySelector("ha-menu-button");
-			if (menuButton) {
-				if (hidden) {
-					menuButton.style.display = "none";
-				} else {
-					menuButton.style.removeProperty("display");
+		if (panelLovelace) {
+			const huiRoot = panelLovelace.shadowRoot.querySelector("hui-root");
+			if (huiRoot) {
+				const menuButton = huiRoot.shadowRoot.querySelector("ha-menu-button");
+				if (menuButton) {
+					if (hidden) {
+						menuButton.style.display = "none";
+					} else {
+						menuButton.style.removeProperty("display");
+					}
 				}
 			}
 		}
@@ -886,7 +891,7 @@ class WallpanelView extends HuiView {
 			});
 
 			if (imageSourceType() == "media-entity") {
-				this.switchActiveEntityImage();
+				this.switchActiveImage("entity_update");
 			}
 		}
 	}
@@ -1813,7 +1818,7 @@ class WallpanelView extends HuiView {
 
 			function preloadCallback(wp) {
 				if (switchImages) {
-					wp.switchActiveImage();
+					wp.switchActiveImage("init");
 				} else {
 					wp.startPlayingActiveMedia();
 				}
@@ -2558,7 +2563,7 @@ class WallpanelView extends HuiView {
 
 	preloadImages(callback = null) {
 		logger.debug("Preloading images");
-		if (imageSourceType() === "media-entity") {
+		if (["media-entity", "iframe"].includes(imageSourceType())) {
 			this.preloadImage(this.imageOne, function (wp) {
 				if (callback) {
 					callback(wp);
@@ -2573,29 +2578,6 @@ class WallpanelView extends HuiView {
 				});
 			});
 		}
-	}
-
-	switchActiveEntityImage(crossfadeMillis = null) {
-		this.lastImageUpdate = Date.now();
-		const imageEntity = config.image_url.replace(/^media-entity:\/\//, "");
-		const entity = this.hass.states[imageEntity];
-		if (!entity || mediaEntityState == entity.state) {
-			// Unchanged
-			return;
-		}
-		logger.debug(`Media entity ${imageEntity} state has changed`);
-		mediaEntityState = entity.state;
-		let next = this.imageTwo;
-		if (this.imageTwoContainer.style.opacity == 1) {
-			next = this.imageOne;
-		}
-		const wp = this;
-		const onLoad = function () {
-			next.removeEventListener("load", onLoad);
-			wp.switchActiveImage(crossfadeMillis);
-		};
-		next.addEventListener("load", onLoad);
-		this.updateImage(next);
 	}
 
 	startPlayingActiveMedia() {
@@ -2626,14 +2608,14 @@ class WallpanelView extends HuiView {
 				if (activeElem.currentTime > config.crossfade_time) {
 					const remainingTime = activeElem.duration - activeElem.currentTime;
 					if (remainingTime <= config.crossfade_time) {
-						this.switchActiveImage();
+						this.switchActiveImage("display_time_elapsed");
 						cleanupListeners();
 					}
 				}
 			};
 			const onMediaEnded = () => {
 				if (this.getActiveImageElement() === activeElem) {
-					this.switchActiveImage();
+					this.switchActiveImage("media_end");
 				}
 				cleanupListeners();
 			};
@@ -2658,7 +2640,45 @@ class WallpanelView extends HuiView {
 		});
 	}
 
-	switchActiveImage(crossfadeMillis = null) {
+	switchActiveImage(eventType) {
+		const sourceType = imageSourceType();
+
+		if (sourceType === "media-entity") {
+			const imageEntity = config.image_url.replace(/^media-entity:\/\//, "");
+			const entity = this.hass.states[imageEntity];
+			if (!entity) {
+				return;
+			}
+
+			if (mediaEntityState != entity.state) {
+				logger.debug(`Media entity ${imageEntity} state has changed`);
+			} else if (eventType == "entity_update") {
+				return;
+			} else if (config.media_entity_load_unchanged) {
+				logger.debug(`Media entity ${imageEntity} state unchanged, but media_entity_load_unchanged = true`);
+			} else {
+				this.lastImageUpdate = Date.now();
+				this.restartProgressBarAnimation();
+				return;
+			}
+			mediaEntityState = entity.state;
+		}
+
+		this.lastImageUpdate = Date.now();
+
+		const crossfadeMillis = eventType == "user_action" ? 250 : null;
+		if (["media-entity", "iframe"].includes(sourceType)) {
+			const nextImg = this.imageTwoContainer.style.opacity == 1 ? this.imageOne : this.imageTwo;
+			const wp = this;
+			wp.updateImage(nextImg, () => {
+				wp._switchActiveImage(crossfadeMillis);
+			});
+		} else {
+			this._switchActiveImage(crossfadeMillis);
+		}
+	}
+
+	_switchActiveImage(crossfadeMillis = null) {
 		if (this.afterFadeoutTimer) {
 			clearTimeout(this.afterFadeoutTimer);
 		}
@@ -2699,7 +2719,9 @@ class WallpanelView extends HuiView {
 
 		// Load next image after fade out
 		// only if not media-entity, which will not yet have changed already
-		if (imageSourceType() !== "media-entity") {
+		// iframe will be loaded when switching images
+		// TODO: Refactor, always load new media right before switch
+		if (!["media-entity", "iframe"].includes(imageSourceType())) {
 			const wp = this;
 			this.afterFadeoutTimer = setTimeout(function () {
 				if (typeof curImg.pause === "function") {
@@ -2878,11 +2900,7 @@ class WallpanelView extends HuiView {
 			this.screensaverOverlay.style.background = "#000000";
 		} else if (config.show_images) {
 			if (now - this.lastImageUpdate >= config.display_time * 1000) {
-				if (imageSourceType() === "media-entity") {
-					this.switchActiveEntityImage();
-				} else {
-					this.switchActiveImage();
-				}
+				this.switchActiveImage("display_time_elapsed");
 			}
 			if (now - this.lastImageListUpdate >= config.image_list_update_interval * 1000) {
 				this.updateImageList();
@@ -2952,7 +2970,7 @@ class WallpanelView extends HuiView {
 		this.updateImageIndex();
 		const inactiveImage = this.getInactiveImageElement();
 		this.updateImage(inactiveImage, function (wp) {
-			wp.switchActiveImage(250);
+			wp.switchActiveImage("user_action");
 		});
 	}
 
@@ -3058,7 +3076,7 @@ class WallpanelView extends HuiView {
 						this.imageOne.getAttribute("data-loading") == "false" &&
 						this.imageTwo.getAttribute("data-loading") == "false"
 					) {
-						this.switchActiveImage(250);
+						this.switchActiveImage("user_action");
 					}
 				}
 				return;
@@ -3073,7 +3091,7 @@ class WallpanelView extends HuiView {
 						this.imageOne.getAttribute("data-loading") == "false" &&
 						this.imageTwo.getAttribute("data-loading") == "false"
 					) {
-						this.switchActiveImage(250);
+						this.switchActiveImage("user_action");
 					}
 				}
 				return;
@@ -3139,6 +3157,7 @@ function reconfigure() {
 	}
 
 	updateConfig();
+
 	if (isActive()) {
 		activateWallpanel();
 	} else {
@@ -3147,6 +3166,13 @@ function reconfigure() {
 }
 
 function locationChanged() {
+	if (window.location.href == currentLocation) {
+		return;
+	}
+
+	logger.debug(`Location changed from '${currentLocation}' to '${window.location.href}'`);
+	currentLocation = window.location.href;
+
 	if (
 		wallpanel &&
 		wallpanel.screensaverRunning &&
@@ -3163,13 +3189,6 @@ function locationChanged() {
 		}
 	}
 
-	if (window.location.href == currentLocation) {
-		return;
-	}
-
-	logger.debug(`Location changed from '${currentLocation}' to '${window.location.href}'`);
-	currentLocation = window.location.href;
-
 	let panel = null;
 	let tab = null;
 	const path = window.location.pathname.split("/");
@@ -3184,7 +3203,8 @@ function locationChanged() {
 	}
 	activePanel = panel;
 	activeTab = tab;
-	reconfigure();
+
+	setTimeout(reconfigure, 25);
 }
 
 const startTime = Date.now();
@@ -3234,16 +3254,14 @@ function startup() {
 		}
 		wallpanel = document.createElement("wallpanel-view");
 		elHaMain.shadowRoot.appendChild(wallpanel);
+		window.addEventListener("location-changed", (event) => {
+			logger.debug("location-changed", event);
+			setTimeout(locationChanged, 25);
+		});
 		if (window.navigation) {
 			// Using navigate event because a back button on a sub-view will not produce a location-changed event
 			window.navigation.addEventListener("navigate", (event) => {
 				logger.debug("navigate", event);
-				setTimeout(locationChanged, 0);
-			});
-		} else {
-			// Not supported (i.e. Firefox)
-			window.addEventListener("location-changed", (event) => {
-				logger.debug("location-changed", event);
 				setTimeout(locationChanged, 0);
 			});
 		}

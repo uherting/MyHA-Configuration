@@ -1,0 +1,51 @@
+{
+    "config": {
+      "step": {
+        "user": {
+          "title": "Lägg till Attribut som Sensor",
+          "description": "Skapa en sensor som får sitt värde från en annan entitets attribut.",
+          "data": {
+            "entity_id": "Entitet",
+            "name": "Namn"
+          }
+        },
+        "attr": {
+          "data": {
+            "attribute": "Attribut",
+            "icon": "Ikon",
+            "device_class": "Enhetsklass",
+            "state_class": "Tillståndsklass",
+            "unit_of_measurement": "Måttenhet",
+            "value_template": "Värdemall"
+          },
+          "data_description": {
+            "attribute": "Välj det attribut som du vill ha som sensor.",
+            "unit_of_measurement": "Välj en måttenhet som är fördefinierad eller skapa din egen.",
+            "value_template": "En mall för att återge sensorns värde baserat på filens innehåll."
+          }
+        }
+      }
+    },
+    "options": {
+      "step": {
+        "init": {
+          "data": {
+            "icon": "Ikon",
+            "device_class": "Enhetsklass",
+            "state_class": "Tillståndsklass",
+            "unit_of_measurement": "Måttenhet",
+            "value_template": "Värdemall"
+          },
+          "data_description": {
+            "unit_of_measurement": "Välj en måttenhet som är fördefinierad eller skapa din egen.",
+            "value_template": "En mall för att återge sensorns värde baserat på filens innehåll."
+          }
+        }
+      }
+    },
+    "exceptions": {
+      "template_not_valid": {
+        "message": "Värdemallen {template} är inte giltig, uppdatera hjälparens alternativ och korrigera värdemallen"
+      }
+    }
+  }

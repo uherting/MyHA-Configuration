@@ -1,0 +1,39 @@
+# ############################################################
+#
+#  Take care that the ZB plug L2 kitchen microwave
+#
+# ############################################################
+
+# ############################################################
+# Zigbee plug turn off after x minutes if power consumption is below x watts
+# ############################################################
+- alias: ZB plug kitchen microwave auto off timer
+  id: "f82631d9-628e-4afa-a224-2fe4b9bf15ed"
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # after the plug was on for x minutes the switch goes off
+  trigger:
+    # if the ZB plug is on and it is at least x minutes ago since the power used changed then...
+    - platform: template
+      value_template:
+        "{{ (is_state('switch.zb_plug_l2_kitchen_microwave', 'on')) and ((states('sensor.zb_plug_l2_kitchen_microwave_power') | float) <= 0.15) and ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_microwave_power'].last_changed).timestamp() | int ) > (10*60)) }}"
+        # (10*60))seconds ==> safety, so that the microwave cannot be switched off while it is still working
+    # - platform: state
+    #   entity_id: switch.zb_plug_l2_kitchen_microwave
+    #   to: "on"
+    #   for:
+    #     minutes: 6
+  # -------------------- CONDITIONS -------------------
+  # if power consumption is below x watts
+  condition: []
+  # condition:
+  #   - condition: template
+  #     value_template: '{{ (states("sensor.zb_plug_l2_kitchen_microwave_power") | float(0)) < 35 }}'
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------ ZB Plug OFF ------------------
+    service: switch.turn_off
+    entity_id: switch.zb_plug_l2_kitchen_microwave
+# ############################################################
+#  END OF FILE
+# ############################################################
