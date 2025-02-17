@@ -9,21 +9,27 @@
 # ############################################################
 - alias: ZB plug kitchen dishwasher auto off timer
   id: "edf283ff-f16e-4902-9fbd-bac5b0b1ad29"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # after the plug was on for x minutes the switch goes off
   trigger:
-    - platform: state
-      entity_id: switch.zb_plug_l2_kitchen_dishwasher
-      to: "on"
-      for:
-        hours: 4
-        minutes: 0
+    # if the ZB plug is on and  it is at least x minutes ago since the power used changed then...
+    - platform: template
+      value_template:
+        "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= 0.15) and ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > (20*60)) }}"
+        # (20*60))seconds ==> safety, so that the dishwasher cannot be switched off while it is still working
+    # - platform: state
+    #   entity_id: switch.zb_plug_l2_kitchen_dishwasher
+    #   to: "on"
+    #   for:
+    #     hours: 4
+    #     minutes: 0
   # -------------------- CONDITIONS -------------------
   # if power consumption is below x watts
-  condition:
-    - condition: template
-      value_template: '{{ (states("sensor.zb_plug_l2_kitchen_dishwasher_power") | float(0)) < 10 }}'
+  condition: []
+  # condition:
+  #   - condition: template
+  #     value_template: '{{ (states("sensor.zb_plug_l2_kitchen_dishwasher_power") | float(0)) < 10 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
