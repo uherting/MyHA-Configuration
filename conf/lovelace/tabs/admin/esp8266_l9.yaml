@@ -10,17 +10,19 @@ title: ESP cams L9
 path: esp_cams_l9
 badges: []
 cards:
-  # - type: entities
-  #   title: L9 Cam32 01
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.l9_cam32_01_conn_ip_addr
-  #     - sensor.l9_cam32_01_wifi_signal
-  #     - sensor.l9_cam32_01_conn_ssid
-  #     - sensor.l9_cam32_01_conn_bssid
-  #     - sensor.l9_cam32_01_uptime
-  #     - sensor.l9_cam32_01_uptime_human_readable
-  #     - sensor.l9_cam32_01_esphome_version
+  - type: entities
+    title: L9 Cam32 01
+    show_header_toggle: false
+    entities:
+      - sensor.l9_cam32_01_conn_ip_addr
+      - sensor.l9_cam32_01_wifi_signal
+      - sensor.l9_cam32_01_conn_ssid
+      - sensor.l9_cam32_01_conn_bssid
+      - sensor.l9_cam32_01_uptime
+      - sensor.l9_cam32_01_uptime_human_readable
+      - binary_sensor.l9_cam32_01_status
+      - sensor.l9_cam32_01_esphome_version
+      - switch.l9_cam32_01_restart_device
   - type: entities
     title: L9 Cam32 02
     show_header_toggle: false
