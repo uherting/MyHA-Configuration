@@ -2,16 +2,16 @@
 # esp32_camera 800x600
 
 ######################### CAM DEVICE #########################
-# Author by airijia.com
-# ESP32-CAM
 # Lovelace camera card https://github.com/custom-cards/camera-card
-# Video tutorial https://youtu.be/-towjof_ixU
+# Video tutorial for camera card: https://youtu.be/-towjof_ixU
+#   -> This card should NOT be used and is no longer maintained!!!
+#       -> solution: use picture-glance card from now on!
 
 #esp32_camera:
 name: $friendly_name Cam
 external_clock:
   pin: GPIO0
-  frequency: 8MHz
+  frequency: 20MHz
 i2c_pins:
   sda: GPIO26
   scl: GPIO27

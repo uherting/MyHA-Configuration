@@ -1,0 +1,32 @@
+esphome:
+  name: testcam
+  friendly_name: testcam
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "LOgLKqTXIAaExliuPNLkuz1EoS6ZuLcvHGYVh/Qghhk="
+
+ota:
+  - platform: esphome
+    password: "bad158e0c602abe1ef6dba219f9c827b"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Testcam Fallback Hotspot"
+    password: "mmvrDlB51tsH"
+
+captive_portal:
+    

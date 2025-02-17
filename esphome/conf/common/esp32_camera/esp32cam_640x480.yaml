@@ -11,7 +11,7 @@
 name: $friendly_name Cam
 external_clock:
   pin: GPIO0
-  frequency: 8MHz
+  frequency: 20MHz
 i2c_pins:
   sda: GPIO26
   scl: GPIO27

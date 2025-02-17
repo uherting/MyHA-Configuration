@@ -7,7 +7,6 @@ esphome:
   name: $device_name
   comment: $device_comment
   build_path: ./build/${device_name}
-  # platform: $device_platform
 
   on_boot:
     priority: -100
@@ -20,9 +19,8 @@ esphome:
 # taken from https://esphome.io/components/esp32
 esp32:
   board: $device_board
-  # this is now working due to a change in esphome/conf/common/sensor/uptime.yaml (was: String(..), now std::to_string(...))
   framework:
-    type: esp-idf
+    type: $device_framework
 
 ####################################################################
 # LOGGING (central setup)

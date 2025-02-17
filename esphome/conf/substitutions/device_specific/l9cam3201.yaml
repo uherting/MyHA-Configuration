@@ -15,8 +15,11 @@ wifi_static_ip: 192.168.178.181
 #   https://www.esphome-devices.com/devices/ESP32-CAM
 # device_board: esp32dev
 
-# from the add new device wizard
-device_board: esp32cam
+# latest
+device_board: esp32dev
+device_framework: arduino
+# framework esp-idf throughs too many warnings
+# device_framework: esp-idf
 
 # the friendly name / id
 friendly_name: L9 Cam32 01

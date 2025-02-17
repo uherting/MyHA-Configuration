@@ -142,6 +142,9 @@ output: !include conf/common/esp32_camera/esp32cam_output.yaml
 # cam light
 light: !include conf/common/esp32_camera/esp32cam_light.yaml
 
+#-------------------------------------------------------------------
+# web server
+# esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
 ####################################################################
 # EOF
 ####################################################################
