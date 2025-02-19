@@ -1,0 +1,29 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# shall the bathroom window be considered open?
+- binary_sensor:
+    # if the window is open ...
+    - name: "L2 Bathroom Window Generic"
+      unique_id: "l2_bathroom_window_generic"
+      state: >
+        {{  
+           (is_state('binary_sensor.l2_bathroom01_window', 'on')) or
+           (is_state('binary_sensor.zb_dw_l2_bathroom_contact', 'on'))
+        }}
+    # if the window is open and the outside temperature is below 15.0 degrees...
+    - name: "L2 Bathroom Window Generic Cold"
+      unique_id: "l2_bathroom_window_generic_cold"
+      state: >
+        {{  
+          (is_state('binary_sensor.l2_bathroom_window_generic', 'on'))
+          and 
+          ((states('sensor.l2_bathroom01_tempenv_02') | float(99) ) < 15.0 )
+        }}
+
+####################################################################
+# EOF
+####################################################################
