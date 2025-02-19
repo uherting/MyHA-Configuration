@@ -9,19 +9,14 @@
 # ############################################################
 - alias: ZB plug kitchen kettle auto off timer
   id: "fcd10427-4f0a-4f42-9247-d63271af5a83"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
-  # after the plug was on for x minutes the switch goes off
   trigger:
     - platform: state
       entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_kettle
       to: "on"
   # -------------------- CONDITIONS -------------------
-  # if power consumption is below x watts
   condition: []
-  # condition:
-  #   - condition: template
-  #     value_template: '{{ (states("sensor.zb_plug_l2_kitchen_kettle_power") | float(0)) < 35 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------

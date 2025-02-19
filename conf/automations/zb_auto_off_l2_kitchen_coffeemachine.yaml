@@ -9,19 +9,14 @@
 # ############################################################
 - alias: ZB plug kitchen coffee machine auto off timer
   id: "0229adb7-ba47-47bf-ad42-8f1c4c18916a"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
-  # after the plug was on for x minutes the switch goes off
   trigger:
     - platform: state
-      entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_kettle
+      entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_coffeemachine
       to: "on"
   # -------------------- CONDITIONS -------------------
-  # if power consumption is below x watts
   condition: []
-  # condition:
-  #   - condition: template
-  #     value_template: '{{ (states("sensor.zb_plug_l2_kitchen_coffeemachine_power") | float(0)) < 35 }}'
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
