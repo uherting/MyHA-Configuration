@@ -80,6 +80,11 @@
             "battery_type": "CR2032"
         },
         {
+            "manufacturer": "_TZ3000_6km7djcm",
+            "model": "TS0041",
+            "battery_type": "CR2032"
+        },
+        {
             "manufacturer": "_TZ3000_6ygjfyll",
             "model": "TS0202",
             "battery_type": "CR2450"
@@ -210,6 +215,11 @@
             "manufacturer": "_TZ3000_kstbkt6a",
             "model": "TS0207",
             "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "_TZ3000_lbtpiody",
+            "model": "TS0201",
+            "battery_type": "CR2"
         },
         {
             "manufacturer": "_TZ3000_lf56vpxj",
@@ -453,6 +463,12 @@
             "manufacturer": "_TZE200_myd45weu",
             "model": "TS0601",
             "battery_type": "AA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "_TZE200_nnrfa68v",
+            "model": "TS0601",
+            "battery_type": "AAA",
             "battery_quantity": 2
         },
         {
@@ -4382,6 +4398,11 @@
         },
         {
             "manufacturer": "LUMI",
+            "model": "lumi.remote.cagl02",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "LUMI",
             "model": "lumi.sen_ill.agl01",
             "battery_type": "CR2450"
         },
@@ -4667,6 +4688,12 @@
         {
             "manufacturer": "Namron",
             "model": "Zigbee 4 channel switch K8 (black) (4512721)",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "Namron",
+            "model": "Zigbee 8 channel switch white",
+            "model_id": "4512772",
             "battery_type": "CR2450"
         },
         {
@@ -5317,6 +5344,11 @@
             "manufacturer": "Qingping",
             "model": "CGG1",
             "battery_type": "CR2430"
+        },
+        {
+            "manufacturer": "Qingping",
+            "model": "GCP22C",
+            "battery_type": "Rechargeable"
         },
         {
             "manufacturer": "Qingping Technology (Beijing) Co., Ltd.",
