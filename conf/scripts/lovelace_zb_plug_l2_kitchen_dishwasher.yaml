@@ -24,7 +24,8 @@ lovelace_zb_plug_l2_kitchen_dishwasher:
               data: {}
         - conditions:
             - condition: template
-              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= 0.15) and  ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > (20*60))  }}"
+              # if it is on for at least 20*60 seconds and the power is below 0.15 for at least 20*60 seconds
+              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_dishwasher'].last_changed).timestamp() | int ) > (20*60)) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= 0.15) and  ((now().timestamp() | int) - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > (20*60))  }}"
               # (20*60))seconds ==> safety, so that the dishwasher cannot be switched off while it is still working
           sequence:
             - service: switch.turn_off
@@ -33,7 +34,7 @@ lovelace_zb_plug_l2_kitchen_dishwasher:
               data: {}
         - conditions:
             - condition: template
-              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) > 0.0) }}"
+              value_template: "{{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) and ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) > 0.1) }}"
           sequence:
             - service: persistent_notification.create
               data:

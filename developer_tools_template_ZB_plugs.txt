@@ -1,0 +1,29 @@
+{% set duration = 10 %}
+{% set pwr_max = 0.15 %}
+{% set duration_compare = duration*60 %}
+{% set name_switch='switch.zb_plug_l2_kitchen_coffeemachine' %}
+{% set name_sensor='sensor.zb_plug_l2_kitchen_coffeemachine_power' %}
+START
+=====
+{% set timestamp_secs = now().timestamp() | int(0) %}
+{% set complete =
+(is_state(name_switch, 'on')) and 
+((timestamp_secs) - ((states[name_switch].last_changed).timestamp() | int ) > (duration_compare)) and
+((states(name_sensor) | float) <= pwr_max) and 
+((now().timestamp() | int) - ((states[name_sensor].last_changed).timestamp() | int ) > (10*60)) %}
+sub results
+1:{{ (is_state(name_switch, 'on')) }}
+-----
+2 (a gt b):{{ ((timestamp_secs) - ((states[name_switch].last_changed).timestamp() | int ) > (duration_compare)) }}
+2a:{{ (timestamp_secs) - ((states[name_switch].last_changed).timestamp() | int ) }}
+2b:{{ duration_compare}}
+-----
+3 (a le b):{{ ((states(name_sensor) | float) <= pwr_max) }}
+3a (value):{{ states(name_sensor) | float }}
+3b (value): {{ pwr_max }}
+-----
+4: {{ ((timestamp_secs) - ((states[name_sensor].last_changed).timestamp() | int ) > (duration_compare)) }}
+4a : {{ (timestamp_secs) - ((states[name_sensor].last_changed).timestamp() | int ) }}
+4b: {{duration_compare}}
+=====
+complete: {{ complete }}
