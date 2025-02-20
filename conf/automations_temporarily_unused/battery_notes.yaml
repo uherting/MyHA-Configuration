@@ -5,89 +5,86 @@
 #
 # ############################################################
 
-# 1st a template
 # ############################################################
-#  L2 TRV run away handling by switching hvac_mode (bedroom)
+#  A template for an automation
 # ############################################################
-# - alias: L2 TRV run away handling by switching hvac_mode (bedroom)
-#   id: "251c4a95-6635-448e-90e5-c2795d3b7722"
-#   description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
-#   mode: single
-#   max_exceeded: silent
+- alias: A template for an automation
+  id: "b72625e9-d712-499b-8934-a29512e0719b"
+  initial_state: true
+  description: "Foo bar"
+  mode: single
+  max_exceeded: silent
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: template
+      id: "l2_trv_runaway_high_bedroom"
+      value_template: "{{
+        is_state('binary_sensor.l2_trv_runaway_precondition_high', 'on')
+        and
+        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_high', 'on')
+      }}"
+    - platform: template
+      id: "l2_trv_runaway_low_bedroom"
+      value_template: "{{
+        is_state('binary_sensor.l2_trv_runaway_precondition_low', 'on')
+        and
+        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_low', 'on')
+      }}"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - choose:
+        #
+        # --------------------- l2_trv_runaway_high_bedroom
+        - conditions:
+            - condition: trigger
+              id: "l2_trv_runaway_high_bedroom"
+          sequence:
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
+              data:
+                hvac_mode: "off"
+            - service: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+            - service: persistent_notification.create
+              data:
+                title: "L2 TRV bedroom: turned off"
+                message: "L2 TRV run away conditions (high temp) handled for the bedroom. Temperatures (current/target): {{ states('sensor.l2_trv_runaway_temp_bedroom_current') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_target') }}°C.Time: {{ now() }}"
+        #
+        # --------------------- l2_trv_runaway_low_bedroom
+        - conditions:
+            - condition: trigger
+              id: "l2_trv_runaway_low_bedroom"
+          sequence:
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
+              data:
+                hvac_mode: "auto"
+            - service: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
+            - service: persistent_notification.create
+              data:
+                title: "L2 TRV bedroom: auto resumed"
+                message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
 
-#   initial_state: true
-#   # --------------------- TRIGGER ---------------------
-#   trigger:
-#     - platform: template
-#       id: "l2_trv_runaway_high_bedroom"
-#       value_template: "{{
-#         is_state('binary_sensor.l2_trv_runaway_precondition_high', 'on')
-#         and
-#         is_state('binary_sensor.l2_trv_runaway_condition_bedroom_high', 'on')
-#       }}"
-#     - platform: template
-#       id: "l2_trv_runaway_low_bedroom"
-#       value_template: "{{
-#         is_state('binary_sensor.l2_trv_runaway_precondition_low', 'on')
-#         and
-#         is_state('binary_sensor.l2_trv_runaway_condition_bedroom_low', 'on')
-#       }}"
-#   # -------------------- CONDITIONS -------------------
-#   # none whatsoever
-#   condition: []
-#   # --------------------- ACTIONS ---------------------
-#   action:
-#     - choose:
-#         #
-#         # --------------------- l2_trv_runaway_high_bedroom
-#         - conditions:
-#             - condition: trigger
-#               id: "l2_trv_runaway_high_bedroom"
-#           sequence:
-#             - action: climate.set_hvac_mode
-#               target:
-#                 entity_id: climate.zb_trv_bedroom_l2
-#               data:
-#                 hvac_mode: "off"
-#             - service: input_boolean.turn_on
-#               target:
-#                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
-#             - service: persistent_notification.create
-#               data:
-#                 title: "L2 TRV bedroom: turned off"
-#                 message: "L2 TRV run away conditions (high temp) handled for the bedroom. Temperatures (current/target): {{ states('sensor.l2_trv_runaway_temp_bedroom_current') }}/{{ states('sensor.l2_trv_runaway_temp_bedroom_target') }}°C.Time: {{ now() }}"
-
-#         #
-#         # --------------------- l2_trv_runaway_low_bedroom
-#         - conditions:
-#             - condition: trigger
-#               id: "l2_trv_runaway_low_bedroom"
-#           sequence:
-#             - action: climate.set_hvac_mode
-#               target:
-#                 entity_id: climate.zb_trv_bedroom_l2
-#               data:
-#                 hvac_mode: "auto"
-#             - service: input_boolean.turn_off
-#               target:
-#                 entity_id: input_boolean.l2_trv_runaway_handling_in_progress_bedroom
-#             - service: persistent_notification.create
-#               data:
-#                 title: "L2 TRV bedroom: auto resumed"
-#                 message: "L2 TRV run away: TRV resumed auto mode (bedroom). Time: {{ now() }}"
-
-#       #
-#       # --------------------- default branch of choose:
-#       default:
-#         - service: system_log.write
-#           data:
-#             message: "Automation L2 TRV run away handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-#             level: "error"
-#             logger: "system_log.external"
-#         - service: persistent_notification.create
-#           data:
-#             title: "L2 TRV run away automation unknown activity"
-#             message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
+      #
+      # --------------------- default branch of choose:
+      default:
+        - service: system_log.write
+          data:
+            message: "Automation L2 TRV run away handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            level: "error"
+            logger: "system_log.external"
+        - service: persistent_notification.create
+          data:
+            title: "L2 TRV run away automation unknown activity"
+            message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
 
 # - alias: Batterie+ Info Batteriewechsel
 #   description: "Batterie+ Info Batteriewechsel"
