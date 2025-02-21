@@ -1,15 +1,15 @@
 # ############################################################
 #
-#  Create notification for low battery level condition for all battery sensors
+#  Create notification for low battery level condition for all battery sensors on BT
 #
 # ############################################################
 
 # ############################################################
-#  Low battery level notification for all battery sensors
+#  Low battery level notification for all battery sensors on BT
 # ############################################################
-- alias: Low battery level notification for all battery sensors
+- alias: Low battery level notification for all battery sensors on BT
   id: "b350e9a3-4cfa-4786-a472-7151a7d53891"
-  description: "This automation sends a low battery level notification for all battery sensors"
+  description: "This automation sends a low battery level notification for all battery sensors on BT"
   mode: single
   initial_state: true
   # -------------------- CONDITIONS -------------------
@@ -30,14 +30,13 @@
       # every day
       # day: 0
       weekday:
+        - mon
+        - tue
+        - wed
+        - thu
         - fri
-      #   - mon
-      #   - tue
-      #   - wed
-      #   - thu
-      #   - fri
-      #   - sat
-      #   - sun
+        - sat
+        - sun
       # batteries listed will hold less than threshold percent of capacity
       threshold: 10
       # bullet form for blueprint from itn3rd77
@@ -57,7 +56,7 @@
         - service: script.tg_send_txt
           data_template:
             msg_title: "Low battery level notification"
-            msg_text_prefix: "The following devices have a low bat condition:\n- "
+            msg_text_prefix: "The following devices have a low bat condition:\n"
             msg_text_suffix: "\n"
             msg_text: "{{ sensors | replace(',', ', ') }}"
             msg_receiver: "admin"
