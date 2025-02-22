@@ -15,7 +15,7 @@ wifi_static_ip: 192.168.178.182
 #   https://www.esphome-devices.com/devices/ESP32-CAM
 # device_board: esp32dev
 
-# latest
+# latest 20250222
 device_board: esp32dev
 device_framework: arduino
 # framework esp-idf throughs too many warnings
@@ -30,8 +30,8 @@ cam_light_name: $friendly_name CamLight
 cam_light_id: ${friendly_id}_CamLight
 
 # PIR
-pir01_name: $friendly_name PIR 01
-pir01_id: ${friendly_id}_PIR_01
+pir01_name: $friendly_name PIR 02
+pir01_id: ${friendly_id}_PIR_02
 ###################################################################
 # EOF
 ####################################################################
