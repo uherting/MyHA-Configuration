@@ -17,11 +17,14 @@ views:
   # - !include /config/conf/lovelace/tabs/user/cctv.yaml
   #  - !include /config/conf/lovelace/tabs/user/temperatures.yaml
 
-  # ZB chargers
-  - !include /config/conf/lovelace/tabs/user/l2smartphone_chargers.yaml
-
   # HA app entities
   - !include /config/conf/lovelace/tabs/user/smartphone_status.yaml
+
+  # BN Batteries
+  - !include /config/conf/lovelace/tabs/user/bn_batteries.yaml
+
+  # ZB chargers
+  - !include /config/conf/lovelace/tabs/user/l2smartphone_chargers.yaml
 
   # covid entities
   # the integration coronavirus does not get data anymore so the next tabs are useless
