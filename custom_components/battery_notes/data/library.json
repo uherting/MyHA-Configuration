@@ -3159,6 +3159,13 @@
         },
         {
             "manufacturer": "Google",
+            "model": "Topaz-2.34",
+            "hw_version": "Battery",
+            "battery_type": "AA",
+            "battery_quantity": 6
+        },
+        {
+            "manufacturer": "Google",
             "model": "Topaz-2.7",
             "hw_version": "Battery",
             "battery_type": "AA",
