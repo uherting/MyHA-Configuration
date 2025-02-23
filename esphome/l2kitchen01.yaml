@@ -103,7 +103,7 @@ globals:
   - <<: !include conf/common/globals/opto_coupler_03.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
+  # - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
   # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
   - <<: !include conf/script/l2kitchen01/touch_button_A404_double.yaml
   - <<: !include conf/script/l2kitchen01/touch_button_A404_short.yaml
@@ -119,7 +119,7 @@ script:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  # - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # reed relay from bathroom window
   # - <<: !include conf/common/binary_sensor/reed_A7.yaml
   # the touch buttons

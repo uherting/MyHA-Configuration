@@ -16,7 +16,7 @@
 #   - ESP32-cam
 #
 # Automation:
-#   - yes, HA internal only
+#   - nope. and if it is HA internal only
 #
 # WiFi:
 #   - connects to the strongest WiFi configured

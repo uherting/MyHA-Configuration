@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l9cam3204
+# DEVICE: l9cam3205
 #
 ####################################################################
 ####################################################################
@@ -16,7 +16,7 @@
 #   - ESP32-cam
 #
 # Automation:
-#   - yes, HA internal only
+#   - nope. and if it is HA internal only
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
@@ -31,9 +31,9 @@
 
 ############### GETTING THE NAMING CONVENTIONS SET UP #############
 
-substitutions:
-  <<: !include conf/substitutions/device_specific/l9cam3204.yaml
-  <<: !include conf/substitutions/overwrites/l9cam3204.yaml
+substitutions: 
+  <<: !include conf/substitutions/device_specific/l9cam3205.yaml
+  <<: !include conf/substitutions/overwrites/l9cam3205.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -50,7 +50,7 @@ packages:
 
 # change the log level temporary for this very device
 
-# this has to be done in conf/substitutions/overwrites/l9cam3204.yaml
+# this has to be done in conf/substitutions/overwrites/l9cam3205.yaml
 # by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
@@ -62,7 +62,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-i2c: !include conf/common/device/i2c_esp32_v1.yaml
+# i2c: !include conf/common/device/i2c_esp32_v1.yaml
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -83,7 +83,7 @@ interval:
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
-  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  - <<: !include conf/common/binary_sensor/wifi_status_espcam.yaml
   # - <<: !include conf/common/binary_sensor/pir01.yaml
   # - <<: !include conf/common/binary_sensor/pir02.yaml
   # - <<: !include conf/common/binary_sensor/reed01.yaml
@@ -98,7 +98,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l9cam3204.yaml
+  # - <<: !include conf/sensor/l9cam3205/l9cam3205.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp32_GPIO14_upd_01min.yaml
 
@@ -142,6 +142,9 @@ output: !include conf/common/esp32_camera/esp32cam_output.yaml
 # cam light
 light: !include conf/common/esp32_camera/esp32cam_light.yaml
 
+#-------------------------------------------------------------------
+# web server
+# esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
 ####################################################################
 # EOF
 ####################################################################

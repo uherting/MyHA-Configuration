@@ -11,26 +11,26 @@
   name: ${wifi_uptime_name}
   id: ${wifi_uptime_id}
   update_interval: !secret ESPHOME_UPTIME_UPDATE_INTERVAL
-  on_raw_value:
-    then:
-      - text_sensor.template.publish:
-          id: ${wifi_uptime_human_id}
-          # the function String() does not work with framework type esp-idf, so the code uses std::to_string() now
-          state: !lambda |-
-            int seconds = round(id(${wifi_uptime_id}).raw_state);
-            int days = seconds / (24 * 3600);
-            seconds = seconds % (24 * 3600);
-            int hours = seconds / 3600;
-            seconds = seconds % 3600;
-            int minutes = seconds /  60;
-            seconds = seconds % 60;
+  # on_raw_value:
+  #   then:
+  #     - text_sensor.template.publish:
+  #         id: ${wifi_uptime_human_id}
+  #         # the function String() does not work with framework type esp-idf, so the code uses std::to_string() now
+  #         state: !lambda |-
+  #           int seconds = round(id(${wifi_uptime_id}).raw_state);
+  #           int days = seconds / (24 * 3600);
+  #           seconds = seconds % (24 * 3600);
+  #           int hours = seconds / 3600;
+  #           seconds = seconds % 3600;
+  #           int minutes = seconds /  60;
+  #           seconds = seconds % 60;
 
-            return (
-              (days ? std::to_string(days) + "d " : "") +
-              (hours ? std::to_string(hours) + "h " : "") +
-              (minutes ? std::to_string(minutes) + "m " : "") +
-              (std::to_string(seconds) + "s")
-            ).c_str();
+  #           return (
+  #             (days ? std::to_string(days) + "d " : "") +
+  #             (hours ? std::to_string(hours) + "h " : "") +
+  #             (minutes ? std::to_string(minutes) + "m " : "") +
+  #             (std::to_string(seconds) + "s")
+  #           ).c_str();
 
 ####################################################################
 # EOF

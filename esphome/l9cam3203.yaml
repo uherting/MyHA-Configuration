@@ -16,7 +16,7 @@
 #   - ESP32-cam
 #
 # Automation:
-#   - yes, HA internal only
+#   - nope. and if it is HA internal only
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
@@ -79,7 +79,6 @@ interval:
   # - <<: !include conf/common/interval/cam32_auto_restart.yaml
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1.yaml
-
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
