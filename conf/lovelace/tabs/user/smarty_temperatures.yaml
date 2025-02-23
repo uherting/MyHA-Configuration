@@ -32,8 +32,16 @@ cards:
             entity: sensor.zb_th_l2_kitchen_humidity
             show_state: true
           - type: "custom:button-card"
-            # entity:
-            name: " "
+            entity: switch.zb_plug_l2_kitchen_fridge
+            name: "Fridge"
+            color: yellow
+            show_state: false
+            tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_fridge
+            double_tap_action:
+              action: call-service
+              service: script.lovelace_zb_plug_l2_kitchen_fridge
           - type: "custom:button-card"
             name: "KitchenA"
             entity: switch.l2_kitchen01_ssr_01
@@ -63,16 +71,6 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_fridge
-            name: "Fridge"
-            color: yellow
-            show_state: false
-            tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_fridge
-            double_tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_fridge
 
       # Lounge L2
       - type: grid
@@ -93,19 +91,15 @@ cards:
             entity: sensor.temperature_humidity_sensor_3592_humidity
             show_state: true
           - type: "custom:button-card"
-            # entity: switch.zb_plug_l2_lounge_light_corner
-            # name: "Light"
-            # color: yellow
-            # show_state: true
-          - type: "custom:button-card"
             entity: switch.zb_plug_l2_misc_01
             name: "Misc 01"
             color: yellow
             show_state: false
-          # - type: "custom:button-card"
-          #   # entity: sensor.l2_storage
-          #   name: " "
-          #   show_state: true
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_02
+            name: "Misc 02"
+            color: yellow
+            show_state: false
 
       # Bedroom L2
       - type: grid
@@ -124,18 +118,13 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
-            name: " "
-            show_state: true
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_misc_02
-            name: "Misc 02"
+            entity: binary_sensor.zb_dw_l2_bedroom_01_contact
+            name: "links"
             color: yellow
-            show_state: false
-          # - type: "custom:button-card"
-          #   # entity: sensor.l2_storage
-          #   name: " "
-          #   show_state: true
+          - type: "custom:button-card"
+            entity: binary_sensor.zb_dw_l2_bedroom_02_contact
+            name: "rechts"
+            color: yellow
 
       # Bathroom L2
       - type: grid
@@ -159,15 +148,8 @@ cards:
             show_state: true
           - type: "custom:button-card"
             entity: binary_sensor.zb_dw_l2_bathroom_contact
-            # currently (20250120094400) out of order:
-            # entity: binary_sensor.l2_bathroom01_window
-            # the following is a combination of ...
-            #   - binary_sensor.zb_dw_l2_bathroom_contact
-            #   - binary_sensor.l2_bathroom01_window
-            # entity: l2_bathroom_window_generic
             name: " "
             color: yellow
-            show_state: true
 
       # North L2
       - type: grid
@@ -182,13 +164,6 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity:
-            name: " "
-            show_state: true
-          # - type: "custom:button-card"
-          #   # entity:
-          #   name: " "
-          #   show_state: true
           - type: "custom:button-card"
             entity: switch.l2_bathroom01a_ssr_01
             name: "Fill up"
