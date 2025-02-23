@@ -7,22 +7,70 @@
 ####################################################################
 
 icon: mdi:cctv
-title: CCTV TheWorld
-path: cctv2-the-world
+title: CCTV H431 ESP32 only
+path: cctv2
 badges: []
 
 cards:
-  # ONVIF CAM "TheWorld" hires
-  # works with F5 (refreshing the page) only
-  - type: picture-entity
-    entity: camera.ipcam_ker01_mainstream
-    camera_view: auto
+  # # ESP32CAM #01
+  # - type: picture-glance
+  #   title: ESP32Cam 01
+  #   camera_image: camera.l9_cam32_01_cam
+  #   camera_view: live
+  #   tap_action: none
+  #   entities:
+  #     - binary_sensor.l9_cam32_01_status
+  #     - sensor.l9_cam32_01_esphome_version
+  #     - light.l9_cam32_01_camlight
+  #     - switch.l9_cam32_01_restart_device
 
-  # ONVIF CAM "TheWorld" lowres
-  # works with F5 (refreshing the page) only
-  # - type: picture-entity
-  #   entity: camera.ipcam_ker01_substream
-  #   camera_view: auto
+  # ESP32CAM #02
+  - type: picture-glance
+    title: ESP32Cam 02
+    camera_image: camera.l9_cam32_02_cam
+    camera_view: live
+    tap_action: none
+    entities:
+      - binary_sensor.l9_cam32_02_status
+      - sensor.l9_cam32_02_esphome_version
+      - light.l9_cam32_02_camlight
+      - switch.l9_cam32_02_restart_device
+
+  # ESP32CAM #03
+  - type: picture-glance
+    title: ESP32Cam 03
+    camera_image: camera.l9_cam32_03_cam
+    camera_view: live
+    # tap_action: none
+    entities:
+      - binary_sensor.l9_cam32_03_status
+      - sensor.l9_cam32_03_esphome_version
+      - light.l9_cam32_03_camlight
+      - switch.l9_cam32_03_restart_device
+
+  # # ESP32CAM #04
+  # - type: picture-glance
+  #   title: ESP32Cam 04
+  #   camera_image: camera.l9_cam32_04_cam
+  #   camera_view: live
+  #   # tap_action: none
+  #   entities:
+  #     - binary_sensor.l9_cam32_04_status
+  #     - sensor.l9_cam32_04_esphome_version
+  #     - light.l9_cam32_04_camlight
+  #     - switch.l9_cam32_04_restart_device
+
+  # # ESP32CAM #05
+  # - type: picture-glance
+  #   title: ESP32Cam 05
+  #   camera_image: camera.l9_cam32_05_cam
+  #   camera_view: live
+  #   # tap_action: none
+  #   entities:
+  #     - binary_sensor.l9_cam32_05_status
+  #     - sensor.l9_cam32_05_esphome_version
+  #     - light.l9_cam32_05_camlight
+  #     - switch.l9_cam32_05_restart_device
 ####################################################################
 # EOF
 ####################################################################

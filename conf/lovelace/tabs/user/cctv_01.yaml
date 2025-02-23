@@ -7,7 +7,7 @@
 ####################################################################
 
 icon: mdi:cctv
-title: CCTV H431
+title: CCTV H431 general
 path: cctv1
 badges: []
 
@@ -51,16 +51,16 @@ cards:
       - light.l9_cam32_02_camlight
       - switch.l9_cam32_02_restart_device
 
-  - type: picture-glance
-    title: ESP32Cam 01
-    camera_image: camera.l9_cam32_01_cam
-    camera_view: live
-    tap_action: none
-    entities:
-      - binary_sensor.l9_cam32_01_status
-      - sensor.l9_cam32_01_esphome_version
-      - light.l9_cam32_01_camlight
-      - switch.l9_cam32_01_restart_device
+  # - type: picture-glance
+  #   title: ESP32Cam 01
+  #   camera_image: camera.l9_cam32_01_cam
+  #   camera_view: live
+  #   tap_action: none
+  #   entities:
+  #     - binary_sensor.l9_cam32_01_status
+  #     - sensor.l9_cam32_01_esphome_version
+  #     - light.l9_cam32_01_camlight
+  #     - switch.l9_cam32_01_restart_device
 
   - type: picture-glance
     title: ESP32Cam 03

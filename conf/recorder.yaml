@@ -53,6 +53,7 @@ exclude:
     - sensor.l0_garagebig02_uptime
     - sensor.l1_thehut01_uptime
     - sensor.l2_ble01_uptime
+    - sensor.l2_bathroom01a_uptime
     - sensor.l2_corridor01_uptime
     - sensor.l2_kitchen01_uptime
     - sensor.l2_storage01_uptime
@@ -61,6 +62,7 @@ exclude:
     - sensor.l2_btproxy_bedroom_uptime
     - sensor.l2_btproxy_kitchen_uptime
     - sensor.l2_btproxy_lounge_uptime
+    - sensor.l2_bathroom01a_uptime_human_readable
     - sensor.l0_corridor01_uptime_human_readable
     - sensor.l0_corridor02_uptime_human_readable
     - sensor.l0_entrance01_uptime_human_readable
@@ -76,13 +78,20 @@ exclude:
     - sensor.l2_btproxy_bedroom_uptime_human_readable
     - sensor.l2_btproxy_kitchen_uptime_human_readable
     - sensor.l2_btproxy_lounge_uptime_human_readable
+    # - sensor.l9_cam32_01_uptime
+    # - sensor.l9_cam32_02_uptime_human_readable
+    - sensor.l9_cam32_02_uptime
+    - sensor.l9_cam32_02_uptime_human_readable
+    - sensor.l9_cam32_03_uptime
+    - sensor.l9_cam32_03_uptime_human_readable
+    # - sensor.l9_cam32_04_uptime
+    # - sensor.l9_cam32_04_uptime_human_readable
+    # - sensor.l9_cam32_05_uptime
+    # - sensor.l9_cam32_05_uptime_human_readable
     - sensor.last_message
     - sensor.low_battery
     - sensor.network
     - sensor.network_detail
-    - sensor.pi_hole_ads_blocked_today
-    - sensor.pi_hole_ads_percentage_blocked_today
-    - sensor.pi_hole_dns_queries_today
     - sensor.last_boot
     - sensor.last_boot_templated
     - sensor.time
