@@ -5,11 +5,18 @@
 # for details see https://esphome.io/components/sensor/uptime.html
 
 #text_sensor:
-  - platform: template
+  # relies on a publish action, see esphome/conf/common/sensor/uptime.yaml
+  # - platform: template
+  #   name: ${wifi_uptime_human_name}
+  #   id: ${wifi_uptime_human_id}
+  #   icon: mdi:clock-start
+
+  # for details see: https://esphome.io/components/text_sensor/uptime.html
+  - platform: uptime
     name: ${wifi_uptime_human_name}
     id: ${wifi_uptime_human_id}
+    update_interval: !secret ESPHOME_UPTIME_HR_UPDATE_INTERVAL
     icon: mdi:clock-start
-
 # ############################################################
 #  END OF FILE
 # ############################################################
