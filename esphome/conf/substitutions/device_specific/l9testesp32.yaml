@@ -1,0 +1,22 @@
+####################################################################
+# DEVICE SPECIFIC SUBSTITUTIONS
+
+# device definitions
+device_name: l9testesp32
+device_comment: Level 9 Test ESP32
+device_platform: ESP32
+device_board: esp32dev
+wifi_static_ip: 192.168.178.23
+
+# the friendly name and id
+friendly_name: L9 TEST ESP32
+friendly_id: L9_TEST_ESP32
+
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L9_TEST_ESP32_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L9_TEST_ESP32_ENVSENSOR_01_ADDRESS
+####################################################################
+# EOF
+####################################################################
