@@ -1,0 +1,35 @@
+####################################################################
+####################################################################
+#
+# esp8266 level l2 tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP32 L9
+path: esp32_l9
+badges: []
+cards:
+  - type: entities
+    title: L9 Test ESP32 Tech
+    show_header_toggle: false
+    entities:
+      - sensor.l9_test_esp32_conn_ip_addr
+      - sensor.l9_test_esp32_wifi_signal
+      - sensor.l9_test_esp32_conn_ssid
+      - sensor.l9_test_esp32_conn_bssid
+      - sensor.l9_test_esp32_scan_results
+      - sensor.l9_test_esp32_uptime
+      - sensor.l9_test_esp32_uptime_human_readable
+      - binary_sensor.l9_test_esp32_status
+      - sensor.l9_test_esp32_esphome_version
+      - switch.l9_test_esp32_restart_device
+
+  - type: entities
+    title: L9 Test ESP32 Details
+    show_header_toggle: false
+    entities:
+      - sensor.l9_test_esp32_vl53l0x_01
+####################################################################
+# EOF
+####################################################################
