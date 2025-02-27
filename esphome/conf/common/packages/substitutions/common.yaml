@@ -167,6 +167,14 @@ substitutions:
   touchbutton06_name: $friendly_name TB 06
   touchbutton07_id: ${friendly_id}_TB_07
   touchbutton07_name: $friendly_name TB 07
+
+  vl53l0x_01_name: $friendly_name vl53l0x 01
+  vl53l0x_01_id: ${friendly_id}_vl53l0x_01
+  vl53l0x_01_address: "0x29"
+  vl53l0x_01_enablepin: GPIOXX
+  vl53l0x_01_timeout: 200us
+  vl53l0x_01_updateinterval: 500ms
+  vl53l0x_01_unitofmeasurement: "cm"
 ####################################################################
 # EOF
 ####################################################################
