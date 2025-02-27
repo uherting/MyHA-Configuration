@@ -2,10 +2,10 @@
 # I2C
 ####################################################################
 
-# used in esp32cams only
+# general usage in esp32 controllers, not to be used in esp32cams
 # for details see https://esphome.io/components/i2c.html
-  scl: !secret I2C_SCL_PIN_ESP32_V1
-  sda: !secret I2C_SDA_PIN_ESP32_V1
+  scl: !secret I2C_SCL_PIN_ESP32_V2
+  sda: !secret I2C_SDA_PIN_ESP32_V2
   scan: true
 
   # default values
