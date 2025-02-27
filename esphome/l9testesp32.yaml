@@ -59,7 +59,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-# i2c: !include conf/common/device/i2c_esp32_v1.yaml
+i2c: !include conf/common/device/i2c_esp32_v1.yaml
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -104,7 +104,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  # non so far...
+  - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
