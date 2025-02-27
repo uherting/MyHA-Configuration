@@ -5,8 +5,13 @@
 device_name: l2btproxylounge
 device_comment: Level 2 BT Proxy Lounge
 device_platform: ESP32
-device_board: esp32dev
 wifi_static_ip: 192.168.178.234
+
+# latest 20250222
+device_board: esp32dev
+device_framework: arduino
+# framework esp-idf throughs too many warnings
+# device_framework: esp-idf
 
 # the friendly name and id
 friendly_name: L2 BTPROXY_LOUNGE
