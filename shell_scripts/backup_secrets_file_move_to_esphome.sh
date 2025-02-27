@@ -21,7 +21,7 @@ if [ "$HOST_NAME" == "winnipeg" ];then
   HOME_DIR="/home/uwe"
   HOME_REPOSITORY="/Git/UH/MyHAConfig"
 
-  SRC_FILE=`ls -rt ${HOME_DIR}/Desktop/secrets_*yaml | tail -n1`
+  SRC_FILE=`ls -rt ${HOME_DIR}/Desktop/secrets_yaml/secrets_*yaml | tail -n1`
   TGT_FILE="${HOME_DIR}${HOME_REPOSITORY}/esphome/secrets.yaml"
 
   echo "Using ${SRC_FILE} for copying content to ${TGT_FILE}"

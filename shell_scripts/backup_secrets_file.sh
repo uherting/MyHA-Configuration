@@ -18,5 +18,5 @@ fi
 TARGET_MACHINE="192.168.178.33"
 
 TS=`date +%Y%m%d_%H%M%S`
-scp /usr/share/hassio/homeassistant/esphome/secrets.yaml uwe@${TARGET_MACHINE}:/home/uwe/Desktop/secrets_${TS}.yaml
+scp /usr/share/hassio/homeassistant/esphome/secrets_yaml/secrets.yaml uwe@${TARGET_MACHINE}:/home/uwe/Desktop/secrets_${TS}.yaml
 
