@@ -12,6 +12,17 @@ path: cctv2
 badges: []
 
 cards:
+  - type: custom:advanced-camera-card
+    cameras:
+      - camera_entity: camera.rworld1_fluent_lens_0
+      - camera_entity: camera.rworld1_fluent_lens_1
+      - camera_entity: camera.l9_cam32_02_cam
+      - camera_entity: camera.l9_cam32_03_cam
+    live:
+      display:
+        mode: grid
+    # profiles:
+    #   - scrubbing
   # # ESP32CAM #01
   # - type: picture-glance
   #   title: ESP32Cam 01
@@ -24,29 +35,29 @@ cards:
   #     - light.l9_cam32_01_camlight
   #     - switch.l9_cam32_01_restart_device
 
-  # ESP32CAM #02
-  - type: picture-glance
-    title: ESP32Cam 02
-    camera_image: camera.l9_cam32_02_cam
-    camera_view: live
-    tap_action: none
-    entities:
-      - binary_sensor.l9_cam32_02_status
-      - sensor.l9_cam32_02_esphome_version
-      - light.l9_cam32_02_camlight
-      - switch.l9_cam32_02_restart_device
+  # # ESP32CAM #02
+  # - type: picture-glance
+  #   title: ESP32Cam 02
+  #   camera_image: camera.l9_cam32_02_cam
+  #   camera_view: live
+  #   tap_action: none
+  #   entities:
+  #     - binary_sensor.l9_cam32_02_status
+  #     - sensor.l9_cam32_02_esphome_version
+  #     - light.l9_cam32_02_camlight
+  #     - switch.l9_cam32_02_restart_device
 
-  # ESP32CAM #03
-  - type: picture-glance
-    title: ESP32Cam 03
-    camera_image: camera.l9_cam32_03_cam
-    camera_view: live
-    # tap_action: none
-    entities:
-      - binary_sensor.l9_cam32_03_status
-      - sensor.l9_cam32_03_esphome_version
-      - light.l9_cam32_03_camlight
-      - switch.l9_cam32_03_restart_device
+  # # ESP32CAM #03
+  # - type: picture-glance
+  #   title: ESP32Cam 03
+  #   camera_image: camera.l9_cam32_03_cam
+  #   camera_view: live
+  #   # tap_action: none
+  #   entities:
+  #     - binary_sensor.l9_cam32_03_status
+  #     - sensor.l9_cam32_03_esphome_version
+  #     - light.l9_cam32_03_camlight
+  #     - switch.l9_cam32_03_restart_device
 
   # # ESP32CAM #04
   # - type: picture-glance

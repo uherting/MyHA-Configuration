@@ -62,6 +62,10 @@ resources:
   - url: /hacsfiles/homed-zigbee-networkmap/homed-zigbee-networkmap.js
     type: module
 
+  # Advanced Camera Card, FKA Frigate Card
+  - url: /hacsfiles/advanced-camera-card/advanced-camera-card.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
