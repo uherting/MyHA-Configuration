@@ -2912,6 +2912,11 @@
         },
         {
             "manufacturer": "EZVIZ",
+            "model": "DB2 Pro",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "EZVIZ",
             "model": "DP2",
             "battery_type": "Rechargeable"
         },
@@ -6946,6 +6951,51 @@
             "manufacturer": "Tile",
             "model": "T1301N",
             "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "S200B",
+            "hw_version": "1.0",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "S210",
+            "hw_version": "1.0",
+            "battery_type": "AAA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "S220",
+            "hw_version": "1.0",
+            "battery_type": "AAA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "T100",
+            "hw_version": "1.0",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "T110",
+            "hw_version": "1.0",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "T300",
+            "hw_version": "1.0",
+            "battery_type": "AAA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "T310",
+            "hw_version": "1.0",
+            "battery_type": "CR2450"
         },
         {
             "manufacturer": "TP-Link",
