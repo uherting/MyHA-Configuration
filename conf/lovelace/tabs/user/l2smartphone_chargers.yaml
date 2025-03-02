@@ -16,7 +16,7 @@ cards:
     entities:
       - switch.zb_charger_gh
       - input_boolean.zb_charger_gh_functionality
-      - sensor.spghnote8pro_battery_level
+      - sensor.sp_ghnote8pro_battery_level
       - input_number.zb_charger_gh_min_percentage_low_percentage
       - input_number.zb_charger_gh_max_percentage_low_percentage
       - input_boolean.zb_charger_gh_force_delayed

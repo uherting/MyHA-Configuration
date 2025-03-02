@@ -26,12 +26,12 @@ cards:
     title: Smartphone GH Note8pro
     show_header_toggle: false
     entities:
-      - device_tracker.spghnote8pro
-      - sensor.spghnote8pro_battery_state
-      - sensor.spghnote8pro_battery_level
-      - sensor.spghnote8pro_battery_temperature
-      - sensor.spghnote8pro_charger_type
-      - binary_sensor.spghnote8pro_is_charging
+      - device_tracker.sp_ghnote8pro
+      - sensor.sp_ghnote8pro_battery_state
+      - sensor.sp_ghnote8pro_battery_level
+      - sensor.sp_ghnote8pro_battery_temperature
+      - sensor.sp_ghnote8pro_charger_type
+      - binary_sensor.sp_ghnote8pro_is_charging
 
   - type: entities
     title: FireHD10

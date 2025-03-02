@@ -278,7 +278,7 @@ cards:
           - type: "custom:button-card"
             name: "PSU"
           - type: "custom:button-card"
-            entity: sensor.spghnote8pro_battery_level
+            entity: sensor.sp_ghnote8pro_battery_level
             name: "Batt GH"
             color: yellow
             show_state: false
