@@ -10,7 +10,6 @@ icon: mdi:printer
 title: Printer Info
 path: printer
 cards:
-
   - type: entities
     title: Printer Info
     show_header_toggle: false
@@ -22,21 +21,21 @@ cards:
       - sensor.ecosys_p5026cdw_yellow_tk_5240ys
       - sensor.ecosys_p5026cdw_waste_toner_box
 
-  - type: entities
-    title: OctoPrint
-    entities:
-      - entity: sensor.octoprint_current_state
-        name: Current State
-      - entity: sensor.octoprint_estimated_finish_time
-        name: Estimated Finish Time
-      - entity: sensor.octoprint_job_percentage
-        name: Job Percentage
-      - entity: binary_sensor.octoprint_printing
-        name: Printing
-      - entity: binary_sensor.octoprint_printing_error
-        name: Printing Error
-      - entity: sensor.octoprint_start_time
-        name: Start Time
+  # - type: entities
+  #   title: OctoPrint
+  #   entities:
+  #     - entity: sensor.octoprint_current_state
+  #       name: Current State
+  #     - entity: sensor.octoprint_estimated_finish_time
+  #       name: Estimated Finish Time
+  #     - entity: sensor.octoprint_job_percentage
+  #       name: Job Percentage
+  #     - entity: binary_sensor.octoprint_printing
+  #       name: Printing
+  #     - entity: binary_sensor.octoprint_printing_error
+  #       name: Printing Error
+  #     - entity: sensor.octoprint_start_time
+  #       name: Start Time
 
   ####################################################################
 # EOF
