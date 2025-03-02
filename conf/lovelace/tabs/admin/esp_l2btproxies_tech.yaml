@@ -6,8 +6,8 @@
 ####################################################################
 ####################################################################
 
-title: ESP8266 l2 BT Proxies Tech
-path: esp8266_l2btproxies_tech
+title: ESP l2 BT Proxies Tech
+path: esp_l2btproxies_tech
 badges: []
 cards:
   # - type: entities
@@ -24,19 +24,19 @@ cards:
   #     - sensor.l2_btproxy_bathroom_esphome_version
   #     - switch.l2_btproxy_bathroom_restart_device
 
-  # - type: entities
-  #   title: L2 BLE Proxy Bedroom
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.l2_btproxy_bedroom_conn_ip_addr
-  #     - sensor.l2_btproxy_bedroom_wifi_signal
-  #     - sensor.l2_btproxy_bedroom_conn_ssid
-  #     - sensor.l2_btproxy_bedroom_conn_bssid
-  #     - sensor.l2_btproxy_bedroom_uptime
-  #     - sensor.l2_btproxy_bedroom_uptime_human_readable
-  #     - binary_sensor.l2_btproxy_bedroom_status
-  #     - sensor.l2_btproxy_bedroom_esphome_version
-  #     - switch.l2_btproxy_bedroom_restart_device
+  - type: entities
+    title: L2 BLE Proxy Bedroom
+    show_header_toggle: false
+    entities:
+      - sensor.l2_btproxy_bedroom_conn_ip_addr
+      - sensor.l2_btproxy_bedroom_wifi_signal
+      - sensor.l2_btproxy_bedroom_conn_ssid
+      - sensor.l2_btproxy_bedroom_conn_bssid
+      - sensor.l2_btproxy_bedroom_uptime
+      - sensor.l2_btproxy_bedroom_uptime_human_readable
+      - binary_sensor.l2_btproxy_bedroom_status
+      - sensor.l2_btproxy_bedroom_esphome_version
+      - switch.l2_btproxy_bedroom_restart_device
 
   - type: entities
     title: L2 BLE Proxy Kitchen
