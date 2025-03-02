@@ -1924,6 +1924,14 @@
             "battery_type": "CR123"
         },
         {
+            "manufacturer": "Develco",
+            "model": "Window sensor",
+            "model_id": "WISZB-120",
+            "hw_version": "3.1.1",
+            "battery_type": "AAA",
+            "battery_quantity": 2
+        },
+        {
             "manufacturer": "Develco Products A/S",
             "model": "AQSZB-110",
             "battery_type": "AA",
@@ -2203,7 +2211,7 @@
         {
             "manufacturer": "eQ-3",
             "model": "HM-PBI-4-FM",
-            "battery_type": "CR20321"
+            "battery_type": "CR2032"
         },
         {
             "manufacturer": "eQ-3",
