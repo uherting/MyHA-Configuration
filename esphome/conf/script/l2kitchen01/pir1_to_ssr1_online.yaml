@@ -1,0 +1,16 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01 (no matter whether the device is online or offline)
+  # just dummy action for testing
+  - id: ssr_script_pir_01
+    mode: restart
+    then:
+      # - logger.log: "Turning SSR01 on anyway automation."
+      - delay: !secret DELAY_02MIN
+      # - logger.log: "Turning SSR01 off anyway automation."
+
+####################################################################
+# EOF
+####################################################################
