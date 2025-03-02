@@ -940,6 +940,12 @@
         },
         {
             "manufacturer": "Aqara",
+            "model": "Cube T1 Pro",
+            "model_id": "CTP-R01",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "Aqara",
             "model": "Door and window sensor",
             "model_id": "MCCGQ11LM",
             "hw_version": "2",
@@ -1221,6 +1227,12 @@
         {
             "manufacturer": "Aqara",
             "model": "Water leak sensor T1 (SJCGQ12LM)",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "Aqara",
+            "model": "Wireless mini switch",
+            "model_id": "WXKG11LM",
             "battery_type": "CR2032"
         },
         {
