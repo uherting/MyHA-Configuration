@@ -24,3 +24,24 @@
     # ------------------- SSR01 off -------------------
     - service: switch.turn_off
       entity_id: switch.l2_kitchen01_ssr_01
+
+# ############################################################
+# L2 Kitchen SSR01 on at defined time
+# ############################################################
+- alias: L2 Kitchen SSR01 on at defined time
+  id: "a5e57faa-917a-4f4f-8a2b-54b0c51d8711"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "17:00:00"
+
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SSR01 off -------------------
+    - service: switch.turn_on
+      entity_id: switch.l2_kitchen01_ssr_01
