@@ -5,6 +5,27 @@
 # ############################################################
 
 # ############################################################
+# L2 Kitchen SSR01 on at defined time
+# ############################################################
+- alias: L2 Kitchen SSR01 on at defined time
+  id: "a5e57faa-917a-4f4f-8a2b-54b0c51d8711"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "17:00:00"
+
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SSR01 on -------------------
+    - service: switch.turn_on
+      entity_id: switch.l2_kitchen01_ssr_01
+
+# ############################################################
 # L2 Kitchen SSR01 off at defined time
 # ############################################################
 - alias: L2 Kitchen SSR01 off at defined time
@@ -26,22 +47,28 @@
       entity_id: switch.l2_kitchen01_ssr_01
 
 # ############################################################
-# L2 Kitchen SSR01 on at defined time
+# L2 Kitchen SSR01 keep on
 # ############################################################
-- alias: L2 Kitchen SSR01 on at defined time
-  id: "a5e57faa-917a-4f4f-8a2b-54b0c51d8711"
+- alias: L2 Kitchen SSR01 keep on
+  id: "ade61edc-0a4e-43c7-88ca-0c2f331277ad"
   mode: single
   initial_state: true
 
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: time
-      at: "17:00:00"
+    - platform: state
+      entity_id: switch.l2_kitchen01_ssr_01
+      to: "off"
 
   # -------------------- CONDITIONS -------------------
-  condition: []
+  conditions:
+    - alias: "Time between 1700-2300"
+      condition: time
+      # At least one of the following is required.
+      after: "17:00:00"
+      before: "23:00:00"
   # --------------------- ACTIONS ---------------------
   action:
-    # ------------------- SSR01 off -------------------
+    # ------------------- SSR01 on -------------------
     - service: switch.turn_on
       entity_id: switch.l2_kitchen01_ssr_01
