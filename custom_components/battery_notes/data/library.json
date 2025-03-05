@@ -3388,6 +3388,13 @@
         },
         {
             "manufacturer": "HEIMAN",
+            "model": "Remote dimmer and color control",
+            "model_id": "HS2WDSR-E",
+            "hw_version": "16",
+            "battery_type": "CR2450"
+        },
+        {
+            "manufacturer": "HEIMAN",
             "model": "Remote dimmer and color control (HS2WDSR-E)",
             "model_id": "HS2WDSR-E",
             "battery_type": "CR2450"
@@ -4811,6 +4818,14 @@
             "manufacturer": "Neo",
             "model": "Outdoor solar alarm (NAS-AB06B2)",
             "battery_type": "18650"
+        },
+        {
+            "manufacturer": "Neo",
+            "model": "Temperature & humidity sensor and alarm",
+            "model_id": "NAS-AB02B0",
+            "hw_version": "1",
+            "battery_type": "CR123A",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "Neo",
@@ -6735,6 +6750,11 @@
             "battery_quantity": 2
         },
         {
+            "manufacturer": "Switchbot",
+            "model": "WoRemote",
+            "battery_type": "CR2450"
+        },
+        {
             "manufacturer": "switchbot",
             "model": "WoTHP",
             "battery_type": "AAA",
@@ -7048,6 +7068,11 @@
             "hw_version": "1.0",
             "battery_type": "AAA",
             "battery_quantity": 2
+        },
+        {
+            "manufacturer": "TP-Link",
+            "model": "Tapo T110",
+            "battery_type": "CR2032"
         },
         {
             "manufacturer": "Tractive GmbH",
