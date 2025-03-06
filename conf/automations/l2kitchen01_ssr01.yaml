@@ -72,3 +72,7 @@
     # ------------------- SSR01 on -------------------
     - service: switch.turn_on
       entity_id: switch.l2_kitchen01_ssr_01
+    - service: persistent_notification.create
+      data:
+        title: "L2 Kitchen keep on service"
+        message: "The light in L2 Kitchen coffee machine area was switched on by the keep on service. Time: {{ now() }}"
