@@ -6,11 +6,11 @@
 
 # ZB plug auto off L2 plugs
 - binary_sensor:
-    - name: "ZB plug auto off L2 Kitchen Coffeemachine"
+    - name: "zb_plug_auto_off_l2_kitchen_coffeemachine"
       unique_id: "0ba6d84a-57ee-4f15-a322-c7e6ce56687f"
       state: >
-        {% set duration_sw_on_cmp = 10*60 %}
-        {% set duration_pwr_cmp = 5*60 %}
+        {% set duration_sw_on_cmp = 10*60 %} {# 10min #}
+        {% set duration_pwr_cmp = 5*60 %} {# 5min #}
         {% set pwr_max = 0.15 %}
         {% set timestamp_secs = now().timestamp() | int(0) %}
         {{ 
@@ -19,11 +19,11 @@
           ((states('sensor.zb_plug_l2_kitchen_coffeemachine_power') | float) <= pwr_max) and 
           (timestamp_secs - ((states['sensor.zb_plug_l2_kitchen_coffeemachine_power'].last_changed).timestamp() | int ) > duration_pwr_cmp) 
         }}
-    - name: "ZB plug auto off L2 Kitchen Kettle"
+    - name: "zb_plug_auto_off_l2_kitchen_kettle"
       unique_id: "92c30c3d-eeae-4215-ac38-de0e9abb6b2f"
       state: >
-        {% set duration_sw_on_cmp = 5*60 %}
-        {% set duration_pwr_cmp = 5*60 %}
+        {% set duration_sw_on_cmp = 5*60 %} {# 5min #}
+        {% set duration_pwr_cmp = 5*60 %} {# 5min #}
         {% set pwr_max = 0.15 %}
         {% set timestamp_secs = now().timestamp() | int(0) %}
         {{ 
@@ -32,11 +32,11 @@
           ((states('sensor.zb_plug_l2_kitchen_kettle_power') | float) <= pwr_max) and 
           (timestamp_secs - ((states['sensor.zb_plug_l2_kitchen_kettle_power'].last_changed).timestamp() | int ) > duration_pwr_cmp) 
         }}
-    - name: "ZB plug auto off L2 Kitchen Microwave"
+    - name: "zb_plug_auto_off_l2_kitchen_microwave"
       unique_id: "0b6ece06-05b2-404b-9064-f14642c38555"
       state: >
-        {% set duration_sw_on_cmp = 5*60 %}
-        {% set duration_pwr_cmp = 7*60 %}
+        {% set duration_sw_on_cmp = 5*60 %} {# 5min #}
+        {% set duration_pwr_cmp = 7*60 %} {# 7min #}
         {% set pwr_max = 0.15 %}
         {% set timestamp_secs = now().timestamp() | int(0) %}
         {{ 
@@ -45,11 +45,11 @@
           ((states('sensor.zb_plug_l2_kitchen_microwave_power') | float) <= pwr_max) and 
           (timestamp_secs - ((states['sensor.zb_plug_l2_kitchen_microwave_power'].last_changed).timestamp() | int ) > duration_pwr_cmp) 
         }}
-    - name: "ZB plug auto off L2 Kitchen Dishwasher"
+    - name: "zb_plug_auto_off_l2_kitchen_dishwasher"
       unique_id: "2ee2e9e3-938c-4a32-b24b-79e6f667bc07"
       state: >
-        {% set duration_sw_on_cmp = 4*60*60 %}
-        {% set duration_pwr_cmp = 20*60 %}
+        {% set duration_sw_on_cmp = 4*60*60 %} {# 4h #}
+        {% set duration_pwr_cmp = 20*60 %}  {# 20min #}
         {% set pwr_max = 0.15 %}
         {% set timestamp_secs = now().timestamp() | int(0) %}
         {{ 
