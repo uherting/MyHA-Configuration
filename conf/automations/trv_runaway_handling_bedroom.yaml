@@ -101,7 +101,7 @@
       entity_id: binary_sensor.l2_trv_runaway_condition_bedroom_low
       to: "on"
       for:
-        hours: 2
+        hours: 1
         minutes: 0
   # -------------------- CONDITIONS -------------------
   # none whatsoever
