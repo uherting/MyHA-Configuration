@@ -2132,7 +2132,20 @@
         },
         {
             "manufacturer": "Elgato",
+            "model": "Eve Door 20EAL9901",
+            "hw_version": "1.0.0",
+            "battery_type": "LS14250"
+        },
+        {
+            "manufacturer": "Elgato",
             "model": "Eve Motion 20EAK9901",
+            "battery_type": "AA",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "Elgato",
+            "model": "Eve Thermo 20EAR1701",
+            "hw_version": "1.0.0",
             "battery_type": "AA",
             "battery_quantity": 2
         },
@@ -3880,6 +3893,13 @@
         },
         {
             "manufacturer": "IKEA",
+            "model": "TRADFRI open/close remote",
+            "model_id": "E1766",
+            "hw_version": "1",
+            "battery_type": "CR2032"
+        },
+        {
+            "manufacturer": "IKEA",
             "model": "TRADFRI open/close remote (E1766)",
             "battery_type": "CR2032"
         },
@@ -3928,6 +3948,13 @@
         {
             "manufacturer": "Ikea",
             "model": "TREDANSEN cellular blind (E2103)",
+            "battery_type": "Rechargeable"
+        },
+        {
+            "manufacturer": "IKEA",
+            "model": "TREDANSEN cellular blind, block-out",
+            "model_id": "E2103",
+            "hw_version": "1",
             "battery_type": "Rechargeable"
         },
         {
