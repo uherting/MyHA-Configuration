@@ -1,0 +1,17 @@
+---------------
+# content of: /config/developer_tools_template_ZB_plug_dishwasher.txt
+---------------
+
+  {% set duration_sw_on_cmp = 3*60 %} {# 5min #}
+  {% set duration_pwr_cmp = 2*60 %}  {# 4min #}
+  {% set pwr_max = 0.3 %}
+  {% set timestamp_secs = now().timestamp() | int(0) %}
+Parts
+  {{ (is_state('switch.zb_plug_l2_kitchen_dishwasher', 'on')) }}
+  {{ ((timestamp_secs) - ((states['switch.zb_plug_l2_kitchen_dishwasher'].last_changed).timestamp() | int ) < duration_sw_on_cmp) }}
+  {{ ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= pwr_max) }}
+  {{ (timestamp_secs - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > duration_pwr_cmp) }}
+======================
+Template sensors
+  l2_kitchen_dishwasher {{ states('binary_sensor.zb_plug_auto_off_l2_kitchen_dishwasher') }}
+  l2_kitchen_dishwasher_short_period {{ states('binary_sensor.zb_plug_auto_off_l2_kitchen_dishwasher_short_period') }}
