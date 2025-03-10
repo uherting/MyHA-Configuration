@@ -1,12 +1,11 @@
 ####################################################################
-# I2C
+# I2C (esp32 test microcontroller only)
 ####################################################################
 
-# general usage in esp32 controllers, not to be used in esp32cams
+# usage in esp32 test microcontroller, not to be used in anything else
 # for details see https://esphome.io/components/i2c.html
-  scl: !secret I2C_SCL_PIN_ESP32_V2
-  sda: !secret I2C_SDA_PIN_ESP32_V2
-  scan: true
+  scl: !secret I2C_SCL_PIN_ESP32_TESTDEV
+  sda: !secret I2C_SDA_PIN_ESP32_TESTDEV
 
   # default values
   # see: https://esphome.io/components/i2c.html#configuration-variables
