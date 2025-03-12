@@ -4,6 +4,7 @@
 # if there are no overrides the dummy value comes in handy ;-)
 dummy_value: "dummy value"
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
+# log_level: !secret LOG_LEVEL_WARN
 ####################################################################
 # EOF
 ####################################################################
