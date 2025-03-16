@@ -1,3 +1,14 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# ############################################################
+#
+#  Zigbee - unavailable devices notification
+#
+
 - sensor:
     - name: "Unavailable Zigbee devices info"
       unique_id: "ff0fb012-8a84-452d-88d0-9c9a4a6a7e03"
@@ -17,3 +28,7 @@
         device_list_length: >-
           {%- set hash_value=state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join(', ') | length -%}
           {{ hash_value }}
+
+####################################################################
+# EOF
+####################################################################

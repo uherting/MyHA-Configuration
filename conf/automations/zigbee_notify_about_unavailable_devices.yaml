@@ -1,13 +1,13 @@
 # ############################################################
 #
-#  Create notification with unavailable ESPHome devices
+#  Create notification with unavailable Zigbee devices
 #
 # ############################################################
 
 # ############################################################
-#  notify TG admin group of unavailable ESPHome devices
+#  notify TG admin group of unavailable Zigbee devices
 # ############################################################
-- alias: Notify admin of unavailable ESPHome devices
+- alias: Notify admin of unavailable Zigbee devices
   id: "1ed7edf6-f99f-4038-a5a7-307e73282fab"
   mode: single
   initial_state: true
@@ -15,19 +15,19 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: sensor.unavailable_esphome_devices_info
+      entity_id: sensor.unavailable_zigbee_devices_info
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition:
     condition: template
-    value_template: "{{ (state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') int(0)) > 0 }}"
+    value_template: "{{ (state_attr('sensor.unavailable_zigbee_devices_info', 'device_list_length') int(0)) > 0 }}"
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_txt
       data_template:
-        msg_title: "ESPHome (unavailable devices)"
-        msg_text: "The following ESPHome devices are unavailable:\n- {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join('\n- ') }}\n"
+        msg_title: "Zigbee (unavailable devices)"
+        msg_text: "The following Zigbee devices are unavailable:\n- {{ state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join('\n- ') }}\n"
         msg_receiver: "admin"
 ############################################################
 #  END OF FILE
