@@ -114,8 +114,8 @@ dashboards:
   uilovelace-usr-ovw-all1:
     mode: yaml
     filename: ui-lovelace-usr_ovw_all1.yaml
-    title: Overview
-    icon: mdi:earth
+    title: Batteries
+    icon: mdi:battery
     show_in_sidebar: true
     require_admin: false
 
