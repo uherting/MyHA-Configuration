@@ -20,7 +20,7 @@
   # none whatsoever
   condition:
     condition: template
-    value_template: "{{ (state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') int(0)) > 0 }}"
+    value_template: "{{ (state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0 }}"
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
