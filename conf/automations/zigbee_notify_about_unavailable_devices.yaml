@@ -8,7 +8,7 @@
 #  notify TG admin group of unavailable Zigbee devices
 # ############################################################
 - alias: Notify admin of unavailable Zigbee devices
-  id: "1ed7edf6-f99f-4038-a5a7-307e73282fab"
+  id: "ed192012-57f5-4532-ba25-5fce3d3f9b5f"
   mode: single
   initial_state: true
 
