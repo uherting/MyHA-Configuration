@@ -1,0 +1,45 @@
+####################################################################
+####################################################################
+#
+# printer tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:desktop-classic
+title: Network Clients
+path: network_clients
+cards:
+  - type: custom:flex-table-card
+    title: null
+    entities:
+      include: sensor.network_scanner
+    sort_by: x.ip+
+    columns:
+      - name: IP-Addresse
+        data: devices
+        modify: x.ip
+      - name: MAC-Addresse
+        data: devices
+        modify: x.mac
+      - name: Hostname
+        data: devices
+        modify: x.hostname
+      - name: Hersteller
+        data: devices
+        modify: x.vendor
+
+  - type: markdown
+    content: >
+      ## Devices
+
+      | IP Address | MAC Address | Custom Name | Custom Description | Hostname | Vendor |
+      |------------|-------------|-------------|--------------------|----------|--------|
+
+      {% for device in state_attr('sensor.network_scanner', 'devices') %}
+      | {{ device.ip }} | {{ device.mac }} | {{ device.name }} | {{ device.type }} | {{ device.hostname }} | {{ device.vendor }} |
+      {% endfor %}
+
+####################################################################
+# EOF
+####################################################################

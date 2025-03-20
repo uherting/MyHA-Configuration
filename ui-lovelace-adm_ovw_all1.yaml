@@ -19,6 +19,7 @@ views:
   - !include /config/conf/lovelace/tabs/admin/esphome-unplugged-devices.yaml
   # - !include /config/conf/lovelace/tabs/admin/pi-holes.yaml
   - !include /config/conf/lovelace/tabs/admin/printer.yaml
+  - !include /config/conf/lovelace/tabs/admin/network_clients.yaml
 ####################################################################
 # EOF
 ####################################################################
