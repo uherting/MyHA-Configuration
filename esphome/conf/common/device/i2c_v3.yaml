@@ -2,6 +2,7 @@
 # I2C
 ####################################################################
 
+  id: !secret I2C_BUS_A
   scl: !secret I2C_SCL_PIN_V3
   sda: !secret I2C_SDA_PIN_V3
   scan: true
