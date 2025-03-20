@@ -24,7 +24,7 @@
                   {% set result.sensors = result.sensors + [state.name | regex_replace(find=' last seen', replace='') ~ ' (' ~ relative_time(strptime(states(state.entity_id), '%Y-%m-%dT%H:%M:%S%z', 'unavailable')) ~ ')'] %}
               {% endif %}
           {% endfor %}
-          {{ result.sensors | join('\n') | truncate(254, True) }}
+          {{ result.sensors | sort | join('\n') | truncate(254, True) }}
         device_list_length: >-
           {%- set hash_value=state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join(', ') | length -%}
           {{ hash_value }}
