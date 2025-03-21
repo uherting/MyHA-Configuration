@@ -29,17 +29,16 @@ cards:
         data: devices
         modify: x.vendor
 
-  - type: markdown
-    content: >
-      ## Devices
+  # - type: markdown
+  #   content: >
+  #     ## Devices
 
-      | IP Address | MAC Address | Custom Name | Custom Description | Hostname | Vendor |
-      |------------|-------------|-------------|--------------------|----------|--------|
+  #     | IP Address | MAC Address | Custom Name | Custom Description | Hostname | Vendor |
+  #     |------------|-------------|-------------|--------------------|----------|--------|
 
-      {% for device in state_attr('sensor.network_scanner', 'devices') %}
-      | {{ device.ip }} | {{ device.mac }} | {{ device.name }} | {{ device.type }} | {{ device.hostname }} | {{ device.vendor }} |
-      {% endfor %}
-
+  #     {% for device in state_attr('sensor.network_scanner', 'devices') %}
+  #     | {{ device.ip }} | {{ device.mac }} | {{ device.name }} | {{ device.type }} | {{ device.hostname }} | {{ device.vendor }} |
+  #     {% endfor %}
 ####################################################################
 # EOF
 ####################################################################
