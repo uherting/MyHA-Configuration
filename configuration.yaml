@@ -84,27 +84,27 @@ http:
   trusted_proxies:
     - 172.30.33.0/24
 
-# additional icons on the side bar
-panel_custom:
-  # setttings replaced the neccessivity to have this side menu item
-  - name: srv_dashboard
-    sidebar_title: Dashboard
-    sidebar_icon: mdi:view-dashboard
-    js_url: /api/hassio/app/entrypoint.js
-    url_path: "config/dashboard"
-    embed_iframe: true
-    require_admin: true
-    config:
-      ingress: core_configurator
-  # - name: srv_restart
-  #   sidebar_title: Restart
-  #   sidebar_icon: mdi:restart
-  #   js_url: /api/hassio/app/entrypoint.js
-  #   url_path: "developer-tools/yaml"
-  #   embed_iframe: true
-  #   require_admin: true
-  #   config:
-  #     ingress: core_configurator
+# # additional icons on the side bar
+# panel_custom:
+#   # setttings replaced the neccessivity to have this side menu item
+#   - name: srv_dashboard
+#     sidebar_title: Dashboard
+#     sidebar_icon: mdi:view-dashboard
+#     js_url: /api/hassio/app/entrypoint.js
+#     url_path: "config/dashboard"
+#     embed_iframe: true
+#     require_admin: true
+#     config:
+#       ingress: core_configurator
+# - name: srv_restart
+#   sidebar_title: Restart
+#   sidebar_icon: mdi:restart
+#   js_url: /api/hassio/app/entrypoint.js
+#   url_path: "developer-tools/yaml"
+#   embed_iframe: true
+#   require_admin: true
+#   config:
+#     ingress: core_configurator
 
 # updater:
 
