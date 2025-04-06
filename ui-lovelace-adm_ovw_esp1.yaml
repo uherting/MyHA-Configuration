@@ -12,6 +12,7 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
+  - !include /config/conf/lovelace/tabs/admin/esp_general.yaml
   - !include /config/conf/lovelace/tabs/admin/esp_l2btproxies_tech.yaml
   - !include /config/conf/lovelace/tabs/admin/esp8266_l9.yaml
   - !include /config/conf/lovelace/tabs/admin/esp8266_l2_tech.yaml

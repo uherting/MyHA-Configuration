@@ -70,6 +70,10 @@ resources:
   - url: /hacsfiles/flex-table-card/flex-table-card.js
     type: module
 
+  # Calendar Card Pro
+  - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
