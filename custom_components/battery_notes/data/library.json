@@ -2748,6 +2748,12 @@
         },
         {
             "manufacturer": "eQ-3",
+            "model": "HmIP-WRCC2",
+            "battery_type": "LR44",
+            "battery_quantity": 2
+        },
+        {
+            "manufacturer": "eQ-3",
             "model": "HmIP-WRCD",
             "battery_type": "AAA",
             "battery_quantity": 2
@@ -3905,6 +3911,14 @@
             "manufacturer": "IKEA",
             "model": "SOMRIG shortcut button (E2213)",
             "battery_type": "AAA"
+        },
+        {
+            "manufacturer": "IKEA",
+            "model": "STYRBAR remote control",
+            "model_id": "E2001/E2002",
+            "hw_version": "1",
+            "battery_type": "AAA",
+            "battery_quantity": 2
         },
         {
             "manufacturer": "IKEA",
@@ -6228,6 +6242,11 @@
             "manufacturer": "Shenzhen Neo Electronics Co., Ltd.",
             "model": "NAS-WS01Z",
             "battery_type": "CR2"
+        },
+        {
+            "manufacturer": "Shenzhen Neo Electronics Co., Ltd.",
+            "model": "NAS_PD02Z-2",
+            "battery_type": "CR123A"
         },
         {
             "manufacturer": "SIEGENIA",
