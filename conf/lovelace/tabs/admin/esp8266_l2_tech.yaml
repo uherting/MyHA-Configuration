@@ -21,6 +21,7 @@ cards:
       - sensor.l2_kitchen01_uptime
       - sensor.l2_kitchen01_uptime_human_readable
       - binary_sensor.l2_kitchen01_status
+      - update.l2kitchen01_firmware
       - sensor.l2_kitchen01_esphome_version
       - switch.l2_kitchen01_restart_device
 
