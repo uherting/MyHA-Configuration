@@ -19,21 +19,35 @@ badges:
   ]
 
 cards:
-  # Recycling / rubbish
-  - type: "custom:auto-entities"
-    card:
-      type: entities
-      title: Recycling / rubbish
-      show_header_toggle: false
-    filter:
-      include:
-        - entity_id: "sensor.ics_1*"
-    show_empty: true
-    unique: false
-    sort:
-      method: attribute
-      attribute: remaining
-      numeric: true
+  - type: custom:calendar-card-pro
+    title: "Next events"
+    entities:
+      - entity: calendar.allgemein
+      - entity: calendar.birthdays
+      - entity: calendar.fahrschule
+      - entity: calendar.feiertage_in_belgien
+      - entity: calendar.feiertage_in_den_niederlande
+      - entity: calendar.feiertage_in_deutschland
+      - entity: calendar.lkw_job
+    days_to_show: 7
+    compact_events_to_show: 10
+    show_location: true
+
+  # # Recycling / rubbish
+  # - type: "custom:auto-entities"
+  #   card:
+  #     type: entities
+  #     title: Recycling / rubbish
+  #     show_header_toggle: false
+  #   filter:
+  #     include:
+  #       - entity_id: "sensor.ics_1*"
+  #   show_empty: true
+  #   unique: false
+  #   sort:
+  #     method: attribute
+  #     attribute: remaining
+  #     numeric: true
 
   # Full / new moon
   - type: entities

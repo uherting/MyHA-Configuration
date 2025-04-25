@@ -74,9 +74,9 @@ resources:
   - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
     type: module
 
-  # Week planner card
-  - url: /hacsfiles/week-planner-card/week-planner-card.js
-    type: module
+  # # Week planner card
+  # - url: /hacsfiles/week-planner-card/week-planner-card.js
+  #   type: module
 
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
@@ -127,6 +127,22 @@ dashboards:
     filename: ui-lovelace-usr_ovw_all1.yaml
     title: Batteries
     icon: mdi:battery
+    show_in_sidebar: true
+    require_admin: false
+
+  uilovelace-usr-calpro:
+    mode: yaml
+    filename: ui-lovelace-usr_calpro.yaml
+    title: CalPro
+    icon: mdi:calendar
+    show_in_sidebar: true
+    require_admin: false
+
+  uilovelace-usr-week-planner:
+    mode: yaml
+    filename: ui-lovelace-usr_week_planner.yaml
+    title: WeekPlanner
+    icon: mdi:view-week
     show_in_sidebar: true
     require_admin: false
 
