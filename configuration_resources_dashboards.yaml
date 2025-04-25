@@ -74,6 +74,10 @@ resources:
   - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
     type: module
 
+  # Week planner card
+  - url: /hacsfiles/week-planner-card/week-planner-card.js
+    type: module
+
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
@@ -108,9 +112,8 @@ resources:
   #   type: module
 
 # Add more dashboards
+# attn: the name of the dashboard needs to contain a hyphen (-)
 dashboards:
-  # attn: the name of the dashboard needs to contain a hyphen (-)
-
   # uilovelace:
   #   mode: yaml
   #   filename: ui-lovelace-usr_smarty1.yaml
