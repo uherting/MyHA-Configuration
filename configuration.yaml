@@ -71,6 +71,7 @@ homeassistant:
     - type: trusted_networks
       trusted_networks:
         - 192.168.178.0/24
+        - 192.168.179.0/24
       trusted_users:
         192.168.178.32: !secret AUTHPROVIDER_USERID_EDMIN
         192.168.178.52: !secret AUTHPROVIDER_USERID_UWE
