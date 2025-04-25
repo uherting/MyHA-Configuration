@@ -33,21 +33,21 @@ cards:
     compact_events_to_show: 10
     show_location: true
 
-  # # Recycling / rubbish
-  # - type: "custom:auto-entities"
-  #   card:
-  #     type: entities
-  #     title: Recycling / rubbish
-  #     show_header_toggle: false
-  #   filter:
-  #     include:
-  #       - entity_id: "sensor.ics_1*"
-  #   show_empty: true
-  #   unique: false
-  #   sort:
-  #     method: attribute
-  #     attribute: remaining
-  #     numeric: true
+  # Recycling / rubbish
+  - type: "custom:auto-entities"
+    card:
+      type: entities
+      title: Recycling / rubbish
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: "sensor.ics_1*"
+    show_empty: true
+    unique: false
+    sort:
+      method: attribute
+      attribute: remaining
+      numeric: true
 
   # Full / new moon
   - type: entities
