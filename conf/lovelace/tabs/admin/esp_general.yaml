@@ -6,14 +6,14 @@
 ####################################################################
 ####################################################################
 
-icon: mdi:devices
 title: ESP devices
+icon: mdi:devices
 path: esp_devices
 badges: []
 cards:
   - type: markdown
     content: >
-      ## ESP device list
+      ## Configured ESP device list
 
       {% set x = namespace(devices=[]) %}
       {% for device in integration_entities('esphome')|map('device_id')|unique|list -%}
