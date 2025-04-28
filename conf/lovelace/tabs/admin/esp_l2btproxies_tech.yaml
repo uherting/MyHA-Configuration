@@ -52,19 +52,19 @@ cards:
       - sensor.l2_btproxy_kitchen_esphome_version
       - switch.l2_btproxy_kitchen_restart_device
 
-  - type: entities
-    title: L2 BLE Proxy Lounge
-    show_header_toggle: false
-    entities:
-      - sensor.l2_btproxy_lounge_conn_ip_addr
-      - sensor.l2_btproxy_lounge_wifi_signal
-      - sensor.l2_btproxy_lounge_conn_ssid
-      - sensor.l2_btproxy_lounge_conn_bssid
-      - sensor.l2_btproxy_lounge_uptime
-      - sensor.l2_btproxy_lounge_uptime_human_readable
-      - binary_sensor.l2_btproxy_lounge_status
-      - sensor.l2_btproxy_lounge_esphome_version
-      - switch.l2_btproxy_lounge_restart_device
+  # - type: entities
+  #   title: L2 BLE Proxy Lounge
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l2_btproxy_lounge_conn_ip_addr
+  #     - sensor.l2_btproxy_lounge_wifi_signal
+  #     - sensor.l2_btproxy_lounge_conn_ssid
+  #     - sensor.l2_btproxy_lounge_conn_bssid
+  #     - sensor.l2_btproxy_lounge_uptime
+  #     - sensor.l2_btproxy_lounge_uptime_human_readable
+  #     - binary_sensor.l2_btproxy_lounge_status
+  #     - sensor.l2_btproxy_lounge_esphome_version
+  #     - switch.l2_btproxy_lounge_restart_device
 ####################################################################
 # EOF
 ####################################################################
