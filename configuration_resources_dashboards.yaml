@@ -130,21 +130,21 @@ dashboards:
     show_in_sidebar: true
     require_admin: false
 
-  uilovelace-usr-calpro:
-    mode: yaml
-    filename: ui-lovelace-usr_calpro.yaml
-    title: CalPro
-    icon: mdi:calendar
-    show_in_sidebar: true
-    require_admin: false
+  # uilovelace-usr-calpro:
+  #   mode: yaml
+  #   filename: ui-lovelace-usr_calpro.yaml
+  #   title: CalPro
+  #   icon: mdi:calendar
+  #   show_in_sidebar: true
+  #   require_admin: true
 
-  uilovelace-usr-week-planner:
-    mode: yaml
-    filename: ui-lovelace-usr_week_planner.yaml
-    title: WeekPlanner
-    icon: mdi:view-week
-    show_in_sidebar: true
-    require_admin: false
+  # uilovelace-usr-week-planner:
+  #   mode: yaml
+  #   filename: ui-lovelace-usr_week_planner.yaml
+  #   title: WeekPlanner
+  #   icon: mdi:view-week
+  #   show_in_sidebar: true
+  #   require_admin: true
 
   # ui-lovelace-usr-cctv-cams:
   #   mode: yaml
