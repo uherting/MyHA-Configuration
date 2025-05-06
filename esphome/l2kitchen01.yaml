@@ -74,7 +74,7 @@ packages:
 
 # change the log level temporary for this very device
 
-# this has to be done in conf/substitutions/overwrites/l9cam3202.yaml
+# this has to be done in conf/substitutions/overwrites/<devive>.yaml
 # by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
