@@ -27,10 +27,11 @@
           #     data:
           #       switch_id: "switch.l2_kitchen01_ssr_09"
 
-          - homeassistant.action:
-              action: script.switch_toggle_by_esphome
-              data:
-                switch_id: "switch.l2_kitchen01_ssr_01"
+          - logger.log: "ESPHome: script tb_04_click_short action w/o any action."
+          # - homeassistant.action:
+          #     action: script.switch_toggle_by_esphome
+          #     data:
+          #       switch_id: "switch.l2_kitchen01_ssr_01"
 
           # # trigger opto coupler so that the light bar will go on
           # - globals.set:

@@ -50,6 +50,13 @@ packages:
   # captive_portal: conf/common/networking/captive_portal.yaml
   ota: !include conf/common/networking/ota.yaml
 
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+
+# this has to be done in conf/substitutions/overwrites/<devive>.yaml
+# by (re)defining the variable log_level
+
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
