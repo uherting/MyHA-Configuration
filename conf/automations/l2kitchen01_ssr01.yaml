@@ -75,4 +75,4 @@
     - service: persistent_notification.create
       data:
         title: "L2 Kitchen keep on service"
-        message: "The light in L2 Kitchen coffee machine area was switched on by the keep on service. Time: {{ now() }}"
+        message: "The 2nd lvl light in L2 Kitchen was switched on by the keep on service. Time: {{ now() }}"
