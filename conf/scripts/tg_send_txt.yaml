@@ -70,43 +70,73 @@ tg_send_txt:
             - condition: template
               value_template: "{{ msg_receiver == 'admin' }}"
           sequence:
-            - service: persistent_notification.create
+            - service: script.persis_notif_create
               data:
-                title: "{{ msg_title }}"
-                message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
+                msg_title: "{{ msg_title }}"
+                msg_text: "{{ msg_text }}"
+                msg_text_prefix: "{{msg_text_prefix}}"
+                msg_text_suffix: "{{msg_text_suffix}}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "{{ msg_title }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
         # general notification group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'notify' }}"
           sequence:
-            - service: persistent_notification.create
+            - service: script.persis_notif_create
               data:
-                title: "{{ msg_title }}"
-                message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
+                msg_title: "{{ msg_title }}"
+                msg_text: "{{ msg_text }}"
+                msg_text_prefix: "{{msg_text_prefix}}"
+                msg_text_suffix: "{{msg_text_suffix}}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "{{ msg_title }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
         # cams inside group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'cams_inside' }}"
           sequence:
-            - service: persistent_notification.create
+            - service: script.persis_notif_create
               data:
-                title: "{{ msg_title }}"
-                message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
+                msg_title: "{{ msg_title }}"
+                msg_text: "{{ msg_text }}"
+                msg_text_prefix: "{{msg_text_prefix}}"
+                msg_text_suffix: "{{msg_text_suffix}}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "{{ msg_title }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
         # cams outside notification group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'cams_outside' }}"
           sequence:
-            - service: persistent_notification.create
+            - service: script.persis_notif_create
               data:
-                title: "{{ msg_title }}"
-                message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''  }}. Time: {{ now() }}"
+                msg_title: "{{ msg_title }}"
+                msg_text: "{{ msg_text }}"
+                msg_text_prefix: "{{msg_text_prefix}}"
+                msg_text_suffix: "{{msg_text_suffix}}"
+            # - service: persistent_notification.create
+            #   data:
+            #     title: "{{ msg_title }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''  }}. Time: {{ now() }}"
       # receiver does not exist
       default:
-        - service: persistent_notification.create
+        - service: script.persis_notif_create
           data:
-            title: "{{ msg_title }}"
-            message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix }}. Time: {{ now() }}"
+            msg_title: "{{ msg_title }}"
+            msg_text: "{{ msg_text }}"
+            msg_text_prefix: "{{msg_text_prefix}}"
+            msg_text_suffix: "{{msg_text_suffix}}"
+        # - service: persistent_notification.create
+        #   data:
+        #     title: "{{ msg_title }}"
+        #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix }}. Time: {{ now() }}"
 # ############################################################
 #  END OF FILE
 # ############################################################

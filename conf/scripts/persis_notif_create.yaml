@@ -1,0 +1,55 @@
+# ############################################################
+#
+#  Telegram messaging
+#
+#  Purpose: sending text into a Telegram group or to the systems log
+#
+#  Attention: not all notification groups as defined in
+#  conf/notify.yaml are implemented yet
+#
+# ############################################################
+
+# --------------------------------------------------------------
+# sending a text message to a TG group
+# --------------------------------------------------------------
+persis_notif_create:
+  alias: Create a persistant notification
+  icon: mdi:text
+  description: This script creates a persistant notification
+  fields:
+    msg_title:
+      description: "The title of the notification"
+      advanced: true
+      required: true
+      example: "State change"
+      default: "default msg title"
+      # selector: text
+    msg_text:
+      description: "The message content"
+      advanced: true
+      required: true
+      example: "The light is on!"
+      default: "default msg text"
+    msg_text_prefix:
+      # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
+      description: "The message prefix content"
+      advanced: true
+      required: false
+      example: "The light "
+      default: ""
+    msg_text_suffix:
+      # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
+      description: "The message suffix content"
+      advanced: true
+      required: false
+      example: "is on!"
+      default: ""
+  mode: queued
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "{{ msg_title }}"
+        message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text_suffix }}. Time: {{ now() }}"
+# ############################################################
+#  END OF FILE
+# ############################################################
