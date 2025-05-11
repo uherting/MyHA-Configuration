@@ -1,11 +1,6 @@
 # ############################################################
 #
-#  Telegram messaging
-#
-#  Purpose: sending text into a Telegram group or to the systems log
-#
-#  Attention: not all notification groups as defined in
-#  conf/notify.yaml are implemented yet
+#  Create a persistant notification
 #
 # ############################################################
 
