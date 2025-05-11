@@ -89,8 +89,8 @@ tg_send_txt:
               data:
                 msg_title: "{{ msg_title }}"
                 msg_text: "{{ msg_text }}"
-                msg_text_prefix: "{{msg_text_prefix}}"
-                msg_text_suffix: "{{msg_text_suffix}}"
+                msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+                msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
             # - service: persistent_notification.create
             #   data:
             #     title: "{{ msg_title }}"
@@ -104,8 +104,8 @@ tg_send_txt:
               data:
                 msg_title: "{{ msg_title }}"
                 msg_text: "{{ msg_text }}"
-                msg_text_prefix: "{{msg_text_prefix}}"
-                msg_text_suffix: "{{msg_text_suffix}}"
+                msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+                msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
             # - service: persistent_notification.create
             #   data:
             #     title: "{{ msg_title }}"
@@ -119,8 +119,8 @@ tg_send_txt:
               data:
                 msg_title: "{{ msg_title }}"
                 msg_text: "{{ msg_text }}"
-                msg_text_prefix: "{{msg_text_prefix}}"
-                msg_text_suffix: "{{msg_text_suffix}}"
+                msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+                msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
             # - service: persistent_notification.create
             #   data:
             #     title: "{{ msg_title }}"
@@ -131,8 +131,8 @@ tg_send_txt:
           data:
             msg_title: "{{ msg_title }}"
             msg_text: "{{ msg_text }}"
-            msg_text_prefix: "{{msg_text_prefix}}"
-            msg_text_suffix: "{{msg_text_suffix}}"
+            msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+            msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
         # - service: persistent_notification.create
         #   data:
         #     title: "{{ msg_title }}"
