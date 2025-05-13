@@ -71,6 +71,10 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_01
+            name: "Misc 01"
+            color: yellow
+            show_state: false
 
       # Lounge L2
       - type: grid
@@ -91,8 +95,8 @@ cards:
             entity: sensor.temperature_humidity_sensor_3592_humidity
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_misc_01
-            name: "Misc 01"
+            entity: switch.zb_plug_l2_lounge_tv
+            name: "TV"
             color: yellow
             show_state: false
           - type: "custom:button-card"
