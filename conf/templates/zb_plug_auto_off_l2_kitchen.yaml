@@ -76,3 +76,7 @@
           ((states('sensor.zb_plug_l2_kitchen_dishwasher_power') | float) <= pwr_max) and 
           (timestamp_secs - ((states['sensor.zb_plug_l2_kitchen_dishwasher_power'].last_changed).timestamp() | int ) > duration_pwr_cmp)
         }}
+
+####################################################################
+# EOF
+####################################################################

@@ -1,0 +1,26 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# ZB plug auto off L2 plugs
+- binary_sensor:
+    # switch is on for more than duration_sw_on_cmp seconds and the power is less than pwr_max for duration_pwr_cmp
+    - name: "zb_plug_auto_off_l2_lounge_tv"
+      unique_id: "3a0b7a3e-1f90-486a-ae0d-f77a41cf2ccb"
+      state: >
+        {% set duration_sw_on_cmp = 1*60 %} {# 1min #}
+        {% set duration_pwr_cmp = 2*60 %} {# 5min #}
+        {% set pwr_max = 20.0 %}
+        {% set timestamp_secs = now().timestamp() | int(0) %}
+        {{ 
+          (is_state('switch.zb_plug_l2_lounge_tv', 'on')) and 
+          ((timestamp_secs) - ((states['switch.zb_plug_l2_lounge_tv'].last_changed).timestamp() | int ) > duration_sw_on_cmp) and 
+          ((states('sensor.zb_plug_l2_lounge_tv_power') | float) <= pwr_max) and 
+          (timestamp_secs - ((states['sensor.zb_plug_l2_lounge_tv_power'].last_changed).timestamp() | int ) > duration_pwr_cmp) 
+        }}
+
+####################################################################
+# EOF
+####################################################################

@@ -1,0 +1,27 @@
+# ############################################################
+#
+#  Take care that the ZB plug L2 lounge tv
+#
+# ############################################################
+
+# ############################################################
+# Zigbee plug turn off after x minutes if power consumption is below x watts
+# ############################################################
+- alias: ZB plug lounge tv auto off timer
+  id: "3d2f39c2-fa78-42f1-92f9-2687df347f3e"
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.zb_plug_auto_off_l2_lounge_tv
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------ ZB Plug OFF ------------------
+    service: switch.turn_off
+    entity_id: switch.zb_plug_l2_lounge_tv
+# ############################################################
+#  END OF FILE
+# ############################################################
