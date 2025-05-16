@@ -31,13 +31,13 @@
         - ON for 0.1s to 0.3s
         - OFF for at least 2s
       then:
-        - logger.log: "ESPHome: Single short clicked. Exec script tb_04_click_short."
+        - logger.log: "ESPHome: Single short clicked. Prior exec script tb_04_click_short."
         - script.execute: tb_04_click_short
     - timing:
         - ON for 1s to 7s
         - OFF for at least 2s
       then:
-        - logger.log: "ESPHome: Single long clicked. Exec script tb_04_click_long."
+        - logger.log: "ESPHome: Single long clicked. Prior exec script tb_04_click_long."
         - script.execute: tb_04_click_long
     - timing:
         - ON for 0.1s to 0.3s
@@ -45,7 +45,7 @@
         - ON for 0.1s to 0.3s
         - OFF for at least 2s
       then:
-        - logger.log: "ESPHome: Double clicked. Exec script tb_04_click_dbl."
+        - logger.log: "ESPHome: Double clicked. Prior exec script tb_04_click_dbl."
         - script.execute: tb_04_click_dbl
 # ############################################################
 #  END OF FILE
