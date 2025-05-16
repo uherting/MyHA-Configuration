@@ -9,7 +9,7 @@
 # ############################################################
 - alias: ZB plug lounge tv auto off timer
   id: "3d2f39c2-fa78-42f1-92f9-2687df347f3e"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
