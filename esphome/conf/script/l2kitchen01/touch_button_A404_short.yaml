@@ -20,19 +20,16 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          # - logger.log: "script tb_04_click_short action."
+          - logger.log: "script tb_04_click_short action."
 
-          # - homeassistant.action:
-          #     action: script.switch_toggle_by_esphome
-          #     data:
-          #       switch_id: "switch.l2_kitchen01_ssr_09"
+          - homeassistant.action:
+              action: script.switch_toggle_by_esphome
+              data:
+                switch_id: "switch.l2_kitchen01_ssr_01"
 
-          - logger.log: "ESPHome: script tb_04_click_short action w/o any action."
-          # - homeassistant.action:
-          #     action: script.switch_toggle_by_esphome
-          #     data:
-          #       switch_id: "switch.l2_kitchen01_ssr_01"
-
+          # =========================================================
+          # future feature for the light bar
+          # --------------------------------------------------------
           # # trigger opto coupler so that the light bar will go on
           # - globals.set:
           #     id: isLightBarOnViaBtn
@@ -42,6 +39,8 @@
           #     value: 'true'
           # - script.execute: lightbar_script_oc_trigger_on_max
           # - logger.log: "The light bar was (theoretically) switched to max brightness."
+          # =========================================================
+
 ####################################################################
 # EOF
 ####################################################################

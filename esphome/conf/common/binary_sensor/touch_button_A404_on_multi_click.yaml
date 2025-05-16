@@ -9,6 +9,9 @@
 - platform: gpio
   name: $touchbutton04_name
   id: ${touchbutton04_id}
+  # filters:
+  #   - delayed_on: 70ms
+  #   - delayed_off: 70ms
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
     number: !secret MCP23017_PIN_A4
@@ -25,29 +28,24 @@
   device_class: power
   on_multi_click:
     - timing:
-        - ON for at most 0.3s
-        - OFF for at least 0.2s
+        - ON for 0.1s to 0.3s
+        - OFF for at least 2s
       then:
-        # - logger.log: "Single short clicked. Exec script tb_04_click_short."
+        - logger.log: "ESPHome: Single short clicked. Exec script tb_04_click_short."
         - script.execute: tb_04_click_short
-        # - logger.log: "Single short clicked, automation on."
-        # - service: automation.turn_on
-        #   data:
-        #     entity_id: automation.<nameOfAutomation>
     - timing:
         - ON for 1s to 7s
-        - OFF for at least 0.4s
+        - OFF for at least 2s
       then:
-        # - logger.log: "Single long clicked, no further action."
+        - logger.log: "ESPHome: Single long clicked. Exec script tb_04_click_long."
         - script.execute: tb_04_click_long
-        # - logger.log: "Single long clicked, automation off."
     - timing:
-        - ON for at most 0.3s
+        - ON for 0.1s to 0.3s
         - OFF for at most 0.4s
-        - ON for at most 0.3s
-        - OFF for at least 0.2s
+        - ON for 0.1s to 0.3s
+        - OFF for at least 2s
       then:
-        # - logger.log: "Double clicked, no further action."
+        - logger.log: "ESPHome: Double clicked. Exec script tb_04_click_dbl."
         - script.execute: tb_04_click_dbl
 # ############################################################
 #  END OF FILE
