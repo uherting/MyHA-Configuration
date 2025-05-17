@@ -11,6 +11,15 @@ path: tempAndQuckAccess
 badges: []
 
 cards:
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.backups_stale
+        state_not: "off"
+    card:
+      type: markdown
+      title: Stale Backups!
+      content: >-
+        Backups are stale. Please visit the "Home Assistant Google Drive Backup" add-on status page for details.
   - type: vertical-stack
     cards:
       # Kitchen L2
