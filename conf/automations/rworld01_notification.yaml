@@ -1,0 +1,30 @@
+# ############################################################
+#
+#  Create a notification if camera RWorld01 senses ...
+#
+# ############################################################
+
+# ############################################################
+# Create a notification if camera RWorld01 senses ...
+# ############################################################
+- alias: Camera RWorld01 sensed something
+  id: "8eb2599a-157e-40a6-8d8b-a0a73a28a3a2"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.rworld1_person
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- CREATE NOTIFICATION -------------------
+    - service: persistent_notification.create
+      data:
+        title: "Camera RWorld01 sensed something"
+        message: "The camera RWorld01 sensed a person. This happened at {{ now() }}"
+############################################################
+#  END OF FILE
+# ############################################################
+
