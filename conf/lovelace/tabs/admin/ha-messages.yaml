@@ -60,7 +60,7 @@ cards:
         icon: "hacs:hacs"
         name: HACS updates
       - type: divider
-      - entity: sensor.snapshot_backup
+      - entity: binary_sensor.backups_stale
         icon: "mdi:cloud-upload-outline"
         name: HA Google Backup state
       - type: divider
