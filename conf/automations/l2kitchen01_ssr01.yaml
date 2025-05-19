@@ -14,8 +14,11 @@
 
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: time
-      at: "17:00:00"
+    - platform: sun
+      event: sunset
+      offset: "01:00:00"
+    # - platform: time
+    #   at: "17:00:00"
 
   # -------------------- CONDITIONS -------------------
   condition: []
