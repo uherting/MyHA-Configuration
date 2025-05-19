@@ -7,13 +7,13 @@
 # ############################################################
 # snapshots went stale
 # ############################################################
-- alias: Snapshots went stale
-  id: "snapshots_went_stale"
+- alias: Google Drive Backup
+  id: "15cd9000-389a-4026-950a-8ead7f42305a"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: binary_sensor.snapshots_stale
+      entity_id: binary_sensor.backups_stale
       to: "on"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
@@ -24,7 +24,7 @@
     - service: script.tg_send_txt
       data_template:
         msg_title: "Google Drive Backup"
-        msg_text: "Snapshots of Google Drive Backup are stale. Please visit the <a href='/cebe7a76_hassio_google_drive_backup'>Hass.io Google Drive Backup</a> add-on status page for details.\n"
+        msg_text: "Snapshots of HA Google Drive Backup Add-On are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.\n"
         msg_receiver: "admin"
 # ############################################################
 #  END OF FILE
