@@ -36,7 +36,7 @@ cards:
       - sensor.l2_storage01_uptime
       - sensor.l2_storage01_uptime_human_readable
       - binary_sensor.l2_storage01_status
-      - update.l2storage_firmware
+      - update.l2storage01_firmware
       - sensor.l2_storage01_esphome_version
       - switch.l2_storage01_restart_device
 
