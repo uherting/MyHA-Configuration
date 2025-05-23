@@ -9,21 +9,26 @@
 # sun related sensors
 # Source: https://www.home-assistant.io/integrations/binary_sensor.template/
 # Note: restart of HA was required to (de)activate this sensor.
-  - platform: template
-    sensors:
-      sun_up:
-        friendly_name: "Sun is up"
-        value_template: >-
-          {{ state_attr('sun.sun', 'elevation')|float > 0 }}
-      sun_down:
-        friendly_name: "Sun is down"
-        value_template: >-
-          {{ state_attr('sun.sun', 'elevation')|float <= 0 }}
-      sun_dwn_twilight:
-        # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
-        friendly_name: "civil twilight"
-        value_template: >-
-          {{ state_attr('sun.sun', 'elevation')|float < 6 }}
+- platform: template
+  sensors:
+    sun_up:
+      friendly_name: "Sun is up"
+      value_template: >-
+        {{ state_attr('sun.sun', 'elevation')|float > 0 }}
+    sun_down:
+      friendly_name: "Sun is down"
+      value_template: >-
+        {{ state_attr('sun.sun', 'elevation')|float <= 0 }}
+    sun_dwn_twilight:
+      # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+      friendly_name: "civil twilight"
+      value_template: >-
+        {{ state_attr('sun.sun', 'elevation')|float < 6 }}
+    sun_dwn_dusk_civil:
+      # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+      friendly_name: "civil dusk"
+      value_template: >-
+        {{ state_attr('sun.sun', 'elevation')|float <= 6 }}
 
 # ############################################################
 #  END OF FILE
