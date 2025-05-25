@@ -17,7 +17,7 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          # - logger.log: "script tb_04_click_dbl action."
+          # - logger.log: "ESPHome: within script tb_04_click_dbl action."
 
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
