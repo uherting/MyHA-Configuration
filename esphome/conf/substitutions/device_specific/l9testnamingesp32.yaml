@@ -5,7 +5,7 @@
 device_name: l9testnamingesp32
 device_comment: Level 9 TestNaming ESP32
 device_platform: ESP32
-wifi_static_ip: 192.168.178.19
+wifi_static_ip: 192.168.178.39
 
 # latest 20250222
 device_board: esp32dev
