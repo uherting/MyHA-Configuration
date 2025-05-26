@@ -58,13 +58,7 @@ homeassistant:
     - /config/var/opt/tg/real_world01
     - /config/var/opt/tg/real_world02
     - /config/var/opt/tg/real_world03
-  customize:
-    person.uwe:
-      entity_picture: "/local/avatars/uh.jpg"
-    person.uwe_trucking:
-      entity_picture: "/local/avatars/uh.jpg"
-    person.gillian:
-      entity_picture: "/local/avatars/gh.jpg"
+  customize: !include_dir_merge_named conf/customize
   packages: !include_dir_named conf/packages
   auth_providers:
     - type: homeassistant
