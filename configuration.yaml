@@ -58,7 +58,7 @@ homeassistant:
     - /config/var/opt/tg/real_world01
     - /config/var/opt/tg/real_world02
     - /config/var/opt/tg/real_world03
-  customize: !include_dir_merge_named conf/customize
+  customize: !include conf/customize/customize_debug.yaml
   packages: !include_dir_named conf/packages
   auth_providers:
     - type: homeassistant
