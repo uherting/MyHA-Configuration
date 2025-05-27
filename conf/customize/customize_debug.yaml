@@ -1,0 +1,243 @@
+person.uwe:
+  entity_picture: "/local/avatars/uh.jpg"
+person.uwe_trucking:
+  entity_picture: "/local/avatars/uh.jpg"
+person.gillian:
+  entity_picture: "/local/avatars/gh.jpg"
+
+switch.l2btproxybedroom_l2_btproxy_bedroom_restart_device:
+  friendly_name: "L2 BTPROXY_BEDROOM Restart Device"
+binary_sensor.l2btproxybedroom_l2_btproxy_bedroom_status:
+  friendly_name: "L2 BTPROXY_BEDROOM Status"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_wifi_signal:
+  friendly_name: "L2 BTPROXY_BEDROOM WiFi Signal"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_uptime:
+  friendly_name: "L2 BTPROXY_BEDROOM Uptime"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_esphome_version:
+  friendly_name: "L2 BTPROXY_BEDROOM ESPHome Version"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_conn_ssid:
+  friendly_name: "L2 BTPROXY_BEDROOM Conn SSID"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_conn_bssid:
+  friendly_name: "L2 BTPROXY_BEDROOM Conn BSSID"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_mac_address:
+  friendly_name: "L2 BTPROXY_BEDROOM MAC address"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_scan_results:
+  friendly_name: "L2 BTPROXY_BEDROOM Scan Results"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_conn_ip_addr:
+  friendly_name: "L2 BTPROXY_BEDROOM Conn IP addr"
+sensor.l2btproxybedroom_l2_btproxy_bedroom_uptime_human_readable:
+  friendly_name: "L2 BTPROXY_BEDROOM Uptime human readable"
+switch.l2_storage01_restart_device:
+  friendly_name: "L2 Storage01 Restart Device"
+switch.l2_storage01_ssr_01:
+  friendly_name: "L2 Storage01 SSR 01"
+switch.l2_kitchen01_ssr_09:
+  friendly_name: "L2 Kitchen01 SSR 09"
+switch.l2_storage01_ssr_03:
+  friendly_name: "L2 Storage01 SSR 03"
+binary_sensor.l2_storage01_status:
+  friendly_name: "L2 Storage01 Status"
+binary_sensor.l2_storage01_pir_01:
+  friendly_name: "L2 Storage01 PIR 01"
+binary_sensor.l2_storage01_door_storage:
+  friendly_name: "L2 Storage01 Door Storage"
+binary_sensor.l2_storage01_tb_01:
+  friendly_name: "L2 Storage01 TB 01"
+binary_sensor.l2_kitchen01_tb_02:
+  friendly_name: "L2 Kitchen01 TB 02"
+binary_sensor.l2_storage01_bin_templ_spymode:
+  friendly_name: "L2 Storage01 BIN_TEMPL SPYMODE"
+sensor.l2_storage01_wifi_signal:
+  friendly_name: "L2 Storage01 WiFi Signal"
+sensor.l2_storage01_uptime:
+  friendly_name: "L2 Storage01 Uptime"
+sensor.l2_storage01_tempcase_01:
+  friendly_name: "L2 Storage01 TempCase 01"
+sensor.l2_storage01_esphome_version:
+  friendly_name: "L2 Storage01 ESPHome Version"
+sensor.l2_storage01_conn_ssid:
+  friendly_name: "L2 Storage01 Conn SSID"
+sensor.l2_storage01_conn_bssid:
+  friendly_name: "L2 Storage01 Conn BSSID"
+sensor.l2_storage01_mac_address:
+  friendly_name: "L2 Storage01 MAC address"
+sensor.l2_storage01_scan_results:
+  friendly_name: "L2 Storage01 Scan Results"
+sensor.l2_storage01_conn_ip_addr:
+  friendly_name: "L2 Storage01 Conn IP addr"
+sensor.l2_storage01_uptime_human_readable:
+  friendly_name: "L2 Storage01 Uptime human readable"
+switch.l2btproxykitchen_l2_btproxy_kitchen_restart_device:
+  friendly_name: "L2 BTPROXY_KITCHEN Restart Device"
+binary_sensor.l2btproxykitchen_l2_btproxy_kitchen_status:
+  friendly_name: "L2 BTPROXY_KITCHEN Status"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_wifi_signal:
+  friendly_name: "L2 BTPROXY_KITCHEN WiFi Signal"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_uptime:
+  friendly_name: "L2 BTPROXY_KITCHEN Uptime"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_esphome_version:
+  friendly_name: "L2 BTPROXY_KITCHEN ESPHome Version"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_conn_ssid:
+  friendly_name: "L2 BTPROXY_KITCHEN Conn SSID"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_conn_bssid:
+  friendly_name: "L2 BTPROXY_KITCHEN Conn BSSID"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_mac_address:
+  friendly_name: "L2 BTPROXY_KITCHEN MAC address"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_scan_results:
+  friendly_name: "L2 BTPROXY_KITCHEN Scan Results"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_conn_ip_addr:
+  friendly_name: "L2 BTPROXY_KITCHEN Conn IP addr"
+sensor.l2btproxykitchen_l2_btproxy_kitchen_uptime_human_readable:
+  friendly_name: "L2 BTPROXY_KITCHEN Uptime human readable"
+switch.l2_kitchen01_restart_device:
+  friendly_name: "L2 Kitchen01 Restart Device"
+switch.l2_kitchen01_ssr_01:
+  friendly_name: "L2 Kitchen01 SSR 01"
+switch.l2_kitchen01_ssr_02:
+  friendly_name: "L2 Kitchen01 SSR 02"
+binary_sensor.l2_kitchen01_status:
+  friendly_name: "L2 Kitchen01 Status"
+binary_sensor.l2kitchen01_l2_kitchen01_pir_01:
+  friendly_name: "L2 Kitchen01 PIR 01"
+binary_sensor.l2_kitchen01_tb_04:
+  friendly_name: "L2 Kitchen01 TB 04"
+binary_sensor.l2_kitchen01_mainlight:
+  friendly_name: "L2 Kitchen01 MainLight"
+sensor.l2_kitchen01_wifi_signal:
+  friendly_name: "L2 Kitchen01 WiFi Signal"
+sensor.l2_kitchen01_uptime:
+  friendly_name: "L2 Kitchen01 Uptime"
+sensor.l2_kitchen01_tempcase_01:
+  friendly_name: "L2 Kitchen01 TempCase 01"
+sensor.l2_kitchen01_tempenv_01:
+  friendly_name: "L2 Kitchen01 TempEnv 01"
+sensor.l2_bathroom01_tempenv_02:
+  friendly_name: "House Back T"
+sensor.l2_kitchen01_esphome_version:
+  friendly_name: "L2 Kitchen01 ESPHome Version"
+sensor.l2_kitchen01_conn_ssid:
+  friendly_name: "L2 Kitchen01 Conn SSID"
+sensor.l2_kitchen01_conn_bssid:
+  friendly_name: "L2 Kitchen01 Conn BSSID"
+sensor.l2_kitchen01_mac_address:
+  friendly_name: "L2 Kitchen01 MAC address"
+sensor.l2_kitchen01_scan_results:
+  friendly_name: "L2 Kitchen01 Scan Results"
+sensor.l2_kitchen01_conn_ip_addr:
+  friendly_name: "L2 Kitchen01 Conn IP addr"
+sensor.l2_kitchen01_uptime_human_readable:
+  friendly_name: "L2 Kitchen01 Uptime human readable"
+switch.l2bathroom01a_l2_bathroom01a_restart_device:
+  friendly_name: "L2 Bathroom01a Restart Device"
+switch.l2bathroom01a_l2_bathroom01a_ssr_01:
+  friendly_name: "L2 Bathroom01a SSR 01"
+binary_sensor.l2bathroom01a_l2_bathroom01a_status:
+  friendly_name: "L2 Bathroom01a Status"
+binary_sensor.l2bathroom01a_l2_bathroom01a_reed_01:
+  friendly_name: "L2 Bathroom01a REED 01"
+binary_sensor.l2bathroom01a_l2_bathroom01a_reed_02:
+  friendly_name: "L2 Bathroom01a REED 02"
+sensor.l2bathroom01a_l2_bathroom01a_wifi_signal:
+  friendly_name: "L2 Bathroom01a WiFi Signal"
+sensor.l2bathroom01a_l2_bathroom01a_uptime:
+  friendly_name: "L2 Bathroom01a Uptime"
+sensor.l2bathroom01a_l2_bathroom01a_esphome_version:
+  friendly_name: "L2 Bathroom01a ESPHome Version"
+sensor.l2bathroom01a_l2_bathroom01a_conn_ssid:
+  friendly_name: "L2 Bathroom01a Conn SSID"
+sensor.l2bathroom01a_l2_bathroom01a_conn_bssid:
+  friendly_name: "L2 Bathroom01a Conn BSSID"
+sensor.l2bathroom01a_l2_bathroom01a_mac_address:
+  friendly_name: "L2 Bathroom01a MAC address"
+sensor.l2bathroom01a_l2_bathroom01a_scan_results:
+  friendly_name: "L2 Bathroom01a Scan Results"
+sensor.l2bathroom01a_l2_bathroom01a_conn_ip_addr:
+  friendly_name: "L2 Bathroom01a Conn IP addr"
+sensor.l2bathroom01a_l2_bathroom01a_uptime_human_readable:
+  friendly_name: "L2 Bathroom01a Uptime human readable"
+switch.l9testnamingesp32_l9_testnaming_esp32_restart_device:
+  friendly_name: "L9 TESTNAMING ESP32 Restart Device"
+binary_sensor.l9testnamingesp32_l9_testnaming_esp32_status:
+  friendly_name: "L9 TESTNAMING ESP32 Status"
+sensor.l9testnamingesp32_l9_testnaming_esp32_wifi_signal:
+  friendly_name: "L9 TESTNAMING ESP32 WiFi Signal"
+sensor.l9testnamingesp32_l9_testnaming_esp32_uptime:
+  friendly_name: "L9 TESTNAMING ESP32 Uptime"
+sensor.l9testnamingesp32_l9_testnaming_esp32_esphome_version:
+  friendly_name: "L9 TESTNAMING ESP32 ESPHome Version"
+sensor.l9testnamingesp32_l9_testnaming_esp32_conn_ssid:
+  friendly_name: "L9 TESTNAMING ESP32 Conn SSID"
+sensor.l9testnamingesp32_l9_testnaming_esp32_conn_bssid:
+  friendly_name: "L9 TESTNAMING ESP32 Conn BSSID"
+sensor.l9testnamingesp32_l9_testnaming_esp32_mac_address:
+  friendly_name: "L9 TESTNAMING ESP32 MAC address"
+sensor.l9testnamingesp32_l9_testnaming_esp32_scan_results:
+  friendly_name: "L9 TESTNAMING ESP32 Scan Results"
+sensor.l9testnamingesp32_l9_testnaming_esp32_conn_ip_addr:
+  friendly_name: "L9 TESTNAMING ESP32 Conn IP addr"
+sensor.l9testnamingesp32_l9_testnaming_esp32_uptime_human_readable:
+  friendly_name: "L9 TESTNAMING ESP32 Uptime human readable"
+light.l9_cam32_03_camlight:
+  friendly_name: "L9 Cam32 03 CamLight"
+switch.l9_cam32_03_restart_device:
+  friendly_name: "L9 Cam32 03 Restart Device"
+binary_sensor.l9_cam32_03_status:
+  friendly_name: "L9 Cam32 03 Status"
+camera.l9_cam32_03_cam:
+  friendly_name: "L9 Cam32 03 Cam"
+sensor.l9_cam32_03_wifi_signal:
+  friendly_name: "L9 Cam32 03 WiFi Signal"
+sensor.l9_cam32_03_uptime:
+  friendly_name: "L9 Cam32 03 Uptime"
+sensor.l9_cam32_03_esphome_version:
+  friendly_name: "L9 Cam32 03 ESPHome Version"
+sensor.l9_cam32_03_conn_ssid:
+  friendly_name: "L9 Cam32 03 Conn SSID"
+sensor.l9_cam32_03_conn_bssid:
+  friendly_name: "L9 Cam32 03 Conn BSSID"
+sensor.l9_cam32_03_mac_address:
+  friendly_name: "L9 Cam32 03 MAC address"
+sensor.l9_cam32_03_scan_results:
+  friendly_name: "L9 Cam32 03 Scan Results"
+sensor.l9_cam32_03_conn_ip_addr:
+  friendly_name: "L9 Cam32 03 Conn IP addr"
+sensor.l9_cam32_03_uptime_human_readable:
+  friendly_name: "L9 Cam32 03 Uptime human readable"
+light.l9_cam32_02_camlight:
+  friendly_name: "L9 Cam32 02 CamLight"
+switch.l9_cam32_02_restart_device:
+  friendly_name: "L9 Cam32 02 Restart Device"
+binary_sensor.l9_cam32_02_status:
+  friendly_name: "L9 Cam32 02 Status"
+camera.l9_cam32_02_cam:
+  friendly_name: "L9 Cam32 02 Cam"
+sensor.l9_cam32_02_wifi_signal:
+  friendly_name: "L9 Cam32 02 WiFi Signal"
+sensor.l9_cam32_02_uptime:
+  friendly_name: "L9 Cam32 02 Uptime"
+sensor.l9_cam32_02_esphome_version:
+  friendly_name: "L9 Cam32 02 ESPHome Version"
+sensor.l9_cam32_02_conn_ssid:
+  friendly_name: "L9 Cam32 02 Conn SSID"
+sensor.l9_cam32_02_conn_bssid:
+  friendly_name: "L9 Cam32 02 Conn BSSID"
+sensor.l9_cam32_02_mac_address:
+  friendly_name: "L9 Cam32 02 MAC address"
+sensor.l9_cam32_02_scan_results:
+  friendly_name: "L9 Cam32 02 Scan Results"
+sensor.l9_cam32_02_conn_ip_addr:
+  friendly_name: "L9 Cam32 02 Conn IP addr"
+sensor.l9_cam32_02_uptime_human_readable:
+  friendly_name: "L9 Cam32 02 Uptime human readable"
+update.l9cam3202_firmware:
+  friendly_name: "Firmware"
+update.l2btproxykitchen_firmware:
+  friendly_name: "Firmware"
+update.l2bathroom01a_firmware:
+  friendly_name: "Firmware"
+update.l2kitchen01_firmware:
+  friendly_name: "Firmware"
+# ================================================================
+# The above code is to be used in the template editor
+# The result is to be pasted into customize_esphome_entities.yaml
+# ================================================================
