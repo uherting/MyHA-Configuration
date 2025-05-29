@@ -1,10 +1,5 @@
-person.uwe:
-  entity_picture: "/local/avatars/uh.jpg"
-person.uwe_trucking:
-  entity_picture: "/local/avatars/uh.jpg"
-person.gillian:
-  entity_picture: "/local/avatars/gh.jpg"
-
+# ================================================================
+# ================================================================
 switch.l2btproxybedroom_l2_btproxy_bedroom_restart_device:
   friendly_name: "L2 BTPROXY_BEDROOM Restart Device"
 binary_sensor.l2btproxybedroom_l2_btproxy_bedroom_status:
@@ -237,6 +232,10 @@ update.l2bathroom01a_firmware:
   friendly_name: "Firmware"
 update.l2kitchen01_firmware:
   friendly_name: "Firmware"
+# {%- for e in integration_entities('esphome') %}
+# {{ e }}:
+#   friendly_name: "{{ state_attr(e, 'friendly_name')|regex_replace('^' ~ device_name(e)~' ', '') }}"
+# {%- endfor %}
 # ================================================================
 # The above code is to be used in the template editor
 # The result is to be pasted into customize_esphome_entities.yaml
