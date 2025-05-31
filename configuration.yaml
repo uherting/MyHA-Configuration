@@ -30,6 +30,7 @@ system_log:
   fire_event: true
 
 homeassistant:
+  # customize: !include customize.yaml
   name: Home431
   country: DE
   latitude: !secret HA_LOCATION_LATITUDE
@@ -58,7 +59,6 @@ homeassistant:
     - /config/var/opt/tg/real_world01
     - /config/var/opt/tg/real_world02
     - /config/var/opt/tg/real_world03
-  customize: !include customize.yaml
   packages: !include_dir_named conf/packages
   auth_providers:
     - type: homeassistant
