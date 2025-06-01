@@ -44,7 +44,7 @@ persis_notif_create:
     - service: persistent_notification.create
       data:
         title: "{{ msg_title }}"
-        message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text_suffix }}. Time: {{ now() }}"
+        message: "{{ msg_text_prefix }}{{ msg_text }}{{ msg_text_suffix }} \nTime: {{ now() }}"
 # ############################################################
 #  END OF FILE
 # ############################################################

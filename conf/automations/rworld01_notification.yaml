@@ -20,10 +20,11 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- CREATE NOTIFICATION -------------------
-    - service: persistent_notification.create
+    - service: script.tg_send_txt
       data:
-        title: "Camera RWorld01 sensed something"
-        message: "The camera RWorld01 sensed a person. This happened at {{ now() }}"
+        msg_title: "Camera RWorld01 sensed something"
+        msg_text: "The camera RWorld01 sensed a person."
+        msg_receiver: "admin"
 ############################################################
 #  END OF FILE
 # ############################################################

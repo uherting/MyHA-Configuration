@@ -24,7 +24,7 @@
     - service: script.tg_send_txt
       data_template:
         msg_title: "Google Drive Backup"
-        msg_text: "Snapshots of HA Google Drive Backup Add-On are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.\n"
+        msg_text: "Snapshots of HA Google Drive Backup Add-On are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details."
         msg_receiver: "admin"
 # ############################################################
 #  END OF FILE

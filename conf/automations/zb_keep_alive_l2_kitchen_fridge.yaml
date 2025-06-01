@@ -26,10 +26,11 @@
     - service: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_fridge
     # ------------------- CREATE NOTIFICATION -------------------
-    - service: persistent_notification.create
+    - service: script.tg_send_txt
       data:
-        title: "ZB plug L2 kitchen fridge on"
-        message: "The ZB plug L2 kitchen fridge was switched on by an automation. This happened at {{ now() }}"
+        msg_title: "ZB plug L2 kitchen was switched fridge on"
+        msg_text: "The ZB plug L2 kitchen fridge was switched on by an automation."
+        msg_receiver: "admin"
 ############################################################
 #  END OF FILE
 # ############################################################

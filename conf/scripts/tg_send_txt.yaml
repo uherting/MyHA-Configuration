@@ -32,14 +32,14 @@ tg_send_txt:
       default: "default msg text"
     msg_text_prefix:
       # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
-      description: "The message prefix content"
+      description: "The optional message prefix content"
       advanced: true
       required: false
       example: "The light "
       default: ""
     msg_text_suffix:
       # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
-      description: "The message suffix content"
+      description: "The optional message suffix content"
       advanced: true
       required: false
       example: "is on!"
@@ -94,7 +94,7 @@ tg_send_txt:
             # - service: persistent_notification.create
             #   data:
             #     title: "{{ msg_title }}"
-            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }} Time: {{ now() }}"
         # cams inside group
         - conditions:
             - condition: template
@@ -109,7 +109,7 @@ tg_send_txt:
             # - service: persistent_notification.create
             #   data:
             #     title: "{{ msg_title }}"
-            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }}. Time: {{ now() }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else '' }} Time: {{ now() }}"
         # cams outside notification group
         - conditions:
             - condition: template
@@ -124,7 +124,7 @@ tg_send_txt:
             # - service: persistent_notification.create
             #   data:
             #     title: "{{ msg_title }}"
-            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''  }}. Time: {{ now() }}"
+            #     message: "{{ msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}{{ msg_text }}{{ msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''  }} Time: {{ now() }}"
       # receiver does not exist
       default:
         - service: script.persis_notif_create
