@@ -19,7 +19,7 @@ cards:
       type: markdown
       title: Stale Backups!
       content: >-
-        Backups are stale. Please visit the "Home Assistant Google Drive Backup" add-on status page for details.
+        Backups are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
   - type: vertical-stack
     cards:
       # Kitchen L2

@@ -39,10 +39,9 @@ cards:
         state_not: "off"
     card:
       type: markdown
-      content: >-
-        Backups are stale! Please visit the <a href="/hassio/ingress/cebe7a76_hassio_google_drive_backup">HA Google Drive Backup</a> add-on
-        status page for details.
       title: Stale Backups!
+      content: >-
+        Backups are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
 
   # HACS updates
   - type: entities
