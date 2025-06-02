@@ -71,6 +71,7 @@ cards:
           - type: custom:scheduler-card
             title: Schedules
             tags: none
+            show_header_toggle: true
             customize:
               climate.my_tuya_thermostat:
                 exclude_actions:
