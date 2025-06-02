@@ -3,10 +3,10 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.46.2";
+const version = "4.46.3";
 const defaultConfig = {
 	enabled: false,
-	enabled_on_tabs: [],
+	enabled_on_views: [],
 	debug: false,
 	wait_for_browser_mod_time: 0.25,
 	log_level_console: "info",
@@ -457,21 +457,21 @@ function mergeConfig(target, ...sources) {
 	// https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
 	if (!sources.length) return target;
 	const source = sources.shift();
+	const renamedOptions = {
+		image_excludes: "exclude_filenames",
+		image_fit: "image_fit_landscape",
+		enabled_on_tabs: "enabled_on_views"
+	};
 
 	if (isObject(target) && isObject(source)) {
 		for (let key in source) {
 			let val = source[key];
-			if (key == "image_excludes") {
+
+			if (renamedOptions[key]) {
 				logger.warn(
-					"The configuration option 'image_excludes' has been renamed to 'exclude_filenames'. Please update your wallpanel configuration accordingly."
+					`The configuration option '${key}' has been renamed to '${renamedOptions[key]}'. Please update your wallpanel configuration accordingly.`
 				);
-				key = "exclude_filenames";
-			}
-			if (key == "image_fit") {
-				logger.warn(
-					"The configuration option 'image_fit' has been renamed to 'image_fit_landscape'. Please update your wallpanel configuration accordingly."
-				);
-				key = "image_fit_landscape";
+				key = renamedOptions[key];
 			}
 
 			if (isObject(val)) {
@@ -642,10 +642,10 @@ function isActive() {
 		return false;
 	}
 	if (
-		config.enabled_on_tabs &&
-		config.enabled_on_tabs.length > 0 &&
+		config.enabled_on_views &&
+		config.enabled_on_views.length > 0 &&
 		activeTab &&
-		!config.enabled_on_tabs.includes(activeTab)
+		!config.enabled_on_views.includes(activeTab)
 	) {
 		logger.debug(`Wallpanel not enabled on current tab ${activeTab}`);
 		return false;
@@ -1992,6 +1992,8 @@ function initWallpanel() {
 				return;
 			}
 
+			// Check if attributes are undefined to avoid overwriting existing ones (e.g., from the Immich API),
+			// even if the new value is an empty string
 			let mediaInfo = mediaInfoCache.get(infoCacheUrl);
 			if (!mediaInfo) {
 				mediaInfo = {};
@@ -1999,20 +2001,20 @@ function initWallpanel() {
 			if (!mediaInfo.image) {
 				mediaInfo.image = {};
 			}
-			if (!mediaInfo.image.url) {
+			if (mediaInfo.image.url === undefined) {
 				mediaInfo.image.url = mediaUrl;
 			}
 			const mediaUrlWithoutQuery = mediaUrl.replace(/\?[^?]*$/, "").replace(/\/+$/, "");
-			if (!mediaInfo.image.path) {
+			if (mediaInfo.image.path === undefined) {
 				mediaInfo.image.path = mediaUrlWithoutQuery.replace(/^[^:]+:\/\/[^/]+/, "");
 			}
-			if (!mediaInfo.image.relativePath) {
+			if (mediaInfo.image.relativePath === undefined) {
 				mediaInfo.image.relativePath = mediaUrlWithoutQuery.replace(config.image_url, "").replace(/^\/+/, "");
 			}
-			if (!mediaInfo.image.filename) {
+			if (mediaInfo.image.filename === undefined) {
 				mediaInfo.image.filename = mediaUrlWithoutQuery.replace(/^.*[\\/]/, "");
 			}
-			if (!mediaInfo.image.folderName) {
+			if (mediaInfo.image.folderName === undefined) {
 				mediaInfo.image.folderName = "";
 				const parts = mediaUrlWithoutQuery.split("/");
 				if (parts.length >= 2) {
@@ -2217,20 +2219,24 @@ function initWallpanel() {
 
 		async updateMediaListFromUnsplashAPI() {
 			const urls = [];
-			const timestamp = Date.now();
 			const requestUrl = `${config.image_url}&count=30`;
 
 			logger.debug(`Unsplash API request: ${requestUrl}`);
-
 			try {
-				const response = await fetch(requestUrl, {
+				const options = {
 					method: "GET",
-					headers: { Accept: "application/json" },
-					signal: AbortSignal.timeout(10000)
-				});
+					headers: { Accept: "application/json" }
+				};
+				if (typeof AbortSignal !== "undefined") {
+					logger.debug("Using AbortSignal");
+					options.signal = AbortSignal.timeout(10000); // 10 seconds timeout
+				}
+
+				const response = await fetch(requestUrl, options);
 
 				if (!response.ok) {
-					throw new Error(`Unsplash API request failed with status ${response.status}: ${response.statusText}`);
+					const errorText = await response.text();
+					throw new Error(`Unsplash API request failed: ${response.status} ${response.statusText} - ${errorText}`);
 				}
 
 				const json = await response.json();
@@ -2244,10 +2250,10 @@ function initWallpanel() {
 				});
 				this.mediaList = urls;
 			} catch (error) {
-				logger.warn("Unsplash API error, falling back to random image", error);
-				logger.debug("Falling back to random Unsplash image.");
-				const fallbackUrl = `https://source.unsplash.com/random/\${width}x\${height}?sig=${timestamp}`;
-				this.mediaList = [fallbackUrl];
+				if (error.name === "AbortError") {
+					throw new Error(`Unsplash API request timed out: ${requestUrl}`);
+				}
+				throw error; // Re-throw other errors
 			}
 		}
 
@@ -2257,18 +2263,18 @@ function initWallpanel() {
 					"x-api-key": config.immich_api_key,
 					"Content-Type": "application/json",
 					Accept: "application/json"
-				},
-				timeout: 10000 // 10 seconds timeout
+				}
 			};
 			const mergedOptions = { ...defaultOptions, ...options };
 			mergedOptions.headers = { ...defaultOptions.headers, ...options.headers };
+			if (typeof AbortSignal !== "undefined") {
+				logger.debug("Using AbortSignal");
+				mergedOptions.signal = AbortSignal.timeout(10000); // 10 seconds timeout
+			}
 
-			const controller = new AbortController();
-			const timeoutId = setTimeout(() => controller.abort(), mergedOptions.timeout);
-
+			logger.debug(`Immich API request: ${url}`);
 			try {
-				const response = await fetch(url, { ...mergedOptions, signal: controller.signal });
-				clearTimeout(timeoutId);
+				const response = await fetch(url, mergedOptions);
 
 				if (!response.ok) {
 					const errorText = await response.text();
@@ -2276,7 +2282,6 @@ function initWallpanel() {
 				}
 				return await response.json();
 			} catch (error) {
-				clearTimeout(timeoutId);
 				if (error.name === "AbortError") {
 					throw new Error(`Immich API request timed out: ${url}`);
 				}
@@ -2476,7 +2481,7 @@ function initWallpanel() {
 		}
 
 		async updateMediaFromUrl(element, url, mediaType = null, headers = null, useFetch = false) {
-			const loadMediaWithElement = async (elem, url) => {
+			const loadMediaWithElement = async (elem) => {
 				if (useFetch) {
 					headers = headers || {};
 					const response = await fetch(url, { headers: headers });
@@ -2516,7 +2521,6 @@ function initWallpanel() {
 
 						elem.addEventListener(loadEventName, onLoad);
 						elem.onerror = onError;
-						elem.crossOrigin = "anonymous";
 						elem.src = url;
 					});
 				}
@@ -2555,22 +2559,22 @@ function initWallpanel() {
 				currentElem.replaceWith(newElem);
 			};
 
-			const handleFallback = async (currentElem, url, mediaType = null, originalError = null) => {
+			const handleFallback = async (currentElem, mediaType = null, originalError = null) => {
 				const fallbackElem = createFallbackElement(currentElem, mediaType);
 				replaceElementWith(currentElem, fallbackElem);
 				try {
-					await loadMediaWithElement(fallbackElem, url);
+					await loadMediaWithElement(fallbackElem);
 				} catch (e) {
 					this.handleMediaError(currentElem, originalError || e);
 				}
 			};
 
-			const loadOrFallback = async (currentElem, url, withFallback) => {
+			const loadOrFallback = async (currentElem, withFallback) => {
 				try {
-					await loadMediaWithElement(currentElem, url);
+					await loadMediaWithElement(currentElem);
 				} catch (e) {
 					if (withFallback) {
-						await handleFallback(currentElem, url, null, e);
+						await handleFallback(currentElem, null, e);
 					} else {
 						this.handleMediaError(currentElem, e);
 					}
@@ -2578,11 +2582,11 @@ function initWallpanel() {
 			};
 
 			if (!mediaType) {
-				await loadOrFallback(element, url, true);
+				await loadOrFallback(element, true);
 			} else if (mediaType === element.tagName.toLowerCase()) {
-				await loadOrFallback(element, url, false);
+				await loadOrFallback(element, false);
 			} else {
-				await handleFallback(element, url, mediaType);
+				await handleFallback(element, mediaType);
 			}
 		}
 
