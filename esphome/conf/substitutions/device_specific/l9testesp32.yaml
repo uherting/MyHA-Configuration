@@ -4,6 +4,8 @@
 # device definitions
 device_name: l9testesp32
 device_comment: Level 9 Test ESP32
+device_area: L2
+
 device_platform: ESP32
 wifi_static_ip: 192.168.178.239
 

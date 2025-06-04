@@ -4,6 +4,8 @@
 # device definitions
 device_name: l2storage01
 device_comment: Level 2 Storage device 01
+device_area: L2
+
 device_platform: ESP8266
 device_board: nodemcuv2
 wifi_static_ip: 192.168.178.221

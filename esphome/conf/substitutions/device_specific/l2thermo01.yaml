@@ -4,6 +4,8 @@
 # device definitions
 device_name: l2thermo01
 device_comment: Level 2 Thermo device 01
+device_area: L2
+
 device_platform: ESP8266
 device_board: nodemcuv2
 
