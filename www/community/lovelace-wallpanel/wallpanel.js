@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.46.3";
+const version = "4.47.0";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_views: [],
@@ -50,8 +50,8 @@ const defaultConfig = {
 	immich_persons: [],
 	immich_memories: false,
 	immich_resolution: "preview",
-	image_fit_landscape: "cover", // cover / contain / fill
-	image_fit_portrait: "contain", // cover / contain / fill
+	image_fit_landscape: "cover", // cover / contain
+	image_fit_portrait: "contain", // cover / contain
 	image_list_update_interval: 3600,
 	image_order: "sorted", // sorted / random
 	exclude_filenames: [], // Excluded filenames (regex)
@@ -74,6 +74,8 @@ const defaultConfig = {
 	image_animation_ken_burns: false,
 	image_animation_ken_burns_zoom: 1.3,
 	image_animation_ken_burns_delay: 0,
+	image_animation_ken_burns_duration: 0,
+	image_animation_ken_burns_animations: ["simple"], // simple / experimental
 	camera_motion_detection_enabled: false,
 	camera_motion_detection_facing_mode: "user",
 	camera_motion_detection_threshold: 5,
@@ -81,6 +83,7 @@ const defaultConfig = {
 	camera_motion_detection_capture_height: 48,
 	camera_motion_detection_capture_interval: 0.3,
 	camera_motion_detection_capture_visible: false,
+	custom_css: "",
 	style: {},
 	badges: [],
 	cards: [{ type: "weather-forecast", entity: "weather.home", show_forecast: true }],
@@ -1071,6 +1074,7 @@ function initWallpanel() {
 
 			this.screensaverContainer.removeAttribute("style");
 			this.screensaverContainer.style.position = "fixed";
+			this.screensaverContainer.style.pointerEvents = "none";
 			this.screensaverContainer.style.top = 0;
 			this.screensaverContainer.style.left = 0;
 			this.screensaverContainer.style.width = "100vw";
@@ -1104,7 +1108,6 @@ function initWallpanel() {
 			this.imageOne.style.pointerEvents = "none";
 			this.imageOne.style.width = "100%";
 			this.imageOne.style.height = "100%";
-			this.imageOne.style.objectFit = "contain";
 			this.imageOne.style.border = "none";
 
 			this.imageOneInfoContainer.removeAttribute("style");
@@ -1143,7 +1146,6 @@ function initWallpanel() {
 			this.imageTwo.style.pointerEvents = "none";
 			this.imageTwo.style.width = "100%";
 			this.imageTwo.style.height = "100%";
-			this.imageTwo.style.objectFit = "contain";
 			this.imageTwo.style.border = "none";
 
 			this.imageTwoInfoContainer.removeAttribute("style");
@@ -1190,12 +1192,15 @@ function initWallpanel() {
 			this.infoBox.style.setProperty("--wp-card-backdrop-filter", "none");
 			this.infoBox.style.setProperty("--wp-badges-minwidth", "200px");
 
+			this.infoBoxPosX.style.pointerEvents = "none";
 			this.infoBoxPosX.style.height = "100%";
 			this.infoBoxPosX.style.width = "100%";
 
+			this.infoBoxPosY.style.pointerEvents = "none";
 			this.infoBoxPosY.style.height = "100%";
 			this.infoBoxPosY.style.width = "100%";
 
+			this.infoBoxContent.style.pointerEvents = "none";
 			this.infoBoxContent.style.width = "fit-content";
 			this.infoBoxContent.style.height = "100%";
 			this.infoBoxContent.style.display = "grid";
@@ -1208,14 +1213,12 @@ function initWallpanel() {
 			this.fixedInfoContainer.style.width = "100%";
 			this.fixedInfoContainer.style.height = "100%";
 
-			this.fixedInfoBox.style.cssText = this.infoBox.style.cssText;
 			this.fixedInfoBox.style.pointerEvents = "none";
+			this.fixedInfoBox.style.cssText = this.infoBox.style.cssText;
 
 			this.screensaverOverlay.removeAttribute("style");
 			this.screensaverOverlay.style.position = "absolute";
-			if (config.card_interaction) {
-				this.screensaverOverlay.style.pointerEvents = "none";
-			}
+			this.screensaverOverlay.style.pointerEvents = "none";
 			this.screensaverOverlay.style.top = 0;
 			this.screensaverOverlay.style.left = 0;
 			this.screensaverOverlay.style.width = "100%";
@@ -1230,8 +1233,6 @@ function initWallpanel() {
 			this.style.transition = `opacity ${Math.round(config.fade_in_time * 1000)}ms ease-in-out`;
 			this.imageOneContainer.style.transition = `opacity ${Math.round(config.crossfade_time * 1000)}ms ease-in-out`;
 			this.imageTwoContainer.style.transition = `opacity ${Math.round(config.crossfade_time * 1000)}ms ease-in-out`;
-			this.imageOne.style.objectFit = config.image_fit_landscape;
-			this.imageTwo.style.objectFit = config.image_fit_landscape;
 
 			if (config.info_animation_duration_x) {
 				this.infoBoxPosX.style.animation = `moveX ${config.info_animation_duration_x}s ${config.info_animation_timing_function_x} infinite alternate`;
@@ -1332,16 +1333,48 @@ function initWallpanel() {
 						width: 100%;
 					}
 				}
-				@keyframes kenBurnsEffect {
+				@keyframes kenBurnsEffect-experimental {
+					0% {
+						transform: scale(1.0) translateX(calc(var(--hidden-width) / -2 * 1px)) translateY(calc(var(--hidden-height) / -2 * 1px));
+					}
+					50% {
+						transform: scale(var(--ken-burns-zoom));
+					}
+					90% {
+						transform: scale(calc(1.0 + ((var(--ken-burns-zoom) - 1.0)/2))) translateX(calc(var(--hidden-width) / 2 * 1px)) translateY(calc(var(--hidden-height) / 2 * 1px));
+					}
+					100% {
+						transform: scale(1.0);
+					}
+				}
+				@keyframes kenBurnsEffect-experimental2 {
+					0% {
+						transform: scale(1.0);
+					}
+					25% {
+						transform: scale(calc(1.0 + ((var(--ken-burns-zoom) - 1.0)/2))) translateX(calc(var(--hidden-width) / 2 * 1px)) translateY(calc(var(--hidden-height) / 2 * 1px));
+					}
+					50% {
+						transform: scale(var(--ken-burns-zoom));
+					}
+					75% {
+						transform: scale(calc(1.0 + ((var(--ken-burns-zoom) - 1.0)/2))) translateX(calc(var(--hidden-width) / -2 * 1px)) translateY(calc(var(--hidden-height) / -2 * 1px));
+					}
+					100% {
+						transform: scale(1.0);
+					}
+				}
+				@keyframes kenBurnsEffect-simple {
 					0% {
 						transform-origin: bottom left;
 						transform: scale(1.0);
 					}
 					100% {
-						transform: scale(${config.image_animation_ken_burns_zoom});
+						transform: scale(var(--ken-burns-zoom));
 					}
 				}
 				${classCss}
+				${config.custom_css}
 			`;
 		}
 
@@ -1517,7 +1550,9 @@ function initWallpanel() {
 
 					const viewContainer = document.createElement("div");
 					if (config.card_interaction) {
-						viewElement.style.pointerEvents = "initial";
+						viewElement.style.pointerEvents = "auto";
+					} else {
+						viewElement.style.pointerEvents = "none";
 					}
 					if (viewConfig.wp_style) {
 						for (const attr in viewConfig.wp_style) {
@@ -1560,7 +1595,9 @@ function initWallpanel() {
 					cardContainer.style.backdropFilter = "var(--wp-card-backdrop-filter)";
 
 					if (config.card_interaction) {
-						cardContainer.style.pointerEvents = "initial";
+						cardContainer.style.pointerEvents = "auto";
+					} else {
+						cardContainer.style.pointerEvents = "none";
 					}
 					for (const attr in style) {
 						if (attr == "parent") {
@@ -1597,17 +1634,29 @@ function initWallpanel() {
 		}
 
 		restartKenBurnsEffect() {
-			if (!config.image_animation_ken_burns) {
+			if (!config.image_animation_ken_burns || !config.image_animation_ken_burns_animations.length) {
 				return;
 			}
 			const activeElement = this.getActiveMediaElement();
 			activeElement.style.animation = "none";
+			activeElement.style.setProperty("--ken-burns-zoom", config.image_animation_ken_burns_zoom);
+
 			let delay = Math.floor(config.image_animation_ken_burns_delay * 1000);
 			if (delay < 50) {
 				delay = 50;
 			}
-			setTimeout(function () {
-				activeElement.style.animation = `kenBurnsEffect ${config.display_time + Math.ceil(config.crossfade_time * 2) + 1}s ease`;
+			const duration = Math.ceil(
+				config.image_animation_ken_burns_duration || (config.display_time + config.crossfade_time * 2) * 1.2
+			);
+			const animation =
+				config.image_animation_ken_burns_animations[
+					Math.floor(Math.random() * config.image_animation_ken_burns_animations.length)
+				];
+			if (this.kenburnsDelayStartTimer) {
+				clearTimeout(this.kenburnsDelayStartTimer);
+			}
+			this.kenburnsDelayStartTimer = setTimeout(function () {
+				activeElement.style.animation = `kenBurnsEffect-${animation} ${duration}s linear`;
 			}, delay);
 		}
 
@@ -1805,6 +1854,7 @@ function initWallpanel() {
 			window.addEventListener("resize", () => {
 				if (wp.screensaverRunning()) {
 					wp.updateShadowStyle();
+					wp.setMediaDimensions();
 				}
 			});
 			window.addEventListener("hass-more-info", () => {
@@ -1820,7 +1870,6 @@ function initWallpanel() {
 			});
 			infoBoxResizeObserver.observe(this.infoBoxContent);
 
-			//////////////////this.reconfigure();
 			// Correct possibly incorrect entity state
 			this.setScreensaverEntityState();
 		}
@@ -1963,7 +2012,7 @@ function initWallpanel() {
 
 		setMediaDataInfo(mediaElement) {
 			const infoCacheUrl = mediaElement.infoCacheUrl;
-			const mediaUrl = mediaElement.mediaUrl;
+			let mediaUrl = mediaElement.mediaUrl;
 			if (!infoCacheUrl) {
 				logger.error("infoCacheUrl missing:", mediaElement);
 				return;
@@ -1972,6 +2021,7 @@ function initWallpanel() {
 				logger.error("mediaUrl missing:", mediaElement);
 				return;
 			}
+			mediaUrl = decodeURI(mediaUrl);
 
 			const infoElements = [];
 			if (this.imageOne.infoCacheUrl == infoCacheUrl) {
@@ -2746,6 +2796,75 @@ function initWallpanel() {
 			}
 		}
 
+		setMediaDimensions() {
+			const activeElem = this.getActiveMediaElement();
+
+			// Determine if the new media is landscape or portrait, and set the appropriate image_fit
+			let width = 0;
+			let height = 0;
+			if (activeElem.infoCacheUrl) {
+				const mediaInfo = mediaInfoCache.get(activeElem.infoCacheUrl);
+				if (mediaInfo) {
+					width = mediaInfo.exifImageWidth;
+					height = mediaInfo.exifImageHeight;
+				}
+			}
+			if (!width || !height) {
+				if (activeElem.tagName.toLowerCase() === "video") {
+					width = activeElem.videoWidth;
+					height = activeElem.videoHeight;
+				} else {
+					width = activeElem.naturalWidth;
+					height = activeElem.naturalHeight;
+				}
+			}
+			logger.debug(`Size of media element is ${width}x${height}`, activeElem);
+
+			const mediaFit = !width || !height || width >= height ? config.image_fit_landscape : config.image_fit_portrait; // cover / contain
+
+			activeElem.style.position = "absolute";
+			activeElem.style.objectFit = "fill";
+			activeElem.style.left = "0px";
+			activeElem.style.top = "0px";
+			const availWidth = this.screensaverContainer.clientWidth;
+			const availHeight = this.screensaverContainer.clientHeight;
+			let setHeight = height;
+			let setWidth = width;
+			let hiddenHeight = 0;
+			let hiddenWidth = 0;
+			let setTop = 0;
+			let setLeft = 0;
+
+			const ratioWidth = availWidth / width;
+			const ratioHeight = availHeight / height;
+			const diffWidth = availWidth - width * ratioHeight;
+			const diffHeight = availHeight - height * ratioWidth;
+
+			logger.debug(`avail=${availWidth}x${availHeight} - size=${width}x${height} - diff=${diffWidth}x${diffHeight}`);
+			if ((mediaFit == "contain" && diffWidth < diffHeight) || (mediaFit == "cover" && diffWidth >= diffHeight)) {
+				logger.debug("Using available width");
+				setWidth = availWidth;
+				setHeight = Math.round(height * ratioWidth);
+				setTop = Math.round((height * ratioWidth - availHeight) / -2);
+				hiddenHeight = Math.max(setHeight - availHeight, 0);
+			} else {
+				logger.debug("Using available height");
+				setHeight = availHeight;
+				setWidth = Math.round(width * ratioHeight);
+				setLeft = Math.round((width * ratioHeight - availWidth) / -2);
+				hiddenWidth = Math.max(setWidth - availWidth, 0);
+			}
+			logger.debug(
+				`setSize=${setWidth}x${setHeight} - setPosition=${setTop}x${setLeft} - hidden=${hiddenWidth}x${hiddenHeight}`
+			);
+			activeElem.style.width = `${setWidth}px`;
+			activeElem.style.height = `${setHeight}px`;
+			activeElem.style.top = `${setTop}px`;
+			activeElem.style.left = `${setLeft}px`;
+			activeElem.style.setProperty("--hidden-width", hiddenWidth);
+			activeElem.style.setProperty("--hidden-height", hiddenHeight);
+		}
+
 		startPlayingActiveMedia() {
 			const activeElem = this.getActiveMediaElement();
 			if (typeof activeElem.play !== "function") {
@@ -2851,13 +2970,6 @@ function initWallpanel() {
 			});
 		}
 
-		getImageFit(width, height) {
-			if (!width || !height || width >= height) {
-				return config.image_fit_landscape;
-			}
-			return config.image_fit_portrait;
-		}
-
 		_switchActiveMedia(newElement, crossfadeMillis = null) {
 			this.lastMediaUpdate = Date.now();
 
@@ -2888,29 +3000,7 @@ function initWallpanel() {
 			}
 
 			this.setMediaDataInfo(newMedia);
-
-			// Determine if the new media is landscape or portrait, and set the appropriate image_fit
-			let width = 0;
-			let height = 0;
-			if (newMedia.infoCacheUrl) {
-				const mediaInfo = mediaInfoCache.get(newMedia.infoCacheUrl);
-				if (mediaInfo) {
-					width = mediaInfo.exifImageWidth;
-					height = mediaInfo.exifImageHeight;
-				}
-			}
-			if (!width || !height) {
-				if (curMedia.tagName.toLowerCase() === "video") {
-					width = newMedia.videoWidth;
-					height = newMedia.videoHeight;
-				} else {
-					width = newMedia.naturalWidth;
-					height = newMedia.naturalHeight;
-				}
-			}
-			logger.debug(`Size of media element is ${width}x${height}`, newMedia);
-			newMedia.style.objectFit = this.getImageFit(width, height);
-
+			this.setMediaDimensions();
 			this.setImageURLEntityState();
 			this.startPlayingActiveMedia();
 			this.restartProgressBarAnimation();
@@ -2969,13 +3059,9 @@ function initWallpanel() {
 
 			this.updateStyle();
 			this.setupScreensaver();
+			this.setMediaDimensions();
 			this.setImageURLEntityState();
 			this.startPlayingActiveMedia();
-
-			// Set the correct objectFit for the active image
-			const activeElement = this.getActiveMediaElement();
-			activeElement.style.objectFit = this.getImageFit(activeElement.naturalWith, activeElement.naturalHeight);
-
 			this.restartProgressBarAnimation();
 			this.restartKenBurnsEffect();
 
@@ -3004,6 +3090,7 @@ function initWallpanel() {
 			if (config.debug) {
 				this.debugBox.style.pointerEvents = "auto";
 			}
+			this.style.pointerEvents = "auto";
 
 			this.setScreensaverEntityState();
 
@@ -3054,6 +3141,7 @@ function initWallpanel() {
 			}
 			this.style.opacity = 0;
 			this.style.visibility = "hidden";
+			this.style.pointerEvents = "none";
 			this.infoBoxPosX.style.animation = "";
 			this.infoBoxPosY.style.animation = "";
 
