@@ -16,8 +16,10 @@ device_framework: arduino
 # device_framework: esp-idf
 
 # the friendly name and id
-friendly_name: L9 TESTNAME ESP32
-friendly_id: L9_TESTNAME_ESP32
+# friendly_name: L9 TESTNAME ESP32
+# friendly_id: L9_TESTNAME_ESP32
+friendly_name: ""
+friendly_id: ""
 
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01
