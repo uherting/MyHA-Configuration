@@ -11,8 +11,10 @@ device_board: d1_mini
 wifi_static_ip: 192.168.178.224
 
 # the friendly name and id
-friendly_name: L2 Bathroom01a
-friendly_id: L2Bathroom01a
+# friendly_name: L2 Bathroom01a
+# friendly_id: L2Bathroom01a
+friendly_name: ""
+friendly_id: ""
 
 relay01_name: $friendly_name Relay 01
 relay01_id: ${friendly_id}_relay_01
