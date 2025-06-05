@@ -15,12 +15,14 @@ lovelace_l2_bathroom01a_ssr_01_01:
   sequence:
     - service: switch.turn_on
       target:
-        entity_id: switch.l2_bathroom01a_ssr_01
+        # entity_id: switch.l2_bathroom01a_ssr_01
+        entity_id: switch.l2bathroom01a_ssr_01
       data: {}
     - delay: 00:00:10
     - service: switch.turn_off
       target:
-        entity_id: switch.l2_bathroom01a_ssr_01
+        # entity_id: switch.l2_bathroom01a_ssr_01
+        entity_id: switch.l2bathroom01a_ssr_01
       data: {}
 
 # --------------------------------------------------------------
@@ -33,7 +35,8 @@ lovelace_l2_bathroom01a_ssr_01_02:
   sequence:
     - service: switch.turn_off
       target:
-        entity_id: switch.l2_bathroom01a_ssr_01
+        # entity_id: switch.l2_bathroom01a_ssr_01
+        entity_id: switch.l2bathroom01a_ssr_01
       data: {}
 
 # --------------------------------------------------------------
@@ -59,12 +62,14 @@ lovelace_l2_bathroom01a_ssr_01_NoLongerInUse:
           sequence:
             - service: switch.turn_on
               target:
-                entity_id: switch.l2_bathroom01a_ssr_01
+                # entity_id: switch.l2_bathroom01a_ssr_01
+                entity_id: switch.l2bathroom01a_ssr_01
               data: {}
             - delay: 00:00:10
             - service: switch.turn_off
               target:
-                entity_id: switch.l2_bathroom01a_ssr_01
+                # entity_id: switch.l2_bathroom01a_ssr_01
+                entity_id: switch.l2bathroom01a_ssr_01
               data: {}
         - conditions:
             - condition: template
@@ -72,7 +77,8 @@ lovelace_l2_bathroom01a_ssr_01_NoLongerInUse:
           sequence:
             - service: switch.turn_off
               target:
-                entity_id: switch.l2_bathroom01a_ssr_01
+                # entity_id: switch.l2_bathroom01a_ssr_01
+                entity_id: switch.l2bathroom01a_ssr_01
               data: {}
       default:
         - service: persistent_notification.create
