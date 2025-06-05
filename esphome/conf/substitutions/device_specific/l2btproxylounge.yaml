@@ -4,6 +4,8 @@
 # device definitions
 device_name: l2btproxylounge
 device_comment: Level 2 BT Proxy Lounge
+device_area: L2
+
 device_platform: ESP32
 wifi_static_ip: 192.168.178.234
 

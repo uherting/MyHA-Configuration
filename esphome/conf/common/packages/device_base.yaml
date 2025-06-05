@@ -6,6 +6,7 @@
 esphome:
   name: $device_name
   comment: $device_comment
+  area: $device_area
   build_path: ./build/${device_name}
   # platform: $device_platform
 

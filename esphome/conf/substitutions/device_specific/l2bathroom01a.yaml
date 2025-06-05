@@ -4,6 +4,8 @@
 # device definitions
 device_name: l2bathroom01a
 device_comment: Level 2 Bathroom device 01a
+device_area: L2
+
 device_platform: ESP8266
 device_board: d1_mini
 wifi_static_ip: 192.168.178.224

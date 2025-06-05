@@ -4,6 +4,8 @@
 # device definitions
 device_name: l2btproxykitchen
 device_comment: Level 2 BT Proxy Kitchen
+device_area: L2
+
 device_platform: ESP32
 wifi_static_ip: 192.168.178.233
 
