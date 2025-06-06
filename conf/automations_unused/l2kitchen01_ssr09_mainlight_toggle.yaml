@@ -17,10 +17,6 @@
       to: "on"
   # --------------------- ACTIONS ---------------------
   action:
-    # - service: persistent_notification.create
-    #   data:
-    #     title: "L2 Kitchen toggle ssr09 main light toggled"
-    #     message: "Trigger: binary_sensor.l2_kitchen01_mainlight. Time: {{ now() }}"
     # --------------------- SSR OFF ---------------------
     - service: switch.toggle
       entity_id: switch.l2_kitchen01_ssr_09

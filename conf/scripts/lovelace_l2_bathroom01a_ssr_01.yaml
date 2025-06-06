@@ -15,13 +15,11 @@ lovelace_l2_bathroom01a_ssr_01_01:
   sequence:
     - service: switch.turn_on
       target:
-        # entity_id: switch.l2_bathroom01a_ssr_01
         entity_id: switch.l2bathroom01a_ssr_01
       data: {}
     - delay: 00:00:10
     - service: switch.turn_off
       target:
-        # entity_id: switch.l2_bathroom01a_ssr_01
         entity_id: switch.l2bathroom01a_ssr_01
       data: {}
 
@@ -35,56 +33,8 @@ lovelace_l2_bathroom01a_ssr_01_02:
   sequence:
     - service: switch.turn_off
       target:
-        # entity_id: switch.l2_bathroom01a_ssr_01
         entity_id: switch.l2bathroom01a_ssr_01
       data: {}
-
-# --------------------------------------------------------------
-# void script as lovelace seemingly does not send the parameter :-((
-# --------------------------------------------------------------
-lovelace_l2_bathroom01a_ssr_01_NoLongerInUse:
-  alias: Switch the valve of the toilet on/off
-  icon: mdi:text
-  description: This script switches the valve of the toilet on/off after hitting the button in lovelace
-  fields:
-    valve_action:
-      description: "The action to be performed on the valve"
-      advanced: false
-      required: true
-      example: "off"
-      default: "onoff"
-  mode: restart
-  sequence:
-    - choose:
-        - conditions:
-            - condition: template
-              value_template: "{{ valve_action == 'onoff' }}"
-          sequence:
-            - service: switch.turn_on
-              target:
-                # entity_id: switch.l2_bathroom01a_ssr_01
-                entity_id: switch.l2bathroom01a_ssr_01
-              data: {}
-            - delay: 00:00:10
-            - service: switch.turn_off
-              target:
-                # entity_id: switch.l2_bathroom01a_ssr_01
-                entity_id: switch.l2bathroom01a_ssr_01
-              data: {}
-        - conditions:
-            - condition: template
-              value_template: "{{ valve_action == 'off' }}"
-          sequence:
-            - service: switch.turn_off
-              target:
-                # entity_id: switch.l2_bathroom01a_ssr_01
-                entity_id: switch.l2bathroom01a_ssr_01
-              data: {}
-      default:
-        - service: persistent_notification.create
-          data:
-            title: "{{ 'no parm given' }}"
-            message: "Time: {{ now() }}"
 # ############################################################
 #  END OF FILE
 # ############################################################
