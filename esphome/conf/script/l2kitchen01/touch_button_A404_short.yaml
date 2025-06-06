@@ -20,10 +20,16 @@
         then:
           - logger.log: "ESPHome: within script tb_04_click_short action."
 
-          - homeassistant.action:
-              action: script.switch_toggle_by_esphome
-              data:
-                switch_id: "switch.l2_kitchen01_ssr_01"
+          - switch.toggle: _SSR01
+          - logger.log: "ESPHome: within script tb_04_click_short action, the kitchen light was toggled."
+
+          # the light is directly connected to the device, so local toggling is possible
+          # =========================================================
+          # outdated solution, but kept for reference
+          # - homeassistant.action:
+          #     action: script.switch_toggle_by_esphome
+          #     data:
+          #       switch_id: "switch.l2_kitchen01_ssr_01"
 
           # =========================================================
           # future feature for the light bar
