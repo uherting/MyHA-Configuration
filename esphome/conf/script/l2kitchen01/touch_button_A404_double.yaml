@@ -19,10 +19,11 @@
         then:
           # - logger.log: "ESPHome: within script tb_04_click_dbl action."
 
+          # SSR_09 (kitchen main light) is connected to l2storage01
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
               data:
-                switch_id: "switch.l2_kitchen01_ssr_09"
+                switch_id: "switch.l2kitchen01_ssr_09"
 
 ####################################################################
 # EOF
