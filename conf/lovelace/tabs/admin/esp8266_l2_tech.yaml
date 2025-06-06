@@ -52,7 +52,7 @@ cards:
       - sensor.l2_bathroom01a_uptime_human_readable
       - binary_sensor.l2_bathroom01a_status
       - update.l2bathroom01a_firmware
-      - sensor.l2_bathroom01a_esphome_version
+      - sensor.l2bathroom01a_esphome_version
       - switch.l2_bathroom01a_restart_device
 
   # - type: entities
