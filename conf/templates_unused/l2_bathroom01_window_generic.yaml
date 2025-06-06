@@ -21,7 +21,7 @@
         {{  
           (is_state('binary_sensor.l2_bathroom_window_generic', 'on'))
           and 
-          ((states('sensor.l2_bathroom01_tempenv_02') | float(99) ) < 15.0 )
+          ((states('sensor.l2bathroom01_tempenv_02') | float(99) ) < 15.0 )
         }}
 
 ####################################################################

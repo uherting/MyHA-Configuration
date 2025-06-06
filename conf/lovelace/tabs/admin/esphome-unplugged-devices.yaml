@@ -23,29 +23,29 @@ cards:
       - "off"
     entities:
       # ESP8266
-      # - binary_sensor.l0_corridor01_status
-      # - binary_sensor.l0_corridor02_status
-      # - binary_sensor.l0_entrance01_status
-      # - binary_sensor.l0_laundryfloor01_status
-      # - binary_sensor.l0_garagebig01_status
-      # - binary_sensor.l0_garagesmall01_status
-      # - binary_sensor.l1_thehut01_status
-      - binary_sensor.l2_kitchen01_status
-      - binary_sensor.l2_storage01_status
-      # - binary_sensor.l2_thermo01_status
+      # - binary_sensor.l0corridor01_status
+      # - binary_sensor.l0corridor02_status
+      # - binary_sensor.l0entrance01_status
+      # - binary_sensor.l0laundryfloor01_status
+      # - binary_sensor.l0garagebig01_status
+      # - binary_sensor.l0garagesmall01_status
+      # - binary_sensor.l1thehut01_status
+      - binary_sensor.l2kitchen01_status
+      - binary_sensor.l2storage01_status
+      # - binary_sensor.l2thermo01_status
       # ESP32 cams
-      # - binary_sensor.l9_cam32_01_status
-      - binary_sensor.l9_cam32_02_status
-      - binary_sensor.l9_cam32_03_status
+      # - binary_sensor.l9cam32_01_status
+      - binary_sensor.l9cam32_02_status
+      - binary_sensor.l9cam32_03_status
       # - binary_sensor.l9_cam32_04_status
       # TTGO cams
-      # - binary_sensor.l9_cam_ttgo_01_status
-      # - binary_sensor.l9_cam_ttgo_02_status
+      # - binary_sensor.l9cam_ttgo_01_status
+      # - binary_sensor.l9cam_ttgo_02_status
       # misc stuff
-      # - binary_sensor.l2_btproxy_bathroom_status
-      # - binary_sensor.l2_btproxy_bedroom_status
+      # - binary_sensor.l2btproxy_bathroom_status
+      # - binary_sensor.l2btproxy_bedroom_status
       - binary_sensor.l2btproxykitchen_status
-      # - binary_sensor.l2_btproxy_lounge_status
+      # - binary_sensor.l2btproxy_lounge_status
 ####################################################################
 # EOF
 ####################################################################

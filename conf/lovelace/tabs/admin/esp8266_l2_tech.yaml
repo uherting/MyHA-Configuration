@@ -14,74 +14,74 @@ cards:
     title: L2 Kitchen 01
     show_header_toggle: false
     entities:
-      - sensor.l2_kitchen01_conn_ip_addr
-      - sensor.l2_kitchen01_wifi_signal
-      - sensor.l2_kitchen01_conn_ssid
-      - sensor.l2_kitchen01_conn_bssid
-      - sensor.l2_kitchen01_uptime
-      - sensor.l2_kitchen01_uptime_human_readable
-      - binary_sensor.l2_kitchen01_status
+      - sensor.l2kitchen01_conn_ip_addr
+      - sensor.l2kitchen01_wifi_signal
+      - sensor.l2kitchen01_conn_ssid
+      - sensor.l2kitchen01_conn_bssid
+      - sensor.l2kitchen01_uptime
+      - sensor.l2kitchen01_uptime_human_readable
+      - binary_sensor.l2kitchen01_status
       - update.l2kitchen01_firmware
-      - sensor.l2_kitchen01_esphome_version
-      - switch.l2_kitchen01_restart_device
+      - sensor.l2kitchen01_esphome_version
+      - switch.l2kitchen01_restart_device
 
   - type: entities
     title: L2 Storage 01
     show_header_toggle: false
     entities:
-      - sensor.l2_storage01_conn_ip_addr
-      - sensor.l2_storage01_wifi_signal
-      - sensor.l2_storage01_conn_ssid
-      - sensor.l2_storage01_conn_bssid
-      - sensor.l2_storage01_uptime
-      - sensor.l2_storage01_uptime_human_readable
-      - binary_sensor.l2_storage01_status
+      - sensor.l2storage01_conn_ip_addr
+      - sensor.l2storage01_wifi_signal
+      - sensor.l2storage01_conn_ssid
+      - sensor.l2storage01_conn_bssid
+      - sensor.l2storage01_uptime
+      - sensor.l2storage01_uptime_human_readable
+      - binary_sensor.l2storage01_status
       - update.l2storage01_firmware
-      - sensor.l2_storage01_esphome_version
-      - switch.l2_storage01_restart_device
+      - sensor.l2storage01_esphome_version
+      - switch.l2storage01_restart_device
 
   - type: entities
     title: L2 Bathroom 01a
     show_header_toggle: false
     entities:
-      - sensor.l2_bathroom01a_conn_ip_addr
-      - sensor.l2_bathroom01a_wifi_signal
-      - sensor.l2_bathroom01a_conn_ssid
-      - sensor.l2_bathroom01a_conn_bssid
-      - sensor.l2_bathroom01a_uptime
-      - sensor.l2_bathroom01a_uptime_human_readable
-      - binary_sensor.l2_bathroom01a_status
+      - sensor.l2bathroom01a_conn_ip_addr
+      - sensor.l2bathroom01a_wifi_signal
+      - sensor.l2bathroom01a_conn_ssid
+      - sensor.l2bathroom01a_conn_bssid
+      - sensor.l2bathroom01a_uptime
+      - sensor.l2bathroom01a_uptime_human_readable
+      - binary_sensor.l2bathroom01a_status
       - update.l2bathroom01a_firmware
       - sensor.l2bathroom01a_esphome_version
-      - switch.l2_bathroom01a_restart_device
+      - switch.l2bathroom01a_restart_device
 
   # - type: entities
   #   title: L2 Corridor 01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l2_corridor01_conn_ip_addr
-  #     - sensor.l2_corridor01_wifi_signal
-  #     - sensor.l2_corridor01_conn_ssid
-  #     - sensor.l2_corridor01_conn_bssid
-  #     - sensor.l2_corridor01_uptime
-  #     - sensor.l2_corridor01_uptime_human_readable
-  #     - binary_sensor.l2_corridor01_status
-  #     - sensor.l2_corridor01_esphome_version
-  #     - switch.l2_corridor01_restart_device
+  #     - sensor.l2corridor01_conn_ip_addr
+  #     - sensor.l2corridor01_wifi_signal
+  #     - sensor.l2corridor01_conn_ssid
+  #     - sensor.l2corridor01_conn_bssid
+  #     - sensor.l2corridor01_uptime
+  #     - sensor.l2corridor01_uptime_human_readable
+  #     - binary_sensor.l2corridor01_status
+  #     - sensor.l2corridor01_esphome_version
+  #     - switch.l2corridor01_restart_device
 
   # - type: entities
   #   title: L2 Bathroom 01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l2_bathroom01_conn_ip_addr
-  #     - sensor.l2_bathroom01_wifi_signal
-  #     - sensor.l2_bathroom01_conn_ssid
-  #     - sensor.l2_bathroom01_conn_bssid
-  #     - sensor.l2_bathroom01_uptime
-  #     - sensor.l2_bathroom01_uptime_human_readable
-  #     - binary_sensor.l2_bathroom01_status
-  #     - sensor.l2_bathroom01_esphome_version
-  #     - switch.l2_bathroom01_restart_device
+  #     - sensor.l2bathroom01_conn_ip_addr
+  #     - sensor.l2bathroom01_wifi_signal
+  #     - sensor.l2bathroom01_conn_ssid
+  #     - sensor.l2bathroom01_conn_bssid
+  #     - sensor.l2bathroom01_uptime
+  #     - sensor.l2bathroom01_uptime_human_readable
+  #     - binary_sensor.l2bathroom01_status
+  #     - sensor.l2bathroom01_esphome_version
+  #     - switch.l2bathroom01_restart_device
 ####################################################################
 # EOF
 ####################################################################

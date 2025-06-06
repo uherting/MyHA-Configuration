@@ -173,7 +173,7 @@ cards:
           - type: "custom:button-card"
             name: "OutNorth"
           - type: "custom:button-card"
-            entity: sensor.l2_bathroom01_tempenv_02
+            entity: sensor.l2kitchen01_l2_bathroom01_tempenv_02
             name: " "
             show_state: true
           - type: "custom:button-card"
