@@ -44,7 +44,7 @@ cards:
       # misc stuff
       # - binary_sensor.l2_btproxy_bathroom_status
       # - binary_sensor.l2_btproxy_bedroom_status
-      - binary_sensor.l2btproxy_kitchen_status
+      - binary_sensor.l2btproxykitchen_status
       # - binary_sensor.l2_btproxy_lounge_status
 ####################################################################
 # EOF

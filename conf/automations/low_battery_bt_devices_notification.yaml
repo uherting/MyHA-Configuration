@@ -17,7 +17,7 @@
   # (actually only important for bluetooth devices by Xiaomi with batteries)
   condition:
     condition: state
-    entity_id: binary_sensor.l2btproxy_kitchen_status
+    entity_id: binary_sensor.l2btproxykitchen_status
     state:
       - "on"
   # --------------------- BLUEPRINT --------------------
