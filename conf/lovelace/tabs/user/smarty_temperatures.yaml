@@ -53,7 +53,7 @@ cards:
               service: script.lovelace_zb_plug_l2_kitchen_fridge
           - type: "custom:button-card"
             name: "KitchenA"
-            entity: switch.l2_kitchen01_ssr_01
+            entity: switch.l2kitchen01_ssr_01
             color: yellow
 
       # Storage L2

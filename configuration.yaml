@@ -30,6 +30,7 @@ system_log:
   fire_event: true
 
 homeassistant:
+  # no customization anynore
   # customize: !include customize.yaml
   name: Home431
   country: DE

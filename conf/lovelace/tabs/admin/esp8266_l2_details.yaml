@@ -23,7 +23,9 @@ cards:
       # - binary_sensor.l2_kitchen01_tb_06
       # - binary_sensor.l2_kitchen01_tb_07
       # - binary_sensor.l2_kitchen01_door
-      - switch.l2_kitchen01_ssr_01
+      - switch.l2kitchen01_ssr_01
+      - switch.l2kitchen01_ssr_02
+      - switch.l2_kitchen01_ssr_09
 
   - type: entities
     title: L2 Storage 01

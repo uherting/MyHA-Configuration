@@ -26,7 +26,8 @@
   action:
     # ------------------- SSR01 on -------------------
     - service: switch.turn_on
-      entity_id: switch.l2_kitchen01_ssr_01
+      entity_id: switch.l2kitchen01_ssr_01
+      # entity_id: switch.l2_kitchen01_ssr_01
 
 # ############################################################
 # L2 Kitchen SSR01 off at defined time
@@ -47,7 +48,8 @@
   action:
     # ------------------- SSR01 off -------------------
     - service: switch.turn_off
-      entity_id: switch.l2_kitchen01_ssr_01
+      entity_id: switch.l2kitchen01_ssr_01
+      # entity_id: switch.l2_kitchen01_ssr_01
 
 # ############################################################
 # L2 Kitchen SSR01 keep on
@@ -60,7 +62,8 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: switch.l2_kitchen01_ssr_01
+      entity_id: switch.l2kitchen01_ssr_01
+      # entity_id: switch.l2_kitchen01_ssr_01
       to: "off"
 
   # -------------------- CONDITIONS -------------------
@@ -74,7 +77,8 @@
   action:
     # ------------------- SSR01 on -------------------
     - service: switch.turn_on
-      entity_id: switch.l2_kitchen01_ssr_01
+      entity_id: switch.l2kitchen01_ssr_01
+      # entity_id: switch.l2_kitchen01_ssr_01
     # - service: script.persis_notif_create
     #   data_template:
     #     msg_title: "Used paper collection info"
