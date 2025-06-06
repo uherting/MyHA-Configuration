@@ -72,7 +72,7 @@
       # new: state is room temperature
       state: >
         {% set ns = namespace(value=999.0) %}
-        {% if (is_state('binary_sensor.l2_btproxy_kitchen_status', 'on')) %}
+        {% if (is_state('binary_sensor.l2btproxy_kitchen_status', 'on')) %}
         {% set ns.value = 777.0 %}
         {% set ns.value = states('sensor.temperature_humidity_sensor_8eec_temperature') | float(100) %}
         {% else %}
