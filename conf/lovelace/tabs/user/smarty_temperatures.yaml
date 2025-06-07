@@ -30,7 +30,7 @@ cards:
         cards:
           - type: "custom:button-card"
             name: "Kitchen"
-            entity: switch.l2_kitchen01_ssr_09
+            entity: switch.l2kitchen01_ssr_09
             color: yellow
           - type: "custom:button-card"
             name: " "
@@ -63,7 +63,7 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
-            entity: switch.l2_storage01_ssr_01
+            entity: switch.l2storage01_ssr_01
             name: "Storage"
             color: yellow
             show_state: false
@@ -156,7 +156,7 @@ cards:
             name: " "
             show_state: true
           - type: "custom:button-card"
-            # entity: sensor.l2_storage
+            # entity:
             name: " "
             show_state: true
           - type: "custom:button-card"
@@ -198,7 +198,7 @@ cards:
               action: call-service
               service: automation.toggle
               service_data:
-                entity_id: automation.l2_storage_motion_detected_ssr01_on
+                entity_id: automation.l2storage_motion_detected_ssr01_on
 
       # South L2
       - type: grid
@@ -216,10 +216,6 @@ cards:
             entity: sensor.zb_th_l2_storage_out_humidity
             name: " "
             show_state: true
-          # - type: "custom:button-card"
-          #   entity: sensor.l2_thermo01_tempenv_01
-          #   name: "Thermo"
-          #   show_state: true
           - type: "custom:button-card"
             entity: switch.l2bathroom01a_ssr_01
             name: "Stop fill"

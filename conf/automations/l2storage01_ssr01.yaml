@@ -14,7 +14,7 @@
   # motion is detected or door is opened
   trigger:
     - platform: state
-      entity_id: binary_sensor.l2_storage01_pir_01
+      entity_id: binary_sensor.l2storage01_pir_01
       to: "on"
   # -------------------- CONDITIONS -------------------
   # condition: []
@@ -30,7 +30,7 @@
   action:
     # --------------------- SSR ON ----------------------
     service: switch.turn_on
-    entity_id: switch.l2_storage01_ssr_01
+    entity_id: switch.l2storage01_ssr_01
 
 # ############################################################
 # L2 Storage: SSR01 off after there is no motion for x minutes
@@ -42,7 +42,7 @@
   # no motion is detected for x minutes or door is closed
   trigger:
     - platform: state
-      entity_id: binary_sensor.l2_storage01_pir_01
+      entity_id: binary_sensor.l2storage01_pir_01
       to: "off"
       for:
         minutes: 2
@@ -54,7 +54,7 @@
   action:
     # --------------------- SSR OFF ---------------------
     service: switch.turn_off
-    entity_id: switch.l2_storage01_ssr_01
+    entity_id: switch.l2storage01_ssr_01
 # ############################################################
 #  END OF FILE
 # ############################################################

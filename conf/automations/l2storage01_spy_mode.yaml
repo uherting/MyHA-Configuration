@@ -14,7 +14,7 @@
   # no motion is detected for x minutes
   trigger:
     - platform: state
-      entity_id: binary_sensor.l2_storage01_pir_01
+      entity_id: binary_sensor.l2storage01_pir_01
       to: "off"
       for:
         minutes: 30
@@ -22,7 +22,7 @@
   action:
     # ------------ AUTOMATION ACTIVE AGAIN ------------
     service: automation.turn_on
-    entity_id: automation.l2_storage_motion_detected_ssr01_on
+    entity_id: automation.l2storage_motion_detected_ssr01_on
 
 # ############################################################
 # L2 Storage: toggle spy mode based on TB02 at l2storage01
@@ -31,17 +31,17 @@
   id: "0a590c08-ad40-4181-a713-6c6b4c720939"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # double click binary_sensor.l2_storage01_bin_templ_spymode
+  # double click binary_sensor.l2storage01_bin_templ_spymode
   trigger:
     - platform: state
       id: "l2storage01_spymode_on"
-      entity_id: binary_sensor.l2_storage01_bin_templ_spymode
+      entity_id: binary_sensor.l2storage01_bin_templ_spymode
       to: "on"
   # --------------------- ACTIONS ---------------------
   action:
     # --------------- AUTOMATION TOGGLE ---------------
     service: automation.toggle
-    entity_id: automation.l2_storage_motion_detected_ssr01_on
+    entity_id: automation.l2storage_motion_detected_ssr01_on
 # ############################################################
 #  END OF FILE
 # ############################################################
