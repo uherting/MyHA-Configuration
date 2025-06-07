@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.47.0";
+const version = "4.47.1";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_views: [],
@@ -29,7 +29,7 @@ const defaultConfig = {
 	keep_screen_on_time: 0,
 	black_screen_after_time: 0,
 	control_reactivation_time: 1.0,
-	screensaver_stop_navigation_path: "",
+	screensaver_start_navigation_path: "",
 	screensaver_stop_close_browser_mod_popup: false,
 	screensaver_entity: "",
 	stop_screensaver_on_mouse_move: true,
@@ -463,7 +463,8 @@ function mergeConfig(target, ...sources) {
 	const renamedOptions = {
 		image_excludes: "exclude_filenames",
 		image_fit: "image_fit_landscape",
-		enabled_on_tabs: "enabled_on_views"
+		enabled_on_tabs: "enabled_on_views",
+		screensaver_stop_navigation_path: "screensaver_start_navigation_path"
 	};
 
 	if (isObject(target) && isObject(source)) {
@@ -2802,30 +2803,21 @@ function initWallpanel() {
 			// Determine if the new media is landscape or portrait, and set the appropriate image_fit
 			let width = 0;
 			let height = 0;
-			if (activeElem.infoCacheUrl) {
-				const mediaInfo = mediaInfoCache.get(activeElem.infoCacheUrl);
-				if (mediaInfo) {
-					width = mediaInfo.exifImageWidth;
-					height = mediaInfo.exifImageHeight;
-				}
-			}
-			if (!width || !height) {
-				if (activeElem.tagName.toLowerCase() === "video") {
-					width = activeElem.videoWidth;
-					height = activeElem.videoHeight;
-				} else {
-					width = activeElem.naturalWidth;
-					height = activeElem.naturalHeight;
-				}
+			if (activeElem.tagName.toLowerCase() === "video") {
+				width = activeElem.videoWidth;
+				height = activeElem.videoHeight;
+			} else {
+				width = activeElem.naturalWidth;
+				height = activeElem.naturalHeight;
 			}
 			logger.debug(`Size of media element is ${width}x${height}`, activeElem);
 
 			const mediaFit = !width || !height || width >= height ? config.image_fit_landscape : config.image_fit_portrait; // cover / contain
 
 			activeElem.style.position = "absolute";
-			activeElem.style.objectFit = "fill";
 			activeElem.style.left = "0px";
 			activeElem.style.top = "0px";
+			activeElem.style.objectFit = mediaFit;
 			const availWidth = this.screensaverContainer.clientWidth;
 			const availHeight = this.screensaverContainer.clientHeight;
 			let setHeight = height;
@@ -3094,12 +3086,12 @@ function initWallpanel() {
 
 			this.setScreensaverEntityState();
 
-			if (config.screensaver_stop_navigation_path || config.screensaver_stop_close_browser_mod_popup) {
+			if (config.screensaver_start_navigation_path || config.screensaver_stop_close_browser_mod_popup) {
 				this.screensaverStopNavigationPathTimeout = setTimeout(
 					() => {
-						if (config.screensaver_stop_navigation_path) {
+						if (config.screensaver_start_navigation_path) {
 							skipDisableScreensaverOnLocationChanged = true;
-							navigate(config.screensaver_stop_navigation_path);
+							navigate(config.screensaver_start_navigation_path);
 							setTimeout(() => {
 								skipDisableScreensaverOnLocationChanged = false;
 							}, 5000);
