@@ -15,7 +15,7 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: switch.zb_plug_l2_kitchen_dishwasher
+      entity_id: switch.zb_plug_l2_kitchen_fridge
       to: "unavailable"
       for:
         minutes: 30

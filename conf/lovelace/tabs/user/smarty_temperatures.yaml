@@ -198,7 +198,7 @@ cards:
               action: call-service
               service: automation.toggle
               service_data:
-                entity_id: automation.l2storage_motion_detected_ssr01_on
+                entity_id: automation.l2_storage_motion_detected_ssr01_on
 
       # South L2
       - type: grid
