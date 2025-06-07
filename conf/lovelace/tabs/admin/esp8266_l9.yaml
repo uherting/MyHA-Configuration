@@ -14,75 +14,75 @@ cards:
   #   title: L9 Cam32 01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l9_cam32_01_conn_ip_addr
-  #     - sensor.l9_cam32_01_wifi_signal
-  #     - sensor.l9_cam32_01_conn_ssid
-  #     - sensor.l9_cam32_01_conn_bssid
-  #     - sensor.l9_cam32_01_uptime
-  #     - sensor.l9_cam32_01_uptime_human_readable
-  #     - binary_sensor.l9_cam32_01_status
-  #     - sensor.l9_cam32_01_esphome_version
-  #     - switch.l9_cam32_01_restart_device
+  #     - sensor.l9cam3201_conn_ip_addr
+  #     - sensor.l9cam3201_wifi_signal
+  #     - sensor.l9cam3201_conn_ssid
+  #     - sensor.l9cam3201_conn_bssid
+  #     - sensor.l9cam3201_uptime
+  #     - sensor.l9cam3201_uptime_human_readable
+  #     - binary_sensor.l9cam3201_status
+  #     - sensor.l9cam3201_esphome_version
+  #     - switch.l9cam3201_restart_device
 
   - type: entities
     title: L9 Cam32 02
     show_header_toggle: false
     entities:
-      - sensor.l9_cam32_02_conn_ip_addr
-      - sensor.l9_cam32_02_wifi_signal
-      - sensor.l9_cam32_02_conn_ssid
-      - sensor.l9_cam32_02_conn_bssid
-      - sensor.l9_cam32_02_uptime
-      - sensor.l9_cam32_02_uptime_human_readable
-      - binary_sensor.l9_cam32_02_status
+      - sensor.l9cam3202_conn_ip_addr
+      - sensor.l9cam3202_wifi_signal
+      - sensor.l9cam3202_conn_ssid
+      - sensor.l9cam3202_conn_bssid
+      - sensor.l9cam3202_uptime
+      - sensor.l9cam3202_uptime_human_readable
+      - binary_sensor.l9cam3202_status
       - update.l9cam3202_firmware
-      - sensor.l9_cam32_02_esphome_version
-      - switch.l9_cam32_02_restart_device
+      - sensor.l9cam3202_esphome_version
+      - switch.l9cam3202_restart_device
 
   - type: entities
     title: L9 Cam32 03
     show_header_toggle: false
     entities:
-      - sensor.l9_cam32_03_conn_ip_addr
-      - sensor.l9_cam32_03_wifi_signal
-      - sensor.l9_cam32_03_conn_ssid
-      - sensor.l9_cam32_03_conn_bssid
-      - sensor.l9_cam32_03_uptime
-      - sensor.l9_cam32_03_uptime_human_readable
-      - binary_sensor.l9_cam32_03_status
+      - sensor.l9cam3203_conn_ip_addr
+      - sensor.l9cam3203_wifi_signal
+      - sensor.l9cam3203_conn_ssid
+      - sensor.l9cam3203_conn_bssid
+      - sensor.l9cam3203_uptime
+      - sensor.l9cam3203_uptime_human_readable
+      - binary_sensor.l9cam3203_status
       - update.l9cam3203_firmware
-      - sensor.l9_cam32_03_esphome_version
-      - switch.l9_cam32_03_restart_device
+      - sensor.l9cam3203_esphome_version
+      - switch.l9cam3203_restart_device
 
   # - type: entities
   #   title: L9 Cam32 04
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l9_cam32_04_conn_ip_addr
-  #     - sensor.l9_cam32_04_wifi_signal
-  #     - sensor.l9_cam32_04_conn_ssid
-  #     - sensor.l9_cam32_04_conn_bssid
-  #     - sensor.l9_cam32_04_uptime
-  #     - sensor.l9_cam32_04_uptime_human_readable
-  #     - binary_sensor.l9_cam32_04_status
+  #     - sensor.l9cam3204_conn_ip_addr
+  #     - sensor.l9cam3204_wifi_signal
+  #     - sensor.l9cam3204_conn_ssid
+  #     - sensor.l9cam3204_conn_bssid
+  #     - sensor.l9cam3204_uptime
+  #     - sensor.l9cam3204_uptime_human_readable
+  #     - binary_sensor.l9cam3204_status
   # - update.l9cam3204_firmware
-  #     - sensor.l9_cam32_04_esphome_version
-  #     - switch.l9_cam32_04_restart_device
+  #     - sensor.l9cam3204_esphome_version
+  #     - switch.l9cam3204_restart_device
 
   # - type: entities
   #   title: L9 Cam32 05
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l9_cam32_05_conn_ip_addr
-  #     - sensor.l9_cam32_05_wifi_signal
-  #     - sensor.l9_cam32_05_conn_ssid
-  #     - sensor.l9_cam32_05_conn_bssid
-  #     - sensor.l9_cam32_05_uptime
-  #     - sensor.l9_cam32_05_uptime_human_readable
-  #     - binary_sensor.l9_cam32_05_status
+  #     - sensor.l9cam3205_conn_ip_addr
+  #     - sensor.l9cam3205_wifi_signal
+  #     - sensor.l9cam3205_conn_ssid
+  #     - sensor.l9cam3205_conn_bssid
+  #     - sensor.l9cam3205_uptime
+  #     - sensor.l9cam3205_uptime_human_readable
+  #     - binary_sensor.l9cam3205_status
   # - update.l9cam3205_firmware
-  #     - sensor.l9_cam32_05_esphome_version
-  #     - switch.l9_cam32_05_restart_device
+  #     - sensor.l9cam3205_esphome_version
+  #     - switch.l9cam3205_restart_device
 ####################################################################
 # EOF
 ####################################################################

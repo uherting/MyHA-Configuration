@@ -25,7 +25,7 @@ cards:
       # - binary_sensor.l2kitchen01_door
       - switch.l2kitchen01_ssr_01
       - switch.l2kitchen01_ssr_02
-      - switch.l2kitchen01_ssr_09
+      - switch.l2storage01_l2_kitchen01_ssr_09
 
   - type: entities
     title: L2 Storage 01
@@ -38,8 +38,7 @@ cards:
       # - binary_sensor.l2storage01_pir_02
       - binary_sensor.l2storage01_door_storage
       - switch.l2storage01_ssr_01
-      - binary_sensor.l2kitchen01_tb_02
-      - switch.l2kitchen01_ssr_09
+      - switch.l2storage01_l2_kitchen01_ssr_09
 
   - type: entities
     title: L2 Bathroom 01a

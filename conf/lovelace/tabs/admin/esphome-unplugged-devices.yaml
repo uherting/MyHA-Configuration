@@ -34,13 +34,13 @@ cards:
       - binary_sensor.l2storage01_status
       # - binary_sensor.l2thermo01_status
       # ESP32 cams
-      - binary_sensor.l9cam3201_status
+      # - binary_sensor.l9cam3201_status
       - binary_sensor.l9cam3202_status
       - binary_sensor.l9cam3203_status
-      - binary_sensor.l9cam3204_status
+      # - binary_sensor.l9cam3204_status
       # misc stuff
       # - binary_sensor.l2btproxy_bathroom_status
-      - binary_sensor.l2btproxybedroom_status
+      # - binary_sensor.l2btproxybedroom_status
       - binary_sensor.l2btproxykitchen_status
       # - binary_sensor.l2btproxy_lounge_status
 ####################################################################

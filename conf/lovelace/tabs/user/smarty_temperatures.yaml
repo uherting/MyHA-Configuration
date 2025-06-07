@@ -30,7 +30,7 @@ cards:
         cards:
           - type: "custom:button-card"
             name: "Kitchen"
-            entity: switch.l2kitchen01_ssr_09
+            entity: switch.l2storage01_l2_kitchen01_ssr_09
             color: yellow
           - type: "custom:button-card"
             name: " "

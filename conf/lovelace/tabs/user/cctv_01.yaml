@@ -15,14 +15,14 @@ cards:
   # # TTGO-camera
   # - type: picture-glance
   #   title: TTGO Cam 01
-  #   camera_image: camera.l9_cam_ttgo_01_cam
+  #   camera_image: camera.l9cam_ttgo_01_cam
   #   camera_view: live
   #   entities:
-  #     - binary_sensor.l9_cam_ttgo_01_pir
-  #     - binary_sensor.l9_cam_ttgo_01_button
-  #     - binary_sensor.l9_cam_ttgo_01_status
-  #     - sensor.l9_cam_ttgo_01_esphome_version
-  #     - sensor.l9_cam_ttgo_01_wifi_signal
+  #     - binary_sensor.l9cam_ttgo_01_pir
+  #     - binary_sensor.l9cam_ttgo_01_button
+  #     - binary_sensor.l9cam_ttgo_01_status
+  #     - sensor.l9cam_ttgo_01_esphome_version
+  #     - sensor.l9cam_ttgo_01_wifi_signal
 
   - type: picture-glance
     title: RWorld Big Pic
@@ -30,7 +30,7 @@ cards:
     camera_view: live
     tap_action: none
     entities:
-      - binary_sensor.l9_cam32_02_status
+      - binary_sensor.l9cam3202_status
 
   - type: picture-glance
     title: RWorld Detail Pic
@@ -38,40 +38,40 @@ cards:
     camera_view: live
     tap_action: none
     entities:
-      - binary_sensor.l9_cam32_02_status
+      - binary_sensor.l9cam3202_status
 
   - type: picture-glance
     title: ESP32Cam 02
-    camera_image: camera.l9_cam32_02_cam
+    camera_image: camera.l9cam3202_cam
     camera_view: live
     tap_action: none
     entities:
-      - binary_sensor.l9_cam32_02_status
-      - sensor.l9_cam32_02_esphome_version
-      - light.l9_cam32_02_camlight
-      - switch.l9_cam32_02_restart_device
+      - binary_sensor.l9cam3202_status
+      - sensor.l9cam3202_esphome_version
+      - light.l9cam3202_camlight
+      - switch.l9cam3202_restart_device
 
   # - type: picture-glance
   #   title: ESP32Cam 01
-  #   camera_image: camera.l9_cam32_01_cam
+  #   camera_image: camera.l9cam3201_cam
   #   camera_view: live
   #   tap_action: none
   #   entities:
-  #     - binary_sensor.l9_cam32_01_status
-  #     - sensor.l9_cam32_01_esphome_version
-  #     - light.l9_cam32_01_camlight
-  #     - switch.l9_cam32_01_restart_device
+  #     - binary_sensor.l9cam3201_status
+  #     - sensor.l9cam3201_esphome_version
+  #     - light.l9cam3201_camlight
+  #     - switch.l9cam3201_restart_device
 
   - type: picture-glance
     title: ESP32Cam 03
-    camera_image: camera.l9_cam32_03_cam
+    camera_image: camera.l9cam3203_cam
     camera_view: live
     # tap_action: none
     entities:
-      - binary_sensor.l9_cam32_03_status
-      - sensor.l9_cam32_03_esphome_version
-      - light.l9_cam32_03_camlight
-      - switch.l9_cam32_03_restart_device
+      - binary_sensor.l9cam3203_status
+      - sensor.l9cam3203_esphome_version
+      - light.l9cam3203_camlight
+      - switch.l9cam3203_restart_device
 ####################################################################
 # EOF
 ####################################################################
