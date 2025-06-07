@@ -16,7 +16,7 @@ l2storage01_bin_templ_spymode_control:
     - service: automation.toggle
       data: {}
       target:
-        entity_id: automation.l2storage_motion_detected_ssr01_on
+        entity_id: automation.l2_storage_motion_detected_ssr01_on
 # ############################################################
 #  END OF FILE
 # ############################################################
