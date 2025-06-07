@@ -20,9 +20,9 @@
   # -------------------- CONDITIONS -------------------
   condition:
     # if both window sensors are open and it is below a certain
-    # temperature (see definition of binary_sensor.l2_bathroom_window_generic_cold)
+    # temperature (see definition of binary_sensor.l2bathroom_window_generic_cold)
     - condition: state
-      entity_id: binary_sensor.l2_bathroom_window_generic_cold
+      entity_id: binary_sensor.l2bathroom_window_generic_cold
       state: "true"
 
   # --------------------- ACTIONS ---------------------

@@ -12,7 +12,7 @@ l2_bathroom_window_open:
   name: "L2 Bathroom window is open"
   # title: 'L2 Bathroom title'
   done_message: "L2 Bathroom window was closed"
-  entity_id: binary_sensor.l2_bathroom_window_generic_cold
+  entity_id: binary_sensor.l2bathroom_window_generic_cold
   state: "on"
   repeat:
     - 10

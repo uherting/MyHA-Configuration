@@ -16,7 +16,7 @@
         }}
     # if the window is open and the outside temperature is below 15.0 degrees...
     - name: "L2 Bathroom Window Generic Cold"
-      unique_id: "l2_bathroom_window_generic_cold"
+      unique_id: "l2bathroom_window_generic_cold"
       state: >
         {{  
           (is_state('binary_sensor.l2_bathroom_window_generic', 'on'))
