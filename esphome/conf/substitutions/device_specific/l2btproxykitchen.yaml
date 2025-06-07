@@ -16,8 +16,8 @@ device_framework: arduino
 # device_framework: esp-idf
 
 # the friendly name and id
-friendly_name: L2 BTPROXY_KITCHEN
-friendly_id: L2BTPROXY_KITCHEN
+friendly_name: ""
+friendly_id: ""
 
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01
