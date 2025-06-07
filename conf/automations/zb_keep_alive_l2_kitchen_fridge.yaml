@@ -9,7 +9,7 @@
 # ############################################################
 - alias: Take care that the ZB plug L2 kitchen fridge is on ASAP
   id: "9421a619-c72e-4bef-95ea-bf2c2def96ac"
-  description: "This automation turns on the ZB plug L2 kitchen fridge after being offline or being switched off accidentenly"
+  description: "This automation turns on the ZB plug L2 kitchen fridge after being offline or being switched off accidently"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
