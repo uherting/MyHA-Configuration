@@ -9,13 +9,13 @@
   - platform: vl53l0x
     name: $vl53l0x_01_name
     id: $vl53l0x_01_id
-
+    
     address: $vl53l0x_01_address
     
-    enable_pin: $vl53l0x_01_enablepin
+    # enable_pin: $vl53l0x_01_enablepin
     timeout: $vl53l0x_01_timeout
     update_interval: $vl53l0x_01_updateinterval
-    unit_of_measurement: $vl53l0x_01_unitofmeasurement
+    unit_of_measurement: $vl53l0x_01_unitofmeasurement_cm
 
 ####################################################################
 # EOF

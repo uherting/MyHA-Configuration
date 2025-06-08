@@ -174,7 +174,15 @@ substitutions:
   vl53l0x_01_enablepin: GPIO19
   vl53l0x_01_timeout: 200us
   vl53l0x_01_updateinterval: 500ms
-  vl53l0x_01_unitofmeasurement: "cm"
+  vl53l0x_01_unitofmeasurement_cm: "cm"
+  vl53l0x_01_unitofmeasurement_mm: "mm"
+
+  veml7700_01_name: $friendly_name veml7700 01
+  veml7700_01_id: ${friendly_id}_veml7700_01
+  veml7700_01_address: "0x10"
+  veml7700_01_updateinterval_60s: 60s
+  veml7700_01_unitofmeasurement_cm: "cm"
+  veml7700_01_unitofmeasurement_mm: "mm"
 ####################################################################
 # EOF
 ####################################################################
