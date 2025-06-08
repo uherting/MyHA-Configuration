@@ -25,11 +25,11 @@ cards:
     cameras:
       - entity: camera.rworld1_fluent_lens_0
       - entity: camera.rworld1_fluent_lens_1
-      # - entity: camera.l9_cam32_01_cam
-      - entity: camera.l9_cam32_02_cam
-      - entity: camera.l9_cam32_03_cam
-      # - entity: camera.l9_cam32_04_cam
-      # - entity: camera.l9_cam32_05_cam
+      # - entity: camera.l9cam3201_cam
+      - entity: camera.l9cam3202_cam
+      - entity: camera.l9cam3203_cam
+      # - entity: camera.l9cam3204_cam
+      # - entity: camera.l9cam3205_cam
       - entity: camera.ipcam_ker01_mainstream
       #   # motion_entity: binary_sensor.front_porch_motion
       - entity: camera.ipcam_ker01_substream

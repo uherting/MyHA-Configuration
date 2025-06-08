@@ -15,7 +15,7 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: binary_sensor.l9_cam32_02_status
+      entity_id: binary_sensor.l9cam3202_status
       to: "unavailable"
   # -------------------- CONDITIONS -------------------
   condition: []
@@ -39,7 +39,7 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: binary_sensor.l9_cam32_02_status
+      entity_id: binary_sensor.l9cam3202_status
       to: "on"
   # -------------------- CONDITIONS -------------------
   condition: []

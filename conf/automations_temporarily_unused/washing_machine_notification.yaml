@@ -27,22 +27,22 @@
     conditions:
       # only if the cam is online
       - condition: state
-        entity_id: binary_sensor.l9_cam32_03_status
+        entity_id: binary_sensor.l9cam3203_status
         state: "on"
       # ... and online longer than x minutes
       - condition: template
-        value_template: "{{ (now() - states.binary_sensor.l9_cam32_03_status.last_changed) > (timedelta(hours = 0, minutes = 10)) }}"
+        value_template: "{{ (now() - states.binary_sensor.l9cam3203_status.last_changed) > (timedelta(hours = 0, minutes = 10)) }}"
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- CAM LIGHT ON ---------------------
     - service: switch.turn_on
       data:
-        entity_id: light.l9_cam32_03_camlight
+        entity_id: light.l9cam3203_camlight
     - delay: "00:00:01"
     # ------------------- CREATE SNAPSHOTS -------------------
     - service: camera.snapshot
       data:
-        entity_id: camera.l9_cam32_03_cam
+        entity_id: camera.l9cam3203_cam
         filename: "/config/var/opt/tg/l9esp32cam03/1.jpg"
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_one_file
@@ -53,7 +53,7 @@
     # --------------------- CAM LIGHT OFF ---------------------
     - service: switch.turn_off
       data:
-        entity_id: light.l9_cam32_03_camlight
+        entity_id: light.l9cam3203_camlight
 # ############################################################
 #  END OF FILE
 # ############################################################
