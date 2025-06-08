@@ -2,15 +2,15 @@
 # DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
-device_name: l9testnamingesp32
-device_comment: Level 9 TestNaming ESP32
-device_area: L9
+device_name: l2kitchen02
+device_comment: Level 2 Kitchen 02
+device_area: L2
 
-device_platform: ESP32
-wifi_static_ip: 192.168.178.39
+# device_platform: ESP32
+wifi_static_ip: 192.168.178.240
 
 # latest 20250222
-device_board: esp32dev
+device_board: esp32-c3-devkitm-1
 device_framework: arduino
 # framework esp-idf throughs too many warnings
 # device_framework: esp-idf
@@ -21,9 +21,9 @@ friendly_id: ""
 
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L9_TEST_ESP32_CASESENSOR_01_ADDRESS
+dallas_01c01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L9_TEST_ESP32_ENVSENSOR_01_ADDRESS
+dallas_01e01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_ENVSENSOR_01_ADDRESS
 ####################################################################
 # EOF
 ####################################################################

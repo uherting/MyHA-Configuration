@@ -1,0 +1,23 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# VEML7700 Light intensity sensor
+# for details see https://esphome.io/components/sensor/veml7700
+
+#sensor:
+  - platform: veml7700
+    # name: $veml7700_01_name
+    # id: $veml7700_01_id
+
+    address: $veml7700_01_address
+
+    # update_interval: defaults to 60s
+    # update_interval: $veml7700_01_update_interval_60s
+
+    # short variant in case you don’t need any other options
+    ambient_light: "Ambient light"
+
+####################################################################
+# EOF
+####################################################################

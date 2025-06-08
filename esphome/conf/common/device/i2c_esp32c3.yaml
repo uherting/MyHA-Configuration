@@ -5,8 +5,8 @@
 # usage in esp32 test microcontroller, not to be used in anything else
 # for details see https://esphome.io/components/i2c.html
   id: !secret I2C_BUS_A
-  scl: !secret I2C_SCL_PIN_ESP32C3_TESTDEV
-  sda: !secret I2C_SDA_PIN_ESP32C3_TESTDEV
+  scl: !secret I2C_SCL_PIN_ESP32C3
+  sda: !secret I2C_SDA_PIN_ESP32C3
   scan: true
 
   # default values

@@ -24,8 +24,8 @@ device_framework: arduino
 # device_framework: esp-idf
 
 # the friendly name / id
-friendly_name: L9 Cam32 05
-friendly_id: L9Cam3205
+friendly_name: ""
+friendly_id: ""
 
 # LED
 cam_light_name: $friendly_name CamLight

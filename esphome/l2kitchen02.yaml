@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l9testesp32c3
+# DEVICE: l2kitchen02
 #
 ####################################################################
 ####################################################################
@@ -11,7 +11,7 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for Tests on a ESP32-C3 platform w/o MCP23017 
+#   - Microcontroller for measuring distance to the diswasher door and the ambience light of the kitchen
 #
 # Future feature:
 #   - unknown
@@ -26,7 +26,8 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - none so far
+#   - VEML7700
+#   - VL53L0X
 #
 # Output
 #   - the device reports to HA only 
@@ -36,8 +37,8 @@
 # naming conventions which override common behaviour
 
 substitutions: 
-  <<: !include conf/substitutions/device_specific/l9testesp32c3.yaml
-  <<: !include conf/substitutions/overwrites/l9testesp32c3.yaml
+  <<: !include conf/substitutions/device_specific/l2kitchen02.yaml
+  <<: !include conf/substitutions/overwrites/l2kitchen02.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -59,7 +60,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-# i2c: !include conf/common/device/i2c_esp32c3_testdev.yaml
+i2c: !include conf/common/device/i2c_esp32c3.yaml
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -70,12 +71,12 @@ time: !include conf/common/time.yaml
 #-------------------------------------------------------------------
 # MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
 
-# globals:
-#   - <<: !include conf/common/globals/connectivity.yaml
+globals:
+  - <<: !include conf/common/globals/connectivity.yaml
 #   - <<: !include conf/common/globals/opto_coupler_01.yaml
 #   - <<: !include conf/common/globals/opto_coupler_02.yaml
 #   - <<: !include conf/common/globals/opto_coupler_03.yaml
-# interval: !include conf/common/interval/connectivity.yaml
+interval: !include conf/common/interval/connectivity.yaml
 # script:
 #   - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
 #   # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
@@ -104,22 +105,8 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
-
-#-------------------------------------------------------------------
-# SERVOS
-# servo:
-#   - <<: !include conf/common/servo/servo01.yaml
-# output:
-#   - <<: !include conf/common/output/servo01.yaml
-
-#-------------------------------------------------------------------
-# SWITCHES
-# switch:
-  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
-  # - <<: !include conf/common/switch/esp32_general_01.yaml
-  # - <<: !include conf/common/switch/esp32_general_02.yaml
+  - <<: !include conf/common/sensor/vl53L0x_01_single_mm.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_short.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
