@@ -1,12 +1,12 @@
 ####################################################################
-# I2C (esp32 test microcontroller only)
+# I2C (esp32c3 test microcontroller only)
 ####################################################################
 
 # usage in esp32 test microcontroller, not to be used in anything else
 # for details see https://esphome.io/components/i2c.html
   id: !secret I2C_BUS_A
-  scl: !secret I2C_SCL_PIN_ESP32_TESTDEV_C3
-  sda: !secret I2C_SDA_PIN_ESP32_TESTDEV_C3
+  scl: !secret I2C_SCL_PIN_ESP32C3_TESTDEV
+  sda: !secret I2C_SDA_PIN_ESP32C3_TESTDEV
   scan: true
 
   # default values
