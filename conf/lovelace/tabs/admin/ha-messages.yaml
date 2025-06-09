@@ -12,7 +12,6 @@ path: ha-messages
 badges: [
     person.uwe,
     person.gillian,
-    # person.uwe_trucking,
     sun.sun,
     binary_sensor.sun_dwn_twilight,
     binary_sensor.workday,

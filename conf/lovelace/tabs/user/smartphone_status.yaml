@@ -57,7 +57,7 @@ cards:
       - binary_sensor.bdf_x20_is_charging
 
   - type: entities
-    title: Smartphone UH Trucking
+    title: Smartphone Reno 8pro
     show_header_toggle: false
     entities:
       - device_tracker.reno8_pro
