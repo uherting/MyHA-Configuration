@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.48.0";
+const version = "4.49.0";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_views: [],
@@ -56,8 +56,10 @@ const defaultConfig = {
 	image_order: "sorted", // sorted / random
 	exclude_filenames: [], // Excluded filenames (regex)
 	exclude_media_types: [], // Exclude media types (image / video)
+	exclude_media_orientation: "", // Exclude media items with this orientation (landscape / portrait / auto)
 	image_background: "color", // color / image
 	video_loop: false,
+	video_volume: 0.001,
 	touch_zone_size_next_image: 15,
 	touch_zone_size_previous_image: 15,
 	show_progress_bar: false,
@@ -276,6 +278,8 @@ class ScreenWakeLock {
 			this._player.setAttribute("id", "ScreenWakeLockVideo");
 			this._player.setAttribute("src", videoData);
 			this._player.setAttribute("playsinline", "");
+			// Do not set muted to true or the following error can occur:
+			// Uncaught (in promise) DOMException: The play() request was interrupted because video-only background media was paused to save power. https://goo.gl/LdLk22
 			this._player.setAttribute("muted", "");
 			this._player.addEventListener("ended", () => {
 				logger.debug("Video ended");
@@ -1087,7 +1091,7 @@ function initWallpanel() {
 
 			this.screensaverContainer.removeAttribute("style");
 			this.screensaverContainer.style.position = "fixed";
-			this.screensaverContainer.style.pointerEvents = "none";
+			this.screensaverContainer.style.pointerEvents = "auto";
 			this.screensaverContainer.style.top = 0;
 			this.screensaverContainer.style.left = 0;
 			this.screensaverContainer.style.width = "100vw";
@@ -2030,15 +2034,18 @@ function initWallpanel() {
 			});
 		}
 
-		setMediaDataInfo(mediaElement) {
+		setMediaDataInfo(mediaElement = null) {
+			if (!mediaElement) {
+				mediaElement = this.getActiveMediaElement();
+			}
 			const infoCacheUrl = mediaElement.infoCacheUrl;
 			let mediaUrl = mediaElement.mediaUrl;
 			if (!infoCacheUrl) {
-				logger.error("infoCacheUrl missing:", mediaElement);
+				logger.debug("infoCacheUrl missing:", mediaElement);
 				return;
 			}
 			if (!mediaUrl) {
-				logger.error("mediaUrl missing:", mediaElement);
+				logger.debug("mediaUrl missing:", mediaElement);
 				return;
 			}
 			mediaUrl = decodeURI(mediaUrl);
@@ -2387,6 +2394,15 @@ function initWallpanel() {
 				throw new Error("immich_api_key not configured");
 			}
 			const wp = this;
+			const screenOrientation =
+				this.screensaverContainer.clientWidth >= this.screensaverContainer.clientHeight ? "landscape" : "portrait";
+			let exclude_media_orientation = config.exclude_media_orientation;
+			if (exclude_media_orientation == "auto") {
+				exclude_media_orientation = screenOrientation == "landscape" ? "portrait" : "landscape";
+			}
+			logger.debug(
+				`config.exclude_media_orientation=${config.exclude_media_orientation}, screenOrientation=${screenOrientation}, exclude_media_orientation=${exclude_media_orientation}`
+			);
 			const urls = [];
 			const apiUrl = config.image_url.replace(/^immich\+/, "");
 			const excludeRegExp = [];
@@ -2409,6 +2425,23 @@ function initWallpanel() {
 
 					for (const exclude of excludeRegExp) {
 						if (exclude.test(asset.originalFileName)) {
+							return;
+						}
+					}
+
+					if (
+						exclude_media_orientation &&
+						asset.exifInfo &&
+						asset.exifInfo.exifImageWidth &&
+						asset.exifInfo.exifImageHeight
+					) {
+						let orientation =
+							asset.exifInfo.exifImageWidth >= asset.exifInfo.exifImageHeight ? "landscape" : "portrait";
+						if (asset.exifInfo.orientation && [5, 6, 7, 8].includes(parseInt(asset.exifInfo.orientation))) {
+							// 90 or 270 degrees rotated
+							orientation = orientation == "landscape" ? "portrait" : "landscape";
+						}
+						if (orientation === exclude_media_orientation) {
 							return;
 						}
 					}
@@ -2638,7 +2671,9 @@ function initWallpanel() {
 					.forEach((attr) => fallbackElem.setAttribute(attr.name, attr.value));
 
 				if (tagName.toLowerCase() === "video") {
-					Object.assign(fallbackElem, { preload: "auto", muted: true });
+					// Do not set muted to true or the following error can occur:
+					// Uncaught (in promise) DOMException: The play() request was interrupted because video-only background media was paused to save power. https://goo.gl/LdLk22
+					Object.assign(fallbackElem, { preload: "auto", muted: false, volume: config.video_volume });
 				}
 				return fallbackElem;
 			};
@@ -2831,7 +2866,11 @@ function initWallpanel() {
 					this.loadBackgroundImage(element);
 				}
 
-				if (!isVideo && config.show_image_info && /.*\.jpe?g$/i.test(element.mediaUrl.split("?")[0])) {
+				if (
+					!isVideo &&
+					config.show_image_info &&
+					/.*\.jpe?g$/i.test(element.mediaUrl.split("?")[0].replace(/\/*$/, ""))
+				) {
 					this.fetchEXIFInfo(element);
 				}
 			} finally {
@@ -2843,7 +2882,9 @@ function initWallpanel() {
 		setMediaDimensions() {
 			const activeElem = this.getActiveMediaElement();
 			logger.debug("Setting dimensions for media element", activeElem);
-
+			if (!activeElem.mediaUrl) {
+				return;
+			}
 			// Determine if the new media is landscape or portrait, and set the appropriate image_fit
 			let width = 0;
 			let height = 0;
@@ -3020,12 +3061,10 @@ function initWallpanel() {
 			let curActiveContainer = this.imageOneContainer;
 			let newActiveContainer = this.imageTwoContainer;
 			let curMedia = this.imageOne;
-			let newMedia = this.imageTwo;
 			if (newElement == this.imageOne) {
 				curActiveContainer = this.imageTwoContainer;
 				newActiveContainer = this.imageOneContainer;
 				curMedia = this.imageTwo;
-				newMedia = this.imageOne;
 			}
 			logger.debug(`Switching active media to '${newActiveContainer.id}'`);
 
@@ -3036,7 +3075,7 @@ function initWallpanel() {
 				curActiveContainer.style.opacity = 0;
 			}
 
-			this.setMediaDataInfo(newMedia);
+			this.setMediaDataInfo();
 			this.setMediaDimensions();
 			this.setImageURLEntityState();
 			this.startPlayingActiveMedia();
@@ -3096,6 +3135,7 @@ function initWallpanel() {
 
 			this.updateStyle();
 			this.setupScreensaver();
+			this.setMediaDataInfo();
 			this.setMediaDimensions();
 			this.setImageURLEntityState();
 			this.startPlayingActiveMedia();
@@ -3179,6 +3219,8 @@ function initWallpanel() {
 			this.style.opacity = 0;
 			this.style.visibility = "hidden";
 			this.style.pointerEvents = "none";
+			this.imageOneInfo.style.pointerEvents = "none";
+			this.imageTwoInfo.style.pointerEvents = "none";
 			this.infoBoxPosX.style.animation = "";
 			this.infoBoxPosY.style.animation = "";
 
