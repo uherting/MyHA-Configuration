@@ -16,7 +16,7 @@
   trigger:
     - platform: sun
       event: sunset
-      offset: "01:00:00"
+      offset: "-02:00:00"
     # - platform: time
     #   at: "17:00:00"
 
