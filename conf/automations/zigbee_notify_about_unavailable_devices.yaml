@@ -5,7 +5,7 @@
 # ############################################################
 
 # ############################################################
-#  notify TG admin group of unavailable Zigbee devices
+#  notify admin of unavailable Zigbee devices
 # ############################################################
 - alias: Notify admin of unavailable Zigbee devices
   id: "ed192012-57f5-4532-ba25-5fce3d3f9b5f"
@@ -17,7 +17,6 @@
     - platform: state
       entity_id: sensor.unavailable_zigbee_devices_info
   # -------------------- CONDITIONS -------------------
-  # none whatsoever
   condition:
     condition: template
     value_template: "{{ (state_attr('sensor.unavailable_zigbee_devices_info', 'device_list_length') | int(0)) > 0 }}"
