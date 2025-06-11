@@ -105,7 +105,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  - <<: !include conf/common/sensor/vl53L0x_01_single_mm.yaml
+  - <<: !include conf/common/sensor/vl53L0x_single_mm.yaml
   - <<: !include conf/common/sensor/veml7700_standard_short.yaml
 
 #-------------------------------------------------------------------

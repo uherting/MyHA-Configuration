@@ -3,7 +3,7 @@
 
 #script:
 # on_multi_click action of TB A4 (long click)
-- id: tb_04_click_long
+- id: tb_03_click_long
   mode: restart
   then:
     - if:
@@ -17,7 +17,7 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          # - logger.log: "ESPHome: within script tb_04_click_long action."
+          # - logger.log: "ESPHome: within script tb_03_click_long action."
 
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
