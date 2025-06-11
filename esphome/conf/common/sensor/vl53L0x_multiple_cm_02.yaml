@@ -1,0 +1,22 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# VL53L0X Time Of Flight Distance Sensor¶
+# for details see https://esphome.io/components/sensor/vl53l0x.html
+
+#sensor:
+  - platform: vl53l0x
+    name: $vl53l0x_02_name
+    id: $vl53l0x_02_id
+
+    address: $vl53l0x_02_address
+    
+    enable_pin: $vl53l0x_02_enablepin
+    timeout: $vl53l0x_02_timeout
+    update_interval: $vl53l0x_02_updateinterval
+    unit_of_measurement: $vl53l0x_02_unitofmeasurement
+
+####################################################################
+# EOF
+####################################################################
