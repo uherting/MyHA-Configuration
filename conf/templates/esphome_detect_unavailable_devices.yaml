@@ -46,7 +46,7 @@
           {%- set all_entities_with_required_state_list = states.binary_sensor | selectattr('state', 'in', ['unavailable', 'unknown', 'off']) | selectattr('entity_id', 'match', 'binary_sensor.l[0,2,9].*_status') | map(attribute='entity_id') | list -%}
           {% set ns = namespace(devices=[]) %}
           {% for entity in all_entities_with_required_state_list %}
-          {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
+            {% set ns.devices = ns.devices + [ device_attr(entity, 'name') ] %}
           {% endfor %}
           {{ ns.devices | sort | unique | list }}
         device_list_length: >-
