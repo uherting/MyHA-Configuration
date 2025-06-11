@@ -47,66 +47,58 @@ exclude:
     - sensor.date_time_iso
     - sensor.ha_uptime
     - sensor.l0corridor01_uptime
+    - sensor.l0corridor01_uptime_human_readable
     - sensor.l0corridor02_uptime
+    - sensor.l0corridor02_uptime_human_readable
+    - sensor.l0entrance01_uptime
+    - sensor.l0entrance01_uptime_human_readable
     - sensor.l0entrance_uptime
     - sensor.l0garagebig01_uptime
+    - sensor.l0garagebig01_uptime_human_readable
     - sensor.l0garagebig02_uptime
+    - sensor.l0garagebig02_uptime_human_readable
     - sensor.l1_thehut01_uptime
-    - sensor.l2bathroom01a_uptime
-    - sensor.l2corridor01_uptime
-    - sensor.l2kitchen01_uptime
-    - sensor.l2storage01_uptime
-    - sensor.l2thermo01_uptime
-    - sensor.l2btproxy_bathroom_uptime
-    - sensor.l2btproxy_bedroom_uptime
-    - sensor.l2btproxy_kitchen_uptime
-    - sensor.l2btproxy_lounge_uptime
-    - sensor.l2bathroom01a_uptime
-    - sensor.l0corridor01_uptime
-    - sensor.l0corridor02_uptime
-    - sensor.l0entrance01_uptime
-    - sensor.l0garagebig01_uptime
-    - sensor.l0garagebig02_uptime
     - sensor.l1thehut01_uptime
-    - sensor.l2corridor01_uptime
-    - sensor.l2kitchen01_uptime
-    - sensor.l2storage01_uptime
-    - sensor.l2thermo01_uptime
+    - sensor.l1thehut01_uptime_human_readable
+    - sensor.l2bathroom01a_uptime
+    - sensor.l2bathroom01a_uptime_human_readable
+    - sensor.l2btproxy_bathroom_uptime
     - sensor.l2btproxybathroom_uptime
+    - sensor.l2btproxybathroom_uptime_human_readable
+    - sensor.l2btproxy_bedroom_uptime
     - sensor.l2btproxybedroom_uptime
+    - sensor.l2btproxybedroom_uptime_human_readable
+    - sensor.l2btproxy_kitchen_uptime
     - sensor.l2btproxykitchen_uptime
+    - sensor.l2btproxykitchen_uptime_human_readable
+    - sensor.l2btproxy_lounge_uptime
     - sensor.l2btproxylounge_uptime
+    - sensor.l2btproxylounge_uptime_human_readable
+    - sensor.l2corridor01_uptime
+    - sensor.l2corridor01_uptime_human_readable
+    - sensor.l2kitchen01_uptime
+    - sensor.l2kitchen01_uptime_human_readable
+    - sensor.l2kitchen02_uptime
+    - sensor.l2kitchen02_uptime_human_readable
+    - sensor.l2storage01_uptime
+    - sensor.l2storage01_uptime_human_readable
+    - sensor.l2thermo01_uptime
+    - sensor.l2thermo01_uptime_human_readable
     - sensor.l9cam3201_uptime
     - sensor.l9cam3202_uptime
+    - sensor.l9cam3202_uptime_human_readable
     - sensor.l9cam3203_uptime
-    - sensor.l9cam3204_uptime
-    - sensor.l9cam3205_uptime
-    - sensor.l2bathroom01a_uptime_human_readable
-    - sensor.l0corridor01_uptime_human_readable
-    - sensor.l0corridor02_uptime_human_readable
-    - sensor.l0entrance01_uptime_human_readable
-    - sensor.l0garagebig01_uptime_human_readable
-    - sensor.l0garagebig02_uptime_human_readable
-    - sensor.l1thehut01_uptime_human_readable
-    - sensor.l2corridor01_uptime_human_readable
-    - sensor.l2kitchen01_uptime_human_readable
-    - sensor.l2storage01_uptime_human_readable
-    - sensor.l2thermo01_uptime_human_readable
-    - sensor.l2btproxybathroom_uptime_human_readable
-    - sensor.l2btproxybedroom_uptime_human_readable
-    - sensor.l2btproxykitchen_uptime_human_readable
-    - sensor.l2btproxylounge_uptime_human_readable
-    - sensor.l9cam3202_uptime_human_readable
-    - sensor.l9cam3202_uptime_human_readable
     - sensor.l9cam3203_uptime_human_readable
+    - sensor.l9cam3204_uptime
     - sensor.l9cam3204_uptime_human_readable
+    - sensor.l9cam3205_uptime
     - sensor.l9cam3205_uptime_human_readable
+    - sensor.last_boot
+    - sensor.last_boot_templated
     - sensor.last_message
     - sensor.low_battery
     - sensor.network
     - sensor.network_detail
-    - sensor.last_boot
-    - sensor.last_boot_templated
     - sensor.time
     - sensor.time_date
     - sensor.time_utc
