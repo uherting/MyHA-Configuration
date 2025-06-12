@@ -171,8 +171,8 @@ substitutions:
   vl53l0x_unitofmeasurement_cm: "cm"
   vl53l0x_unitofmeasurement_mm: "mm"
 
-  vl53l0x_01_name: $friendly_name vl53l0x 01
-  vl53l0x_01_id: ${friendly_id}_vl53l0x_01
+  vl53l0x_01_name: $friendly_name Distance
+  vl53l0x_01_id: ${friendly_id}_distance
   vl53l0x_01_address: "0x29"
   vl53l0x_01_enablepin: GPIO19
   vl53l0x_01_timeout: 200us
