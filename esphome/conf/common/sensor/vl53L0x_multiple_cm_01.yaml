@@ -2,7 +2,8 @@
 # SENSORS
 
 ####################################################################
-# VL53L0X Time Of Flight Distance Sensor¶
+# VL53L0X Time Of Flight (ToF) Laser Ranging Sensor / Distance Sensor
+# 940nm GY-530 GY-VL53L0XV2 Laser Distance Module I2C IIC
 # for details see https://esphome.io/components/sensor/vl53l0x.html
 
 #sensor:

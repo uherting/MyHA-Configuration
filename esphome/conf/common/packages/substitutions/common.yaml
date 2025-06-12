@@ -168,14 +168,15 @@ substitutions:
   touchbutton07_id: ${friendly_id}_TB_07
   touchbutton07_name: $friendly_name TB 07
 
+  vl53l0x_unitofmeasurement_cm: "cm"
+  vl53l0x_unitofmeasurement_mm: "mm"
+
   vl53l0x_01_name: $friendly_name vl53l0x 01
   vl53l0x_01_id: ${friendly_id}_vl53l0x_01
   vl53l0x_01_address: "0x29"
   vl53l0x_01_enablepin: GPIO19
   vl53l0x_01_timeout: 200us
   vl53l0x_01_updateinterval: 500ms
-  vl53l0x_01_unitofmeasurement_cm: "cm"
-  vl53l0x_01_unitofmeasurement_mm: "mm"
 
   veml7700_01_name: $friendly_name veml7700 01
   veml7700_01_id: ${friendly_id}_veml7700_01

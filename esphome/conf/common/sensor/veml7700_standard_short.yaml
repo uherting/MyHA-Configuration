@@ -3,6 +3,7 @@
 
 ####################################################################
 # VEML7700 Light intensity sensor
+# sensor module 120k Lux light measuring, sensor board 3.3V 5V I2C IIC Interface
 # for details see https://esphome.io/components/sensor/veml7700
 
 #sensor:
