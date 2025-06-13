@@ -1,14 +1,14 @@
 # ############################################################
 #
-#  automation for l2storage01: notify with text / pics on
-#    motion detected by cam RealWorld01
+#  Create a notification if camera RWorld01 senses motion
+#  notification with text / pics
 #
 # ############################################################
 
 # ############################################################
-# cam RealWorld01 detected motion (person or vehicle)
+# cam RWorld01 detected motion (person or vehicle)
 # ############################################################
-- alias: RealWorld01_motion_snapshot
+- alias: RWorld01_motion_snapshot
   id: "8b4aa82f-79f7-41c9-bd30-89833c63c518"
   initial_state: true
   # --------------------- TRIGGER ---------------------
