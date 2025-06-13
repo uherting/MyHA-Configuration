@@ -26,7 +26,7 @@
           {% endfor %}
           {{ result.sensors | join('\n') | truncate(254, True) }}
         device_list_length: >-
-          {%- set hash_value = result.sensors | length %}
+          {%- set hash_value=state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join(', ') | length -%}
           {{ hash_value }}
 
 ####################################################################
