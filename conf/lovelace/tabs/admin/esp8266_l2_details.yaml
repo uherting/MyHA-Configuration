@@ -28,6 +28,13 @@ cards:
       - switch.l2storage01_l2_kitchen01_ssr_09
 
   - type: entities
+    title: L2 Kitchen 02
+    show_header_toggle: false
+    entities:
+      - sensor.l2kitchen02_ambient_light
+      - sensor.l2kitchen02_distance
+
+  - type: entities
     title: L2 Storage 01
     show_header_toggle: false
     entities:
