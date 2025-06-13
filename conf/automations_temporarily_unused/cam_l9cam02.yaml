@@ -1,16 +1,16 @@
 # ############################################################
 #
-#  Create a notification if camera RWorld01 senses motion
+#  Create a notification if camera l9cam02 senses motion
 #  notification with text / pics
 #
 # ############################################################
 
 # ############################################################
-# cam RWorld01 detected motion (person or vehicle)
+# cam l9cam02 detected motion (person or vehicle)
 # ############################################################
-- alias: RWorld01_motion_snapshot
+- alias: l9cam02_motion_snapshot
   id: "8b4aa82f-79f7-41c9-bd30-89833c63c518"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
