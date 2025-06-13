@@ -54,7 +54,7 @@
       # --------------------- ACTIONS ---------------------
       actions:
         - service: script.tg_send_txt
-          data_template:
+          data:
             msg_title: "Low battery level notification"
             msg_text_prefix: "The following devices have a low bat condition:\n"
             msg_text_suffix: "\n"

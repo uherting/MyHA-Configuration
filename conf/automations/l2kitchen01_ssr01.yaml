@@ -80,7 +80,7 @@
       entity_id: switch.l2kitchen01_ssr_01
       # entity_id: switch.l2_kitchen01_ssr_01
     # - service: script.persis_notif_create
-    #   data_template:
+    #   data:
     #     msg_title: "Used paper collection info"
     #     msg_text: "Used paper collection is due the day *after tomorrow*"
     #     msg_receiver: "notify"

@@ -19,15 +19,15 @@
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - delay: 00:00:02
+    # - delay: 00:00:02
     # --------------------- NOTIFY ---------------------
-    # - service: script.tg_send_txt
-    #   data_template:
-    #     msg_title: "Home Assistant"
-    #     msg_text: "Shut down"
-    #     msg_receiver: "admin"
-    #     msg_text_prefix: ""
-    #     msg_text_suffix: ""
+    - service: script.tg_send_txt
+      data:
+        msg_title: "Home Assistant"
+        msg_text: "Shut down"
+        msg_receiver: "admin"
+        msg_text_prefix: ""
+        msg_text_suffix: ""
 # ############################################################
 #  END OF FILE
 # ############################################################
