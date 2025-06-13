@@ -24,7 +24,7 @@
   action:
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_txt
-      data_template:
+      data:
         msg_title: "Zigbee (unavailable devices)"
         msg_text: "The following Zigbee devices are unavailable:
           {{ state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') }}"
