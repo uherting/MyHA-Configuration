@@ -1,0 +1,30 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_multi_click action of TB A4 (short click)
+- id: tb_07_click_short
+  mode: restart
+  then:
+    - if:
+        # execution only: the light bar is off
+        condition:
+          # execute this script only if we are offline
+          # lambda: 'return (!id(isDeviceConnected);'
+
+          # execute only if the lightbar is on
+          # lambda: 'return (!id(isLightBarOn));'
+
+          # execute this script anyway (TM) for debugging purposes
+          lambda: "return (true);"
+        then:
+          - logger.log: "ESPHome: within script tb_07_click_short action."
+
+          - homeassistant.action:
+              action: script.switch_toggle_by_esphome
+              data:
+                switch_id: 'switch.zb_plug_l2_kitchen_coffeemachine'
+
+####################################################################
+# EOF
+####################################################################
