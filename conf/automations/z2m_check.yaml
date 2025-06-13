@@ -1,6 +1,6 @@
 # ############################################################
 #
-#  Take care that the ZB plug L2 kitchen dish washer
+#  Take care that the ZB plug L2 kitchen fridge
 #
 # ############################################################
 
@@ -18,17 +18,18 @@
       entity_id: switch.zb_plug_l2_kitchen_fridge
       to: "unavailable"
       for:
-        minutes: 30
+        minutes: 10
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- CREATE NOTIFICATION -------------------
-    - service: persistent_notification.create
+    - service: script.tg_send_txt
       data:
-        title: "The Z2M addon needs to be restarted"
-        message: "The Z2M addon needs to be restarted. Time: {{ now() }}"
+        msg_title: "The Z2M addon needs to be restarted"
+        msg_text: "The Z2M addon needs to be restarted"
+        msg_receiver: "admin"
 ############################################################
 #  END OF FILE
 # ############################################################
