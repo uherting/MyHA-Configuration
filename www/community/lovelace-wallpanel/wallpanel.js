@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.49.0";
+const version = "4.50.1";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_views: [],
@@ -43,6 +43,7 @@ const defaultConfig = {
 	image_url: "https://picsum.photos/${width}/${height}?random=${timestamp}",
 	image_url_entity: "",
 	media_entity_load_unchanged: true,
+	iframe_load_unchanged: false,
 	immich_api_key: "",
 	immich_album_names: [],
 	immich_shared_albums: true,
@@ -52,7 +53,8 @@ const defaultConfig = {
 	immich_resolution: "preview",
 	image_fit_landscape: "cover", // cover / contain
 	image_fit_portrait: "contain", // cover / contain
-	image_list_update_interval: 3600,
+	media_list_update_interval: 3600,
+	media_list_max_size: 500,
 	image_order: "sorted", // sorted / random
 	exclude_filenames: [], // Excluded filenames (regex)
 	exclude_media_types: [], // Exclude media types (image / video)
@@ -122,7 +124,7 @@ const classStyles = {
 		"font-size": "2em",
 		background: "#00000055",
 		"backdrop-filter": "blur(2px)",
-		"border-radius": "0.1em"
+		"border-radius": "0.5rem"
 	},
 	"wallpanel-progress": {
 		position: "absolute",
@@ -133,14 +135,56 @@ const classStyles = {
 	"wallpanel-progress-inner": {
 		height: "100%",
 		"background-color": "white"
+	},
+	"wallpanel-message": {
+		width: "30em",
+		"max-width": "100%",
+		"box-sizing": "border-box",
+		padding: "1em",
+		"border-radius": "0.5rem",
+		border: "1px solid black",
+		"box-shadow": "0 4px 12px rgba(0, 0, 0, 0.3)",
+		"font-size": "1.5em",
+		color: "white",
+		cursor: "pointer",
+		opacity: "0",
+		transform: "translateX(100%)",
+		transition: "all 0.4s ease"
+	},
+	"wallpanel-message.show": {
+		opacity: 1,
+		transform: "translateX(0)"
+	},
+	"wallpanel-message.error": {
+		"background-color": "#f8d7da",
+		color: "#721c24",
+		"border-color": "#721c24"
+	},
+	"wallpanel-message.warning": {
+		"background-color": "#fff3cd",
+		color: "#856404",
+		"border-color": "#856404"
+	},
+	"wallpanel-message.info": {
+		"background-color": "#d1ecf1",
+		color: "#0c5460",
+		"border-color": "#0c5460"
+	},
+	"wallpanel-message.success": {
+		"background-color": "#d4edda",
+		color: "#155724",
+		"border-color": "#155724"
+	},
+	"wallpanel-message-title": {
+		"font-weight": "bold",
+		"margin-bottom": "0.25rem"
 	}
 };
 
-const mediaInfoCacheMaxSize = 500;
 const mediaInfoCache = new Map();
 
 function addToMediaInfoCache(mediaUrl, value) {
-	while (mediaInfoCache.size >= mediaInfoCacheMaxSize) {
+	while (mediaInfoCache.size >= config.media_list_max_size) {
 		// Remove the oldest key (first inserted)
 		const oldestKey = mediaInfoCache.keys().next().value;
 		mediaInfoCache.delete(oldestKey);
@@ -480,6 +524,7 @@ function mergeConfig(target, ...sources) {
 		image_excludes: "exclude_filenames",
 		image_fit: "image_fit_landscape",
 		enabled_on_tabs: "enabled_on_views",
+		image_list_update_interval: "media_list_update_interval",
 		screensaver_stop_navigation_path: "screensaver_start_navigation_path"
 	};
 
@@ -608,9 +653,9 @@ function updateConfig() {
 		if (mediaSourceType() == "media-source") {
 			config.image_url = config.image_url.replace(/\/+$/, "");
 		}
-		if (mediaSourceType() == "unsplash-api" && config.image_list_update_interval < 90) {
+		if (mediaSourceType() == "unsplash-api" && config.media_list_update_interval < 90) {
 			// Unsplash API currently places a limit of 50 requests per hour
-			config.image_list_update_interval = 90;
+			config.media_list_update_interval = 90;
 		}
 	} else {
 		config.show_images = false;
@@ -885,7 +930,6 @@ function initWallpanel() {
 			this.updatingMediaList = false;
 			this.updatingMedia = false;
 			this.lastMediaUpdate = 0;
-			this.messageBoxTimeout = null;
 			this.blockEventsUntil = 0;
 			this.screensaverStartedAt;
 			this.screensaverStoppedAt = new Date();
@@ -1054,22 +1098,19 @@ function initWallpanel() {
 		}
 
 		setDefaultStyle() {
-			this.messageBox.removeAttribute("style");
-			this.messageBox.style.position = "fixed";
-			this.messageBox.style.pointerEvents = "none";
-			this.messageBox.style.top = 0;
-			this.messageBox.style.left = 0;
-			this.messageBox.style.width = "100%";
-			this.messageBox.style.height = "10%";
-			this.messageBox.style.zIndex = this.style.zIndex + 1;
-			if (!this.screensaverRunning()) {
-				this.messageBox.style.visibility = "hidden";
-			}
-			//this.messageBox.style.margin = '5vh auto auto auto';
-			this.messageBox.style.padding = "5vh 0 0 0";
-			this.messageBox.style.fontSize = "5vh";
-			this.messageBox.style.textAlign = "center";
-			this.messageBox.style.transition = "visibility 200ms ease-in-out";
+			this.messageContainer.removeAttribute("style");
+			this.messageContainer.style.position = "fixed";
+			this.messageContainer.style.top = "1rem";
+			this.messageContainer.style.left = "1rem";
+			this.messageContainer.style.bottom = "1rem";
+			this.messageContainer.style.right = "1rem";
+			this.messageContainer.style.alignItems = "flex-end";
+			this.messageContainer.style.display = "flex";
+			this.messageContainer.style.flexDirection = "column";
+			this.messageContainer.style.gap = "0.5rem";
+			this.messageContainer.style.zIndex = this.style.zIndex + 1;
+			this.messageContainer.style.pointerEvents = "none";
+			this.messageContainer.style.visibility = "hidden";
 
 			this.debugBox.removeAttribute("style");
 			this.debugBox.style.position = "fixed";
@@ -1081,13 +1122,11 @@ function initWallpanel() {
 			this.debugBox.style.background = "#00000099";
 			this.debugBox.style.color = "#ffffff";
 			this.debugBox.style.zIndex = this.style.zIndex + 2;
-			if (!this.screensaverRunning()) {
-				this.debugBox.style.visibility = "hidden";
-			}
 			this.debugBox.style.fontFamily = "monospace";
 			this.debugBox.style.fontSize = "12px";
 			this.debugBox.style.overflowWrap = "break-word";
 			this.debugBox.style.overflowY = "auto";
+			this.debugBox.style.visibility = "hidden";
 
 			this.screensaverContainer.removeAttribute("style");
 			this.screensaverContainer.style.position = "fixed";
@@ -1098,10 +1137,8 @@ function initWallpanel() {
 			this.screensaverContainer.style.height = "100vh";
 			this.screensaverContainer.style.background = "#000000";
 
-			if (!this.screensaverRunning()) {
-				this.imageOneContainer.removeAttribute("style");
-				this.imageOneContainer.style.opacity = 1;
-			}
+			this.imageOneContainer.removeAttribute("style");
+			this.imageOneContainer.style.opacity = 1;
 			this.imageOneContainer.style.position = "absolute";
 			this.imageOneContainer.style.pointerEvents = "none";
 			this.imageOneContainer.style.top = 0;
@@ -1118,9 +1155,7 @@ function initWallpanel() {
 			this.imageOneBackground.style.height = "100%";
 			this.imageOneBackground.style.border = "none";
 
-			if (!this.screensaverRunning()) {
-				this.imageOne.removeAttribute("style");
-			}
+			this.imageOne.removeAttribute("style");
 			this.imageOne.style.position = "relative";
 			this.imageOne.style.pointerEvents = "none";
 			this.imageOne.style.width = "100%";
@@ -1138,10 +1173,8 @@ function initWallpanel() {
 
 			this.imageOneInfo.style.overflowY = "auto";
 
-			if (!this.screensaverRunning()) {
-				this.imageTwoContainer.removeAttribute("style");
-				this.imageTwoContainer.style.opacity = 0;
-			}
+			this.imageTwoContainer.removeAttribute("style");
+			this.imageTwoContainer.style.opacity = 0;
 			this.imageTwoContainer.style.position = "absolute";
 			this.imageTwoContainer.style.pointerEvents = "none";
 			this.imageTwoContainer.style.top = 0;
@@ -1158,9 +1191,7 @@ function initWallpanel() {
 			this.imageTwoBackground.style.height = "100%";
 			this.imageTwoBackground.style.border = "none";
 
-			if (!this.screensaverRunning()) {
-				this.imageTwo.removeAttribute("style");
-			}
+			this.imageTwo.removeAttribute("style");
 			this.imageTwo.style.position = "relative";
 			this.imageTwo.style.pointerEvents = "none";
 			this.imageTwo.style.width = "100%";
@@ -1180,9 +1211,6 @@ function initWallpanel() {
 
 			this.screensaverImageOverlay.removeAttribute("style");
 			this.screensaverImageOverlay.style.position = "absolute";
-			if (config.card_interaction) {
-				this.screensaverImageOverlay.style.pointerEvents = "none";
-			}
 			this.screensaverImageOverlay.style.top = 0;
 			this.screensaverImageOverlay.style.left = 0;
 			this.screensaverImageOverlay.style.width = "100%";
@@ -1250,10 +1278,15 @@ function initWallpanel() {
 		updateStyle() {
 			this.screensaverOverlay.style.background = "#00000000";
 			this.debugBox.style.visibility = config.debug ? "visible" : "hidden";
+			this.debugBox.style.pointerEvents = config.debug ? "auto" : "none";
 			//this.screensaverContainer.style.transition = `opacity ${Math.round(config.fade_in_time*1000)}ms ease-in-out`;
 			this.style.transition = `opacity ${Math.round(config.fade_in_time * 1000)}ms ease-in-out`;
 			this.imageOneContainer.style.transition = `opacity ${Math.round(config.crossfade_time * 1000)}ms ease-in-out`;
 			this.imageTwoContainer.style.transition = `opacity ${Math.round(config.crossfade_time * 1000)}ms ease-in-out`;
+			this.messageContainer.style.visibility = this.screensaverRunning() ? "visible" : "hidden";
+			if (config.card_interaction) {
+				this.screensaverImageOverlay.style.pointerEvents = "none";
+			}
 
 			if (config.info_animation_duration_x) {
 				this.infoBoxPosX.style.animation = `moveX ${config.info_animation_duration_x}s ${config.info_animation_timing_function_x} infinite alternate`;
@@ -1696,16 +1729,6 @@ function initWallpanel() {
 			return this.imageOne;
 		}
 
-		handleMediaError(element, error) {
-			// Example: "TypeError: Failed to fetch"
-			// This is most likely due to a network error.
-			// The network error can be caused by power-saving settings on mobile devices.
-			// Make sure the "Keep WiFi on during sleep" option is enabled.
-			// Set your WiFi connection to "not metered".
-			logger.error(`Failed to load media: ${element.mediaUrl}:`, error);
-			this.displayMessage(`Failed to load media: ${element.mediaUrl}: ${error}`, 5000);
-		}
-
 		loadBackgroundImage(element) {
 			let srcMediaUrl = element.src;
 			if (element.tagName.toLowerCase() === "video") {
@@ -1736,8 +1759,8 @@ function initWallpanel() {
 			this.style.opacity = 0;
 			this.style.position = "fixed";
 
-			this.messageBox = document.createElement("div");
-			this.messageBox.id = "wallpanel-message-box";
+			this.messageContainer = document.createElement("div");
+			this.messageContainer.id = "wallpanel-message-container";
 
 			this.debugBox = document.createElement("div");
 			this.debugBox.id = "wallpanel-debug-box";
@@ -1855,7 +1878,7 @@ function initWallpanel() {
 			const shadow = this.attachShadow({ mode: "open" });
 			shadow.appendChild(this.shadowStyle);
 			shadow.appendChild(this.screensaverContainer);
-			shadow.appendChild(this.messageBox);
+			shadow.appendChild(this.messageContainer);
 			shadow.appendChild(this.debugBox);
 
 			const wp = this;
@@ -2196,12 +2219,7 @@ function initWallpanel() {
 			if (!config.image_url) return;
 
 			if (!force) {
-				if (new Date().getTime() - this.lastMediaListUpdate < config.image_list_update_interval * 1000) {
-					/*
-					if (callback) {
-						callback();
-					}
-					*/
+				if (new Date().getTime() - this.lastMediaListUpdate < config.media_list_update_interval * 1000) {
 					return;
 				}
 			}
@@ -2232,23 +2250,23 @@ function initWallpanel() {
 			this.lastMediaListUpdate = Date.now();
 			try {
 				await updateFunction.bind(wp)();
-				logger.debug(`Image list from ${sourceType} is now:`, wp.mediaList);
+				logger.debug(`Media list from ${sourceType} is now:`, wp.mediaList);
 				if (callback) {
 					callback();
 				}
 			} catch (error) {
 				const maxRetries = 3;
 				const retryDelay = 3000; // 3 seconds
-				logger.warn(`Failed to update image list from ${sourceType}:`, error);
+				logger.warn(`Failed to update media list from ${sourceType}:`, error);
 				if (retryCount < maxRetries) {
 					logger.warn(
-						`Retrying image list update in ${retryDelay / 1000} seconds (attempt ${retryCount + 1}/${maxRetries})...`
+						`Retrying media list update in ${retryDelay / 1000} seconds (attempt ${retryCount + 1}/${maxRetries})...`
 					);
 					setTimeout(() => wp.updateMediaList(callback, true, retryCount + 1), retryDelay);
 				} else {
-					const errorMsg = `Failed to update image list from ${config.image_url} after ${maxRetries} retries: ${error.message || stringify(error)}`;
+					const errorMsg = `Failed to update media list from ${config.image_url} after ${maxRetries} retries: ${error.message || stringify(error)}`;
 					logger.error(errorMsg);
-					wp.displayMessage(errorMsg, 10000);
+					wp.showMessage("error", "Error", errorMsg, 10000);
 				}
 			}
 			this.updatingMediaList = false;
@@ -2271,7 +2289,11 @@ function initWallpanel() {
 				});
 
 				logger.debug("Found media entry", mediaEntry);
+				let count;
 				const promises = mediaEntry.children.map(async (child) => {
+					if (count > config.media_list_max_size) {
+						return null;
+					}
 					const filename = child.media_content_id.replace(/^media-source:\/\/[^/]+/, "");
 					for (const exclude of excludeRegExp) {
 						if (exclude.test(filename)) {
@@ -2282,6 +2304,7 @@ function initWallpanel() {
 						if (config.exclude_media_types && config.exclude_media_types.includes(child.media_class)) {
 							return null; // Excluded by media type
 						}
+						count += 1;
 						return child.media_content_id;
 					}
 					if (child.media_class == "directory") {
@@ -2293,7 +2316,10 @@ function initWallpanel() {
 
 				const results = await Promise.all(promises);
 				// Flatten the results and filter out null values
-				return results.flat().filter((res) => res !== null);
+				return results
+					.flat()
+					.filter((res) => res !== null)
+					.splice(0, config.media_list_max_size);
 			} catch (error) {
 				logger.warn(`Error browsing media ${mediaContentId}:`, error);
 				throw error; // Re-throw the error to be caught by the caller
@@ -2413,6 +2439,10 @@ function initWallpanel() {
 			}
 
 			function processAssets(assets, folderName = null) {
+				if (assets.length > config.media_list_max_size) {
+					logger.info(`Using only ${config.media_list_max_size} of ${assets.length} media assets`);
+					assets = assets.slice(0, config.media_list_max_size);
+				}
 				assets.forEach((asset) => {
 					logger.debug(asset);
 					const assetType = asset.type.toLowerCase();
@@ -2508,7 +2538,7 @@ function initWallpanel() {
 							logger.debug("Searching asset metadata for persons: ", personIds);
 							const searchResults = await wp._immichFetch(`${apiUrl}/search/metadata`, {
 								method: "POST",
-								body: JSON.stringify({ personIds: personIds, withExif: true, size: 1000 })
+								body: JSON.stringify({ personIds: personIds, withExif: true, size: config.media_list_max_size })
 							});
 							logger.debug(`Got immich API response`, searchResults);
 							if (!searchResults.assets.count) {
@@ -2550,7 +2580,7 @@ function initWallpanel() {
 						logger.debug("Searching asset metadata for tags: ", tagIds);
 						const searchResults = await wp._immichFetch(`${apiUrl}/search/metadata`, {
 							method: "POST",
-							body: JSON.stringify({ tagIds: tagIds, withExif: true, size: 1000 })
+							body: JSON.stringify({ tagIds: tagIds, withExif: true, size: config.media_list_max_size })
 						});
 						logger.debug("Got immich API response", searchResults);
 						processAssets(searchResults.assets.items);
@@ -2611,8 +2641,7 @@ function initWallpanel() {
 			const loadMediaWithElement = async (elem) => {
 				const loadEventName = { img: "load", video: "loadeddata", iframe: "load" }[elem.tagName.toLowerCase()];
 				if (!loadEventName) {
-					logger.error(`Unsupported element tag "${elem.tagName}"`);
-					return;
+					throw new Error(`Unsupported element tag "${elem.tagName}"`);
 				}
 				const promise = new Promise((resolve, reject) => {
 					const cleanup = () => {
@@ -2639,8 +2668,7 @@ function initWallpanel() {
 					const response = await fetch(url, { headers: headers });
 					logger.debug("Got respone", response);
 					if (!response.ok) {
-						logger.error(`Failed to load ${elem.tagName} "${url}"`, response);
-						return;
+						throw new Error(`Failed to load ${elem.tagName} "${url}": ${response}`);
 					}
 					// The object URL created by URL.createObjectURL() must be released
 					// using URL.revokeObjectURL() to free the associated memory again.
@@ -2695,29 +2723,31 @@ function initWallpanel() {
 				replaceElementWith(currentElem, fallbackElem);
 				try {
 					await loadMediaWithElement(fallbackElem);
+					return fallbackElem;
 				} catch (e) {
-					this.handleMediaError(currentElem, originalError || e);
+					throw originalError || e;
 				}
 			};
 
 			const loadOrFallback = async (currentElem, withFallback) => {
 				try {
 					await loadMediaWithElement(currentElem);
+					return currentElem;
 				} catch (e) {
 					if (withFallback) {
-						await handleFallback(currentElem, null, e);
+						return await handleFallback(currentElem, null, e);
 					} else {
-						this.handleMediaError(currentElem, e);
+						throw e;
 					}
 				}
 			};
 
 			if (!mediaType) {
-				await loadOrFallback(element, true);
+				return await loadOrFallback(element, true);
 			} else if (mediaType === element.tagName.toLowerCase()) {
-				await loadOrFallback(element, false);
+				return await loadOrFallback(element, false);
 			} else {
-				await handleFallback(element, mediaType);
+				return await handleFallback(element, mediaType);
 			}
 		}
 
@@ -2735,30 +2765,32 @@ function initWallpanel() {
 		}
 
 		async updateMediaFromMediaSource(element) {
-			try {
-				const result = await this.hass.callWS({
-					type: "media_source/resolve_media",
-					media_content_id: element.mediaUrl
-				});
-				const matchedType = result.mime_type?.match(/^(image|video)\//);
-				const mediaType = { image: "img", video: "video" }[matchedType?.[1]] || null;
+			const result = await this.hass.callWS({
+				type: "media_source/resolve_media",
+				media_content_id: element.mediaUrl
+			});
+			const matchedType = result.mime_type?.match(/^(image|video)\//);
+			const mediaType = { image: "img", video: "video" }[matchedType?.[1]] || null;
 
-				let src = result.url;
-				if (!src.startsWith("http://") && !src.startsWith("https://")) {
-					src = `${document.location.origin}${src}`;
-				}
-				logger.debug(`Setting image src: ${src}`);
-				element.mediaUrl = src;
-				await this.updateMediaFromUrl(element, element.mediaUrl, mediaType);
-			} catch (error) {
-				logger.error(`media_source/resolve_media error for ${element.mediaUrl}:`, error);
+			let src = result.url;
+			if (!src.startsWith("http://") && !src.startsWith("https://")) {
+				src = `${document.location.origin}${src}`;
 			}
+			logger.debug(`Setting image src: ${src}`);
+			element.mediaUrl = src;
+			return await this.updateMediaFromUrl(element, element.mediaUrl, mediaType);
 		}
 
 		async updateMediaFromImmichAPI(element) {
 			const mediaInfo = mediaInfoCache.get(element.mediaUrl) || {};
 			const mediaType = mediaInfo["mediaType"] == "video" ? "video" : "img";
-			await this.updateMediaFromUrl(element, element.mediaUrl, mediaType, { "x-api-key": config.immich_api_key }, true);
+			return await this.updateMediaFromUrl(
+				element,
+				element.mediaUrl,
+				mediaType,
+				{ "x-api-key": config.immich_api_key },
+				true
+			);
 		}
 
 		async updateMediaFromMediaEntity(element) {
@@ -2781,7 +2813,7 @@ function initWallpanel() {
 				addToMediaInfoCache(element.infoCacheUrl, entity.attributes);
 			}
 			mediaEntityState = entity.state;
-			await this.updateMediaFromUrl(element, element.mediaUrl, "img", null, true);
+			return await this.updateMediaFromUrl(element, element.mediaUrl, "img", null, true);
 		}
 
 		async updateMediaFromUnsplashAPI(element) {
@@ -2790,92 +2822,99 @@ function initWallpanel() {
 			if (mediaInfo) {
 				addToMediaInfoCache(element.mediaUrl, mediaInfo);
 			}
-			await this.updateMediaFromUrl(element, element.mediaUrl, "img");
+			return await this.updateMediaFromUrl(element, element.mediaUrl, "img");
 		}
 
 		async updateMediaFromMediaIframe(element) {
-			await this.updateMediaFromUrl(element, element.mediaUrl, "iframe");
+			return await this.updateMediaFromUrl(element, element.mediaUrl, "iframe");
 		}
 
 		async updateMediaFromOtherSrc(element) {
 			element.mediaUrl = this.fillPlaceholders(element.mediaUrl);
-			await this.updateMediaFromUrl(element, element.mediaUrl);
+			return await this.updateMediaFromUrl(element, element.mediaUrl);
 		}
 
 		async updateMedia(element) {
 			if (!config.show_images) {
 				return;
 			}
-
-			const elementType = element == this.getActiveMediaElement() ? "active" : "inactive";
-			if (elementType == "active") {
-				const inactiveElement = this.getInactiveMediaElement();
-				if (inactiveElement.tagName.toLowerCase() === "video") {
-					try {
-						inactiveElement.pause();
-					} catch (e) {
-						logger.debug(e);
+			this.updatingMedia = true;
+			try {
+				if (element == this.getActiveMediaElement()) {
+					const inactiveElement = this.getInactiveMediaElement();
+					if (inactiveElement.tagName.toLowerCase() === "video") {
+						try {
+							inactiveElement.pause();
+						} catch (e) {
+							logger.debug(e);
+						}
 					}
 				}
-			}
-			this.updatingMedia = true;
-			this.updateMediaIndex();
-			element.mediaUrl = this.mediaList[this.mediaIndex];
-			if (!element.mediaUrl) {
-				return;
-			}
-			element.infoCacheUrl = element.mediaUrl;
 
-			try {
+				this.updateMediaIndex();
+				element.mediaUrl = this.mediaList[this.mediaIndex];
+				if (!element.mediaUrl) {
+					return;
+				}
+				element.infoCacheUrl = element.mediaUrl;
+
 				if (mediaSourceType() == "media-source") {
-					await this.updateMediaFromMediaSource(element);
+					element = await this.updateMediaFromMediaSource(element);
 				} else if (mediaSourceType() == "unsplash-api") {
-					await this.updateMediaFromUnsplashAPI(element);
+					element = await this.updateMediaFromUnsplashAPI(element);
 				} else if (mediaSourceType() == "immich-api") {
-					await this.updateMediaFromImmichAPI(element);
+					element = await this.updateMediaFromImmichAPI(element);
 				} else if (mediaSourceType() == "media-entity") {
-					await this.updateMediaFromMediaEntity(element);
+					element = await this.updateMediaFromMediaEntity(element);
 				} else if (mediaSourceType() == "iframe") {
-					await this.updateMediaFromMediaIframe(element);
+					element = await this.updateMediaFromMediaIframe(element);
 				} else {
-					await this.updateMediaFromOtherSrc(element);
+					element = await this.updateMediaFromOtherSrc(element);
 				}
 
-				element = elementType == "active" ? this.getActiveMediaElement() : this.getInactiveMediaElement();
-				const isVideo = element.tagName.toLowerCase() === "video";
+				if (element) {
+					const isVideo = element.tagName.toLowerCase() === "video";
 
-				if (isVideo) {
-					await new Promise((resolve, reject) => {
-						if (element.readyState >= element.HAVE_ENOUGH_DATA) {
-							resolve();
-						} else {
-							const onCanPlay = () => {
-								element.removeEventListener("canplay", onCanPlay);
+					if (isVideo) {
+						await new Promise((resolve, reject) => {
+							if (element.readyState >= element.HAVE_ENOUGH_DATA) {
 								resolve();
-							};
-							const onError = () => {
-								element.removeEventListener("error", onError);
-								reject(new Error("Video failed to load"));
-							};
-							element.addEventListener("canplay", onCanPlay);
-							element.addEventListener("error", onError);
-						}
-					});
-				}
-				if (config.image_background === "image") {
-					this.loadBackgroundImage(element);
-				}
+							} else {
+								const onCanPlay = () => {
+									element.removeEventListener("canplay", onCanPlay);
+									resolve();
+								};
+								const onError = () => {
+									element.removeEventListener("error", onError);
+									reject(new Error("Video failed to load"));
+								};
+								element.addEventListener("canplay", onCanPlay);
+								element.addEventListener("error", onError);
+							}
+						});
+					}
+					if (config.image_background === "image") {
+						this.loadBackgroundImage(element);
+					}
 
-				if (
-					!isVideo &&
-					config.show_image_info &&
-					/.*\.jpe?g$/i.test(element.mediaUrl.split("?")[0].replace(/\/*$/, ""))
-				) {
-					this.fetchEXIFInfo(element);
+					if (
+						!isVideo &&
+						config.show_image_info &&
+						/.*\.jpe?g$/i.test(element.mediaUrl.split("?")[0].replace(/\/*$/, ""))
+					) {
+						this.fetchEXIFInfo(element);
+					}
 				}
-			} finally {
-				this.updatingMedia = false;
+			} catch (error) {
+				// Example: "TypeError: Failed to fetch"
+				// This is most likely due to a network error.
+				// The network error can be caused by power-saving settings on mobile devices.
+				// Make sure the "Keep WiFi on during sleep" option is enabled.
+				// Set your WiFi connection to "not metered".
+				logger.error(`Failed to update media from ${element.mediaUrl}:`, error);
+				this.showMessage("error", "Error", `Failed to update media from ${element.mediaUrl}: ${error}`, 5000);
 			}
+			this.updatingMedia = false;
 			return element;
 		}
 
@@ -2885,13 +2924,14 @@ function initWallpanel() {
 			if (!activeElem.mediaUrl) {
 				return;
 			}
-			// Determine if the new media is landscape or portrait, and set the appropriate image_fit
+			// Determine if the new media is landscape or portrait, and set the appropriate sizes
+			const tagName = activeElem.tagName.toLowerCase();
 			let width = 0;
 			let height = 0;
-			if (activeElem.tagName.toLowerCase() === "video") {
+			if (tagName === "video") {
 				width = activeElem.videoWidth;
 				height = activeElem.videoHeight;
-			} else {
+			} else if (tagName === "img") {
 				width = activeElem.naturalWidth;
 				height = activeElem.naturalHeight;
 			}
@@ -2930,7 +2970,7 @@ function initWallpanel() {
 					setLeft = Math.floor((setWidth - availWidth) / -2);
 					hiddenWidth = Math.max(setWidth - availWidth, 0);
 				}
-			} else {
+			} else if (tagName !== "iframe") {
 				logger.warn("Size not available for media element", activeElem);
 			}
 			logger.debug(
@@ -2950,18 +2990,17 @@ function initWallpanel() {
 				return; // Not playable element.
 			}
 
-			let playbackListeners;
 			const cleanupListeners = () => {
-				if (playbackListeners) {
-					Object.entries(playbackListeners).forEach(([event, handler]) => {
+				if (activeElem._wp_video_playback_listeners) {
+					Object.entries(activeElem._wp_video_playback_listeners).forEach(([event, handler]) => {
 						activeElem.removeEventListener(event, handler);
 					});
-					playbackListeners == null;
+					activeElem._wp_video_playback_listeners = null;
 				}
 			};
 
 			activeElem.loop = config.video_loop;
-			if (!config.video_loop) {
+			if (!config.video_loop && !activeElem._wp_video_playback_listeners) {
 				// Immediately switch to next image at the end of the playback.
 				const onTimeUpdate = () => {
 					if (this.getActiveMediaElement() !== activeElem) {
@@ -2987,12 +3026,12 @@ function initWallpanel() {
 					cleanupListeners();
 				};
 
-				playbackListeners = {
+				activeElem._wp_video_playback_listeners = {
 					timeupdate: onTimeUpdate,
 					ended: onMediaEnded,
 					pause: onMediaPause
 				};
-				Object.entries(playbackListeners).forEach(([event, handler]) => {
+				Object.entries(activeElem._wp_video_playback_listeners).forEach(([event, handler]) => {
 					activeElem.addEventListener(event, handler);
 				});
 			}
@@ -3035,16 +3074,22 @@ function initWallpanel() {
 			}
 
 			this.lastMediaUpdate = Date.now();
-
 			let crossfadeMillis = eventType == "user_action" ? 250 : null;
-
-			let newElement = this.getActiveMediaElement();
+			const activeElement = this.getActiveMediaElement();
+			const currentMediaUrl = activeElement.mediaUrl;
+			let newElement = activeElement;
 			if (newElement.src) {
 				newElement = this.getInactiveMediaElement();
 			} else {
 				crossfadeMillis = 0;
 			}
 			const element = await this.updateMedia(newElement);
+			if (
+				!element ||
+				(sourceType === "iframe" && element.mediaUrl == currentMediaUrl && !config.iframe_load_unchanged)
+			) {
+				return;
+			}
 			this._switchActiveMedia(element, crossfadeMillis);
 		}
 
@@ -3095,24 +3140,45 @@ function initWallpanel() {
 			}
 		}
 
-		displayMessage(message, timeout = 15000) {
-			this.hideMessage();
-			this.messageBox.innerHTML = message;
-			this.messageBox.style.visibility = "visible";
-			const wp = this;
-			this.messageBoxTimeout = setTimeout(function () {
-				wp.hideMessage();
-			}, timeout);
-		}
-
-		hideMessage() {
-			if (!this.messageBoxTimeout) {
+		showMessage(type, title, text, timeout = 5000) {
+			// type: info / success / warning / error
+			if (!this.messageContainer) {
 				return;
 			}
-			clearTimeout(this.messageBoxTimeout);
-			this.messageBoxTimeout = null;
-			this.messageBox.style.visibility = "hidden";
-			this.messageBox.innerHTML = "";
+
+			const message = document.createElement("div");
+			message.className = `wallpanel-message ${type}`;
+
+			const titleDiv = document.createElement("div");
+			titleDiv.className = "wallpanel-message-title";
+			titleDiv.innerHTML = title;
+			message.appendChild(titleDiv);
+
+			const textDiv = document.createElement("div");
+			textDiv.className = "wallpanel-message-text";
+			textDiv.innerHTML = text;
+			message.appendChild(textDiv);
+
+			this.messageContainer.appendChild(message);
+			requestAnimationFrame(() => message.classList.add("show"));
+
+			const wp = this;
+			setTimeout(() => wp.hideMessage(message), timeout);
+		}
+
+		hideMessage(message) {
+			message.classList.remove("show");
+			message.addEventListener("transitionend", () => message.remove());
+		}
+
+		hideAllMessages() {
+			const messages = this.messageContainer.querySelectorAll(".wallpanel-message");
+			if (!messages.length) {
+				return false;
+			}
+			const wp = this;
+			messages.forEach((message) => wp.hideMessage(message));
+			return true;
 		}
 
 		setupScreensaver() {
@@ -3133,6 +3199,9 @@ function initWallpanel() {
 				return;
 			}
 
+			this.screensaverStartedAt = Date.now();
+			this.screensaverStoppedAt = null;
+
 			this.updateStyle();
 			this.setupScreensaver();
 			this.setMediaDataInfo();
@@ -3149,24 +3218,24 @@ function initWallpanel() {
 						logger.error(
 							"Keep screen on will not work because the user didn't interact with the document first. https://goo.gl/xX8pDD"
 						);
-						wp.displayMessage("Please interact with the screen for a moment to request wake lock.", 15000);
+						wp.showMessage(
+							"info",
+							"Keep screen on",
+							"Please tap the screen for a moment to keep it awake and prevent it from turning off.",
+							15000
+						);
 					}
 				}, 2000);
 			}
 
 			this.lastMove = Date.now();
 			this.lastMediaUpdate = Date.now();
-			this.screensaverStartedAt = Date.now();
-			this.screensaverStoppedAt = null;
 			document.documentElement.style.overflow = "hidden";
 
 			this.createInfoBoxContent();
 
 			this.style.visibility = "visible";
 			this.style.opacity = 1;
-			if (config.debug) {
-				this.debugBox.style.pointerEvents = "auto";
-			}
 			this.style.pointerEvents = "auto";
 
 			this.setScreensaverEntityState();
@@ -3208,7 +3277,7 @@ function initWallpanel() {
 			if (this.screensaverStopNavigationPathTimeout) {
 				clearTimeout(this.screensaverStopNavigationPathTimeout);
 			}
-			this.hideMessage();
+			this.hideAllMessages();
 
 			this.debugBox.style.pointerEvents = "none";
 			if (fadeOutTime > 0) {
@@ -3271,7 +3340,7 @@ function initWallpanel() {
 				if (now - this.lastMediaUpdate >= config.display_time * 1000) {
 					this.switchActiveMedia("display_time_elapsed");
 				}
-				if (now - this.lastMediaListUpdate >= config.image_list_update_interval * 1000) {
+				if (now - this.lastMediaListUpdate >= config.media_list_update_interval * 1000) {
 					this.updateMediaList(null, true);
 				}
 				if (this.imageOneContainer.style.visibility != "visible") {
@@ -3310,10 +3379,11 @@ function initWallpanel() {
 					const p = this.screenWakeLock._player;
 					html += `<b>Screen wake lock video</b>: readyState=${p.readyState} currentTime=${p.currentTime} paused=${p.paused} ended=${p.ended}<br/>`;
 				}
+				html += `<b>Media list size:</b> ${this.mediaList.length}<br/>`;
 				const activeElement = this.getActiveMediaElement();
 				if (activeElement) {
 					html += `<b>Current media:</b> ${activeElement.mediaUrl}<br/>`;
-					const mediaInfo = mediaInfoCache.get(activeElement.mediaUrl);
+					const mediaInfo = mediaInfoCache.get(activeElement.infoCacheUrl);
 					if (mediaInfo) {
 						html += `<b>Media info:</b> ${JSON.stringify(mediaInfo)}<br/>`;
 					}
@@ -3375,13 +3445,10 @@ function initWallpanel() {
 			}
 
 			// Screensaver is active
-			if (this.messageBoxTimeout) {
-				// Message on screen
-				if (isClick) {
-					this.blockEventsUntil = now + 1000;
-					this.hideMessage();
-					return;
-				}
+			if (isClick && this.hideAllMessages()) {
+				// One or messages where hidden
+				this.blockEventsUntil = now + 1000;
+				return;
 			}
 
 			let x = evt.clientX;
