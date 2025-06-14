@@ -13,20 +13,25 @@
     - name: "Unavailable Zigbee devices info"
       unique_id: "ff0fb012-8a84-452d-88d0-9c9a4a6a7e03"
       icon: mdi:counter
-      availability: "true"
+      # availability: "true"
       unit_of_measurement: "cm"
       state: 0
       attributes:
         unavailable_device_names: >-
           {% set result = namespace(sensors=[]) %}
           {% for state in states.sensor | rejectattr('attributes.device_class', 'undefined') | selectattr('attributes.device_class', '==', 'timestamp') %}
-              {% if 'last_seen' in state.entity_id and (states(state.entity_id) == 'unavailable' or ((as_timestamp(now()) - as_timestamp(states(state.entity_id))) > ((24 | int) * 60 * 60))) %}
+              {% if 
+                ('last_seen' in state.entity_id) and 
+                ( 
+                  (states(state.entity_id) == 'unavailable') or
+                  ((as_timestamp(now()) - as_timestamp(states(state.entity_id), 3749911504)) < 0)
+                ) %}
                   {% set result.sensors = result.sensors + ['- ' + state.name | regex_replace(find=' Last seen', replace='')] %}
               {% endif %}
           {% endfor %}
-          {{ result.sensors | join('\n') | truncate(254, True) }}
+          {{ result.sensors | join('\n') | truncate(127, True, '...') }}
         device_list_length: >-
-          {%- set hash_value=state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join(', ') | length -%}
+          {%- set hash_value=state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join('\n') | truncate(127, True, '...') | length %}
           {{ hash_value }}
 
 ####################################################################
