@@ -26,13 +26,17 @@
                   (states(state.entity_id) == 'unavailable') or
                   ((as_timestamp(now()) - as_timestamp(states(state.entity_id), 3749911504)) < 0)
                 ) %}
-                  {% set result.sensors = result.sensors + ['- ' + state.name | regex_replace(find=' Last seen', replace='')] %}
+                  {% set result.sensors = result.sensors + [state.name | regex_replace(find=' Last seen', replace='')] %}
               {% endif %}
           {% endfor %}
-          {{ result.sensors | join('\n') | truncate(127, True, '...') }}
+          {% set device_names = result.sensors | join(', ') | truncate(127, True, '...') %}
+          {{ device_names }}
         device_list_length: >-
-          {%- set hash_value=state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | join('\n') | truncate(127, True, '...') | length %}
-          {{ hash_value }}
+          {%- set str_length = '0' %}
+          {% if state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') %}
+            {%- set str_length = state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') | length %}
+          {% endif %}
+          {{ str_length  }}
 
 ####################################################################
 # EOF
