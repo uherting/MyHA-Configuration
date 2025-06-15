@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.50.1";
+const version = "4.51.0";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_views: [],
@@ -55,13 +55,13 @@ const defaultConfig = {
 	image_fit_portrait: "contain", // cover / contain
 	media_list_update_interval: 3600,
 	media_list_max_size: 500,
-	image_order: "sorted", // sorted / random
+	media_order: "random", // sorted / random
 	exclude_filenames: [], // Excluded filenames (regex)
 	exclude_media_types: [], // Exclude media types (image / video)
 	exclude_media_orientation: "", // Exclude media items with this orientation (landscape / portrait / auto)
 	image_background: "color", // color / image
 	video_loop: false,
-	video_volume: 0.001,
+	video_volume: 0.0,
 	touch_zone_size_next_image: 15,
 	touch_zone_size_previous_image: 15,
 	show_progress_bar: false,
@@ -90,7 +90,7 @@ const defaultConfig = {
 	custom_css: "",
 	style: {},
 	badges: [],
-	cards: [{ type: "weather-forecast", entity: "weather.home", show_forecast: true }],
+	cards: [],
 	views: [],
 	card_interaction: false,
 	profile: "",
@@ -291,7 +291,12 @@ const logger = {
 		}
 		logger.addMessage("error", arguments);
 		if (config.alert_errors) {
-			alert(`Wallpanel error: ${stringify(arguments)}`);
+			const msg = `Wallpanel error: ${stringify(arguments)}`;
+			if (wallpanel) {
+				wallpanel.showMessage("error", "Error", msg, 10000);
+			} else {
+				alert(msg);
+			}
 		}
 	}
 };
@@ -523,6 +528,7 @@ function mergeConfig(target, ...sources) {
 	const renamedOptions = {
 		image_excludes: "exclude_filenames",
 		image_fit: "image_fit_landscape",
+		image_order: "media_order",
 		enabled_on_tabs: "enabled_on_views",
 		image_list_update_interval: "media_list_update_interval",
 		screensaver_stop_navigation_path: "screensaver_start_navigation_path"
@@ -942,6 +948,8 @@ function initWallpanel() {
 			this.lastClickTime = 0;
 			this.clickCount = 0;
 			this.touchStartX = -1;
+			this.currentWidth = 0;
+			this.currentHeight = 0;
 			this.energyCollectionUpdateEnabled = false;
 			this.energyCollectionUpdateInterval = 60;
 			this.lastEnergyCollectionUpdate = 0;
@@ -1138,7 +1146,7 @@ function initWallpanel() {
 			this.screensaverContainer.style.background = "#000000";
 
 			this.imageOneContainer.removeAttribute("style");
-			this.imageOneContainer.style.opacity = 1;
+			this.imageOneContainer.style.opacity = 0;
 			this.imageOneContainer.style.position = "absolute";
 			this.imageOneContainer.style.pointerEvents = "none";
 			this.imageOneContainer.style.top = 0;
@@ -1899,7 +1907,12 @@ function initWallpanel() {
 				);
 			});
 			window.addEventListener("resize", () => {
-				if (wp.screensaverRunning()) {
+				const width = this.screensaverContainer.clientWidth;
+				const height = this.screensaverContainer.clientHeight;
+				if (wp.screensaverRunning() && (wp.currentWidth != width || wp.currentHeight != height)) {
+					logger.debug(`Size changed from ${wp.currentWidth}x${wp.currentHeight} to ${width}x${height}`);
+					wp.currentWidth = width;
+					wp.currentHeight = height;
 					wp.updateShadowStyle();
 					wp.setMediaDimensions();
 				}
@@ -1924,7 +1937,6 @@ function initWallpanel() {
 		reconfigure(oldConfig) {
 			const oldConfigAvailable = oldConfig && Object.keys(oldConfig).length > 0;
 
-			this.setDefaultStyle();
 			this.updateStyle();
 			if (this.screensaverRunning()) {
 				this.createInfoBoxContent();
@@ -2289,11 +2301,7 @@ function initWallpanel() {
 				});
 
 				logger.debug("Found media entry", mediaEntry);
-				let count;
 				const promises = mediaEntry.children.map(async (child) => {
-					if (count > config.media_list_max_size) {
-						return null;
-					}
 					const filename = child.media_content_id.replace(/^media-source:\/\/[^/]+/, "");
 					for (const exclude of excludeRegExp) {
 						if (exclude.test(filename)) {
@@ -2304,7 +2312,6 @@ function initWallpanel() {
 						if (config.exclude_media_types && config.exclude_media_types.includes(child.media_class)) {
 							return null; // Excluded by media type
 						}
-						count += 1;
 						return child.media_content_id;
 					}
 					if (child.media_class == "directory") {
@@ -2316,10 +2323,7 @@ function initWallpanel() {
 
 				const results = await Promise.all(promises);
 				// Flatten the results and filter out null values
-				return results
-					.flat()
-					.filter((res) => res !== null)
-					.splice(0, config.media_list_max_size);
+				return results.flat().filter((res) => res !== null);
 			} catch (error) {
 				logger.warn(`Error browsing media ${mediaContentId}:`, error);
 				throw error; // Re-throw the error to be caught by the caller
@@ -2331,12 +2335,17 @@ function initWallpanel() {
 			const wp = this;
 
 			try {
-				const result = await wp.findMedias(mediaContentId);
+				let urls = await wp.findMedias(mediaContentId);
 				if (config.image_order == "random") {
-					wp.mediaList = shuffleArray(result);
+					urls = shuffleArray(urls);
 				} else {
-					wp.mediaList = result.sort(); // Sort consistently if not random
+					urls = urls.sort(); // Sort consistently if not random
 				}
+				if (urls.length > config.media_list_max_size) {
+					logger.info(`Using only ${config.media_list_max_size} of ${urls.length} media items`);
+					urls = urls.slice(0, config.media_list_max_size);
+				}
+				wp.mediaList = urls;
 			} catch (error) {
 				// Error is logged in findMedias, re-throw for updateMediaList handler
 				throw new Error(`Failed to update image list from ${config.image_url}: ${error.message || stringify(error)}`);
@@ -2429,7 +2438,8 @@ function initWallpanel() {
 			logger.debug(
 				`config.exclude_media_orientation=${config.exclude_media_orientation}, screenOrientation=${screenOrientation}, exclude_media_orientation=${exclude_media_orientation}`
 			);
-			const urls = [];
+			let urls = [];
+			const mediaInfo = {};
 			const apiUrl = config.image_url.replace(/^immich\+/, "");
 			const excludeRegExp = [];
 			if (config.exclude_filenames) {
@@ -2439,10 +2449,6 @@ function initWallpanel() {
 			}
 
 			function processAssets(assets, folderName = null) {
-				if (assets.length > config.media_list_max_size) {
-					logger.info(`Using only ${config.media_list_max_size} of ${assets.length} media assets`);
-					assets = assets.slice(0, config.media_list_max_size);
-				}
 				assets.forEach((asset) => {
 					logger.debug(asset);
 					const assetType = asset.type.toLowerCase();
@@ -2485,23 +2491,31 @@ function initWallpanel() {
 						}
 					}
 					const url = `${apiUrl}/assets/${asset.id}/${resolution}`;
-					const mediaInfo = asset.exifInfo || {};
-					mediaInfo["mediaType"] = assetType;
-					mediaInfo["image"] = {
+					const info = asset.exifInfo || {};
+					info["mediaType"] = assetType;
+					info["image"] = {
 						filename: asset.originalFileName,
 						folderName: folderName
 					};
-					addToMediaInfoCache(url, mediaInfo);
+					mediaInfo[url] = info;
 					urls.push(url);
 				});
 			}
 
 			function finalizeImageList() {
 				if (config.image_order == "random") {
-					wp.mediaList = shuffleArray(urls);
+					urls = shuffleArray(urls);
 				} else {
-					wp.mediaList = urls.sort(); // Sort consistently if not random
+					urls = urls.sort(); // Sort consistently if not random
 				}
+				if (urls.length > config.media_list_max_size) {
+					logger.info(`Using only ${config.media_list_max_size} of ${urls.length} media items`);
+					urls = urls.slice(0, config.media_list_max_size);
+				}
+				urls.forEach((url) => {
+					addToMediaInfoCache(url, mediaInfo[url]);
+				});
+				wp.mediaList = urls;
 			}
 
 			try {
@@ -2751,17 +2765,25 @@ function initWallpanel() {
 			}
 		}
 
-		updateMediaIndex() {
+		getNextMediaURL(updateIndex = true) {
+			if (!this.mediaList.length) {
+				return null;
+			}
+			let mediaIndex = this.mediaIndex;
 			if (this.mediaListDirection == "forwards") {
-				this.mediaIndex++;
+				mediaIndex++;
 			} else {
-				this.mediaIndex--;
+				mediaIndex--;
 			}
-			if (this.mediaIndex >= this.mediaList.length) {
-				this.mediaIndex = 0;
-			} else if (this.mediaIndex < 0) {
-				this.mediaIndex = this.mediaList.length - 1;
+			if (mediaIndex >= this.mediaList.length) {
+				mediaIndex = 0;
+			} else if (mediaIndex < 0) {
+				mediaIndex = this.mediaList.length - 1;
 			}
+			if (updateIndex) {
+				this.mediaIndex = mediaIndex;
+			}
+			return this.mediaList[mediaIndex];
 		}
 
 		async updateMediaFromMediaSource(element) {
@@ -2850,9 +2872,7 @@ function initWallpanel() {
 						}
 					}
 				}
-
-				this.updateMediaIndex();
-				element.mediaUrl = this.mediaList[this.mediaIndex];
+				element.mediaUrl = this.getNextMediaURL();
 				if (!element.mediaUrl) {
 					return;
 				}
@@ -3074,20 +3094,25 @@ function initWallpanel() {
 			}
 
 			this.lastMediaUpdate = Date.now();
-			let crossfadeMillis = eventType == "user_action" ? 250 : null;
-			const activeElement = this.getActiveMediaElement();
-			const currentMediaUrl = activeElement.mediaUrl;
-			let newElement = activeElement;
+
+			if (
+				sourceType === "iframe" &&
+				!config.iframe_load_unchanged &&
+				this.getNextMediaURL(false) == this.getActiveMediaElement().mediaUrl
+			) {
+				return;
+			}
+
+			let crossfadeMillis = eventType == "user_action" ? 250 : Math.round(config.crossfade_time * 1000);
+			let newElement = this.getActiveMediaElement();
 			if (newElement.src) {
 				newElement = this.getInactiveMediaElement();
 			} else {
 				crossfadeMillis = 0;
 			}
+
 			const element = await this.updateMedia(newElement);
-			if (
-				!element ||
-				(sourceType === "iframe" && element.mediaUrl == currentMediaUrl && !config.iframe_load_unchanged)
-			) {
+			if (!element) {
 				return;
 			}
 			this._switchActiveMedia(element, crossfadeMillis);
@@ -3095,11 +3120,6 @@ function initWallpanel() {
 
 		_switchActiveMedia(newElement, crossfadeMillis = null) {
 			this.lastMediaUpdate = Date.now();
-
-			if (crossfadeMillis === null) {
-				crossfadeMillis = Math.round(config.crossfade_time * 1000);
-			}
-
 			this.imageOneContainer.style.transition = `opacity ${crossfadeMillis}ms ease-in-out`;
 			this.imageTwoContainer.style.transition = `opacity ${crossfadeMillis}ms ease-in-out`;
 
@@ -3192,17 +3212,32 @@ function initWallpanel() {
 		}
 
 		startScreensaver() {
-			updateConfig();
 			logger.debug("Start screensaver");
-			if (!isActive()) {
-				logger.debug("Wallpanel not active, not starting screensaver");
-				return;
-			}
 
 			this.screensaverStartedAt = Date.now();
 			this.screensaverStoppedAt = null;
+			this.currentWidth = this.screensaverContainer.clientWidth;
+			this.currentHeight = this.screensaverContainer.clientHeight;
 
-			this.updateStyle();
+			this.setDefaultStyle();
+			updateConfig();
+
+			if (!isActive()) {
+				logger.debug("Wallpanel not active, not starting screensaver");
+				this.screensaverStartedAt = null;
+				this.screensaverStoppedAt = Date.now();
+				return;
+			}
+
+			const activeElement = this.getActiveMediaElement();
+			if (activeElement == this.imageOne) {
+				this.imageOneContainer.style.opacity = 1;
+				this.imageTwoContainer.style.opacity = 0;
+			} else {
+				this.imageOneContainer.style.opacity = 0;
+				this.imageTwoContainer.style.opacity = 1;
+			}
+
 			this.setupScreensaver();
 			this.setMediaDataInfo();
 			this.setMediaDimensions();
