@@ -14,19 +14,20 @@
 
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: state
-      entity_id: sensor.unavailable_zigbee_devices_info
+    - platform: template
+      value_template: "{{ 
+        ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and 
+        states('binary_sensor.is_it_safe_to_send_notifications')
+      }}"
   # -------------------- CONDITIONS -------------------
-  condition:
-    condition: template
-    value_template: "{{ (state_attr('sensor.unavailable_zigbee_devices_info', 'device_list_length') | int(0)) > 0 }}"
+  condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
     - service: script.tg_send_txt
       data:
         msg_title: "Zigbee (unavailable devices)"
-        msg_text: "The following Zigbee devices are unavailable: {{ state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') }}"
+        msg_text: "The following Zigbee devices are unavailable:\n- {{ state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') }}"
         msg_receiver: "admin"
 ############################################################
 #  END OF FILE

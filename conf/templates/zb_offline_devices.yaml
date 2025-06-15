@@ -13,8 +13,9 @@
     - name: "Unavailable Zigbee devices info"
       unique_id: "ff0fb012-8a84-452d-88d0-9c9a4a6a7e03"
       icon: mdi:counter
-      # availability: "true"
-      unit_of_measurement: "cm"
+      # availability: True  # defaults to True
+      # unit_of_measurement: "cm"  # unnecessary!!!
+      # the state unnecessary and useless!!!
       state: 0
       attributes:
         unavailable_device_names: >-
@@ -29,7 +30,7 @@
                   {% set result.sensors = result.sensors + [state.name | regex_replace(find=' Last seen', replace='')] %}
               {% endif %}
           {% endfor %}
-          {% set device_names = result.sensors | join(', ') | truncate(127, True, '...') %}
+          {% set device_names = result.sensors | join('- ') | truncate(127, True, '...') %}
           {{ device_names }}
         device_list_length: >-
           {%- set str_length = '0' %}

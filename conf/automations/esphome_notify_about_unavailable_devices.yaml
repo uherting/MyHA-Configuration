@@ -14,13 +14,14 @@
 
   # --------------------- TRIGGER ---------------------
   trigger:
-    - platform: state
-      entity_id: sensor.unavailable_esphome_devices_info
+    - platform: template
+      value_template: "{{ 
+        ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and 
+        states('binary_sensor.is_it_safe_to_send_notifications')
+      }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition:
-    condition: template
-    value_template: "{{ (state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0 }}"
+  condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------

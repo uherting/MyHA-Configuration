@@ -17,8 +17,6 @@
     - platform: sun
       event: sunset
       offset: "-02:00:00"
-    # - platform: time
-    #   at: "17:00:00"
 
   # -------------------- CONDITIONS -------------------
   condition: []
@@ -63,28 +61,24 @@
   trigger:
     - platform: state
       entity_id: switch.l2kitchen01_ssr_01
-      # entity_id: switch.l2_kitchen01_ssr_01
       to: "off"
 
   # -------------------- CONDITIONS -------------------
   conditions:
-    - alias: "Time between 1700-2300"
-      condition: time
-      # At least one of the following is required.
-      after: "17:00:00"
-      before: "23:00:00"
+    - condition: and
+      conditions:
+        - condition: sun
+          after: sunset
+          after_offset: "-02:00:00"
+        - condition: time
+          before: "23:00:00"
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SSR01 on -------------------
     - service: switch.turn_on
       entity_id: switch.l2kitchen01_ssr_01
-      # entity_id: switch.l2_kitchen01_ssr_01
-    # - service: script.persis_notif_create
-    #   data:
-    #     msg_title: "Used paper collection info"
-    #     msg_text: "Used paper collection is due the day *after tomorrow*"
-    #     msg_receiver: "notify"
-    - service: persistent_notification.create
+    # ------------------- NOTIFICATION -------------------
+    - service: script.persis_notif_create
       data:
-        title: "L2 Kitchen keep on service"
-        message: "The 2nd lvl light in L2 Kitchen was switched on by the keep on service. Time: {{ now() }}"
+        msg_title: "L2 Kitchen keep on service"
+        msg_text: "The 2nd lvl light in L2 Kitchen was switched on by the keep on service. Time: {{ now() }}"

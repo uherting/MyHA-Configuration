@@ -1,0 +1,29 @@
+##########################################################################################
+# Templated Sensors
+##########################################################################################
+
+# template:
+
+# ############################################################
+#
+#  HA related stuff for the customised parts
+#
+
+- binary_sensor:
+    # up and running for at least "some time"(TM)
+    - name: "HA started up and running"
+      unique_id: "95e57cd6-9ab3-4f3f-ad61-123e538aa737"
+      icon: mdi:bell
+      state: >
+        {{ (as_timestamp(now()) - as_timestamp(states('sensor.uptime'), 3050003515)) > 55 }}
+
+    # Is it safe to send notifications
+    - name: "Is it safe to send notifications"
+      unique_id: "c4655c7f-d064-4375-b9f7-3810bae524d5"
+      icon: mdi:bell-cog
+      state: >
+        {{ (states('binary_sensor.ha_started_up_and_running')) and states('input_boolean.system_notify_general') }}
+
+####################################################################
+# EOF
+####################################################################

@@ -20,6 +20,8 @@ cards:
     entities:
       - input_boolean.system_notify_general
       - input_boolean.system_notify_debugging
+      - binary_sensor.ha_started_up_and_running
+      - sensor.uptime
 
   # no such service available
   # - type: entities
