@@ -16,29 +16,22 @@
       # availability: True  # defaults to True
       # unit_of_measurement: "cm"  # unnecessary!!!
       # the state unnecessary and useless!!!
-      state: >-
-        {% set result = namespace(sensors=[]) %}
-        {% for s in states.sensor
-            | selectattr('attributes.device_class', 'defined')
-            | selectattr('attributes.device_class', '==', 'timestamp')
-            | selectattr('object_id', 'search', 'last_seen')
-            if states(s.entity_id) == 'unavailable' or
-               ((now() - (states(s.entity_id) | as_datetime)) > timedelta(days=1)) %}
-          {% set result.sensors = result.sensors + [s.name | replace(' Last seen', '')] %}
-        {% endfor %}
-        {{ result.sensors }}
+      state: 0
       attributes:
         unavailable_device_names: >-
           {% set result = namespace(sensors=[]) %}
-          {% for s in states.sensor
-              | selectattr('attributes.device_class', 'defined')
-              | selectattr('attributes.device_class', '==', 'timestamp')
-              | selectattr('object_id', 'search', 'last_seen')
-              if states(s.entity_id) == 'unavailable' or
-                 ((now() - (states(s.entity_id) | as_datetime)) > timedelta(days=1)) %}
-            {% set result.sensors = result.sensors + [s.name | replace(' Last seen', '')] %}
+          {% for state in states.sensor | rejectattr('attributes.device_class', 'undefined') | selectattr('attributes.device_class', '==', 'timestamp') %}
+              {% if 
+                ('last_seen' in state.entity_id) and 
+                ( 
+                  (states(state.entity_id) == 'unavailable') or
+                  ((as_timestamp(now()) - as_timestamp(states(state.entity_id), 3749911504)) < 0)
+                ) %}
+                  {% set result.sensors = result.sensors + [state.name | regex_replace(find=' Last seen', replace='')] %}
+              {% endif %}
           {% endfor %}
-          {{ result.sensors }}
+          {% set device_names = result.sensors | join('- ') | truncate(127, True, '...') %}
+          {{ device_names }}
         device_list_length: >-
           {%- set str_length = '0' %}
           {% if state_attr('sensor.unavailable_zigbee_devices_info', 'unavailable_device_names') %}

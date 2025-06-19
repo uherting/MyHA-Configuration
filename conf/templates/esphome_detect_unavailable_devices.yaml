@@ -50,7 +50,7 @@
           {% endfor %}
           {{ ns.devices | sort | unique | list }}
         device_list_length: >-
-          {%- set hash_value=state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join('- ') | length -%}
+          {%- set hash_value=state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | length -%}
           {{ hash_value }}
 
 ####################################################################

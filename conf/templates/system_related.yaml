@@ -18,6 +18,7 @@
         {{ (as_timestamp(now()) - as_timestamp(states('sensor.uptime'), 3050003515)) > 55 }}
 
     # Is it safe to send notifications
+    # declaration of sensor: binary_sensor.is_it_safe_to_send_notifications
     - name: "Is it safe to send notifications"
       unique_id: "c4655c7f-d064-4375-b9f7-3810bae524d5"
       icon: mdi:bell-cog
