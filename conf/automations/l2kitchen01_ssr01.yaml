@@ -81,4 +81,4 @@
     - service: script.persis_notif_create
       data:
         msg_title: "L2 Kitchen keep on service"
-        msg_text: "The 2nd lvl light in L2 Kitchen was switched on by the keep on service. Time: {{ now() }}"
+        msg_text: "The 2nd lvl light in L2 Kitchen was switched on by the keep on service."
