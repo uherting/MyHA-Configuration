@@ -1,30 +1,35 @@
 # ############################################################
 #
-#  Home assistant start up info
+#  Home assistant shutdown info
 #
 # ############################################################
 
 # ############################################################
-# ha_startup_notification
+# ha_shutdown_notification
 # ############################################################
-- alias: HA startup notification
-  id: "e458a617-8837-4213-9452-26942f9c487f"
+- alias: HA shutdown notification
+  id: "72f3feb9-f1ac-4491-814b-e956f08c0c47"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: event
-      event_type: homeassistant_started
+  triggers:
+    # for details see https://www.home-assistant.io/docs/automation/trigger/#home-assistant-trigger
+    - trigger: homeassistant
+      # event: start
+      event: shutdown
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
   # --------------------- ACTIONS ---------------------
   action:
+    # - delay: 00:00:02
     # --------------------- NOTIFY ---------------------
     - service: script.tg_send_txt
-      data_template:
-        msg_title: "Home Assistant"
-        msg_text: "Up and running"
-        msg_receiver: "admin"
-    - service: automation.turn_off
       data:
-        entity_id: automation.ha_startup_notification
+        msg_title: "Home Assistant - Shut down"
+        msg_text: "HA is about to be shut down."
+        msg_receiver: "admin"
+        msg_text_prefix: ""
+        msg_text_suffix: ""
 # ############################################################
 #  END OF FILE
 # ############################################################
