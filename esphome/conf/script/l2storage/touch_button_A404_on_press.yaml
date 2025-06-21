@@ -3,7 +3,7 @@
 
 #script:
 # on_press action of TB A4
-- id: tb_01_click_on_press
+- id: tb_04_click_on_press
   mode: single
   then:
     - switch.toggle: ${ssr01_id}

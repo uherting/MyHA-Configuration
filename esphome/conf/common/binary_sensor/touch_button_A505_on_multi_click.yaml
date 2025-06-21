@@ -7,8 +7,8 @@
 # TOUCH BUTTON
 
 - platform: gpio
-  name: $touchbutton07_name
-  id: ${touchbutton07_id}
+  name: $touchbutton05_name
+  id: ${touchbutton05_id}
   # filters:
   #   - delayed_on: 70ms
   #   - delayed_off: 70ms
@@ -31,22 +31,22 @@
         - ON for 0.1s to 0.3s
         - OFF for at least 1s
       then:
-        # - logger.log: "ESPHome: Single short clicked. Prior exec script tb_07_click_short."
-        - script.execute: tb_07_click_short
+        # - logger.log: "ESPHome: Single short clicked. Prior exec script tb_05_click_short."
+        - script.execute: tb_05_click_short
     - timing:
         - ON for 1s to 7s
         - OFF for at least 1s
       then:
-        # - logger.log: "ESPHome: Single long clicked. Prior exec script tb_07_click_long."
-        - script.execute: tb_07_click_long
+        # - logger.log: "ESPHome: Single long clicked. Prior exec script tb_05_click_long."
+        - script.execute: tb_05_click_long
     - timing:
         - ON for 0.1s to 0.3s
         - OFF for at most 0.4s
         - ON for 0.1s to 0.3s
         - OFF for at least 1s
       then:
-        # - logger.log: "ESPHome: Double clicked. Prior exec script tb_07_click_dbl."
-        - script.execute: tb_07_click_dbl
+        # - logger.log: "ESPHome: Double clicked. Prior exec script tb_05_click_dbl."
+        - script.execute: tb_05_click_dbl
 # ############################################################
 #  END OF FILE
 # ############################################################

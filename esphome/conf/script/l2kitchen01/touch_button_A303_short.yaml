@@ -4,7 +4,7 @@
 #script:
 # on_multi_click action of TB A4 (short click)
 - id: tb_03_click_short
-  mode: restart
+  mode: single
   then:
     - if:
         # execution only: the light bar is off
@@ -18,10 +18,10 @@
           # execute this script anyway (TM) for debugging purposes
           lambda: "return (true);"
         then:
-          - logger.log: "ESPHome: within script tb_03_click_short action."
+          # - logger.log: "ESPHome: within script tb_03_click_short action."
 
           - switch.toggle: _SSR01
-          - logger.log: "ESPHome: within script tb_03_click_short action, the kitchen light was toggled."
+          # - logger.log: "ESPHome: within script tb_03_click_short action, the kitchen light was toggled."
 
           # the light is directly connected to the device, so local toggling is possible
           # =========================================================

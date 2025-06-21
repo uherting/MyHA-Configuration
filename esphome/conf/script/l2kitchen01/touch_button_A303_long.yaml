@@ -3,8 +3,10 @@
 
 #script:
 # on_multi_click action of TB A4 (long click)
+
 - id: tb_03_click_long
-  mode: restart
+  # ZB plugs microwave / kettle / coffeemachine L2 kitchen
+  mode: single
   then:
     - if:
         condition:
@@ -22,7 +24,7 @@
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
               data:
-                switch_id: "switch.zb_plug_l2_kitchen_coffeemachine"
+                switch_id: "switch.zb_plug_l2_kitchen_microwave"
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
               data:
@@ -30,7 +32,7 @@
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
               data:
-                switch_id: "switch.zb_plug_l2_kitchen_microwave"
+                switch_id: "switch.zb_plug_l2_kitchen_coffeemachine"
 
 ####################################################################
 # EOF

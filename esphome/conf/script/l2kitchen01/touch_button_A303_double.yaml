@@ -3,8 +3,10 @@
 
 #script:
 # on_multi_click action of TB A4 (double click)
+
 - id: tb_03_click_dbl
-  mode: restart
+  # main light L2 kitchen
+  mode: single
   then:
     - if:
         condition:

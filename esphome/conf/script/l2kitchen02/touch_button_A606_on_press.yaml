@@ -1,0 +1,26 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of TB A6
+  - id: tb_06_click_on_press
+    mode: single
+    then:
+      # - logger.log: "script tb_06_click_on_press action."
+      - if:
+          condition:
+            # execute this script only if we are offline
+            # lambda: 'return (!id(isDeviceConnected);'
+            
+            # execute this script anyway (TM) for debugging purposes
+            lambda: 'return (true);'
+          then:
+            # - logger.log: "script tb_06_click_on_press action."
+            - homeassistant.action:
+                action: script.switch_toggle_by_esphome
+                data:
+                  switch_id: 'switch.zb_plug_l2_kitchen_coffeemachine'
+
+####################################################################
+# EOF
+####################################################################

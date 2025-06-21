@@ -1,12 +1,16 @@
 ####################################################################
 # SCRIPTS
 
+#
+# no action here, just a placeholder!!!
+#
+
 #script:
 # on_multi_click action of TB A5 (long click)
-- id: tb_02_click_long
+- id: tb_05_click_long
   mode: single
   then:
-    # - logger.log: "script tb_02_click_long action."
+    # - logger.log: "script tb_05_click_long action."
     - if:
         condition:
           # execute this script only if we are offline
@@ -16,7 +20,7 @@
           lambda: "return (true);"
         then:
           - delay: !secret DELAY_01SEC
-          # - logger.log: "script tb_02_click_long action."
+          # - logger.log: "script tb_05_click_long action."
 ####################################################################
 # EOF
 ####################################################################

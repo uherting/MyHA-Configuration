@@ -3,10 +3,10 @@
 
 #script:
 # on_multi_click action of TB A5 (double click)
-- id: tb_02_click_dbl
+- id: tb_05_click_dbl
   mode: single
   then:
-    # - logger.log: "script tb_02_click_dbl action."
+    # - logger.log: "script tb_05_click_dbl action."
     - binary_sensor.template.publish:
         id: ${binary_template_sensor_spy_mode_id}
         state: true
@@ -15,7 +15,7 @@
     - binary_sensor.template.publish:
         id: ${binary_template_sensor_spy_mode_id}
         state: false
-    # - logger.log: "script tb_02_click_dbl action."
+    # - logger.log: "script tb_05_click_dbl action."
 ####################################################################
 # EOF
 ####################################################################

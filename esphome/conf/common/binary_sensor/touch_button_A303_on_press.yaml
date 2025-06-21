@@ -7,10 +7,16 @@
 # TOUCH BUTTON
 
 - platform: gpio
-  name: $touchbutton01_name
-  id: ${touchbutton01_id}
+  name: $touchbutton03_name
+  id: ${touchbutton03_id}
   pin:
-    number: !secret GPIO_PIN_D5
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A3
+    #
+    # TODO: before installation change settings for mode / inverted
+    # production => inverted: false / mode: INPUT
+    # before installation => inverted: true / mode: INPUT_PULLUP
+    #
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: INPUT
     # mode: INPUT_PULLUP
@@ -18,8 +24,8 @@
     # inverted: true
   device_class: power
   on_press:
-    # - logger.log: "TB on_press action."
-    - script.execute: tb_d5_click_on_press
+    # - logger.log: "TB on_press without any action due to lack of time."
+    - script.execute: tb_03_click_on_press
 # ############################################################
 #  END OF FILE
 # ############################################################

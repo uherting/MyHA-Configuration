@@ -109,12 +109,6 @@ script:
   - <<: !include conf/script/l2kitchen01/touch_button_A303_short.yaml
   - <<: !include conf/script/l2kitchen01/touch_button_A303_long.yaml
   - <<: !include conf/script/l2kitchen01/touch_button_A303_double.yaml
-  - <<: !include conf/script/l2kitchen01/touch_button_A404_on_press.yaml
-  - <<: !include conf/script/l2kitchen01/touch_button_A505_on_press.yaml
-  - <<: !include conf/script/l2kitchen01/touch_button_A606_on_press.yaml
-  - <<: !include conf/script/l2kitchen01/touch_button_A707_short.yaml
-  - <<: !include conf/script/l2kitchen01/touch_button_A707_long.yaml
-  - <<: !include conf/script/l2kitchen01/touch_button_A707_double.yaml
   - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_on_off.yaml
   - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_next_level.yaml
   - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_on_max.yaml
@@ -128,10 +122,6 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/reed_A7.yaml
   # the touch buttons
   - <<: !include conf/common/binary_sensor/touch_button_A303_on_multi_click.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A505_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A606_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A707_on_multi_click.yaml
   # kitchen 
   - <<: !include conf/binary_sensor/l2kitchen01_mainlight.yaml
   # - <<: !include conf/binary_sensor/l2kitchen01_zbplug_coffee.yaml
