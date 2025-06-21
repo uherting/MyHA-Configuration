@@ -123,7 +123,7 @@ script:
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/common/binary_sensor/pir_A0.yaml
-  - <<: !include conf/common/binary_sensor/reed_A2.yaml
+  - <<: !include conf/common/binary_sensor/reed_door_onrelease_A2.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A505_on_multi_click.yaml
   - <<: !include conf/binary_sensor/l2storage01.yaml

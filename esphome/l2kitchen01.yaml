@@ -119,7 +119,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # reed relay from bathroom window
-  # - <<: !include conf/common/binary_sensor/reed_A7.yaml
+  # - <<: !include conf/common/binary_sensor/reed_window_noexecute_A7.yaml
   # the touch buttons
   - <<: !include conf/common/binary_sensor/touch_button_A303_on_multi_click.yaml
   # kitchen 
