@@ -5,6 +5,11 @@
 dummy_value: "dummy value"
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 # log_level: !secret LOG_LEVEL_WARN
+reed_contact01_name: $friendly_name Switch Dishwasher
+reed_contact02_name: $friendly_name Switch Microwave
+reed_contact04_name: $friendly_name Switch Kettle
+reed_contact03_name: $friendly_name Switch Coffee Machine
+reed_contact05_name: $friendly_name Switch Lightbar Short
 ####################################################################
 # EOF
 ####################################################################

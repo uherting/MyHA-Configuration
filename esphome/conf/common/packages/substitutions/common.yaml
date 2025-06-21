@@ -129,18 +129,25 @@ substitutions:
   # reed relay contacts
   reed_contact01_id: ${friendly_id}_REED_01
   reed_contact01_name: $friendly_name REED 01
+  reed_contact01_device_class: "opening"
   reed_contact02_id: ${friendly_id}_REED_02
   reed_contact02_name: $friendly_name REED 02
+  reed_contact02_device_class: "opening"
   reed_contact03_id: ${friendly_id}_REED_03
   reed_contact03_name: $friendly_name REED 03
+  reed_contact03_device_class: "opening"
   reed_contact04_id: ${friendly_id}_REED_04
   reed_contact04_name: $friendly_name REED 04
+  reed_contact04_device_class: "opening"
   reed_contact05_id: ${friendly_id}_REED_05
   reed_contact05_name: $friendly_name REED 05
+  reed_contact05_device_class: "opening"
   reed_contact06_id: ${friendly_id}_REED_06
   reed_contact06_name: $friendly_name REED 06
+  reed_contact06_device_class: "opening"
   reed_contact07_id: ${friendly_id}_REED_07
   reed_contact07_name: $friendly_name REED 07
+  reed_contact07_device_class: "opening"
 
   # SSRs
   ssr01_id: ${friendly_id}_SSR01

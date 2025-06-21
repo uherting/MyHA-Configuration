@@ -78,20 +78,20 @@ globals:
 #   - <<: !include conf/common/globals/opto_coupler_03.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/script/l2kitchen02/touch_button_A303_on_press.yaml
-  - <<: !include conf/script/l2kitchen02/touch_button_A404_on_press.yaml
-  - <<: !include conf/script/l2kitchen02/touch_button_A505_on_press.yaml
-  - <<: !include conf/script/l2kitchen02/touch_button_A606_on_press.yaml
-  - <<: !include conf/script/l2kitchen02/touch_button_A707_on_press.yaml
+  - <<: !include conf/script/l2kitchen02/reed01_click_on_press.yaml
+  - <<: !include conf/script/l2kitchen02/reed02_click_on_press.yaml
+  - <<: !include conf/script/l2kitchen02/reed03_click_on_press.yaml
+  - <<: !include conf/script/l2kitchen02/reed04_click_on_press.yaml
+  - <<: !include conf/script/l2kitchen02/reed05_click_on_press.yaml
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A505_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A606_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A707_on_press.yaml
+  - <<: !include conf/common/binary_sensor/reed_A1_onpress.yaml
+  - <<: !include conf/common/binary_sensor/reed_A2_onpress.yaml
+  - <<: !include conf/common/binary_sensor/reed_A3_onpress.yaml
+  - <<: !include conf/common/binary_sensor/reed_A4_onpress.yaml
+  - <<: !include conf/common/binary_sensor/reed_A5_onpress.yaml
 #-------------------------------------------------------------------
 # SENSORS
 sensor:
