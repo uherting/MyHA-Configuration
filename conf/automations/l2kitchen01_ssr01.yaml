@@ -71,7 +71,7 @@
           after: sunset
           after_offset: "-02:00:00"
         - condition: time
-          before: "23:00:00"
+          before: "22:00:00"
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SSR01 on -------------------
