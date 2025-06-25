@@ -21,6 +21,7 @@ cards:
   #     - sensor.l2btproxybathroom_uptime
   #     - sensor.l2btproxybathroom_uptime_human_readable
   #     - binary_sensor.l2btproxybathroom_status
+  #     - update.l2btproxybathroom_firmware
   #     - sensor.l2btproxybathroom_esphome_version
   #     - switch.l2btproxybathroom_restart_device
 
@@ -28,15 +29,16 @@ cards:
   #   title: L2 BLE Proxy Bedroom
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l2btproxykitchen_conn_ip_addr
-  #     - sensor.l2btproxykitchen_wifi_signal
-  #     - sensor.l2btproxykitchen_conn_ssid
-  #     - sensor.l2btproxykitchen_conn_bssid
-  #     - sensor.l2btproxykitchen_uptime
-  #     - sensor.l2btproxykitchen_uptime_human_readable
-  #     - binary_sensor.l2btproxykitchen_status
-  #     - sensor.l2btproxykitchen_esphome_version
-  #     - switch.l2btproxykitchen_restart_device
+  #     - sensor.l2btproxybedroom_conn_ip_addr
+  #     - sensor.l2btproxybedroom_wifi_signal
+  #     - sensor.l2btproxybedroom_conn_ssid
+  #     - sensor.l2btproxybedroom_conn_bssid
+  #     - sensor.l2btproxybedroom_uptime
+  #     - sensor.l2btproxybedroom_uptime_human_readable
+  #     - binary_sensor.l2btproxybedroom_status
+  #     - update.l2btproxybedroom_firmware
+  #     - sensor.l2btproxybedroom_esphome_version
+  #     - switch.l2btproxybedroom_restart_device
 
   - type: entities
     title: L2 BLE Proxy Kitchen
@@ -49,6 +51,7 @@ cards:
       - sensor.l2btproxykitchen_uptime
       - sensor.l2btproxykitchen_uptime_human_readable
       - binary_sensor.l2btproxykitchen_status
+      - update.l2btproxykitchen_firmware
       - sensor.l2btproxykitchen_esphome_version
       - switch.l2btproxykitchen_restart_device
 
@@ -63,6 +66,7 @@ cards:
   #     - sensor.l2btproxylounge_uptime
   #     - sensor.l2btproxylounge_uptime_human_readable
   #     - binary_sensor.l2btproxylounge_status
+  #     - update.l2btproxylounge_firmware
   #     - sensor.l2btproxylounge_esphome_version
   #     - switch.l2btproxylounge_restart_device
 ####################################################################
