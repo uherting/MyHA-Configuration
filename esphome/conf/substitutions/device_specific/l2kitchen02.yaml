@@ -7,7 +7,7 @@ device_comment: Level 2 Kitchen 02
 device_area: L2
 
 # device_platform: ESP32
-wifi_static_ip: 192.168.178.240
+wifi_static_ip: 192.168.178.225
 
 # latest 20250222
 device_board: esp32-c3-devkitm-1
@@ -20,10 +20,10 @@ friendly_name: ""
 friendly_id: ""
 
 # details for DALLAS sensors connected to the device
-dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_CASESENSOR_01_ADDRESS
-dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_ENVSENSOR_01_ADDRESS
+# dallas_01c01_name: $friendly_name TempCase 01
+# dallas_01c01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_CASESENSOR_01_ADDRESS
+# dallas_01e01_name: $friendly_name TempEnv 01
+# dallas_01e01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_ENVSENSOR_01_ADDRESS
 ####################################################################
 # EOF
 ####################################################################
