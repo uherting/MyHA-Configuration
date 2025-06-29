@@ -78,6 +78,9 @@ substitutions:
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
 
+  # LD2410
+  ld2410_out_name: ${friendly_id}_LD2410_OUT
+
   # MotorDrv DRV8833 settings, each motor has 'I/O for control (INx/INx+1) / ENABLE / endstops)
   # motor 1
   motordrv_cover_1_id: ${friendly_id}_MotorDrvCover1
@@ -174,6 +177,12 @@ substitutions:
   touchbutton06_name: $friendly_name TB 06
   touchbutton07_id: ${friendly_id}_TB_07
   touchbutton07_name: $friendly_name TB 07
+
+  # UART ESP32-C3
+  # this is the id of the UART interface, used in the uart: section
+  # and in the uart_esp32c3.yaml file
+  uart01_esp32c3_id: ${friendly_id}_UART_01
+  
 
   vl53l0x_unitofmeasurement_cm: "cm"
   vl53l0x_unitofmeasurement_mm: "mm"

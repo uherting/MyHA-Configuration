@@ -59,9 +59,10 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-i2c: !include conf/common/device/i2c_esp32c3.yaml
+# i2c: !include conf/common/device/i2c_esp32c3.yaml
 # dallas: !include conf/common/device/dallas.yaml
-mcp23017: !include conf/common/device/mcp23017.yaml
+# mcp23017: !include conf/common/device/mcp23017.yaml
+uart: !include conf/common/device/uart01_esp32c3.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -86,6 +87,7 @@ interval: !include conf/common/interval/connectivity.yaml
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  - <<: !include conf/binary_sensor/l2kitchen03_out.yaml
   # - <<: !include conf/common/binary_sensor/reed_A1_onpress.yaml
   # - <<: !include conf/common/binary_sensor/reed_A2_onpress.yaml
   # - <<: !include conf/common/binary_sensor/reed_A3_onpress.yaml
