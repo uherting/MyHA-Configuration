@@ -1,0 +1,33 @@
+# ############################################################
+#
+#  Create a snapshot after motion was detected
+#
+# ############################################################
+
+# ############################################################
+#  Create a snapshot after motion was detected
+# ############################################################
+- alias: Create a snapshot after motion was detected
+  id: "ecb9481a-52fc-4164-8a7d-55e0f93e162f"
+  description: "This automation creates a snapshot after motion was detected"
+  mode: single
+  initial_state: true
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- BLUEPRINT --------------------
+  use_blueprint:
+    path: uh/save-camera-snapshot-notification-on-motion.yaml
+    input:
+      # using templated sensor combining sensors from the cam
+      motion_sensor: binary_sensor.cam_rworld1_motion
+      camera: camera.rworld1_fluent_lens_0
+      file: /media/rworld1/last_motion.jpg
+      archive_file: /media/rworld1/archive/motion_{{ now().strftime("%Y%m%d-%H%M%S")}}.jpg
+      camera2: camera.l9cam3202_cam
+      file2: /media/l9cam3202/last_motion.jpg
+      archive_file2: /media/l9cam3202/archive/motion_{{ now().strftime("%Y%m%d-%H%M%S")}}.jpg
+      delay: 1
+############################################################
+#  END OF FILE
+# ############################################################

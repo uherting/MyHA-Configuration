@@ -1,8 +1,8 @@
 blueprint:
-  name: Save a camera snapshot when motion is detected
-  description: Save a camera snapshot with archive when motion is detected
+  name: Save a camera snapshot when motion is detected (UH)
+  description: Save a camera snapshot with archive when motion is detected (UH)
   domain: automation
-  source_url: https://gist.github.com/niemyjski/08c566a4fe64fb2e70998ee4f38c9d1e
+  source_url: https://gist.github.com/uherting/b43f3d66162a72a209d8eeaadac3ed93
   input:
     motion_sensor:
       name: Motion sensor
@@ -17,14 +17,28 @@ blueprint:
       selector:
         entity:
           domain: camera
+    camera2:
+      name: Camera2
+      description: The camera which creates the 2nd snapshot
+      selector:
+        entity:
+          domain: camera
     file:
       name: File Path
       description: The file path to store the most current snapshot.
       default: "/media/CAMERA_NAME/last_motion.jpg"
+    file2:
+      name: File Path
+      description: The file path to store the most current snapshot.
+      default: "/media/CAMERA_NAME2/last_motion.jpg"
     archive_file:
       name: Archive File Path
       description: The file path to store the snapshot in an archive folder.
       default: '/media/CAMERA_NAME/archive/motion_{{ now().strftime("%Y%m%d-%H%M%S") }}.jpg'
+    archive_file2:
+      name: Archive File Path
+      description: The file path to store the snapshot in an archive folder.
+      default: '/media/CAMERA_NAME2/archive/motion_{{ now().strftime("%Y%m%d-%H%M%S") }}.jpg'
     delay:
       name: Delay (Optional)
       description: Wait before creating camera snapshot
@@ -45,7 +59,9 @@ variables:
   motion_sensor: !input "motion_sensor"
   camera: !input "camera"
   file: !input file
+  file2: !input file2
   archive_file: !input archive_file
+  archive_file2: !input archive_file
   delay: !input "delay"
 action:
   - delay: "{{ delay }}"
@@ -57,3 +73,11 @@ action:
     entity_id: !input "camera"
     data:
       filename: !input archive_file
+  - service: camera.snapshot
+    entity_id: !input "camera2"
+    data:
+      filename: !input file2
+  - service: camera.snapshot
+    entity_id: !input "camera2"
+    data:
+      filename: !input archive_file2
