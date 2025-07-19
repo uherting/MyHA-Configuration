@@ -24,16 +24,7 @@
 # Hardware:
 #   - 1 ESP8266
 #   - 1 MCP23017 modul
-#   - 2 Dallas 18B20 sensor
-#   - 1 SSR module with 1 SSR
-#   - 1 PIR/RCWL
-#   - 1 TP223 touch button
-#   - steel housing for external Dallas 18B20 sensors
-#   - heat shrink tube, misc diameter
-#   - case for the hardware
-#   - PCB
-#   - wire
-#   - for future feature: opto coupler PC817 => IKEA remote
+#   - certainly some more stuff (TM)
 #
 # Automation:
 #   - partially, see binary sensors definition file
