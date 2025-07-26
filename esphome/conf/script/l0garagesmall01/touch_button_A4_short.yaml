@@ -3,11 +3,12 @@
 
 #script:
 # on_multi_click action of TB A4 (short click)
-- id: tb_01_click_short
+- id: tb_04_click_short
   mode: restart
   then:
     # - logger.log: "script tb_01_click_short action."
-    - switch.toggle: ${ssr01_id}
+    # - switch.toggle: ${ssr01_id}
+    - delay: !secret DELAY_01SEC
     # - if:
     #     condition:
     #       # execute this script only if we are offline

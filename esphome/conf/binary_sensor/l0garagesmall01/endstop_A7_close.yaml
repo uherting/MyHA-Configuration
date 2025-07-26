@@ -14,12 +14,12 @@
     number: !secret MCP23017_PIN_A7
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: INPUT_PULLUP
-    inverted: false
+    inverted: true
   # debouncing
   filters:
     - delayed_on: 50ms
     - delayed_off: 50ms
-  device_class: window
+  device_class: Window
   # on_release:
   #   then:
   #     - script.execute: ssr_script_reed_10
