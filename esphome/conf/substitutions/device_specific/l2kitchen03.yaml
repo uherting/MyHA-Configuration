@@ -2,12 +2,12 @@
 # DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
-device_name: l2kitchen02
-device_comment: Level 2 Kitchen 02
+device_name: l2kitchen03
+device_comment: Level 2 Kitchen 03
 device_area: L2
 
 # device_platform: ESP32
-wifi_static_ip: 192.168.178.225
+wifi_static_ip: 192.168.178.222
 
 # latest 20250222
 device_board: esp32-c3-devkitm-1

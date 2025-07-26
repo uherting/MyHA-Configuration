@@ -24,16 +24,7 @@
 # Hardware:
 #   - 1 ESP8266
 #   - 1 MCP23017 modul
-#   - 2 Dallas 18B20 sensor
-#   - 1 SSR module with 1 SSR
-#   - 1 PIR/RCWL
-#   - 1 TP223 touch button
-#   - steel housing for external Dallas 18B20 sensors
-#   - heat shrink tube, misc diameter
-#   - case for the hardware
-#   - PCB
-#   - wire
-#   - for future feature: opto coupler PC817 => IKEA remote
+#   - certainly some more stuff (TM)
 #
 # Automation:
 #   - partially, see binary sensors definition file
@@ -115,10 +106,10 @@ binary_sensor:
   # so far unused: - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # the touch buttons
   # so far unused: - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A505_on_press.yaml
   # device specific
-  - <<: !include conf/binary_sensor/l0garagesmall_endstop_A6_open.yaml
-  - <<: !include conf/binary_sensor/l0garagesmall_endstop_A7_close.yaml
+  - <<: !include conf/binary_sensor/l0garagesmall01/endstop_A6_open.yaml
+  - <<: !include conf/binary_sensor/l0garagesmall01/endstop_A7_close.yaml
 
 #-------------------------------------------------------------------
 # SENSORS

@@ -3,10 +3,10 @@
 
 #script:
 # on_press action of TB A5
-- id: tb_02_click_on_press
+- id: tb_05_click_on_press
   mode: restart
   then:
-    # - logger.log: "script tb_02_click_on_press action."
+    # - logger.log: "script tb_05_click_on_press action."
     # - if:
     #     condition:
     #       # execute this script only if we are offline
@@ -15,7 +15,7 @@
     #       # execute this script anyway (TM) for debugging purposes
     #       lambda: 'return (true);'
     #     then:
-    #       - logger.log: "script tb_02_click_on_press action."
+    #       - logger.log: "script tb_05_click_on_press action."
 
     # the lambda was copied from https://esphome.io/cookbook/lambda_magic#one-button-cover-control
     - lambda: |
