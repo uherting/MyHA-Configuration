@@ -108,8 +108,8 @@ binary_sensor:
   # so far unused: - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A505_on_press.yaml
   # device specific
-  - <<: !include conf/binary_sensor/l0garagesmall/endstop_A6_open.yaml
-  - <<: !include conf/binary_sensor/l0garagesmall/endstop_A7_close.yaml
+  - <<: !include conf/binary_sensor/l0garagesmall01/endstop_A6_open.yaml
+  - <<: !include conf/binary_sensor/l0garagesmall01/endstop_A7_close.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
