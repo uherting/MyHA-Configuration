@@ -11,8 +11,10 @@ device_board: nodemcuv2
 wifi_static_ip: 192.168.178.203
 
 # the friendly name and id
-friendly_name: L0 GarageSmall01
-friendly_id: L0GarageSmall01
+# friendly_name: L0 GarageSmall01
+# friendly_id: L0GarageSmall01
+friendly_name: ""
+friendly_id: ""
 
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01

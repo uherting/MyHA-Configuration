@@ -3,7 +3,7 @@
 
 #script:
 # on_multi_click action of TB A4 (double click)
-- id: tb_01_click_dbl
+- id: tb_04_click_dbl
   mode: restart
   then:
     # - logger.log: "script tb_01_click_dbl action."

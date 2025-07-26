@@ -92,9 +92,9 @@ interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
   # for SSR (light)
-  # - <<: !include conf/script/l0garagesmall01/touch_button_A4_double.yaml
-  # - <<: !include conf/script/l0garagesmall01/touch_button_A4_short.yaml
-  # - <<: !include conf/script/l0garagesmall01/touch_button_A4_long.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A4_double.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A4_short.yaml
+  - <<: !include conf/script/l0garagesmall01/touch_button_A4_long.yaml
   # - <<: !include conf/common/script/touch_button_A4_on_press.yaml
   # the safety "flap"
   - <<: !include conf/script/l0garagesmall01/touch_button_A5_on_press.yaml
@@ -105,7 +105,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # so far unused: - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # the touch buttons
-  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A404_on_multi_click.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A505_on_press.yaml
   # device specific (cover endstops)
   - <<: !include conf/binary_sensor/l0garagesmall01/endstop_A6_open.yaml
@@ -120,7 +120,7 @@ sensor:
   # device related
   # temp sensors
   - <<: !include conf/sensor/l0garagesmall01/l0garagesmall01_case.yaml
-  # - <<: !include conf/sensor/l0garagesmall01/l0garagesmall01_env01.yaml
+  - <<: !include conf/sensor/l0garagesmall01/l0garagesmall01_env01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
