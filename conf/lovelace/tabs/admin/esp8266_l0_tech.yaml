@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# esp8266_l0_tech tab --- lovelace configuration
+# esp8266_l0tech tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
@@ -14,81 +14,96 @@ cards:
   #   title: L0 Entrance 01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l0_entrance01_conn_ip_addr
-  #     - sensor.l0_entrance01_wifi_signal
-  #     - sensor.l0_entrance01_conn_ssid
-  #     - sensor.l0_entrance01_conn_bssid
-  #     - sensor.l0_entrance01_uptime
-  #     - sensor.l0_entrance01_uptime_human_readable
-  #     - binary_sensor.l0_entrance01_status
-  #     - sensor.l0_entrance01_esphome_version
+  #     - sensor.l0entrance01_conn_ip_addr
+  #     - sensor.l0entrance01_wifi_signal
+  #     - sensor.l0entrance01_conn_ssid
+  #     - sensor.l0entrance01_conn_bssid
+  #     - sensor.l0entrance01_uptime
+  #     - sensor.l0entrance01_uptime_human_readable
+  #     - binary_sensor.l0entrance01_status
+  #     - sensor.l0entrance01_esphome_version
   #     - entity: switch.l0entrance01_internet_access
   #       name: Internet Access
-  #     - switch.l0_entrance01_restart_device
+  #     - switch.l0entrance01_restart_device
 
   # - type: entities
   #   title: L0 Corridor 01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l0_corridor01_conn_ip_addr
-  #     - sensor.l0_corridor01_wifi_signal
-  #     - sensor.l0_corridor01_conn_ssid
-  #     - sensor.l0_corridor01_conn_bssid
-  #     - sensor.l0_corridor01_uptime
-  #     - sensor.l0_corridor01_uptime_human_readable
-  #     - binary_sensor.l0_corridor01_status
-  #     - sensor.l0_corridor01_esphome_version
+  #     - sensor.l0corridor01_conn_ip_addr
+  #     - sensor.l0corridor01_wifi_signal
+  #     - sensor.l0corridor01_conn_ssid
+  #     - sensor.l0corridor01_conn_bssid
+  #     - sensor.l0corridor01_uptime
+  #     - sensor.l0corridor01_uptime_human_readable
+  #     - binary_sensor.l0corridor01_status
+  #     - sensor.l0corridor01_esphome_version
   #     - entity: switch.l0corridor01_internet_access
   #       name: Internet Access
-  #     - switch.l0_corridor01_restart_device
+  #     - switch.l0corridor01_restart_device
 
   # - type: entities
   #   title: L0 Corridor 02
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l0_corridor02_conn_ip_addr
-  #     - sensor.l0_corridor02_wifi_signal
-  #     - sensor.l0_corridor02_conn_ssid
-  #     - sensor.l0_corridor02_conn_bssid
-  #     - sensor.l0_corridor02_uptime
-  #     - sensor.l0_corridor02_uptime_human_readable
-  #     - binary_sensor.l0_corridor02_status
-  #     - sensor.l0_corridor02_esphome_version
+  #     - sensor.l0corridor02_conn_ip_addr
+  #     - sensor.l0corridor02_wifi_signal
+  #     - sensor.l0corridor02_conn_ssid
+  #     - sensor.l0corridor02_conn_bssid
+  #     - sensor.l0corridor02_uptime
+  #     - sensor.l0corridor02_uptime_human_readable
+  #     - binary_sensor.l0corridor02_status
+  #     - sensor.l0corridor02_esphome_version
   #     - entity: switch.l0corridor02_internet_access
   #       name: Internet Access
-  #     - switch.l0_corridor02_restart_device
+  #     - switch.l0corridor02_restart_device
+
+  - type: entities
+    title: L0 GarageSmall 01
+    show_header_toggle: false
+    entities:
+      - sensor.l0garagesmall01_conn_ip_addr
+      - sensor.l0garagesmall01_wifi_signal
+      - sensor.l0garagesmall01_conn_ssid
+      - sensor.l0garagesmall01_conn_bssid
+      - sensor.l0garagesmall01_uptime
+      - sensor.l0garagesmall01_uptime_human_readable
+      - binary_sensor.l0garagesmall01_status
+      - update.l0garagesmall01_firmware
+      - sensor.l0garagesmall01_esphome_version
+      - switch.l0garagesmall01_restart_device
 
   # - type: entities
-  #   title: l0_garagesmall01
+  #   title: l0garagesmall01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l0_garagesmall01_conn_ip_addr
-  #     - sensor.l0_garagesmall01_wifi_signal
-  #     - sensor.l0_garagesmall01_conn_ssid
-  #     - sensor.l0_garagesmall01_conn_bssid
-  #     - sensor.l0_garagesmall01_uptime
-  #     - sensor.l0_garagesmall01_uptime_human_readable
-  #     - binary_sensor.l0_garagesmall01_status
-  #     - sensor.l0_garagesmall01_esphome_version
+  #     - sensor.l0garagesmall01_conn_ip_addr
+  #     - sensor.l0garagesmall01_wifi_signal
+  #     - sensor.l0garagesmall01_conn_ssid
+  #     - sensor.l0garagesmall01_conn_bssid
+  #     - sensor.l0garagesmall01_uptime
+  #     - sensor.l0garagesmall01_uptime_human_readable
+  #     - binary_sensor.l0garagesmall01_status
+  #     - sensor.l0garagesmall01_esphome_version
   #     - entity: switch.l0heatingroomarea01_internet_access
   #       name: Internet Access
-  #     - switch.l0_garagesmall01_restart_device
+  #     - switch.l0garagesmall01_restart_device
 
   # - type: entities
-  #   title: l0_heatingroomarea01
+  #   title: l0heatingroomarea01
   #   show_header_toggle: false
   #   entities:
-  #     - sensor.l0_heatingroomarea01_conn_ip_addr
-  #     - sensor.l0_heatingroomarea01_wifi_signal
-  #     - sensor.l0_heatingroomarea01_conn_ssid
-  #     - sensor.l0_heatingroomarea01_conn_bssid
-  #     - sensor.l0_heatingroomarea01_uptime
-  #     - sensor.l0_heatingroomarea01_uptime_human_readable
-  #     - binary_sensor.l0_heatingroomarea01_status
-  #     - sensor.l0_heatingroomarea01_esphome_version
+  #     - sensor.l0heatingroomarea01_conn_ip_addr
+  #     - sensor.l0heatingroomarea01_wifi_signal
+  #     - sensor.l0heatingroomarea01_conn_ssid
+  #     - sensor.l0heatingroomarea01_conn_bssid
+  #     - sensor.l0heatingroomarea01_uptime
+  #     - sensor.l0heatingroomarea01_uptime_human_readable
+  #     - binary_sensor.l0heatingroomarea01_status
+  #     - sensor.l0heatingroomarea01_esphome_version
   #     - entity: switch.l0heatingroomarea01_internet_access
   #       name: Internet Access
-  #     - switch.l0_heatingroomarea01_restart_device
+  #     - switch.l0heatingroomarea01_restart_device
 ####################################################################
 # EOF
 ####################################################################
