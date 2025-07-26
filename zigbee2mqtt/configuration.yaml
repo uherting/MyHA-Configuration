@@ -96,11 +96,15 @@ devices:
     friendly_name: ZB_Plug_L2_Lounge_TV
   '0xa4c138a8686e79f6':
     friendly_name: ZB_Plug_L2_Bedroom_Misc01
+  '0xa4c13869f1de9bd3':
+    friendly_name: ZB_HumanPresence_L2Kitchen
 groups:
   '1':
     friendly_name: level2-TRVs
   '2':
     friendly_name: level2-Plugs
+  '3':
+    friendly_name: level2-HumanPresence
 availability:
   enabled: true
 version: 4

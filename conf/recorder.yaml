@@ -100,6 +100,10 @@ exclude:
     - sensor.l2kitchen02_scan_results
     - sensor.l2kitchen02_uptime
     - sensor.l2kitchen02_uptime_human_readable
+    - sensor.l2kitchen03_scan_results
+    - sensor.l2kitchen03_uptime
+    - sensor.l2kitchen03_uptime_human_readable
+    - binary_sensor.l2kitchen03_ld2410_out
     - sensor.l2storage01_scan_results
     - sensor.l2storage01_uptime
     - sensor.l2storage01_uptime_human_readable
@@ -120,6 +124,27 @@ exclude:
     - sensor.l9cam3205_scan_results
     - sensor.l9cam3205_uptime
     - sensor.l9cam3205_uptime_human_readable
+    - sensor.zb_charger_gh_last_seen
+    - sensor.zb_charger_uh_last_seen
+    - sensor.zb_dw_l2_bedroom_01_last_seen
+    - sensor.zb_dw_l2_bedroom_02_last_seen
+    - sensor.zb_humanpresence_l2kitchen_last_seen
+    - sensor.zb_plug_l2_misc_01_last_seen
+    - sensor.zb_plug_l2_misc_02_last_seen
+    - sensor.zb_plug_l2_lounge_tv_last_seen
+    - sensor.zb_plug_l2_bedroom_misc01_last_seen
+    - sensor.zb_plug_l2_kitchen_coffeemachine_last_seen
+    - sensor.zb_plug_l2_kitchen_kettle_last_seen
+    - sensor.zb_plug_l2_kitchen_microwave_last_seen
+    - sensor.zb_plug_l2_kitchen_fridge_last_seen
+    - sensor.zb_th_l2_bedroom_last_seen
+    - sensor.zb_th_l2_lounge_last_seen
+    - sensor.zb_th_l2_kitchen_last_seen
+    - sensor.zb_th_l2_storage_out_last_seen
+    - sensor.zb_trv_l2_bedroom_last_seen
+    - sensor.zb_trv_l2_lounge_last_seen
+    - sensor.zb_trv_l2_kitchen_last_seen
+    - sensor.last_seen
     - sensor.last_boot
     - sensor.last_boot_templated
     - sensor.last_message

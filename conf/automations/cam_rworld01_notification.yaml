@@ -8,9 +8,9 @@
 # ############################################################
 # Create a notification if camera RWorld01 senses a person / vehicle
 # ############################################################
-- alias: Camera RWorld01 sensed something
+- alias: Camera RWorld01 sensed a person / vehicle
   id: "8eb2599a-157e-40a6-8d8b-a0a73a28a3a2"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
@@ -27,13 +27,13 @@
     - service: script.tg_send_txt
       data:
         msg_title: "Camera RWorld01 sensed something"
-        msg_text: "The camera RWorld01 sensed a person."
+        msg_text: "The camera RWorld01 sensed a person / vehicle."
         msg_receiver: "admin"
-    - service: script.tg_send_one_file
-      data:
-        msg_filename: ""
-        msg_caption: "The camera RWorld01 sensed a person."
-        msg_receiver: "notify"
+    # - service: script.tg_send_one_file
+    #   data:
+    #     msg_filename: ""
+    #     msg_caption: "The camera RWorld01 sensed a person."
+    #     msg_receiver: "notify"
 ############################################################
 #  END OF FILE
 # ############################################################

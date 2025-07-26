@@ -9,7 +9,7 @@
 # ############################################################
 - alias: ZB_Plug_L2_Bedroom_Misc01 off depending on sun elevation
   id: "3f4d5ff2-e150-490b-a824-78e63b823b0a"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # civil dusk is detected
   trigger:
@@ -17,7 +17,11 @@
       entity_id: binary_sensor.sun_dwn_dusk_civil
       to: "on"
   # -------------------- CONDITIONS -------------------
-  condition: []
+  condition:
+    - alias: "Has the plug the btproxy functionality"
+      condition: state
+      entity_id: input_boolean.zb_plug_l2_bedroom_misc01_btproxy
+      state: "on"
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR ON ----------------------
@@ -29,7 +33,7 @@
 # ############################################################
 - alias: ZB_Plug_L2_Bedroom_Misc01 on depending on sun elevation
   id: "9d4162b3-7424-4911-a501-2ee63ec3ad86"
-  initial_state: true
+  initial_state: false
   # --------------------- TRIGGER ---------------------
   # civil dusk is detected
   trigger:
@@ -37,7 +41,11 @@
       entity_id: binary_sensor.sun_up
       to: "on"
   # -------------------- CONDITIONS -------------------
-  condition: []
+  condition:
+    - alias: "Has the plug the btproxy functionality"
+      condition: state
+      entity_id: input_boolean.zb_plug_l2_bedroom_misc01_btproxy
+      state: "on"
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR ON ----------------------

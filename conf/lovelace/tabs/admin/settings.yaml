@@ -18,6 +18,7 @@ cards:
     title: General Notifications
     show_header_toggle: false
     entities:
+      - input_boolean.zb_plug_l2_bedroom_misc01_btproxy
       - input_boolean.system_notify_general
       - input_boolean.system_notify_debugging
       - binary_sensor.ha_started_up_and_running

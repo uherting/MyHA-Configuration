@@ -1,0 +1,16 @@
+# ############################################################
+#
+#  Input boolean
+#
+# ############################################################
+
+#input_boolean:
+zb_plug_l2_bedroom_misc01_btproxy:
+  name: ZB Plug L2 Bedroom Misc01 BT proxy functionality
+  icon: mdi:bell
+  # no need to define an initial value as it will be reloaded
+  # initial: off
+# ############################################################
+#  END OF FILE
+# ############################################################
+
