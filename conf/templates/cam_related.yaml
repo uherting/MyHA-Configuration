@@ -11,11 +11,25 @@
 
 - binary_sensor:
     # detected motion on cam rworld1 (cam_rworld1_motion)
+    # cam_rworld1_motion
     - name: "Cam Rworld1 Motion"
       unique_id: "7fc19a95-99d3-4e89-8f25-3f4ef1717ab4"
       icon: mdi:motion-sensor
       state: >
         {{ (states('binary_sensor.rworld1_person')) or states('binary_sensor.rworld1_vehicle') }}
+
+    # detected motion on cam rworld1 (cam_rworld1_motion)
+    # cam_rworld1_cooldown
+    - name: "Cam Rworld1 CoolDown"
+      unique_id: "eac3fdb3-dd46-4836-860a-856623b01a72"
+      icon: mdi:coolant-temperature
+      state: >
+        {% set duration_sw_on_cmp = 1*60 %} {# 1min #}
+        {% set timestamp_secs = now().timestamp() | int(0) %}
+        {{ 
+          (is_state('binary_sensor.cam_rworld1_motion', 'on')) and 
+          ((timestamp_secs) - ((states['binary_sensor.cam_rworld1_motion'].last_changed).timestamp() | int ) > duration_sw_on_cmp)
+        }}
 
 ####################################################################
 # EOF
