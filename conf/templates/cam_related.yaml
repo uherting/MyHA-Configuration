@@ -30,13 +30,6 @@
           ((timestamp_secs) - ((states['binary_sensor.cam_rworld1_motion'].last_changed).timestamp() | int ) > duration_sw_on_cmp)
         }}
 
-        # {% set duration_sw_on_cmp = 1*60 %} {# 1min #}
-        # {% set timestamp_secs = now().timestamp() | int(0) %}
-        # {{ 
-        #   (is_state('binary_sensor.cam_rworld1_motion', 'on')) and 
-        #   ((timestamp_secs) - ((states['binary_sensor.cam_rworld1_motion'].last_changed).timestamp() | int ) > duration_sw_on_cmp)
-        # }}
-
 ####################################################################
 # EOF
 ####################################################################
