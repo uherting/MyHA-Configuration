@@ -92,12 +92,12 @@ devices:
   '0xa4c1388148217706':
     friendly_name: ZB_Plug_L2_Kitchen_Kettle
     icon: device_icons/08a9016bbc0657cf5f581ae9c19c31a5.png
-  '0xa4c138820b55bd63':
-    friendly_name: ZB_Plug_L2_Lounge_TV
   '0xa4c138a8686e79f6':
     friendly_name: ZB_Plug_L2_Bedroom_Misc01
   '0xa4c13869f1de9bd3':
     friendly_name: ZB_HumanPresence_L2Kitchen
+  '0xa4c138eb12190e51':
+    friendly_name: ZB_Plug_L2_Lounge_TV
 groups:
   '1':
     friendly_name: level2-TRVs
