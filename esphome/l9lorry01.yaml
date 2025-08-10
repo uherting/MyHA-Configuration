@@ -11,7 +11,7 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for Tests on a ESP32-C3 platform w/o MCP23017 
+#   - Microcontroller for remote usage (ESP32-C3 platform) w/o MCP23017 
 #
 # Future feature:
 #   - unknown
