@@ -15,7 +15,10 @@
       unique_id: "7fc19a95-99d3-4e89-8f25-3f4ef1717ab4"
       icon: mdi:motion-sensor
       state: >
-        {{ (states('binary_sensor.rworld1_person')) or states('binary_sensor.rworld1_vehicle') }}
+        {{ 
+          states('binary_sensor.rworld1_person') or 
+          states('binary_sensor.rworld1_vehicle')
+        }}
 
 ####################################################################
 # EOF

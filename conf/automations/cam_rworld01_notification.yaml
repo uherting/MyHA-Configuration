@@ -14,17 +14,22 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: binary_sensor.rworld1_person
+      entity_id: binary_sensor.cam_rworld1_motion
       to: "on"
-    - platform: state
-      entity_id: binary_sensor.rworld1_vehicle
-      to: "on"
+    # - platform: state
+    #   entity_id: binary_sensor.rworld1_person
+    #   to: "on"
+    # - platform: state
+    #   entity_id: binary_sensor.rworld1_vehicle
+    #   to: "on"
   # -------------------- CONDITIONS -------------------
   condition:
+    # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
     - alias: "Cam cooldown RWorld01 not activated"
       condition: state
       entity_id: input_boolean.cam_rworld1_cooldown
       state: "off"
+  # condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- CREATE NOTIFICATION -------------------

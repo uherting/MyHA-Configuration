@@ -14,6 +14,7 @@
   initial_state: true
   # -------------------- CONDITIONS -------------------
   condition:
+    # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
     - alias: "Cam cooldown RWorld01 not activated"
       condition: state
       entity_id: input_boolean.cam_rworld1_cooldown
