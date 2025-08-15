@@ -105,10 +105,15 @@ cards:
             entity: sensor.temperature_humidity_sensor_3592_humidity
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_lounge_tv
-            name: "TV"
-            color: yellow
+            # entity:
+            name: " "
             show_state: false
+            color: yellow
+          # - type: "custom:button-card"
+          #   entity: switch.zb_plug_l2_lounge_tv
+          #   name: "TV"
+          #   color: yellow
+          #   show_state: false
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_misc_02
             name: "Misc 02"
