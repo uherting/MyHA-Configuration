@@ -1,0 +1,15 @@
+# ############################################################
+#
+#  Input boolean
+#
+# ############################################################
+
+#input_boolean:
+cam_rworld1_cooldown:
+  # cool down period on cam rworld1 (cam_rworld1_cooldown)
+  name: "Cam Rworld1 CoolDown"
+  icon: mdi:coolant-temperature
+  initial: off
+# ############################################################
+#  END OF FILE
+# ############################################################

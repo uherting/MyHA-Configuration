@@ -13,8 +13,11 @@
   mode: single
   initial_state: true
   # -------------------- CONDITIONS -------------------
-  # none whatsoever
-  condition: []
+  condition:
+    - alias: "Cam cooldown RWorld01 not activated"
+      condition: state
+      entity_id: input_boolean.cam_rworld1_cooldown
+      state: "off"
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
     path: uh/save-camera-snapshot-notification-on-motion.yaml

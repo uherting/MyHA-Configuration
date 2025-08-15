@@ -20,7 +20,11 @@
       entity_id: binary_sensor.rworld1_vehicle
       to: "on"
   # -------------------- CONDITIONS -------------------
-  condition: []
+  condition:
+    - alias: "Cam cooldown RWorld01 not activated"
+      condition: state
+      entity_id: input_boolean.cam_rworld1_cooldown
+      state: "off"
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- CREATE NOTIFICATION -------------------

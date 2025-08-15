@@ -1,0 +1,51 @@
+# ############################################################
+#
+#  Automation related to motion detection and further notifications
+#
+# ############################################################
+
+# ############################################################
+# Camera Cooldown RWorld01 On
+# ############################################################
+- alias: Camera Cooldown RWorld01 On
+  id: "9ba5dd9f-ee29-407a-a4f6-ea0e7bd1c952"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.cam_rworld1_motion
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- START COOLDOWN ---------------------
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.cam_rworld1_cooldown
+
+# ############################################################
+# Camera Cooldown RWorld01 Off
+# ############################################################
+- alias: Camera Cooldown RWorld01 Off
+  id: "07b3755b-d694-4cb8-9f1d-e2310d2546c5"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: input_boolean.cam_rworld1_cooldown
+      to: "on"
+      for:
+        minutes: 1
+        seconds: 30
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- END COOLDOWN ---------------------
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.cam_rworld1_cooldown
+############################################################
+#  END OF FILE
+# ############################################################
