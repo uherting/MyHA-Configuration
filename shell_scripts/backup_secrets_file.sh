@@ -17,6 +17,6 @@ fi
 # winnipeg
 TARGET_MACHINE="192.168.178.33"
 
-TS=`date +%Y%m%d_%H%M%S`
+TS=$(date +%Y%m%d_%H%M%S)
 scp /usr/share/hassio/homeassistant/esphome/secrets.yaml uwe@${TARGET_MACHINE}:/home/uwe/Desktop/secrets_yaml/secrets_${TS}.yaml
 
