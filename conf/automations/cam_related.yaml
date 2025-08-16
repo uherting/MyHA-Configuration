@@ -23,12 +23,21 @@
     #   entity_id: binary_sensor.rworld1_vehicle
     #   to: "on"
   # -------------------- CONDITIONS -------------------
-  condition:
-    # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
-    - alias: "Cam cooldown RWorld01 is not yet activated"
-      condition: state
-      entity_id: input_boolean.cam_rworld1_cooldown
-      state: "off"
+  conditions:
+    - or:
+        - condition: state
+          entity_id: input_boolean.cam_rworld1_cooldown
+          state: "off"
+        - condition: state
+          entity_id: input_boolean.cam_rworld1_cooldown
+          state: "unavailable"
+
+  # condition:
+  #   # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
+  #   - alias: "Cam cooldown RWorld01 is not yet activated"
+  #     condition: state
+  #     entity_id: input_boolean.cam_rworld1_cooldown
+  #     state: "off"
   # condition: []
   # --------------------- ACTIONS ---------------------
   action:
