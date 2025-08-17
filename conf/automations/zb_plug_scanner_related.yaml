@@ -1,0 +1,30 @@
+# ############################################################
+#
+#  automation for ZB_Plug_L2_Lounge_Scanner
+#
+# ############################################################
+
+# ############################################################
+# ZB_Plug_L2_Lounge_Scanner off after x minutes
+# ############################################################
+- alias: ZB_Plug_L2_Lounge_Scanner off after x minutes
+  id: "c223f4f3-56aa-4a0d-84ce-f35bd3a1f777"
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: switch.zb_plug_l2_lounge_scanner
+      to: "on"
+      for:
+        hours: 0
+        minutes: 20
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SSR ON ----------------------
+    service: switch.turn_off
+    entity_id: switch.zb_plug_l2_lounge_scanner
+# ############################################################
+#  END OF FILE
+# ############################################################
