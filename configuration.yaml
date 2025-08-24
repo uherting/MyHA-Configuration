@@ -111,8 +111,6 @@ recorder: !include conf/recorder.yaml
 # history: !include conf/history.yaml
 # influxdb: !include conf/influxdb.yaml
 
-#mqtt: !include conf/mqtt.yaml
-
 lovelace: !include configuration_resources_dashboards.yaml
 
 frontend:
@@ -217,6 +215,18 @@ template: !include_dir_merge_list conf/templates
 switch: !include_dir_merge_list conf/switches
 # DOODS
 #image_processing: !include conf/doods/image_processing.yaml
+
+# MQTT
+# no idea to put in a separate file as the editor puts the key words in column 1 on saving the file
+# that is why this config ended up in configuration.yaml
+# mqtt: !include conf/mqtt.yaml
+# mqtt:
+#   broker: !secret MQTT_HIVEMQ_BROKER_01_HOSTNAME
+#   port: !secret MQTT_HIVEMQ_BROKER_01_PORT
+#   username: !secret MQTT_HIVEMQ_BROKER_01_MQTT_USERNAME
+#   password: !secret MQTT_HIVEMQ_BROKER_01_PASSWORD
+#   # HIVEMQ does not offer certificates in free plans at the moment, use Let’s Encrypt certificate https://letsencrypt.org/certs/isrgrootx1.pem
+#   # certificate: !secret
 
 battery_notes:
   enable_autodiscovery: true
