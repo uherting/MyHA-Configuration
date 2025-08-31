@@ -96,8 +96,6 @@ devices:
     friendly_name: ZB_Plug_L2_Bedroom_Misc01
   '0xa4c13869f1de9bd3':
     friendly_name: ZB_HumanPresence_L2Kitchen_01
-  '0xa4c138c3a4782f6a':
-    friendly_name: ZB_HumanPresence_L2Kitchen_02
 groups:
   '1':
     friendly_name: level2-TRVs
