@@ -9,7 +9,7 @@
 # ############################################################
 - alias: ZB_Plug_L2_Lounge_Scanner off after x minutes
   id: "c223f4f3-56aa-4a0d-84ce-f35bd3a1f777"
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
