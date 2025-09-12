@@ -105,10 +105,10 @@ cards:
             entity: sensor.temperature_humidity_sensor_3592_humidity
             show_state: true
           - type: "custom:button-card"
-            # entity:
-            name: " "
-            show_state: false
+            entity: switch.zb_plug_l2_lounge_scanner
+            name: "Scanner"
             color: yellow
+            show_state: false
           # - type: "custom:button-card"
           #   entity: switch.zb_plug_l2_lounge_tv
           #   name: "TV"
@@ -234,10 +234,10 @@ cards:
               action: call-service
               service: script.lovelace_l2_bathroom01a_ssr_01_02
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_lounge_scanner
-            name: "Scanner"
-            color: yellow
+            # entity:
+            name: " "
             show_state: false
+            color: yellow
           # - type: "custom:button-card"
           #   # entity:
           #   name: " "
