@@ -15,16 +15,16 @@
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
-      entity_id: binary_sensor.zb_humanpresence_l2kitchen_01_presence
+      entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
       to: "on"
     - platform: state
-      entity_id: sensor.zb_humanpresence_l2kitchen_01_motion_state
+      entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
       to: "large"
     # - platform: state
-    #   entity_id: binary_sensor.zb_humanpresence_l2kitchen_02_presence
+    #   entity_id: binary_sensor.zb_humanpresence_l2_kitchen_02_presence
     #   to: "on"
     # - platform: state
-    #   entity_id: sensor.zb_humanpresence_l2kitchen_02_motion_state
+    #   entity_id: sensor.zb_humanpresence_l2_kitchen_02_motion_state
     #   to: "large"
 
   # -------------------- CONDITIONS -------------------
@@ -50,7 +50,7 @@
   # no motion is detected for x minutes or door is closed
   trigger:
     - platform: state
-      entity_id: binary_sensor.zb_humanpresence_l2kitchen_01_presence
+      entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
       to: "off"
       for:
         minutes: 1
