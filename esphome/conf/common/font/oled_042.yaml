@@ -1,0 +1,20 @@
+####################################################################
+# FONT
+
+# font:
+  - file: 'gfonts://Roboto'
+    id: myfont_roboto18
+    size: 18
+  - file: 'gfonts://Inter'
+    id: myfont_inter12
+    size: 12
+  # - file: $font_times_new_roman_ttf
+  #   id: font_times_new_roman_20
+  #   size: 20
+  # - file: $font_times_new_roman_ttf
+  #   id: font_times_new_roman_35
+  #   size: 35
+
+# ############################################################
+#  END OF FILE
+# ############################################################
