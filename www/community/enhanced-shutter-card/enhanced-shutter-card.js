@@ -1,14 +1,14 @@
-const VERSION = 'v1.2.3';
+
+const VERSION = 'v1.3.0';
 const DEBUG = false;
-import {
-  LitElement,
-  html,
-  css,
-  unsafeCSS
-}
-from './lit/lit-core.min.js';
-// local copy of RELEASE 3.0.1 of
+// // local copy of RELEASE 3.0.1 of
 // https://www.jsdelivr.com/package/gh/lit/dist
+
+import {LitElement, html, css, unsafeCSS } from './lit/lit-core.min.js';
+
+// import {html, css, unsafeCSS } from './lit/lit-core.min.js';
+// import {LitElement} from './lit/lit-debug.js'; // <-- dit is nu de debug versie
+
 
 const HA_CARD_NAME = "enhanced-shutter-card";
 const HA_SHUTTER_NAME = `enhanced-shutter`;
@@ -16,7 +16,8 @@ const HA_HUI_VIEW = 'hui-view';
 const SPACE = '';
 
 const UNAVAILABLE = 'unavailable';
-const NOT_KNOWN =[UNAVAILABLE,'unknown',undefined];
+const UNKNOWN = 'unknown';
+const NOT_KNOWN =[UNAVAILABLE,UNKNOWN,undefined, null ];
 
 const AUTO = 'auto';
 const LEFT = 'left';
@@ -102,12 +103,14 @@ const ESC_CLASS_BUTTONS_RIGHT = `${ESC_CLASS_BUTTONS}-${RIGHT}`;
 const ESC_CLASS_BUTTON = `${ESC_CLASS_BASE_NAME}-button`;
 const ESC_CLASS_SELECTOR = `${ESC_CLASS_BASE_NAME}-selector`;
 const ESC_CLASS_SELECTOR_PICTURE = `${ESC_CLASS_BASE_NAME}-selector-picture`;
-const ESC_CLASS_SELECTOR_SLIDE = `${ESC_CLASS_BASE_NAME}-selector-slide`;
 const ESC_CLASS_SELECTOR_PICKER = `${ESC_CLASS_BASE_NAME}-selector-picker`;
 const ESC_CLASS_SELECTOR_PARTIAL = `${ESC_CLASS_BASE_NAME}-selector-partial`;
+const ESC_CLASS_SELECTOR_SLIDE = `${ESC_CLASS_BASE_NAME}-selector-slide`;
+const ESC_CLASS_SELECTOR_SLIDE_MAIN = `${ESC_CLASS_SELECTOR_SLIDE}-main`;
+const ESC_CLASS_SELECTOR_SLIDE_EDGE = `${ESC_CLASS_SELECTOR_SLIDE}-edge`;
 const ESC_CLASS_MOVEMENT_OVERLAY = `${ESC_CLASS_BASE_NAME}-movement-overlay`;
-const ESC_CLASS_MOVEMENT_OPEN = `${ESC_CLASS_BASE_NAME}-movement-open`;
-const ESC_CLASS_MOVEMENT_CLOSE = `${ESC_CLASS_BASE_NAME}-movement-close`;
+const ESC_CLASS_MOVEMENT_UP = `${ESC_CLASS_BASE_NAME}-movement-up`;
+const ESC_CLASS_MOVEMENT_DOWN = `${ESC_CLASS_BASE_NAME}-movement-down`;
 const ESC_CLASS_HA_ICON = `${ESC_CLASS_BASE_NAME}-ha-icon`;
 const ESC_CLASS_HA_ICON_LOCK = `${ESC_CLASS_HA_ICON}-lock`;
 const ESC_CLASS_TOP_LEFT = `${ESC_CLASS_BASE_NAME}-${TOP}-${LEFT}`;
@@ -131,6 +134,7 @@ const ICON_SIZE = 24;
 const UNITY= 'px';
 
 const CONFIG_TYPE = "type";
+const CONFIG_SHUTTER_PRESET = 'shutter_preset';
 const CONFIG_TITLE = "title";
 const CONFIG_ENTITIES = 'entities';
 
@@ -153,17 +157,20 @@ const CONFIG_WINDOW_IMAGE = 'window_image';
 const CONFIG_VIEW_IMAGE = 'view_image';
 const CONFIG_SHUTTER_SLAT_IMAGE = 'shutter_slat_image';
 const CONFIG_SHUTTER_BOTTOM_IMAGE = 'shutter_bottom_image';
+const CONFIG_ROTATE_MAIN_SHUTTER_IMAGE = 'rotate_slat_image';
+const CONFIG_STRETCH_EDGE_SHUTTER_IMAGE = 'stretch_bottom_image';
 const CONFIG_BASE_HEIGHT_PX = 'base_height_px';
 const CONFIG_BASE_WIDTH_PX = 'base_width_px';
 const CONFIG_RESIZE_HEIGHT_PCT = 'resize_height_pct';
 const CONFIG_RESIZE_WIDTH_PCT = 'resize_width_pct';
 
 const CONFIG_SCALE_ICONS = 'scale_icons';
+const CONFIG_SCALE_TEXTS = 'scale_texts';
 const CONFIG_SCALE_BUTTONS = 'scale_buttons';
-const CONFIG_OFFSET_OPENED_PCT = 'top_offset_pct'; // TODO  rename
-const CONFIG_OFFSET_CLOSED_PCT = 'bottom_offset_pct'; // TODO rename
+const CONFIG_OFFSET_OPENED_PCT = 'top_offset_pct'; // TODO  rename: top->opened
+const CONFIG_OFFSET_CLOSED_PCT = 'bottom_offset_pct'; // TODO rename bottom->closed
 const CONFIG_BUTTONS_POSITION = 'buttons_position';
-const CONFIG_TITLE_POSITION = 'title_position';  // deprecated
+const CONFIG_TITLE_POSITION = 'title_position';  // removed
 const CONFIG_NAME_POSITION = 'name_position';
 const CONFIG_NAME_DISABLED = 'name_disabled';
 const CONFIG_OPENING_POSITION = 'opening_position';
@@ -171,6 +178,7 @@ const CONFIG_OPENING_DISABLED = 'opening_disabled';
 const CONFIG_INLINE_HEADER = 'inline_header';
 
 const CONFIG_INVERT_PCT = 'invert_percentage';
+const CONFIG_INVERT_OPEN_CLOSE = 'invert_open_close';
 const CONFIG_CAN_TILT = 'can_tilt';
 const CONFIG_SHOW_TILT = 'show_tilt';
 const CONFIG_CLOSING_DIRECTION = 'closing_direction'
@@ -184,13 +192,31 @@ const CONFIG_PICKER_OVERLAP_PX = 'picker_overlap_px';
 const CONFIG_CURRENT_POSITION = 'current_position';
 
 const CONFIG_BUTTON_STOP_HIDE_STATES = 'button_stop_hide_states';
-const CONFIG_BUTTON_UP_HIDE_STATES = 'button_up_hide_states';
-const CONFIG_BUTTON_DOWN_HIDE_STATES = 'button_down_hide_states';
+const CONFIG_BUTTON_OPENED_HIDE_STATES = 'button_up_hide_states';  // TODO rename up->opened
+const CONFIG_BUTTON_CLOSED_HIDE_STATES = 'button_down_hide_states'; // TODO rename down->closed
+
+const DEPRECATED={
+  //[CONFIG_TITLE_POSITION]: {new: CONFIG_NAME_POSITION},
+  [CONFIG_CAN_TILT]: {new: CONFIG_SHOW_TILT}
+};
+const REMOVED={
+  [CONFIG_TITLE_POSITION]: {new: CONFIG_NAME_POSITION},
+  //[CONFIG_CAN_TILT]: {new: CONFIG_SHOW_TILT}
+};
+    const ICONCOLORS = {
+      '-1': "grey",
+      0: "red",
+      1: "#FF4D00",// deep orange,
+      2: "#FF7F00", // amber
+      3: "orange",
+      4: "#66B266", // sligly dim green
+      5: "green",
+    };
 
 const Z_INDEX_PARTIAL = 5;
 const Z_INDEX_PICKER  = 3;
 const Z_INDEX_PICTURE = 1;
-const Z_INDEX_MOVEMENT_ICON = -1;  // !important ??
+const Z_INDEX_MOVEMENT_ICON = 2;  // !important ??
 const Z_INDEX_SLIDE  = -1;
 const Z_INDEX_OVERLAY =-1;
 
@@ -200,20 +226,31 @@ const ESC_ENTITY_ID = null;
 const ESC_BATTERY_ENTITY_ID = null;
 const ESC_SIGNAL_ENTITY_ID = null;
 
+const ESC_AWNING = 'awning';
+const ESC_CURTAIN = 'curtain';
+const ESC_TEST = 'test'; // used for testing purposes
+const ESC_SHADE = 'shade';
+const ESC_ROLLER_SHUTTER = 'roller-shutter';
+const ESC_TYPES =
+  [ESC_AWNING, ESC_CURTAIN, ESC_ROLLER_SHUTTER,ESC_SHADE];
+
+const ESC_SHUTTER_PRESET = ESC_ROLLER_SHUTTER;
 const ESC_NAME = null;
 const ESC_PASSIVE_MODE = false;
 const ESC_IMAGE_MAP = `/local/community/${HA_CARD_NAME}/images`;
 const ESC_IMAGE_WINDOW = 'esc-window.png';
 const ESC_IMAGE_VIEW = 'esc-view.png';
-
-const ESC_IMAGE_SHUTTER_SLAT   = { [VERTICAL]:'esc-shutter-slat.png'  ,[HORIZONTAL]: 'esc-curtain.png'};
-const ESC_IMAGE_SHUTTER_BOTTOM = {[VERTICAL]: 'esc-shutter-bottom.png',[HORIZONTAL]: ''};
+const ESC_IMAGE_SHUTTER_SLAT   = 'esc-shutter-slat.png';
+const ESC_IMAGE_SHUTTER_BOTTOM = 'esc-shutter-bottom.png';
+const ESC_ROTATE_MAIN_SHUTTER_IMAGE = true; // true: rotate slat image, false: use slat image as is
+const ESC_STRETCH_EDGE_SHUTTER_IMAGE = true; // true: stretch bottom image, false: use bottom image as is
 const ESC_BASE_HEIGHT_PX = 150; // image-height
 const ESC_BASE_WIDTH_PX = 150;  // image-width
 const ESC_RESIZE_HEIGHT_PCT = 100;
 const ESC_RESIZE_WIDTH_PCT  = 100;
 
 const ESC_SCALE_ICONS = true;
+const ESC_SCALE_TEXTS = false;
 const ESC_SCALE_BUTTONS = false;
 const ESC_OPENED_OFFSET_PCT = 0;
 const ESC_CLOSED_OFFSET_PCT = 0;
@@ -225,6 +262,7 @@ const ESC_OPENING_POSITION = TOP;
 const ESC_OPENING_DISABLED = false;
 const ESC_INLINE_HEADER = false;
 const ESC_INVERT_PCT = false;
+const ESC_INVERT_OPEN_CLOSE = false
 const ESC_CAN_TILT = false;
 const ESC_SHOW_TILT = true;
 const ESC_CLOSING_DIRECTION = DOWN;
@@ -237,21 +275,32 @@ const ESC_DISABLE_PARTIAL_OPEN_BUTTONS = true;
 const ESC_PICKER_OVERLAP_PX = 20;
 const ESC_CURRENT_POSITION = 0;
 
-const ESC_MIN_RESIZE_WIDTH_PCT  =  50;
-const ESC_MAX_RESIZE_WIDTH_PCT  = 200;
-const ESC_MIN_RESIZE_HEIGHT_PCT =  50;
-const ESC_MAX_RESIZE_HEIGHT_PCT = 200;
+
+const ESC_MIN_RESIZE_WIDTH_PCT  =  20;
+const ESC_MAX_RESIZE_WIDTH_PCT  = 500;
+const ESC_MIN_RESIZE_HEIGHT_PCT =  20;
+const ESC_MAX_RESIZE_HEIGHT_PCT = 500;
 
 const ESC_BUTTON_STOP_HIDE_STATES = [];
-const ESC_BUTTON_UP_HIDE_STATES = [];
-const ESC_BUTTON_DOWN_HIDE_STATES = [];
+const ESC_BUTTON_OPENED_HIDE_STATES = [];
+const ESC_BUTTON_CLOSED_HIDE_STATES = [];
 
+const INVERT_OPEN_CLOSE ={
+  [SHUTTER_STATE_OPEN]: SHUTTER_STATE_CLOSED,
+  [SHUTTER_STATE_CLOSED]: SHUTTER_STATE_OPEN,
+  [SHUTTER_STATE_OPENING]: SHUTTER_STATE_CLOSING,
+  [SHUTTER_STATE_CLOSING]: SHUTTER_STATE_OPENING,
+  [ACTION_SHUTTER_OPEN]: ACTION_SHUTTER_CLOSE,
+  [ACTION_SHUTTER_CLOSE]: ACTION_SHUTTER_OPEN,
+
+};
 
 const CONFIG_DEFAULT ={
   [CONFIG_TYPE]: "",
   [CONFIG_TITLE]: "",
   [CONFIG_ENTITIES]: "",
 
+  [CONFIG_SHUTTER_PRESET]: ESC_SHUTTER_PRESET,
   [CONFIG_ENTITY_ID]: ESC_ENTITY_ID,
 
   [CONFIG_BATTERY_ENTITY_ID]: ESC_BATTERY_ENTITY_ID,
@@ -264,6 +313,8 @@ const CONFIG_DEFAULT ={
   [CONFIG_VIEW_IMAGE]: ESC_IMAGE_VIEW,
   [CONFIG_SHUTTER_SLAT_IMAGE]: ESC_IMAGE_SHUTTER_SLAT,
   [CONFIG_SHUTTER_BOTTOM_IMAGE]: ESC_IMAGE_SHUTTER_BOTTOM,
+  [CONFIG_ROTATE_MAIN_SHUTTER_IMAGE]: ESC_ROTATE_MAIN_SHUTTER_IMAGE,
+  [CONFIG_STRETCH_EDGE_SHUTTER_IMAGE]: ESC_STRETCH_EDGE_SHUTTER_IMAGE,
   [CONFIG_BASE_HEIGHT_PX]: ESC_BASE_HEIGHT_PX,
   [CONFIG_BASE_WIDTH_PX]: ESC_BASE_WIDTH_PX,
   [CONFIG_RESIZE_HEIGHT_PCT]: ESC_RESIZE_HEIGHT_PCT,
@@ -271,6 +322,7 @@ const CONFIG_DEFAULT ={
 
   [CONFIG_SCALE_ICONS]: ESC_SCALE_ICONS,
   [CONFIG_SCALE_BUTTONS]: ESC_SCALE_BUTTONS,
+  [CONFIG_SCALE_TEXTS]: ESC_SCALE_TEXTS,
   [CONFIG_OFFSET_OPENED_PCT]: ESC_OPENED_OFFSET_PCT,
   [CONFIG_OFFSET_CLOSED_PCT]: ESC_CLOSED_OFFSET_PCT,
   [CONFIG_BUTTONS_POSITION]: ESC_BUTTONS_POSITION,
@@ -282,6 +334,7 @@ const CONFIG_DEFAULT ={
   [CONFIG_INLINE_HEADER]: ESC_INLINE_HEADER,
 
   [CONFIG_INVERT_PCT]: ESC_INVERT_PCT,
+  [CONFIG_INVERT_OPEN_CLOSE]: ESC_INVERT_OPEN_CLOSE,
 
   [CONFIG_CAN_TILT]: ESC_CAN_TILT,
   [CONFIG_SHOW_TILT]: ESC_SHOW_TILT,
@@ -298,24 +351,55 @@ const CONFIG_DEFAULT ={
   [CONFIG_CURRENT_POSITION]: ESC_CURRENT_POSITION,
 
   [CONFIG_BUTTON_STOP_HIDE_STATES]: ESC_BUTTON_STOP_HIDE_STATES,
-  [CONFIG_BUTTON_UP_HIDE_STATES]: ESC_BUTTON_UP_HIDE_STATES,
-  [CONFIG_BUTTON_DOWN_HIDE_STATES]: ESC_BUTTON_DOWN_HIDE_STATES,
+  [CONFIG_BUTTON_OPENED_HIDE_STATES]: ESC_BUTTON_OPENED_HIDE_STATES,
+  [CONFIG_BUTTON_CLOSED_HIDE_STATES]: ESC_BUTTON_CLOSED_HIDE_STATES,
+// Home assistant key words, not used but to prevent warnings
+  ['view_layout']: null,
+  ['grid_options']: null,
+
+
 
 };
-const DEPRECATED={
-  //[CONFIG_TITLE_POSITION]: {new: CONFIG_NAME_POSITION},
-  [CONFIG_CAN_TILT]: {new: CONFIG_SHOW_TILT}
-};
-const REMOVED={
-  [CONFIG_TITLE_POSITION]: {new: CONFIG_NAME_POSITION},
-  //[CONFIG_CAN_TILT]: {new: CONFIG_SHOW_TILT}
-};
+const ESC_PRESET = {
+  [ESC_ROLLER_SHUTTER] : {
+    [CONFIG_ROTATE_MAIN_SHUTTER_IMAGE]: true,
+  }  // default is using CONFIG_DEFAULT
+  ,
+  [ESC_AWNING]: {
+    [CONFIG_INVERT_OPEN_CLOSE]: true,
+    [CONFIG_SHUTTER_SLAT_IMAGE]: 'esc-awning.png',
+    [CONFIG_SHUTTER_BOTTOM_IMAGE]: 'esc-awning-bottom.png',
+    [CONFIG_ROTATE_MAIN_SHUTTER_IMAGE]: true,
+    [CONFIG_STRETCH_EDGE_SHUTTER_IMAGE]: false,
+    [CONFIG_OFFSET_CLOSED_PCT]: 50
+  },
+  [ESC_CURTAIN]: {
+    [CONFIG_CLOSING_DIRECTION]: RIGHT,
+    [CONFIG_SHUTTER_SLAT_IMAGE]: 'esc-curtain.png',
+    [CONFIG_SHUTTER_BOTTOM_IMAGE]: '',
+    [CONFIG_ROTATE_MAIN_SHUTTER_IMAGE]: false,
+  },
+  [ESC_SHADE]: {
+    [CONFIG_SHUTTER_SLAT_IMAGE]: '#00000080',
+  },
+  [ESC_TEST]: {
+    [CONFIG_SHUTTER_SLAT_IMAGE]: 'rode_rechthoek.png',
+    [CONFIG_SHUTTER_BOTTOM_IMAGE]: 'gele_rechthoek.png',
+  },
+}
 
 const LOCALIZE_TEXT= {
-  [SHUTTER_STATE_OPEN]: 'component.cover.entity_component._.state.open',
-  [SHUTTER_STATE_CLOSED]: 'component.cover.entity_component._.state.closed',
+  // Search for this in Lokalise.com : component::cover::entity_component::_::state::
+  [SHUTTER_STATE_OPEN]:    'component.cover.entity_component._.state.open',
+  [SHUTTER_STATE_CLOSED]:  'component.cover.entity_component._.state.closed',
   [SHUTTER_STATE_CLOSING]: 'component.cover.entity_component._.state.closing',
   [SHUTTER_STATE_OPENING]: 'component.cover.entity_component._.state.opening',
+  [ACTION_SHUTTER_OPEN]:       'ui.card.cover.open_cover',
+  [ACTION_SHUTTER_OPEN_TILT]:  'ui.card.cover.open_cover_tilt',
+  [ACTION_SHUTTER_STOP]:       'ui.card.cover.stop_cover',
+  [ACTION_SHUTTER_CLOSE]:      'ui.card.cover.close_cover',
+  [ACTION_SHUTTER_CLOSE_TILT]: 'ui.card.cover.close_cover_tilt',
+
   [UNAVAILABLE]: 'state.default.unavailable',
 };
 
@@ -336,7 +420,6 @@ const SHUTTER_CSS =`
         overflow: visible;
         --mdc-icon-button-size: 48px;
         --mdc-icon-size: 24px;
-        bbackground-color: red;
 
       }
       .${ESC_CLASS_MIDDLE} {
@@ -383,7 +466,7 @@ const SHUTTER_CSS =`
         background-size: cover;
         background-position: center;
         flex-grow: 0;
-        flex-shrink: 1;
+        flex-shrink: 0;
         flex-basis: var(--esc-selector-flex-basis);
       }
       .${ESC_CLASS_SELECTOR_PICTURE} {
@@ -395,7 +478,7 @@ const SHUTTER_CSS =`
         position: relative;
         margin: auto;
         line-height: 0;
-        overflow: hidden;
+        overflow: hidden; /* prevents image overflow */
         image-rendering: auto;
         image-rendering: pixelated;
         image-rendering: crisp-edges;
@@ -420,49 +503,40 @@ const SHUTTER_CSS =`
         touch-action: none;
         user-select: none;
       }
-      .${ESC_CLASS_SELECTOR_SLIDE}org {
+      .${ESC_CLASS_SELECTOR_SLIDE} {
         z-index: ${Z_INDEX_SLIDE};
+        text-align: start;` /* align to left, solves #104 */ +`
         position: absolute;
         left: -50%;
         width: 100%;
-        background-position: bottom;
-        background-image: var(--esc-slide-background-image);
         overflow: hidden;
         bottom: 100%;
         height: var(--esc-slide-height);
-        max-width: 100%;
         transform-origin: bottom;
         transform: var(--esc-transform-slide);
-      }
-      .${ESC_CLASS_SELECTOR_SLIDE}::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        background-position: var(--esc-slide-background-position);
-        background-image: var(--esc-slide-background-image);
-
-        background-repeat: no-repeat, repeat;
-        background-size: var(--esc-slide-background-size);
-
-        overflow: hidden;
-        height: var(--esc-slide-height);
-        transform: var(--esc-transform-pre-slide);
         image-rendering: auto;
         image-rendering: pixelated;
         image-rendering: crisp-edges;
         image-rendering: -webkit-optimize-contrast;
       }
-      .${ESC_CLASS_SELECTOR_SLIDE} {
-        z-index: ${Z_INDEX_SLIDE};
-        position: absolute;
-        left: -50%;
-        width: 100%;
-        overflow: hidden;
-        bottom: 100%;
-        height: var(--esc-slide-height);
-        transform-origin: bottom;
-        transform: var(--esc-transform-slide);
-        image-rendering: pixelated;
+      .${ESC_CLASS_SELECTOR_SLIDE_MAIN} {
+        height: var(--esc-slide-main-height);
+        background-position: var(--esc-slide-background-main-position);
+        background-image: var(--esc-slide-background-main-image);
+        background-color: var(--esc-slide-background-main-color);
+
+        background-repeat: repeat;
+        background-size: var(--esc-slide-background-main-size);
+        transform: var(--esc-transform-undo-rotate);
+      }
+      .${ESC_CLASS_SELECTOR_SLIDE_EDGE} {
+        height: var(--esc-slide-edge-height);
+        background-position: var(--esc-slide-background-edge-position);
+        background-image: var(--esc-slide-background-edge-image);
+        background-color: var(--esc-slide-background-edge-color);
+
+        background-repeat: repeat;
+        background-size: var(--esc-slide-background-edge-size);
       }
       .${ESC_CLASS_SELECTOR_PARTIAL} {
         z-index: ${Z_INDEX_PARTIAL};
@@ -489,26 +563,23 @@ const SHUTTER_CSS =`
         --mdc-icon-size: 60px;
         transform-origin: center center;
       }
-      .${ESC_CLASS_MOVEMENT_OPEN},
-      .${ESC_CLASS_MOVEMENT_CLOSE} {
+      .${ESC_CLASS_MOVEMENT_UP},
+      .${ESC_CLASS_MOVEMENT_DOWN} {
         z-index: ${Z_INDEX_MOVEMENT_ICON} !important;
-        ttop: 50%;
-        lleft: 50%;
-        ttransform: translate(-50%, -50%) var(--esc-button-rotate);
         transform: var(--esc-transform-movement);
         position: absolute;
         display: block;
       }
-      .${ESC_CLASS_MOVEMENT_OPEN} {
-        display: var(--esc-movement-overlay-open-display);
+      .${ESC_CLASS_MOVEMENT_UP} {
+        display: var(--esc-movement-overlay-up-display);
       }
-      .${ESC_CLASS_MOVEMENT_CLOSE} {
-        display: var(--esc-movement-overlay-close-display);
+      .${ESC_CLASS_MOVEMENT_DOWN} {
+        display: var(--esc-movement-overlay-down-display);
       }
       .${ESC_CLASS_TOP}, .${ESC_CLASS_BOTTOM} {
         text-align: center;
-        padding-top: 8px;
-        padding-bottom: 8px;
+        padding-top: calc(8px*var(--esc-text-scale));
+        padding-bottom: calc(8px*var(--esc-text-scale));
       }
       .${ESC_CLASS_TOP}>.${ESC_CLASS_LABEL} {
          display: var(--esc-display-name-top);
@@ -525,11 +596,12 @@ const SHUTTER_CSS =`
       .${ESC_CLASS_LABEL} {
         display: inline-block;
         clear: both;
-        font-size: 20px;
-        line-height: 30px;
+        font-size: calc(20px*var(--esc-text-scale));
+        line-height: calc(30px*var(--esc-text-scale));
         bottom: 0;
         position: relative;
         cursor: pointer;
+
       }
       .${ESC_CLASS_LABEL_DISABLED} {
         color: var(--secondary-text-color);
@@ -540,12 +612,13 @@ const SHUTTER_CSS =`
       .${ESC_CLASS_POSITION} {
         display: inline-block;
         vertical-align: top;
-        line-height: 20px;
         clear: both;
-        font-size: 14px;
-        height: 20px;
+        font-size: calc(14px*var(--esc-text-scale));
+        line-height: calc(20px*var(--esc-text-scale));
+        height: calc(20px*var(--esc-text-scale));
         border-radius: 5px;
         margin: 5px;
+
       }
       .${ESC_CLASS_POSITION}>span {
         background-color: var(--secondary-background-color);
@@ -630,14 +703,19 @@ class EnhancedShutterCardNew extends LitElement{
       configSub={[CONFIG_ENTITY_ID]: configSub};
     }
     let uniqueKeys = this.getUniqueKeysFromObjects(configSub,configBase);
+    // handle unkown keywords
     if (uniqueKeys.length > 0){
       uniqueKeys.forEach((key) =>
       {
         this.messageManager.addMessage(`Unknown keyword: [${key}], check your input!`,HA_ALERT_WARNING,entityId);
       });
     };
-    let config={};
+    // handle PRESET TYPE
+    //
+    let config = { ...ESC_PRESET[configSub[CONFIG_SHUTTER_PRESET]]} || {};
+
     Object.keys(configBase).forEach(keyMain =>{
+      if (keyMain === CONFIG_SHUTTER_PRESET) return; // skip shutter type
       // first, handle deprecations ....
       let keySub = keyMain;
 
@@ -648,10 +726,12 @@ class EnhancedShutterCardNew extends LitElement{
         this.messageManager.addMessage(`Removed: [${keyMain}], use '${REMOVED[keyMain].new}'!`,HA_ALERT_ERROR,entityId);
       }
       // check already defined by deprecation handling ...
-      if (!config[keySub]) {
-        config[keySub] = (typeof configSub[keyMain] === 'undefined' ||
-        configSub[keyMain]=== null ||
-        configSub[keyMain]==='null') ? configBase[keyMain] : configSub[keyMain];
+      //if (!config[keySub]) {
+      if (!(keySub in config)) {
+        config[keySub] =
+          (typeof configSub[keyMain] === 'undefined' || configSub[keyMain]=== null || configSub[keyMain]==='null')
+            ? configBase[keyMain]
+            : configSub[keyMain];
       }
     });
     return config;
@@ -760,7 +840,6 @@ class EnhancedShutterCardNew extends LitElement{
     }
     this.getGridOptionsInternal();
     this.messageManager.addMessage(`GridSize: rows: ${this.nbRows}, columns: ${this.nbCols}`,HA_ALERT_SUCCESS,'GridSize');
-    //this.requestUpdate();
     this.startResizeObserver();
     console_log('Card connectedCallback End');
   }
@@ -952,13 +1031,31 @@ class EnhancedShutterCardNew extends LitElement{
     }else{
       console.warn('ShutterCard  .. no content ??..');
     }
-    this.nbRows= Math.ceil((cardSize.localHeightPx+HA_GRID_PX_GAP)/(HA_GRID_PX_HEIGHTt+HA_GRID_PX_GAP));
-    this.nbCols= Math.ceil((cardSize.localWidthPx+HA_GRID_PX_GAP)/(HA_GRID_PX_WIDTH+HA_GRID_PX_GAP));
-    //this.nbRows= Math.round((cardSize.localHeightPx+HA_GRID_PX_GAP)/(HA_GRID_PX_HEIGHTt+HA_GRID_PX_GAP));
-    //this.nbCols= Math.round((cardSize.localWidthPx+HA_GRID_PX_GAP)/(HA_GRID_PX_WIDTH+HA_GRID_PX_GAP));
-    //this.nbRows= Math.floor((cardSize.localHeightPx+HA_GRID_PX_GAP)/(HA_GRID_PX_HEIGHTt+HA_GRID_PX_GAP));
-    //this.nbCols= Math.floor((cardSize.localWidthPx+HA_GRID_PX_GAP)/(HA_GRID_PX_WIDTH+HA_GRID_PX_GAP));
+    const gridContainer = this.closest('.container');
+    /*
+    *
+    * Calculate the number of rows and columns
+    * Based on the card size and the grid size
+    * of the container
+    * Looks not working OK.
+    * Therefore use sizes from calculated cardSize and HA grid sizes
+    */
 
+//  if (gridContainer){
+    if (false){
+      const styles = getComputedStyle(gridContainer);
+      const column = parseFloat(styles.gridTemplateColumns.split(" ", 1)[0]);
+      const row = parseFloat(styles.gridTemplateRows.split(" ", 1)[0]);
+      const column_gap = parseFloat(styles.columnGap);
+      const row_gap = parseFloat(styles.rowGap);
+
+      this.nbRows= Math.ceil((cardSize.localHeightPx+row_gap)/(row+row_gap));
+      this.nbCols= Math.ceil((cardSize.localWidthPx+column_gap)/(column+column_gap));
+    }
+    else{
+      this.nbRows= Math.ceil((cardSize.localHeightPx+HA_GRID_PX_GAP)/(HA_GRID_PX_HEIGHTt+HA_GRID_PX_GAP));
+      this.nbCols= Math.ceil((cardSize.localWidthPx+HA_GRID_PX_GAP)/(HA_GRID_PX_WIDTH+HA_GRID_PX_GAP));
+    }
     return {
       rows: this.nbRows,
       min_rows: this.nbRows-1,
@@ -1200,14 +1297,14 @@ class EnhancedShutter extends LitElement
 
     this[ESC_CLASS_SELECTOR]=null;
 
-    console_log('Version:',this.version);
+    console_log('Version:',VERSION);
 
     //console_log('Shutter constructor ready');
   }
   shouldUpdate(changedProperties)
   {
     changedProperties.forEach((oldValue, propName) => {
-      //console_log(`Shutter shouldUpdate, Property ${propName} changed. oldValue: `,oldValue,`; new: `,this[propName]);
+      console_log(`Shutter shouldUpdate, Property ${propName} changed. oldValue: `,oldValue,`; new: `,this[propName]);
     });
     return this.escImagesLoaded?true:false;
   }
@@ -1268,7 +1365,6 @@ class EnhancedShutter extends LitElement
     //console_log('Shutter Updated');
     super.updated(changedProperties);
     this.action='cover-update';
-
     //console_log('Shutter Updated ready');
   }
   render()
@@ -1287,7 +1383,7 @@ class EnhancedShutter extends LitElement
     }else{
       // position cover shown.
       positionText =  this.cfg.computePositionText();
-      this.actualScreenPosition =  this.defScreenPositionFromPercent();
+      this.actualScreenPosition =  this.defScreenPositionFromCurrentPosition();
     }
 
     let htmlParts = new htmlCard(this,positionText);
@@ -1328,46 +1424,60 @@ class EnhancedShutter extends LitElement
     ].join(SPACE);
   }
   transformPicker(actualScreenPosition){
-      // TODO: improve handling actualScreenPosition
-      const size_x = this.actualGlobalWidthPx();
-      const size_y = this.actualGlobalHeightPx();
-      const size_global = new xyPair(size_x,size_y);
-      const size_local=this.cfg.switchAxis(size_global);
-      return [
-        this.cfg.transformTranslate(size_global.x/2,size_global.y/2), // to mid-point
-        this.cfg.transformRotate(), // rotate around div transform-origin
-        this.cfg.transformScalePicker(size_global.x,size_global.y), // correct local width of the Picker
-        this.cfg.transformTranslate(0,-size_local.y/2 + actualScreenPosition),  // Move to correct position
+    // TODO: improve handling actualScreenPosition
+    const size_x = this.actualGlobalWidthPx();
+    const size_y = this.actualGlobalHeightPx();
+    const size_global = new xyPair(size_x,size_y);
+    const size_local=this.cfg.switchAxis(size_global);
+    return [
+      this.cfg.transformTranslate(size_global.x/2,size_global.y/2), // to mid-point
+      this.cfg.transformRotate(), // rotate around div transform-origin
+      this.cfg.transformScalePicker(size_global.x,size_global.y), // correct local width of the Picker
+      this.cfg.transformTranslate(0,-size_local.y/2 + actualScreenPosition),  // Move to correct position
 
-      ].join(SPACE);
-    }
-    transformSlide(actualScreenPosition){
-      // TODO: improve handling actualScreenPosition
-      const size_x = this.actualGlobalWidthPx();
-      const size_y = this.actualGlobalHeightPx();
-      const size_global = new xyPair(size_x,size_y);
-      const size_local=this.cfg.switchAxis(size_global);
-      return [
-        this.cfg.transformTranslate(size_global.x/2,size_global.y/2), // to mid-point
-        this.cfg.transformRotate(), // rotate around div transform-origin
-        this.cfg.transformScalePicker(size_global.x,size_global.y), // correct local width of the Picker
-        this.cfg.transformTranslate(0,-size_local.y/2 + actualScreenPosition),  // Move to correct position
+    ].join(SPACE);
+  }
+  transformSlide(actualScreenPosition){
+    // TODO: improve handling actualScreenPosition
+    const size_x = this.actualGlobalWidthPx();
+    const size_y = this.actualGlobalHeightPx();
+    const size_global = new xyPair(size_x,size_y);
+    const size_local=this.cfg.switchAxis(size_global);
+    return [
+      this.cfg.transformTranslate(size_global.x/2,size_global.y/2), // to mid-point
+      this.cfg.transformRotate(), // rotate around div transform-origin
+      //this.cfg.transformScale(size_global.x,size_global.y), // correct local width of the Picker
+      this.cfg.transformScalePicker(size_global.x,size_global.y), // correct local width of the Picker
+      this.cfg.transformTranslate(0,-size_local.y/2 + actualScreenPosition),  // Move to correct position
 
-      ].join(SPACE);
-    }
-    transformPreSlide(actualScreenPosition){
-      // TODO: improve handling actualScreenPosition
-      return [
-        this.cfg.transformRotate(-this.cfg.getCloseAngle()), // rotate around div transform-origin
+    ].join(SPACE);
+  }
+  transformUndoMainRotate(){
 
-      ].join(SPACE);
+    let rotate = this.cfg.rotateMainImage() ? 0 : -this.cfg.getCloseAngle();
+    let size_global;
+    let size_x;
+    let size_y;
+    if (this.cfg.rotateMainImage()){
+      size_x = 1;
+      size_y = 1;
+      rotate =  0;
+    }else{
+      size_x = this.actualGlobalWidthPx();
+      size_y = this.mainSlideHeightPx();
+      rotate = -this.cfg.getCloseAngle();
     }
+    return [
+      this.cfg.transformRotate(rotate), // rotate around div transform-origin
+      this.cfg.transformScale(size_x,size_y), // correct local width of the main
+    ].join(SPACE);
+  }
   transformPartial(){
     const size_x = this.actualGlobalWidthPx();
     const size_y = this.actualGlobalHeightPx();
     const size_global = new xyPair(size_x,size_y);
     const size_local=this.cfg.switchAxis(size_global);
-    const position = this.defScreenPositionFromPercent(this.cfg.partial());
+    const position = this.defScreenPositionFromCurrentPosition(this.cfg.partial());
     return [
       this.cfg.transformTranslate(size_global.x/2,size_global.y/2), // to mid-point
       this.cfg.transformRotate(), // rotate around div transform-origin
@@ -1380,7 +1490,8 @@ class EnhancedShutter extends LitElement
     const size_y = this.actualGlobalHeightPx();
     const size_global = new xyPair(size_x,size_y);
     const size_local=this.cfg.switchAxis(size_global);
-    const position = this.offsetOpenedPx()+this.coverMovingDirectionPx()/2.0;
+    const position = this.offsetOpenedPx()+this.coverSizeMovingDirectionPx()/2.0;
+    //const rotate = this.cfg.getCloseAngle()= this.invertPercentage()?180:0 // ##TODO: check if this is correct
     return [
       'translate(-50%, -50%)',
       this.cfg.transformTranslate(size_global.x/2,size_global.y/2), // to mid-point
@@ -1389,11 +1500,13 @@ class EnhancedShutter extends LitElement
     ].join(SPACE);
   }
 
-  coverMovingDirectionPx(){
+  coverSizeMovingDirectionPx(){
     return this.cfg.verticalMovement() ? this.coverHeightPx():this.coverWidthPx();
   }
-  windowMovingDirectionPx(){
-    return this.cfg.verticalMovement() ? this.actualGlobalHeightPx():this.actualGlobalWidthPx();
+  windowSizeMovingDirectionPx(){
+    return this.cfg.verticalMovement()
+      ? this.actualGlobalHeightPx()
+      : this.actualGlobalWidthPx();
   }
 
   coverHeightPx(){
@@ -1402,41 +1515,101 @@ class EnhancedShutter extends LitElement
   coverWidthPx(){
     return this.actualGlobalWidthPx()-this.offsetClosedPx() - this.offsetOpenedPx();
   }
+  shutterBottomSize(){
+    const imageSize = this.escImages.getShutterBottomImageSize(this.cfg.entityId());
+    return imageSize;
+  };
+
   shutterBackgroundPosition(){
-    const direction=this.cfg.closingDirection();
-    const dirs={[DOWN]:BOTTOM,[UP]:TOP,[LEFT]:LEFT,[RIGHT]:RIGHT};
-    const position = dirs[direction] || BOTTOM;
+
+    const direction=this.cfg.unrollUnfoldDirection();
+    const dirs={
+      [DOWN]:BOTTOM,
+      [UP]:TOP,
+      [LEFT]:LEFT,
+      [RIGHT]:RIGHT
+    };
+    const position = this.cfg.rotateMainImage() ? BOTTOM : dirs[direction] || BOTTOM;
     return position;
   }
+  shutterMainBackgroundPosition(){
+
+    const direction=this.cfg.unrollUnfoldDirection();
+    const dirs={
+      [DOWN]:BOTTOM,
+      [UP]:TOP,
+      [LEFT]:LEFT,
+      [RIGHT]:RIGHT
+    };
+    const position = this.cfg.rotateMainImage() ? BOTTOM : dirs[direction] || BOTTOM;
+    return position;
+  }
+  shutterEdgeBackgroundPosition(){
+    const position = BOTTOM
+    return position;
+  }
+/*
+      const y_size_bottom= this.escImages.getShutterBottomImageSize(this.cfg.entityId()).y+'px';
+      [DOWN]:'center bottom '+y_size_bottom,
+      [UP]:'center top '+y_size_bottom,
+      [LEFT]:'left '+y_size_bottom+' center',
+      [RIGHT]:'right '+y_size_bottom+' center',
+*/
+
   shutterSlatSizePercentage(){
-    const imageSize = this.escImages.getShutterSlatImageSize(this.cfg.entityId())
-    return this.sizePercentage(imageSize);
+    let imageSize = this.escImages.getShutterSlatImageSize(this.cfg.entityId())
+    let imagePercentage;
+    if (this.cfg.rotateMainImage()) {
+      imagePercentage = this.sizePercentage(imageSize);
+    }else{
+      if (!this.cfg.verticalMovement()) imageSize =  new xyPair(imageSize.y, imageSize.x);
+      imagePercentage = this.sizePercentage(imageSize);
+      if (!this.cfg.verticalMovement()) imagePercentage = new xyPair(imagePercentage.y, imagePercentage.x);
+    }
+    let size = `${imagePercentage.x} ${imagePercentage.y}`;
+    return size;
   }
   shutterBottomSizePercentage(){
     const imageSize = this.escImages.getShutterBottomImageSize(this.cfg.entityId())
-    return this.sizePercentage(imageSize);
+    let size;
+    if (this.cfg.stretchEdgeImage()){
+      size= `100% ${imageSize.y}px`;
+    }else{
+       let imagePercentage = this.sizePercentage(imageSize);
+       size = `${imagePercentage.x} ${imagePercentage.y}`;
+    }
+    return size;
   }
   sizePercentage(imageSize){
-    const min=Math.max(Math.min( imageSize.x,imageSize.y),6); // TODO why 6 here?
-    let size;
-    if (this.cfg.verticalMovement()){
-      size=`100% ${min}px`;
+    //const min=Math.max(Math.min( imageSize.x,imageSize.y),6); // TODO why 6 here?
+    let width;
+    //if (!this.cfg.rotateMainImage()){
+    if (this.cfg.verticalMovement()) {
+      width = this.cfg.windowWidthPx();
     }else{
-      size=`${min}px 100%`;
+      width = this.cfg.windowHeightPx();
     }
+
+    let factor = width / imageSize.x;
+    let x = `calc(100% / (${width}/${imageSize.x}))`; // TODO stretch_bottom_image
+    let y= imageSize.y+ 'px';
+    let size = new xyPair(x,y);
     return size;
 
   }
 
 
   offsetOpenedPx(){
-    return Math.round(this.cfg.offsetOpenedPct()/ 100 * this.windowMovingDirectionPx());
+    return Math.round(this.cfg.offsetOpenedPct()/ 100 * this.windowSizeMovingDirectionPx());
   }
   offsetClosedPx(){
-    return Math.round(this.cfg.offsetClosedPct())/ 100 * this.windowMovingDirectionPx();
+    return Math.round(this.cfg.offsetClosedPct())/ 100 * this.windowSizeMovingDirectionPx();
+  }
+  mainSlideHeightPx(){
+    return this.slideHeightPx()-this.shutterBottomSize().y;
   }
   slideHeightPx(){
-    return this.windowMovingDirectionPx();
+    return this.windowSizeMovingDirectionPx();
   }
   coverOpenedPx(){
     return this.offsetOpenedPx();
@@ -1449,9 +1622,10 @@ class EnhancedShutter extends LitElement
   }
 
 
-  defScreenPositionFromPercent(currentPosition=this.cfg.currentPosition()) {
+  defScreenPositionFromCurrentPosition(currentPosition=this.cfg.currentPosition()) {
+
     let visiblePosition = this.cfg.visiblePosition(currentPosition);
-    let screenPosition = this.offsetOpenedPx() + (this.coverMovingDirectionPx() * (100-visiblePosition) / 100) ;
+    let screenPosition = this.offsetOpenedPx() + (this.coverSizeMovingDirectionPx() * (100-visiblePosition) / 100) ;
     return screenPosition;
 
   }
@@ -1472,6 +1646,7 @@ class EnhancedShutter extends LitElement
       height = this.actualHeightEdit; // Should be solved an by asymc /await / promise ...
     }else{
       height = this[ESC_CLASS_SELECTOR]?.getBoundingClientRect()?.height ?? this.cfg.windowHeightPx();
+      //height = this.cfg.windowHeightPx();
     }
     return height;
   }
@@ -1485,15 +1660,19 @@ class EnhancedShutter extends LitElement
       this.dispatchEvent(e);
     }
   }
-  doOnclick(command, position=0) {
+  doOnclick(command, position=null) {
 
-    let entityId= this.cfg.entityId();
     this.action='user-pick';
+    let entityId= this.cfg.entityId();
+
+    if (position !==null) position = this.cfg.applyInvertPercentageToPosition(position);
+    //command = this.cfg.applyInvertToCommand(command);
+
     const services ={
       [ACTION_SHUTTER_OPEN] : {'args': ''},
       [ACTION_SHUTTER_CLOSE] : {'args': ''},
       [ACTION_SHUTTER_STOP] : {'args': ''},
-      [ACTION_SHUTTER_SET_POS] : {'args': {position: this.cfg.applyInvertPercentage(position)}},
+      [ACTION_SHUTTER_SET_POS] : {'args': {position: position}},
       [ACTION_SHUTTER_OPEN_TILT] : {'args': ''},
       [ACTION_SHUTTER_CLOSE_TILT] : {'args': ''},
     }
@@ -1503,13 +1682,13 @@ class EnhancedShutter extends LitElement
     /* get picked point */
     this.basePickPoint = this.getPoint(event);
     /* get current shutter position on screen */
-    this.basePickPoint.shutterScreenPos = this.defScreenPositionFromPercent();
+    this.basePickPoint.shutterScreenPos = this.defScreenPositionFromCurrentPosition();
 
     console_log('screenPos: basePickPoint:',this.basePickPoint);
   }
 
   getShutterPosFromScreenPos(screenPosition){
-    let shutterPosition = SHUTTER_OPEN_PCT - Math.round((screenPosition - this.offsetOpenedPx()) * (100-this.cfg.offset()) / this.coverMovingDirectionPx());
+    let shutterPosition = SHUTTER_OPEN_PCT - Math.round((screenPosition - this.offsetOpenedPx()) * (100-this.cfg.offset()) / this.coverSizeMovingDirectionPx());
     return shutterPosition;
   }
 
@@ -1532,7 +1711,7 @@ class EnhancedShutter extends LitElement
       y: event.pageY,
       coord: new xyPair(event.pageX,event.pageY),
       movementVertical: this.cfg.verticalMovement(),
-      closingDir: this.cfg.closingDirection()
+      closingDir: this.cfg.unrollUnfoldDirection()
     };
     return point;
   }
@@ -1562,12 +1741,13 @@ class EnhancedShutter extends LitElement
   {
     console_log('mouseMove:',event.type,event);
     if (event.pageY === undefined) return;
-    console_log('mouseMove: this.action',this.action);
+    // console_log('mouseMove: this.action',this.action);
 
     this.action='user-drag';
     this.screenPosition = this.getScreenPosFromPickPoint(this.getPoint(event)); // this.screenPosition triggers refresh
     let pointedShutterPosition = this.getShutterPosFromScreenPos(this.screenPosition);
     this.positionText = this.cfg.computePositionText(pointedShutterPosition);
+
   };
 
   mouseUp = (event) =>
@@ -1599,7 +1779,7 @@ class EnhancedShutter extends LitElement
 
   sendShutterPosition( entityId, position)
   {
-    this.callHassCoverService(entityId,ACTION_SHUTTER_SET_POS, { position: this.cfg.applyInvertPercentage(position) });
+    this.callHassCoverService(entityId,ACTION_SHUTTER_SET_POS, { position: this.cfg.applyInvertPercentageToPosition(position) });
   }
   callHassCoverService(entityId,command,args='')
   {
@@ -1633,15 +1813,15 @@ class shutterCfg {
   #batteryEntity=null;
   #signalEntity=null;
   #localize={};
-  shutterState = 'None';
-  batteryState = 'None';
-  signalState = 'None';
+  shutterState = NONE;
+  batteryState = NONE;
+  signalState = NONE;
 
   constructor(hass,escConfig)
   {
-    this.shutterState = 'None';
-    this.batteryState = 'None';
-    this.signalState = 'None';
+    this.shutterState = NONE;
+    this.batteryState = NONE;
+    this.signalState =  NONE;
     let entityId = this.entityId(escConfig[CONFIG_ENTITY_ID] ? escConfig[CONFIG_ENTITY_ID] : escConfig);
 
       this.#setLocalize(hass.localize);
@@ -1650,11 +1830,14 @@ class shutterCfg {
       this.setBatteryEntity(hass,escConfig[CONFIG_BATTERY_ENTITY_ID]);
       this.setSignalEntity(hass,escConfig[CONFIG_SIGNAL_ENTITY_ID]);
 
-      this.friendlyName(escConfig[CONFIG_NAME] || this.#getCoverEntity()?.getFriendlyName() || 'Unknown');
+      this.friendlyName(escConfig[CONFIG_NAME] || this.getCoverEntity()?.getFriendlyName() || UNKNOWN);
+
       this.invertPercentage(escConfig[CONFIG_INVERT_PCT]);
+      this.invertOpenClose(escConfig[CONFIG_INVERT_OPEN_CLOSE]);
+
       this.passiveMode(escConfig[CONFIG_PASSIVE_MODE]);
 
-      this.closingDirection(escConfig[CONFIG_CLOSING_DIRECTION]);
+      this.unrollUnfoldDirection(escConfig[CONFIG_CLOSING_DIRECTION]);
 
       let base_height_px = escConfig[CONFIG_BASE_HEIGHT_PX];
       let resize_height_pct = escConfig[CONFIG_RESIZE_HEIGHT_PCT];
@@ -1664,8 +1847,13 @@ class shutterCfg {
       let resize_width_pct  = escConfig[CONFIG_RESIZE_WIDTH_PCT];
       this.windowWidthPx(Math.round(boundary(resize_width_pct, ESC_MIN_RESIZE_WIDTH_PCT ,ESC_MAX_RESIZE_WIDTH_PCT)  / 100 * base_width_px));
 
+      this.rotateMainImage(escConfig[CONFIG_ROTATE_MAIN_SHUTTER_IMAGE]);
+      this.stretchEdgeImage(escConfig[CONFIG_STRETCH_EDGE_SHUTTER_IMAGE]);
+
       this.scaleButtons(escConfig[CONFIG_SCALE_BUTTONS]);
       this.scaleIcons(escConfig[CONFIG_SCALE_ICONS]);
+      this.scaleTexts(escConfig[CONFIG_SCALE_TEXTS]);
+
       this.partial(boundary(escConfig[CONFIG_PARTIAL_CLOSE_PCT]));
       this.offset(boundary(escConfig[CONFIG_OFFSET_IS_CLOSED_PCT]));
 
@@ -1692,8 +1880,8 @@ class shutterCfg {
       this.disablePartialOpenButtons(escConfig[CONFIG_DISABLE_PARTIAL_OPEN_BUTTONS]);
 
       this.buttonStopHideStates(escConfig[CONFIG_BUTTON_STOP_HIDE_STATES]  ? escConfig[CONFIG_BUTTON_STOP_HIDE_STATES] : ESC_BUTTON_STOP_HIDE_STATES);
-      this.buttonOpenHideStates(escConfig[CONFIG_BUTTON_UP_HIDE_STATES]  ? escConfig[CONFIG_BUTTON_UP_HIDE_STATES] : ESC_BUTTON_UP_HIDE_STATES);
-      this.buttonCloseHideStates(escConfig[CONFIG_BUTTON_DOWN_HIDE_STATES]  ? escConfig[CONFIG_BUTTON_DOWN_HIDE_STATES] : ESC_BUTTON_DOWN_HIDE_STATES);
+      this.buttonOpenHideStates(escConfig[CONFIG_BUTTON_OPENED_HIDE_STATES]  ? escConfig[CONFIG_BUTTON_OPENED_HIDE_STATES] : ESC_BUTTON_OPENED_HIDE_STATES);
+      this.buttonCloseHideStates(escConfig[CONFIG_BUTTON_CLOSED_HIDE_STATES]  ? escConfig[CONFIG_BUTTON_CLOSED_HIDE_STATES] : ESC_BUTTON_CLOSED_HIDE_STATES);
 
       Object.preventExtensions(this);
   }
@@ -1736,10 +1924,6 @@ class shutterCfg {
     return this.#signalEntity;
   }
 
-  // Get CoverInfo
-  #getCoverEntity(){
-    return this.#coverEntity;
-  }
 
   batteryLevel(){
     let state = this.#batteryEntity?.getState()?? UNAVAILABLE;
@@ -1809,7 +1993,8 @@ class shutterCfg {
     return transform;
   }
   buttonRotate(){
-    let transform = this.transformRotate();
+    let r = this.getCloseAngle() % 180;
+    let transform = this.transformRotate(r);
     return transform;
   }
   transformScalePicker(x = this.actualGlobalWidthPx(),y = this.actualGlobalHeightPx()){
@@ -1853,6 +2038,9 @@ class shutterCfg {
   invertPercentage(value = null){
     return this.#getCfg(CONFIG_INVERT_PCT,value);
   }
+  invertOpenClose(value = null){
+    return this.#getCfg(CONFIG_INVERT_OPEN_CLOSE,value);
+  }
   openingDisabled(value = null){
     return this.#getCfg(CONFIG_OPENING_DISABLED,value);
   }
@@ -1868,21 +2056,33 @@ class shutterCfg {
     return this.#getCfg(CONFIG_WIDTH_PX,value);
   }
   partial(value = null){
-    // partial value should be entered in the defined shuuter-percentage setting (inverted or not)
+    // partial value should be entered in the defined shutter-percentage setting (inverted or not)
     // and is stored in the config as non-inverted.
-    if (value !== null) value =this.applyInvertPercentage(value);
-    const partial = this.#getCfg(CONFIG_PARTIAL_CLOSE_PCT,value);
+    if (value !== null) value =this.applyInvertPercentageToPosition(value);
+    var partial = this.#getCfg(CONFIG_PARTIAL_CLOSE_PCT,value);
+    if (partial == SHUTTER_OPEN_PCT ||  partial == SHUTTER_CLOSED_PCT) partial = 0;
+
     // only when cover can set position
     return this.isCoverFeatureActive(ESC_FEATURE_SET_POSITION) ? partial : 0;
   }
   offset(value = null){
+    if (value !== null && value !=0) value =this.applyInvertPercentageToPosition(value);
     return this.#getCfg(CONFIG_OFFSET_IS_CLOSED_PCT,value);
+  }
+  rotateMainImage(value = null){
+    return this.#getCfg(CONFIG_ROTATE_MAIN_SHUTTER_IMAGE,value);
+  }
+  stretchEdgeImage(value = null){
+    return this.#getCfg(CONFIG_STRETCH_EDGE_SHUTTER_IMAGE,value);
   }
   scaleButtons(value = null){
     return this.#getCfg(CONFIG_SCALE_BUTTONS,value);
   }
   scaleIcons(value = null){
     return this.#getCfg(CONFIG_SCALE_ICONS,value);
+  }
+  scaleTexts(value = null){
+    return this.#getCfg(CONFIG_SCALE_TEXTS,value);
   }
   offsetOpenedPct(value = null){
     return this.#getCfg(CONFIG_OFFSET_OPENED_PCT,value);
@@ -1897,11 +2097,11 @@ class shutterCfg {
     return (this.canTilt()|| this.#getCfg(CONFIG_SHOW_TILT,value)) && this.isCoverFeatureActive(ESC_FEATURE_OPEN_TILT | ESC_FEATURE_CLOSE_TILT) ;
   }
   canTilt(value = null){
-    return this.#getCfg(CONFIG_CAN_TILT,value);
+    return this.#getCfg(CONFIG_CAN_TILT,value );
   }
 
 
-  closingDirection(value = null){
+  unrollUnfoldDirection(value = null){
     return this.#getCfg(CONFIG_CLOSING_DIRECTION,value);
   }
   nameDisabled(value = null){
@@ -1910,13 +2110,19 @@ class shutterCfg {
   buttonStopHideStates(value = null){
     return this.#getCfg(CONFIG_BUTTON_STOP_HIDE_STATES,value);
   }
+  buttonOpenCloseHideStates(upDown){
+    if (upDown == UP) return this.buttonOpenHideStates();
+    if (upDown == DOWN) return this.buttonCloseHideStates();
+  }
+
+
 
   buttonOpenHideStates(value = null){
-    return this.#getCfg(CONFIG_BUTTON_UP_HIDE_STATES,value);
+    return this.#getCfg(CONFIG_BUTTON_OPENED_HIDE_STATES,value);
   }
 
   buttonCloseHideStates(value = null){
-    return this.#getCfg(CONFIG_BUTTON_DOWN_HIDE_STATES,value);
+    return this.#getCfg(CONFIG_BUTTON_CLOSED_HIDE_STATES,value);
   }
 
   // deprecated
@@ -1954,51 +2160,121 @@ class shutterCfg {
   ** end getters/setters
   */
   verticalMovement(){
-    return IS_VERTICAL.includes(this.closingDirection());
+    return IS_VERTICAL.includes(this.unrollUnfoldDirection());
   }
+
+
   currentPosition(){
+    // returns current position in non-inverted percentage
     let position;
     if (this.isCoverFeatureActive(ESC_FEATURE_SET_POSITION)){
-      position = this.#getCoverEntity()?.getCurrentPosition() ?? 0;
-      position = this.applyInvertPercentage(position);
+      position = this.getCoverEntity()?.getCurrentPosition() ?? 0;
     }else{
-      position= this.#getCoverEntity()?.getState()==SHUTTER_STATE_OPEN ? SHUTTER_OPEN_PCT :  SHUTTER_CLOSED_PCT;
+      position= this.getCoverEntity()?.getState()==SHUTTER_STATE_OPEN ? SHUTTER_OPEN_PCT :  SHUTTER_CLOSED_PCT;
     }
+    position = this.applyInvertPercentageToPosition(position);
     return position;
   }
-  applyInvertPercentage(position=this.currentPosition()){
+  applyInvertPercentageToPosition(position){
     if (this.invertPercentage()) position = 100-position;
     return position;
   }
+  applyInvertNone(setting){
+    return setting;
+  }
+  applyInvertOpenCloseAndDirection(setting){
+    setting = this.applyInvertOpenClose(setting);
+    //setting = this.applyInvertPercentage(setting);
+    setting = this.applyInvertDirection(setting);
 
+    return setting;
+  }
+  applyInvertOpenCloseAndPercentage(setting){
+    setting = this.applyInvertOpenClose(setting);
+    setting = this.applyInvertPercentage(setting);
+    //setting = this.applyInvertDirection(setting);
+
+    return setting;
+  }
+  applyInvertPercentageAndDirection(setting){
+    //setting = this.applyInvertOpenClose(setting);
+    setting = this.applyInvertPercentage(setting);
+    setting = this.applyInvertDirection(setting);
+
+    return setting;
+  }
+  applyInvertAll(setting){
+    setting = this.applyInvertOpenClose(setting);
+    setting = this.applyInvertPercentage(setting);
+    setting = this.applyInvertDirection(setting);
+
+    return setting;
+  }
+  applyInvertDirection(setting){
+    if (this.invertDirection()){
+      setting = Object.keys(INVERT_OPEN_CLOSE).includes(setting) ? INVERT_OPEN_CLOSE[setting] : setting;
+    }
+    return setting;
+  }
+  invertDirection(){
+    return this.unrollUnfoldDirection() == RIGHT || this.unrollUnfoldDirection() == UP;
+  }
+
+  applyInvertOpenClose(setting){
+    if (this.invertOpenClose()) setting = Object.keys(INVERT_OPEN_CLOSE).includes(setting) ? INVERT_OPEN_CLOSE[setting] : setting;
+    return setting;
+  }
+  applyInvertPercentage(setting){
+    if (this.invertPercentage()) setting = Object.keys(INVERT_OPEN_CLOSE).includes(setting) ? INVERT_OPEN_CLOSE[setting] : setting;
+    return setting;
+  }
+  applyInvertToCommand(command){
+    if (this.invertPercentage()) {
+      if (command == ACTION_SHUTTER_OPEN) command = ACTION_SHUTTER_CLOSE;
+      else if (command == ACTION_SHUTTER_CLOSE) command = ACTION_SHUTTER_OPEN;
+    }
+    return command;
+  }
   getCloseAngle(){
-    const direction= {[DOWN]:0,[LEFT]:90,[RIGHT]:270,[UP]:180};
-    return direction[this.closingDirection()] || 0;
+    const direction= {
+      [DOWN]:0,
+      [LEFT]:90,
+      [RIGHT]:270,
+      [UP]:180
+    };
+    return direction[this.unrollUnfoldDirection()] || 0;
   }
 
   getOrientation(){
     return Globals.screenOrientation.value; // global variable !!
   }
 
-  movementState(position= this.currentPosition()){
-    // see for position and state definition: https://www.home-assistant.io/integrations/cover.template/#combining-value_template-and-position_template
-    let state = this.#getCoverEntity().getState() || UNAVAILABLE;
+  positionToState(position = this.currentPosition()){
+    // see for position and state definition:
+    //  https://www.home-assistant.io/integrations/cover.template/#combining-value_template-and-position_template
+
+    let state = this.getCoverEntity().getState() || UNAVAILABLE;
+    let escState;
     if (state !== SHUTTER_STATE_OPENING && state !== SHUTTER_STATE_CLOSING) {
-      state = position ? SHUTTER_STATE_OPEN : SHUTTER_STATE_CLOSED;
-    }
+      //  shutter is not moving,
+      if (position != SHUTTER_OPEN_PCT && position != SHUTTER_CLOSED_PCT){
+        // shutter is not 0% or 100%
+        escState= SHUTTER_STATE_PARTIAL_OPEN;
+      }else{
+        escState = position ? this.applyInvertOpenClose(SHUTTER_STATE_OPEN) : this.applyInvertOpenClose(SHUTTER_STATE_CLOSED);
+      }
+    }else  {
+      escState = this.applyInvertOpenCloseAndPercentage(state);
 
-    if (state == SHUTTER_STATE_OPEN && position != SHUTTER_OPEN_PCT && position != SHUTTER_CLOSED_PCT){
-      state= SHUTTER_STATE_PARTIAL_OPEN;
     }
-
     // solve issue #54
-    if (position == SHUTTER_OPEN_PCT && state== SHUTTER_STATE_OPENING) {
-      state = SHUTTER_STATE_OPEN;
-    }else if (position == SHUTTER_CLOSED_PCT && state== SHUTTER_STATE_CLOSING) {
-      state = SHUTTER_STATE_CLOSED;
-    }
+    if (position == this.applyInvertPercentageToPosition(SHUTTER_OPEN_PCT) && escState == (this.applyInvertOpenCloseAndPercentage(SHUTTER_STATE_OPENING))) {
 
-    return state;
+      escState = this.applyInvertAll(SHUTTER_STATE_OPEN);
+    }else if (position == this.applyInvertPercentageToPosition(SHUTTER_CLOSED_PCT) && escState== (this.applyInvertOpenCloseAndPercentage(SHUTTER_STATE_CLOSING))) {
+      escState = this.applyInvertAll(SHUTTER_STATE_CLOSED);
+    }
+    return escState;
   }
 
   buttonsLeftActive(){
@@ -2023,43 +2299,60 @@ class shutterCfg {
     return this.getButtonsPosition() == BOTTOM || this.getButtonsPosition() == RIGHT;
   }
   disabledGlobaly() {
-    return (this.#getCoverEntity().getState() == UNAVAILABLE);
+    return (NOT_KNOWN.includes(this.getCoverEntity().getState()));
   }
-  upButtonDisabled(){
-    let upDisabled = false;
+  coverButtonUpDisabled(){
+    let disabled = false;
     if (this.disableEndButtons()) {
       if (this.coverIsClosed()) {
-        upDisabled = false;
+        disabled = false;
       } else if (this.coverIsOpen()) {
-        upDisabled = true;
+        disabled = true;
       }
     }
-    return upDisabled;
+    return disabled;
   }
-  downButtonDisabled(){
-    let downDisabled = false;
+  coverButtonDownDisabled(){
+    let disabled = false;
     if (this.disableEndButtons()) {
       if (this.coverIsClosed()) {
-        downDisabled = true;
+        disabled = true;
       } else if (this.coverIsOpen()) {
-        downDisabled = false;
+        disabled = false;
       }
     }
-    return downDisabled;
+    return disabled;
+  }
+  coverButtonDisabled(upDown){
+    upDown = this.applyInvertDirection(upDown);
+    if (upDown === UP) {
+      if (this.invertDirection()) {
+        return this.coverButtonDownDisabled();
+      }else{
+        return this.coverButtonUpDisabled();
+      }
+    }
+    if (upDown === DOWN) {
+      if (this.invertDirection()) {
+        return this.coverButtonUpDisabled();
+      }else{
+        return this.coverButtonDownDisabled();
+      }
+    }
   }
 
   displayName(position){
       let displayType= this.inlineHeader() ? 'inline-block' : 'block';
-      let display =(this.namePosition() != position || this.nameDisabled()) ? 'none' : displayType;
+      let display =(this.namePosition() != position || this.nameDisabled()) ? NONE : displayType;
       return display;
     }
   displayOpening(position){
     let displayType= this.inlineHeader() ? 'inline-block' : 'block';
     let display;
     if (this.inlineHeader()){
-      display =(this.namePosition() != position || this.openingDisabled()) ? 'none' : displayType;
+      display =(this.namePosition() != position || this.openingDisabled()) ? NONE : displayType;
     }else{
-      display =(this.openingPosition() != position || this.openingDisabled()) ? 'none' : displayType;
+      display =(this.openingPosition() != position || this.openingDisabled()) ? NONE : displayType;
     }
     return display;
   }
@@ -2078,48 +2371,55 @@ class shutterCfg {
     this.buttonsPosition(POSITIONS.includes(buttonsPosition) ? buttonsPosition : ESC_BUTTONS_POSITION);
   }
 
-  positionPercentToText(percent){
+  positionToText(position){
     let text='';
     if (this.isCoverFeatureActive(ESC_FEATURE_SET_POSITION)) {
-      if (typeof percent === 'number') {
+      if (typeof position === 'number') {
         if (this.alwaysPercentage()) {
-          text = this.applyInvertPercentage(percent) + '%';
+          text = position + '%';
+
         }else{
-          let state= this.movementState(percent);
+          let state= this.positionToState(this.applyInvertPercentageToPosition(position));
           if (state != SHUTTER_STATE_PARTIAL_OPEN){
-            text= this.getLocalize(LOCALIZE_TEXT[state]);
+            text = this.getLocalize(LOCALIZE_TEXT[this.applyInvertOpenClose(state)]);
           } else{
-            text = this.applyInvertPercentage(percent) + '%';
+            text = position + '%';
           }
         }
       } else {
         text = this.getLocalize(LOCALIZE_TEXT[UNAVAILABLE]);
       }
     }else{
-      if (percent > 50 ) {
-        text = this.getLocalize(LOCALIZE_TEXT[SHUTTER_STATE_OPEN]);
+      if (this.applyInvertPercentageToPosition(position) > 50 ) {
+        text = this.getLocalize(LOCALIZE_TEXT[this.applyInvertOpenClose(SHUTTER_STATE_OPEN)]);
       } else {
-        text = this.getLocalize(LOCALIZE_TEXT[SHUTTER_STATE_CLOSED]);
+        text = this.getLocalize(LOCALIZE_TEXT[this.applyInvertOpenClose(SHUTTER_STATE_CLOSED)]);
       }
     }
     return text;
   }
   computePositionText(currentPosition =this.currentPosition()) {
     let positionText;
-    if (this.#getCoverEntity().getState()==UNAVAILABLE){
+    if (NOT_KNOWN.includes(this.getCoverEntity().getState())){
         positionText = this.getLocalize(LOCALIZE_TEXT[UNAVAILABLE]);
     }else{
-      const visiblePosition = this.visiblePosition(currentPosition);
-      positionText = this.positionPercentToText(visiblePosition);
+      //currentPosition = this.applyInvertPercentageToPosition(currentPosition);
+      const displayPosition = this.applyInvertPercentageToPosition(this.visiblePosition(currentPosition));
+      //const displayPosition = (this.visiblePosition(currentPosition));
+      positionText = this.positionToText(displayPosition);
 
-      if (this.offset()) {
-          positionText += ' (' + (100-Math.round(Math.abs(currentPosition-visiblePosition)/this.offset()*100)) + '%)';
+      if (this.offset()>0 && this.offset()<100) {
+        positionText += ` (${this.applyInvertPercentageToPosition(currentPosition)}%)`;
       }
     }
     return positionText;
   }
   visiblePosition(currentPosition) {
-    const visiblePosition = this.offset() ? Math.max(0, Math.round((currentPosition - this.offset())     / (100-this.offset()) * 100 ))     : currentPosition;
+    const offset =this.offset();
+
+    const visiblePosition = (offset)
+      ? Math.max(0, Math.round((currentPosition - offset)     / (100-offset) * 100 ))
+      : currentPosition;
     return visiblePosition;
   }
   coverIsOpen(){
@@ -2129,7 +2429,30 @@ class shutterCfg {
     return (this.currentPosition() == SHUTTER_CLOSED_PCT);
   }
   iconScaleFactor(){
-    return this.scaleIcons()? Math.min(this.windowWidthPx()/ESC_BASE_WIDTH_PX*1.25,1): 1;
+    let scale_setting = this.scaleIcons();
+    let scale = 1.0;
+    switch(typeof(scale_setting)){
+      case 'boolean':
+        scale = scale_setting ? Math.min(this.windowWidthPx()/ESC_BASE_WIDTH_PX*1.25,1) : 1;
+        break;
+      case 'number':
+        scale = boundary(scale_setting,0.1,2);
+        break;
+    }
+    return scale;
+  }
+  textScaleFactor(){
+    let scale_setting = this.scaleTexts();
+    let scale = 1.0;
+    switch(typeof(scale_setting)){
+      case 'boolean':
+        scale = scale_setting ? this.windowWidthPx()/ESC_BASE_WIDTH_PX : 1;
+        break;
+      case 'number':
+        scale = boundary(scale_setting,0.1,2);
+        break;
+    }
+    return scale;
   }
   iconScalePercent(){
     return Math.round(this.iconScaleFactor()*100)+'%';
@@ -2137,35 +2460,62 @@ class shutterCfg {
 
   iconButtonSize(){
     let size = ICON_BUTTON_SIZE;
-    if (this.scaleButtons()){
-      let px;
-      if (this.buttonsInRow()){
-        px = this.windowHeightPx();
-      }else{
-        px = this.windowWidthPx();
-      }
-      size = Math.min(px/3.0,ICON_BUTTON_SIZE); // buttons fit in 1/3 of the size
+
+    let scale_setting = this.scaleButtons();
+    switch(typeof(scale_setting)){
+      case 'boolean':
+        if (scale_setting){
+          let px;
+          if (this.buttonsInRow()){
+            px = this.windowHeightPx();
+          }else{
+            px = this.windowWidthPx();
+          }
+          size = Math.min(px/3.0,ICON_BUTTON_SIZE); // buttons fit in 1/3 of the size
+        }
+        break;
+      case 'number':
+        size = boundary(scale_setting,0.1,2)*ICON_BUTTON_SIZE;
+        break;
     }
+
     return size;
   }
   iconSize(){
     let size = ICON_SIZE;
-    if (this.scaleButtons()){
-      let px;
-      if (this.buttonsInRow()){
-        px = this.windowHeightPx();
-      }else{
-        px = this.windowWidthPx();
-      }
-      size = Math.min(px/(3.0*ICON_BUTTON_SIZE/ICON_SIZE),ICON_SIZE); // buttons fit in 1/3 of the size
+
+    let scale_setting = this.scaleButtons();
+    switch(typeof(scale_setting)){
+      case 'boolean':
+        if (scale_setting){
+          let px;
+          if (this.buttonsInRow()){
+            px = this.windowHeightPx();
+          }else{
+            px = this.windowWidthPx();
+          }
+          size = Math.min(px/(3.0*ICON_BUTTON_SIZE/ICON_SIZE),ICON_SIZE); // buttons fit in 1/3 of the size
+        }
+        break;
+      case 'number':
+        size = boundary(scale_setting,0.1,2)*ICON_SIZE;
+        break;
     }
     return size;
   }
   iconSizeWifiBattery(){
     let size = ICON_SIZE;
-    if (this.scaleIcons()){
-      let px = this.windowWidthPx();
-      size = Math.min(px/6.0,ICON_SIZE);
+    let scale_setting = this.scaleIcons();
+    switch(typeof(scale_setting)){
+      case 'boolean':
+        if (scale_setting){
+          let px = this.windowWidthPx();
+          size = Math.min(px/6.0,ICON_SIZE);
+        }
+        break;
+      case 'number':
+        size = boundary(scale_setting,0.1,2)*ICON_SIZE;
+        break;
     }
     return size;
   }
@@ -2205,34 +2555,16 @@ class shutterCfg {
     let level = this.batteryLevel();
     let roundedLevel = Math.round(level / 20);
     roundedLevel = isNaN(roundedLevel) ? -1 : roundedLevel;
-    const iconColor = {
-      '-1': "grey",
-      0: "red",
-      1: "#FF4D00",// deep orange,
-      2: "#FF7F00", // amber
-      3: "orange",
-      4: "#66B266", // sligly dim green
-      5: "green",
-    };
-    return iconColor[roundedLevel];
+    return ICONCOLORS[roundedLevel];
   }
   signalIconColor(){
     let iconLevelIndex= this.signalLevelIndex();
-    const iconColor = {
-      '-1': "grey",
-      0: "red",
-      1: "#FF4D00",// deep orange,
-      2: "#FF7F00", // amber
-      3: "orange",
-      4: "#66B266", // sligly dim green
-      5: "green",
-    };
-    return iconColor[iconLevelIndex];
+    return ICONCOLORS[iconLevelIndex];
   }
   signalLevelIndex(){
     let level = this.signalLevel();
     let unit = this.signalUnit();
-    if (unit != '?'){
+    if (unit != '?' && level != '?'){
       const unitType ={
         'dB': {max: 100, min: 0},
         'dBm': {max: -40, min: -90},
@@ -2246,14 +2578,14 @@ class shutterCfg {
 
       return levelIndex;
     }
-    return -1;
+    return 99;
   }
   signalLevelIcon(){
     let unit = this.signalUnit();
     let icon = 'mdi:wifi-strength-off-outline';
     if (unit != '?'){
       const iconStrength = {
-        '-1': "alert-outline",
+        99: "alert-outline",
         0: "off-outline",
         1: "outline",
         2: "1",
@@ -2283,7 +2615,13 @@ class htmlCard{
   }
 
   defStyleVars(){
-    let state=this.cfg.movementState();
+    let escState=this.cfg.positionToState();
+    const viewImage=this.escImages.getViewImageSrc(this.cfg.entityId());
+
+    // solves #103 see other lines with shutterSlatImage
+    const shutterSlatImage=this.escImages.getShutterSlatImageSrc(this.cfg.entityId());
+    const shutterBottomImage=this.escImages.getShutterBottomImageSrc(this.cfg.entityId());
+
 
     return `
       --mdc-icon-button-size: ${this.cfg.iconButtonSize()}${UNITY};
@@ -2296,13 +2634,13 @@ class htmlCard{
       --esc-flex-flow-middle: ${!this.cfg.buttonsInRow() ? 'column': 'row'}${this.cfg.buttonsContainerReversed() ? '-reverse' : ''} nowrap;
       --esc-window-width: ${this.cfg.buttonsInRow() ? '100%': this.cfg.windowWidthPx()+UNITY};
       --esc-window-height: ${this.cfg.windowHeightPx()+UNITY};
-      --esc-window-background-image: ${this.escImages.getViewImageSrc(this.cfg.entityId()).includes('.') ? `url(${this.escImages.getViewImageSrc(this.cfg.entityId())})` : ''};
-      --esc-window-background-color: ${this.escImages.getViewImageSrc(this.cfg.entityId()).includes('.') ? '' : `${this.escImages.getViewImageSrc(this.cfg.entityId())}`};
+      --esc-window-background-image: ${viewImage.includes('.') ?  `url(${viewImage})` : ''};
+      --esc-window-background-color: ${viewImage.includes('.') ? '' : `${viewImage}`};
       --esc-window-rotate: ${this.cfg.viewImageRotate()};
       --esc-button-rotate: ${this.cfg.buttonRotate()};
 
       --esc-transform-slide:  ${this.enhancedShutter.transformSlide(this.actualScreenPosition)};
-      --esc-transform-pre-slide:  ${this.enhancedShutter.transformPreSlide(this.actualScreenPosition)};
+      --esc-transform-undo-rotate:  ${this.enhancedShutter.transformUndoMainRotate()};
       --esc-transform-picker: ${this.enhancedShutter.transformPicker(this.actualScreenPosition)};
 
       --esc-transform-movement: ${this.enhancedShutter.transformMovement()};
@@ -2310,28 +2648,39 @@ class htmlCard{
       --esc-picker-top: -${this.cfg.pickerOverlapPx()+UNITY};
       --esc-picker-height: ${this.cfg.pickerOverlapPx()*2+UNITY};
       --esc-slide-height: ${this.enhancedShutter.slideHeightPx()+UNITY};
+      --esc-slide-main-height: ${(this.enhancedShutter.mainSlideHeightPx())+UNITY};
+      --esc-slide-edge-height: ${this.enhancedShutter.shutterBottomSize().y+UNITY};
 
       --esc-transform-partial: ${this.enhancedShutter.transformPartial()};
 
       --esc-buttons-flex-flow: ${!this.cfg.buttonsInRow() ? 'row' : 'column'} wrap;
 
-      --esc-movement-overlay-display: ${(state == SHUTTER_STATE_OPENING || state == SHUTTER_STATE_CLOSING) ? 'block' : 'none'};
-      --esc-movement-overlay-open-display: ${state == SHUTTER_STATE_OPENING ? 'block' : 'none'};
-      --esc-movement-overlay-close-display: ${state == SHUTTER_STATE_CLOSING ? 'block' : 'none'};
+      --esc-movement-overlay-display: ${(escState == SHUTTER_STATE_OPENING || escState == SHUTTER_STATE_CLOSING) ? 'block' : NONE};
+      --esc-movement-overlay-up-display: ${escState == this.cfg.applyInvertOpenClose(SHUTTER_STATE_OPENING) ? 'block' : NONE};
+      --esc-movement-overlay-down-display: ${escState == this.cfg.applyInvertOpenClose(SHUTTER_STATE_CLOSING) ? 'block' : NONE};
       --esc-movement-overlay-top: ${this.enhancedShutter.offsetOpenedPx()-7}${UNITY};
       --esc-movement-overlay-height: ${this.enhancedShutter.coverHeightPx() + 7}${UNITY};
 
-      --esc-partial-top: ${this.enhancedShutter.defScreenPositionFromPercent(this.cfg.partial())}${UNITY};
+      --esc-partial-top: ${this.enhancedShutter.defScreenPositionFromCurrentPosition(this.cfg.partial())}${UNITY};
 
-      --esc-slide-background-image: url(${this.escImages.getShutterBottomImageSrc(this.cfg.entityId())}), url(${this.escImages.getShutterSlatImageSrc(this.cfg.entityId())});
-      --esc-slide-background-size: ${this.enhancedShutter.shutterBottomSizePercentage()}, ${this.enhancedShutter.shutterSlatSizePercentage()};
-      --esc-slide-background-position: ${this.enhancedShutter.shutterBackgroundPosition()};
+      --esc-slide-background-main-image: ${shutterSlatImage.includes('.') ?  `url(${shutterSlatImage})` : ''};
+      --esc-slide-background-edge-image: ${shutterBottomImage.includes('.') ?  `url(${shutterBottomImage})` : ''};
+
+      --esc-slide-background-main-color: ${shutterSlatImage.includes('.') ? '' : `${shutterSlatImage}`};
+      --esc-slide-background-edge-color: ${shutterBottomImage.includes('.') ? '' : `${shutterBottomImage}`};
+
+      --esc-slide-background-main-size: ${this.enhancedShutter.shutterSlatSizePercentage()};
+      --esc-slide-background-edge-size: ${this.enhancedShutter.shutterBottomSizePercentage()};
+
+      --esc-slide-background-main-position: ${this.enhancedShutter.shutterMainBackgroundPosition()};
+      --esc-slide-background-edge-position: ${this.enhancedShutter.shutterEdgeBackgroundPosition()};
 
       --esc-top-right-color: ${this.cfg.signalIconColor()};
       --esc-top-left-color: ${this.cfg.batteryIconColor()};
 
       --esc-top-icon-text-line-height: ${this.cfg.iconScalePercent()};
       --esc-top-icon-text-font-size: ${this.cfg.iconScalePercent()};
+      --esc-text-scale: ${this.cfg.textScaleFactor()};
 
       --esc-selector-flex-basis: ${this.cfg.buttonsInRow() ? this.enhancedShutter.actualGlobalWidthPx():this.enhancedShutter.actualGlobalHeightPx()}${UNITY};
 `;
@@ -2395,19 +2744,26 @@ class htmlCard{
         </div>
     `;
   }
-  showButtonOpen(){
+
+  showButtonUp(){
+    return this.showButtonUpDown(ESC_FEATURE_OPEN,ACTION_SHUTTER_OPEN,UP,'mdi:arrow-up');
+   }
+  showButtonDown(){
+    return this.showButtonUpDown(ESC_FEATURE_CLOSE,ACTION_SHUTTER_CLOSE,DOWN,'mdi:arrow-down');
+  }
+  showButtonUpDown(feature,action,upDown,icon){
     return html`
       ${!this.cfg.disableStandardButtons() &&
-        !this.cfg.buttonOpenHideStates().includes(this.cfg.movementState()) &&
-         this.cfg.isCoverFeatureActive(ESC_FEATURE_OPEN)
+        !this.cfg.buttonOpenCloseHideStates(upDown).includes(this.cfg.positionToState()) &&
+         this.cfg.isCoverFeatureActive(feature)
       ? html`
         <ha-icon-button
-          label="${this.cfg.getLocalize('ui.card.cover.open_cover')}"
-          .disabled=${this.cfg.disabledGlobaly() || this.cfg.upButtonDisabled()}
-          @click=${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_OPEN}`)} >
+          label="${this.cfg.getLocalize(LOCALIZE_TEXT[this.cfg.applyInvertOpenCloseAndDirection(action)])}"
+          .disabled=${this.cfg.disabledGlobaly() || this.cfg.coverButtonDisabled(upDown)}
+          @click=${()=> this.enhancedShutter.doOnclick(`${this.cfg.applyInvertPercentageAndDirection(action)}`)} >
           <ha-icon
             class="${ESC_CLASS_HA_ICON}"
-            icon="mdi:arrow-up">
+            icon="${icon}">
           </ha-icon>
         </ha-icon-button>
       `
@@ -2415,44 +2771,28 @@ class htmlCard{
     `;
   }
   showButtonStop(){
-    //console_log('xxx showButtonStop:',this.cfg.friendlyName(),this.cfg.movementState(),this.cfg.buttonStopHideStates(),this.cfg.isCoverFeatureActive(ESC_FEATURE_STOP));
+
+    const action = ACTION_SHUTTER_STOP;
+    const feature = ESC_FEATURE_STOP;
+    const icon = "mdi:stop"
+
     return html`
       ${!this.cfg.disableStandardButtons() &&
-        !this.cfg.buttonStopHideStates().includes(this.cfg.movementState()) &&
-         this.cfg.isCoverFeatureActive(ESC_FEATURE_STOP)
+        !this.cfg.buttonStopHideStates().includes(this.cfg.positionToState()) &&
+         this.cfg.isCoverFeatureActive(feature)
       ? html`
         <ha-icon-button
-          label="${this.cfg.getLocalize('ui.card.cover.stop_cover')}"
+          label="${this.cfg.getLocalize(LOCALIZE_TEXT[action])}"
           .disabled=${this.cfg.disabledGlobaly()}
-          @click=${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_STOP}`)} >
+          @click=${()=> this.enhancedShutter.doOnclick(`${action}`)} >
           <ha-icon
             class="${ESC_CLASS_HA_ICON}"
-            icon="mdi:stop">
+            icon="${icon}">
           </ha-icon>
         </ha-icon-button>
       `
       : ''
     }`;
-  }
-
-  showButtonClose(){
-    return html`
-      ${!this.cfg.disableStandardButtons() &&
-        !this.cfg.buttonCloseHideStates().includes(this.cfg.movementState()) &&
-        this.cfg.isCoverFeatureActive(ESC_FEATURE_CLOSE)
-      ? html`
-        <ha-icon-button
-          label="${this.cfg.getLocalize('ui.card.cover.close_cover')}"
-          .disabled=${this.cfg.disabledGlobaly() || this.cfg.downButtonDisabled()}
-          @click=${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_CLOSE}`)} >
-          <ha-icon
-            class="${ESC_CLASS_HA_ICON}"
-            icon="mdi:arrow-down">
-          </ha-icon>
-        </ha-icon-button>
-      `
-      : ''
-     } `;
   }
   showButtonPartial(){
     return html`
@@ -2471,13 +2811,13 @@ class htmlCard{
     return html`
       ${this.cfg.showTilt() ? html`
           <ha-icon-button
-            label="${this.cfg.getLocalize('ui.card.cover.open_tilt_cover')}"
+            label="${this.cfg.getLocalize(LOCALIZE_TEXT[ACTION_SHUTTER_OPEN_TILT])}"
             .disabled=${this.cfg.disabledGlobaly()}
             @click="${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_OPEN_TILT}`)}">
             <ha-icon class="${ESC_CLASS_HA_ICON}" icon="mdi:arrow-top-right"></ha-icon>
           </ha-icon-button>
           <ha-icon-button
-            label="${this.cfg.getLocalize('ui.card.cover.close_tilt_cover')}"
+            label="${this.cfg.getLocalize(LOCALIZE_TEXT[ACTION_SHUTTER_CLOSE_TILT])}"
             .disabled=${this.cfg.disabledGlobaly()} @click="${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_CLOSE_TILT}`)}">
             <ha-icon class="${ESC_CLASS_HA_ICON}" icon="mdi:arrow-bottom-left"></ha-icon>
           </ha-icon-button>
@@ -2489,9 +2829,9 @@ class htmlCard{
       ${this.cfg.buttonsLeftActive()
       ? html`
         <div class="${ESC_CLASS_BUTTONS}">
-          ${this.showButtonOpen()}
+          ${this.showButtonUp()}
           ${this.showButtonStop()}
-          ${this.showButtonClose()}
+          ${this.showButtonDown()}
         </div>
         <div class="${ESC_CLASS_BUTTONS}">
           ${this.showButtonPartial()}
@@ -2511,21 +2851,22 @@ class htmlCard{
         ${this.escImages.getWindowImageSrc(this.cfg.entityId()) ? html`<img src= "${this.escImages.getWindowImageSrc(this.cfg.entityId())} ">` : ''}
 
           <div class="${ESC_CLASS_SELECTOR_SLIDE}">
+            <div class="${ESC_CLASS_SELECTOR_SLIDE_MAIN}"></div>
+            <div class="${ESC_CLASS_SELECTOR_SLIDE_EDGE}"></div>
           </div>
-          ${this.cfg.partial() && !this.cfg.offset() ?
-            html`
-              <div class="${ESC_CLASS_SELECTOR_PARTIAL}">
-              </div>
-            ` : ''}
+          ${this.cfg.partial() && !this.cfg.offset() //  show partial only if no offset is defined
+            ? html`<div class="${ESC_CLASS_SELECTOR_PARTIAL}"></div>`
+            : ''}
           <div class="${ESC_CLASS_MOVEMENT_OVERLAY}">
-            <ha-icon class="${ESC_CLASS_MOVEMENT_OPEN}" icon="mdi:arrow-up">
+            <ha-icon class="${ESC_CLASS_MOVEMENT_UP}" icon="mdi:arrow-up">
             </ha-icon>
-            <ha-icon class="${ESC_CLASS_MOVEMENT_CLOSE}" icon="mdi:arrow-down">
+            <ha-icon class="${ESC_CLASS_MOVEMENT_DOWN}" icon="mdi:arrow-down">
             </ha-icon>
           </div>
         </div>
-        <div class="${ESC_CLASS_SELECTOR_PICKER}">
-        </div>
+        ${this.cfg.isCoverFeatureActive(ESC_FEATURE_SET_POSITION)
+          ? html`<div class="${ESC_CLASS_SELECTOR_PICKER}"></div>`
+          : ''}
       </div>
     `;
   }
@@ -2536,7 +2877,7 @@ class htmlCard{
           <div class="${ESC_CLASS_BUTTONS}">
             <ha-icon-button
               label="Fully opened"
-              .disabled=${this.cfg.disabledGlobaly() || this.cfg.upButtonDisabled()}
+              .disabled=${this.cfg.disabledGlobaly() || this.cfg.coverButtonUpDisabled()}
               @click=${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_SET_POS}`, SHUTTER_OPEN_PCT)}
               path="M3 4H21V8H19V20H17V8H7V20H5V8H3V4Z">
             </ha-icon-button>
@@ -2568,7 +2909,7 @@ class htmlCard{
             </ha-icon-button>
             <ha-icon-button
               label="Fully closed"
-              .disabled=${this.cfg.disabledGlobaly() || this.cfg.downButtonDisabled()}
+              .disabled=${this.cfg.disabledGlobaly() || this.cfg.coverButtonDownDisabled()}
               @click=${()=> this.enhancedShutter.doOnclick(`${ACTION_SHUTTER_SET_POS}`, SHUTTER_CLOSED_PCT)}
               path="M3 4H21V8H19V20H17V8H7V20H5V8H3V4M8 9H16V20H8V18Z">
             </ha-icon-button>
@@ -2653,8 +2994,8 @@ class MessageManager {
     this.messageGroup[subject].messages.push(message);
     if (type == 'warning' || type == 'error'){
       console.warn(`Enhanced Shutter Card (${subject}): "${message.text}"`);
-    }else{
-      console.info(`Enhanced Shutter Card (${subject}): "${message.text}"`);
+//    }else{
+//      console.info(`Enhanced Shutter Card (${subject}): "${message.text}"`);
     }
   }
 
@@ -2710,31 +3051,35 @@ class EscImages{
     var nImages=0;
     this.escImages={};
     let base_image_map = config[CONFIG_IMAGE_MAP] || ESC_IMAGE_MAP;
-
+    let shutter_preset = config[CONFIG_SHUTTER_PRESET];
 
     //IMAGE_TYPES.forEach((image_type) =>
     for (const image_type of IMAGE_TYPES)
     {
       let imageRefs={};
-      let movingDirection = config[CONFIG_CLOSING_DIRECTION] && IS_HORIZONTAL.includes(config[CONFIG_CLOSING_DIRECTION]) ? HORIZONTAL : VERTICAL;
 
-      for (const entity of config.entities)
+      // Determine the initial image from CONFIG_DEFAULT
+      let initImage = CONFIG_DEFAULT[image_type];
+
+      // Check if a preset image exists for the shutter type, otherwise use the initial image
+      let presetImage = (shutter_preset && ESC_PRESET[shutter_preset] && ESC_PRESET[shutter_preset][image_type]!== undefined)
+        ? ESC_PRESET[shutter_preset][image_type]
+        : initImage;
+
+      // Use the config image if provided, otherwise use the preset image
+      let configImage = (config[image_type]) ? config[image_type] : presetImage;
+
+      // Resolve the final base image path or color
+      let base_image = defImagePathOrColor(base_image_map, configImage, image_type);
+
+      for (const entityConfig of config.entities)
       {
-        movingDirection = entity[CONFIG_CLOSING_DIRECTION] ? (IS_HORIZONTAL.includes(entity[CONFIG_CLOSING_DIRECTION]) ? HORIZONTAL : VERTICAL) : movingDirection;
+        let image_map = entityConfig[CONFIG_IMAGE_MAP] || base_image_map;
+        const entityId = entityConfig[CONFIG_ENTITY_ID] || entityConfig;
 
-        let default_image = typeof CONFIG_DEFAULT[image_type] === "object"
-        ? CONFIG_DEFAULT[image_type][movingDirection]
-        : CONFIG_DEFAULT[image_type];
-
-        let image_map = entity[CONFIG_IMAGE_MAP] || base_image_map;
-        const entityId = entity[CONFIG_ENTITY_ID] || entity;
-
-        //let image = entity[image_type] ? defImagePathOrColor(image_map,entity[image_type],image_type) : base_image;
-        let base_image = config[image_type] ? defImagePathOrColor(base_image_map,config[image_type],image_type) : default_image?`${ESC_IMAGE_MAP}/${default_image}`: null;
-        let image = typeof entity[image_type] !== 'undefined' ? defImagePathOrColor(image_map,entity[image_type],image_type) : base_image;
+        let image = NOT_KNOWN.includes(entityConfig[image_type])  ? base_image : defImagePathOrColor(image_map,entityConfig[image_type],image_type);
         if (image){
-          let src = image || `${ESC_IMAGE_MAP}/${default_image}`;
-          src = src.replace(/([^:]\/)\/+/g, "/").trim(); // Remove double slashes and trim
+          let src = image.replace(/([^:]\/)\/+/g, "/").trim(); // Remove double slashes and trim
           var key;
           if (!(this.images.includes(src))){
             this.images[nImages]=src;
@@ -2742,11 +3087,9 @@ class EscImages{
           }else{
             key = this.images.findIndex(element => element == src);
           }
-          //var size= await loadImage(src);
-          //images[entityId]={entityId,src,width: size.width, height: size.height};
           imageRefs[entityId]={entityId,key};
         }else{
-          imageRefs[entityId]={entityId,key};
+          imageRefs[entityId]={entityId,key: -1};
 
         }
       };
@@ -2767,7 +3110,11 @@ class EscImages{
     return this.getImageSrc(CONFIG_SHUTTER_BOTTOM_IMAGE,entityId);
   }
   getImageSrc(image_type,entityId){
-    return this.images[this.escImages[image_type][entityId].key];
+    const key = this.escImages[image_type][entityId].key;
+    if (key < 0 || key >= this.images.length) {
+      return ''; // Return a default empty string if the key is invalid
+    }
+    return this.images[key];
   }
 
   getWindowImageSize(entityId){
@@ -2777,14 +3124,19 @@ class EscImages{
     return this.getImageSize(CONFIG_VIEW_IMAGE,entityId);
   }
   getShutterSlatImageSize(entityId){
-    return this.getImageSize(CONFIG_SHUTTER_SLAT_IMAGE,entityId);
+    let imageSize = this.getImageSize(CONFIG_SHUTTER_SLAT_IMAGE,entityId);
+    return imageSize;
   }
   getShutterBottomImageSize(entityId){
     return this.getImageSize(CONFIG_SHUTTER_BOTTOM_IMAGE,entityId);
   }
-  getImageSize(image_type,entityId){
-    const key = this.escImages[image_type][entityId].key;
-    return new xyPair(this.width[key],this.height[key]);
+  getImageSize(image_type, entityId) {
+    const key = this.escImages[image_type][entityId]?.key;
+    if (key == null || key < 0 || key >= this.images.length) {
+      return new xyPair(0, 0);
+    }
+    const  xy = new xyPair(this.width[key] || 0, this.height[key] || 0);
+    return xy;
   }
 
   async processImages() {
@@ -2792,8 +3144,10 @@ class EscImages{
       const images=this.images;
       const imageDimensions = await readImageDimensions(images);
       imageDimensions.forEach((value,key,array)=>{
-        this.width[key] = value.width;
-        this.height[key]= value.height;
+        //this.width[key] = value.width;
+        //this.height[key]= value.height;
+        this.width[value.index] = value.width;
+        this.height[value.index]= value.height;
       });
 
       this.escImagesLoaded = true; // Mark images as loaded
@@ -2819,7 +3173,7 @@ function defImagePathOrColor(image_map,image,image_type)
   let result;
   if (!image) return '';
 
-  if (image_type== CONFIG_VIEW_IMAGE && !image.includes('.')){
+  if (!image.includes('.')){
     // is Color
     result=image;
   }else{
@@ -2971,39 +3325,53 @@ function displayNodePathToTopIncludingShadowAndClass(node) {
   const path = [];
 
   while (currentNode) {
-      // If the node has a shadow root, include it in the path
-      if (currentNode.host) {
-          path.push(`#shadow-root`); // Include shadow root with its mode (open or closed)
-          path.push(`${currentNode.host.nodeName}`); // Include shadow root with its mode (open or closed)
-      }else{
+    // If the node has a shadow root, include it in the path
+    if (currentNode.host) {
+        path.push(`#shadow-root`); // Include shadow root with its mode (open or closed)
+        path.push(`${currentNode.host.nodeName}`); // Include shadow root with its mode (open or closed)
+    }else{
 
-        // Add the current node's tag name and class name (if any)
-        let nodeDescription = currentNode.nodeName;
+      // Add the current node's tag name and class name (if any)
+      let nodeDescription = currentNode.nodeName;
 
-        // If the node has a className, add it to the description
-        if (currentNode.className) {
-            nodeDescription += `.${currentNode.className}`;
-        }
-
-        // Optionally, you can also add the ID, if you want
-        if (currentNode.id) {
-            nodeDescription += `#${currentNode.id}`;
-        }
-
-        path.push(nodeDescription);  // Add the node description to the path
+      // If the node has a className, add it to the description
+      if (currentNode.className) {
+          nodeDescription += `.${currentNode.className}`;
       }
-      // If we're inside a shadow DOM, go up to the shadow host
-      //if (currentNode.shadowRoot) {
-      if (currentNode.host) {
-          currentNode = currentNode.host.parentNode  // Move to the shadow host
-      } else {
-          currentNode = currentNode.parentNode;  // Move to the regular parent node
+
+      // Optionally, you can also add the ID, if you want
+      if (currentNode.id) {
+          nodeDescription += `#${currentNode.id}`;
       }
+
+      path.push(nodeDescription);  // Add the node description to the path
+    }
+    // If we're inside a shadow DOM, go up to the shadow host
+    //if (currentNode.shadowRoot) {
+    if (currentNode.host) {
+        currentNode = currentNode.host.parentNode  // Move to the shadow host
+    } else {
+        currentNode = currentNode.parentNode;  // Move to the regular parent node
+    }
   }
+}
+function findParentNode(node, selector) {
+  // Check if the node matches the selector itself
+  if (node.matches(selector)) {
+      return node;
+  }
+  let currentNode = node;
 
-  // Reverse the path to show it from the root to the target node
-  //console.log('Node path from target to root (including shadow roots and class names):');
-  //console.log(path.reverse().join(" \n > "));
+  while (currentNode && !currentNode.matches(selector)) {
+    // If the node has a shadow root, include it in the path
+    if (currentNode.host) {
+        currentNode = currentNode.host.parentNode  // Move to the shadow host
+    } else {
+        currentNode = currentNode.parentNode;  // Move to the regular parent node
+    }
+  }
+  return currentNode;
+
 }
 function console_log(...args){
   if (VERSION.indexOf('b') > 0){
@@ -3019,7 +3387,8 @@ function isUrl(fileName){
 
 async function readImageDimensions(files) {
   const promises = [];
-
+  var count=0;
+  var pointer=[];
   // Loop through each file URL in the provided array
   for (let i = 0; i < files.length; i++) {
     const fileUrl = files[i];
@@ -3031,7 +3400,8 @@ async function readImageDimensions(files) {
             resolve({
                 url: fileUrl,
                 width: img.width,
-                height: img.height
+                height: img.height,
+                index: i // Store the index of the image in the original array
             });
         };
 
@@ -3040,8 +3410,12 @@ async function readImageDimensions(files) {
         };
 
         img.src = fileUrl; // Set the src to the image URL directly
+        //img.index= i; // Store the index of the image in the original array
+
       });
       promises.push(promise);
+      pointer[i]=count++;
+      //promises[i] = promise; // Store the promise in the array at index i
     }
   }
 
