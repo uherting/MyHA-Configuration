@@ -1,0 +1,296 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Area Occupancy Detection",
+                "description": "Configure area occupancy detection with sensors and parameters",
+                "data": {
+                    "name": "Name of Detection Area"
+                },
+                "data_description": {
+                    "name": "This is the name of the area or detection area. It will be used to name the sensors and the area occupancy entity."
+                },
+                "sections": {
+                    "purpose": {
+                        "name": "Area Purpose",
+                        "description": "Configure the primary purpose of this area",
+                        "data": {
+                            "purpose": "Area Purpose"
+                        },
+                        "data_description": {
+                            "purpose": "The primary purpose of this area determines decay behavior. Different purposes have different half-life values that affect how quickly occupancy probability decreases over time."
+                        }
+                    },
+                    "motion": {
+                        "name": "Motion & Presence Sensors",
+                        "description": "Configure motion and presence sensors",
+                        "data": {
+                            "primary_occupancy_sensor": "Primary Occupancy Sensor",
+                            "motion_sensors": "Additional Motion/Presence Sensors",
+                            "weight_motion": "Motion Weight",
+                            "motion_timeout": "Motion Timeout (seconds)"
+                        },
+                        "data_description": {
+                            "primary_occupancy_sensor": "This is the primary occupancy sensor that will be used to detect occupancy. It will be used to calculate the prior probability. This should be your most reliable indicator of occupancy as it will be used as the baseline probability.",
+                            "motion_sensors": "These will be used to detect occupancy and presence. They can be motion sensors, occupancy sensors, or presence sensors.",
+                            "weight_motion": "The weight given to motion sensor inputs in the occupancy calculation.",
+                            "motion_timeout": "This adds an additional timeout to historical motion sensor data. You can use this to effectively adjust the prior probability for the area and the likelihood of occupancy for any given sensor."
+                        }
+                    },
+                    "doors": {
+                        "name": "Door Sensors",
+                        "description": "Configure door sensors and their states",
+                        "data": {
+                            "door_sensors": "Door Sensors",
+                            "door_active_state": "Door Active State",
+                            "weight_door": "Door Weight"
+                        },
+                        "data_description": {
+                            "door_active_state": "This is the state of the door that will be used to detect occupancy.",
+                            "weight_door": "The weight given to door sensor inputs in the occupancy calculation."
+                        }
+                    },
+                    "wasp_in_box": {
+                        "name": "Wasp in Box",
+                        "description": "Configure wasp-in-box behavior for single-entry rooms",
+                        "data": {
+                            "wasp_enabled": "Enable Wasp in Box",
+                            "wasp_motion_timeout": "Motion Timeout (seconds)",
+                            "wasp_weight": "Sensor Weight",
+                            "wasp_max_duration": "Max Duration (seconds)"
+                        },
+                        "data_description": {
+                            "wasp_enabled": "Enable wasp-in-box behavior and entity for this area",
+                            "wasp_motion_timeout": "How long motion remains valid after detection",
+                            "wasp_weight": "The weight given to this sensor in the occupancy calculation",
+                            "wasp_max_duration": "The maximum duration of the wasp-in-box behavior"
+                        }
+                    },
+                    "windows": {
+                        "name": "Window Sensors",
+                        "description": "Configure window sensors and their states",
+                        "data": {
+                            "window_sensors": "Window Sensors",
+                            "window_active_state": "Window Active State",
+                            "weight_window": "Window Weight"
+                        },
+                        "data_description": {
+                            "window_active_state": "This is the state of the window that will be used to detect occupancy.",
+                            "weight_window": "The weight given to window sensor inputs in the occupancy calculation."
+                        }
+                    },
+                    "media": {
+                        "name": "Media Players",
+                        "description": "Configure media players and their states",
+                        "data": {
+                            "media_devices": "Media Players",
+                            "media_active_states": "Media Active States",
+                            "weight_media": "Media Weight"
+                        },
+                        "data_description": {
+                            "media_active_states": "These are the states of the media players that will be used to detect occupancy.",
+                            "weight_media": "The weight given to media player inputs in the occupancy calculation."
+                        }
+                    },
+                    "appliances": {
+                        "name": "Appliances",
+                        "description": "Configure appliances and their states",
+                        "data": {
+                            "appliances": "Appliances",
+                            "appliance_active_states": "Appliance Active States",
+                            "weight_appliance": "Appliance Weight"
+                        },
+                        "data_description": {
+                            "appliance_active_states": "These are the states of the appliances that will be used to detect occupancy.",
+                            "weight_appliance": "The weight given to appliance inputs in the occupancy calculation."
+                        }
+                    },
+                    "environmental": {
+                        "name": "Environmental Sensors",
+                        "description": "Configure environmental sensors",
+                        "data": {
+                            "illuminance_sensors": "Illuminance Sensors",
+                            "humidity_sensors": "Humidity Sensors",
+                            "temperature_sensors": "Temperature Sensors",
+                            "weight_environmental": "Environmental Weight"
+                        },
+                        "data_description": {
+                            "weight_environmental": "The weight given to environmental sensor inputs in the occupancy calculation."
+                        }
+                    },
+                    "parameters": {
+                        "name": "Advanced Parameters",
+                        "description": "Configure advanced parameters for occupancy detection",
+                        "data": {
+                            "threshold": "Occupancy Threshold (%)",
+                            "decay_enabled": "Enable Time Decay",
+                            "decay_half_life": "Decay Half Life (seconds)"
+                        },
+                        "data_description": {
+                            "threshold": "The probability threshold above which the area is considered occupied.",
+                            "decay_enabled": "Whether to enable time-based decay of occupancy probability.",
+                            "decay_half_life": "Time window over which occupancy probability decays by half. Automatically defaults based on area purpose: Passageway (60s), Utility (120s), Food-Prep (300s), Eating/Working (600s), Social (720s), Relaxing (900s), Sleeping (1800s). You can manually adjust this value or it will be auto-set when you change the area purpose."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Area Occupancy Detection Options",
+                "description": "Modify area occupancy detection configuration",
+                "sections": {
+                    "purpose": {
+                        "name": "Area Purpose",
+                        "description": "Configure the primary purpose of this area",
+                        "data": {
+                            "purpose": "Area Purpose"
+                        },
+                        "data_description": {
+                            "purpose": "The primary purpose of this area determines decay behavior. Different purposes have different half-life values that affect how quickly occupancy probability decreases over time."
+                        }
+                    },
+                    "motion": {
+                        "name": "Motion & Presence Sensors",
+                        "description": "Configure motion and presence sensors",
+                        "data": {
+                            "primary_occupancy_sensor": "Primary Occupancy Sensor",
+                            "motion_sensors": "Additional Motion/Presence Sensors",
+                            "weight_motion": "Motion Weight",
+                            "motion_timeout": "Motion Timeout (seconds)"
+                        },
+                        "data_description": {
+                            "primary_occupancy_sensor": "This is the primary occupancy sensor that will be used to detect occupancy. It will be used to calculate the prior probability. This should be your most reliable indicator of occupancy as it will be used as the baseline probability.",
+                            "motion_sensors": "These will be used to detect occupancy and presence. They can be motion sensors, occupancy sensors, or presence sensors.",
+                            "weight_motion": "The weight given to motion sensor inputs in the occupancy calculation.",
+                            "motion_timeout": "This adds an additional timeout to historical motion sensor data. You can use this to effectively adjust the prior probability for the area and the likelihood of occupancy for any given sensor."
+                        }
+                    },
+                    "doors": {
+                        "name": "Door Sensors",
+                        "description": "Configure door sensors and their states",
+                        "data": {
+                            "door_sensors": "Door Sensors",
+                            "door_active_state": "Door Active State",
+                            "weight_door": "Door Weight"
+                        },
+                        "data_description": {
+                            "door_active_state": "This is the state of the door that will be used to detect occupancy.",
+                            "weight_door": "The weight given to door sensor inputs in the occupancy calculation."
+                        }
+                    },
+                    "wasp_in_box": {
+                        "name": "Wasp in Box",
+                        "description": "Configure wasp-in-box behavior for single-entry rooms",
+                        "data": {
+                            "wasp_enabled": "Enable Wasp in Box",
+                            "wasp_motion_timeout": "Motion Timeout (seconds)",
+                            "wasp_weight": "Sensor Weight",
+                            "wasp_max_duration": "Max Duration (seconds)"
+                        },
+                        "data_description": {
+                            "wasp_enabled": "Enable wasp-in-box behavior and entity for this area",
+                            "wasp_motion_timeout": "How long motion remains valid after detection",
+                            "wasp_weight": "The weight given to this sensor in the occupancy calculation",
+                            "wasp_max_duration": "The maximum duration of the wasp-in-box behavior"
+                        }
+                    },
+                    "windows": {
+                        "name": "Window Sensors",
+                        "description": "Configure window sensors and their states",
+                        "data": {
+                            "window_sensors": "Window Sensors",
+                            "window_active_state": "Window Active State",
+                            "weight_window": "Window Weight"
+                        },
+                        "data_description": {
+                            "window_active_state": "This is the state of the window that will be used to detect occupancy.",
+                            "weight_window": "The weight given to window sensor inputs in the occupancy calculation."
+                        }
+                    },
+                    "media": {
+                        "name": "Media Players",
+                        "description": "Configure media players and their states",
+                        "data": {
+                            "media_devices": "Media Players",
+                            "media_active_states": "Media Active States",
+                            "weight_media": "Media Weight"
+                        },
+                        "data_description": {
+                            "media_active_states": "These are the states of the media players that will be used to detect occupancy.",
+                            "weight_media": "The weight given to media player inputs in the occupancy calculation."
+                        }
+                    },
+                    "appliances": {
+                        "name": "Appliances",
+                        "description": "Configure appliances and their states",
+                        "data": {
+                            "appliances": "Appliances",
+                            "appliance_active_states": "Appliance Active States",
+                            "weight_appliance": "Appliance Weight"
+                        },
+                        "data_description": {
+                            "appliance_active_states": "These are the states of the appliances that will be used to detect occupancy.",
+                            "weight_appliance": "The weight given to appliance inputs in the occupancy calculation."
+                        }
+                    },
+                    "environmental": {
+                        "name": "Environmental Sensors",
+                        "description": "Configure environmental sensors",
+                        "data": {
+                            "illuminance_sensors": "Illuminance Sensors",
+                            "humidity_sensors": "Humidity Sensors",
+                            "temperature_sensors": "Temperature Sensors",
+                            "weight_environmental": "Environmental Weight"
+                        },
+                        "data_description": {
+                            "weight_environmental": "The weight given to environmental sensor inputs in the occupancy calculation."
+                        }
+                    },
+                    "parameters": {
+                        "name": "Advanced Parameters",
+                        "description": "Configure advanced parameters for occupancy detection",
+                        "data": {
+                            "threshold": "Occupancy Threshold (%)",
+                            "decay_enabled": "Enable Time Decay",
+                            "decay_half_life": "Decay Half Life (seconds)"
+                        },
+                        "data_description": {
+                            "threshold": "The probability threshold above which the area is considered occupied.",
+                            "decay_enabled": "Whether to enable time-based decay of occupancy probability.",
+                            "decay_half_life": "Time window over which occupancy probability decays by half. Automatically defaults based on area purpose: Passageway (60s), Utility (120s), Food-Prep (300s), Eating/Working (600s), Social (720s), Relaxing (900s), Sleeping (1800s). You can manually adjust this value or it will be auto-set when you change the area purpose."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "occupancy_status": {
+                "name": "Occupancy Status"
+            },
+            "wasp_in_box": {
+                "name": "Wasp in Box"
+            }
+        },
+        "sensor": {
+            "occupancy_probability": {
+                "name": "Occupancy Probability"
+            },
+            "prior_probability": {
+                "name": "Prior Probability"
+            },
+            "decay_status": {
+                "name": "Decay Status"
+            }
+        },
+        "number": {
+            "threshold": {
+                "name": "Occupancy Threshold"
+            }
+        }
+    }
+}

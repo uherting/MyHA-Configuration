@@ -128,7 +128,7 @@ exclude:
     - sensor.zb_charger_uh_last_seen
     - sensor.zb_dw_l2_bedroom_01_last_seen
     - sensor.zb_dw_l2_bedroom_02_last_seen
-    - sensor.zb_humanpresence_l2kitchen_last_seen
+    - sensor.zb_humanpresence_l2_kitchen_01_last_seen
     - sensor.zb_plug_l2_misc_01_last_seen
     - sensor.zb_plug_l2_misc_02_last_seen
     - sensor.zb_plug_l2_lounge_tv_last_seen

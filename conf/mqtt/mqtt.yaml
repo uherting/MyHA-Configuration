@@ -1,0 +1,16 @@
+# ############################################################
+#  setup of MQTT services
+# ############################################################
+
+# void as editor puts the key words in column 1 on saving the file
+# that is why this config ended up in configuration.yaml
+
+# mqtt:
+# broker: !secret MQTT_HIVEMQ_BROKER_01_HOSTNAME
+# port: !secret MQTT_HIVEMQ_BROKER_01_PORT
+# username: !secret MQTT_HIVEMQ_BROKER_01_MQTT_USERNAME
+# password: !secret MQTT_HIVEMQ_BROKER_01_PASSWORD
+# certificate: !secret
+# ############################################################
+#  END OF FILE
+# ############################################################
