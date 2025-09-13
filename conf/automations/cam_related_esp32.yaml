@@ -25,7 +25,7 @@
     # --------------------- START COOLDOWN ---------------------
     - service: light.turn_off
       target:
-        entity_id: light.l9cam3203_camlight
+        entity_id: light.l9cam3202_camlight
 
 # ############################################################
 # Camlight l9cam3203 auto off
