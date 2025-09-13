@@ -1,0 +1,54 @@
+# ############################################################
+#
+#  Automatic camlight off after x minutes
+#
+# ############################################################
+
+# ############################################################
+# Camlight l9cam3202 auto off
+# ############################################################
+- alias: Camlight l9cam3202 auto off
+  id: "af34e2b6-5807-418e-a470-1c1c40eb43b8"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: light.l9cam3202_camlight
+      to: "on"
+      for:
+        minutes: 0
+        seconds: 30
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- START COOLDOWN ---------------------
+    - service: light.turn_off
+      target:
+        entity_id: light.l9cam3203_camlight
+
+# ############################################################
+# Camlight l9cam3203 auto off
+# ############################################################
+- alias: Camlight l9cam3203 auto off
+  id: "470fa077-6e65-49ca-af54-74bc5d7b2d6d"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: light.l9cam3203_camlight
+      to: "on"
+      for:
+        minutes: 0
+        seconds: 30
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- START COOLDOWN ---------------------
+    - service: light.turn_off
+      target:
+        entity_id: light.l9cam3203_camlight
+############################################################
+#  END OF FILE
+# ############################################################
