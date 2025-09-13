@@ -53,7 +53,9 @@ packages:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
-api: !include conf/common/networking/api.yaml
+# api disabled to avoid connection attempts from HA and reset cycles
+# for details see https://esphome.io/components/api.html#api
+# api: !include conf/common/networking/api.yaml
 time: !include conf/common/time.yaml
 # sun: !include conf/common/sun.yaml
 
