@@ -18,6 +18,9 @@
     it.print(0, 0, id(myfont_roboto18), "Hello");
     it.print(0, 23, id(myfont_roboto18), "Uwe!");
 
+# ############################################################
+# about using pages see https://esphome.io/components/display/index.html#display-pages or the below commented out example
+# ############################################################
 # - platform: ssd1306_i2c
   # model: "SSD1306 72x40"
   # address: 0x3C
