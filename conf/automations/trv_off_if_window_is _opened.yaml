@@ -1,0 +1,83 @@
+# ############################################################
+#
+#  Window contact detected open window
+#
+# ############################################################
+
+# ############################################################
+#  Window contact detected open window
+# ############################################################
+- alias: Window contact detected open window
+  id: "48ba3366-08e4-4885-bd8a-94b090585307"
+  description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
+  mode: single
+  max_exceeded: silent
+
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    # if the group zb_dw_l2_bedroom_contact goes to "on"
+    - platform: state
+      id: "zb_dw_l2_bedroom_contact"
+      entity_id: binary_sensor.zb_dw_l2_bedroom_contact
+      to: "on"
+    # if the contact zb_dw_l2_lounge_contact_01 goes to "on"
+    # - platform: state
+    #   id: "zb_dw_l2_lounge_contact_01"
+    #   entity_id: binary_sensor.zb_dw_l2_lounge_01_contact
+    #   to: "on"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - choose:
+        # --------------------- zb_dw_l2_bedroom_contact
+        - conditions:
+            - condition: trigger
+              id: "zb_dw_l2_bedroom_contact"
+          sequence:
+            # ------------------- TRV SWITCHED OFF -------------------
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
+              data:
+                hvac_mode: "off"
+            # ------------------- CREATE NOTIFICATION -------------------
+            - service: script.tg_send_txt
+              data:
+                msg_title: "Detected open window"
+                msg_text: "An open window in the bedroom was detected, the TRV was turned off"
+                msg_receiver: "notify"
+    - choose:
+        # --------------------- zb_dw_l2_lounge_contact_01
+        - conditions:
+            - condition: trigger
+              id: "zb_dw_l2_lounge_contact_01"
+          sequence:
+            # ------------------- TRV SWITCHED OFF -------------------
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_lounge_l2
+              data:
+                hvac_mode: "off"
+            # ------------------- CREATE NOTIFICATION -------------------
+            - service: script.tg_send_txt
+              data:
+                msg_title: "Detected open window"
+                msg_text: "An open window in the lounge was detected, the TRV was turned off"
+                msg_receiver: "notify"
+      # --------------------- default branch of choose:
+      default:
+        - service: system_log.write
+          data:
+            message: "Automation L2 TRV run away handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            level: "error"
+            logger: "system_log.external"
+        # - service: persistent_notification.create
+        #   data:
+        #     title: "L2 TRV run away automation unknown activity"
+        #     message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
+############################################################
+#  END OF FILE
+# ############################################################
