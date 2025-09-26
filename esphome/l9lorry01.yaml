@@ -45,7 +45,7 @@ substitutions:
 
 packages:
   substitutions_common: !include conf/common/packages/substitutions/common.yaml
-  device_base_common: !include conf/common/packages/device_base_esp32c3.yaml
+  device_base_common: !include conf/common/packages/device_base_esp32.yaml
   # wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_remote.yaml
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
@@ -56,7 +56,10 @@ packages:
 # api disabled to avoid connection attempts from HA and reset cycles
 # for details see https://esphome.io/components/api.html#api
 # api: !include conf/common/networking/api.yaml
-time: !include conf/common/time.yaml
+
+# TODO: enable time setup through HA asap
+# time: !include conf/common/time.yaml
+
 # sun: !include conf/common/sun.yaml
 
 ############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
@@ -66,9 +69,9 @@ web_server:
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 for the ESP32c3 platform
-i2c: !include conf/common/device/i2c_esp32c3.yaml
+i2c: !include conf/common/device/i2c_esp32_testdev.yaml
 # dallas: !include conf/common/device/dallas.yaml
-# mcp23017: !include conf/common/device/mcp23017.yaml
+mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -83,7 +86,11 @@ globals:
 #   - <<: !include conf/common/globals/opto_coupler_02.yaml
 #   - <<: !include conf/common/globals/opto_coupler_03.yaml
 interval: !include conf/common/interval/connectivity.yaml
-# script:
+script:
+  - <<: !include conf/script/l9lorry/touch_button_A101_on_press.yaml
+  - <<: !include conf/script/l9lorry/touch_button_A202_on_press.yaml
+  - <<: !include conf/script/l9lorry/touch_button_A303_on_press.yaml
+  - <<: !include conf/script/l9lorry/touch_button_A404_on_press.yaml
 #   - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
 #   # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
 #   - <<: !include conf/common/script/touch_button_A4_on_press.yaml
@@ -114,6 +121,10 @@ binary_sensor:
 #   # - <<: !include conf/common/binary_sensor/reed02.yaml
 # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
 # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
