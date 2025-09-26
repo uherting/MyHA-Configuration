@@ -94,13 +94,15 @@ interval: !include conf/common/interval/connectivity.yaml
 
 #-------------------------------------------------------------------
 # DISPLAY
+# Display configuration for OLED 0.42" display (72x40)
 display:
-  - <<: !include conf/display/oled_042.yaml
+  - <<: !include conf/display/oled_042_72_40.yaml
 
 #-------------------------------------------------------------------
 # FONT
+# Font configuration for OLED 0.42" display (72x40)
 font:
-  - <<: !include conf/common/font/oled_042.yaml
+  - <<: !include conf/common/font/oled_042_72_40.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
