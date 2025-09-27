@@ -3,14 +3,14 @@
 
 # device definitions
 device_name: l9lorry01
-device_comment: Level 9 Lorry ESP32 C3
+device_comment: Level 9 Lorry ESP32
 device_area: L9
 
-# device_platform: ESP32
+device_platform: ESP32
 wifi_static_ip: 192.168.178.191
 
 # latest 20250222
-device_board: esp32-c3-devkitm-1
+device_board: esp32dev
 device_framework: arduino
 # framework esp-idf throughs too many warnings
 # device_framework: esp-idf
