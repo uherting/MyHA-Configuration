@@ -3,11 +3,11 @@
 
 # device definitions
 device_name: l2kitchen09
-device_comment: Level 9 Lorry ESP32
-device_area: L9
+device_comment: Level 2 Kitchen ESP32
+device_area: L2
 
 device_platform: ESP32
-wifi_static_ip: 192.168.178.191
+wifi_static_ip: 192.168.178.225
 
 # latest 20250222
 device_board: esp32dev
