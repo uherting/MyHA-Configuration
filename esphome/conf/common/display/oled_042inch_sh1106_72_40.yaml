@@ -23,6 +23,9 @@
   #   it.print(0, 23, id(myfont_roboto18), "Uwe!");
   # for usage of pages see https://esphome.io/components/display/index.html#display-pages
   
+# ############################################################
+# about using pages see https://esphome.io/components/display/index.html#display-pages or the below commented out example
+# ############################################################
   pages:
     - id: page1
       lambda: |-
@@ -36,6 +39,7 @@
       # it.print(0, 10, id(font_times_new_roman_20), "This is page 2!");
 
 # ############################################################
+# example for page usage following here
 # about using pages see https://esphome.io/components/display/index.html#display-pages or the below commented out example
 # ############################################################
 # - platform: ssd1306_i2c
