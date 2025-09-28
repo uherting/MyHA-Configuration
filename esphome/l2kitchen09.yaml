@@ -11,7 +11,7 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for remote usage (ESP32-C3 platform) w/o MCP23017 
+#   - Microcontroller for controlling ZB plugs realted to l2kitchen
 #
 # Future feature:
 #   - unknown
@@ -26,10 +26,12 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - none so far
+#   - rotary encoder on OLED board
+#   - 
+#   - no physical buttons so far
 #
 # Output
-#   - the device reports to HA only 
+#   - OLED display 0.42" 72x40
 #
 
 ###################### PACKAGES CONFIGURATION ######################
@@ -133,8 +135,8 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
+  # - <<: !include conf/common/sensor/dht_esp32_01.yaml
 
 #-------------------------------------------------------------------
 # SERVOS
