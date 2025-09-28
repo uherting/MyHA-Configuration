@@ -23,9 +23,9 @@ display_id: ${device_name}_display
 
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_CASESENSOR_01_ADDRESS
+dallas_01c01_address: !secret DALLAS_01_L9_KITCHEN_ESP32_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L9_TEST_ESP32_C3_ENVSENSOR_01_ADDRESS
+dallas_01e01_address: !secret DALLAS_01_L9_KITCHEN_ESP32_ENVSENSOR_01_ADDRESS
 ####################################################################
 # EOF
 ####################################################################
