@@ -19,13 +19,26 @@ device_framework: arduino
 friendly_name: ""
 friendly_id: ""
 
+# OLED
 display_id: ${device_name}_display
 
+# AHT10 sensor
+aht10_01_temp_name: $friendly_name Kitchen AHT10 T 01
+aht10_01_hum_name: $friendly_name Kitchen AHT10 H 01
+aht10_01_update_interval: 60s
+aht10_01_address: 0x38
+aht10_01_variant: AHT10
+aht10_01_temp_unit: "°C"
+aht10_01_hum_unit: "%"
+aht10_01_temp_id: ${friendly_id}_Kitchen_AHT10_T_01
+aht10_01_hum_id: ${friendly_id}_Kitchen_AHT10_H_01
+
+# DALLAS sensors
 # details for DALLAS sensors connected to the device
 dallas_01c01_name: $friendly_name TempCase 01
-dallas_01c01_address: !secret DALLAS_01_L9_KITCHEN_ESP32_CASESENSOR_01_ADDRESS
+dallas_01c01_address: !secret DALLAS_01_L2_KITCHEN_ESP32_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
-dallas_01e01_address: !secret DALLAS_01_L9_KITCHEN_ESP32_ENVSENSOR_01_ADDRESS
+dallas_01e01_address: !secret DALLAS_01_L2_KITCHEN_ESP32_ENVSENSOR_01_ADDRESS
 ####################################################################
 # EOF
 ####################################################################

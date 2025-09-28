@@ -55,9 +55,7 @@ packages:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
-# api disabled to avoid connection attempts from HA and reset cycles
-# for details see https://esphome.io/components/api.html#api
-# api: !include conf/common/networking/api.yaml
+api: !include conf/common/networking/api.yaml
 
 # TODO: enable time setup through HA asap
 # time: !include conf/common/time.yaml
@@ -137,7 +135,8 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/common/sensor/rotary_encoder.yaml
+  - <<: !include conf/common/sensor/rotary_encoder_01.yaml
+  - <<: !include conf/common/sensor/aht10_01.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
 
