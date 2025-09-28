@@ -7,6 +7,7 @@
 # ############################################################
 #  Turn the ZB plug on GH simple
 # ############################################################
+# automation.turn_the_zb_plug_gh_on_simple
 - alias: Turn the ZB plug GH on simple
   id: "d7241af0-3816-43b4-8642-47499504882c"
   description: "This automation turns on the ZB plug GH the simple way"
