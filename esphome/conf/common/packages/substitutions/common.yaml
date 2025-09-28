@@ -157,7 +157,6 @@ substitutions:
   rotaryencoder01_id: ${friendly_id}_RE_01
   rotaryencoder01_min_value: 0
   rotaryencoder01_max_value: 99
-  rotaryencoder01_initial_value: 0
   rotaryencoder01_resolution: 1
   rotaryencoder01_on_value_script: re_01_value_changed_with_param
   

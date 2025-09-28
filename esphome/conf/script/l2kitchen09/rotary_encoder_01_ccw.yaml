@@ -1,13 +1,11 @@
 ####################################################################
 # SCRIPTS
 
-#script:
-# 
-- id: re_01_clockwise
-  mode: restart
-  then:
-    - delay: 50ms
-- id: re_01_anticlockwise`
+# script:
+# rotary encoder script counterclockwise turn
+
+# anticlockwise turn
+- id: re_01_anticlockwise
   mode: restart
   then:
     - delay: 50ms

@@ -2,9 +2,10 @@
 # DISPLAY
 
 - platform: ssd1306_i2c
-  model: "SH1106 72x40"
-  # SSD1306 72x40 seems to work as well, no idea what the difference is
-  # model: "SSD1306 72x40"
+  # "SH1106 72x40" should be the model, but it does not get validated
+  # model: "SH1106 72x40"
+  # SSD1306 72x40 seems to work though, no idea what the difference is
+  model: "SSD1306 72x40"
   
   address: 0x3C
   id: ${display_id}
@@ -29,14 +30,14 @@
   pages:
     - id: page1
       lambda: |-
-        it.print(5, 20, id(font_times_new_roman_35), "");
+        it.print(5, 20, id(myfont_roboto18), "");
     - id: page2
       lambda: |-
-        it.print(5, 20, id(font_times_new_roman_35), "");
-      # it.print(0, 0, id(font_times_new_roman_35), "Hallo!");
-      # it.strftime(64, 0, id(font_times_new_roman_20), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
-      # it.strftime(64, 64, id(font_times_new_roman_35), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
-      # it.print(0, 10, id(font_times_new_roman_20), "This is page 2!");
+        it.print(5, 20, id(myfont_roboto18), "");
+      # it.print(0, 0, id(myfont_roboto18), "Hallo!");
+      # it.strftime(64, 0, id(myfont_roboto18), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
+      # it.strftime(64, 64, id(myfont_roboto18), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
+      # it.print(0, 10, id(myfont_roboto18), "This is page 2!");
 
 # ############################################################
 # example for page usage following here
@@ -52,14 +53,14 @@
   # pages:
   #   - id: page1
   #     lambda: |-
-  #       it.print(5, 20, id(font_times_new_roman_35), "");
+  #       it.print(5, 20, id(myfont_roboto18), "");
   #   - id: page2
   #     lambda: |-
-  #       it.print(5, 20, id(font_times_new_roman_35), "");
-  #     # it.print(0, 0, id(font_times_new_roman_35), "Hallo!");
-  #     # it.strftime(64, 0, id(font_times_new_roman_20), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
-  #     # it.strftime(64, 64, id(font_times_new_roman_35), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
-  #     # it.print(0, 10, id(font_times_new_roman_20), "This is page 2!");
+  #       it.print(5, 20, id(myfont_roboto18), "");
+  #     # it.print(0, 0, id(myfont_roboto18), "Hallo!");
+  #     # it.strftime(64, 0, id(myfont_roboto18), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
+  #     # it.strftime(64, 64, id(myfont_roboto18), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
+  #     # it.print(0, 10, id(myfont_roboto18), "This is page 2!");
 
 # ############################################################
 #  END OF FILE

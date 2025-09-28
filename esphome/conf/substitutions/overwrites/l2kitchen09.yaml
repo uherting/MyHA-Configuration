@@ -3,6 +3,13 @@
 
 # if there are no overrides the dummy value comes in handy ;-)
 dummy_value: "dummy value"
+
+# rotary encoder
+rotaryencoder01_min_value: 0
+rotaryencoder01_max_value: 4
+rotaryencoder01_resolution: 1
+rotaryencoder01_on_value_script: re_01_value_changed_with_param
+
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 # log_level: !secret LOG_LEVEL_WARN
 ####################################################################
