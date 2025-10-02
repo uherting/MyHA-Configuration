@@ -164,8 +164,8 @@ substitutions:
   reed_contact07_device_class: "opening"
 
   # rotary encoder
-  rotaryencoder01_name: $friendly_name RE 01
-  rotaryencoder01_id: ${friendly_id}_RE_01
+  rotaryencoder01_name: $friendly_name RotaryEncoder 01
+  rotaryencoder01_id: ${friendly_id}_RotaryEncoder_01
   rotaryencoder01_min_value: 0
   rotaryencoder01_max_value: 99
   rotaryencoder01_resolution: 1
