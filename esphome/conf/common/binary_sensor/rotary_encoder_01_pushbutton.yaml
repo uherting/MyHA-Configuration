@@ -1,0 +1,27 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# ROTARY ENCODER PUSHBUTTON
+
+- platform: gpio
+  name: $reed_contact01_name
+  id: ${reed_contact01_id}
+  pin:
+    number: !secret ROTARYENCODER01_PUSHBUTTON_PIN
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    inverted: false
+  # debouncing
+  filters:
+    - delayed_on: 50ms
+    - delayed_off: 50ms
+  # device_class: $rotaryencoder01_pshbtn_class
+  on_press:
+    then:
+      - script.execute: rotary_encoder_01_pushbutton_pressed
+# ############################################################
+#  END OF FILE
+# ############################################################

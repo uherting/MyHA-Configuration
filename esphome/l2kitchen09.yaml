@@ -94,17 +94,13 @@ interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/script/l2kitchen09/rotary_encoder_01_cw.yaml
   - <<: !include conf/script/l2kitchen09/rotary_encoder_01_ccw.yaml
+  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_pushbutton_pressed.yaml
+  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_backbutton_pressed.yaml
+  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_confirmbutton_pressed.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A101_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A202_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A303_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A404_on_press.yaml
-#   - <<: !include conf/common/script/pir1_to_ssr1_online.yaml
-#   # - <<: !include conf/common/script/pir1_to_ssr1_online_OC.yaml
-#   - <<: !include conf/common/script/touch_button_A4_on_press.yaml
-#   # - <<: !include conf/common/script/touch_button_A4_double.yaml
-#   # - <<: !include conf/common/script/touch_button_A4_short.yaml
-#   # - <<: !include conf/common/script/touch_button_A4_long.yaml
-#   - <<: !include conf/common/script/lightbar_script_oc_trigger_on_off.yaml
 
 #-------------------------------------------------------------------
 # DISPLAY
@@ -122,16 +118,14 @@ font:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  # device related
+  - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
+  - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
+  - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
-#   - <<: !include conf/common/binary_sensor/pir01.yaml
-#   # - <<: !include conf/common/binary_sensor/pir02.yaml
-#   # - <<: !include conf/common/binary_sensor/reed01.yaml
-#   # - <<: !include conf/common/binary_sensor/reed02.yaml
-# - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
-# - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
