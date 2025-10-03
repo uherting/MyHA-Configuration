@@ -2,12 +2,14 @@
 # OTA
 ####################################################################
 
-ota:
+# ota:
   - platform: esphome
     password: !secret HA_OTA_PW
 
-safe_mode:
-  num_attempts: 10
+# for details see https://esphome.io/components/safe_mode/
+# the following just lists default values and is therefore commented out 
+# safe_mode:
+#   num_attempts: 10
 # ############################################################
 #  END OF FILE
 # ############################################################

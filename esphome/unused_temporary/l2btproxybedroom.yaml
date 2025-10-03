@@ -48,7 +48,12 @@ packages:
   device_base_common: !include conf/common/packages/device_base_esp32.yaml
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
-  ota: !include conf/common/networking/ota.yaml
+
+  # Contained an error which got validated nevertheless. 
+  # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
+  # ota: !include conf/common/networking/ota.yaml
+
+ota: !include conf/common/networking/ota.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
