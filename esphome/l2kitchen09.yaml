@@ -87,16 +87,13 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 
 globals:
   - <<: !include conf/common/globals/connectivity.yaml
-#   - <<: !include conf/common/globals/opto_coupler_01.yaml
-#   - <<: !include conf/common/globals/opto_coupler_02.yaml
-#   - <<: !include conf/common/globals/opto_coupler_03.yaml
 interval: !include conf/common/interval/connectivity.yaml
-script:
-  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_cw.yaml
-  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_ccw.yaml
-  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_pushbutton_pressed.yaml
-  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_backbutton_pressed.yaml
-  - <<: !include conf/script/l2kitchen09/rotary_encoder_01_confirmbutton_pressed.yaml
+# script:
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_cw.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_ccw.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_pushbutton_pressed.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_backbutton_pressed.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_confirmbutton_pressed.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A101_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A202_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A303_on_press.yaml
@@ -105,23 +102,23 @@ script:
 #-------------------------------------------------------------------
 # DISPLAY
 # Display configuration for OLED 0.42" display (72x40)
-display:
-  - <<: !include conf/common/display/oled_042inch_sh1106_72_40.yaml
+# display:
+#   - <<: !include conf/common/display/oled_042inch_sh1106_72_40.yaml
 
 #-------------------------------------------------------------------
 # FONT
 # Font configuration for OLED 0.42" display (72x40)
-font:
-  - <<: !include conf/common/font/oled_042inch_sh1106_72_40.yaml
+# font:
+#   - <<: !include conf/common/font/oled_042inch_sh1106_72_40.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
-  - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
-  - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
-  - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
@@ -134,25 +131,15 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/common/sensor/rotary_encoder_01.yaml
-  - <<: !include conf/common/sensor/aht10_01.yaml
+  # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
+  # - <<: !include conf/common/sensor/aht10_01.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
-  # - <<: !include conf/common/sensor/dht_esp32_01.yaml
-
-#-------------------------------------------------------------------
-# SERVOS
-# servo:
-#   - <<: !include conf/common/servo/servo01.yaml
-# output:
-#   - <<: !include conf/common/output/servo01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
 # switch:
   # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
   # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
-  # - <<: !include conf/common/switch/esp32_general_01.yaml
-  # - <<: !include conf/common/switch/esp32_general_02.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -163,10 +150,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
-#-------------------------------------------------------------------
-# Enable the BLE Tracker
-# bluetooth_proxy:
 
 ####################################################################
 # EOF
