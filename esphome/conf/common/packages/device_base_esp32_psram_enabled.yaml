@@ -1,0 +1,54 @@
+####################################################################
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL ESP32CAM DEVICES
+
+####################################################################
+# DEVICE DEFINITION
+esphome:
+  name: $device_name
+  comment: $device_comment
+  area: $device_area
+  build_path: ./build/${device_name}
+  # platform: $device_platform
+
+# edited due to changes ahead
+# for details see https://github.com/esphome/esphome/pull/8118
+# taken from https://esphome.io/components/esp32
+esp32:
+  board: $device_board
+  # this is now working due to a change in esphome/conf/common/sensor/uptime.yaml (was: String(..), now std::to_string(...))
+  framework:
+    type: esp-idf
+
+# Enable PSRAM --- no further configuration parameters needed in most cases
+psram:
+  # size: 4MB  # Uncomment and set if you want to specify the size
+  # type: auto  # Uncomment and set if you want to specify the type (auto, esp32, esp32s2, esp32s3)
+  # cache_mode: cache_mode_0  # Uncomment and set if you want to specify the cache mode (cache_mode_0, cache_mode_1, cache_mode_2)
+  # mode: sram_mode  # Uncomment and set if you want to specify the mode (sram_mode, octal_mode)
+  # frequency: 40MHz  # Uncomment and set if you want to specify the frequency
+  # voltage: 3.3V  # Uncomment and set if you want to specify the voltage
+  # spi_pins:  # Uncomment and set if you want to specify custom SPI pins
+  #   miso: GPIO12
+  #   mosi: GPIO13
+  #   sclk: GPIO14
+  #   cs: GPIO15
+
+####################################################################
+# LOGGING (central setup)
+#
+# according to:
+#  - https://esphome.io/components/logger.html?highlight=logger#log-levels
+#  - see secrets.yaml for definitions
+logger:
+  level: ${log_level}
+
+####################################################################
+# Switches (central setup)
+#
+switch:
+  - platform: restart
+    name: ${restart_device_switch_name}
+    id: ${restart_device_switch_id}
+####################################################################
+# EOF
+####################################################################
