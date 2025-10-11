@@ -76,7 +76,10 @@ web_server:
 # IC2 for the ESP32c3 platform
 i2c: !include conf/common/device/i2c_esp32_v2.yaml
 # dallas: !include conf/common/device/dallas.yaml
-mcp23017: !include conf/common/device/mcp23017.yaml
+# mcp23017: !include conf/common/device/mcp23017.yaml
+
+# SPI for the ESP32 platform
+spi: !include conf/common/device/spi_v0.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -101,15 +104,26 @@ interval: !include conf/common/interval/connectivity.yaml
 
 #-------------------------------------------------------------------
 # DISPLAY
-# Display configuration for OLED 0.42" display (72x40)
-# display:
-#   - <<: !include conf/common/display/oled_042inch_sh1106_72_40.yaml
+display:
+  - <<: !include conf/common/display/touch_panel_28inch_240x320RGB_01.yaml
 
 #-------------------------------------------------------------------
-# FONT
-# Font configuration for OLED 0.42" display (72x40)
-# font:
-#   - <<: !include conf/common/font/oled_042inch_sh1106_72_40.yaml
+# TOUCH PANEL
+# Touch Panel configuration for TFT 2.8" touch panel (240x320 RGB)
+touchscreen:
+  - <<: !include conf/common/touch_panel/touch_panel_28inch_240x320RGB_01.yaml
+
+#-------------------------------------------------------------------
+# COLORS
+# Color configuration
+color:
+  - <<: !include conf/common/color/touch_panel_28inch_240x320RGB_01.yaml
+
+#-------------------------------------------------------------------
+# FONTS
+# Font configuration
+font:
+  - <<: !include conf/common/font/touch_panel_28inch_240x320RGB_01.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -131,8 +145,8 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
+  - <<: !include conf/common/sensor/aht10_01.yaml
   # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
-  # - <<: !include conf/common/sensor/aht10_01.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
 
 #-------------------------------------------------------------------

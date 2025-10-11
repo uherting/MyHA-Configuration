@@ -1,0 +1,44 @@
+####################################################################
+# COLOUR
+# configuration for colours
+
+# color:
+  - id: my_red
+    red: 100%
+    green: 0%
+    blue: 0%
+  - id: my_yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+  - id: my_green
+    red: 0%
+    green: 100%
+    blue: 0%
+  - id: my_blue
+    red: 0%
+    green: 0%
+    blue: 100%
+  - id: my_gray
+    red: 50%
+    green: 50%
+    blue: 50%
+  - id: my_orange
+    red: 100%
+    green: 50%
+    blue: 0%
+  - id: my_teal
+    red: 0%
+    green: 100%
+    blue: 100%
+  - id: my_white
+    red: 100%
+    green: 100%
+    blue: 100%
+  - id: my_black
+    red: 0%
+    green: 0%
+    blue: 0%
+# ############################################################
+#  END OF FILE
+# ############################################################

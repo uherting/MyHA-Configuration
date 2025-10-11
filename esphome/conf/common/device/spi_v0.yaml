@@ -1,0 +1,8 @@
+####################################################################
+# DISPLAY
+# configuration for SPI bus, for details see https://esphome.io/components/spi/
+# spi:
+  clk_pin: GPIO18  # SCK
+  mosi_pin: GPIO23 # MOSI
+  miso_pin: GPIO19 # MISO (optional, not needed for displays)
+  # id: spi_bus_1  # optional, useful if you have multiple SPI buses
