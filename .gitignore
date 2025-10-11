@@ -46,6 +46,7 @@ secrets.yaml
 # report created by the watchman integration (HACS)
 watchman_report.txt
 
+.ha_run.lock
 # ############################################################
 #  EOF
 # ############################################################
