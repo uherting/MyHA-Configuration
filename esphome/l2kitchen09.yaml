@@ -26,8 +26,7 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - rotary encoder on OLED board
-#   - 
+#   - TFT 2.8" touch panel (240x320 RGB)
 #   - no physical buttons so far
 #
 # Output
