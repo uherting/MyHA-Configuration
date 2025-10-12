@@ -26,19 +26,19 @@ cards:
       - switch.l2kitchen01_restart_device
 
   - type: entities
-    title: L2 Kitchen 02
+    title: L2 Kitchen 09
     show_header_toggle: false
     entities:
-      - sensor.l2kitchen02_conn_ip_addr
-      - sensor.l2kitchen02_wifi_signal
-      - sensor.l2kitchen02_conn_ssid
-      - sensor.l2kitchen02_conn_bssid
-      - sensor.l2kitchen02_uptime
-      - sensor.l2kitchen02_uptime_human_readable
-      - binary_sensor.l2kitchen02_status
-      - update.l2kitchen02_firmware
-      - sensor.l2kitchen02_esphome_version
-      - switch.l2kitchen02_restart_device
+      - sensor.l2kitchen09_conn_ip_addr
+      - sensor.l2kitchen09_wifi_signal
+      - sensor.l2kitchen09_conn_ssid
+      - sensor.l2kitchen09_conn_bssid
+      - sensor.l2kitchen09_uptime
+      - sensor.l2kitchen09_uptime_human_readable
+      - binary_sensor.l2kitchen09_status
+      - update.l2kitchen09_firmware
+      - sensor.l2kitchen09_esphome_version
+      - switch.l2kitchen09_restart_device
 
   - type: entities
     title: L2 Storage 01

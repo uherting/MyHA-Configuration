@@ -58,23 +58,8 @@ cards:
   #       name: Internet Access
   #     - switch.l0corridor02_restart_device
 
-  - type: entities
-    title: L0 GarageSmall 01
-    show_header_toggle: false
-    entities:
-      - sensor.l0garagesmall01_conn_ip_addr
-      - sensor.l0garagesmall01_wifi_signal
-      - sensor.l0garagesmall01_conn_ssid
-      - sensor.l0garagesmall01_conn_bssid
-      - sensor.l0garagesmall01_uptime
-      - sensor.l0garagesmall01_uptime_human_readable
-      - binary_sensor.l0garagesmall01_status
-      - update.l0garagesmall01_firmware
-      - sensor.l0garagesmall01_esphome_version
-      - switch.l0garagesmall01_restart_device
-
   # - type: entities
-  #   title: l0garagesmall01
+  #   title: L0 GarageSmall 01
   #   show_header_toggle: false
   #   entities:
   #     - sensor.l0garagesmall01_conn_ip_addr
@@ -84,9 +69,8 @@ cards:
   #     - sensor.l0garagesmall01_uptime
   #     - sensor.l0garagesmall01_uptime_human_readable
   #     - binary_sensor.l0garagesmall01_status
+  #     - update.l0garagesmall01_firmware
   #     - sensor.l0garagesmall01_esphome_version
-  #     - entity: switch.l0heatingroomarea01_internet_access
-  #       name: Internet Access
   #     - switch.l0garagesmall01_restart_device
 
   # - type: entities
