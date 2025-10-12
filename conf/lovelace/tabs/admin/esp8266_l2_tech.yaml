@@ -36,7 +36,7 @@ cards:
       - sensor.l2kitchen09_uptime
       - sensor.l2kitchen09_uptime_human_readable
       - binary_sensor.l2kitchen09_status
-      - update.l2kitchen09_firmware
+      # - update.l2kitchen09_firmware  # not provided (not even as hidden/disabled entity) by the device for unknown reason
       - sensor.l2kitchen09_esphome_version
       - switch.l2kitchen09_restart_device
 
