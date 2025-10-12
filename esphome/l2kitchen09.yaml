@@ -73,12 +73,10 @@ web_server:
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 for the ESP32c3 platform
-i2c: !include conf/common/device/i2c_esp32_v2.yaml
+# i2c: !include conf/common/device/i2c_esp32_v2.yaml
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
-# SPI for the ESP32 platform
-spi: !include conf/common/device/spi_v0.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -101,28 +99,31 @@ interval: !include conf/common/interval/connectivity.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A303_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A404_on_press.yaml
 
+#===================================================================
+# Configuration for the touchscreen display
+#===================================================================
+#-------------------------------------------------------------------
+# SPI for the ESP32 platform
+spi: !include conf/common/device/spi_v0.yaml
 #-------------------------------------------------------------------
 # DISPLAY
 display:
-  - <<: !include conf/common/display/touch_panel_28inch_240x320RGB_01.yaml
-
+  - <<: !include conf/common/display/touchscreen_28inch_240x320RGB_01.yaml
 #-------------------------------------------------------------------
-# TOUCH PANEL
-# Touch Panel configuration for TFT 2.8" touch panel (240x320 RGB)
+# TOUCHSCREEN
+# touchscreen configuration for TFT 2.8" touch panel (240x320 RGB)
 touchscreen:
-  - <<: !include conf/common/touch_panel/touch_panel_28inch_240x320RGB_01.yaml
-
+  - <<: !include conf/common/touchscreen/touchscreen_28inch_240x320RGB_01.yaml
 #-------------------------------------------------------------------
 # COLORS
 # Color configuration
 color:
-  - <<: !include conf/common/color/touch_panel_28inch_240x320RGB_01.yaml
-
+  - <<: !include conf/common/color/touchscreen_28inch_240x320RGB_01.yaml
 #-------------------------------------------------------------------
 # FONTS
 # Font configuration
 font:
-  - <<: !include conf/common/font/touch_panel_28inch_240x320RGB_01.yaml
+  - <<: !include conf/common/font/touchscreen_28inch_240x320RGB_01.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -144,9 +145,9 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  - <<: !include conf/common/sensor/aht10_01.yaml
-  # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
+  # - <<: !include conf/common/sensor/aht10_01.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
+  # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
