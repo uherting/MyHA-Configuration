@@ -31,40 +31,64 @@ cards:
   #    entities:
   #      - binary_sensor.updater
 
-  # HA Google Drive Backup - stale snapshot
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.backups_stale
-        state_not: "off"
-    card:
-      type: markdown
-      title: Stale Backups!
-      content: >-
-        Backups are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
+  - type: vertical-stack
+    cards:
+      - type: vertical-stack
+        cards:
+          # Kitchen L2
+          - type: grid
+            square: false
+            # title: Kitchen
+            columns: 5
+            cards:
+              - type: "custom:button-card"
+                entity: binary_sensor.l2storage_spymode
+                name: "Restart HA"
+                color: yellow
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: homeassistant.restart
+                  data: {}
+                double_tap_action:
+                  action: call-service
+                  service: homeassistant.restart
+                  data: {}
 
-  # HACS updates
-  - type: entities
-    title: HA - overall system info
-    show_header_toggle: false
-    entities:
-      - entity: sensor.current_version
-      - entity: sensor.latest_version
-        name: HA update available
-      - type: divider
-      - entity: counter.homeassistant_warnings
-      - entity: counter.homeassistant_errors
-      - type: divider
-      - entity: update.hacs_update
-        icon: "hacs:hacs"
-        name: HACS updates
-      - type: divider
-      - entity: binary_sensor.backups_stale
-        icon: "mdi:cloud-upload-outline"
-        name: HA Google Backup state
-      - type: divider
-      - entity: sensor.last_boot
-        icon: "mdi:calendar"
-        name: Last boot (HA host)
+      # HA Google Drive Backup - stale snapshot
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.backups_stale
+            state_not: "off"
+        card:
+          type: markdown
+          title: Stale Backups!
+          content: >-
+            Backups are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
+
+      # HACS updates
+      - type: entities
+        title: HA - overall system info
+        show_header_toggle: false
+        entities:
+          - entity: sensor.current_version
+          - entity: sensor.latest_version
+            name: HA update available
+          - type: divider
+          - entity: counter.homeassistant_warnings
+          - entity: counter.homeassistant_errors
+          - type: divider
+          - entity: update.hacs_update
+            icon: "hacs:hacs"
+            name: HACS updates
+          - type: divider
+          - entity: binary_sensor.backups_stale
+            icon: "mdi:cloud-upload-outline"
+            name: HA Google Backup state
+          - type: divider
+          - entity: sensor.last_boot
+            icon: "mdi:calendar"
+            name: Last boot (HA host)
 ####################################################################
 # EOF
 ####################################################################
