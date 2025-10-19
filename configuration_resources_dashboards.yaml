@@ -74,6 +74,10 @@ resources:
   - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
     type: module
 
+  # Tankerkoenig
+  # - url: /hacsfiles/lovelace-tankerkoenig-card/tankerkoenig-card.js
+  #   type: module
+
   # # Week planner card
   # - url: /hacsfiles/week-planner-card/week-planner-card.js
   #   type: module
