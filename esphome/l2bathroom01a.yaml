@@ -94,6 +94,7 @@ interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/script/l2bathroom01a/reed1_to_ssr01.yaml
   - <<: !include conf/script/l2bathroom01a/reed2_to_ssr01.yaml
+  - <<: !include conf/script/l2bathroom01a/touch_button_D7_on_press.yaml
   # - <<: !include conf/script/l2bathroom01a/touch_button_D5_short.yaml
   # - <<: !include conf/script/l2bathroom01a/touch_button_D5_double.yaml
   # - <<: !include conf/script/l2bathroom01a/touch_button_D5_long.yaml
