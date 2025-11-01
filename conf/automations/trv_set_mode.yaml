@@ -1,15 +1,15 @@
 # ############################################################
 #
-#  Schedules for Zigbee TRV Bedroom_L2
+#  Schedules for TRV on L2
 #
 # ############################################################
 
 # ############################################################
-# Bedroom_L2 preset mode to comfort
+# Bedroom_L2 preset mode comfort
 # ############################################################
-- alias: Zigbee TRV Bedroom_L2 preset mode to comfort
+- alias: TRV Bedroom_L2 preset mode comfort
   id: "259cb60e-fd6a-4cf3-ba04-0201fffd57f7"
-  description: "This automation emulates a schedule for Zigbee Bedroom_L2 preset mode to comfort"
+  description: "This automation emulates a schedule for Bedroom_L2 preset mode to comfort"
   mode: single
   initial_state: false
   # --------------------- TRIGGER ---------------------
@@ -31,11 +31,11 @@
         entity_id: climate.zb_trv_bedroom_l2
 
 # ############################################################
-# Bedroom_L2 preset mode to eco
+# Bedroom_L2 preset mode eco
 # ############################################################
-- alias: Zigbee TRV Bedroom_L2 preset mode to eco
+- alias: TRV Bedroom_L2 preset mode eco
   id: "b31c5f8b-d8a9-46de-a28b-9c98b05dffec"
-  description: "This automation emulates a schedule for Zigbee Bedroom_L2 preset mode to eco"
+  description: "This automation emulates a schedule for Bedroom_L2 preset mode to eco"
   mode: single
   initial_state: false
   # --------------------- TRIGGER ---------------------
@@ -55,11 +55,11 @@
         entity_id: climate.zb_trv_bedroom_l2
 
 # ############################################################
-# Kitchen_L2 preset mode to comfort
+# Kitchen_L2 preset mode comfort
 # ############################################################
-- alias: Zigbee TRV Kitchen_L2 preset mode to comfort
+- alias: TRV Kitchen_L2 preset mode comfort
   id: "0d87c726-6d8b-4322-ba47-e20fcf6d11f9"
-  description: "This automation emulates a schedule for Zigbee Kitchen_L2 preset mode to comfort"
+  description: "This automation emulates a schedule for Kitchen_L2 preset mode to comfort"
   mode: single
   initial_state: false
   # --------------------- TRIGGER ---------------------
@@ -83,11 +83,11 @@
         entity_id: climate.zb_trv_kitchen_l2
 
 # ############################################################
-# Kitchen_L2 preset mode to eco
+# Kitchen_L2 preset mode eco
 # ############################################################
-- alias: Zigbee TRV Kitchen_L2 preset mode to eco
+- alias: TRV Kitchen_L2 preset mode eco
   id: "460a60bf-f3a0-4571-999f-084b804152fb"
-  description: "This automation emulates a schedule for Zigbee Kitchen_L2 preset mode to eco"
+  description: "This automation emulates a schedule for Kitchen_L2 preset mode to eco"
   mode: single
   initial_state: false
   # --------------------- TRIGGER ---------------------
@@ -115,11 +115,11 @@
         entity_id: climate.zb_trv_kitchen_l2
 
 # ############################################################
-# Lounge_L2 preset mode to comfort
+# Lounge_L2 preset mode comfort
 # ############################################################
-- alias: Zigbee TRV Lounge_L2 preset mode to comfort
+- alias: TRV Lounge_L2 preset mode comfort
   id: "b66d3937-973b-4bce-bb10-8d0c8aed973b"
-  description: "This automation emulates a schedule for Zigbee Lounge_L2 preset mode to comfort"
+  description: "This automation emulates a schedule for Lounge_L2 preset mode to comfort"
   mode: single
   initial_state: false
   # --------------------- TRIGGER ---------------------
@@ -143,11 +143,11 @@
         entity_id: climate.zb_trv_lounge_l2
 
 # ############################################################
-# Lounge_L2 preset mode to eco
+# Lounge_L2 preset mode eco
 # ############################################################
-- alias: Zigbee TRV Lounge_L2 preset mode to eco
+- alias: TRV Lounge_L2 preset mode eco
   id: "b328614e-37dd-4cd6-8140-8ea9c49e4d59"
-  description: "This automation emulates a schedule for Zigbee Lounge_L2 preset mode to eco"
+  description: "This automation emulates a schedule for Lounge_L2 preset mode to eco"
   mode: single
   initial_state: false
   # --------------------- TRIGGER ---------------------
