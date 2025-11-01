@@ -217,9 +217,16 @@ switch: !include_dir_merge_list conf/switches
 #image_processing: !include conf/doods/image_processing.yaml
 
 # MQTT
-# no idea to put in a separate file as the editor puts the key words in column 1 on saving the file
-# that is why this config ended up in configuration.yaml
+# The MQTT broker is set up in the GUI
+#
+# Before the broker was set up in the GUI there was a problems
+# as the editor put the key words in column 1 on saving the
+# file which was not exactly helpful.
+#
+# did not work (see above):
 # mqtt: !include conf/mqtt.yaml
+#
+# Nice, but as there is only one MQTT broker allowed. So this does not either:
 # mqtt:
 #   broker: !secret MQTT_HIVEMQ_BROKER_01_HOSTNAME
 #   port: !secret MQTT_HIVEMQ_BROKER_01_PORT
