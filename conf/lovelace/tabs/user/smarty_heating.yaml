@@ -25,18 +25,6 @@ cards:
         columns: 1
         cards:
           # ========================================
-          # L2 Bedroom
-          # ========================================
-          - type: thermostat
-            entity: climate.zb_trv_bedroom_l2
-            features:
-              - type: climate-hvac-modes
-                hvac_modes:
-                  - heat
-                  - auto
-                  - "off"
-
-          # ========================================
           # L2 Lounge
           # ========================================
           - type: thermostat
@@ -60,48 +48,123 @@ cards:
                   - auto
                   - "off"
 
+          # ========================================
+          # L2 Bedroom
+          # ========================================
+          - type: thermostat
+            entity: climate.zb_trv_bedroom_l2
+            features:
+              - type: climate-hvac-modes
+                hvac_modes:
+                  - heat
+                  - auto
+                  - "off"
+
       # ==============================================================================
-      # scheduler card
+      # scheduler card (doesn't work as of 20251025)
       # ==============================================================================
-      - type: grid
-        square: false
-        columns: 1
-        cards:
-          # Scheduler "Normal" for TRV L2
-          - type: custom:scheduler-card
-            title: Schedules
-            tags: none
-            show_header_toggle: true
-            customize:
-              climate.my_tuya_thermostat:
-                exclude_actions:
-                  - heat # hide the built-in action to avoid duplicates
-                  - set mode # we won't use this
-                  - set preset # we won't use this
-                actions: # add the custom actions
-                  - service: set_temperature
-                    service_data:
-                      hvac_mode: auto
-                    variables:
-                      temperature:
-                        min: 5
-                        max: 25
-                        step: 0.5
-                        unit: "°C"
-                    icon: "hass:fire"
-                    name: "heat[ to {temperature}]"
-                    # replace with local translation for 'heat' and 'to' if desired
-            # domains:
-            # ...
-            # entities:
-            # ...
-            # groups:
-            # ...
-            groups:
-              - name: "Radiators"
-                icon: "hass:radiator"
-                include:
-                  - climate
+      # - type: grid
+      #   square: false
+      #   columns: 1
+      #   cards:
+      #     # Scheduler "Normal" for TRV L2
+      #     - type: custom:scheduler-card
+      #       title: Schedules
+      #       tags: none
+      #       show_header_toggle: true
+      #       domains:
+      #         - climate
+      #       customize:
+      #         climate.zb_trv_lounge_l2:
+      #           name: Lounge
+      #           icon: thermometer
+      #           actions:
+      #             - service: set_hvac_mode
+      #               name: Set mode
+      #               icon: "hass:settings"
+      #               variables:
+      #                 hvac_mode:
+      #                   name: Operation mode
+      #                   options:
+      #                     - value: heat
+      #                       icon: "hass:fire"
+      #                     - value: cool
+      #                       icon: "hass:snowflake"
+      #                     - value: "off"
+      #                       icon: "hass:power"
+      #         climate.zb_trv_bedroom_l2:
+      #           name: Bedroom
+      #           icon: thermometer
+      #           actions:
+      #             - service: set_hvac_mode
+      #               name: Set mode
+      #               icon: "hass:settings"
+      #               variables:
+      #                 hvac_mode:
+      #                   name: Operation mode
+      #                   options:
+      #                     - value: heat
+      #                       icon: "hass:fire"
+      #                     - value: cool
+      #                       icon: "hass:snowflake"
+      #                     - value: "off"
+      #                       icon: "hass:power"
+      #         climate.zb_trv_kitchen_l2:
+      #           name: Kitchen
+      #           icon: thermometer
+      #           actions:
+      #             - service: set_hvac_mode
+      #               name: Set mode
+      #               icon: "hass:settings"
+      #               variables:
+      #                 hvac_mode:
+      #                   name: Operation mode
+      #                   options:
+      #                     - value: heat
+      #                       icon: "hass:fire"
+      #                     - value: cool
+      #                       icon: "hass:snowflake"
+      #                     - value: "off"
+      #                       icon: "hass:power"
+      #       # entities:
+      #       #   - climate.zb_trv_bedroom_l2
+      #       #   - climate.zb_trv_kitchen_l2
+      #       #   - climate.zb_trv_lounge_l2
+      #       # groups:
+      #       #   - name: "Radiators"
+      #       #     icon: "hass:radiator"
+      #       #     include:
+      #       #       - climate
+      #       # customize:
+      #       #   climate.my_tuya_thermostat:
+      #       #     exclude_actions:
+      #       #       - heat # hide the built-in action to avoid duplicates
+      #       #       - set mode # we won't use this
+      #       #       - set preset # we won't use this
+      #       #     actions: # add the custom actions
+      #       #       - service: set_temperature
+      #       #         service_data:
+      #       #           hvac_mode: auto
+      #       #         variables:
+      #       #           temperature:
+      #       #             min: 5
+      #       #             max: 25
+      #       #             step: 0.5
+      #       #             unit: "°C"
+      #       #         icon: "hass:fire"
+      #       #         name: "heat[ to {temperature}]"
+      #       # replace with local translation for 'heat' and 'to' if desired
+      #       # domains:
+      #       # ...
+      #       # entities:
+      #       # ...
+      #       # groups:
+      #       # ...
+      # groups:
+      #   - name: "Radiators"
+      #     icon: "hass:radiator"
+      #     include:
+      #       - climate
 
       # ==============================================================================
       # Switching modes for all TRVs on L2  off/auto
