@@ -163,6 +163,10 @@
       at: "15:30:00"
     - platform: time
       at: "21:30:00"
+    - platform: time
+      at: "22:30:00"
+    - platform: time
+      at: "23:30:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
