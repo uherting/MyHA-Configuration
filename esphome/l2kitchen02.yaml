@@ -11,7 +11,9 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for measuring distance to the diswasher door and the ambience light of the kitchen
+#   - Microcontroller for measuring distance to the diswasher door 
+#     and the ambience light of the kitchen used to automate kitchen 
+#     lighting and dishwasher ZB plug through door open/close status
 #
 # Future feature:
 #   - unknown
@@ -26,7 +28,7 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - VEML7700
+# #   - VEML7700
 #   - VL53L0X
 #
 # Output
