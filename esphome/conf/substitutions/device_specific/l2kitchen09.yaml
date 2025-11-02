@@ -7,7 +7,7 @@ device_comment: Level 2 Kitchen ESP32
 device_area: L2
 
 device_platform: ESP32
-wifi_static_ip: 192.168.178.225
+wifi_static_ip: 192.168.178.226
 
 # latest 20250222
 device_board: esp32dev
