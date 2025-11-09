@@ -70,6 +70,8 @@
     - platform: time
       at: "09:30:00"
     - platform: time
+      at: "11:30:00"
+    - platform: time
       at: "18:30:00"
   # -------------------- CONDITIONS -------------------
   # none so far
@@ -95,8 +97,6 @@
   trigger:
     - platform: time
       at: "10:00:00"
-    - platform: time
-      at: "11:30:00"
     - platform: time
       at: "13:30:00"
     - platform: time
