@@ -3,13 +3,40 @@
 # configuration for TFT 2.8" touch panel (240x320 RGB)
 # for details see https://esphome.io/components/display/ili9xxx.html (obsolete) and
 # https://esphome.io/components/display/mipi_spi.html (new since ESPHome v2024.6)
+
 # display:
-  - platform: mipi_spi
+
+# the following is an example configuration for the ILI9341 display controller
+# connected via SPI to an ESP32 platform
+# the code is from https://github.com/esphome/issues/issues/6772
+
+# display:
+#   - platform: ili9xxx
+#     model: ILI9341
+#     cs_pin: GPIO03
+#     dc_pin: GPIO04
+#     reset_pin: GPIO06
+#     color_palette: 8BIT
+#     transform:
+#       mirror_y: true
+#     color_order: bgr
+#     invert_colors: false
+#     dimensions:
+#       width: 240
+#       height: 320
+
+# ============================================================
+# experimental code code
+# ============================================================
+# from RTFM:
+  - platform: mipi_spi 
+# from https://github.com/esphome/issues/issues/6772
+  # - platform: ili9xxx
     model: "ILI9341"
     id: ${display_id}
     update_interval: 1s
     dimensions: 320x240  # Display dimensions (width x height)
-    dc_pin: GPIO2    # Data/Command pin, seems to be the onboard LED of the ESP32-WROOM-32D as well
+    dc_pin: GPIO3    # Data/Command pin, GPIO2 seems to be the onboard LED of the ESP32-WROOM-32D as well
     invert_colors: false
     # testing the display
     show_test_card: true
@@ -19,8 +46,8 @@
     #   inverted: false
 
     # other optional pins:
-    # cs_pin: GPIO5    # Chip Select pin, optional
-    # reset_pin: GPIO4 # Reset pin, optional
+    cs_pin: GPIO15    # Chip Select pin, optional
+    reset_pin: GPIO4 # Reset pin, optional
 
     # lambda to put text on the display
     # lambda: |-
@@ -40,6 +67,50 @@
         # it.strftime(64, 0, id(myfont_roboto18), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
         # it.strftime(64, 64, id(myfont_roboto18), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
         # it.print(0, 10, id(myfont_roboto18), "This is page 2!");
+
+# ============================================================
+# original code
+# ============================================================
+# # from RTFM:
+#   - platform: mipi_spi 
+# # from https://github.com/esphome/issues/issues/6772
+#   # - platform: ili9xxx
+#     model: "ILI9341"
+#     id: ${display_id}
+#     update_interval: 1s
+#     dimensions: 320x240  # Display dimensions (width x height)
+#     dc_pin: GPIO2    # Data/Command pin, GPIO2 seems to be the onboard LED of the ESP32-WROOM-32D as well
+#     invert_colors: false
+#     # testing the display
+#     show_test_card: true
+#     # rotation: 0°     # Display rotation (0°, 90°, 180°, 270°), optional
+#     # backlight_pin:
+#     #   pin: GPIO15    # Backlight control pin
+#     #   inverted: false
+
+#     # other optional pins:
+#     # cs_pin: GPIO5    # Chip Select pin, optional
+#     # reset_pin: GPIO4 # Reset pin, optional
+
+#     # lambda to put text on the display
+#     # lambda: |-
+#     #   it.print(0, 0, id(myfont_roboto18), id(my_black), "Hello World");
+
+#     # ############################################################
+#     # about using pages see https://esphome.io/components/display/index.html#display-pages or the below commented out example
+#     # ############################################################
+#     pages:
+#       - id: page1
+#         lambda: |-
+#           it.print(5, 20, id(myfont_roboto18), "PAGE 1");
+#       - id: page2
+#         lambda: |-
+#           it.print(5, 20, id(myfont_roboto18), "PAGE 2");
+#         # it.print(0, 0, id(myfont_roboto18), "Hallo!");
+#         # it.strftime(64, 0, id(myfont_roboto18), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
+#         # it.strftime(64, 64, id(myfont_roboto18), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
+#         # it.print(0, 10, id(myfont_roboto18), "This is page 2!");
+
 
 ####################################################################
 # EOF
