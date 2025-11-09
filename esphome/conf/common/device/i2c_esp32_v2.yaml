@@ -3,6 +3,7 @@
 ####################################################################
 
 # for details see https://esphome.io/components/i2c.html
+# i2c:
   id: !secret I2C_BUS_A
   scl: !secret I2C_SCL_PIN_ESP32_V2
   sda: !secret I2C_SDA_PIN_ESP32_V2

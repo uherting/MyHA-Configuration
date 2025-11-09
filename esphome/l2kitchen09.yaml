@@ -75,7 +75,7 @@ web_server:
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 for the ESP32c3 platform
-# i2c: !include conf/common/device/i2c_esp32_v2.yaml
+i2c: !include conf/common/device/i2c_esp32_v2.yaml
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -89,7 +89,9 @@ web_server:
 
 globals:
   - <<: !include conf/common/globals/connectivity.yaml
-interval: !include conf/common/interval/connectivity.yaml
+interval: 
+  - <<: !include conf/common/interval/connectivity.yaml
+  - <<: !include conf/interval/l2kitchen09.yaml
 # script:
   # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_cw.yaml
   # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_ccw.yaml
@@ -101,31 +103,28 @@ interval: !include conf/common/interval/connectivity.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A303_on_press.yaml
   # - <<: !include conf/script/l2kitchen09/touch_button_A404_on_press.yaml
 
-# #===================================================================
-# # Configuration for the touchscreen display
-# #===================================================================
-# #-------------------------------------------------------------------
-# # SPI for the ESP32 platform
-# spi: !include conf/common/device/spi_v0.yaml
-# #-------------------------------------------------------------------
-# # DISPLAY
-# display:
-#   - <<: !include conf/common/display/touchscreen_28inch_240x320RGB_01.yaml
-# #-------------------------------------------------------------------
-# # TOUCHSCREEN
-# # touchscreen configuration for TFT 2.8" touch panel (240x320 RGB)
-# touchscreen:
-#   - <<: !include conf/common/touchscreen/touchscreen_28inch_240x320RGB_01.yaml
-# #-------------------------------------------------------------------
-# # COLORS
-# # Color configuration
-# color:
-#   - <<: !include conf/common/color/touchscreen_28inch_240x320RGB_01.yaml
-# #-------------------------------------------------------------------
-# # FONTS
-# # Font configuration
-# font:
-#   - <<: !include conf/common/font/touchscreen_28inch_240x320RGB_01.yaml
+#===================================================================
+# Configuration for the touchscreen display
+#===================================================================
+#-------------------------------------------------------------------
+# SPI (default ESP32 platform)
+spi: !include conf/common/device/spi_esp32_v0.yaml
+#-------------------------------------------------------------------
+# COLOR configuration
+color: !include conf/common/color/touchscreen_28inch_240x320RGB_01.yaml
+#-------------------------------------------------------------------
+# FONT configuration
+# needs to be included before display configuration
+# this file provides basic fonts for the 2.8" touchscreen display (240x320 RGB) only.
+# font: !include conf/common/font/touchscreen_28inch_240x320RGB_01.yaml
+# this file provides all fonts for the 2.8" touchscreen display (240x320 RGB) only.
+font: !include conf/font/l2kitchen09/touchscreen_28inch_240x320RGB_01.yaml
+#-------------------------------------------------------------------
+# DISPLAY
+display: !include conf/display/l2kitchen09/touchscreen_28inch_240x320RGB_01.yaml
+#-------------------------------------------------------------------
+# TOUCHSCREEN (TFT 2.8" touch panel, 240x320 RGB)
+touchscreen: !include conf/common/touchscreen/touchscreen_28inch_240x320RGB_01.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS

@@ -1,10 +1,8 @@
 ####################################################################
 # FONT
 # needs to be included before display configuration
-# This is a common font configuration for the 2.8" touchscreen display (240x320 RGB).
+# This is a font configuration on device level for the 2.8" touchscreen display (240x320 RGB).
 # For details see https://esphome.io/components/font/index.html
-
-# This is more or less a minimum/dummy as the fonts needs customization on a per device base if fonts are used differently.
 
 # font:
   - file: 'gfonts://Roboto'
