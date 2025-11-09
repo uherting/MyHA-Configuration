@@ -46,7 +46,7 @@
     #   inverted: false
 
     # other optional pins:
-    cs_pin: GPIO15    # Chip Select pin, optional
+    # cs_pin: GPIO15    # Chip Select pin, optional (was GPIO5 before)
     reset_pin: GPIO4 # Reset pin, optional
 
     # lambda to put text on the display
