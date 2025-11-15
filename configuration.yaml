@@ -179,7 +179,8 @@ script: !include_dir_merge_named conf/scripts
 
 # owntracks: !include conf/owntracks.yaml
 
-group: !include_dir_merge_list conf/groups
+#group: !include_dir_merge_list conf/groups
+group: !include conf/groups/family.yaml
 
 # telegram_bot: !include conf/telegram_bot.yaml
 # notify: !include conf/notify.yaml
