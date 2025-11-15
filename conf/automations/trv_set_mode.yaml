@@ -68,9 +68,7 @@
     - platform: time
       at: "07:00:00"
     - platform: time
-      at: "09:30:00"
-    - platform: time
-      at: "11:30:00"
+      at: "12:00:00"
     - platform: time
       at: "18:30:00"
   # -------------------- CONDITIONS -------------------
@@ -154,15 +152,7 @@
   # time based execution
   trigger:
     - platform: time
-      at: "10:00:00"
-    - platform: time
-      at: "11:30:00"
-    - platform: time
-      at: "13:30:00"
-    - platform: time
-      at: "15:30:00"
-    - platform: time
-      at: "21:30:00"
+      at: "21:00:00"
     - platform: time
       at: "22:30:00"
     - platform: time
