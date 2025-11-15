@@ -124,7 +124,7 @@
   # time based execution
   trigger:
     - platform: time
-      at: "09:30:00"
+      at: "07:00:00"
     - platform: time
       at: "12:30:00"
     - platform: time
@@ -157,6 +157,71 @@
       at: "22:30:00"
     - platform: time
       at: "23:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+
+# ############################################################
+# all TRVs L2 preset mode eco because of all people gone
+# ############################################################
+- alias: TRV all on L2 preset mode eco
+  id: "d9d190f6-e04d-4e0c-9747-c93346b82c1f"
+  description: "This automation sets preset mode to eco in case everbody is gone"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    # the last person left
+    - platform: state
+      entity_id: binary_sensor.home_all_are_gone
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+
+# ############################################################
+# all necessary TRVs L2 preset mode comfort because of some people are back
+# ############################################################
+- alias: TRV all on L2 preset mode eco
+  id: "da31b093-9289-4e0f-a0de-ff500f15fcff"
+  description: "This automation sets preset mode to eco in case everbody is gone"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    # GH came back
+    - platform: state
+      entity_id: binary_sensor.home_gillian_is_here
+      to: "on"
+    # - platform: state
+    #   entity_id: binary_sensor.home_uwe_is_here
+    #   to: "on"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
