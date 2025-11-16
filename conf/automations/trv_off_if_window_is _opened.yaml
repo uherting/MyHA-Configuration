@@ -9,7 +9,7 @@
 # ############################################################
 - alias: Window contact detected open window
   id: "48ba3366-08e4-4885-bd8a-94b090585307"
-  description: "This automation handles L2 TRV run away conditions in the L2 bedroom"
+  description: "This automation handles L2 TRV open window conditions"
   mode: single
   max_exceeded: silent
 
@@ -21,6 +21,7 @@
       id: "zb_dw_l2_bedroom_contact"
       entity_id: binary_sensor.zb_dw_l2_bedroom_contact
       to: "on"
+    # future feature:
     # if the contact zb_dw_l2_lounge_contact_01 goes to "on"
     # - platform: state
     #   id: "zb_dw_l2_lounge_contact_01"
@@ -71,12 +72,12 @@
       default:
         - service: system_log.write
           data:
-            message: "Automation L2 TRV run away handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            message: "Automation L2 TRV open window handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
         # - service: persistent_notification.create
         #   data:
-        #     title: "L2 TRV run away automation unknown activity"
+        #     title: "L2 TRV open window automation unknown activity"
         #     message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
 ############################################################
 #  END OF FILE
