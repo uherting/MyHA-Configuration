@@ -2,6 +2,10 @@ ESP32: TFT LCD Touchscreen Display – 2.8 inch ILI9341 240×320 (Arduino IDE) b
 
 In this guide, you’ll learn how to get started with the TFT LCD Touchscreen Display with the ESP32 board. This TFT Touchscreen with 2.8 inch display (240×320 px) comes with the ILI9341 driver. This display is a great option to build graphical user interfaces (GUI) for your IoT projects.
 
+Used libraries:
+- TFT_eSPI
+- XPT2046_Touchscreen
+
 Links:
 - https://randomnerdtutorials.com/esp32-tft-touchscreen-display-2-8-ili9341-arduino/ (Complete project tutorial)
 - https://randomnerdtutorials.com/esp32-pinout-reference-gpios/ (ESP32 Pinout Reference with explanations)
