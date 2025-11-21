@@ -128,6 +128,12 @@ text_sensor:
 #################### DETAILED CONFIGURATION CAM ######################
 
 # cam device
+
+# 1st option: psram
+psram:
+  id: psram1
+
+# 2nd option: the complete config of the cam in an extra file
 # esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
 esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
 
