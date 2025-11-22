@@ -50,24 +50,24 @@
                 msg_title: "Detected open window"
                 msg_text: "An open window in the bedroom was detected, the TRV was turned off"
                 msg_receiver: "notify"
-    - choose:
-        # --------------------- zb_dw_l2_lounge_contact_01
-        - conditions:
-            - condition: trigger
-              id: "zb_dw_l2_lounge_contact_01"
-          sequence:
-            # ------------------- TRV SWITCHED OFF -------------------
-            - action: climate.set_hvac_mode
-              target:
-                entity_id: climate.zb_trv_lounge_l2
-              data:
-                hvac_mode: "off"
-            # ------------------- CREATE NOTIFICATION -------------------
-            - service: script.tg_send_txt
-              data:
-                msg_title: "Detected open window"
-                msg_text: "An open window in the lounge was detected, the TRV was turned off"
-                msg_receiver: "notify"
+      # - choose:
+      #     # --------------------- zb_dw_l2_lounge_contact_01
+      #     - conditions:
+      #         - condition: trigger
+      #           id: "zb_dw_l2_lounge_contact_01"
+      #       sequence:
+      #         # ------------------- TRV SWITCHED OFF -------------------
+      #         - action: climate.set_hvac_mode
+      #           target:
+      #             entity_id: climate.zb_trv_lounge_l2
+      #           data:
+      #             hvac_mode: "off"
+      #         # ------------------- CREATE NOTIFICATION -------------------
+      #         - service: script.tg_send_txt
+      #           data:
+      #             msg_title: "Detected open window"
+      #             msg_text: "An open window in the lounge was detected, the TRV was turned off"
+      #             msg_receiver: "notify"
       # --------------------- default branch of choose:
       default:
         - service: system_log.write
@@ -75,10 +75,10 @@
             message: "Automation L2 TRV open window handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
-        # - service: persistent_notification.create
-        #   data:
-        #     title: "L2 TRV open window automation unknown activity"
-        #     message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
+        - service: persistent_notification.create
+          data:
+            title: "L2 TRV open window automation unknown activity"
+            message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
 ############################################################
 #  END OF FILE
 # ############################################################
