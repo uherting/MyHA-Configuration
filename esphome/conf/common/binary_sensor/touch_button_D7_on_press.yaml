@@ -1,0 +1,25 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# TOUCH BUTTON
+
+- platform: gpio
+  name: $touchbutton01_name
+  id: ${touchbutton01_id}
+  pin:
+    number: !secret GPIO_PIN_D7
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    # mode: INPUT_PULLUP
+    inverted: false
+    # inverted: true
+  device_class: power
+  on_press:
+    # - logger.log: "TB on_press action."
+    - script.execute: tb_d7_click_on_press
+# ############################################################
+#  END OF FILE
+# ############################################################
