@@ -1,0 +1,14 @@
+####################################################################
+# SCRIPTS
+
+#script:
+# on_press action of TB D7
+- id: tb_d7_click_on_press
+  mode: restart
+  then:
+    - switch.turn_on: ${ssr01_id}
+    - delay: !secret DELAY_10SEC
+    - switch.turn_off: ${ssr01_id}
+####################################################################
+# EOF
+####################################################################
