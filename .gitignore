@@ -36,6 +36,7 @@ home-assistant_v2.db
 home-assistant.log
 home-assistant.log.1
 home-assistant.log.fault
+home-assistant.log.old
 
 # the cam snapshots we took
 var/opt/tg/*/*.jpg
@@ -46,6 +47,7 @@ secrets.yaml
 # report created by the watchman integration (HACS)
 watchman_report.txt
 
+.ha_run.lock
 # ############################################################
 #  EOF
 # ############################################################

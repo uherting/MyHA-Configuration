@@ -1,0 +1,198 @@
+# ############################################################
+#
+#  Schedules for Zigbee TRV Bedroom_L2
+#
+# ############################################################
+
+# ############################################################
+# Bedroom_L2 Temp 17
+# ############################################################
+- alias: Zigbee TRV Bedroom_L2 Temp 17
+  id: "5f8d0926-b4dd-4bdc-8a4c-66397823212a"
+  description: "This automation emulates a schedule for Zigbee Bedroom_L2 Temp 17"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "10:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 17
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+
+# ############################################################
+# Bedroom_L2 Temp 21
+# ############################################################
+- alias: Zigbee TRV Bedroom_L2 Temp 21
+  id: "ac137980-e564-47e3-9600-62549ddc72bb"
+  description: "This automation emulates a schedule for Zigbee Bedroom_L2 Temp 21"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "21:00:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 21
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+
+# ############################################################
+# Kitchen_L2 Temp 21
+# ############################################################
+- alias: Zigbee TRV Kitchen_L2 Temp 21
+  id: "f3217b12-3094-4691-a2d6-f592a9f8bd27"
+  description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 21"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "09:30:00"
+    - platform: time
+      at: "12:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 21
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+
+# ############################################################
+# Kitchen_L2 Temp 19
+# ############################################################
+- alias: Zigbee TRV Kitchen_L2 Temp 19
+  id: "eebb7b97-c4ff-4cf5-9358-dea8bf80ea87"
+  description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 19"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "18:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 21
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+
+# ############################################################
+# Kitchen_L2 Temp 17
+# ############################################################
+- alias: Zigbee TRV Kitchen_L2 Temp 17
+  id: "2ea3c8c1-0d49-469e-99b2-85cf7f3e2304"
+  description: "This automation emulates a schedule for Zigbee Kitchen_L2 Temp 17"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "10:00:00"
+    - platform: time
+      at: "11:30:00"
+    - platform: time
+      at: "13:30:00"
+    - platform: time
+      at: "15:30:00"
+    - platform: time
+      at: "21:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 17
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+
+# ############################################################
+# Lounge_L2 Temp 21
+# ############################################################
+- alias: Zigbee TRV Lounge_L2 Temp 21
+  id: "b10f658c-8dde-4553-a250-20ed8dd94196"
+  description: "This automation emulates a schedule for Zigbee Lounge_L2 Temp 21"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "09:30:00"
+    - platform: time
+      at: "12:30:00"
+    - platform: time
+      at: "18:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 21
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+
+# ############################################################
+# Lounge_L2 Temp 17
+# ############################################################
+- alias: Zigbee TRV Lounge_L2 Temp 17
+  id: "5f84a7a4-64bb-48d5-a050-c1ecaf304623"
+  description: "This automation emulates a schedule for Zigbee Lounge_L2 Temp 17"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "10:00:00"
+    - platform: time
+      at: "11:30:00"
+    - platform: time
+      at: "13:30:00"
+    - platform: time
+      at: "15:30:00"
+    - platform: time
+      at: "21:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_temperature
+      data:
+        temperature: 17
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+############################################################
+#  END OF FILE
+# ############################################################

@@ -1,0 +1,237 @@
+# ############################################################
+#
+#  Schedules for TRV on L2
+#
+# ############################################################
+
+# ############################################################
+# Bedroom_L2 preset mode comfort
+# ############################################################
+- alias: TRV Bedroom_L2 preset mode comfort
+  id: "259cb60e-fd6a-4cf3-ba04-0201fffd57f7"
+  description: "This automation emulates a schedule for Bedroom_L2 preset mode to comfort"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "19:00:00"
+    - platform: time
+      at: "21:00:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: comfort
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+
+# ############################################################
+# Bedroom_L2 preset mode eco
+# ############################################################
+- alias: TRV Bedroom_L2 preset mode eco
+  id: "b31c5f8b-d8a9-46de-a28b-9c98b05dffec"
+  description: "This automation emulates a schedule for Bedroom_L2 preset mode to eco"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "10:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+
+# ############################################################
+# Kitchen_L2 preset mode comfort
+# ############################################################
+- alias: TRV Kitchen_L2 preset mode comfort
+  id: "0d87c726-6d8b-4322-ba47-e20fcf6d11f9"
+  description: "This automation emulates a schedule for Kitchen_L2 preset mode to comfort"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "07:00:00"
+    - platform: time
+      at: "12:00:00"
+    - platform: time
+      at: "18:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: comfort
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+
+# ############################################################
+# Kitchen_L2 preset mode eco
+# ############################################################
+- alias: TRV Kitchen_L2 preset mode eco
+  id: "460a60bf-f3a0-4571-999f-084b804152fb"
+  description: "This automation emulates a schedule for Kitchen_L2 preset mode to eco"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "10:00:00"
+    - platform: time
+      at: "13:30:00"
+    - platform: time
+      at: "15:30:00"
+    - platform: time
+      at: "21:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+
+# ############################################################
+# Lounge_L2 preset mode comfort
+# ############################################################
+- alias: TRV Lounge_L2 preset mode comfort
+  id: "b66d3937-973b-4bce-bb10-8d0c8aed973b"
+  description: "This automation emulates a schedule for Lounge_L2 preset mode to comfort"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "07:00:00"
+    - platform: time
+      at: "12:30:00"
+    - platform: time
+      at: "18:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: comfort
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+
+# ############################################################
+# Lounge_L2 preset mode eco
+# ############################################################
+- alias: TRV Lounge_L2 preset mode eco
+  id: "b328614e-37dd-4cd6-8140-8ea9c49e4d59"
+  description: "This automation emulates a schedule for Lounge_L2 preset mode to eco"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    - platform: time
+      at: "21:00:00"
+    - platform: time
+      at: "22:30:00"
+    - platform: time
+      at: "23:30:00"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+
+# ############################################################
+# all TRVs L2 preset mode eco because of all people gone
+# ############################################################
+- alias: TRV all on L2 preset mode eco all people gone
+  id: "d9d190f6-e04d-4e0c-9747-c93346b82c1f"
+  description: "This automation sets preset mode to eco in case everbody is gone"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    # the last person left
+    - platform: state
+      entity_id: binary_sensor.home_all_are_gone
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: eco
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+
+# ############################################################
+# all necessary TRVs L2 preset mode comfort because of some people are back
+# ############################################################
+- alias: TRV all on L2 preset mode comfort some people are back
+  id: "da31b093-9289-4e0f-a0de-ff500f15fcff"
+  description: "This automation sets preset mode to comfort in case some people are back"
+  mode: single
+  initial_state: false
+  # --------------------- TRIGGER ---------------------
+  # time based execution
+  trigger:
+    # GH came back
+    - platform: state
+      entity_id: binary_sensor.home_gillian_is_here
+      to: "on"
+    # - platform: state
+    #   entity_id: binary_sensor.home_uwe_is_here
+    #   to: "on"
+  # -------------------- CONDITIONS -------------------
+  # none so far
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - service: climate.set_preset_mode
+      data:
+        preset_mode: comfort
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+############################################################
+#  END OF FILE
+# ############################################################

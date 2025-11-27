@@ -28,8 +28,8 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-# #   - VEML7700
-#   - VL53L0X
+#   - VEML7700 (ambient light sensor, not installed yet)
+#   - VL53L0X (distance sensor)
 #
 # Output
 #   - the device reports to HA only 
@@ -119,10 +119,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
-#-------------------------------------------------------------------
-# Enable the BLE Tracker
-# bluetooth_proxy:
 
 ####################################################################
 # EOF

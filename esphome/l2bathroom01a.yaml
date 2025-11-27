@@ -99,6 +99,7 @@ interval: !include conf/common/interval/connectivity.yaml
 script:
   - <<: !include conf/script/l2bathroom01a/reed1_to_ssr01.yaml
   - <<: !include conf/script/l2bathroom01a/reed2_to_ssr01.yaml
+  - <<: !include conf/script/l2bathroom01a/touch_button_D7_on_press.yaml
   # - <<: !include conf/script/l2bathroom01a/touch_button_D5_short.yaml
   # - <<: !include conf/script/l2bathroom01a/touch_button_D5_double.yaml
   # - <<: !include conf/script/l2bathroom01a/touch_button_D5_long.yaml
@@ -112,6 +113,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   - <<: !include conf/binary_sensor/l2bathroom01a/reed_d5_onpress.yaml
   - <<: !include conf/binary_sensor/l2bathroom01a/reed_d6_onpress.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_D7_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_D5_on_multi_click.yaml

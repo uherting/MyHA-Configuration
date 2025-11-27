@@ -21,15 +21,13 @@
       value_template: "{{
         is_state('binary_sensor.l2_trv_runaway_precondition_high', 'on')
         and
-        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_high', 'on')
-      }}"
+        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_high', 'on') }}"
     - platform: template
       id: "l2_trv_runaway_low_bedroom"
       value_template: "{{
         is_state('binary_sensor.l2_trv_runaway_precondition_low', 'on')
         and
-        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_low', 'on')
-      }}"
+        is_state('binary_sensor.l2_trv_runaway_condition_bedroom_low', 'on') }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -94,7 +92,7 @@
   id: "5168e288-e54d-4c2e-acc6-cc285b922ef6"
   description: "This automation resets run away handling after x hours in the L2 bedroom"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
@@ -117,7 +115,6 @@
     #   data:
     #     title: "L2 TRV bedroom: auto (max time)"
     #     message: "L2 TRV run away: TRV resumed auto mode (bedroom) due to time restraint. Time: {{ now() }}"
-
 ############################################################
 #  END OF FILE
 # ############################################################
