@@ -11,7 +11,6 @@
   id: "c3e20ae7-8712-4b44-ba5d-7a0d63d460bd"
   mode: single
   initial_state: true
-
   # --------------------- TRIGGER ---------------------
   trigger:
     - platform: state
@@ -20,13 +19,6 @@
     - platform: state
       entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
       to: "large"
-    # - platform: state
-    #   entity_id: binary_sensor.zb_humanpresence_l2_kitchen_02_presence
-    #   to: "on"
-    # - platform: state
-    #   entity_id: sensor.zb_humanpresence_l2_kitchen_02_motion_state
-    #   to: "large"
-
   # -------------------- CONDITIONS -------------------
   condition: []
   # condition:
@@ -43,7 +35,7 @@
 # ############################################################
 # L2 Kitchen SSR01 off after there is no motion for x minutes
 # ############################################################
-- alias: L2 Kitchen SSR01 off when ZB HumanPresence detected not detected for a while
+- alias: L2 Kitchen SSR01 off when ZB HumanPresence not detected for a while
   id: "b741c8ff-bea9-4648-a7f6-c0edb59cf0df"
   initial_state: true
   # --------------------- TRIGGER ---------------------
@@ -54,11 +46,6 @@
       to: "off"
       for:
         minutes: 1
-    # - platform: state
-    #   entity_id: binary_sensor.zb_humanpresence_l2kitchen_02_presence
-    #   to: "off"
-    #   for:
-    #     minutes: 1
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR OFF ---------------------
