@@ -1,0 +1,171 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l2kitchen09
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - Microcontroller for controlling ZB plugs realted to l2kitchen
+#
+# Future feature:
+#   - unknown
+#
+# Hardware:
+#   - 1 ESP32
+#
+# Automation:
+#   - none so far
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - TFT 2.8" touch panel (240x320 RGB)
+#   - no physical buttons so far
+#
+# Output
+#   - OLED display 0.42" 72x40
+#
+
+###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
+
+substitutions: 
+  <<: !include conf/substitutions/device_specific/l2kitchen09.yaml
+  <<: !include conf/substitutions/overwrites/l2kitchen09.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
+# log_level can be overwritten in overwrites/<device_name>.yaml
+
+packages:
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  # psram does not work on this device for unknown reasons
+  # device_base_common: !include conf/common/packages/device_base_esp32_psram_enabled.yaml
+  device_base_common: !include conf/common/packages/device_base_esp32.yaml
+  # wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_remote.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+  # captive_portal: conf/common/networking/captive_portal.yaml
+
+  # Contained an error which got validated nevertheless. 
+  # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
+  # ota: !include conf/common/networking/ota.yaml
+
+ota: !include conf/common/networking/ota.yaml
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+
+# TODO: enable time setup through HA asap
+# time: !include conf/common/time.yaml
+
+# sun: !include conf/common/sun.yaml
+
+############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
+web_server:
+  port: 8888
+
+############### COMMON CONFIGURATION FOR THIS DEVICE ###############
+
+# IC2 for the ESP32c3 platform
+i2c: !include conf/common/device/i2c_esp32_v2.yaml
+# dallas: !include conf/common/device/dallas.yaml
+# mcp23017: !include conf/common/device/mcp23017.yaml
+
+
+####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+#-------------------------------------------------------------------
+# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+
+globals:
+  - <<: !include conf/common/globals/connectivity.yaml
+interval: 
+  - <<: !include conf/common/interval/connectivity.yaml
+  - <<: !include conf/interval/l2kitchen09.yaml
+# script:
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_cw.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_ccw.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_pushbutton_pressed.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_backbutton_pressed.yaml
+  # - <<: !include conf/script/l2kitchen09/rotary_encoder_01_confirmbutton_pressed.yaml
+  # - <<: !include conf/script/l2kitchen09/touch_button_A101_on_press.yaml
+  # - <<: !include conf/script/l2kitchen09/touch_button_A202_on_press.yaml
+  # - <<: !include conf/script/l2kitchen09/touch_button_A303_on_press.yaml
+  # - <<: !include conf/script/l2kitchen09/touch_button_A404_on_press.yaml
+
+#===================================================================
+# Configuration for the touchscreen display
+#===================================================================
+#-------------------------------------------------------------------
+# SPI (default ESP32 platform)
+spi: !include conf/common/device/spi_esp32_v0.yaml
+#-------------------------------------------------------------------
+# COLOR configuration
+color: !include conf/common/color/touchscreen_28inch_240x320RGB_01.yaml
+#-------------------------------------------------------------------
+# FONT configuration
+# needs to be included before display configuration
+# this file provides basic fonts for the 2.8" touchscreen display (240x320 RGB) only.
+# font: !include conf/common/font/touchscreen_28inch_240x320RGB_01.yaml
+# this file provides all fonts for the 2.8" touchscreen display (240x320 RGB) only.
+font: !include conf/font/l2kitchen09/touchscreen_28inch_240x320RGB_01.yaml
+#-------------------------------------------------------------------
+# DISPLAY
+display: !include conf/display/l2kitchen09/touchscreen_28inch_240x320RGB_01.yaml
+#-------------------------------------------------------------------
+# TOUCHSCREEN (TFT 2.8" touch panel, 240x320 RGB)
+touchscreen: !include conf/common/touchscreen/touchscreen_28inch_240x320RGB_01.yaml
+
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor:
+  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  # device related
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  # - <<: !include conf/common/sensor/aht10_01.yaml
+  # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
+  # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+# switch:
+  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
+  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+
+#-------------------------------------------------------------------
+# TEXT SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
+  # device related
+  # none so far
+
+####################################################################
+# EOF
+####################################################################

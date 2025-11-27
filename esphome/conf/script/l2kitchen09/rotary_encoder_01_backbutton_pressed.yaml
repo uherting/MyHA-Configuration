@@ -1,0 +1,15 @@
+####################################################################
+# SCRIPTS
+
+# script:
+# rotary encoder script counterclockwise turn
+
+# anticlockwise turn
+- id: rotary_encoder_01_backbutton_pressed
+  mode: restart
+  then:
+    - delay: 50ms
+
+####################################################################
+# EOF
+####################################################################

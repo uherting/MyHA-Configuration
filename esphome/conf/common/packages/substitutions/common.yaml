@@ -35,6 +35,17 @@ substitutions:
 
   # ================= CONNECTED SENSORS / INTERFACES =================
 
+  # AHT10
+  aht10_01_temp_name: $friendly_name AHT10 temp 01
+  aht10_01_hum_name: $friendly_name AHT10 hum 01
+  aht10_01_update_interval: 60s
+  aht10_01_address: 0x38
+  aht10_01_variant: AHT10
+  aht10_01_temp_unit: "°C"
+  aht10_01_hum_unit: "%"
+  aht10_01_temp_id: ${friendly_id}_AHT10_Temp_01
+  aht10_01_hum_id: ${friendly_id}_AHT10_Hum_01
+
   # BH1750 Ambient Light Sensor
   bh1750_01_address: !secret BH1750_0X23_ADDRESS
   bh1750_01_measurement_duration: !secret BH1750_MEASUREMENT_DURATION_69
@@ -151,6 +162,23 @@ substitutions:
   reed_contact07_id: ${friendly_id}_REED_07
   reed_contact07_name: $friendly_name REED 07
   reed_contact07_device_class: "opening"
+
+  # rotary encoder 01
+  rotaryencoder01_name: $friendly_name RotaryEncoder 01
+  rotaryencoder01_id: ${friendly_id}_RotaryEncoder_01
+  rotaryencoder01_min_value: 0
+  rotaryencoder01_max_value: 99
+  rotaryencoder01_resolution: 1
+  rotaryencoder01_on_value_script: re_01_value_changed_with_param
+  rotaryencoder01_pshbtn_name: $friendly_name RotaryEncoder PSHBTN 01
+  rotaryencoder01_pshbtn_id: ${friendly_id}_RotaryEncoder_PshBtn_01
+  rotaryencoder01_backbtn_name: $friendly_name RotaryEncoder BackBtn 01
+  rotaryencoder01_backbtn_id: ${friendly_id}_RotaryEncoder_BACKBTN_01
+  rotaryencoder01_confirm_btn_name: $friendly_name RotaryEncoder ConfirmBtn 01
+  rotaryencoder01_confirm_btn_id: ${friendly_id}_RotaryEncoder_CONFIRMBTN_01
+  rotaryencoder01_pshbtn_class: "switch"
+  rotaryencoder01_backbtn_class: "switch"
+  rotaryencoder01_confirmbtn_class: "switch"
 
   # SSRs
   ssr01_id: ${friendly_id}_SSR01
