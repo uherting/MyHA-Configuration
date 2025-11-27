@@ -1,0 +1,38 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# rotary encoder
+#sensor:
+  - platform: rotary_encoder
+    name: $rotaryencoder01_name
+    id: ${rotaryencoder01_id}
+    pin_a:
+      number: !secret ROTARYENCODER01_PIN_A
+      mode: INPUT
+      inverted: false
+    pin_b:
+      number: !secret ROTARYENCODER01_PIN_B
+      mode: INPUT
+      inverted: false
+    resolution: ${rotaryencoder01_resolution}
+    min_value: ${rotaryencoder01_min_value}
+    max_value: ${rotaryencoder01_max_value}
+    on_clockwise:
+      # - logger.log: "Turned Clockwise"
+      - script.execute: re_01_clockwise
+    on_anticlockwise:
+      # - logger.log: "Turned Anticlockwise"
+      - script.execute: re_01_anticlockwise
+    # wrap: true
+    # speed: 1.0
+    # acceleration: 1.5
+    # on_value:
+    #   then:
+    #     - logger.log: "Rotary Encoder value: ${value}"
+    #     # - script.execute: re_01_value_changed
+    #     - script.execute: re_01_value_changed_with_param
+
+####################################################################
+# EOF
+####################################################################

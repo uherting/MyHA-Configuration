@@ -1,0 +1,23 @@
+####################################################################
+# FONT
+# needs to be included before display configuration
+# This is a font configuration on device level for the 2.8" touchscreen display (240x320 RGB).
+# For details see https://esphome.io/components/font/index.html
+
+# font:
+  - file: 'gfonts://Roboto'
+    id: myfont_roboto18
+    size: 18
+  - file: 'gfonts://Inter'
+    id: myfont_inter12
+    size: 12
+  # - file: $font_times_new_roman_ttf
+  #   id: font_times_new_roman_20
+  #   size: 20
+  # - file: $font_times_new_roman_ttf
+  #   id: font_times_new_roman_35
+  #   size: 35
+
+# ############################################################
+#  END OF FILE
+# ############################################################
