@@ -1,0 +1,36 @@
+# ############################################################
+#
+#  L2Lounge
+#
+# ############################################################
+
+# ############################################################
+# L2 Lounge on when ZB HumanPresence detected
+# ############################################################
+- alias: L2 Lounge on when ZB HumanPresence detected
+  id: "019ac6e6-4790-70a9-9be2-baf59f181da4"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.zb_humanpresence_l2_lounge_01_presence
+      to: "on"
+    - platform: state
+      entity_id: sensor.zb_humanpresence_l2_lounge_01_motion_state
+      to: "large"
+  # -------------------- CONDITIONS -------------------
+  # condition: []
+  condition:
+    - condition: template
+      # only when civil twilight applies
+      # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+      value_template: "{{ is_state('binary_sensor.sun_dwn_twilight', 'on') }}"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SSR01 on -------------------
+    - service: switch.turn_on
+      entity_id: switch.l2kitchen01_ssr_01
+# ############################################################
+#  END OF FILE
+# ############################################################
