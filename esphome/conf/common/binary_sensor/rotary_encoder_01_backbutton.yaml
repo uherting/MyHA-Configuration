@@ -1,0 +1,28 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# ROTARY ENCODER BACKBUTTON
+
+- platform: gpio
+  name: $rotaryencoder01_backbtn_name
+  id: ${rotaryencoder01_backbtn_id}
+  pin:
+    mcp23xxx: ${mcp23017_hub01_id}
+    number: !secret MCP23017_PIN_A6
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    inverted: false
+  # debouncing
+  filters:
+    - delayed_on: 50ms
+    - delayed_off: 50ms
+  # device_class: $rotaryencoder01_backbtn_class
+  on_press:
+    then:
+      - script.execute: rotary_encoder_01_backbutton_pressed
+# ############################################################
+#  END OF FILE
+# ############################################################

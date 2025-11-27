@@ -1,0 +1,21 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# WiFi sensors
+#sensor:
+  - platform: aht10
+    variant: AHT10
+    temperature:
+      name: ${aht10_01_temp_name}
+      id: ${aht10_01_temp_id}
+      unit_of_measurement: ${aht10_01_temp_unit}
+    humidity:
+      name: ${aht10_01_hum_name}
+      id: ${aht10_01_hum_id}
+      unit_of_measurement: ${aht10_01_hum_unit}
+    address: ${aht10_01_address}
+    update_interval: ${aht10_01_update_interval}
+####################################################################
+# EOF
+####################################################################

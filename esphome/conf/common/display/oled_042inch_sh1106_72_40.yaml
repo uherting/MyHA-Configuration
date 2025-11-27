@@ -1,0 +1,67 @@
+####################################################################
+# DISPLAY
+
+- platform: ssd1306_i2c
+  # "SH1106 72x40" should be the model, but it does not get validated
+  # model: "SH1106 72x40"
+  # SSD1306 72x40 seems to work though, no idea what the difference is
+  model: "SSD1306 72x40"
+  
+  address: 0x3C
+  id: ${display_id}
+
+  # reset_pin: D0
+  update_interval: 1s
+  rotation: 0°
+  flip_x: true
+  flip_y: true
+  offset_y: 0
+  offset_x: 0
+  invert: false
+
+  # lambda: |-
+  #   it.print(0, 0, id(myfont_roboto18), "Hello");
+  #   it.print(0, 23, id(myfont_roboto18), "Uwe!");
+  # for usage of pages see https://esphome.io/components/display/index.html#display-pages
+  
+# ############################################################
+# about using pages see https://esphome.io/components/display/index.html#display-pages or the below commented out example
+# ############################################################
+  pages:
+    - id: page1
+      lambda: |-
+        it.print(5, 20, id(myfont_roboto18), "");
+    - id: page2
+      lambda: |-
+        it.print(5, 20, id(myfont_roboto18), "");
+      # it.print(0, 0, id(myfont_roboto18), "Hallo!");
+      # it.strftime(64, 0, id(myfont_roboto18), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
+      # it.strftime(64, 64, id(myfont_roboto18), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
+      # it.print(0, 10, id(myfont_roboto18), "This is page 2!");
+
+# ############################################################
+# example for page usage following here
+# about using pages see https://esphome.io/components/display/index.html#display-pages or the below commented out example
+# ############################################################
+# - platform: ssd1306_i2c
+  # model: "SSD1306 72x40"
+  # address: 0x3C
+  # id: ${display_id}
+  # # rotation: 180°
+  # rotation: 0°
+  # # for usage of pages see https://esphome.io/components/display/index.html#display-pages
+  # pages:
+  #   - id: page1
+  #     lambda: |-
+  #       it.print(5, 20, id(myfont_roboto18), "");
+  #   - id: page2
+  #     lambda: |-
+  #       it.print(5, 20, id(myfont_roboto18), "");
+  #     # it.print(0, 0, id(myfont_roboto18), "Hallo!");
+  #     # it.strftime(64, 0, id(myfont_roboto18), TextAlign::TOP_CENTER,"%d.%m.%Y", id(esphome_time).now());
+  #     # it.strftime(64, 64, id(myfont_roboto18), TextAlign::BASELINE_CENTER, "%H:%M", id(esphome_time).now());
+  #     # it.print(0, 10, id(myfont_roboto18), "This is page 2!");
+
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -1,0 +1,12 @@
+####################################################################
+# DISPLAY INTERVAL
+
+# update time and display it every x interval
+  - interval: 20s
+    then:
+      - display.page.show: page2
+      - component.update: ${display_id}
+
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -1,0 +1,30 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# Touchscreen Binary Sensor
+# The touchscreen binary sensor allows you to setup areas on the touch screen as virtual buttons.
+# for details see https://esphome.io/components/touchscreen/#binary-sensor
+# Example configuration for a touchscreen button area
+
+# binary_sensor:
+  - platform: touchscreen
+    name: Top Left Touch Button
+    id: touchscreen_button_top_left
+    x_min: 0
+    x_max: 100
+    y_min: 0
+    y_max: 100
+    page_id: home_page_id
+    use_raw: true
+    on_press:
+      then:
+        - logger.log: "Top Left Touch Button Pressed"
+    on_release:
+      then:
+        - logger.log: "Top Left Touch Button Released"
+####################################################################
+# END OF FILE
+####################################################################
