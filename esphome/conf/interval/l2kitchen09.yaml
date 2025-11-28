@@ -4,7 +4,7 @@
 # update time and display it every x interval
   - interval: 20s
     then:
-      - display.page.show: page2
+      - display.page.show_next: ${display_id}
       - component.update: ${display_id}
 
 # ############################################################
