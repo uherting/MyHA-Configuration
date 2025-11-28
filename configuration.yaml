@@ -236,12 +236,13 @@ switch: !include_dir_merge_list conf/switches
 #   # HIVEMQ does not offer certificates in free plans at the moment, use Let’s Encrypt certificate https://letsencrypt.org/certs/isrgrootx1.pem
 #   # certificate: !secret
 
-battery_notes:
-  enable_autodiscovery: true
-  default_battery_low_threshold: 10
-  battery_increase_threshold: 25
-  hide_battery: false
-  round_battery: true
+# config of the battery_notes integration was moved by the update to UI:
+# battery_notes:
+#   enable_autodiscovery: true
+#   default_battery_low_threshold: 10
+#   battery_increase_threshold: 25
+#   hide_battery: false
+#   round_battery: true
 ####################################################################
 # EOF
 ####################################################################
