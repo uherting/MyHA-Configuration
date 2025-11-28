@@ -1,0 +1,23 @@
+# required vars:
+# - height
+# - padding
+
+obj: # title bar
+    id: titlebar
+    width: 100%
+    height: ${height}
+    border_width: 0
+    radius: 0
+    pad_all: 0
+    align: TOP_MID
+    widgets:
+      - label: # title
+          id: page_title
+          align: LEFT_MID
+          x: ${padding} # RESOLUTION-SPECIFIC
+          text: " "
+      - label: # clock
+          id: nav_clock
+          align: RIGHT_MID
+          x: -${padding} # RESOLUTION-SPECIFIC
+          text: " "

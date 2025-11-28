@@ -1,0 +1,11 @@
+esphome:
+  name: sunton-50-test
+  friendly_name: Sunton 5.0" Test
+
+substitutions:
+  home_page: lighting_1
+
+packages:
+  common: !include common.yaml
+  device: !include devices/ESP32-8048S050.yaml
+  layout: !include layouts/800x480.yaml

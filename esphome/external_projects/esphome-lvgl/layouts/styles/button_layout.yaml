@@ -1,0 +1,6 @@
+# layout:
+  type: FLEX
+  flex_flow: ROW_WRAP
+  flex_align_main: START
+  # pad_column: 4 # RESOLUTION-SPECIFIC # match container_styles.pad_all
+  # pad_row: 5 # RESOLUTION-SPECIFIC # match container_styles.pad_all

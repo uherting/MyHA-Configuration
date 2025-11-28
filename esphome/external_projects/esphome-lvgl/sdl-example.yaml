@@ -1,0 +1,12 @@
+esphome:
+  name: sdl
+  friendly_name: sdl
+
+substitutions:
+  home_page: lighting_1
+  sdl_width: "320"
+  sdl_height: "480"
+
+packages:
+  device: !include devices/SDL.yaml
+  layout: !include layouts/480x320.yaml

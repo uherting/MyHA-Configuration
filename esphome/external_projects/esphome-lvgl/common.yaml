@@ -1,0 +1,61 @@
+esphome:
+  min_version: 2024.11.0
+
+logger:
+  level: INFO
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+web_server:
+  port: 80
+
+ota:
+  - platform: esphome
+
+api:
+  on_client_connected:
+    - globals.set:
+        id: homeassistant_ip
+        value: !lambda return client_address;
+
+switch:
+  - platform: restart
+    name: Restart
+
+binary_sensor:
+  - platform: status
+    name: Status
+
+sensor:
+  - id: wifi_signal_db
+    name: WiFi Signal
+    platform: wifi_signal
+    update_interval: 60s
+    entity_category: diagnostic
+
+  - id: wifi_signal_strength
+    name: WiFi Strength
+    platform: copy
+    source_id: wifi_signal_db
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: diagnostic
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP Address
+      entity_category: diagnostic
+    ssid:
+      name: Connected SSID
+      entity_category: diagnostic
+    mac_address:
+      name: Mac Address
+      entity_category: diagnostic
+
+globals:
+  - id: homeassistant_ip
+    type: std::string

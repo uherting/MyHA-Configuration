@@ -1,0 +1,98 @@
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+i2c:
+  - sda: 27
+    scl: 22
+    scan: true
+
+spi:
+  - id: tft
+    clk_pin: 14
+    mosi_pin: 13
+    miso_pin:
+      number: 12
+      ignore_strapping_warning: true
+  - id: touch
+    clk_pin: 25
+    mosi_pin: 32
+    miso_pin: 39
+
+output:
+  - id: backlight_pwm
+    platform: ledc
+    pin: 21
+  - id: output_red
+    platform: ledc
+    pin: 4
+    inverted: true
+  - id: output_green
+    platform: ledc
+    pin: 16
+    inverted: true
+  - id: output_blue
+    platform: ledc
+    pin: 17
+    inverted: true
+
+light:
+  - id: backlight
+    platform: monochromatic
+    output: backlight_pwm
+    name: Display Backlight
+    restore_mode: ALWAYS_ON
+  - id: led
+    platform: rgb
+    red: output_red
+    green: output_green
+    blue: output_blue
+    restore_mode: ALWAYS_OFF
+
+# sensor:
+#   - platform: adc
+#     pin: 34
+#     name: "Brightness"
+#     update_interval: 60s
+
+display:
+  - id: main_display
+    platform: ili9xxx
+    model: ILI9341
+    spi_id: tft
+    cs_pin:
+      number: 15
+      ignore_strapping_warning: true
+    dc_pin:
+      number:  2
+      ignore_strapping_warning: true
+    invert_colors: false
+    update_interval: never
+    auto_clear_enabled: false
+
+touchscreen:
+  - id: main_touchscreen
+    platform: xpt2046
+    spi_id: touch
+    cs_pin: 33
+    interrupt_pin: 36
+    threshold: 400
+    calibration:
+      x_min: 280
+      x_max: 3860
+      y_min: 340
+      y_max: 3860
+    transform:
+      mirror_x: true
+    # on_touch:
+    #   - lambda: |-
+    #         ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
+    #           touch.x,
+    #           touch.y,
+    #           touch.x_raw,
+    #           touch.y_raw
+    #         );
+
+lvgl:
+  buffer_size: 25%

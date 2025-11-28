@@ -1,0 +1,29 @@
+time:
+  - id: ha_time
+    platform: homeassistant
+    on_time_sync:
+      - lvgl.label.update:
+          id: nav_clock
+          text:
+            time_format: "%I:%M %p"
+            time: ha_time
+    on_time:
+      - minutes: '*'
+        seconds: 0
+        then:
+          - lvgl.label.update:
+              id: nav_clock
+              text:
+                time_format: "%I:%M %p"
+                time: ha_time
+
+# sensor:
+#   - id: thermostat_temp
+#     platform: homeassistant
+#     entity_id: sensor.thermostat_temperature
+#     on_value:
+#       - lvgl.label.update:
+#           id: header_temp
+#           text:
+#             format: "%.1f°C"
+#             args: [ 'x' ]

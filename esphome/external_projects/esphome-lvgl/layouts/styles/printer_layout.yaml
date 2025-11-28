@@ -1,0 +1,5 @@
+# layout:
+  type: FLEX
+  flex_flow: COLUMN
+  flex_align_main: START
+  # pad_row: 4 # RESOLUTION-SPECIFIC

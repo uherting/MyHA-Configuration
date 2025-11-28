@@ -1,0 +1,218 @@
+text_sensor:
+  - id: ${uid}_print_status
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_print_status
+    filters:
+      - lambda: |-
+          x[0] = toupper(x[0]);
+          return x;
+    on_value:
+      - lvgl.label.update:
+          id: ${uid}_print_status_lbl
+          text: !lambda return x;
+      - if:
+          condition:
+            - text_sensor.state:
+                id: ${uid}_print_status
+                state: 'Failed'
+          then:
+            - lvgl.bar.update:
+                id: ${uid}_print_progress_bar
+                indicator:
+                  bg_color: 0xFF0000
+          else:
+            - if:
+                condition:
+                  - text_sensor.state:
+                      id: ${uid}_print_status
+                      state: 'Pause'
+                then:
+                  - lvgl.bar.update:
+                      id: ${uid}_print_progress_bar
+                      indicator:
+                        bg_color: 0xFFAF00
+                else:
+                  - if:
+                      condition:
+                        - text_sensor.state:
+                            id: ${uid}_print_status
+                            state: 'Finish'
+                      then:
+                        - lvgl.bar.update:
+                            id: ${uid}_print_progress_bar
+                            indicator:
+                              bg_color: 0x4CAF50
+                      else:
+                        - lvgl.bar.update:
+                            id: ${uid}_print_progress_bar
+                            indicator:
+                              bg_color: 0x00B6FF
+
+  - id: ${uid}_remaining_time
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_remaining_time
+    on_value:
+      - if:
+          condition:
+            or:
+              - text_sensor.state:
+                  id: ${uid}_print_status
+                  state: 'Prepare'
+              - text_sensor.state:
+                  id: ${uid}_print_status
+                  state: 'Running'
+          then:
+            - lvgl.label.update:
+                id: ${uid}_remaining_time_lbl
+                text: !lambda |-
+                  int number = std::stoi(x);
+                  int hours = number / 60;
+                  int mins = number % 60;
+                  return std::to_string(hours) + " hr " + std::to_string(mins) + " min";
+          else:
+            - lvgl.label.update:
+                id: ${uid}_remaining_time_lbl
+                text: " "
+      - if:
+          condition:
+            - text_sensor.state:
+                id: ${uid}_remaining_time
+                state: '0'
+          then:
+            - lvgl.label.update:
+                id: ${uid}_remaining_time_lbl
+                text: " "
+
+  - id: ${uid}_end_time
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_end_time
+    on_value:
+      - if:
+          condition:
+            text_sensor.state:
+              id: ${uid}_print_status
+              state: 'Running'
+          then:
+            - lvgl.label.update:
+                id: ${uid}_end_time_lbl
+                text: !lambda |-
+                  int hour = std::stoi(x.substr(11, 2));
+                  std::string am_pm = "AM";
+
+                  if (hour >= 12) {
+                    am_pm = "PM";
+
+                    if (hour > 12) {
+                      hour -= 12;
+                    }
+                  } else if (hour == 0) {
+                    hour = 12;
+                  }
+
+                  std::string time_12hr = std::to_string(hour) + x.substr(13, 3) + " " + am_pm;
+
+                  return time_12hr;
+          else:
+            - lvgl.label.update:
+                id: ${uid}_end_time_lbl
+                text: " "
+
+  - id: ${uid}_ams_tray_1_remain
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_1
+    attribute: remain
+    on_value:
+      - lvgl.label.update:
+          id: ${uid}_ams_tray_1_remaining_lbl
+          text: !lambda return x + '%';
+
+  - id: ${uid}_ams_tray_1_color
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_1
+    attribute: color
+    on_value:
+      - lvgl.widget.update:
+          id: ${uid}_ams_tray_1_obj
+          bg_color: !lambda |-
+            std::string hexString = x.substr(1);
+            int intR = stoi(hexString.substr(0, 2), nullptr, 16);
+            int intG = stoi(hexString.substr(2, 2), nullptr, 16);
+            int intB = stoi(hexString.substr(4, 2), nullptr, 16);
+            return lv_color_make(intR, intG, intB);
+
+  - id: ${uid}_ams_tray_2_remain
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_2
+    attribute: remain
+    on_value:
+      - lvgl.label.update:
+          id: ${uid}_ams_tray_2_remaining_lbl
+          text: !lambda return x + '%';
+
+  - id: ${uid}_ams_tray_2_color
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_2
+    attribute: color
+    on_value:
+      - lvgl.widget.update:
+          id: ${uid}_ams_tray_2_obj
+          bg_color: !lambda |-
+            std::string hexString = x.substr(1);
+            int intR = stoi(hexString.substr(0, 2), nullptr, 16);
+            int intG = stoi(hexString.substr(2, 2), nullptr, 16);
+            int intB = stoi(hexString.substr(4, 2), nullptr, 16);
+            return lv_color_make(intR, intG, intB);
+
+  - id: ${uid}_ams_tray_3_remain
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_3
+    attribute: remain
+    on_value:
+      - lvgl.label.update:
+          id: ${uid}_ams_tray_3_remaining_lbl
+          text: !lambda return x + '%';
+
+  - id: ${uid}_ams_tray_3_color
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_3
+    attribute: color
+    on_value:
+      - lvgl.widget.update:
+          id: ${uid}_ams_tray_3_obj
+          bg_color: !lambda |-
+            std::string hexString = x.substr(1);
+            int intR = stoi(hexString.substr(0, 2), nullptr, 16);
+            int intG = stoi(hexString.substr(2, 2), nullptr, 16);
+            int intB = stoi(hexString.substr(4, 2), nullptr, 16);
+            return lv_color_make(intR, intG, intB);
+
+  - id: ${uid}_ams_tray_4_remain
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_4
+    attribute: remain
+    on_value:
+      - lvgl.label.update:
+          id: ${uid}_ams_tray_4_remaining_lbl
+          text: !lambda return x + '%';
+
+  - id: ${uid}_ams_tray_4_color
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_ams_tray_4
+    attribute: color
+    on_value:
+      - lvgl.widget.update:
+          id: ${uid}_ams_tray_4_obj
+          bg_color: !lambda |-
+            std::string hexString = x.substr(1);
+            int intR = stoi(hexString.substr(0, 2), nullptr, 16);
+            int intG = stoi(hexString.substr(2, 2), nullptr, 16);
+            int intB = stoi(hexString.substr(4, 2), nullptr, 16);
+            return lv_color_make(intR, intG, intB);
+sensor:
+  - id: ${uid}_print_progress
+    platform: homeassistant
+    entity_id: sensor.${entity_id_prefix}_print_progress
+    on_value:
+      - lvgl.bar.update:
+          id: ${uid}_print_progress_bar
+          value: !lambda return x;

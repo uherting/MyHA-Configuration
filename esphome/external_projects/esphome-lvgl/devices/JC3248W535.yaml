@@ -1,0 +1,65 @@
+esphome:
+  platformio_options:
+    upload_speed: 921600
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+    board_build.f_cpu: 240000000L
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      COMPILER_OPTIMIZATION_SIZE: y
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: y
+      CONFIG_ESP32S3_DATA_CACHE_64KB: y
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: y
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: y
+      CONFIG_SPIRAM_RODATA: y
+
+psram:
+  mode: octal
+  speed: 80MHz # 120MHz is not supported and falls back to 40MHz
+
+spi:
+  - type: quad
+    clk_pin: 47
+    data_pins: [21, 48, 40, 39]
+
+i2c:
+  - sda: 4
+    scl: 8
+
+output:
+  - id: gpio_backlight_pwm
+    platform: ledc
+    pin: 1
+
+light:
+  - id: backlight
+    name: Backlight
+    platform: monochromatic
+    output: gpio_backlight_pwm
+    restore_mode: ALWAYS_ON
+
+display:
+  - id: main_display
+    platform: mipi_spi
+    model: JC3248W535
+    data_rate: 40MHz
+    update_interval: never
+    auto_clear_enabled: false
+
+touchscreen:
+  - id: main_touchscreen
+    platform: axs15231
+    # on_touch:
+    #   - lambda: |-
+    #         ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
+    #           touch.x,
+    #           touch.y,
+    #           touch.x_raw,
+    #           touch.y_raw
+    #         );

@@ -1,0 +1,11 @@
+esphome:
+  name: sunton-43-test
+  friendly_name: Sunton 4.3" Test
+
+substitutions:
+  home_page: lighting_1
+
+packages:
+  common: !include common.yaml
+  device: !include devices/ESP32-8048S043.yaml
+  layout: !include layouts/800x480.yaml
