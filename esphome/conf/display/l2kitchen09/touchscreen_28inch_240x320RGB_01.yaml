@@ -26,7 +26,7 @@
 #       height: 320
 
 # ============================================================
-# experimental code code
+# experimental code
 # ============================================================
 # from RTFM:
   - platform: mipi_spi 
