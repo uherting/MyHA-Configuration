@@ -1,0 +1,11 @@
+esphome:
+  name: guition-35-test
+  friendly_name: Guition 3.5" Test
+
+substitutions:
+  home_page: lighting_1
+
+packages:
+  common: !include common.yaml
+  device: !include devices/JC3248W535.yaml
+  layout: !include layouts/480x320.yaml

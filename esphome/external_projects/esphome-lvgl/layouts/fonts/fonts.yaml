@@ -1,0 +1,65 @@
+# font:
+  - id: roboto_sm
+    file:
+      type: gfonts
+      family: Roboto
+    size: ${text_sm}
+    bpp: 4
+
+  - id: roboto_md
+    file:
+      type: gfonts
+      family: Roboto
+    size: ${text_md}
+    bpp: 4
+
+  - id: roboto_lg
+    file:
+      type: gfonts
+      family: Roboto
+    size: ${text_lg}
+    bpp: 4
+
+  - id: roboto_xl
+    file:
+      type: gfonts
+      family: Roboto
+    size: ${text_xl}
+    bpp: 4
+
+  - id: roboto_xxl
+    file:
+      type: gfonts
+      family: Roboto
+    size: ${text_xxl}
+    bpp: 4
+
+  - id: mdi_sm
+    file: https://github.com/Pictogrammers/pictogrammers.github.io/raw/refs/heads/main/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf
+    size: ${icons_sm}
+    bpp: 4
+    glyphs: !include glyphs.yaml
+
+  - id: mdi_md
+    file: https://github.com/Pictogrammers/pictogrammers.github.io/raw/refs/heads/main/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf
+    size: ${icons_md}
+    bpp: 4
+    glyphs: !include glyphs.yaml
+
+  - id: mdi_lg
+    file: https://github.com/Pictogrammers/pictogrammers.github.io/raw/refs/heads/main/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf
+    size: ${icons_lg}
+    bpp: 4
+    glyphs: !include glyphs.yaml
+
+  - id: mdi_xl
+    file: https://github.com/Pictogrammers/pictogrammers.github.io/raw/refs/heads/main/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf
+    size: ${icons_xl}
+    bpp: 4
+    glyphs: !include glyphs.yaml
+
+  - id: mdi_xxl
+    file: https://github.com/Pictogrammers/pictogrammers.github.io/raw/refs/heads/main/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf
+    size: ${icons_xxl}
+    bpp: 4
+    glyphs: !include glyphs.yaml

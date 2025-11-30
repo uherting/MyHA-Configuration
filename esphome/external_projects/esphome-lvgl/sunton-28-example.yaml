@@ -1,0 +1,11 @@
+esphome:
+  name: sunton-28-test
+  friendly_name: Sunton 2.8" Test
+
+substitutions:
+  home_page: lighting_1
+
+packages:
+  common: !include common.yaml
+  device: !include devices/ESP32-2432S028R.yaml
+  layout: !include layouts/320x240.yaml
