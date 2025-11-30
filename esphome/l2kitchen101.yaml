@@ -1,47 +1,9 @@
-####################################################################
-####################################################################
-#
-# DEVICE: l2kitchen10
-#
-####################################################################
-####################################################################
-
-####################################################################
-# DESCRIPTION
-####################################################################
-#
-# Purpose:
-#   - Microcontroller for triggering scripts on HA related to l2kitchen
-#
-# Future feature:
-#   - unknown
-#
-# Hardware:
-#   - 1 ESP32
-#
-# Automation:
-#   - still to be determined / documented
-#
-# WiFi:
-#   - connects to the strongest WiFi configured
-#
-# Input:
-#   - 2.8" ili9341 TFT SPI display (320x240)
-#   - no physical buttons so far
-#
-# Output
-#   - 2.8" ili9341 TFT SPI display (320x240)
-#
-
-## connection details for the 2.8" ili9341 TFT SPI display (320x240)
-##
-## (taken from l2kitchen10.yaml)
 ##
 ## This code has been shared to https://github.com/kdorff/esphome/tree/main/tft-office
 ##
 
 ##
-## I (kdorff @ github) am testing connecting the ESP32 to the 2.8" ili9341 TFT
+## I'm testing connecting the ESP32 to the 2.8" ili9341 TFT
 ## SPI display (320x240) which contains a xpt2046 touchscreen
 ## for use within ESPHome and Home Assistant.
 ## At this time, I'm not tring to support the SD card.
@@ -69,6 +31,41 @@
 ## * VCC to 3V3
 ## * GND to GND
 ##
+
+####################################################################
+####################################################################
+#
+# DEVICE: l2kitchen10
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - Microcontroller for controlling ZB plugs realted to l2kitchen
+#
+# Future feature:
+#   - unknown
+#
+# Hardware:
+#   - 1 ESP32
+#
+# Automation:
+#   - none so far
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - TFT 2.8" touch panel (240x320 RGB)
+#   - no physical buttons so far
+#
+# Output
+#   - OLED display 0.42" 72x40
+#
 
 ###################### PACKAGES CONFIGURATION ######################
 # naming conventions which override common behaviour
@@ -99,7 +96,8 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-# time: is to be enabled later as part of the display functionality
+
+# TODO: enable time setup through HA asap
 # time: !include conf/common/time.yaml
 
 # sun: !include conf/common/sun.yaml
@@ -115,57 +113,6 @@ i2c: !include conf/common/device/i2c_esp32_v2.yaml
 # dallas: !include conf/common/device/dallas.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
-
-####################################################################
-###################### DETAILED CONFIGURATION ######################
-####################################################################
-
-#-------------------------------------------------------------------
-# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
-
-globals:
-  - <<: !include conf/common/globals/connectivity.yaml
-interval: 
-  - <<: !include conf/common/interval/connectivity.yaml
-  # - <<: !include conf/interval/l2kitchen10.yaml
-# script:
-  # - <<: !include conf/script/l2kitchen10/rotary_encoder_01_cw.yaml
-  # - <<: !include conf/script/l2kitchen10/rotary_encoder_01_ccw.yaml
-  # - <<: !include conf/script/l2kitchen10/rotary_encoder_01_pushbutton_pressed.yaml
-  # - <<: !include conf/script/l2kitchen10/rotary_encoder_01_backbutton_pressed.yaml
-  # - <<: !include conf/script/l2kitchen10/rotary_encoder_01_confirmbutton_pressed.yaml
-  # - <<: !include conf/script/l2kitchen10/touch_button_A101_on_press.yaml
-  # - <<: !include conf/script/l2kitchen10/touch_button_A202_on_press.yaml
-  # - <<: !include conf/script/l2kitchen10/touch_button_A303_on_press.yaml
-  # - <<: !include conf/script/l2kitchen10/touch_button_A404_on_press.yaml
-
-# #===================================================================
-# # Configuration for the 2.8" touchscreen display (240x320 RGB)
-# #===================================================================
-# #-------------------------------------------------------------------
-# # SPI (default ESP32 platform)
-# spi: !include conf/common/device/spi_esp32_v0.yaml
-# #-------------------------------------------------------------------
-# # COLOR configuration
-# color: !include conf/common/color/touchscreen_28inch_240x320RGB_01.yaml
-# #-------------------------------------------------------------------
-# # FONT configuration
-# # needs to be included before display configuration
-# # this file provides basic fonts for the 2.8" touchscreen display (240x320 RGB) only.
-# # font: !include conf/common/font/touchscreen_28inch_240x320RGB_01.yaml
-# # this file provides all fonts for the 2.8" touchscreen display (240x320 RGB) only.
-# font: !include conf/font/l2kitchen10/touchscreen_28inch_240x320RGB_01.yaml
-# #-------------------------------------------------------------------
-# # DISPLAY
-# display: !include conf/display/l2kitchen10/touchscreen_28inch_240x320RGB_01.yaml
-# #-------------------------------------------------------------------
-# # TOUCHSCREEN (TFT 2.8" touch panel, 240x320 RGB)
-# touchscreen: !include conf/common/touchscreen/touchscreen_28inch_240x320RGB_01.yaml
-
-
-####################################################################
-########################## TO BE WORKED ON START ###################
-####################################################################
 esphome:
   name: tft-office
   includes:
@@ -387,50 +334,3 @@ sensor:
   - platform: homeassistant
     id: wind_gust_speed
     entity_id: sensor.openweathermap_wind_gust_speed
-####################################################################
-########################## TO BE WORKED ON END #####################
-####################################################################
-
-#-------------------------------------------------------------------
-# BINARY SENSORS
-binary_sensor:
-  - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  # device related
-  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
-  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
-  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
-
-#-------------------------------------------------------------------
-# SENSORS
-sensor:
-  # common sensors
-  - <<: !include conf/common/sensor/wifisignal.yaml
-  - <<: !include conf/common/sensor/uptime.yaml
-  # device related
-  - <<: !include conf/common/sensor/aht10_01.yaml
-  # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
-  # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
-
-#-------------------------------------------------------------------
-# SWITCHES
-# switch:
-  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
-
-#-------------------------------------------------------------------
-# TEXT SENSORS
-text_sensor:
-  # common text sensors
-  - <<: !include conf/common/text_sensor/esphomeversion.yaml
-  - <<: !include conf/common/text_sensor/wifiinfo.yaml
-  - <<: !include conf/common/text_sensor/uptime.yaml
-  # device related
-  # none so far
-
-####################################################################
-# EOF
-####################################################################

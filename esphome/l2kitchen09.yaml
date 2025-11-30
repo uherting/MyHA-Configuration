@@ -62,9 +62,7 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-
-# TODO: enable time setup through HA asap
-# time: !include conf/common/time.yaml
+time: !include conf/common/time.yaml
 
 # sun: !include conf/common/sun.yaml
 

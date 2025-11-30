@@ -1,0 +1,33 @@
+####################################################################
+# DEVICE SPECIFIC SUBSTITUTIONS
+
+# device definitions
+device_name: l2kitchen10
+device_comment: Level 2 Kitchen ESP32
+device_area: L2
+
+device_platform: ESP32
+wifi_static_ip: 192.168.178.226
+
+# latest 20250222
+device_board: esp32dev
+device_framework: arduino
+# framework esp-idf throughs too many warnings
+# device_framework: esp-idf
+
+# the friendly name and id
+friendly_name: ""
+friendly_id: ""
+
+# OLED
+display_id: ${device_name}_display
+
+# DALLAS sensors
+# details for DALLAS sensors connected to the device
+dallas_01c01_name: $friendly_name TempCase 01
+dallas_01c01_address: !secret DALLAS_01_L2_KITCHEN_ESP32_CASESENSOR_01_ADDRESS
+dallas_01e01_name: $friendly_name TempEnv 01
+dallas_01e01_address: !secret DALLAS_01_L2_KITCHEN_ESP32_ENVSENSOR_01_ADDRESS
+####################################################################
+# EOF
+####################################################################
