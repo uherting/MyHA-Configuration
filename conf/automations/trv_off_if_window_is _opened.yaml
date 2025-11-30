@@ -38,18 +38,23 @@
             - condition: trigger
               id: "zb_dw_l2_bedroom_contact"
           sequence:
-            # ------------------- TRV SWITCHED OFF -------------------
+            # ------------- TRV GETS SWITCHED OFF / BACK TO AUTO ----------
             - action: climate.set_hvac_mode
               target:
                 entity_id: climate.zb_trv_bedroom_l2
               data:
                 hvac_mode: "off"
-            # ------------------- CREATE NOTIFICATION -------------------
             - service: script.tg_send_txt
               data:
                 msg_title: "Detected open window"
-                msg_text: "An open window in the bedroom was detected, the TRV was turned off"
+                msg_text: "An open window in the bedroom was detected, the TRV was turned off. It will return to auto mode in 20 minutes."
                 msg_receiver: "notify"
+            - delay: "20min"
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.zb_trv_bedroom_l2
+              data:
+                hvac_mode: "auto"
       # - choose:
       #     # --------------------- zb_dw_l2_lounge_contact_01
       #     - conditions:
@@ -62,12 +67,17 @@
       #             entity_id: climate.zb_trv_lounge_l2
       #           data:
       #             hvac_mode: "off"
-      #         # ------------------- CREATE NOTIFICATION -------------------
       #         - service: script.tg_send_txt
       #           data:
       #             msg_title: "Detected open window"
-      #             msg_text: "An open window in the lounge was detected, the TRV was turned off"
+      #             msg_text: "An open window in the lounge was detected, the TRV was turned off. It will return to auto mode in 20 minutes."
       #             msg_receiver: "notify"
+      #         - delay: "20min"
+      #         - action: climate.set_hvac_mode
+      #           target:
+      #             entity_id: climate.zb_trv_lounge_l2
+      #           data:
+      #             hvac_mode: "auto"
       # --------------------- default branch of choose:
       default:
         - service: system_log.write
