@@ -102,6 +102,10 @@ devices:
     friendly_name: ZB_HumanPresence_L2_Lounge_01
   '0xa4c1386544d8ad1c':
     friendly_name: ZB_HumanPresence_L2_Storage_01
+  '0xa4c1389db7a97c22':
+    friendly_name: ZB_HumanPresence_L2_Corridor_01
+  '0xa4c138eb12190e51':
+    friendly_name: ZB_Plug_L2_Misc_03
 groups:
   '1':
     friendly_name: level2-TRVs
