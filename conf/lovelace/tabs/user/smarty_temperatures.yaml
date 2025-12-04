@@ -22,6 +22,38 @@ cards:
         Backups are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
   - type: vertical-stack
     cards:
+      # misc ZB plugs
+      - type: grid
+        square: false
+        # title: Storage
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            # entity:
+            name: "Plugs"
+            show_state: false
+            color: yellow
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_bedroom_misc01
+            name: "LED NB"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_02
+            name: "NB charge"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_03
+            name: "Misc 03"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_lounge_scanner
+            name: "Scanner"
+            color: yellow
+            show_state: false
+
       # Kitchen L2
       - type: grid
         square: false
@@ -56,36 +88,6 @@ cards:
             entity: switch.l2kitchen01_ssr_01
             color: yellow
 
-      # Storage L2
-      - type: grid
-        square: false
-        # title: Storage
-        columns: 5
-        cards:
-          - type: "custom:button-card"
-            entity: switch.l2storage01_ssr_01
-            name: "Storage"
-            color: yellow
-            show_state: false
-          - type: "custom:button-card"
-            name: " "
-            entity: sensor.temperature_humidity_sensor_d59f_temperature
-            show_state: true
-          - type: "custom:button-card"
-            name: " "
-            entity: sensor.temperature_humidity_sensor_d59f_humidity
-            show_state: true
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_bedroom_misc01
-            name: "MiscB 01"
-            color: yellow
-            show_state: false
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_misc_01
-            name: "Misc 01"
-            color: yellow
-            show_state: false
-
       # Lounge L2
       - type: grid
         square: false
@@ -105,20 +107,20 @@ cards:
             entity: sensor.temperature_humidity_sensor_3592_humidity
             show_state: true
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_lounge_scanner
-            name: "Scanner"
+            entity: switch.zb_plug_l2_lounge_tv
+            name: "TV"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_01
+            name: "shelf"
             color: yellow
             show_state: false
           # - type: "custom:button-card"
-          #   entity: switch.zb_plug_l2_lounge_tv
-          #   name: "TV"
-          #   color: yellow
+          #   # entity:
+          #   name: " "
           #   show_state: false
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_misc_02
-            name: "Misc 02"
-            color: yellow
-            show_state: false
+          #   color: yellow
 
       # Bedroom L2
       - type: grid
@@ -168,6 +170,44 @@ cards:
           - type: "custom:button-card"
             entity: binary_sensor.zb_dw_l2_bathroom_contact
             name: " "
+            color: yellow
+
+      # Storage L2
+      - type: grid
+        square: false
+        # title: Storage
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            entity: switch.l2storage01_ssr_01
+            name: "Storage"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            name: " "
+            entity: sensor.zb_th_l2_storage_temperature
+            show_state: true
+          - type: "custom:button-card"
+            name: " "
+            entity: sensor.zb_th_l2_storage_humidity
+            show_state: true
+          # - type: "custom:button-card"
+          #   name: " "
+          #   entity: sensor.temperature_humidity_sensor_d59f_temperature
+          #   show_state: true
+          # - type: "custom:button-card"
+          #   name: " "
+          #   entity: sensor.temperature_humidity_sensor_d59f_humidity
+          #   show_state: true
+          - type: "custom:button-card"
+            # entity:
+            name: " "
+            show_state: false
+            color: yellow
+          - type: "custom:button-card"
+            # entity:
+            name: " "
+            show_state: false
             color: yellow
 
       # North L2
