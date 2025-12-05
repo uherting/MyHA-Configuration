@@ -15,6 +15,7 @@ wifi:
     - ssid: !secret WIFI_L92_SSID
       password: !secret WIFI_L92_PW
   domain: !secret WIFI_DOMAIN
+  min_auth_mode: WPA2  # Reject WPA-only networks
 
 # renaming a device which is online
 # see https://esphome.io/components/esphome.html?highlight=restore_from#changing-esphome-node-name

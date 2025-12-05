@@ -9,6 +9,7 @@ wifi:
     - ssid: !secret WIFI_L99_SSID
       password: !secret WIFI_L99_PW
   domain: !secret WIFI_DOMAIN
+  min_auth_mode: WPA2  # Reject WPA-only networks
 
   # # Optional manual IP
   # manual_ip:
