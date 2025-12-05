@@ -66,13 +66,21 @@ cards:
             entity: switch.zb_plug_l2_lounge_light_corner
             name: Lounge
             color: yellow
+          # - type: "custom:button-card"
+          #   name: " "
+          #   entity: sensor.temperature_humidity_sensor_3592_temperature
+          #   show_state: true
+          # - type: "custom:button-card"
+          #   name: " "
+          #   entity: sensor.temperature_humidity_sensor_3592_humidity
+          #   show_state: true
           - type: "custom:button-card"
             name: " "
-            entity: sensor.temperature_humidity_sensor_3592_temperature
+            entity: sensor.zb_th_l2_lounge_temperature
             show_state: true
           - type: "custom:button-card"
             name: " "
-            entity: sensor.temperature_humidity_sensor_3592_humidity
+            entity: sensor.zb_th_l2_lounge_humidity
             show_state: true
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_lounge_tv
