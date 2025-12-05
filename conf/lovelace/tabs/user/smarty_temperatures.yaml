@@ -22,38 +22,6 @@ cards:
         Backups are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
   - type: vertical-stack
     cards:
-      # misc ZB plugs
-      - type: grid
-        square: false
-        # title: Storage
-        columns: 5
-        cards:
-          - type: "custom:button-card"
-            # entity:
-            name: "Plugs"
-            show_state: false
-            color: yellow
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_bedroom_misc01
-            name: "LED NB"
-            color: yellow
-            show_state: false
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_misc_02
-            name: "NB charge"
-            color: yellow
-            show_state: false
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_misc_03
-            name: "Misc 03"
-            color: yellow
-            show_state: false
-          - type: "custom:button-card"
-            entity: switch.zb_plug_l2_lounge_scanner
-            name: "Scanner"
-            color: yellow
-            show_state: false
-
       # Kitchen L2
       - type: grid
         square: false
@@ -352,6 +320,39 @@ cards:
             name: "PSU UH"
             color: yellow
             show_state: false
+
+      # misc ZB plugs
+      - type: grid
+        square: false
+        # title: Storage
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            # entity:
+            name: "Plugs"
+            show_state: false
+            color: yellow
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_bedroom_misc01
+            name: "LED NB"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_02
+            name: "NB charge"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_misc_03
+            name: "Misc 03"
+            color: yellow
+            show_state: false
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_lounge_scanner
+            name: "Scanner"
+            color: yellow
+            show_state: false
+
       # Recycling / rubbish
       - type: "custom:auto-entities"
         card:
