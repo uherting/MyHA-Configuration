@@ -2,47 +2,38 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any
+from datetime import datetime
 
 import voluptuous as vol
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntity,
-    SensorStateClass,
+
+from homeassistant.core import Event, HomeAssistant, EventStateChangedData, callback
+from homeassistant.util import dt as dt_util
+from homeassistant.const import (
+    CONF_TYPE,
+    STATE_UNKNOWN,
+    STATE_UNAVAILABLE,
+    ATTR_UNIT_OF_MEASUREMENT,
+)
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.event import (
+    async_track_state_change_event,
+    async_track_entity_registry_updated_event,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import (
-    ATTR_UNIT_OF_MEASUREMENT,
-    CONF_NAME,
-    CONF_TYPE,
-    CONF_UNIQUE_ID,
-    STATE_UNAVAILABLE,
-    STATE_UNKNOWN,
+from homeassistant.helpers.typing import StateType
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorStateClass,
+    SensorDeviceClass,
 )
-from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_platform
-from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.entity_platform import (
-    AddConfigEntryEntitiesCallback,
-    AddEntitiesCallback,
-)
-from homeassistant.helpers.event import (
-    async_track_entity_registry_updated_event,
-    async_track_state_change_event,
-)
-from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.restore_state import RestoreEntity
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, StateType
-from homeassistant.util import dt as dt_util
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import (
-    ATTR_LAST_MODIFIED,
-    CONF_ENTITY_ID,
-    DOMAIN,
     LOGGER,
-    PLATFORMS,
+    CONF_ENTITY_ID,
+    ATTR_LAST_MODIFIED,
 )
 
 ATTR_MIN_VALUE = "min_value"
@@ -54,8 +45,6 @@ SENSOR_TYPES = {
     ATTR_MIN_VALUE: "min",
     ATTR_MAX_VALUE: "max",
 }
-
-SERVICE_RESET = "reset"
 
 SENSOR_TYPE_TO_ATTR = {v: k for k, v in SENSOR_TYPES.items()}
 
@@ -154,34 +143,7 @@ async def async_setup_entry(
         ]
     )
 
-    platform = entity_platform.async_get_current_platform()
-
-    platform.async_register_entity_service(
-        SERVICE_RESET,
-        None,
-        "handle_reset",
-    )
-
     return True
-
-
-async def async_setup_platform(
-    hass: HomeAssistant,
-    config: ConfigType,
-    async_add_entities: AddEntitiesCallback,
-    discovery_info: DiscoveryInfoType | None = None,
-) -> None:
-    """Set up the periodic min/max sensor."""
-    source_entity_id: str = config[CONF_ENTITY_ID]
-    name: str | None = config.get(CONF_NAME)
-    sensor_type: str = config[CONF_TYPE]
-    unique_id = config.get(CONF_UNIQUE_ID)
-
-    await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
-
-    async_add_entities(
-        [PeriodicMinMaxSensor(hass, source_entity_id, name, sensor_type, unique_id)]
-    )
 
 
 class PeriodicMinMaxSensor(SensorEntity, RestoreEntity):
