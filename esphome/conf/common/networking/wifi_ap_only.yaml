@@ -12,6 +12,7 @@ wifi:
     gateway: 10.0.0.1
     subnet: 255.255.255.0
   domain: !secret WIFI_DOMAIN
+  min_auth_mode: WPA2  # Reject WPA-only networks
 
   # # Optional manual IP
   # manual_ip:
