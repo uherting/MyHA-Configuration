@@ -1,0 +1,40 @@
+##########################################################################################
+#
+# Templated Sensors
+#
+##########################################################################################
+
+# template:
+
+##########################################################################################
+# sun based theme sensor dependend on sun.sun elevation
+- sensor:
+    - default_entity_id: sensor.sun_based_theme
+      icon:
+        "{% if is_state('sun.sun', 'above_horizon') %}\n  mdi:weather-sunny\n{%
+        else %}\n  mdi:weather-night\n{% endif %}"
+      name: Sun based theme
+      state:
+        "{% if is_state('sun.sun','above_horizon') %}\n {{states('input_select.set_sunrise_theme')}}\n{%
+        else %}\n  {{states('input_select.set_sunset_theme')}}\n{% endif %}"
+
+  #
+  # - platform: template
+  #   sensors:
+  #     sun_based_theme:
+  #       friendly_name: Sun based theme
+  #       value_template: >
+  #         {% if is_state('sun.sun','above_horizon') %}
+  #          {{states('input_select.set_sunrise_theme')}}
+  #         {% else %}
+  #           {{states('input_select.set_sunset_theme')}}
+  #         {% endif %}
+  #       icon_template: >
+  #         {% if is_state('sun.sun', 'above_horizon') %}
+  #           mdi:weather-sunny
+  #         {% else %}
+  #           mdi:weather-night
+  #         {% endif %}
+####################################################################
+# EOF
+####################################################################

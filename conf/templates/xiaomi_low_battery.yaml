@@ -1,0 +1,53 @@
+##########################################################################################
+#
+# Templated Sensors
+#
+##########################################################################################
+
+# template:
+
+# xiaomi low battery alert is based on this sensors
+- binary_sensor:
+    - default_entity_id: binary_sensor.xiaomi_low_battery_l2_bathroom
+      name: Xiaomi low battery L2 bathroom
+      state: "{{ states('sensor.xiaomi_l2_bathroom_battery') | int(0) < 11 }}"
+
+- binary_sensor:
+    - default_entity_id: binary_sensor.xiaomi_low_battery_l2_bedroom
+      name: Xiaomi low battery L2 bedroom
+      state: "{{ states('sensor.xiaomi_l2_bedroom_battery') | int(0) < 11 }}"
+
+- binary_sensor:
+    - default_entity_id: binary_sensor.xiaomi_low_battery_l2_lounge
+      name: Xiaomi low battery L2 lounge
+      state: "{{ states('sensor.xiaomi_l2_lounge_battery') | int(0) < 11 }}"
+
+- binary_sensor:
+    - default_entity_id: binary_sensor.xiaomi_low_battery_l2_storage
+      name: Xiaomi low battery L2 storage
+      state: "{{ states('sensor.xiaomi_l2_storage_battery') | int(0) < 11 }}"
+# - platform: template
+#   sensors:
+#     xiaomi_low_battery_l2_bathroom:
+#       friendly_name: Xiaomi low battery L2 bathroom
+#       value_template: >-
+#         {{ states('sensor.xiaomi_l2_bathroom_battery') | int(0) < 11 }}
+
+#     xiaomi_low_battery_l2_bedroom:
+#       friendly_name: Xiaomi low battery L2 bedroom
+#       value_template: >-
+#         {{ states('sensor.xiaomi_l2_bedroom_battery') | int(0) < 11 }}
+
+#     xiaomi_low_battery_l2_lounge:
+#       friendly_name: Xiaomi low battery L2 lounge
+#       value_template: >-
+#         {{ states('sensor.xiaomi_l2_lounge_battery') | int(0) < 11 }}
+
+#     xiaomi_low_battery_l2_storage:
+#       friendly_name: Xiaomi low battery L2 storage
+#       value_template: >-
+#         {{ states('sensor.xiaomi_l2_storage_battery') | int(0) < 11 }}
+
+# ############################################################
+#  END OF FILE
+# ############################################################

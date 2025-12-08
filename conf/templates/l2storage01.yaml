@@ -1,9 +1,16 @@
-# ############################################################
+##########################################################################################
 #
-#  Binary template sensor
+# Templated Sensors
 #
-# ############################################################
+##########################################################################################
 
+# "spy mode" for light automation in l2storage
+# if on the automation for the light is off
+# template:
+- binary_sensor:
+    - default_entity_id: binary_sensor.l2storage_spymode
+      name: SpyMode
+      state: '{{ states("automation.l2_storage_motion_detected_ssr01_on") != ''on'' }}'
 # was:
 #binary_sensor:
 
@@ -16,13 +23,6 @@
 #       value_template: >-
 #         {{ states("automation.l2_storage_motion_detected_ssr01_on") != 'on' }}
 
-# "spy mode" for light automation in l2storage
-# if on the automation for the light is off
-# template:
-- binary_sensor:
-    - default_entity_id: binary_sensor.l2storage_spymode
-      name: SpyMode
-      state: '{{ states("automation.l2_storage_motion_detected_ssr01_on") != ''on'' }}'
 # ############################################################
 #  END OF FILE
 # ############################################################

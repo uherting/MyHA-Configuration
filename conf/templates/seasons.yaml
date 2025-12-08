@@ -1,0 +1,34 @@
+##########################################################################################
+#
+# Templated Sensors
+#
+##########################################################################################
+
+# template:
+
+# warm / cold seasons
+- binary_sensor:
+    - default_entity_id: binary_sensor.season_is_warm
+      name: Warm season
+      state: "{{ is_state('sensor.season', 'summer') }}"
+
+- binary_sensor:
+    - default_entity_id: binary_sensor.season_is_cold
+      name: Cold season
+      state: "{{ is_state('binary_sensor.season_is_warm', 'false') }}"
+# warm / cold seasons
+# - platform: template
+#   sensors:
+#     season_is_warm:
+#       friendly_name: Warm season
+#       value_template: >-
+#         {{ is_state('sensor.season', 'summer') }}
+#
+#     season_is_cold:
+#       friendly_name: Cold season
+#       value_template: >-
+#         {{ is_state('binary_sensor.season_is_warm', 'false') }}
+
+# ############################################################
+#  END OF FILE
+# ############################################################
