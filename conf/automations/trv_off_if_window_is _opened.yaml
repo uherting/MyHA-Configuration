@@ -44,11 +44,11 @@
                 entity_id: climate.zb_trv_bedroom_l2
               data:
                 hvac_mode: "off"
-            - service: script.tg_send_txt
-              data:
-                msg_title: "Detected open window"
-                msg_text: "An open window in the bedroom was detected, the TRV was turned off. It will return to auto mode in 20 minutes."
-                msg_receiver: "notify"
+            # - service: script.tg_send_txt
+            #   data:
+            #     msg_title: "Detected open window"
+            #     msg_text: "An open window in the bedroom was detected, the TRV was turned off. It will return to auto mode in 20 minutes."
+            #     msg_receiver: "notify"
             - delay: "00:20"
             - action: climate.set_hvac_mode
               target:
