@@ -99,8 +99,7 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-# time: is to be enabled later as part of the display functionality
-# time: !include conf/common/time.yaml
+time: !include conf/common/time.yaml
 
 # sun: !include conf/common/sun.yaml
 
@@ -202,9 +201,6 @@ wifi:
 # logger and captive_portal there doesn't seem to be enough RAM.
 # bluetooth_proxy:
 #  active: true
-
-# Enable logging - at DEBUG by default.
-logger:
 
 color:
   - id: color_text_white
