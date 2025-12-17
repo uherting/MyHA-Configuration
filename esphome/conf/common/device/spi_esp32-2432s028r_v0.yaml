@@ -1,0 +1,18 @@
+####################################################################
+# SPI config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# Setup SPI for the display. The ESP32-2432S028R uses separate SPI buses for display and touch
+# spi:
+  - id: tft
+    clk_pin: GPIO14
+    mosi_pin: GPIO13
+    miso_pin: GPIO12
+  - id: touch
+    clk_pin: GPIO25
+    mosi_pin: GPIO32
+    miso_pin: GPIO39
+
+# ############################################################
+#  END OF FILE
+# ############################################################

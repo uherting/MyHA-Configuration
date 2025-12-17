@@ -1,0 +1,47 @@
+####################################################################
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL ESP32-2432S028R aka CYD DEVICES
+
+####################################################################
+# DEVICE DEFINITION
+esphome:
+  name: $device_name
+  comment: $device_comment
+  area: $device_area
+  build_path: ./build/${device_name}
+  # platform: $device_platform
+
+# # edited due to changes ahead
+# # for details see https://github.com/esphome/esphome/pull/8118
+# # taken from https://esphome.io/components/esp32
+# esp32:
+#   board: $device_board
+#   # this is now working due to a change in esphome/conf/common/sensor/uptime.yaml (was: String(..), now std::to_string(...))
+#   framework:
+#     type: esp-idf
+
+# adjustment for 
+esp32:
+  board: $device_board
+  # this is now working due to a change in esphome/conf/common/sensor/uptime.yaml (was: String(..), now std::to_string(...))
+  framework:
+    type: $device_framework
+
+####################################################################
+# LOGGING (central setup)
+#
+# according to:
+#  - https://esphome.io/components/logger.html?highlight=logger#log-levels
+#  - see secrets.yaml for definitions
+logger:
+  level: ${log_level}
+
+####################################################################
+# Switches (central setup)
+#
+switch:
+  - platform: restart
+    name: ${restart_device_switch_name}
+    id: ${restart_device_switch_id}
+####################################################################
+# EOF
+####################################################################
