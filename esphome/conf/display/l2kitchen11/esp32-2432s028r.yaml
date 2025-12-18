@@ -4,19 +4,64 @@
 
 # display:
 
-# Setup the ili9xxx platform
-#
-# Display is used as 240x320 by default so we rotate it to 90°
-  - platform: ili9xxx
-    model: ili9341
+####################################################################
+# config from https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
+####################################################################
+# no errors, but no visible output
+  - id: main_display
+    platform: ili9xxx
+    model: ILI9341
     spi_id: tft
-    cs_pin: GPIO15
-    dc_pin: GPIO2
-    rotation: 90
+    cs_pin:
+      number: GPIO15
+      ignore_strapping_warning: true
+    dc_pin:
+      number:  GPIO2
+      ignore_strapping_warning: true
     invert_colors: false
+    update_interval: never
+    auto_clear_enabled: false
     lambda: |-
       it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
       it.rectangle(0, 0, 320, 240, id(ha_blue));
+
+####################################################################
+####################################################################
+# the void versions follow below - uncomment to use
+####################################################################
+####################################################################
+
+# config from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/tree/main/Examples/ESPHome
+####################################################################
+  # - platform: ili9xxx
+  #   model: ili9342
+  #   id: esp_display
+  #   spi_id: tft
+  #   cs_pin: GPIO15
+  #   dc_pin: GPIO2
+  #   #invert_display: true (changed to below with ESPhome 2023.12.0)
+  #   invert_colors: true
+  #   lambda: |-
+  #     it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+  #     it.rectangle(0, 0, 320, 240, id(ha_blue));
+
+####################################################################
+# config from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/1-Helloworld/yellowtft1.yaml
+####################################################################
+# # Setup the ili9xxx platform
+# #
+# # Display is used as 240x320 by default so we rotate it to 90°
+#   - platform: ili9xxx
+#     model: ili9341
+#     spi_id: tft
+#     cs_pin: GPIO15
+#     dc_pin: GPIO2
+#     rotation: 90
+#     invert_colors: false
+#     lambda: |-
+#       it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+#       it.rectangle(0, 0, 320, 240, id(ha_blue));
+
 
 # ############################################################
 #  END OF FILE
