@@ -3,7 +3,7 @@
 
 # device definitions
 device_name: l2kitchen11
-device_comment: Level 2 Kitchen ESP32-2432S028R aka CYD
+device_comment: Level 2 Kitchen D11 ESP32-2432S028R aka CYD
 device_area: L2
 
 device_platform: ESP32
