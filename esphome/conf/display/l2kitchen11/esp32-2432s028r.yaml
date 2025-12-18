@@ -5,12 +5,10 @@
 # display:
 
 ####################################################################
-# config from https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
+# config based on info from https://esphome.io/components/display/mipi_spi
 ####################################################################
-# no errors, but no visible output
-  - id: main_display
-    platform: ili9xxx
-    model: ILI9341
+  - platform: mipi_spi
+    model: ESP32-2432S028
     spi_id: tft
     cs_pin:
       number: GPIO15
@@ -18,12 +16,34 @@
     dc_pin:
       number:  GPIO2
       ignore_strapping_warning: true
+    dimensions: 240x320
     invert_colors: false
-    update_interval: never
-    auto_clear_enabled: false
+    rotation: 90
+    update_interval: 10s
     lambda: |-
-      it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
-      it.rectangle(0, 0, 320, 240, id(ha_blue));
+      it.print(120, 160, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+      it.rectangle(0, 0, 240, 320, id(ha_blue));
+
+####################################################################
+# config from https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
+####################################################################
+# # no errors, but no visible output
+#   - id: main_display
+#     platform: ili9xxx
+#     model: ILI9341
+#     spi_id: tft
+#     cs_pin:
+#       number: GPIO15
+#       ignore_strapping_warning: true
+#     dc_pin:
+#       number:  GPIO2
+#       ignore_strapping_warning: true
+#     invert_colors: false
+#     update_interval: never
+#     auto_clear_enabled: false
+#     lambda: |-
+#       it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+#       it.rectangle(0, 0, 320, 240, id(ha_blue));
 
 ####################################################################
 ####################################################################
