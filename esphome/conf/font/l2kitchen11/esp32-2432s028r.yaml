@@ -1,0 +1,15 @@
+####################################################################
+# font config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# font:
+
+# Create a font to use, add and remove glyphs as needed. 
+  - file: 'conf/font/l2kitchen11/Arimo-Regular.ttf'
+    id: arimo20
+    size: 20
+    glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
+
+# ############################################################
+#  END OF FILE
+# ############################################################

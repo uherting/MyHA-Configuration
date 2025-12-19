@@ -2,18 +2,17 @@
 # DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
-device_name: l2kitchen10
-device_comment: Level 2 Kitchen ESP32 touchscreen test
+device_name: l2kitchen11
+device_comment: Level 2 Kitchen D11 ESP32-2432S028R aka CYD
 device_area: L2
 
 device_platform: ESP32
 wifi_static_ip: 192.168.178.226
 
-# latest 20250222
+# The ESP32-2432S028R uses a standard ESP32-WROVER, 
+# so we use the esp32dev defintion here with the Arduino framework
 device_board: esp32dev
 device_framework: arduino
-# framework esp-idf throughs too many warnings
-# device_framework: esp-idf
 
 # the friendly name and id
 friendly_name: ""
