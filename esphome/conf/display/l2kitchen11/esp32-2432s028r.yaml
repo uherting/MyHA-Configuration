@@ -16,18 +16,21 @@
   cs_pin: GPIO15
   dc_pin: GPIO2
   #invert_display: true (changed to below with ESPhome 2023.12.0)
-  invert_colors: true
+  invert_colors: false
+  # for color_palette: seee https://esphome.io/components/display/ili9xxx/#configuration-variables
   color_palette: 8BIT
+  # color_palette: NONE
+  color_order: rgb
   #update_interval: never  # The interval to re-draw the screen. Defaults to 1s.
   #auto_clear_enabled: false
-  rotation: 0 #One of 0, 90, 180 or 270.
+  rotation: 180 #One of 0, 90, 180 or 270.
   dimensions:
    width: 320
    height: 240
    #show_test_card: true
   lambda: |-
       it.fill(id(ha_yellow));
-      it.print(160, 120, id(arimo20), id(ha_black), TextAlign::BOTTOM_CENTER, "Hello World!");
+      it.print(170, 120, id(arimo20), id(ha_black), TextAlign::BOTTOM_CENTER, "Hello World!");
       it.rectangle(100, 10, 50, 150, id(ha_blue));
 
 ####################################################################

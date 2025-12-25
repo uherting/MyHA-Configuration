@@ -10,11 +10,15 @@
 
 # Create a yellow color
   - id: ha_yellow
-    hex: ffff00
+    red: 100%
+    green: 70%
+    blue: 0%
 
 # Create white color
   - id: ha_white
-    hex: ffffff
+    red: 100%
+    green: 100%
+    blue: 100%
 
 # Create a nother color
   - id: ha_another
