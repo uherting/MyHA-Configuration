@@ -97,11 +97,10 @@ font: !include conf/font/l2kitchen11/esp32-2432s028r.yaml
 display: !include conf/display/l2kitchen11/esp32-2432s028r.yaml
 #-------------------------------------------------------------------
 # TOUCHSCREEN configuration
-# In the HelloWorld example no touchscreen configuration was included
-# touchscreen: !include conf/common/touchscreen/esp32-2432s028r.yaml
-
-# ============================================================ 
-# Setup a way to control the backlight
+# config taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
+touchscreen: !include conf/common/touchscreen/esp32-2432s028r.yaml
+#-------------------------------------------------------------------
+# Setup a way to control the backlight of the display
 light:
   - platform: monochromatic
     output: backlight_pwm
@@ -133,6 +132,21 @@ interval:
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
+  # --------------
+  # Setup two binary sensors for the two areas for touch
+  - platform: touchscreen
+    name: Button A
+    x_min: 20
+    x_max: 140
+    y_min: 60
+    y_max: 180
+
+  - platform: touchscreen
+    name: Button B
+    x_min: 180
+    x_max: 300
+    y_min: 60
+    y_max: 180  
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml

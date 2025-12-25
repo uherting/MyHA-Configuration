@@ -5,6 +5,11 @@
 # font:
 
 # Create a font to use, add and remove glyphs as needed. 
+  - file: 'conf/font/l2kitchen11//Arimo-Regular.ttf'
+    id: arimo96
+    size: 96
+    glyphs: "AB"
+
   - file: 'conf/font/l2kitchen11/Arimo-Regular.ttf'
     id: arimo20
     size: 20

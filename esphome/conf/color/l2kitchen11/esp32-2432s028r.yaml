@@ -4,9 +4,25 @@
 
 # color:
 
-# Create a Home Assistant blue color
+# Create a blue color
   - id: ha_blue
     hex: 51c0f2
+
+# Create a yellow color
+  - id: ha_yellow
+    hex: ffff00
+
+# Create white color
+  - id: ha_white
+    hex: ffffff
+
+# Create a nother color
+  - id: ha_another
+    hex: 515151
+
+# Create black color
+  - id: ha_black
+    hex: 100001
 
 # ############################################################
 #  END OF FILE
