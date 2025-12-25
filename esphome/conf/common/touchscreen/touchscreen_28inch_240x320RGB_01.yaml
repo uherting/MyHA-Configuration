@@ -1,5 +1,6 @@
 ####################################################################
-# DISPLAY
+# TOUCHSCREEN
+#
 # configuration for TFT 2.8" touch panel (240x320 RGB)
 # for details see https://esphome.io/components/display/ili9xxx.html (obsolete) and
 # https://esphome.io/components/display/mipi_spi.html (new since ESPHome v2024.6)

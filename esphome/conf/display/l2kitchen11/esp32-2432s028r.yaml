@@ -1,0 +1,206 @@
+####################################################################
+# display config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# display:
+
+# the following config seems to be the working one w/ colour
+####################################################################
+# config from https://community.home-assistant.io/t/faulty-cyd-or-config-error/908986
+# lambda added from below
+####################################################################
+- platform: ili9xxx
+  id: esp_display
+  model: ili9342
+  spi_id: tft
+  cs_pin: GPIO15
+  dc_pin: GPIO2
+  #invert_display: true (changed to below with ESPhome 2023.12.0)
+  invert_colors: false
+  # for color_palette: seee https://esphome.io/components/display/ili9xxx/#configuration-variables
+  color_palette: 8BIT
+  # color_palette: NONE
+  color_order: rgb
+  #update_interval: never  # The interval to re-draw the screen. Defaults to 1s.
+  #auto_clear_enabled: false
+  rotation: 180 #One of 0, 90, 180 or 270.
+  dimensions:
+   width: 320
+   height: 240
+   #show_test_card: true
+  lambda: |-
+      it.fill(id(ha_yellow));
+      it.print(170, 120, id(arimo20), id(ha_black), TextAlign::BOTTOM_CENTER, "Hello World!");
+      it.rectangle(100, 10, 50, 150, id(ha_blue));
+
+####################################################################
+# config based on info from 
+#   - https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/tree/main/Examples/ESPHome
+#
+# attention:
+# ----------
+# NEW HARDWARE VERSION WITH USB-C CONNECTOR:
+# for this, the display component needs to be set up like the following (model ili9342, no rotation, inverted)
+####################################################################
+#  - platform: ili9xxx
+#   #  id: esp_display
+#    model: ili9342
+#    spi_id: tft
+#    cs_pin: GPIO15
+#    dc_pin: GPIO2
+#    #invert_display: true (changed to below with ESPhome 2023.12.0)
+#    invert_colors: true
+#    lambda: |-
+#       it.fill(id(ha_white));
+#       it.print(160, 120, id(arimo20), id(ha_black), TextAlign::BOTTOM_CENTER, "Hello World!");
+#       it.rectangle(100, 10, 50, 150, id(ha_blue));
+
+####################################################################
+# config based on info from https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
+####################################################################
+  # - id: main_display
+  #   platform: ili9xxx
+  #   model: ILI9341
+  #   spi_id: tft
+  #   cs_pin:
+  #     number: 15
+  #     ignore_strapping_warning: true
+  #   dc_pin:
+  #     number:  2
+  #     ignore_strapping_warning: true
+  #   invert_colors: false
+  #   update_interval: never
+  #   auto_clear_enabled: false
+
+
+####################################################################
+# config based on info from https://esphome.io/components/display/mipi_spi
+####################################################################
+  # - platform: mipi_spi
+  #   model: ESP32-2432S028
+  #   spi_id: tft
+  #   cs_pin:
+  #     number: GPIO15
+  #     ignore_strapping_warning: true
+  #   dc_pin:
+  #     number:  GPIO2
+  #     ignore_strapping_warning: true
+  #   dimensions: 240x320
+  #   invert_colors: false
+  #   rotation: 0
+  #   update_interval: never
+  #   lambda: |-
+  #     it.print(160, 120, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+  #     it.rectangle(100, 10, 50, 150, id(ha_blue));
+  #   # it.filled_rectangle(70, 20, 120, 220, id(ha_blue));
+
+####################################################################
+# config based on AI generated suggestion, does not work
+####################################################################
+  # - platform: ili9xxx
+  #   model: ST7789V
+  #   spi_id: tft
+  #   cs_pin: GPIO15
+  #   dc_pin: GPIO2
+  #   # reset_pin: GPIO12
+  #   dimensions:
+  #     height: 320
+  #     width: 240
+  #     offset_height: 0
+  #     offset_width: 0
+  #   invert_colors: false
+  #   lambda: |-
+  #     // Clear screen with black background
+  #     it.fill(ha_black);
+  #     // Print "Hello World" in ha_blue at center (240x320 resolution)
+  #     it.printf(120, 160, id(arimo96), ha_blue, TextAlign::CENTER, "Hello what");
+
+####################################################################
+# config based on info from https://esphome.io/components/display/mipi_spi
+####################################################################
+  # - platform: mipi_spi
+  #   model: ESP32-2432S028
+  #   spi_id: tft
+  #   cs_pin:
+  #     number: GPIO15
+  #     ignore_strapping_warning: true
+  #   dc_pin:
+  #     number:  GPIO2
+  #     ignore_strapping_warning: true
+  #   dimensions: 240x320
+  #   invert_colors: false
+  #   rotation: 0
+  #   update_interval: 10s
+  #   lambda: |-
+  #     it.fill(id(Color::BLACK));
+  #     it.filled_rectangle(20, 60, 120, 120, id(ha_blue));
+  #     it.filled_rectangle(180, 60, 120, 120, id(ha_blue));
+  #     it.print(80, 120, id(arimo96), TextAlign::CENTER, "A");
+  #     it.print(240, 120, id(arimo96), TextAlign::CENTER, "B");
+  #   # from the Hello World example
+  #   # lambda: |-
+  #   #   it.print(120, 160, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+  #   #   it.rectangle(0, 0, 240, 320, id(ha_blue));
+
+####################################################################
+# config from https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
+####################################################################
+# # no errors, but no visible output
+#   - id: main_display
+#     platform: ili9xxx
+#     model: ILI9341
+#     spi_id: tft
+#     cs_pin:
+#       number: GPIO15
+#       ignore_strapping_warning: true
+#     dc_pin:
+#       number:  GPIO2
+#       ignore_strapping_warning: true
+#     invert_colors: false
+#     update_interval: never
+#     auto_clear_enabled: false
+#     lambda: |-
+#       it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+#       it.rectangle(0, 0, 320, 240, id(ha_blue));
+
+####################################################################
+####################################################################
+# the void versions follow below - uncomment to use
+####################################################################
+####################################################################
+
+# config from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/tree/main/Examples/ESPHome
+####################################################################
+  # - platform: ili9xxx
+  #   model: ili9342
+  #   id: esp_display
+  #   spi_id: tft
+  #   cs_pin: GPIO15
+  #   dc_pin: GPIO2
+  #   #invert_display: true (changed to below with ESPhome 2023.12.0)
+  #   invert_colors: true
+  #   lambda: |-
+  #     it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+  #     it.rectangle(0, 0, 320, 240, id(ha_blue));
+
+####################################################################
+# config from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/1-Helloworld/yellowtft1.yaml
+####################################################################
+# # Setup the ili9xxx platform
+# #
+# # Display is used as 240x320 by default so we rotate it to 90°
+#   - platform: ili9xxx
+#     model: ili9341
+#     spi_id: tft
+#     cs_pin: GPIO15
+#     dc_pin: GPIO2
+#     rotation: 90
+#     invert_colors: false
+#     lambda: |-
+#       it.print(160, 140, id(arimo20), id(ha_blue), TextAlign::BOTTOM_CENTER, "Hello World!");
+#       it.rectangle(0, 0, 320, 240, id(ha_blue));
+
+
+# ############################################################
+#  END OF FILE
+# ############################################################

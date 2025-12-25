@@ -1,0 +1,73 @@
+####################################################################
+# TOUCHSCREEN config for ESP32-2432S028R aka CYD --- with onboard ESP32
+#
+####################################################################
+
+# touchscreen:
+
+# taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
+- platform: xpt2046
+  spi_id: touch
+  cs_pin: GPIO33
+  interrupt_pin: GPIO36
+  update_interval: 50ms
+  threshold: 400
+  calibration:
+    x_min: 280
+    x_max: 3860
+    y_min: 340
+    y_max: 3860
+  transform:
+    swap_xy: false      
+
+# taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
+# - platform: xpt2046
+#   spi_id: touch
+#   cs_pin: GPIO33
+#   interrupt_pin: GPIO36
+#   update_interval: 50ms
+#   threshold: 400
+#   transform:
+#     # default for all is false according to docs at https://esphome.io/components/touchscreen/
+#     mirror_x: true
+#     mirror_y: false
+#     swap_xy: false
+#   calibration:
+#     x_min: 280
+#     x_max: 3860
+#     y_min: 340
+#     y_max: 3860
+
+
+# The following touchscreen config is void
+
+
+# # for details see https://esphome.io/components/display/ili9xxx.html (obsolete) and
+# # https://esphome.io/components/display/mipi_spi.html (new since ESPHome v2024.6)
+#   - platform: xpt2046
+#     display: ${display_id}
+#     cs_pin: GPIO33      # Chip Select pin
+#     calibration:
+#       x_min: 300
+#       x_max: 3900
+#       y_min: 200
+#       y_max: 3700
+#     on_touch:
+#       - lambda: |-
+#             ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
+#                 touch.x,
+#                 touch.y,
+#                 touch.x_raw,
+#                 touch.y_raw
+#                 );
+#     # on_touch:
+#     #   then:
+#     #     ...
+#     # on_update:
+#     #   then:
+#     #     ...
+#     # on_release:
+#     #   then:
+####################################################################
+# EOF
+####################################################################
