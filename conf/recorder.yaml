@@ -100,9 +100,12 @@ exclude:
     - sensor.l2kitchen02_scan_results
     - sensor.l2kitchen02_uptime
     - sensor.l2kitchen02_uptime_human_readable
-    - sensor.l2kitchen09_scan_results
-    - sensor.l2kitchen09_uptime
-    - sensor.l2kitchen09_uptime_human_readable
+    - sensor.l2kitchen03_scan_results
+    - sensor.l2kitchen03_uptime
+    - sensor.l2kitchen03_uptime_human_readable
+    - sensor.l2kitchen11_scan_results
+    - sensor.l2kitchen11_uptime
+    - sensor.l2kitchen11_uptime_human_readable
     - sensor.l2storage01_scan_results
     - sensor.l2storage01_uptime
     - sensor.l2storage01_uptime_human_readable
