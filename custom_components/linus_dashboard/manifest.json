@@ -1,0 +1,33 @@
+{
+  "domain": "linus_dashboard",
+  "name": "Linus dashboard",
+  "after_dependencies": [
+    "sensor",
+    "media_player",
+    "light",
+    "switch",
+    "climate",
+    "cover",
+    "binary_sensor",
+    "device_tracker",
+    "person",
+    "fan",
+    "lock",
+    "vacuum",
+    "water_heater",
+    "input_boolean",
+    "input_select"
+  ],
+  "codeowners": [
+    "@Thank-you-Linus"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "http"
+  ],
+  "documentation": "https://github.com/Thank-you-Linus/Linus-Dashboard",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/Thank-you-Linus/Linus-Dashboard/issues",
+  "requirements": [],
+  "version": "1.3.0"
+}

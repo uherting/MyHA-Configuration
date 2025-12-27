@@ -1,0 +1,115 @@
+{
+    "config": {
+        "abort": {
+            "single_instance_allowed": "Only a single configuration of Linus Dashboard is allowed."
+        },
+        "step": {
+            "user": {
+                "title": "Linus Dashboard Setup",
+                "description": "Welcome to Linus Dashboard configuration! This smart dashboard automatically organizes your devices by room and type for a modern and intuitive Home Assistant experience."
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Customize Linus Dashboard",
+                "description": "Configure your Linus Dashboard according to your preferences. You can select weather and alarm entities, exclude certain domains or devices, and customize the display. For more information, visit the documentation: {docs_url}",
+                "data": {
+                    "alarm_entity_ids": "Alarms to display",
+                    "weather_entity": "Weather entity",
+                    "hide_greeting": "Hide greeting message",
+                    "excluded_targets": "Targets to exclude",
+                    "excluded_domains": "Domains to exclude",
+                    "excluded_device_classes": "Device classes to exclude",
+                    "excluded_integrations": "Integrations to exclude"
+                },
+                "data_description": {
+                    "alarm_entity_ids": "List of alarms to control in the dashboard.",
+                    "weather_entity": "Weather entity used to display weather conditions.",
+                    "hide_greeting": "Check this box to hide the greeting message on the dashboard.",
+                    "excluded_targets": "Specific targets that will be excluded from the dashboard.",
+                    "excluded_domains": "Domains that will be excluded from the dashboard.",
+                    "excluded_device_classes": "Device classes that will be excluded from the dashboard.",
+                    "excluded_integrations": "Integrations to exclude from the dashboard."
+                }
+            }
+        }
+    },
+    "entity": {
+        "button": {
+            "add_new_area": {
+                "name": "Area not found",
+                "state": {
+                    "on": "Add a new area",
+                    "off": "Click here to go to the areas page"
+                }
+            }
+        },
+        "text": {
+            "area_states": {
+                "name": "Area States",
+                "state": {
+                    "presence_hold": "Presence Hold",
+                    "sleep": "Sleep",
+                    "extended": "Extended",
+                    "occupied": "Occupied",
+                    "clear": "Clear"
+                }
+            },
+            "area_state_popup": {
+                "name": "Sensors used for presence detection:"
+            },
+            "greeting": {
+                "name": "Greeting",
+                "state": {
+                    "morning": "Good morning,",
+                    "afternoon": "Good afternoon,",
+                    "evening": "Good evening,",
+                    "night": "Good night,"
+                }
+            },
+            "reload_cache": {
+                "name": "Reload Cache",
+                "state": {
+                    "restart": "Clear cache",
+                    "confirm": "Are you sure you want to clear the cache and reload the page?"
+                }
+            },
+            "settings_popup": {
+                "name": "Control center",
+                "state": {
+                    "welcome_message": "Here's what Linus proudly organizes:",
+                    "reload_magic_areas": "Reload Magic Areas",
+                    "reload_confirm": "Are you sure you want to reload Magic Areas?",
+                    "reload_cache": "Reload Cache",
+                    "dashboard_config": "Dashboards",
+                    "areas": "areas",
+                    "floors": "floors",
+                    "entities": "entities",
+                    "devices": "devices",
+                    "logs": "Logs",
+                    "magic_areas": "Magic Areas integrations",
+                    "linus_dashboard": "Linus Dashboard integrations",
+                    "restart": "Restart HA",
+                    "restart_confirm": "Are you sure you want to restart Home Assistant?",
+                    "github": "GitHub",
+                    "documentation": "Documentation",
+                    "issues": "Report a bug",
+                    "thank_you": "Thank you for using Linus Dashboard",
+                    "star_message": "⭐ Love Linus Dashboard? Star us on GitHub!",
+                    "version_info": "Version"
+                }
+            },
+            "version_check": {
+                "name": "⚠️ Linus Dashboard Update Required",
+                "state": {
+                    "mismatch": "ℹ️ Version mismatch detected",
+                    "browser": "💻 Frontend (Dashboard)",
+                    "backend": "🔧 Backend (Custom Component)",
+                    "instructions": "🔄 Please refresh your browser (CTRL+F5 or SHIFT+F5) to load the latest version."
+                }
+            }
+        }
+    }
+}
