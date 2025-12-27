@@ -23,6 +23,11 @@
       state: >
         {% set ics_num = state_attr("sensor.ics_13", "remaining") | int(-1000) %}
         {{ ics_num }}
+    - name: "Abholung-Altglas-D"
+      unit_of_measurement: "d"
+      state: >
+        {% set ics_num = state_attr("sensor.ics_14", "remaining") | int(-1000) %}
+        {{ ics_num }}
 
 ####################################################################
 # EOF

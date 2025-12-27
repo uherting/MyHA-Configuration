@@ -93,6 +93,36 @@
         msg_title: "Gelbe Tonne collection information"
         msg_text: "Gelbe Tonne collection is due the day *after tomorrow*"
         msg_receiver: "notify"
+
+# ############################################################
+# Abholung-Altglas
+# ############################################################
+- alias: ICS - Abholung-Altglas - 2 days to go
+  id: "019b61eb-92e7-702a-8fea-efa424a1c819"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  trigger:
+    - platform: time
+      at: "19:04:00"
+
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.abholung_altglas_d
+      # attribute: remaining
+      below: "3"
+      above: "1"
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SEND NOTIFICATION -------------------
+    - service: script.tg_send_txt
+      data:
+        msg_title: "Recycling info"
+        msg_text: "Glas will be collected the day *after tomorrow*"
+        msg_receiver: "notify"
 # ############################################################
 #  END OF FILE
 # ############################################################

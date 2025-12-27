@@ -11,11 +11,18 @@
 # days to the next event. E.g. 5 days until the trash will be picked up. The information
 # will be read from a user definded ics file.
 
+#
+# data can be imported from https://www.landkreisgoettingen.de/Hauptnavigation/Themen-Leistungen/Abfall-Entsorgung/Abfallwirtschaft/Abfallkalender/
+#
+
 # Altpapier-Abholung
 - platform: ics
   url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
   name: Altpapier-Abholung
-  startswith: Altpapier-Abholung
+  # TODO: change to "Altpapiertonne" if test successfull
+  # startswith: Altpapier-Abholung
+  startswith: "Altpapier tonne"
+  # startswith: "Altpapiertonne"
   lookahead: 60
   force_update: 3600
   id: 11
@@ -36,10 +43,21 @@
   url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
   name: GelbeTonne-Abholung
   startswith: GelbeTonne-Abholung
+  # startswith: "Gelbe Tonne"
   lookahead: 60
   force_update: 3600
   id: 13
   icon: mdi:delete-empty
+
+# Altglas-Abholung
+- platform: ics
+  url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
+  name: Altglas-Abholung
+  startswith: Altglas
+  lookahead: 60
+  force_update: 3600
+  id: 14
+  icon: mdi:glass-fragile
 ####################################################################
 # EOF
 ####################################################################
