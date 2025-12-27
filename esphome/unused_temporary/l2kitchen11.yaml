@@ -98,7 +98,7 @@ display: !include conf/display/l2kitchen11/esp32-2432s028r.yaml
 #-------------------------------------------------------------------
 # TOUCHSCREEN configuration
 # config taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
-touchscreen: !include conf/common/touchscreen/esp32-2432s028r.yaml
+touchscreen: !include conf/touchscreen/l2kitchen11.yaml
 #-------------------------------------------------------------------
 # Setup a way to control the backlight of the display
 light:

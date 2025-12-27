@@ -1,0 +1,27 @@
+####################################################################
+# TOUCHSCREEN config for ESP32-2432S028R aka CYD --- with onboard ESP32
+#####################################################################
+
+# touchscreen:
+
+################################################################
+# taken from https://github.com/pixelEDI/LVGL_ESP32_YT-Beispiele/blob/main/10_LVGL_HelloWorld_switch_mit_ESPHome/lvgl_helloworld.yaml
+################################################################
+  - platform: xpt2046
+    id: my_touch
+    spi_id: touch
+    cs_pin: GPIO33
+    interrupt_pin: GPIO36
+    calibration:
+      x_min: 200
+      x_max: 3900
+      y_min: 200
+      y_max: 3900   
+    transform:
+      mirror_x: false
+      mirror_y: false
+      swap_xy: false
+
+####################################################################
+# EOF
+####################################################################

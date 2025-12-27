@@ -1,0 +1,10 @@
+####################################################################
+# OVERWRITE COMMON SUBSTITUTIONS
+
+# if there are no overrides the dummy value comes in handy ;-)
+dummy_value: "dummy value"
+
+# log_level: !secret LOG_LEVEL_WARN
+####################################################################
+# EOF
+####################################################################

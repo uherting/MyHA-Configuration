@@ -1,0 +1,36 @@
+####################################################################
+# display config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# display:
+
+# the following config seems to be the working one w/ colour
+####################################################################
+# config from https://community.home-assistant.io/t/faulty-cyd-or-config-error/908986
+# lambda added from below
+####################################################################
+- platform: ili9xxx
+  id: esp_display
+  model: ili9342
+  spi_id: tft
+  cs_pin: GPIO15
+  dc_pin: GPIO2
+  #invert_display: true (changed to below with ESPhome 2023.12.0)
+  invert_colors: false
+  # for color_palette: seee https://esphome.io/components/display/ili9xxx/#configuration-variables
+  # color_palette: 8BIT
+  # color_palette: NONE
+  color_order: rgb
+  #update_interval: never  # The interval to re-draw the screen. Defaults to 1s.
+  #auto_clear_enabled: false
+  # rotation: valid values: 0, 90, 180 or 270. 180 equals to antenna on the left side
+  # 90: vertical, antenna on top side
+  rotation: 90 
+  dimensions:
+   width: 320
+   height: 240
+   #show_test_card: true
+
+# ############################################################
+#  END OF FILE
+# ############################################################

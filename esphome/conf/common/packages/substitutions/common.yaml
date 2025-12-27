@@ -190,6 +190,9 @@ substitutions:
   ssr09_id: ${friendly_id}_SSR09
   ssr09_name: $friendly_name SSR 09
 
+  # TTF fonts
+  ttf_font_directory: "conf/common/font"
+
   # touch buttons
   touchbutton01_id: ${friendly_id}_TB_01
   touchbutton01_name: $friendly_name TB 01

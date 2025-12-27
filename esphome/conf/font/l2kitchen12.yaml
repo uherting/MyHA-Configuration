@@ -1,0 +1,27 @@
+####################################################################
+# font config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# font:
+
+# the standard / fall back font for labels and buttons
+  - file: ${ttf_font_directory}/Arimo-Regular.ttf
+    id: my_font
+    size: 12
+    # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
+
+# the font for the icons used in buttons
+  - file: ${ttf_font_directory}/materialdesignicons-webfont.ttf
+                               # Defining Material Design Icons as a font. This
+    id: mdi_icons              # will allow us to use them as button icons.
+    size: 48                   # You can get these glyphs from the https://pictogrammers.com/library/mdi/
+    bpp: 4                     # 4 bits per pixel for better quality
+    glyphs:                    # where you choose the icon, and then "copy glyph".
+      - "󱂟" # mdiCoffeeMaker
+      - "󰪬" # mdiDishwasher
+      - "󰗺" # mdiKettle
+      - "󰲙" # mdiMicrowave
+
+# ############################################################
+#  END OF FILE
+# ############################################################
