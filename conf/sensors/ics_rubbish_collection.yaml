@@ -19,10 +19,7 @@
 - platform: ics
   url: https://calendar.google.com/calendar/ical/uherting-b%40gmx.de/private-a7a271c2066532d9d5e711f9a5b4d384/basic.ics
   name: Altpapier-Abholung
-  # TODO: change to "Altpapiertonne" if test successfull
-  # startswith: Altpapier-Abholung
-  startswith: "Altpapier tonne"
-  # startswith: "Altpapiertonne"
+  startswith: "Altpapiertonne"
   lookahead: 60
   force_update: 3600
   id: 11
