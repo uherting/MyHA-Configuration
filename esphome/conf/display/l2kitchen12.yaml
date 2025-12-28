@@ -18,7 +18,7 @@
   #invert_display: true (changed to below with ESPhome 2023.12.0)
   invert_colors: false
   # for color_palette: seee https://esphome.io/components/display/ili9xxx/#configuration-variables
-  color_palette: 8BIT
+  # color_palette: 8BIT
   # color_palette: NONE
   color_order: rgb
   #update_interval: never  # The interval to re-draw the screen. Defaults to 1s.

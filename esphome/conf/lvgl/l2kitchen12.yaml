@@ -47,15 +47,17 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
-                  bg_color: default_button_bg_color
+                  bg_color: default_btn_bg_color
                   pressed:
-                    bg_color: default_button_pressed_bg_color
+                    bg_color: default_btn_pressed_bg_color
+                  checkable: true
                   widgets:
                     - label:
                         id: lbl_btn_1
                         text: "󰪬"
                         text_font: mdi_icons
-                        text_color: btn_1_color
+                        # text_color: btn_1_color
+                        # text_color: ha_yellow
                         align: center
                   on_click:
                     then:
@@ -72,6 +74,9 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
+                  bg_color: default_btn_bg_color
+                  pressed:
+                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:
@@ -98,6 +103,9 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
+                  bg_color: default_btn_bg_color
+                  pressed:
+                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:
@@ -124,6 +132,9 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
+                  bg_color: default_btn_bg_color
+                  pressed:
+                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:
@@ -143,7 +154,44 @@
                       - delay: 500ms
                       # - binary_sensor.template.publish:
                       #     id: button_4_pressed
-                      #     state: OFF            
+                      #     state: OFF
+              # - switch:
+              #     id: light_switch
+              #     align: CENTER
+              #     on_click:
+              #       light.toggle: local_light
+              #     grid_cell_column_pos: 0
+              #     grid_cell_row_pos: 1
+              #     # grid_cell_x_align: STRETCH
+              #     # grid_cell_y_align: STRETCH
+              # - switch:
+              #     id: light_switch1
+              #     align: CENTER
+              #     on_click:
+              #       light.toggle: local_light
+              #     grid_cell_column_pos: 1
+              #     grid_cell_row_pos: 1
+              #     # grid_cell_x_align: STRETCH
+              #     # grid_cell_y_align: STRETCH
+              # - switch:
+              #     id: light_switch2
+              #     align: CENTER
+              #     on_click:
+              #       light.toggle: local_light
+              #     grid_cell_column_pos: 2
+              #     grid_cell_row_pos: 1
+              #     # grid_cell_x_align: STRETCH
+              #     # grid_cell_y_align: STRETCH
+              # - switch:
+              #     id: light_switch3
+              #     align: CENTER
+              #     on_click:
+              #       light.toggle: local_light
+              #     grid_cell_column_pos: 3
+              #     grid_cell_row_pos: 1
+              #     # grid_cell_x_align: STRETCH
+              #     # grid_cell_y_align: STRETCH
+
 ####################################################################
 # EOF
 ####################################################################

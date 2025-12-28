@@ -105,20 +105,22 @@ touchscreen: !include conf/touchscreen/l2kitchen12.yaml
 #-------------------------------------------------------------------
 # Setup a way to control the backlight of the display
 light:
+  # Backlight control
   - platform: monochromatic
     output: backlight_pwm
     name: Display Backlight
     id: backlight
     restore_mode: ALWAYS_ON
-  - platform: binary
-    output: gpio4_out
-    id: local_light
-    name: "GPIO 4 Light"
-    on_state:
-      - lvgl.widget.update:
-          id: light_switch
-          state:
-            checked: !lambda return id(local_light).current_values.is_on();
+  # RGB LED to test output
+  # - platform: binary
+  #   output: gpio4_out
+  #   id: local_light
+  #   name: "GPIO 4 Light"
+  #   on_state:
+  #     - lvgl.widget.update:
+  #         id: light_switch3
+  #         state:
+  #           checked: !lambda return id(local_light).current_values.is_on();
 
 output:
   - platform: ledc
