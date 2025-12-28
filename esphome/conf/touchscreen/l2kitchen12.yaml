@@ -20,7 +20,8 @@
     transform:
       mirror_x: false
       mirror_y: false
-      swap_xy: false
+      # true as LCD is used in landscape mode
+      swap_xy: true
 
 ####################################################################
 # EOF

@@ -24,6 +24,7 @@
   #update_interval: never  # The interval to re-draw the screen. Defaults to 1s.
   #auto_clear_enabled: false
   # rotation: valid values: 0, 90, 180 or 270. 180 equals to antenna on the left side
+  # pay attention to the touchscreen, swap_xy: might be changed accordingly
   rotation: ${cyd_display_rotation} 
   dimensions:
    width: ${cyd_display_width_320}

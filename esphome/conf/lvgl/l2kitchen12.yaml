@@ -42,7 +42,7 @@
             outline_pad: 5px
             widgets:
               - button:
-                  id: btn_1
+                  id: btn_dishwasher
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -53,23 +53,21 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_1
+                        id: lbl_btn_dishwasher
                         text: "󰪬"
                         text_font: mdi_icons
-                        # text_color: btn_1_color
-                        # text_color: ha_yellow
                         align: center
                   on_click:
                     then:
                       # - binary_sensor.template.publish:
-                      #     id: button_1_pressed
+                      #     id: btn_dishwasher_pressed
                       #     state: ON
                       - delay: 500ms
                       # - binary_sensor.template.publish:
-                      #     id: button_1_pressed
+                      #     id: btn_dishwasher_pressed
                       #     state: OFF
               - button:
-                  id: btn_2
+                  id: btn_microwave
                   grid_cell_column_pos: 1
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -80,7 +78,7 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_2
+                        id: lbl_btn_microwave
                         text: "󰲙"
                         text_font: mdi_icons
                         align: center
@@ -91,14 +89,14 @@
                       #     data:
                       #       entity_id: light.office_ambient_lights
                       # - binary_sensor.template.publish:
-                      #     id: button_2_pressed
+                      #     id: btn_microwave_pressed
                       #     state: ON
                       - delay: 500ms
                       # - binary_sensor.template.publish:
-                      #     id: button_2_pressed
+                      #     id: btn_microwave_pressed
                       #     state: OFF
               - button:
-                  id: btn_3
+                  id: btn_kettle
                   grid_cell_column_pos: 2
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -109,7 +107,7 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_3
+                        id: lbl_btn_kettle
                         text: "󰗺"
                         text_font: mdi_icons
                         align: center
@@ -120,14 +118,14 @@
                       #     data:
                       #       entity_id: switch.office_fan_plug
                       # - binary_sensor.template.publish:
-                      #     id: button_3_pressed
+                      #     id: btn_kettle_pressed
                       #     state: ON
                       - delay: 500ms
                       # - binary_sensor.template.publish:
-                      #     id: button_3_pressed
+                      #     id: btn_kettle_pressed
                       #     state: OFF
               - button:
-                  id: btn_4
+                  id: btn_coffeemachine
                   grid_cell_column_pos: 3
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -138,7 +136,7 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_4
+                        id: lbl_btn_coffeemachine
                         text: "󱂟"
                         text_font: mdi_icons
                         align: center
@@ -149,11 +147,11 @@
                       #     data:
                       #       entity_id: light.office_light
                       # - binary_sensor.template.publish:
-                      #     id: button_4_pressed
+                      #     id: btn_coffeemachine_pressed
                       #     state: ON
                       - delay: 500ms
                       # - binary_sensor.template.publish:
-                      #     id: button_4_pressed
+                      #     id: btn_coffeemachine_pressed
                       #     state: OFF
               # - switch:
               #     id: light_switch
