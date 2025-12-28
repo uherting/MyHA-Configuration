@@ -1,0 +1,24 @@
+####################################################################
+# colour config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# Defines the colors we want to use later for the different buttons.
+# Per-button customizable colors
+color:
+  - id: room_bg_color
+    hex: "000000"
+  - id: default_button_bg_color
+    hex: "000000"
+  - id: default_button_pressed_bg_color
+    hex: "D3D3D3"
+  - id: btn_1_color
+    hex: FF0000                    # Red
+  - id: btn_2_color
+    hex: FF7F00                    # Orange
+  - id: btn_3_color
+    hex: FFFF00                    # Yellow
+  - id: btn_4_color
+    hex: 00FF00                    # Green
+# ############################################################
+#  END OF FILE
+# ############################################################

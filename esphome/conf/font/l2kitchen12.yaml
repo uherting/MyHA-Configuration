@@ -17,10 +17,10 @@
     size: 48                   # You can get these glyphs from the https://pictogrammers.com/library/mdi/
     bpp: 4                     # 4 bits per pixel for better quality
     glyphs:                    # where you choose the icon, and then "copy glyph".
-      - "󱂟" # mdiCoffeeMaker
       - "󰪬" # mdiDishwasher
-      - "󰗺" # mdiKettle
       - "󰲙" # mdiMicrowave
+      - "󰗺" # mdiKettle
+      - "󱂟" # mdiCoffeeMaker
 
 # ############################################################
 #  END OF FILE

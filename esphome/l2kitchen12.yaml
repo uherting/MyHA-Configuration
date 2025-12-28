@@ -89,6 +89,9 @@ spi: !include conf/common/device/spi_esp32-2432s028r_v0.yaml
 # LVGL configuration
 lvgl: !include conf/lvgl/l2kitchen12.yaml
 #-------------------------------------------------------------------
+# COLOUR configuration
+color: !include conf/color/l2kitchen12.yaml
+#-------------------------------------------------------------------
 # FONT configuration
 # needs to be included before display configuration
 font: !include conf/font/l2kitchen12.yaml
