@@ -11,21 +11,22 @@
   theme:
     button:
       # This base is overridden by each button's bg_color
-      bg_color: 0x000000
-      bg_opa: COVER
-      border_color: 0x000000
+      bg_color: default_btn_bg_color
+      # bg_opa: COVER
+      bg_opa: transp
+      border_color: default_btn_border_color
       border_width: 1
       text_color: 0xFFFFFF  # overridden per label using text_color: btn_x_color
       pressed:
-        # Light grey for pressed state (used uniformly)
-        bg_color: 0xC0C0C0
+        bg_color: 0x000000
         bg_grad_color: 0xC0C0C0
         bg_opa: COVER
+        text_color: default_btn_txt_pressed_color
       checked:
         bg_color: 0x000000
         bg_grad_color: 0x000000
         bg_opa: COVER
-        text_color: 0x800080 # purple icon when "checked"... entity is on
+        text_color: default_btn_txt_checked_color
   pages:
     - id: main_page
       pad_all: 0
@@ -47,9 +48,6 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
-                  bg_color: default_btn_bg_color
-                  pressed:
-                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:
@@ -72,9 +70,6 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
-                  bg_color: default_btn_bg_color
-                  pressed:
-                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:
@@ -101,9 +96,6 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
-                  bg_color: default_btn_bg_color
-                  pressed:
-                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:
@@ -130,9 +122,6 @@
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
-                  bg_color: default_btn_bg_color
-                  pressed:
-                    bg_color: default_btn_pressed_bg_color
                   checkable: true
                   widgets:
                     - label:

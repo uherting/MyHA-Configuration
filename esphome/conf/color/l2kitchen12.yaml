@@ -5,30 +5,27 @@
 # color:
 
   - id: ha_yellow
-    red: 100%
-    green: 70%
-    blue: 0%
+    hex: "f2ee00"
+    # red: 100%
+    # green: 70%
+    # blue: 0%
 
 # Defines the colors we want to use later for the different buttons.
 # Per-button customizable colors
   - id: room_bg_color
     hex: "000000"
+  - id: default_btn_border_color
+    hex: "dedede"  
   - id: default_btn_bg_color
-    hex: "2e2e2e"
-    # hex: "ededed"
-    # hex: "000000"
+    hex: "000000"
+  - id: default_btn_bg_color_pressed
+    hex: "000000"
   - id: default_btn_txt_color
-    hex: "D3D3D3"
-  - id: default_btn_pressed_bg_color
-    hex: "9e9d44"
-  # - id: btn_1_color
-  #   hex: FF0000                    # Red
-  # - id: btn_2_color
-  #   hex: FF7F00                    # Orange
-  # - id: btn_3_color
-  #   hex: FFFF00                    # Yellow
-  # - id: btn_4_color
-  #   hex: 00FF00                    # Green
+    hex: "000000"
+  - id: default_btn_txt_pressed_color
+    hex: "FF0000"  # red when pressed
+  - id: default_btn_txt_checked_color
+    hex: "f2ee00"  # yellow when "checked"... entity is on
 # ############################################################
 #  END OF FILE
 # ############################################################
