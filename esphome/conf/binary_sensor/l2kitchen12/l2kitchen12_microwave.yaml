@@ -1,0 +1,17 @@
+####################################################################
+# colour config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# binary_sensor:
+  - platform: lvgl
+    widget: btn_microwave
+    name: LVGL Button Microwave
+    id: btn_microwave_pressed
+    # on_press:
+    #   - logger.log: "Microwave button pressed"
+    # on_release:
+    #   - logger.log: "Microwave button released"
+
+# ############################################################
+#  END OF FILE
+# ############################################################

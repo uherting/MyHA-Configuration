@@ -1,0 +1,17 @@
+####################################################################
+# colour config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# binary_sensor:
+  - platform: lvgl
+    widget: btn_coffeemachine
+    name: LVGL Button Coffeemachine
+    id: btn_coffeemachine_pressed
+    # on_press:
+    #   - logger.log: "Coffeemachine button pressed"
+    # on_release:
+    #   - logger.log: "Coffeemachine button released"
+
+# ############################################################
+#  END OF FILE
+# ############################################################

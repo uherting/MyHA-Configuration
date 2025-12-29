@@ -189,6 +189,12 @@
               #     grid_cell_row_pos: 1
               #     # grid_cell_x_align: STRETCH
               #     # grid_cell_y_align: STRETCH
+  on_idle:
+    timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
+    then:
+      - logger.log: "LVGL is idle"
+      - light.turn_off: display_backlight
+      - lvgl.pause:
 
 ####################################################################
 # EOF

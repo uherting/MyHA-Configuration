@@ -22,7 +22,14 @@
       mirror_y: false
       # true as LCD is used in landscape mode
       swap_xy: true
-
+    on_release:
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - logger.log: "LVGL resuming"
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - light.turn_on: display_backlight
 ####################################################################
 # EOF
 ####################################################################

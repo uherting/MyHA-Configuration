@@ -105,11 +105,11 @@ touchscreen: !include conf/touchscreen/l2kitchen12.yaml
 #-------------------------------------------------------------------
 # Setup a way to control the backlight of the display
 light:
-  # Backlight control
+  # display backlight control
   - platform: monochromatic
     output: backlight_pwm
     name: Display Backlight
-    id: backlight
+    id: display_backlight
     restore_mode: ALWAYS_ON
   # RGB LED to test output
   # - platform: binary
@@ -130,6 +130,19 @@ output:
     pin: GPIO4
     id: gpio4_out
     inverted: true
+
+number:
+  - platform: template
+    name: LVGL Screen timeout
+    optimistic: true
+    id: cyd_display_timeout_s
+    unit_of_measurement: "s"
+    initial_value: 5
+    restore_value: true
+    min_value: 10
+    max_value: 180
+    step: 5
+    mode: box
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
 ####################################################################
@@ -151,6 +164,10 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_coffeemachine.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_kettle.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_microwave.yaml
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml

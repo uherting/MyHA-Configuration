@@ -1,0 +1,17 @@
+####################################################################
+# colour config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# binary_sensor:
+  - platform: lvgl
+    widget: btn_dishwasher
+    name: LVGL Button Dishwasher
+    id: btn_dishwasher_pressed
+    # on_press:
+    #   - logger.log: "Dishwasher button pressed"
+    # on_release:
+    #   - logger.log: "Dishwasher button released"
+
+# ############################################################
+#  END OF FILE
+# ############################################################

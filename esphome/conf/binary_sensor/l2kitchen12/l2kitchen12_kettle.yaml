@@ -1,0 +1,17 @@
+####################################################################
+# colour config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# binary_sensor:
+  - platform: lvgl
+    widget: btn_kettle
+    name: LVGL Button Kettle
+    id: btn_kettle_pressed
+    # on_press:
+    #   - logger.log: "Kettle button pressed"
+    # on_release:
+    #   - logger.log: "Kettle button released"
+    
+# ############################################################
+#  END OF FILE
+# ############################################################
