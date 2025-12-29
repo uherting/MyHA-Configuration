@@ -23,6 +23,7 @@
       # true as LCD is used in landscape mode
       swap_xy: true
     on_release:
+      then:    
       - if:
           condition: lvgl.is_paused
           then:

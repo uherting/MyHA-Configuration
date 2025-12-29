@@ -165,7 +165,7 @@ binary_sensor:
   # device related
   # --------------
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_coffeemachine.yaml
-  # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_kettle.yaml
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_microwave.yaml
   
@@ -193,7 +193,29 @@ sensor:
 # switch:
   # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
   # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
-
+switch:
+  - platform: template
+    name: Antiburn
+    id: switch_antiburn
+    icon: mdi:television-shimmer
+    optimistic: true
+    entity_category: "config"
+    turn_on_action:
+      - logger.log: "Starting Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+      - lvgl.pause:
+          show_snow: true
+    turn_off_action:
+      - logger.log: "Stopping Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
 #-------------------------------------------------------------------
 # TEXT SENSORS
 text_sensor:

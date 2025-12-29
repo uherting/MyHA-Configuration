@@ -57,13 +57,10 @@
                         align: center
                   on_click:
                     then:
-                      # - binary_sensor.template.publish:
-                      #     id: btn_dishwasher_pressed
-                      #     state: ON
-                      - delay: 500ms
-                      # - binary_sensor.template.publish:
-                      #     id: btn_dishwasher_pressed
-                      #     state: OFF
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_dishwasher
               - button:
                   id: btn_microwave
                   grid_cell_column_pos: 1
@@ -79,17 +76,10 @@
                         align: center
                   on_click:
                     then:
-                      # - homeassistant.action:
-                      #     action: light.toggle
-                      #     data:
-                      #       entity_id: light.office_ambient_lights
-                      # - binary_sensor.template.publish:
-                      #     id: btn_microwave_pressed
-                      #     state: ON
-                      - delay: 500ms
-                      # - binary_sensor.template.publish:
-                      #     id: btn_microwave_pressed
-                      #     state: OFF
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_microwave
               - button:
                   id: btn_kettle
                   grid_cell_column_pos: 2
@@ -105,17 +95,10 @@
                         align: center
                   on_click:
                     then:
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.office_fan_plug
-                      # - binary_sensor.template.publish:
-                      #     id: btn_kettle_pressed
-                      #     state: ON
-                      - delay: 500ms
-                      # - binary_sensor.template.publish:
-                      #     id: btn_kettle_pressed
-                      #     state: OFF
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_kettle
               - button:
                   id: btn_coffeemachine
                   grid_cell_column_pos: 3
@@ -131,58 +114,15 @@
                         align: center
                   on_click:
                     then:
-                      # - homeassistant.action:
-                      #     action: light.toggle
-                      #     data:
-                      #       entity_id: light.office_light
-                      # - binary_sensor.template.publish:
-                      #     id: btn_coffeemachine_pressed
-                      #     state: ON
-                      - delay: 500ms
-                      # - binary_sensor.template.publish:
-                      #     id: btn_coffeemachine_pressed
-                      #     state: OFF
-              # - switch:
-              #     id: light_switch
-              #     align: CENTER
-              #     on_click:
-              #       light.toggle: local_light
-              #     grid_cell_column_pos: 0
-              #     grid_cell_row_pos: 1
-              #     # grid_cell_x_align: STRETCH
-              #     # grid_cell_y_align: STRETCH
-              # - switch:
-              #     id: light_switch1
-              #     align: CENTER
-              #     on_click:
-              #       light.toggle: local_light
-              #     grid_cell_column_pos: 1
-              #     grid_cell_row_pos: 1
-              #     # grid_cell_x_align: STRETCH
-              #     # grid_cell_y_align: STRETCH
-              # - switch:
-              #     id: light_switch2
-              #     align: CENTER
-              #     on_click:
-              #       light.toggle: local_light
-              #     grid_cell_column_pos: 2
-              #     grid_cell_row_pos: 1
-              #     # grid_cell_x_align: STRETCH
-              #     # grid_cell_y_align: STRETCH
-              # - switch:
-              #     id: light_switch3
-              #     align: CENTER
-              #     on_click:
-              #       light.toggle: local_light
-              #     grid_cell_column_pos: 3
-              #     grid_cell_row_pos: 1
-              #     # grid_cell_x_align: STRETCH
-              #     # grid_cell_y_align: STRETCH
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_coffeemachine
   on_idle:
     timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
     then:
       - logger.log: "LVGL is idle"
-      - light.turn_off: display_backlight
+      # - light.turn_off: display_backlight
       - lvgl.pause:
 
 ####################################################################
