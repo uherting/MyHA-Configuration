@@ -25,7 +25,7 @@ cards:
       - binary_sensor.l2btproxykitchen_status
       - binary_sensor.l2kitchen01_status
       - binary_sensor.l2kitchen02_status
-      - binary_sensor.l2kitchen03_status
+      # - binary_sensor.l2kitchen03_status
       - binary_sensor.l2storage01_status
       - binary_sensor.l9cam3202_status
       - binary_sensor.l9cam3203_status
