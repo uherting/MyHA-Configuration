@@ -143,6 +143,7 @@ number:
     max_value: 180
     step: 5
     mode: box
+
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
 ####################################################################
@@ -162,6 +163,25 @@ globals:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  - platform: homeassistant
+    name: "L2 Kitchen12 Coffee Machine Sensor"
+    id: l2_kitchen12_coffeemachine_sensor
+    entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+    trigger_on_initial_state: true
+    # on_state:
+    #   - if:
+    #       condition:
+    #         - binary_sensor.is_on: l2_kitchen12_coffeemachine_sensor
+    #       then:
+    #         - lvgl.widget.update:
+    #             id: lbl_btn_coffeemachine
+    #             text_color: default_btn_txt_checked_color
+    #       else:
+    #         - lvgl.widget.update:
+    #             id: lbl_btn_coffeemachine
+    #             text_color: default_btn_txt_color
+
+
   # device related
   # --------------
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_coffeemachine.yaml

@@ -19,9 +19,9 @@
   - id: default_btn_bg_color
     hex: "000000"
   - id: default_btn_bg_color_pressed
-    hex: "000000"
+    hex: "000000" # black
   - id: default_btn_txt_color
-    hex: "000000"
+    hex: "FFFFFF"  # white
   - id: default_btn_txt_pressed_color
     hex: "FF0000"  # red when pressed
   - id: default_btn_txt_checked_color

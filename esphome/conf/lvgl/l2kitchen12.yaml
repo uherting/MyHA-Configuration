@@ -16,7 +16,7 @@
       bg_opa: transp
       border_color: default_btn_border_color
       border_width: 1
-      text_color: 0xFFFFFF  # overridden per label using text_color: btn_x_color
+      text_color: default_btn_txt_color
       pressed:
         bg_color: 0x000000
         bg_grad_color: 0xC0C0C0
@@ -138,7 +138,7 @@
   on_idle:
     timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
     then:
-      - logger.log: "LVGL is idle"
+      - switch.toggle: switch_antiburn
       # - light.turn_off: display_backlight
       - lvgl.pause:
 
