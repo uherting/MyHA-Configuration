@@ -6,8 +6,13 @@
 
 # the standard / fall back font for labels and buttons
   - file: ${ttf_font_directory}/Arimo-Regular.ttf
-    id: my_font
+    id: my_font12
     size: 12
+    # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
+
+  - file: ${ttf_font_directory}/Arimo-Regular.ttf
+    id: my_font16
+    size: 16
     # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
 
 # the font for the icons used in buttons

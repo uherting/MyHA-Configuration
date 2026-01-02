@@ -165,7 +165,7 @@ binary_sensor:
   # device related
   # --------------
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_coffeemachine.yaml
-  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
+  # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_kettle.yaml
   # - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_microwave.yaml
   

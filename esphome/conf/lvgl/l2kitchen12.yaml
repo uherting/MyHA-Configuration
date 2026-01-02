@@ -118,6 +118,23 @@
                           action: switch.toggle
                           data:
                             entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+              # - switch:
+              #     id: switch_antiburn_btn
+              #     grid_cell_column_pos: 3
+              #     grid_cell_row_pos: 2
+              #     # grid_cell_x_align: STRETCH
+              #     # grid_cell_y_align: STRETCH
+              #     widgets:
+              #       - label:
+              #           id: lbl_switch_antiburn
+              #           text: "Antiburn"
+              #           text_font: my_font16
+              #           align: center
+              #     on_click:
+              #       then:
+              #         - switch.toggle: switch_antiburn
+
+
   on_idle:
     timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
     then:
