@@ -18,8 +18,8 @@
       y_min: 200
       y_max: 3900   
     transform:
-      mirror_x: false
-      mirror_y: false
+      mirror_x: true
+      mirror_y: true
       # true as LCD is used in landscape mode
       swap_xy: true
     on_release:

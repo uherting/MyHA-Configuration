@@ -5,7 +5,11 @@
 # lvgl:
 
 ################################################################
-# taken from https://github.com/pixelEDI/LVGL_ESP32_YT-Beispiele/blob/main/10_LVGL_HelloWorld_switch_mit_ESPHome/lvgl_helloworld.yaml
+# initially taken from 
+# - https://github.com/pixelEDI/LVGL_ESP32_YT-Beispiele/blob/main/10_LVGL_HelloWorld_switch_mit_ESPHome/lvgl_helloworld.yaml
+#
+# added stuff later on from other sources
+# - https://github.com/agillis/esphome-modular-lvgl-buttons/blob/main/buttons/switch_button.yaml
 ################################################################
   buffer_size: 25%
   theme:
@@ -138,7 +142,7 @@
   on_idle:
     timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
     then:
-      - switch.toggle: switch_antiburn
+      - switch.turn_on: switch_antiburn
       # - light.turn_off: display_backlight
       - lvgl.pause:
 

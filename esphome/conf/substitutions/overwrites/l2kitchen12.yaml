@@ -2,7 +2,10 @@
 # OVERWRITE COMMON SUBSTITUTIONS
 
 # if there are no overrides the dummy value comes in handy ;-)
-dummy_value: "dummy value"
+# dummy_value: "dummy value"
+
+# antenna on the right side when looking at the display
+cyd_display_rotation: 0
 
 # log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
