@@ -1,6 +1,5 @@
 """Linus Dashboard integration for Home Assistant."""
 
-import json
 import logging
 from pathlib import Path
 
@@ -16,10 +15,12 @@ from homeassistant.components.websocket_api.decorators import (
 from homeassistant.components.websocket_api.messages import result_message
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 
 from custom_components.linus_dashboard import utils
 from custom_components.linus_dashboard.const import (
     CONF_ALARM_ENTITY_IDS,
+    CONF_EMBEDDED_DASHBOARDS,
     CONF_EXCLUDED_DEVICE_CLASSES,
     CONF_EXCLUDED_DOMAINS,
     CONF_EXCLUDED_INTEGRATIONS,
@@ -28,21 +29,13 @@ from custom_components.linus_dashboard.const import (
     CONF_WEATHER_ENTITY,
     CONF_WEATHER_ENTITY_ID,
     DOMAIN,
+    VERSION,
+    is_logger_debug,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-
-def get_version() -> str:
-    """Get the version from manifest.json."""
-    manifest_path = Path(__file__).parent / "manifest.json"
-    try:
-        with manifest_path.open(encoding="utf-8") as manifest_file:
-            manifest = json.load(manifest_file)
-            return manifest.get("version", "unknown")
-    except (FileNotFoundError, json.JSONDecodeError, KeyError):
-        _LOGGER.exception("Failed to read version from manifest")
-        return "unknown"
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, _config: dict) -> bool:
@@ -120,8 +113,8 @@ async def register_static_paths_and_resources(
     js_url = f"/{DOMAIN}_files/www/{js_file}"
     js_path = Path(__file__).parent / f"www/{js_file}"
 
-    # Check if the file actually exists
-    if not js_path.exists():
+    # Check if the file actually exists (using executor to avoid blocking I/O)
+    if not await hass.async_add_executor_job(js_path.exists):
         _LOGGER.warning(
             "JavaScript file not found: %s - skipping registration", js_path
         )
@@ -132,8 +125,8 @@ async def register_static_paths_and_resources(
         StaticPathConfig(js_url, str(js_path), cache_headers=False),
     ])
 
-    # Get version from manifest for cache busting
-    manifest_version = get_version()
+    # Get version from const.py (single source of truth via package.json)
+    manifest_version = VERSION
 
     # Register as a Lovelace resource with version query param for cache busting
     # This ensures browsers fetch the new version after updates
@@ -155,6 +148,18 @@ async def websocket_get_entities(
 ) -> None:
     """Handle request for getting entities and version info."""
     config_entries = hass.config_entries.async_entries(DOMAIN)
+
+    # Auto-detect debug mode from logger level
+    import logging as log
+
+    debug_enabled = is_logger_debug()
+    _LOGGER.info(
+        "🔍 Debug mode detection: enabled=%s, logger_level=%s, effective_level=%s",
+        debug_enabled,
+        log.getLevelName(_LOGGER.level) if _LOGGER.level != log.NOTSET else "NOTSET",
+        log.getLevelName(_LOGGER.getEffectiveLevel()),
+    )
+
     config = {
         CONF_ALARM_ENTITY_IDS: config_entries[0].options.get(CONF_ALARM_ENTITY_IDS, []),
         CONF_WEATHER_ENTITY_ID: config_entries[0].options.get(CONF_WEATHER_ENTITY),
@@ -167,7 +172,17 @@ async def websocket_get_entities(
             CONF_EXCLUDED_INTEGRATIONS, []
         ),
         CONF_EXCLUDED_TARGETS: config_entries[0].options.get(CONF_EXCLUDED_TARGETS),
-        "version": get_version(),  # Include version for frontend version check
+        CONF_EMBEDDED_DASHBOARDS: config_entries[0].options.get(
+            CONF_EMBEDDED_DASHBOARDS, []
+        ),
+        "debug": debug_enabled,
+        "version": VERSION,  # Include version for frontend version check
     }
+
+    _LOGGER.info(
+        "WebSocket sending config: debug=%s, embedded_dashboards=%s",
+        config["debug"],
+        config[CONF_EMBEDDED_DASHBOARDS],
+    )
 
     connection.send_message(result_message(msg["id"], config))
