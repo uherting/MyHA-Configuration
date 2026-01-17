@@ -119,9 +119,9 @@
                   on_click:
                     then:
                       - homeassistant.action:
-                          action: switch.toggle
+                          action: homeassistant.toggle
                           data:
-                            entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+                            entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
               # - switch:
               #     id: switch_antiburn_btn
               #     grid_cell_column_pos: 3
@@ -142,9 +142,9 @@
   on_idle:
     timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
     then:
-      - switch.turn_on: switch_antiburn
-      # - light.turn_off: display_backlight
       - lvgl.pause:
+      - light.turn_off: display_backlight
+      - switch.turn_on: switch_antiburn
 
 ####################################################################
 # EOF

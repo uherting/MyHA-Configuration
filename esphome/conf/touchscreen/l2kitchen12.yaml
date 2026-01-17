@@ -27,10 +27,10 @@
       - if:
           condition: lvgl.is_paused
           then:
-            - logger.log: "LVGL resuming"
             - lvgl.resume:
             - lvgl.widget.redraw:
             - light.turn_on: display_backlight
+            - switch.turn_off: switch_antiburn
 ####################################################################
 # EOF
 ####################################################################
