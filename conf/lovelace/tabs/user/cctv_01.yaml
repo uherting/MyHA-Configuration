@@ -25,6 +25,14 @@ cards:
   #     - sensor.l9cam_ttgo_01_wifi_signal
 
   - type: picture-glance
+    title: RWorld3
+    camera_image: camera.rworld3_fluent
+    camera_view: live
+    tap_action: none
+    entities:
+      - binary_sensor.cam_rworld1_motion
+
+  - type: picture-glance
     title: RWorld1 Big Pic
     camera_image: camera.rworld1_fluent_lens_0
     camera_view: live
@@ -35,14 +43,6 @@ cards:
   - type: picture-glance
     title: RWorld1 Detail Pic
     camera_image: camera.rworld1_fluent_lens_1
-    camera_view: live
-    tap_action: none
-    entities:
-      - binary_sensor.cam_rworld1_motion
-
-  - type: picture-glance
-    title: RWorld3
-    camera_image: camera.rworld3_fluent
     camera_view: live
     tap_action: none
     entities:

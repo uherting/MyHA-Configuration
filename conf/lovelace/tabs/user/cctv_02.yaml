@@ -14,9 +14,9 @@ badges: []
 cards:
   - type: custom:advanced-camera-card
     cameras:
+      - camera_entity: camera.rworld3_fluent
       - camera_entity: camera.rworld1_fluent_lens_0
       - camera_entity: camera.rworld1_fluent_lens_1
-      - camera_entity: camera.rworld3_fluent
       - camera_entity: camera.l9cam3202_cam
       - camera_entity: camera.l9cam3203_cam
     live:
