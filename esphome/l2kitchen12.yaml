@@ -1,0 +1,233 @@
+####################################################################
+####################################################################
+#
+# DEVICE: l2kitchen12 (ESP32-2432S028R aka CYD --- with onboard ESP32)
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - Microcontroller for triggering scripts on HA related to l2kitchen
+#
+# Future feature:
+#   - unknown
+#
+# Hardware:
+#   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32
+#
+# Automation:
+#   - still to be determined / documented
+#
+# WiFi:
+#   - connects to the strongest WiFi configured
+#
+# Input:
+#   - via TFT (2.8" TFT SPI display, 320x240)
+#   - no physical buttons so far
+#
+# Output
+#   - 2.8" TFT SPI display (320x240)
+#   - no physical outputs so far
+
+###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
+
+substitutions: 
+  <<: !include conf/substitutions/device_specific/l2kitchen12.yaml
+  <<: !include conf/substitutions/overwrites/l2kitchen12.yaml
+
+###################### PACKAGES CONFIGURATION ######################
+# merge information to setup the base
+# log_level can be overwritten in overwrites/<device_name>.yaml
+
+packages:
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base_esp32-2432s028r.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r.yaml
+
+  # ota: contained an error which got validated nevertheless. 
+  # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
+  # ota: !include conf/common/networking/ota.yaml
+
+ota: !include conf/common/networking/ota.yaml
+
+# in case of no connection to the Wifi
+# for details see https://esphome.io/components/captive_portal.html
+captive_portal:
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
+api: !include conf/common/networking/api.yaml
+time: !include conf/common/time.yaml
+
+# sun: !include conf/common/sun.yaml
+
+############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
+web_server:
+  port: 8888
+
+#===================================================================
+# Configuration for the 2.8" ESP32-2432S028R aka CYD, a touchscreen display (240x320 RGB)
+#
+# config based on:
+# - if not otherwise stated, the information was taken from
+#   https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/1-Helloworld/yellowtft1.yaml
+# - other resources:
+#   - I2C: https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
+#===================================================================
+#-------------------------------------------------------------------
+# I2C from docs located at 
+i2c: !include conf/common/device/i2c_esp32-2432s028r_v0.yaml
+#-------------------------------------------------------------------
+# SPI (default ESP32 platform)
+spi: !include conf/common/device/spi_esp32-2432s028r_v0.yaml
+#-------------------------------------------------------------------
+# LVGL configuration
+lvgl: !include conf/lvgl/l2kitchen12.yaml
+#-------------------------------------------------------------------
+# COLOUR configuration
+color: !include conf/color/l2kitchen12.yaml
+#-------------------------------------------------------------------
+# FONT configuration
+# needs to be included before display configuration
+font: !include conf/font/l2kitchen12.yaml
+#-------------------------------------------------------------------
+# DISPLAY configuration
+display: !include conf/display/l2kitchen12.yaml
+#-------------------------------------------------------------------
+# TOUCHSCREEN configuration
+# config taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
+touchscreen: !include conf/touchscreen/l2kitchen12.yaml
+#-------------------------------------------------------------------
+# Setup a way to control the backlight of the display
+light:
+  # display backlight control
+  - platform: monochromatic
+    output: backlight_pwm
+    name: Display Backlight
+    id: display_backlight
+    restore_mode: ALWAYS_ON
+  # RGB LED to test output
+  # - platform: binary
+  #   output: gpio4_out
+  #   id: local_light
+  #   name: "GPIO 4 Light"
+  #   on_state:
+  #     - lvgl.widget.update:
+  #         id: light_switch3
+  #         state:
+  #           checked: !lambda return id(local_light).current_values.is_on();
+
+output:
+  - platform: ledc
+    pin: GPIO21
+    id: backlight_pwm
+  - platform: gpio
+    pin: GPIO4
+    id: gpio4_out
+    inverted: true
+
+number:
+  - platform: template
+    name: LVGL Screen timeout
+    optimistic: true
+    id: cyd_display_timeout_s
+    unit_of_measurement: "s"
+    initial_value: 10
+    restore_value: true
+    min_value: 10
+    max_value: 60
+    step: 5
+    mode: box
+
+####################################################################
+###################### DETAILED CONFIGURATION ######################
+####################################################################
+
+#-------------------------------------------------------------------
+# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+
+globals:
+  - <<: !include conf/common/globals/connectivity.yaml
+# interval: 
+#   - <<: !include conf/common/interval/connectivity.yaml
+  # - <<: !include conf/interval/l2kitchen12.yaml
+# script:
+  # - <<: !include conf/script/l2kitchen12/foobar.yaml
+
+#-------------------------------------------------------------------
+# BINARY SENSORS
+binary_sensor:
+  - <<: !include conf/common/binary_sensor/wifi_status.yaml
+  - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_coffeemachine.yaml
+  # device related
+  # --------------
+  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_coffeemachine.yaml
+  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_dishwasher.yaml
+  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_kettle.yaml
+  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_microwave.yaml
+  
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
+  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
+
+#-------------------------------------------------------------------
+# SENSORS
+sensor:
+  # common sensors
+  - <<: !include conf/common/sensor/wifisignal.yaml
+  - <<: !include conf/common/sensor/uptime.yaml
+  # device related
+  # - <<: !include conf/common/sensor/aht10_01.yaml
+  # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
+  # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+# switch:
+  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
+  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+switch:
+  - platform: template
+    name: Antiburn
+    id: switch_antiburn
+    icon: mdi:television-shimmer
+    optimistic: true
+    entity_category: "config"
+    turn_on_action:
+      - logger.log: "Starting Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+      - lvgl.pause:
+          show_snow: true
+    turn_off_action:
+      - logger.log: "Stopping Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+#-------------------------------------------------------------------
+# TEXT SENSORS
+text_sensor:
+  # common text sensors
+  - <<: !include conf/common/text_sensor/esphomeversion.yaml
+  - <<: !include conf/common/text_sensor/wifiinfo.yaml
+  - <<: !include conf/common/text_sensor/uptime.yaml
+  # device related
+  # none so far
+
+####################################################################
+# EOF
+####################################################################

@@ -71,6 +71,13 @@ substitutions:
   # Dallas sensors update time
   dallas_upd: !secret DALLAS_UPDATE_INTERVAL_005M
 
+  # ESP32-2432S028R aka CYD --- with onboard ESP32
+  cyd_display_width_320: 320
+  cyd_display_height_240: 240
+  cyd_display_width: 240
+  cyd_display_height: 320
+  cyd_display_rotation: 180
+  
   # DHT sensors
   dht01_id_humidity: ${friendly_id}_DHT_01_Hum
   dht01_id_temperature: ${friendly_id}_DHT_01_Temp
@@ -189,6 +196,9 @@ substitutions:
   ssr03_name: $friendly_name SSR 03
   ssr09_id: ${friendly_id}_SSR09
   ssr09_name: $friendly_name SSR 09
+
+  # TTF fonts
+  ttf_font_directory: "conf/common/font"
 
   # touch buttons
   touchbutton01_id: ${friendly_id}_TB_01

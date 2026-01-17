@@ -1,0 +1,32 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+###########################################################################
+# import sensor from home assistant
+###########################################################################
+  - platform: homeassistant
+    name: "L2 Kitchen12 Dishwasher Sensor"
+    id: widget_sensor_dishwasher
+    entity_id: switch.zb_plug_l2_kitchen_dishwasher
+    # trigger_on_initial_state: true
+    publish_initial_state: true
+    on_state:
+      - if:
+          condition:
+            - binary_sensor.is_on: widget_sensor_dishwasher
+          then:
+            - lvgl.widget.update:
+                id: lbl_btn_dishwasher
+                text_color: default_btn_txt_checked_color
+          else:
+            - lvgl.widget.update:
+                id: lbl_btn_dishwasher
+                text_color: default_btn_txt_color
+# ############################################################
+#  END OF FILE
+# ############################################################

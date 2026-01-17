@@ -1,0 +1,32 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+###########################################################################
+# import sensor from home assistant
+###########################################################################
+  - platform: homeassistant
+    name: "L2 Kitchen12 Kettle Sensor"
+    id: widget_sensor_kettle
+    entity_id: switch.zb_plug_l2_kitchen_kettle
+    # trigger_on_initial_state: true
+    publish_initial_state: true
+    on_state:
+      - if:
+          condition:
+            - binary_sensor.is_on: widget_sensor_kettle
+          then:
+            - lvgl.widget.update:
+                id: lbl_btn_kettle
+                text_color: default_btn_txt_checked_color
+          else:
+            - lvgl.widget.update:
+                id: lbl_btn_kettle
+                text_color: default_btn_txt_color
+# ############################################################
+#  END OF FILE
+# ############################################################
