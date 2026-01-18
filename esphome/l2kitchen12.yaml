@@ -163,13 +163,12 @@ globals:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_coffeemachine.yaml
   # device related
   # --------------
-  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_coffeemachine.yaml
-  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_dishwasher.yaml
-  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_kettle.yaml
-  # - <<: !include conf/binary_sensors/l2kitchen12/l2kitchen12_microwave.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_coffeemachine.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_kettle.yaml
+  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_microwave.yaml
   
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
   # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
