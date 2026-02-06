@@ -119,4 +119,4 @@ groups:
     friendly_name: level2-HumanPresence
 availability:
   enabled: true
-version: 5
+version: 4
