@@ -7,7 +7,7 @@ from collections.abc import Mapping
 
 import voluptuous as vol
 
-from homeassistant.const import CONF_TYPE
+from homeassistant.const import CONF_TYPE, CONF_ENTITY_ID
 from homeassistant.helpers import selector
 from homeassistant.components.number import DOMAIN as NUMBER_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
@@ -17,7 +17,7 @@ from homeassistant.helpers.schema_config_entry_flow import (
     SchemaConfigFlowHandler,
 )
 
-from .const import DOMAIN, CONF_ENTITY_ID
+from .const import DOMAIN
 
 _STATISTIC_MEASURES = ["min", "max"]
 
@@ -40,7 +40,11 @@ OPTIONS_SCHEMA = vol.Schema(
 
 CONFIG_SCHEMA = vol.Schema(
     {
-        vol.Required("name"): selector.TextSelector(),
+        vol.Required("name"): selector.TextSelector(
+            selector.TextSelectorConfig(
+                type=selector.TextSelectorType.TEXT, autocomplete="off"
+            ),
+        )
     }
 ).extend(OPTIONS_SCHEMA.schema)
 
