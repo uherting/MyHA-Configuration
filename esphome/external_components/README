@@ -1,0 +1,11 @@
+this dir is for developing components which consist of one component only
+
+This comes from the need not to import from another component.
+
+For the sake of a standard developing should take place though in the directory "custom_components_dev".
+
+
+INFO ESPHome 2026.1.4
+INFO Reading configuration /config/l2bathroom01a.yaml...
+WARNING The 'custom_components' folder is deprecated and will be removed in 2026.6.0. Please use 'external_components' instead. See https://esphome.io/components/external_components.html for more information.
+
