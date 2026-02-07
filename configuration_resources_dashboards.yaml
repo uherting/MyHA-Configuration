@@ -144,6 +144,14 @@ dashboards:
     icon: mdi:devices
     show_in_sidebar: true
     require_admin: true
+
+  ui-lovelace-main:
+    mode: yaml
+    filename: ui-lovelace_main.yaml
+    title: Home overview
+    icon: mdi:home
+    show_in_sidebar: true
+    require_admin: false
 # ############################################################
 #  END OF FILE
 # ############################################################
