@@ -1,10 +1,11 @@
 ############################################################
 #
-# lovelace configuration - to be included in configuration.yaml
+# lovelace configuration
 #
 ############################################################
 
-mode: yaml
+# mode: yaml
+resource_mode: yaml
 
 # external resources
 resources:
@@ -119,14 +120,7 @@ resources:
 # Add more dashboards
 # attn: the name of the dashboard needs to contain a hyphen (-)
 dashboards:
-  # uilovelace:
-  #   mode: yaml
-  #   filename: ui-lovelace-usr_smarty1.yaml
-  #   title: Smarty
-  #   icon: mdi:cellphone
-  #   show_in_sidebar: true
-  #   require_admin: false
-
+  # lovelace:
   uilovelace-usr-ovw-all1:
     mode: yaml
     filename: ui-lovelace-usr_ovw_all1.yaml
@@ -134,30 +128,6 @@ dashboards:
     icon: mdi:battery
     show_in_sidebar: true
     require_admin: false
-
-  # uilovelace-usr-calpro:
-  #   mode: yaml
-  #   filename: ui-lovelace-usr_calpro.yaml
-  #   title: CalPro
-  #   icon: mdi:calendar
-  #   show_in_sidebar: true
-  #   require_admin: true
-
-  # uilovelace-usr-week-planner:
-  #   mode: yaml
-  #   filename: ui-lovelace-usr_week_planner.yaml
-  #   title: WeekPlanner
-  #   icon: mdi:view-week
-  #   show_in_sidebar: true
-  #   require_admin: true
-
-  # ui-lovelace-usr-cctv-cams:
-  #   mode: yaml
-  #   filename: ui-lovelace-usr_cctv.yaml
-  #   title: CCTV
-  #   icon: mdi:cctv
-  #   show_in_sidebar: true
-  #   require_admin: false
 
   uilovelace-adm-ovw-all1:
     mode: yaml
