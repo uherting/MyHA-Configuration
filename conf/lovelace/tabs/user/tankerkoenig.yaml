@@ -20,9 +20,10 @@ cards:
     title: Fuel prices
     show_header_toggle: false
     entities:
-      - sensor.tankerkoenig_gulf_bad_lauterberg_diesel
       - sensor.tankerkoenig_bad_lauterberg_wissmannstr_39_diesel
+      - sensor.aral_scharzfelder_str_6_diesel
       - sensor.tankerkoenig_star_tankstelle_diesel
+      - sensor.tankerkoenig_gulf_bad_lauterberg_diesel
       - sensor.tankerkoenig_pfeffer_tankstelle_1_diesel
       - sensor.tankerkoenig_herzberg_diesel
       - sensor.tankerkoenig_raiffeisen_warenhandel_gmbh_diesel
