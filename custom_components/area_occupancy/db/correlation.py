@@ -10,6 +10,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import logging
 from typing import TYPE_CHECKING, Any
+import warnings
 
 import numpy as np
 from sqlalchemy.exc import SQLAlchemyError
@@ -24,7 +25,7 @@ from ..const import (
     MIN_CORRELATION_SAMPLES,
     RETENTION_RAW_NUMERIC_SAMPLES_DAYS,
 )
-from ..data.entity_type import InputType
+from ..data.entity_type import CorrelationType, InputType
 from ..time_utils import from_db_utc, to_db_utc, to_local, to_utc
 from ..utils import clamp_probability, map_binary_state_to_semantic
 from .utils import (
@@ -71,7 +72,12 @@ def calculate_pearson_correlation(
         y = np.array(y_values)
 
         # Calculate correlation coefficient
-        correlation = np.corrcoef(x, y)[0, 1]
+        # Suppress numpy RuntimeWarning for zero-variance arrays (constant values
+        # produce stddev=0, causing divide-by-zero in corrcoef). The resulting
+        # NaN is handled below.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            correlation = np.corrcoef(x, y)[0, 1]
 
         # Handle NaN or invalid values
         if np.isnan(correlation) or not np.isfinite(correlation):
@@ -628,7 +634,7 @@ def analyze_correlation(  # noqa: C901
                 "calculation_date": to_db_utc(dt_util.utcnow()),
                 "correlation_coefficient": 0.0,
                 "sample_count": 0,
-                "correlation_type": "none",
+                "correlation_type": CorrelationType.NONE,
                 "confidence": 0.0,
             }
 
@@ -944,24 +950,24 @@ def analyze_correlation(  # noqa: C901
 
             # Determine correlation type
             abs_correlation = abs(correlation)
-            correlation_type = "none"
+            correlation_type: str = CorrelationType.NONE
             analysis_error = None
 
             if abs_correlation >= CORRELATION_MODERATE_THRESHOLD:
                 # Strong correlation (>= 0.4)
                 if correlation > 0:
-                    correlation_type = "strong_positive"
+                    correlation_type = CorrelationType.STRONG_POSITIVE
                 else:
-                    correlation_type = "strong_negative"
+                    correlation_type = CorrelationType.STRONG_NEGATIVE
             elif abs_correlation >= CORRELATION_WEAK_THRESHOLD:
                 # Weak correlation (0.15 to 0.4)
                 if correlation > 0:
-                    correlation_type = "positive"
+                    correlation_type = CorrelationType.POSITIVE
                 else:
-                    correlation_type = "negative"
+                    correlation_type = CorrelationType.NEGATIVE
             else:
                 # Very weak correlation (< 0.15) - no meaningful correlation
-                correlation_type = "none"
+                correlation_type = CorrelationType.NONE
                 analysis_error = "no_correlation"
 
             # Calculate confidence (based on correlation strength and sample size)
@@ -1075,7 +1081,7 @@ def save_binary_likelihood_result(
             "entity_id": likelihood_data["entity_id"],
             "input_type": input_type_value,
             "correlation_coefficient": 0.0,  # Binary sensors don't have correlation
-            "correlation_type": "binary_likelihood",
+            "correlation_type": CorrelationType.BINARY_LIKELIHOOD,
             "analysis_period_start": to_db_utc(
                 likelihood_data["analysis_period_start"]
             ),
@@ -1406,6 +1412,77 @@ def analyze_and_save_correlation(
     if save_correlation_result(db, correlation_data):
         return correlation_data
     return None
+
+
+def get_entity_correlations(db: AreaOccupancyDB, area_name: str) -> dict[str, float]:
+    """Get normalized correlation strengths for all entities in an area.
+
+    Queries the correlations table and returns a dict mapping entity_id to
+    correlation strength (0.0-1.0) for use in sigmoid probability calculation.
+    Only entities with positive correlations and sufficient data are included.
+
+    Args:
+        db: Database instance
+        area_name: Area name to query correlations for
+
+    Returns:
+        Dict mapping entity_id to correlation strength (0.0-1.0).
+        Entities with insufficient data or negative/no correlation return 0.0
+        and are excluded from the result.
+    """
+    try:
+        with db.get_session() as session:
+            # Query all correlations for this area, newest first
+            correlations = (
+                session.query(db.Correlations)
+                .filter(
+                    db.Correlations.entry_id == db.coordinator.entry_id,
+                    db.Correlations.area_name == area_name,
+                )
+                .order_by(db.Correlations.calculation_date.desc())
+                .all()
+            )
+
+            result: dict[str, float] = {}
+            for corr in correlations:
+                # Only accept the first (newest) row per entity
+                if corr.entity_id in result:
+                    continue
+
+                # Get correlation coefficient (may be None for binary likelihoods)
+                coef = corr.correlation_coefficient
+                if coef is None:
+                    # Binary likelihoods don't have correlation coefficient
+                    # Use mean_value_when_occupied (prob_given_true) as proxy
+                    # Normalize: higher prob_given_true = stronger correlation
+                    prob_true = corr.mean_value_when_occupied
+                    if prob_true is not None and prob_true > 0:
+                        # Scale prob_given_true to 0-1 correlation strength
+                        # 0.5 -> 0.5, 0.95 -> 0.95
+                        result[corr.entity_id] = min(1.0, max(0.0, float(prob_true)))
+                    continue
+
+                # Skip if insufficient samples for reliability
+                if corr.sample_count < MIN_CORRELATION_SAMPLES:
+                    continue
+
+                # Only use positive correlations with sufficient confidence
+                if coef > 0:
+                    # Normalize to 0-1 range
+                    # Correlation coefficient is typically -1 to 1
+                    result[corr.entity_id] = min(1.0, max(0.0, float(coef)))
+
+            return result
+
+    except (
+        SQLAlchemyError,
+        OSError,
+        RuntimeError,
+    ) as err:
+        _LOGGER.warning(
+            "Error getting entity correlations for area %s: %s", area_name, err
+        )
+        return {}
 
 
 def get_correlation_for_entity(

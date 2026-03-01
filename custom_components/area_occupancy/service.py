@@ -1,5 +1,6 @@
 """Service definitions for the Area Occupancy Detection integration."""
 
+from dataclasses import asdict
 import logging
 import time
 from typing import TYPE_CHECKING, Any
@@ -9,6 +10,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.util import dt as dt_util
 
 from .const import DEVICE_SW_VERSION, DOMAIN
+from .data.purpose import get_default_decay_half_life
 from .utils import get_coordinator
 
 if TYPE_CHECKING:
@@ -88,7 +90,8 @@ def _collect_likelihood_data(area: "Area") -> dict[str, dict[str, Any]]:
         }
 
         # Always include analysis data and errors (even if None) for visibility
-        analysis_data = getattr(entity, "learned_gaussian_params", None)
+        gaussian_params = getattr(entity, "learned_gaussian_params", None)
+        analysis_data = asdict(gaussian_params) if gaussian_params else None
         analysis_error = getattr(entity, "analysis_error", None)
         correlation_type = getattr(entity, "correlation_type", None)
 
@@ -124,9 +127,15 @@ def _build_analysis_data(
     entity_states = _collect_entity_states(hass, area)
     likelihood_data = _collect_likelihood_data(area)
 
+    # Resolve half_life: use configured value, or derive from purpose if set to auto (0)
+    half_life = area.config.decay.half_life
+    if half_life == 0:
+        half_life = get_default_decay_half_life(area.config.purpose)
+
     data = {
         "area_name": area_name,
         "purpose": area.purpose.name,
+        "half_life": half_life,
         "current_probability": area.probability(),
         "current_occupied": area.occupied(),
         "current_threshold": area.threshold(),
@@ -175,6 +184,31 @@ async def _run_analysis(hass: HomeAssistant, call: ServiceCall) -> dict[str, Any
         raise HomeAssistantError(error_msg) from err
 
 
+async def _export_config(hass: HomeAssistant, call: ServiceCall) -> dict[str, Any]:
+    """Export the complete integration configuration as YAML."""
+    try:
+        coordinator = get_coordinator(hass)
+        config_entry = coordinator.config_entry
+
+        config = dict(config_entry.data) | dict(config_entry.options)
+
+        # Reorder area dicts so area_id comes first
+        if "areas" in config:
+            config["areas"] = [
+                {
+                    "area_id": area["area_id"],
+                    **{k: v for k, v in area.items() if k != "area_id"},
+                }
+                for area in config["areas"]
+            ]
+    except Exception as err:
+        error_msg = f"Failed to export config: {err}"
+        _LOGGER.error(error_msg)
+        raise HomeAssistantError(error_msg) from err
+    else:
+        return config
+
+
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Register custom services for area occupancy."""
 
@@ -182,11 +216,22 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     async def handle_run_analysis(call: ServiceCall) -> dict[str, Any]:
         return await _run_analysis(hass, call)
 
+    async def handle_export_config(call: ServiceCall) -> dict[str, Any]:
+        return await _export_config(hass, call)
+
     # Register service with async wrapper function
     hass.services.async_register(
         DOMAIN,
         "run_analysis",
         handle_run_analysis,
+        schema=None,
+        supports_response=SupportsResponse.ONLY,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        "export_config",
+        handle_export_config,
         schema=None,
         supports_response=SupportsResponse.ONLY,
     )

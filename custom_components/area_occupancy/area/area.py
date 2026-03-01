@@ -19,8 +19,14 @@ from ..const import (
     DOMAIN,
     MIN_PROBABILITY,
 )
+from ..data.activity import ActivityId, DetectedActivity, detect_activity
 from ..data.analysis import start_prior_analysis
-from ..utils import bayesian_probability
+from ..utils import (
+    apply_activity_boost,
+    combined_probability as calc_combined,
+    environmental_confidence as calc_env,
+    presence_probability as calc_presence,
+)
 
 if TYPE_CHECKING:
     from ..coordinator import AreaOccupancyCoordinator
@@ -118,6 +124,11 @@ class Area:
         # Entity IDs for platform entities (set by platform modules)
         self.occupancy_entity_id: str | None = None
         self.wasp_entity_id: str | None = None
+        self.sleep_entity_id: str | None = None
+
+        # Activity detection cache
+        self._activity_cache: DetectedActivity | None = None
+        self._activity_cache_key: tuple[frozenset[str], float] | None = None
 
     @property
     def factory(self) -> EntityFactory:
@@ -130,7 +141,9 @@ class Area:
     def prior(self) -> Prior:
         """Get or create the Prior instance for this area."""
         if self._prior is None:
-            self._prior = Prior(self.coordinator, area_name=self.area_name)
+            self._prior = Prior(
+                self.coordinator, area_name=self.area_name, config=self.config
+            )
         return self._prior
 
     @property
@@ -181,8 +194,15 @@ class Area:
             sw_version=DEVICE_SW_VERSION,
         )
 
-    def probability(self) -> float:
-        """Calculate and return the current occupancy probability (0.0-1.0) for this area.
+    def _base_probability(self) -> float:
+        """Calculate sensor-only occupancy probability (no activity boost).
+
+        Combines presence probability (from strong binary indicators) with
+        environmental confidence (from environmental sensors) using weighted
+        averaging in logit space.
+
+        This is the first phase of the two-phase probability calculation.
+        Activity detection receives this value to avoid circular dependency.
 
         Returns:
             Probability value (0.0-1.0)
@@ -191,10 +211,85 @@ class Area:
         if not entities:
             return MIN_PROBABILITY
 
-        return bayesian_probability(
-            entities=entities,
-            prior=self.prior.value,
+        presence = self.presence_probability()
+        env = self.environmental_confidence()
+
+        # Skip the 80/20 blend when no environmental sensors are configured.
+        # environmental_confidence() returns exactly 0.5 only when there are no
+        # environmental entities, and blending with neutral would compress
+        # presence toward 0.5 unnecessarily.
+        if env == 0.5:
+            return presence
+
+        return calc_combined(presence, env)
+
+    def probability(self) -> float:
+        """Calculate occupancy probability with activity-based boost.
+
+        Two-phase calculation:
+        1. _base_probability() computes sensor-only probability.
+        2. Activity detection runs against the base probability.
+        3. If a strong activity is detected, boost probability in logit space.
+
+        Returns:
+            Probability value (0.0-1.0)
+        """
+        base = self._base_probability()
+        is_occupied = base >= self.config.threshold
+
+        activity = detect_activity(self, base_probability=base, is_occupied=is_occupied)
+
+        if activity.activity_id in (ActivityId.UNOCCUPIED, ActivityId.IDLE):
+            return base
+
+        return apply_activity_boost(base, activity.occupancy_boost, activity.confidence)
+
+    def presence_probability(self) -> float:
+        """Calculate presence probability from strong binary indicators.
+
+        Uses motion, media, appliances, doors, windows, covers, and power
+        sensors to determine presence likelihood.
+
+        Returns:
+            Probability value (0.0-1.0)
+        """
+        entities = self.entities.entities
+        if not entities:
+            return MIN_PROBABILITY
+
+        correlations = self._get_entity_correlations()
+
+        return calc_presence(
+            entities, prior=self.prior.value, correlations=correlations
         )
+
+    def environmental_confidence(self) -> float:
+        """Calculate environmental support confidence.
+
+        Uses temperature, humidity, illuminance, CO2, and other environmental
+        sensors to determine how much the environment supports occupancy.
+
+        Returns:
+            Confidence value (0.0-1.0), where 0.5 is neutral
+        """
+        entities = self.entities.entities
+        if not entities:
+            return 0.5  # Neutral when no entities
+
+        correlations = self._get_entity_correlations()
+
+        return calc_env(entities, correlations=correlations)
+
+    def _get_entity_correlations(self) -> dict[str, float]:
+        """Get cached correlation strengths for this area.
+
+        Returns correlations loaded asynchronously by the coordinator.
+        No DB calls are made in this method.
+
+        Returns:
+            Dict of entity_id -> correlation strength. Empty dict if no data.
+        """
+        return self.coordinator.get_cached_correlations(self.area_name)
 
     def area_prior(self) -> float:
         """Get the area's baseline occupancy prior from historical data.
@@ -235,6 +330,30 @@ class Area:
             True if occupied, False otherwise
         """
         return self.probability() >= self.config.threshold
+
+    def detected_activity(self) -> DetectedActivity:
+        """Detect the current activity in this area.
+
+        Results are cached and recomputed only when the set of active
+        entity IDs or the base probability changes.
+
+        Returns:
+            DetectedActivity with activity_id, confidence, and matching indicators.
+        """
+        active_ids = frozenset(e.entity_id for e in self.entities.active_entities)
+        base = self._base_probability()
+        prob = round(base, 4)
+        cache_key = (active_ids, prob)
+
+        if self._activity_cache_key == cache_key and self._activity_cache is not None:
+            return self._activity_cache
+
+        result = detect_activity(
+            self, base_probability=base, is_occupied=base >= self.config.threshold
+        )
+        self._activity_cache = result
+        self._activity_cache_key = cache_key
+        return result
 
     def threshold(self) -> float:
         """Return the current occupancy threshold (0.0-1.0) for this area.

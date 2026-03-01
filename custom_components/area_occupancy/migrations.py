@@ -16,7 +16,15 @@ from homeassistant.helpers import (
     entity_registry as er,
 )
 
-from .const import CONF_AREA_ID, CONF_AREAS, CONF_VERSION, DOMAIN
+from .const import (
+    CONF_AREA_ID,
+    CONF_AREAS,
+    CONF_PEOPLE,
+    CONF_PERSON_SLEEP_SENSOR,
+    CONF_PERSON_SLEEP_SENSORS,
+    CONF_VERSION,
+    DOMAIN,
+)
 from .db import DB_NAME
 
 _LOGGER = logging.getLogger(__name__)
@@ -82,8 +90,10 @@ async def async_reset_database_if_needed(hass: HomeAssistant, version: int) -> N
         except FileNotFoundError:
             # Handled by exists check, but safe to catch just in case
             pass
-        except Exception as e:  # noqa: BLE001
-            _LOGGER.warning("Failed to delete database file %s: %s", db_path, e)
+        except OSError as e:
+            _LOGGER.warning(
+                "Failed to delete database file %s: %s", db_path, e, exc_info=True
+            )
 
         # Delete WAL and shared memory files if they exist
         wal_path = storage_dir / (DB_NAME + "-wal")
@@ -93,8 +103,8 @@ async def async_reset_database_if_needed(hass: HomeAssistant, version: int) -> N
                 try:
                     path.unlink()
                     _LOGGER.debug("Deleted database file: %s", path)
-                except Exception as e:  # noqa: BLE001
-                    _LOGGER.debug("Failed to delete %s: %s", path, e)
+                except OSError as e:
+                    _LOGGER.debug("Failed to delete %s: %s", path, e, exc_info=True)
 
     await hass.async_add_executor_job(_delete_database_file)
 
@@ -376,6 +386,39 @@ def _migrate_energy_to_power(data: dict[str, Any]) -> bool:
     return migrated
 
 
+def _migrate_sleep_sensor_to_list(data: dict[str, Any]) -> bool:
+    """Convert sleep_confidence_sensor (string) to sleep_sensors (list) for each person.
+
+    Args:
+        data: Config entry data or options dictionary
+
+    Returns:
+        True if migration was performed, False otherwise
+    """
+    migrated = False
+    people = data.get(CONF_PEOPLE, [])
+
+    for person in people:
+        if not isinstance(person, dict):
+            continue
+        if CONF_PERSON_SLEEP_SENSORS in person:
+            # Already migrated
+            continue
+        old_sensor = person.pop(CONF_PERSON_SLEEP_SENSOR, None)
+        if old_sensor:
+            person[CONF_PERSON_SLEEP_SENSORS] = [old_sensor]
+            _LOGGER.info(
+                "Migrated sleep sensor '%s' to sleep_sensors list",
+                old_sensor,
+            )
+            migrated = True
+        else:
+            person[CONF_PERSON_SLEEP_SENSORS] = []
+            migrated = True
+
+    return migrated
+
+
 # ============================================================================
 # Entry Migration (Main Entry Point)
 # ============================================================================
@@ -490,19 +533,54 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         # Moved inside lock to serialize DB deletion across concurrent setup attempts
         await async_reset_database_if_needed(hass, config_entry.version)
 
-        # Handle v15 migration: energy_sensors -> power_sensors
-        # This runs for entries that are v13+ but < v15
-        # Always bump version to 15 to prevent re-consolidation, even if no fields were removed
+        # Handle v15 migration: energy_sensors -> power_sensors.
+        # This runs for entries that are v13+ but < v15.
+        # Always bump version to 16 to prevent re-consolidation, even if no fields were removed.
         if config_entry.version < 15 and config_entry.version >= 13:
             entry_data = dict(config_entry.data)
             _migrate_energy_to_power(entry_data)  # Clean up any misconfigured fields
             hass.config_entries.async_update_entry(
                 config_entry,
                 data=entry_data,
-                version=CONF_VERSION,
+                version=16,
             )
 
-        # If entry is already at version 15 or higher, no migration needed
+        # Handle v16→v17 migration: sleep_confidence_sensor (str) → sleep_sensors (list)
+        if config_entry.version == 16:
+            migrated = False
+            entry_data = dict(config_entry.data)
+            entry_options = dict(config_entry.options)
+
+            if _migrate_sleep_sensor_to_list(entry_data):
+                migrated = True
+            if _migrate_sleep_sensor_to_list(entry_options):
+                migrated = True
+
+            if migrated:
+                _LOGGER.info(
+                    "Migrated entry %s from v16 to v17: sleep_confidence_sensor → sleep_sensors",
+                    config_entry.entry_id,
+                )
+            hass.config_entries.async_update_entry(
+                config_entry,
+                data=entry_data,
+                options=entry_options,
+                version=17,
+            )
+
+        # Handle v17→v18 migration: add exclude_from_all_areas (defaults to False).
+        # No data changes needed — missing key handled by AreaConfig._load_config().
+        if config_entry.version == 17:
+            hass.config_entries.async_update_entry(
+                config_entry,
+                version=18,
+            )
+            _LOGGER.debug(
+                "Bumped entry %s from v17 to v18 (exclude_from_all_areas support)",
+                config_entry.entry_id,
+            )
+
+        # If entry is already at current version or higher, no migration needed
         if config_entry.version >= CONF_VERSION:
             # Check if we were deleted while waiting for lock
             if config_entry.data.get("deleted"):
@@ -669,7 +747,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
                 )
                 return False  # noqa: TRY300
 
-            except Exception:
+            except (KeyError, ValueError, TypeError, OSError, RuntimeError):
                 _LOGGER.exception("Unexpected error during migration")
                 return False
 

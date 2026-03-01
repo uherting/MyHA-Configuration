@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from contextlib import suppress
 from datetime import datetime, timedelta
 import logging
 from typing import TYPE_CHECKING, Any
@@ -12,7 +13,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_OFF, STATE_ON
+from homeassistant.const import STATE_HOME, STATE_OFF, STATE_ON
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.event import (
@@ -23,7 +24,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
-from .area import AllAreas, AreaDeviceHandle
+from .area import AllAreas, AreaDeviceHandle, FloorAreas
 from .const import (
     ALL_AREAS_IDENTIFIER,
     ATTR_DOOR_STATE,
@@ -33,8 +34,16 @@ from .const import (
     ATTR_MAX_DURATION,
     ATTR_MOTION_STATE,
     ATTR_MOTION_TIMEOUT,
+    ATTR_PEOPLE_DETAILS,
+    ATTR_PEOPLE_SLEEPING,
+    ATTR_PERSON_NAME,
+    ATTR_PERSON_SLEEPING,
+    ATTR_PERSON_STATE,
+    ATTR_SLEEP_SENSORS,
+    ATTR_SLEEP_THRESHOLD,
     ATTR_VERIFICATION_DELAY,
     ATTR_VERIFICATION_PENDING,
+    NAME_SLEEP_PRESENCE,
     NAME_WASP_IN_BOX,
 )
 from .utils import generate_entity_unique_id
@@ -42,6 +51,7 @@ from .utils import generate_entity_unique_id
 if TYPE_CHECKING:
     from .area import Area
     from .coordinator import AreaOccupancyCoordinator
+    from .data.config import PersonConfig
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +68,7 @@ class Occupancy(CoordinatorEntity, BinarySensorEntity):
     def __init__(
         self,
         area_handle: AreaDeviceHandle | None = None,
-        all_areas: AllAreas | None = None,
+        all_areas: AllAreas | FloorAreas | None = None,
     ) -> None:
         """Initialize the sensor."""
         source = area_handle or all_areas
@@ -67,7 +77,12 @@ class Occupancy(CoordinatorEntity, BinarySensorEntity):
         super().__init__(source.coordinator)
         self._handle = area_handle
         self._all_areas = all_areas
-        self._area_name = area_handle.area_name if area_handle else ALL_AREAS_IDENTIFIER
+        if area_handle:
+            self._area_name = area_handle.area_name
+        elif isinstance(all_areas, FloorAreas):
+            self._area_name = f"floor_{all_areas.floor_id}"
+        else:
+            self._area_name = ALL_AREAS_IDENTIFIER
         self._attr_has_entity_name = True
 
         # Unique ID: use entry_id, device_id, and entity_name
@@ -92,11 +107,8 @@ class Occupancy(CoordinatorEntity, BinarySensorEntity):
     async def async_added_to_hass(self) -> None:
         """Handle entity which will be added."""
         await super().async_added_to_hass()
-        # Let the coordinator know our entity_id (only for specific areas, not All Areas)
-        if (
-            self._area_name != ALL_AREAS_IDENTIFIER
-            and (area := self._get_area()) is not None
-        ):
+        # Let the coordinator know our entity_id. Only for per-area entities, not aggregates.
+        if self._handle is not None and (area := self._get_area()) is not None:
             area.occupancy_entity_id = self.entity_id
 
             # Assign device to Home Assistant area if area_id is configured
@@ -112,9 +124,9 @@ class Occupancy(CoordinatorEntity, BinarySensorEntity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Handle entity which will be removed."""
-        # Clear the entity_id from coordinator (only for specific areas, not All Areas)
+        # Clear the entity_id from coordinator. Only for per-area entities, not aggregates.
         if (
-            self._area_name != ALL_AREAS_IDENTIFIER
+            self._handle is not None
             and (area := self._get_area()) is not None
             and area.occupancy_entity_id == self.entity_id
         ):
@@ -135,9 +147,7 @@ class Occupancy(CoordinatorEntity, BinarySensorEntity):
                  False if no data is available or area is unoccupied.
 
         """
-        if self._area_name == ALL_AREAS_IDENTIFIER:
-            if self._all_areas is None:
-                return False
+        if self._all_areas is not None:
             return self._all_areas.occupied()
         area = self._get_area()
         if area is None:
@@ -730,44 +740,326 @@ class WaspInBoxSensor(RestoreEntity, BinarySensorEntity):
         return self._handle.resolve()
 
 
+class SleepPresenceSensor(RestoreEntity, BinarySensorEntity):
+    """Sleep Presence binary sensor implementation.
+
+    This sensor detects sleep presence based on HA person entity state
+    and phone sleep confidence sensor. When a person is home and their
+    sleep confidence exceeds the threshold, the sensor turns ON, feeding
+    into the area's occupancy calculation as a SLEEP input type.
+    """
+
+    _attr_should_poll = False
+
+    def __init__(
+        self,
+        area_handle: AreaDeviceHandle,
+        config_entry: ConfigEntry,
+        people: list[PersonConfig],
+    ) -> None:
+        """Initialize the sensor."""
+        _LOGGER.debug(
+            "Initializing SleepPresenceSensor for area: %s with %d people",
+            area_handle.area_name,
+            len(people),
+        )
+        super().__init__()
+
+        self._handle = area_handle
+        self._coordinator = area_handle.coordinator
+        self._area_name = area_handle.area_name
+        self._people = people
+
+        area = area_handle.resolve()
+        if area is None:
+            raise ValueError(f"Area '{area_handle.area_name}' is not available")
+
+        # Configure entity properties
+        self._attr_has_entity_name = True
+        self._attr_unique_id = generate_entity_unique_id(
+            area_handle.coordinator.entry_id,
+            area.device_info(),
+            NAME_SLEEP_PRESENCE,
+        )
+        self._attr_name = NAME_SLEEP_PRESENCE
+        self._attr_device_class = BinarySensorDeviceClass.OCCUPANCY
+        self._attr_icon = "mdi:sleep"
+        self._attr_device_info = area.device_info()
+        self._attr_available = True
+        self._attr_is_on = False
+
+        # State tracking
+        self._state = STATE_OFF
+        self._remove_state_listener: Callable[[], None] | None = None
+
+    async def async_added_to_hass(self) -> None:
+        """Handle entity which will be added."""
+        _LOGGER.debug("SleepPresenceSensor async_added_to_hass for %s", self.unique_id)
+        await super().async_added_to_hass()
+
+        # Restore previous state
+        if (last_state := await self.async_get_last_state()) is not None:
+            self._state = last_state.state
+            self._attr_is_on = self._state == STATE_ON
+
+        # Register entity_id with the area and add to EntityManager
+        if (area := self._get_area()) is not None:
+            area.sleep_entity_id = self.entity_id
+
+            # Add sleep entity to EntityManager so it's tracked for occupancy
+            # calculation. EntityManager is created before platform setup, so
+            # sleep_entity_id is None at that point — we must register it now.
+            area.entities.register_entity(self.entity_id, "sleep")
+            _LOGGER.debug("Registered sleep entity %s in EntityManager", self.entity_id)
+
+        # Set up state tracking for all person + sleep confidence entities
+        self._setup_entity_tracking()
+        _LOGGER.debug("SleepPresenceSensor setup completed for %s", self.entity_id)
+
+    def _setup_entity_tracking(self) -> None:
+        """Set up state tracking for person and sleep confidence entities."""
+        if self._remove_state_listener is not None:
+            self._remove_state_listener()
+            self._remove_state_listener = None
+
+        tracked_entities: list[str] = []
+        for person in self._people:
+            tracked_entities.append(person.person_entity)
+            if person.device_tracker:
+                tracked_entities.append(person.device_tracker)
+            tracked_entities.extend(person.sleep_sensors)
+
+        if not tracked_entities:
+            _LOGGER.warning(
+                "No entities to track for SleepPresenceSensor in area %s",
+                self._area_name,
+            )
+            return
+
+        self._remove_state_listener = async_track_state_change_event(
+            self.hass, tracked_entities, self._handle_state_change
+        )
+
+        # Initialize from current states
+        self._evaluate_and_update()
+
+    @callback
+    def _handle_state_change(self, event: Any) -> None:
+        """Handle state changes for tracked entities."""
+        self._evaluate_and_update()
+
+    def _evaluate_sleep_state(self) -> bool:
+        """Evaluate whether any person is home and sleeping.
+
+        Supports both binary_sensor (on/off) and numeric sensor (threshold comparison).
+        Any active sleep sensor means the person is sleeping (OR logic).
+        """
+        for person in self._people:
+            # Use device_tracker if configured, otherwise fall back to person entity
+            if person.device_tracker:
+                home_state = self.hass.states.get(person.device_tracker)
+            else:
+                home_state = self.hass.states.get(person.person_entity)
+
+            if not home_state or home_state.state != STATE_HOME:
+                continue
+
+            for sensor_id in person.sleep_sensors:
+                sensor_state = self.hass.states.get(sensor_id)
+                if not sensor_state or sensor_state.state in (
+                    "unknown",
+                    "unavailable",
+                    None,
+                    "",
+                ):
+                    continue
+
+                if sensor_id.startswith("binary_sensor."):
+                    # Binary sensor: "on" means sleeping
+                    if sensor_state.state == STATE_ON:
+                        return True
+                else:
+                    # Numeric sensor: compare against threshold
+                    try:
+                        confidence = float(sensor_state.state)
+                        if confidence >= person.confidence_threshold:
+                            return True
+                    except (ValueError, TypeError):
+                        continue
+        return False
+
+    def _evaluate_and_update(self) -> None:
+        """Evaluate sleep state and update if changed."""
+        is_sleeping = self._evaluate_sleep_state()
+        new_state = STATE_ON if is_sleeping else STATE_OFF
+
+        if new_state != self._state:
+            self._state = new_state
+            self._attr_is_on = new_state == STATE_ON
+            _LOGGER.debug(
+                "Sleep presence changed to %s for area %s",
+                new_state,
+                self._area_name,
+            )
+        self.async_write_ha_state()
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes."""
+        people_sleeping: list[str] = []
+        person_details: list[dict[str, Any]] = []
+
+        for person in self._people:
+            person_state = self.hass.states.get(person.person_entity)
+
+            friendly_name = (
+                person_state.attributes.get("friendly_name", person.person_entity)
+                if person_state
+                else person.person_entity
+            )
+
+            # Use device_tracker if configured, otherwise fall back to person entity
+            if person.device_tracker:
+                home_entity_state = self.hass.states.get(person.device_tracker)
+            else:
+                home_entity_state = person_state
+            is_home = home_entity_state and home_entity_state.state == STATE_HOME
+
+            # Build per-sensor details
+            sensor_details: list[dict[str, Any]] = []
+            any_sensor_active = False
+            for sensor_id in person.sleep_sensors:
+                sensor_state = self.hass.states.get(sensor_id)
+                is_binary = sensor_id.startswith("binary_sensor.")
+                sensor_value: str | None = sensor_state.state if sensor_state else None
+                active = False
+                if sensor_state and sensor_state.state not in (
+                    "unknown",
+                    "unavailable",
+                    None,
+                    "",
+                ):
+                    if is_binary:
+                        active = sensor_state.state == STATE_ON
+                    else:
+                        with suppress(ValueError, TypeError):
+                            active = (
+                                float(sensor_state.state) >= person.confidence_threshold
+                            )
+                if active:
+                    any_sensor_active = True
+                sensor_details.append(
+                    {
+                        "entity_id": sensor_id,
+                        "type": "binary" if is_binary else "numeric",
+                        "state": sensor_value,
+                        "active": active,
+                    }
+                )
+
+            is_sleeping = is_home and any_sensor_active
+
+            if is_sleeping:
+                people_sleeping.append(friendly_name)
+
+            person_details.append(
+                {
+                    ATTR_PERSON_NAME: friendly_name,
+                    ATTR_PERSON_STATE: home_entity_state.state
+                    if home_entity_state
+                    else "unknown",
+                    ATTR_SLEEP_SENSORS: sensor_details,
+                    ATTR_SLEEP_THRESHOLD: person.confidence_threshold,
+                    ATTR_PERSON_SLEEPING: is_sleeping,
+                }
+            )
+
+        return {
+            ATTR_PEOPLE_SLEEPING: people_sleeping,
+            ATTR_PEOPLE_DETAILS: person_details,
+        }
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Cleanup when entity is removed."""
+        _LOGGER.debug("Removing Sleep Presence sensor: %s", self.entity_id)
+        if self._remove_state_listener is not None:
+            self._remove_state_listener()
+            self._remove_state_listener = None
+
+        area = self._get_area()
+        if area is not None and area.sleep_entity_id == self.entity_id:
+            area.sleep_entity_id = None
+            area.entities.deregister_entity(self.entity_id)
+
+        await super().async_will_remove_from_hass()
+
+    def _get_area(self) -> Area | None:
+        """Return the current Area backing this sensor."""
+        return self._handle.resolve()
+
+
 async def async_setup_entry(
     hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: Any
 ) -> None:
     """Set up the Area Occupancy Detection binary sensors."""
     coordinator: AreaOccupancyCoordinator = config_entry.runtime_data
 
-    entities: list[BinarySensorEntity] = []
-
-    # Create occupancy sensors for each area
+    # Create per-area entities.
     for area_name in coordinator.get_area_names():
         handle = coordinator.get_area_handle(area_name)
-        _LOGGER.debug("Creating occupancy sensor for area: %s", area_name)
-        entities.append(Occupancy(area_handle=handle))
-
-        # Create Wasp in Box sensor if enabled for this area
         area = coordinator.get_area(area_name)
+        area_entities: list[BinarySensorEntity] = []
+
+        _LOGGER.debug("Creating occupancy sensor for area: %s", area_name)
+        area_entities.append(Occupancy(area_handle=handle))
+
+        # Create Wasp in Box sensor if enabled for this area.
         if area and area.config.wasp_in_box.enabled:
             _LOGGER.debug(
                 "Wasp in Box sensor enabled for area %s, creating sensor", area_name
             )
-            wasp_sensor = WaspInBoxSensor(
-                area_handle=handle,
-                config_entry=config_entry,
-            )
-            entities.append(wasp_sensor)
-            _LOGGER.debug(
-                "Created Wasp in Box sensor for area %s: %s",
-                area_name,
-                wasp_sensor.unique_id,
+            area_entities.append(
+                WaspInBoxSensor(area_handle=handle, config_entry=config_entry)
             )
 
-    # Create "All Areas" aggregation occupancy sensor when areas exist
-    if len(coordinator.get_area_names()) >= 1:
-        _LOGGER.debug("Creating All Areas aggregation occupancy sensor")
-        entities.append(
-            Occupancy(
-                all_areas=coordinator.get_all_areas(),
+        # Create Sleep Presence sensor if any people assigned to this area.
+        if area and area.config.area_id:
+            people_for_area = coordinator.integration_config.get_people_for_area(
+                area.config.area_id
             )
+            if people_for_area:
+                _LOGGER.debug(
+                    "Sleep Presence sensor: %d people for area %s, creating sensor",
+                    len(people_for_area),
+                    area_name,
+                )
+                area_entities.append(
+                    SleepPresenceSensor(
+                        area_handle=handle,
+                        config_entry=config_entry,
+                        people=people_for_area,
+                    )
+                )
+
+        async_add_entities(
+            area_entities,
+            update_before_add=False,
         )
 
-    async_add_entities(entities, update_before_add=False)
+    # Create "All Areas" aggregation occupancy sensor.
+    if len(coordinator.get_area_names()) >= 1:
+        _LOGGER.debug("Creating All Areas aggregation occupancy sensor")
+        async_add_entities(
+            [Occupancy(all_areas=coordinator.get_all_areas())],
+            update_before_add=False,
+        )
+
+    # Create floor-based aggregation occupancy sensors.
+    for floor_agg in coordinator.get_floor_aggregators().values():
+        _LOGGER.debug(
+            "Creating floor aggregation occupancy sensor for %s", floor_agg.floor_name
+        )
+        async_add_entities(
+            [Occupancy(all_areas=floor_agg)],
+            update_before_add=False,
+        )

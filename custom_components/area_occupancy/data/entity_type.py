@@ -18,6 +18,25 @@ from homeassistant.const import (
 _LOGGER = logging.getLogger(__name__)
 
 
+class CorrelationType(StrEnum):
+    """Correlation type for sensor-occupancy analysis."""
+
+    STRONG_POSITIVE = "strong_positive"
+    POSITIVE = "positive"
+    STRONG_NEGATIVE = "strong_negative"
+    NEGATIVE = "negative"
+    NONE = "none"
+    BINARY_LIKELIHOOD = "binary_likelihood"
+
+
+class AnalysisStatus(StrEnum):
+    """Analysis status for entity correlation analysis."""
+
+    NOT_ANALYZED = "not_analyzed"
+    MOTION_EXCLUDED = "motion_sensor_excluded"
+    ANALYZED = "analyzed"
+
+
 class InputType(StrEnum):
     """Input type."""
 
@@ -39,6 +58,7 @@ class InputType(StrEnum):
     PM25 = "pm25"
     PM10 = "pm10"
     POWER = "power"
+    SLEEP = "sleep"
     ENVIRONMENTAL = "environmental"
     UNKNOWN = "unknown"
 
@@ -54,6 +74,7 @@ class EntityType:
         prob_given_false: float | None = None,
         active_states: list[str] | None = None,
         active_range: tuple[float, float] | None = None,
+        strength_multiplier: float | None = None,
     ) -> None:
         """Initialize the entity type.
 
@@ -66,6 +87,8 @@ class EntityType:
                 If None, uses default. Empty list is treated as "use defaults".
             active_range: Tuple of (min, max) for active range (mutually exclusive with active_states).
                 If None, uses default.
+            strength_multiplier: Logit-space multiplier for sensor strength.
+                If None, uses default from DEFAULT_TYPES (e.g., 3.0 for MOTION, 2.0 for others).
 
         Raises:
             ValueError: If neither or both of active_states and active_range are provided,
@@ -111,6 +134,7 @@ class EntityType:
                     "prob_given_false": 0.05,
                     "active_states": [STATE_ON],
                     "active_range": None,
+                    "strength_multiplier": 2.0,
                 }
         defaults = dict(default_type)
 
@@ -156,14 +180,56 @@ class EntityType:
         if has_active_states and has_active_range:
             raise ValueError("Cannot provide both active_states and active_range")
 
+        # Set strength multiplier (per-type scaling in logit space)
+        self.strength_multiplier = (
+            strength_multiplier
+            if strength_multiplier is not None
+            else defaults.get("strength_multiplier", 2.0)
+        )
+
+
+# Input type classifications for probability calculations
+PRESENCE_INPUT_TYPES: set[InputType] = {
+    InputType.MOTION,
+    InputType.MEDIA,
+    InputType.APPLIANCE,
+    InputType.DOOR,
+    InputType.WINDOW,
+    InputType.COVER,
+    InputType.POWER,
+    InputType.SLEEP,
+}
+
+BINARY_INPUT_TYPES: set[InputType] = {
+    InputType.MEDIA,
+    InputType.APPLIANCE,
+    InputType.DOOR,
+    InputType.WINDOW,
+}
+
+ENVIRONMENTAL_INPUT_TYPES: set[InputType] = {
+    InputType.TEMPERATURE,
+    InputType.HUMIDITY,
+    InputType.ILLUMINANCE,
+    InputType.CO2,
+    InputType.CO,
+    InputType.SOUND_PRESSURE,
+    InputType.PRESSURE,
+    InputType.AIR_QUALITY,
+    InputType.VOC,
+    InputType.PM25,
+    InputType.PM10,
+    InputType.ENVIRONMENTAL,
+}
 
 DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
     InputType.MOTION: {
         "weight": 1,
         "prob_given_true": 0.95,  # Much higher for ground truth
-        "prob_given_false": 0.02,  # Lower false positive rate
+        "prob_given_false": 0.005,  # PIR sensors rarely false-trigger
         "active_states": [STATE_ON],
         "active_range": None,
+        "strength_multiplier": 3.0,
     },
     InputType.MEDIA: {
         "weight": 0.85,
@@ -171,6 +237,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.02,
         "active_states": [STATE_PLAYING, STATE_PAUSED],
         "active_range": None,
+        "strength_multiplier": 2.0,
     },
     InputType.APPLIANCE: {
         "weight": 0.4,
@@ -178,6 +245,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.02,
         "active_states": [STATE_ON, STATE_STANDBY],
         "active_range": None,
+        "strength_multiplier": 2.0,
     },
     InputType.DOOR: {
         "weight": 0.3,
@@ -185,6 +253,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.02,
         "active_states": [STATE_CLOSED],
         "active_range": None,
+        "strength_multiplier": 2.0,
     },
     InputType.WINDOW: {
         "weight": 0.2,
@@ -192,6 +261,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.02,
         "active_states": [STATE_OPEN],
         "active_range": None,
+        "strength_multiplier": 2.0,
     },
     InputType.COVER: {
         "weight": 0.5,
@@ -199,6 +269,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.02,
         "active_states": [STATE_OPENING, STATE_CLOSING],
         "active_range": None,
+        "strength_multiplier": 2.0,
     },
     InputType.TEMPERATURE: {
         "weight": 0.1,
@@ -206,6 +277,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (18.0, 24.0),
+        "strength_multiplier": 2.0,
     },
     InputType.HUMIDITY: {
         "weight": 0.1,
@@ -213,6 +285,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (70.0, 100.0),
+        "strength_multiplier": 2.0,
     },
     InputType.ILLUMINANCE: {
         "weight": 0.1,
@@ -220,6 +293,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (30.00, 100000.0),
+        "strength_multiplier": 2.0,
     },
     InputType.CO2: {
         "weight": 0.1,
@@ -227,6 +301,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (400.0, 1200.0),
+        "strength_multiplier": 2.0,
     },
     InputType.CO: {
         "weight": 0.1,
@@ -234,6 +309,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (5.0, 50.0),  # ppm - elevated levels indicate human activity
+        "strength_multiplier": 2.0,
     },
     InputType.SOUND_PRESSURE: {
         "weight": 0.1,
@@ -241,6 +317,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (40.0, 80.0),
+        "strength_multiplier": 2.0,
     },
     InputType.PRESSURE: {
         "weight": 0.1,
@@ -248,6 +325,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (980.0, 1050.0),
+        "strength_multiplier": 2.0,
     },
     InputType.AIR_QUALITY: {
         "weight": 0.1,
@@ -255,6 +333,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (50.0, 150.0),
+        "strength_multiplier": 2.0,
     },
     InputType.VOC: {
         "weight": 0.1,
@@ -262,6 +341,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (200.0, 1000.0),
+        "strength_multiplier": 2.0,
     },
     InputType.PM25: {
         "weight": 0.1,
@@ -269,6 +349,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (12.0, 55.0),
+        "strength_multiplier": 2.0,
     },
     InputType.PM10: {
         "weight": 0.1,
@@ -276,6 +357,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (55.0, 155.0),
+        "strength_multiplier": 2.0,
     },
     InputType.POWER: {
         "weight": 0.3,
@@ -283,6 +365,15 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.02,
         "active_states": None,
         "active_range": (0.1, 10.0),
+        "strength_multiplier": 2.0,
+    },
+    InputType.SLEEP: {
+        "weight": 0.9,
+        "prob_given_true": 0.95,
+        "prob_given_false": 0.02,
+        "active_states": [STATE_ON],
+        "active_range": None,
+        "strength_multiplier": 3.0,
     },
     InputType.ENVIRONMENTAL: {
         "weight": 0.1,
@@ -290,6 +381,7 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.01,
         "active_states": None,
         "active_range": (0.0, 0.2),
+        "strength_multiplier": 2.0,
     },
     InputType.UNKNOWN: {
         "weight": 0.85,
@@ -297,5 +389,6 @@ DEFAULT_TYPES: dict[InputType, dict[str, Any]] = {
         "prob_given_false": 0.03,
         "active_states": [STATE_ON],
         "active_range": None,
+        "strength_multiplier": 2.0,
     },
 }

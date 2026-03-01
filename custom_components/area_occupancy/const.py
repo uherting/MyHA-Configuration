@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
-from typing import Final, TypedDict
+from typing import Any, Final, TypedDict
 
 from homeassistant.const import (
     STATE_BUFFERING,
@@ -29,8 +29,8 @@ PLATFORMS = [Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SENSOR]
 # Device information
 DEVICE_MANUFACTURER: Final = "Hankanman"
 DEVICE_MODEL: Final = "Area Occupancy Detector"
-DEVICE_SW_VERSION: Final = "2026.1.1"
-CONF_VERSION: Final = 16  # Incremented for timezone normalization + local bucketing
+DEVICE_SW_VERSION: Final = "2026.2.5"
+CONF_VERSION: Final = 18
 CONF_VERSION_MINOR: Final = 0
 HA_RECORDER_DAYS: Final = 10  # days
 
@@ -47,6 +47,7 @@ CONF_ACTION_EDIT: Final = "edit"
 CONF_ACTION_REMOVE: Final = "remove"
 CONF_ACTION_CANCEL: Final = "cancel"
 CONF_ACTION_GLOBAL_SETTINGS: Final = "global_settings"
+CONF_ACTION_MANAGE_PEOPLE: Final = "manage_people"
 CONF_OPTION_PREFIX_AREA: Final = "area_"
 
 # Configuration constants
@@ -86,11 +87,22 @@ CONF_SENSORS: Final = "sensors"
 CONF_ENTITY_ID: Final = "entity_id"
 CONF_MOTION_TIMEOUT: Final = "motion_timeout"
 CONF_MIN_PRIOR_OVERRIDE: Final = "min_prior_override"
+CONF_EXCLUDE_FROM_ALL_AREAS: Final = "exclude_from_all_areas"
 CONF_SLEEP_START: Final = "sleep_start"
 CONF_SLEEP_END: Final = "sleep_end"
 
+# People configuration constants
+CONF_PEOPLE: Final = "people"
+CONF_PERSON_ENTITY: Final = "person_entity"
+CONF_PERSON_SLEEP_SENSOR: Final = "sleep_confidence_sensor"
+CONF_PERSON_SLEEP_SENSORS: Final = "sleep_sensors"
+CONF_PERSON_SLEEP_AREA: Final = "sleep_area_id"
+CONF_PERSON_CONFIDENCE_THRESHOLD: Final = "confidence_threshold"
+CONF_PERSON_DEVICE_TRACKER: Final = "device_tracker"
+
 
 # Configured Weights
+CONF_WEIGHT_SLEEP: Final = "weight_sleep"
 CONF_WEIGHT_MOTION: Final = "weight_motion"
 CONF_WEIGHT_MEDIA: Final = "weight_media"
 CONF_WEIGHT_APPLIANCE: Final = "weight_appliance"
@@ -115,10 +127,18 @@ DEFAULT_NAME: Final = "Area Occupancy"
 DEFAULT_PRIOR_UPDATE_INTERVAL: Final = 1  # hours
 DEFAULT_MOTION_TIMEOUT: Final = 300  # 5 minutes in seconds
 DEFAULT_MOTION_PROB_GIVEN_TRUE: Final = 0.95  # Matches DEFAULT_TYPES[InputType.MOTION]
-DEFAULT_MOTION_PROB_GIVEN_FALSE: Final = 0.02  # Matches DEFAULT_TYPES[InputType.MOTION]
+DEFAULT_MOTION_PROB_GIVEN_FALSE: Final = (
+    0.005  # Matches DEFAULT_TYPES[InputType.MOTION]
+)
 DEFAULT_MIN_PRIOR_OVERRIDE: Final = 0.0  # 0.0 = disabled by default
+DEFAULT_EXCLUDE_FROM_ALL_AREAS: Final = False
 DEFAULT_SLEEP_START: Final = "23:00:00"
 DEFAULT_SLEEP_END: Final = "07:00:00"
+DEFAULT_SLEEP_CONFIDENCE_THRESHOLD: Final = 75
+DEFAULT_SLEEP_WEIGHT: Final = 0.9
+SLEEP_PRESENCE_HALF_LIFE: Final = (
+    7200  # 2 hour half-life for sleep (persistent presence)
+)
 
 # Database recovery defaults
 DEFAULT_ENABLE_AUTO_RECOVERY: Final = True
@@ -138,16 +158,22 @@ DEFAULT_WEIGHT_COVER: Final = (
 DEFAULT_WEIGHT_ENVIRONMENTAL: Final = 0.1
 DEFAULT_WEIGHT_POWER: Final = 0.3
 
+# Activity occupancy boost constants (logit-space magnitudes)
+ACTIVITY_BOOST_HIGH: Final[float] = 1.5  # Showering, bathing, sleeping
+ACTIVITY_BOOST_STRONG: Final[float] = 1.2  # Watching TV
+ACTIVITY_BOOST_MODERATE: Final[float] = 1.0  # Cooking, working
+ACTIVITY_BOOST_MILD: Final[float] = 0.8  # Listening to music, eating
+
 # Safety bounds
 MIN_PROBABILITY: Final = 0.01
 MAX_PROBABILITY: Final = 0.99
-MIN_PRIOR: Final[float] = 0.1
+MIN_PRIOR: Final[float] = 0.01
 MAX_PRIOR: Final[float] = 0.99
 MIN_WEIGHT: Final[float] = 0.01
 MAX_WEIGHT: Final[float] = 0.99
 
 # Time Prior Bounds
-TIME_PRIOR_MIN_BOUND: Final[float] = 0.1
+TIME_PRIOR_MIN_BOUND: Final[float] = 0.03
 TIME_PRIOR_MAX_BOUND: Final[float] = 0.9
 
 # Default prior probabilities
@@ -189,6 +215,10 @@ ENVIRONMENTAL_DEFAULT_PRIOR: Final[float] = 0.0769
 WASP_PROB_GIVEN_TRUE: Final[float] = 0.95
 WASP_PROB_GIVEN_FALSE: Final[float] = 0.05
 WASP_DEFAULT_PRIOR: Final[float] = 0.60
+
+# Sleep presence defaults (High confidence when active)
+SLEEP_PROB_GIVEN_TRUE: Final[float] = 0.95
+SLEEP_PROB_GIVEN_FALSE: Final[float] = 0.02
 
 # Helper constants
 ROUNDING_PRECISION: Final = 2
@@ -274,6 +304,7 @@ SAVE_INTERVAL: Final = 600  # seconds (10 minutes) - periodic database save inte
 
 # Entity naming
 NAME_WASP_IN_BOX: Final = "Wasp in Box"
+NAME_SLEEP_PRESENCE: Final = "Sleeping"
 
 # Configuration keys
 CONF_WASP_ENABLED: Final = "wasp_enabled"
@@ -299,6 +330,16 @@ ATTR_LAST_OCCUPIED_TIME: Final = "last_occupied_time"
 ATTR_MAX_DURATION: Final = "max_duration"
 ATTR_VERIFICATION_DELAY: Final = "verification_delay"
 ATTR_VERIFICATION_PENDING: Final = "verification_pending"
+
+# Sleep Presence attributes
+ATTR_SLEEP_CONFIDENCE: Final = "sleep_confidence"
+ATTR_SLEEP_SENSORS: Final = "sleep_sensors"
+ATTR_PERSON_STATE: Final = "person_state"
+ATTR_SLEEP_THRESHOLD: Final = "sleep_threshold"
+ATTR_PEOPLE_SLEEPING: Final = "people_sleeping"
+ATTR_PEOPLE_DETAILS: Final = "people"
+ATTR_PERSON_NAME: Final = "name"
+ATTR_PERSON_SLEEPING: Final = "sleeping"
 
 
 # ────────────────────────────────────── State Mapping ───────────────────────────
@@ -426,3 +467,48 @@ def get_default_state(platform_type: str) -> str:
     """Get the default state for a given platform type."""
     states = get_state_options(platform_type)
     return states["default"]
+
+
+# Sensor type string -> InputType mapping (alphabetized).
+# Lazy-loaded to avoid circular imports with data.entity_type.
+_SENSOR_TYPE_MAPPING: dict[str, Any] | None = None
+
+
+def get_sensor_type_mapping() -> dict[str, Any]:
+    """Get sensor type mapping, building lazily to avoid circular imports."""
+    global _SENSOR_TYPE_MAPPING  # noqa: PLW0603
+    if _SENSOR_TYPE_MAPPING is None:
+        from .data.entity_type import InputType  # noqa: PLC0415
+
+        _SENSOR_TYPE_MAPPING = {
+            "air_quality": InputType.AIR_QUALITY,
+            "appliance": InputType.APPLIANCE,
+            "co": InputType.CO,
+            "co2": InputType.CO2,
+            "cover": InputType.COVER,
+            "door": InputType.DOOR,
+            "humidity": InputType.HUMIDITY,
+            "illuminance": InputType.ILLUMINANCE,
+            "media": InputType.MEDIA,
+            "motion": InputType.MOTION,
+            "pm10": InputType.PM10,
+            "pm25": InputType.PM25,
+            "power": InputType.POWER,
+            "pressure": InputType.PRESSURE,
+            "sleep": InputType.SLEEP,
+            "sound_pressure": InputType.SOUND_PRESSURE,
+            "temperature": InputType.TEMPERATURE,
+            "voc": InputType.VOC,
+            "window": InputType.WINDOW,
+        }
+    return _SENSOR_TYPE_MAPPING
+
+
+# Fields that use DurationSelector and need conversion.
+DURATION_FIELDS: Final[set[str]] = {
+    CONF_DECAY_HALF_LIFE,
+    CONF_MOTION_TIMEOUT,
+    CONF_WASP_MAX_DURATION,
+    CONF_WASP_MOTION_TIMEOUT,
+    CONF_WASP_VERIFICATION_DELAY,
+}

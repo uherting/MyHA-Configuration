@@ -101,8 +101,224 @@ def map_binary_state_to_semantic(state: str, active_states: list[str]) -> str:
     return state
 
 
+# ────────────────────────────────────── Sigmoid Functions ───────────────────────────
+
+
+def sigmoid(z: float) -> float:
+    """Compute sigmoid function with numerical stability.
+
+    Args:
+        z: Input value (log-odds)
+
+    Returns:
+        Probability in range (0, 1)
+    """
+    # Handle edge cases for numerical stability
+    if z >= 0:
+        return 1 / (1 + math.exp(-z))
+    exp_z = math.exp(z)
+    return exp_z / (1 + exp_z)
+
+
+def logit(p: float) -> float:
+    """Compute logit (inverse sigmoid) with bounds protection.
+
+    Args:
+        p: Probability value
+
+    Returns:
+        Log-odds value
+    """
+    p = clamp_probability(p)  # Ensure 0.01-0.99 range
+    return math.log(p / (1 - p))
+
+
+def sigmoid_probability(
+    entities: dict[str, Entity],
+    prior: float = 0.5,
+    correlations: dict[str, float] | None = None,
+) -> float:
+    """Calculate occupancy probability using weighted sigmoid model.
+
+    This replaces Bayesian calculation with logistic regression-style probability:
+    z = bias + Σ(weight_i × evidence_i × correlation_i × strength_factor)
+    P = sigmoid(z)
+
+    Args:
+        entities: Dict of Entity objects
+        prior: Learned prior probability for this area (0.0-1.0)
+        correlations: Optional dict of entity_id -> correlation strength (0-1)
+                     If None or missing entries, defaults to 1.0
+
+    Returns:
+        Probability in range MIN_PROBABILITY to MAX_PROBABILITY
+    """
+    if not entities:
+        return clamp_probability(prior)
+
+    # Start with bias from prior (logit transforms prior to log-odds space)
+    # logit(0.5) = 0, logit(0.7) = 0.85, logit(0.3) = -0.85
+    bias = logit(prior)
+
+    # Sum weighted contributions from all entities
+    z = bias
+
+    for entity_id, entity in entities.items():
+        if entity.weight <= 0:
+            continue
+
+        # Get correlation multiplier (learned or default)
+        correlation = 1.0
+        if correlations and entity_id in correlations:
+            correlation = correlations[entity_id]
+
+        # Determine evidence contribution
+        # Active = full contribution, Decaying = partial, Inactive = zero
+        if entity.evidence is True:
+            evidence = 1.0
+        elif entity.decay.is_decaying:
+            evidence = entity.decay_factor  # Gradual fade (0.0 to 1.0)
+        else:
+            evidence = 0.0  # Inactive = no contribution (not negative!)
+
+        # Scale by sensor type strength (prob_given_true indicates signal strength)
+        # Motion (0.95) contributes more than door (0.2)
+        strength = entity.prob_given_true
+
+        # Use effective_weight (weight × information_gain) so uninformative sensors
+        # contribute less. Falls back to weight if effective_weight is not available.
+        ew = getattr(entity, "effective_weight", entity.weight)
+
+        # Add to z: effective_weight × evidence × correlation × strength_factor.
+        # strength_multiplier is per-type (e.g., 3.0 for motion, 2.0 for others)
+        # to give ground-truth sensors a stronger logit-space contribution.
+        strength_multiplier = getattr(entity.type, "strength_multiplier", 2.0)
+        contribution = ew * evidence * correlation * (strength * strength_multiplier)
+        z += contribution
+
+    return clamp_probability(sigmoid(z))
+
+
+def presence_probability(
+    entities: dict[str, Entity],
+    prior: float = 0.5,
+    correlations: dict[str, float] | None = None,
+) -> float:
+    """Calculate presence probability from strong binary indicators.
+
+    Filters entities to only include presence-related sensors (motion, media,
+    appliances, doors, windows, covers, power) and calculates probability
+    using the sigmoid model.
+
+    Args:
+        entities: Dict of Entity objects
+        prior: Learned prior probability for this area
+        correlations: Optional dict of entity_id -> correlation strength
+
+    Returns:
+        Probability in range MIN_PROBABILITY to MAX_PROBABILITY
+    """
+    from .data.entity_type import PRESENCE_INPUT_TYPES  # noqa: PLC0415
+
+    presence_entities = {
+        eid: e
+        for eid, e in entities.items()
+        if e.type.input_type in PRESENCE_INPUT_TYPES
+    }
+
+    if not presence_entities:
+        # No presence sensors - return reduced prior (uncertain state)
+        return clamp_probability(prior * 0.5)
+
+    return sigmoid_probability(presence_entities, prior, correlations)
+
+
+def environmental_confidence(
+    entities: dict[str, Entity],
+    correlations: dict[str, float] | None = None,
+) -> float:
+    """Calculate environmental support as 0-1 confidence.
+
+    Uses sigmoid centered at 0.5 (neutral prior) so the result represents
+    how much environmental data supports vs opposes occupancy.
+
+    Args:
+        entities: Dict of Entity objects
+        correlations: Optional dict of entity_id -> correlation strength
+
+    Returns:
+        Confidence value 0.0-1.0 (0.5 = neutral, >0.5 = supports, <0.5 = opposes)
+    """
+    from .data.entity_type import ENVIRONMENTAL_INPUT_TYPES  # noqa: PLC0415
+
+    env_entities = {
+        eid: e
+        for eid, e in entities.items()
+        if e.type.input_type in ENVIRONMENTAL_INPUT_TYPES
+    }
+
+    if not env_entities:
+        return 0.5  # Neutral - no environmental data
+
+    # Use 0.5 prior so result is purely from environmental evidence
+    return sigmoid_probability(env_entities, prior=0.5, correlations=correlations)
+
+
+def combined_probability(
+    presence: float,
+    environmental: float,
+) -> float:
+    """Combine presence and environmental using weighted average in logit space.
+
+    This preserves the smooth sigmoid properties while combining both signals.
+    Presence is weighted more heavily (80%) than environmental (20%).
+
+    Args:
+        presence: Presence probability (0.0-1.0)
+        environmental: Environmental confidence (0.0-1.0)
+
+    Returns:
+        Combined probability in range MIN_PROBABILITY to MAX_PROBABILITY
+    """
+    # Convert to logit space for principled combination
+    z_presence = logit(presence)
+    z_env = logit(environmental)
+
+    # Weighted combination (presence dominates at 80%, environmental at 20%)
+    z_combined = 0.8 * z_presence + 0.2 * z_env
+
+    return clamp_probability(sigmoid(z_combined))
+
+
+def apply_activity_boost(
+    base_probability: float,
+    activity_boost: float,
+    activity_confidence: float,
+) -> float:
+    """Apply an activity-based occupancy boost in logit space.
+
+    When a strong activity is detected (e.g. watching TV, showering), the
+    combination of signals is a stronger occupancy indicator than any single
+    sensor. This function boosts the base probability proportionally to the
+    activity's strength and confidence.
+
+    Args:
+        base_probability: Sensor-only probability (0.0-1.0).
+        activity_boost: Logit-space boost magnitude from the activity definition.
+        activity_confidence: Activity detection confidence (0.0-1.0).
+
+    Returns:
+        Boosted probability in range MIN_PROBABILITY to MAX_PROBABILITY.
+    """
+    effective_boost = activity_boost * activity_confidence
+    if effective_boost <= 0:
+        return clamp_probability(base_probability)
+    z = logit(base_probability) + effective_boost
+    return clamp_probability(sigmoid(z))
+
+
 # ────────────────────────────────────── Core Bayes ───────────────────────────
-def _validate_entity_likelihoods(
+def _filter_invalid_entity_likelihoods(
     active_entities: dict[str, Entity],
 ) -> dict[str, Entity]:
     """Validate entity likelihoods and filter out invalid entities.
@@ -253,7 +469,7 @@ def bayesian_probability(entities: dict[str, Entity], prior: float = 0.5) -> flo
         return clamp_probability(prior)
 
     # Check for entities with invalid likelihoods
-    active_entities = _validate_entity_likelihoods(active_entities)
+    active_entities = _filter_invalid_entity_likelihoods(active_entities)
 
     if not active_entities:
         # All entities had invalid likelihoods - return prior
@@ -316,8 +532,10 @@ def bayesian_probability(entities: dict[str, Entity], prior: float = 0.5) -> flo
 
         log_p_t = math.log(p_t)
         log_p_f = math.log(p_f)
-        contribution_true = log_p_t * entity.weight
-        contribution_false = log_p_f * entity.weight
+        # Use effective_weight so uninformative sensors contribute less.
+        ew = getattr(entity, "effective_weight", entity.weight)
+        contribution_true = log_p_t * ew
+        contribution_false = log_p_f * ew
 
         log_true += contribution_true
         log_false += contribution_false
@@ -333,18 +551,18 @@ def bayesian_probability(entities: dict[str, Entity], prior: float = 0.5) -> flo
         # Both probabilities are zero - return prior as fallback
         return prior
 
-    return true_prob / total_prob
+    return clamp_probability(true_prob / total_prob)
 
 
 def combine_priors(
-    area_prior: float, time_prior: float, time_weight: float = 0.2
+    area_prior: float, time_prior: float, time_weight: float = 0.4
 ) -> float:
     """Combine area prior and time prior using weighted averaging in logit space.
 
     Args:
         area_prior: Base prior probability of occupancy for this area
         time_prior: Time-based modifier for the prior
-        time_weight: Weight given to time_prior (0.0 to 1.0, default: 0.2)
+        time_weight: Weight given to time_prior (0.0 to 1.0, default: 0.4)
 
     Returns:
         float: Combined prior probability
@@ -388,20 +606,13 @@ def combine_priors(
 
     area_weight = 1.0 - time_weight
 
-    # Convert to logit space for better interpolation
-    def prob_to_logit(p: float) -> float:
-        return math.log(p / (1 - p))
-
-    def logit_to_prob(logit: float) -> float:
-        return 1 / (1 + math.exp(-logit))
-
     # Interpolate in logit space for more principled combination
-    area_logit = prob_to_logit(area_prior)
-    time_logit = prob_to_logit(time_prior)
+    area_logit = logit(area_prior)
+    time_logit = logit(time_prior)
 
     # Weighted combination in logit space
     combined_logit = area_weight * area_logit + time_weight * time_logit
-    combined_prior = logit_to_prob(combined_logit)
+    combined_prior = sigmoid(combined_logit)
 
     return clamp_probability(combined_prior)
 

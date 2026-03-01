@@ -24,11 +24,12 @@ from ..utils import clamp_probability, combine_priors
 
 if TYPE_CHECKING:
     from ..coordinator import AreaOccupancyCoordinator
+    from .config import AreaConfig
 
 _LOGGER = logging.getLogger(__name__)
 
 # Prior calculation constants
-PRIOR_FACTOR = 1.05
+PRIOR_FACTOR = 1.0
 DEFAULT_PRIOR = 0.5
 SIGNIFICANT_CHANGE_THRESHOLD = 0.1
 
@@ -40,18 +41,30 @@ class Prior:
     """Compute the baseline probability for an Area entity."""
 
     def __init__(
-        self, coordinator: AreaOccupancyCoordinator, area_name: str | None = None
+        self,
+        coordinator: AreaOccupancyCoordinator,
+        area_name: str | None = None,
+        config: AreaConfig | None = None,
     ) -> None:
         """Initialize the Prior class.
 
         Args:
             coordinator: The coordinator instance
             area_name: Optional area name for multi-area support
+            config: Area configuration (preferred). Falls back to coordinator lookup.
         """
         self.coordinator = coordinator
         self.db = coordinator.db
         self.area_name = area_name
-        self.config = coordinator.areas[area_name].config
+        if config is not None:
+            self.config = config
+        else:
+            area = coordinator.get_area(area_name)
+            if area is None:
+                raise ValueError(
+                    f"Area '{self.area_name}' not found in coordinator and no config provided"
+                )
+            self.config = area.config
         self.sensor_ids = self.config.sensors.motion
         self.media_sensor_ids = self.config.sensors.media
         self.appliance_sensor_ids = self.config.sensors.appliance
@@ -89,7 +102,13 @@ class Prior:
             adjusted_prior = prior * PRIOR_FACTOR
             result = max(MIN_PRIOR, min(MAX_PRIOR, adjusted_prior))
 
-        # Apply minimum prior override if configured
+        # Apply purpose-based minimum prior. Transit spaces have duration-biased
+        # learned priors that are unrealistically low because people don't linger.
+        area = self.coordinator.areas.get(self.area_name)
+        if area is not None and area.purpose.min_prior > 0.0:
+            result = max(result, area.purpose.min_prior)
+
+        # Apply minimum prior override if configured (user override takes precedence)
         # This check must run for all code paths, including when global_prior is None
         if self.config.min_prior_override > 0.0:
             result = max(result, self.config.min_prior_override)
