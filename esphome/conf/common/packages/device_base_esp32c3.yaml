@@ -10,6 +10,12 @@ esphome:
   build_path: ./build/${device_name}
   # platform: $device_platform
 
+  on_boot:
+    priority: -100
+    then:
+      - output.turn_off:
+          id: ${esp32c3_onboard_led_id}
+
 # edited due to changes ahead
 # for details see https://github.com/esphome/esphome/pull/8118
 # taken from https://esphome.io/components/esp32
