@@ -57,7 +57,7 @@ ota: !include conf/common/networking/ota.yaml
 
 # in case of no connection to the Wifi
 # for details see https://esphome.io/components/captive_portal.html
-captive_portal:
+# captive_portal:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
