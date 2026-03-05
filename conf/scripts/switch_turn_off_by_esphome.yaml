@@ -1,0 +1,25 @@
+# ############################################################
+#
+#  Toggle a switch triggered by a ESPHome device
+#
+# ############################################################
+
+switch_turn_off_by_esphome:
+  alias: Turn off a switch triggered by a ESPHome device
+  # icon: mdi:
+  description: This script turns off a switch triggered by a ESPHome device
+  fields:
+    switch_id:
+      description: "The receiver of the message"
+      advanced: true
+      required: true
+      example: "admin"
+      default: "admin"
+  mode: queued
+  sequence:
+    - action: switch.turn_off
+      data_template:
+        entity_id: "{{ switch_id }}"
+# ############################################################
+#  END OF FILE
+# ############################################################
