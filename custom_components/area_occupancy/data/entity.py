@@ -275,6 +275,7 @@ class Entity:
             None,
             "",
             "NaN",
+            "nan",
         ]:
             return None
         return state_value
@@ -882,9 +883,9 @@ class EntityFactory:
         # Set default analysis_error based on entity type
         # Motion and Sleep sensors are excluded from correlation analysis
         analysis_error = (
-            "motion_sensor_excluded"
+            AnalysisStatus.MOTION_EXCLUDED
             if input_type_enum in (InputType.MOTION, InputType.SLEEP)
-            else "not_analyzed"
+            else AnalysisStatus.NOT_ANALYZED
         )
 
         return Entity(
@@ -1003,11 +1004,11 @@ class EntityManager:
 
     @property
     def inactive_entities(self) -> list[Entity]:
-        """Get the inactive entities."""
+        """Get the inactive entities (evidence is explicitly False, not unavailable)."""
         return [
             entity
             for entity in self._entities.values()
-            if not entity.evidence and not entity.decay.is_decaying
+            if entity.evidence is False and not entity.decay.is_decaying
         ]
 
     @property

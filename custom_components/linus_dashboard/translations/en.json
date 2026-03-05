@@ -211,9 +211,14 @@
                 "state": {
                     "state_on": "on",
                     "state_off": "off",
+                    "state_open": "open",
+                    "state_closed": "closed",
+                    "state_locked": "locked",
+                    "state_unlocked": "unlocked",
+                    "state_available": "available",
                     "average": "Average",
                     "total": "Total",
-                    "view_all_prefix": "View All",
+                    "view_all": "See More",
                     "title_light": "Lights",
                     "title_switch": "Switches",
                     "title_fan": "Fans",
@@ -232,7 +237,8 @@
                     "action_off_media_player": "Pause All",
                     "action_off_cover": "Close All",
                     "action_off_climate": "Turn All Off",
-                    "individual_controls": "Individual Controls"
+                    "individual_controls": "Individual Controls",
+                    "no_label": "No label"
                 }
             },
             "cover_popup": {
@@ -302,6 +308,14 @@
                     "confirm_arm_alarm": "Arm/Disarm alarm?",
                     "cancel": "Cancel",
                     "confirm": "Confirm"
+                }
+            },
+            "tags_view": {
+                "name": "Tags",
+                "state": {
+                    "title": "Tags",
+                    "entities": "entities",
+                    "no_entities": "No entities with this label"
                 }
             }
         }

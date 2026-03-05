@@ -128,9 +128,9 @@ class LinusDashboardEditFlow(config_entries.OptionsFlow):
     ) -> str:
         """Extract the original value from a formatted display string."""
         if separator in display_string:
-            return display_string.split(separator)[0]
+            return display_string.split(separator, maxsplit=1)[0]
         if " - " in display_string:
-            return display_string.split(" - ")[0]
+            return display_string.split(" - ", maxsplit=1)[0]
         return display_string
 
     async def _process_form_data(self, form_data: dict[str, Any]) -> dict[str, Any]:
@@ -176,9 +176,32 @@ class LinusDashboardEditFlow(config_entries.OptionsFlow):
         """Get domain options with translations."""
         domains = []
 
-        domain_set = set()
         # Use all available platforms from Home Assistant as domains
         domain_set = {platform.value for platform in Platform}
+
+        # Add important domains that aren't entity platforms but are valid domains
+        # These are component domains that users might want to exclude
+        supplemental_domains = {
+            "automation",  # Automations
+            "script",  # Scripts
+            "person",  # Person entities
+            "group",  # Entity groups
+            "zone",  # Geographic zones
+            "input_boolean",  # Input boolean helpers
+            "input_button",  # Input button helpers
+            "input_datetime",  # Input datetime helpers
+            "input_number",  # Input number helpers
+            "input_select",  # Input select helpers
+            "input_text",  # Input text helpers
+            "tag",  # NFC/RFID tags
+            "counter",  # Counters
+            "timer",  # Timers
+            "sun",  # Sun position/elevation
+            "plant",  # Plant monitoring
+            "proximity",  # Proximity detection
+        }
+
+        domain_set.update(supplemental_domains)
 
         # Get translations using the entity_component category with dynamic language
         lang = await self._get_current_language()

@@ -31,7 +31,7 @@ from ..const import (
     TIME_PRIOR_MAX_BOUND,
     TIME_PRIOR_MIN_BOUND,
 )
-from ..data.entity_type import CorrelationType
+from ..data.entity_type import CorrelationType, InputType
 from ..time_utils import to_db_utc
 from . import maintenance, queries
 
@@ -137,9 +137,16 @@ def _update_existing_entity(
 
     # Restore probabilities from database
     # Correlation data takes priority, but if absent, use database values
-    if corr_data:
+    # Motion and sleep sensors always use user-configured values
+    is_motion_or_sleep = hasattr(
+        existing_entity, "type"
+    ) and existing_entity.type.input_type in (
+        InputType.MOTION,
+        InputType.SLEEP,
+    )
+    if corr_data and not is_motion_or_sleep:
         _apply_correlation_data(existing_entity, corr_data)
-    else:
+    elif not is_motion_or_sleep:
         # No correlation data, restore probabilities directly from database
         if (
             hasattr(entity_obj, "prob_given_true")
@@ -611,6 +618,32 @@ def _cleanup_area_orphans(db: AreaOccupancyDB, area_name: str, area_data: Any) -
             .delete(synchronize_session=False)
         )
 
+        # Delete related records for orphaned entities
+        session.query(db.IntervalAggregates).filter(
+            db.IntervalAggregates.area_name == area_name,
+            db.IntervalAggregates.entity_id.in_(orphaned_entity_ids),
+        ).delete(synchronize_session=False)
+
+        session.query(db.NumericSamples).filter(
+            db.NumericSamples.area_name == area_name,
+            db.NumericSamples.entity_id.in_(orphaned_entity_ids),
+        ).delete(synchronize_session=False)
+
+        session.query(db.NumericAggregates).filter(
+            db.NumericAggregates.area_name == area_name,
+            db.NumericAggregates.entity_id.in_(orphaned_entity_ids),
+        ).delete(synchronize_session=False)
+
+        session.query(db.Correlations).filter(
+            db.Correlations.area_name == area_name,
+            db.Correlations.entity_id.in_(orphaned_entity_ids),
+        ).delete(synchronize_session=False)
+
+        session.query(db.EntityStatistics).filter(
+            db.EntityStatistics.area_name == area_name,
+            db.EntityStatistics.entity_id.in_(orphaned_entity_ids),
+        ).delete(synchronize_session=False)
+
         # Bulk delete all orphaned entities in a single query
         # Filter by both area_name and entity_id to avoid deleting entities
         # with the same ID in other areas
@@ -721,6 +754,41 @@ def delete_area_data(db: AreaOccupancyDB, area_name: str) -> int:
                 .filter_by(area_name=area_name)
                 .delete()
             )
+
+            # Delete interval aggregates for this area
+            session.query(db.IntervalAggregates).filter_by(area_name=area_name).delete()
+
+            # Delete numeric samples for this area (scoped by area_name)
+            session.query(db.NumericSamples).filter(
+                db.NumericSamples.area_name == area_name
+            ).delete(synchronize_session=False)
+
+            # Delete numeric aggregates for this area (scoped by area_name)
+            session.query(db.NumericAggregates).filter(
+                db.NumericAggregates.area_name == area_name
+            ).delete(synchronize_session=False)
+
+            # Delete correlations for this area
+            session.query(db.Correlations).filter_by(area_name=area_name).delete()
+
+            # Delete entity statistics for this area
+            session.query(db.EntityStatistics).filter_by(area_name=area_name).delete()
+
+            # Delete area relationships involving this area
+            session.query(db.AreaRelationships).filter(
+                sa.or_(
+                    db.AreaRelationships.area_name == area_name,
+                    db.AreaRelationships.related_area_name == area_name,
+                )
+            ).delete(synchronize_session=False)
+
+            # Delete cross-area stats referencing this area
+            # involved_areas is a JSON array; use cast+like for SQLite compatibility
+            session.query(db.CrossAreaStats).filter(
+                sa.cast(db.CrossAreaStats.involved_areas, sa.String).like(
+                    f'%"{area_name}"%'
+                )
+            ).delete(synchronize_session=False)
 
             # Delete the area record itself
             area_deleted = (
@@ -905,6 +973,7 @@ def prune_old_intervals(db: AreaOccupancyDB, force: bool = False) -> int:
                 _LOGGER.debug("No old intervals to prune")
                 # Still record the prune attempt to prevent other instances from trying
                 maintenance.set_last_prune_time(db, dt_util.utcnow(), session)
+                session.commit()
                 return 0
 
             # Delete old intervals
@@ -913,6 +982,8 @@ def prune_old_intervals(db: AreaOccupancyDB, force: bool = False) -> int:
             )
             deleted_count = delete_query.delete(synchronize_session=False)
 
+            # Record successful prune in the same transaction as the delete
+            maintenance.set_last_prune_time(db, dt_util.utcnow(), session)
             session.commit()
 
             _LOGGER.info(
@@ -921,9 +992,6 @@ def prune_old_intervals(db: AreaOccupancyDB, force: bool = False) -> int:
                 RETENTION_DAYS,
                 cutoff_date,
             )
-
-            # Record successful prune
-            maintenance.set_last_prune_time(db, dt_util.utcnow(), session)
 
             return deleted_count
 

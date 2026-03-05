@@ -372,7 +372,7 @@ def _get_include_entities(hass: HomeAssistant) -> dict[str, list[str]]:
 
             if is_window_candidate:
                 include_window_entities.append(entry.entity_id)
-            elif is_door_candidate:
+            if is_door_candidate:
                 include_door_entities.append(entry.entity_id)
 
             # Exclude our own integration's sensors from motion selection
@@ -2239,20 +2239,19 @@ class BaseOccupancyFlow:
 
         if user_input is not None:
             flattened = _flatten_sectioned_input(user_input)
-            self._area_config_draft.update(flattened)
+
+            # Validate on a copy to avoid corrupting the draft on failure
+            candidate = {**self._area_config_draft, **flattened}
 
             # Auto-set decay half-life based on purpose
-            selected_purpose = self._area_config_draft.get(CONF_PURPOSE)
-            _apply_purpose_based_decay_default(
-                self._area_config_draft, selected_purpose
-            )
+            selected_purpose = candidate.get(CONF_PURPOSE)
+            _apply_purpose_based_decay_default(candidate, selected_purpose)
 
-            # Run full validation on the complete draft
-            validation_errors = self._validate_config(
-                self._area_config_draft, self.hass
-            )
+            # Run full validation on the complete candidate
+            validation_errors = self._validate_config(candidate, self.hass)
 
             if not validation_errors:
+                self._area_config_draft.update(candidate)
                 return await self._on_area_config_complete(self._area_config_draft)
 
             errors.update(validation_errors)
@@ -2574,7 +2573,24 @@ class AreaOccupancyOptionsFlow(OptionsFlow, BaseOccupancyFlow):
         """Get areas list from merged config entry data+options."""
         merged = dict(self.config_entry.data)
         merged.update(self.config_entry.options)
-        return list(merged.get(CONF_AREAS, []))
+        areas = merged.get(CONF_AREAS, [])
+        if not isinstance(areas, list):
+            _LOGGER.warning(
+                "CONF_AREAS has unexpected type %s, using empty list",
+                type(areas).__name__,
+            )
+            return []
+        valid_areas: list[dict[str, Any]] = []
+        for i, item in enumerate(areas):
+            if isinstance(item, dict):
+                valid_areas.append(item)
+            else:
+                _LOGGER.warning(
+                    "CONF_AREAS[%d] has unexpected type %s, skipping",
+                    i,
+                    type(item).__name__,
+                )
+        return valid_areas
 
     def _get_wizard_areas(self) -> list[dict[str, Any]]:
         """Get areas list for duplicate checking."""
@@ -2596,7 +2612,9 @@ class AreaOccupancyOptionsFlow(OptionsFlow, BaseOccupancyFlow):
         self._area_config_draft = {}
 
         # Store updated areas in options; the update listener handles the reload
-        return self.async_create_entry(title="", data={CONF_AREAS: areas})
+        config_data = dict(self.config_entry.options)
+        config_data[CONF_AREAS] = areas
+        return self.async_create_entry(title="", data=config_data)
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -2716,7 +2734,9 @@ class AreaOccupancyOptionsFlow(OptionsFlow, BaseOccupancyFlow):
             return self.async_abort(reason="cannot_remove_last_area")
 
         self._area_to_remove = None
-        return self.async_create_entry(title="", data={CONF_AREAS: updated_areas})
+        config_data = dict(self.config_entry.options)
+        config_data[CONF_AREAS] = updated_areas
+        return self.async_create_entry(title="", data=config_data)
 
     async def async_step_cancel_remove_area(
         self, user_input: dict[str, Any] | None = None
@@ -2944,28 +2964,41 @@ class AreaOccupancyOptionsFlow(OptionsFlow, BaseOccupancyFlow):
                 defaults[CONF_PERSON_SLEEP_SENSORS] = [old_val] if old_val else []
 
         if user_input is not None:
-            try:
-                person_data = _validate_person_input(user_input)
+            # Check for duplicate person entity before validation
+            new_entity = user_input.get(CONF_PERSON_ENTITY, "")
+            duplicate = any(
+                existing.get(CONF_PERSON_ENTITY) == new_entity
+                for i, existing in enumerate(people)
+                if i != idx
+            )
+            if duplicate:
+                errors["base"] = "person_already_configured"
 
-                # Update or add person
-                updated_people = list(people)
-                if idx is not None and 0 <= idx < len(updated_people):
-                    updated_people[idx] = person_data
+            if not errors:
+                try:
+                    person_data = _validate_person_input(user_input)
+
+                    # Update or add person
+                    updated_people = list(people)
+                    if idx is not None and 0 <= idx < len(updated_people):
+                        updated_people[idx] = person_data
+                    else:
+                        updated_people.append(person_data)
+
+                    config_data = dict(self.config_entry.options)
+                    config_data[CONF_PEOPLE] = updated_people
+                    result = self.async_create_entry(title="", data=config_data)
+                    # Trigger integration reload to update sleep presence sensors
+                    self.hass.async_create_task(
+                        self.hass.config_entries.async_reload(
+                            self.config_entry.entry_id
+                        )
+                    )
+
+                except (vol.Invalid, ValueError, TypeError) as err:
+                    errors["base"] = _handle_step_error(err)
                 else:
-                    updated_people.append(person_data)
-
-                config_data = dict(self.config_entry.options)
-                config_data[CONF_PEOPLE] = updated_people
-                result = self.async_create_entry(title="", data=config_data)
-                # Trigger integration reload to update sleep presence sensors
-                self.hass.async_create_task(
-                    self.hass.config_entries.async_reload(self.config_entry.entry_id)
-                )
-
-            except (vol.Invalid, ValueError, TypeError) as err:
-                errors["base"] = _handle_step_error(err)
-            else:
-                return result
+                    return result
 
         base_schema = vol.Schema(
             {

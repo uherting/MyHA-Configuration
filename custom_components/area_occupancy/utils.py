@@ -493,9 +493,10 @@ def bayesian_probability(entities: dict[str, Entity], prior: float = 0.5) -> flo
             decay_factor = max(0.0, min(1.0, decay_factor))
         is_decaying = entity.decay.is_decaying
 
-        # Skip entities with no evidence (unavailable) unless they're decaying
-        # Unavailable entities should not contribute to the calculation
-        if value is None and not is_decaying:
+        # Skip entities with no evidence (unavailable/unknown)
+        # Unavailable entities should never contribute to the calculation,
+        # even if they were previously decaying
+        if value is None:
             continue
 
         # Determine effective evidence: True if evidence is True OR if decaying
@@ -595,8 +596,8 @@ def combine_priors(
 
     # Handle identical priors case
     if abs(area_prior - time_prior) < 1e-10:
-        # Priors are essentially identical, return the common value
-        return area_prior
+        # Priors are essentially identical, return the common value (clamped)
+        return clamp_probability(area_prior)
 
     # Clamp inputs to valid ranges to prevent division by zero in logit conversion
     # prob_to_logit(p) = log(p / (1 - p)) requires p ∈ (0, 1)

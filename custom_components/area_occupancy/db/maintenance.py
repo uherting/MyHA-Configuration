@@ -296,8 +296,15 @@ def _backup_database(db: AreaOccupancyDB) -> bool:
     try:
         # Checkpoint WAL file to ensure all data is in main database file
         # This ensures the backup includes all committed data
-        with suppress(SQLAlchemyError, OSError), db.engine.connect() as conn:
-            conn.execute(text("PRAGMA wal_checkpoint(TRUNCATE)"))
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text("PRAGMA wal_checkpoint(TRUNCATE)"))
+        except (SQLAlchemyError, OSError) as wal_err:
+            _LOGGER.warning(
+                "WAL checkpoint failed, backup may be incomplete: %s",
+                wal_err,
+                exc_info=True,
+            )
 
         backup_path = db.db_path.with_suffix(".db.backup")
 
@@ -578,20 +585,17 @@ def set_last_prune_time(
         must handle transaction management (commit/rollback) as appropriate for
         their use case.
     """
-    try:
-        if session is not None:
-            # Use existing session to avoid nested lock acquisition
-            existing = (
-                session.query(db.Metadata).filter_by(key="last_prune_time").first()
-            )
-            if existing:
-                existing.value = timestamp.isoformat()
-            else:
-                session.add(
-                    db.Metadata(key="last_prune_time", value=timestamp.isoformat())
-                )
+    if session is not None:
+        # Use existing session — let exceptions propagate to caller
+        # so they can decide whether to commit or rollback
+        existing = session.query(db.Metadata).filter_by(key="last_prune_time").first()
+        if existing:
+            existing.value = timestamp.isoformat()
         else:
-            # Fallback to new session if not provided
+            session.add(db.Metadata(key="last_prune_time", value=timestamp.isoformat()))
+    else:
+        # Fallback to new session if not provided
+        try:
             with db.get_session() as new_session:
                 existing = (
                     new_session.query(db.Metadata)
@@ -605,8 +609,8 @@ def set_last_prune_time(
                         db.Metadata(key="last_prune_time", value=timestamp.isoformat())
                     )
                 new_session.commit()
-    except (SQLAlchemyError, OSError, ValueError) as e:
-        _LOGGER.warning("Failed to record prune timestamp: %s", e)
+        except (SQLAlchemyError, OSError, ValueError) as e:
+            _LOGGER.warning("Failed to record prune timestamp: %s", e)
 
 
 def init_db(db: AreaOccupancyDB) -> None:
