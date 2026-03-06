@@ -17,6 +17,10 @@
           then:
             # - logger.log: "script tb_gpio4_click_on_press action."
             - homeassistant.action:
+                action: script.switch_turn_off_by_esphome
+                data: 
+                  switch_id: 'switch.zb_plug_l2_lounge_tv'
+            - homeassistant.action:
                 action: script.switch_toggle_by_esphome
                 data:
                   switch_id: 'switch.zb_plug_l2_lounge_light_corner'

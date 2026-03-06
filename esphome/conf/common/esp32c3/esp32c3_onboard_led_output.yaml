@@ -5,6 +5,7 @@
   - platform: gpio
     pin: GPIO8
     id: $esp32c3_onboard_led_id
+    inverted: true
 
 ####################################################################
 # EOF
