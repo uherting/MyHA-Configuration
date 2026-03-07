@@ -19,10 +19,9 @@ cards:
       {% for device in integration_entities('esphome')|map('device_id')|unique|list -%}
         {% set x.devices = x.devices + [{
         'name':(device_attr(device, 'name')|title)[:14],
-        'timestamp':strptime(device_attr(device, 'sw_version')[-23:],'(%b %d %Y, %H:%M:%S)')|as_timestamp|int,
-        'version':device_attr(device, 'sw_version')[:-24], }] %}
+        'version':device_attr(device, 'sw_version') }] %}
       {%- endfor -%}
 
-      {% for i in x.devices|sort(attribute="timestamp",reverse=false) -%}
-        {{ ' '*(14-i.name|length) ~ i.name ~ ':\t   ' ~ i.version ~ '\t' ~ i.timestamp|timestamp_custom('%Y.%m.%d  %H:%M') ~ '\n' }}
+      {% for i in x.devices|sort(attribute="version",reverse=false) -%}
+        {{ ' ' ~ i.name ~ ':\t   ' ~ i.version ~ '\t' ~ '\n' }}
       {%- endfor %}
