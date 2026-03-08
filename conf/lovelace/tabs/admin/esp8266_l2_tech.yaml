@@ -25,20 +25,20 @@ cards:
       - sensor.l2kitchen01_esphome_version
       - switch.l2kitchen01_restart_device
 
-  # - type: entities
-  #   title: L2 Kitchen 02
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.l2kitchen02_conn_ip_addr
-  #     - sensor.l2kitchen02_wifi_signal
-  #     - sensor.l2kitchen02_conn_ssid
-  #     - sensor.l2kitchen02_conn_bssid
-  #     - sensor.l2kitchen02_uptime
-  #     - sensor.l2kitchen02_uptime_human_readable
-  #     - binary_sensor.l2kitchen02_status
-  #     - update.l2kitchen02_firmware
-  #     - sensor.l2kitchen02_esphome_version
-  #     - switch.l2kitchen02_restart_device
+  - type: entities
+    title: L2 Corridor 02
+    show_header_toggle: false
+    entities:
+      - sensor.l2corridor02_conn_ip_addr
+      - sensor.l2corridor02_wifi_signal
+      - sensor.l2corridor02_conn_ssid
+      - sensor.l2corridor02_conn_bssid
+      - sensor.l2corridor02_uptime
+      - sensor.l2corridor02_uptime_human_readable
+      - binary_sensor.l2corridor02_status
+      - update.l2corridor02_firmware
+      - sensor.l2corridor02_esphome_version
+      - switch.l2corridor02_restart_device
 
   - type: entities
     title: L2 Storage 01
@@ -70,33 +70,20 @@ cards:
       - sensor.l2bathroom01a_esphome_version
       - switch.l2bathroom01a_restart_device
 
-  # - type: entities
-  #   title: L2 Corridor 01
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.l2corridor01_conn_ip_addr
-  #     - sensor.l2corridor01_wifi_signal
-  #     - sensor.l2corridor01_conn_ssid
-  #     - sensor.l2corridor01_conn_bssid
-  #     - sensor.l2corridor01_uptime
-  #     - sensor.l2corridor01_uptime_human_readable
-  #     - binary_sensor.l2corridor01_status
-  #     - sensor.l2corridor01_esphome_version
-  #     - switch.l2corridor01_restart_device
-
-  # - type: entities
-  #   title: L2 Bathroom 01
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.l2bathroom01_conn_ip_addr
-  #     - sensor.l2bathroom01_wifi_signal
-  #     - sensor.l2bathroom01_conn_ssid
-  #     - sensor.l2bathroom01_conn_bssid
-  #     - sensor.l2bathroom01_uptime
-  #     - sensor.l2bathroom01_uptime_human_readable
-  #     - binary_sensor.l2bathroom01_status
-  #     - sensor.l2bathroom01_esphome_version
-  #     - switch.l2bathroom01_restart_device
+  - type: entities
+    title: L2 Lounge 09
+    show_header_toggle: false
+    entities:
+      - sensor.l2lounge09_conn_ip_addr
+      - sensor.l2lounge09_wifi_signal
+      - sensor.l2lounge09_conn_ssid
+      - sensor.l2lounge09_conn_bssid
+      - sensor.l2lounge09_uptime
+      - sensor.l2lounge09_uptime_human_readable
+      - binary_sensor.l2lounge09_status
+      - update.l2lounge09_firmware
+      - sensor.l2lounge09_esphome_version
+      - switch.l2lounge09_restart_device
 ####################################################################
 # EOF
 ####################################################################
