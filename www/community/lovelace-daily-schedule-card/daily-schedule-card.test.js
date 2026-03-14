@@ -264,6 +264,16 @@ describe("DailyScheduleCard - registration & basic API", () => {
     expect(customElements.get("daily-schedule-card-editor")).toBeDefined();
   });
 
+  test("delayed registration path resolves after home-assistant is defined", async () => {
+    if (!customElements.get("home-assistant")) {
+      customElements.define("home-assistant", class extends HTMLElement {});
+    }
+
+    await flushMicrotasks();
+
+    expect(customElements.get("daily-schedule-card")).toBeDefined();
+  });
+
   test("window.customCards is populated", () => {
     expect(Array.isArray(window.customCards)).toBe(true);
     const entry = window.customCards.find(
@@ -273,6 +283,29 @@ describe("DailyScheduleCard - registration & basic API", () => {
     expect(entry.name).toBeTruthy();
     expect(entry.description).toBeTruthy();
     expect(entry.documentationURL).toMatch(/github/i);
+  });
+
+  test("window.customCards does not add a duplicate entry on repeated module evaluation", async () => {
+    const originalCustomCards = window.customCards;
+    window.customCards = [
+      {
+        type: "daily-schedule-card",
+        name: "Existing Daily Schedule",
+        description: "existing entry",
+        documentationURL: "https://example.com/existing",
+      },
+    ];
+
+    try {
+      await import("./daily-schedule-card.js?duplicate-check");
+    } finally {
+      const entries = window.customCards.filter(
+        (card) => card.type === "daily-schedule-card",
+      );
+      expect(entries).toHaveLength(1);
+      expect(entries[0].name).toBe("Existing Daily Schedule");
+      window.customCards = originalCustomCards;
+    }
   });
 
   test("create element + getConfigElement + stub config", () => {
@@ -666,7 +699,14 @@ describe("DailyScheduleCard - dialog behavior (open, add, toggle, remove, close,
     const card = mountCard({ entities: ["binary_sensor.a"] }, hass);
 
     expect(card._dialog.tagName).toBe("HA-ADAPTIVE-DIALOG");
-    expect(card._dialog.width).toBe("full");
+    expect(card._dialog.width).toBe("medium");
+    expect(card._dialog.hasAttribute("flexcontent")).toBe(true);
+    expect(
+      card._dialog.style.getPropertyValue("--ha-bottom-sheet-height"),
+    ).toBe("calc(100dvh - max(var(--safe-area-inset-top), 48px))");
+    expect(
+      card._dialog.style.getPropertyValue("--ha-bottom-sheet-max-height"),
+    ).toBe("var(--ha-bottom-sheet-height)");
   });
 
   test("dialog closed event resets open flag", () => {

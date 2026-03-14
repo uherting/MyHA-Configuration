@@ -98,7 +98,7 @@ cards:
           #   show_state: false
           #   color: yellow
 
-      # Bedroom L2
+      # Bedroom L2 row 1
       - type: grid
         square: false
         # title: Bedroom
@@ -121,6 +121,31 @@ cards:
           - type: "custom:button-card"
             entity: binary_sensor.zb_dw_l2_bedroom_02_contact
             name: "rechts"
+            color: yellow
+
+      # Bedroom L2 row 2
+      - type: grid
+        square: false
+        # title: Bedroom
+        columns: 5
+        cards:
+          - type: "custom:button-card"
+            name: "Bedroom"
+          - type: "custom:button-card"
+            # entity: snsor.temeperature_humidity_sensor_8eec_temperature
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: sensor.temperature_humidity_sensor_8eec_humidity
+            name: " "
+            show_state: true
+          - type: "custom:button-card"
+            # entity: binary_sensor.zb_dw_l2_bedroom_01_contact
+            name: " "
+            color: yellow
+          - type: "custom:button-card"
+            entity: switch.zb_plug_l2_bedroom_lotus_lantern
+            name: "Lantern"
             color: yellow
 
       # Bathroom L2
