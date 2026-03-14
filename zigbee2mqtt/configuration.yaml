@@ -110,6 +110,8 @@ devices:
     friendly_name: ZB_Plug_L2_Lounge_TV
   '0x7cc6b6fffe9b0688':
     friendly_name: ZB_Router-SLZB-06M-01
+  '0xa4c1384df171e927':
+    friendly_name: ZB_Plug_L2_Bedroom_Lotus_Lantern
 groups:
   '1':
     friendly_name: level2-TRVs
