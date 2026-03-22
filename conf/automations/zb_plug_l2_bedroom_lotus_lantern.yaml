@@ -1,0 +1,31 @@
+# ############################################################
+#
+#  Switch Lotus Lantern switch in L2 Bedroom
+#
+# ############################################################
+
+# ############################################################
+# Lotus Lanter L2 Bedroom off
+# ############################################################
+- alias: Lotus Lanter L2 Bedroom off
+  id: "019cee00-0328-746b-a271-badb26375bc4"
+  mode: single
+  initial_state: true
+
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: time
+      at: "02:58:00"
+
+  # -------------------- CONDITIONS -------------------
+  condition: []
+
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- zb_plug_l2_bedroom_lotus_lantern off -------------------
+    - action: switch.turn_off
+      target:
+        entity_id: switch.zb_plug_l2_bedroom_lotus_lantern
+# ############################################################
+#  END OF FILE
+# ############################################################
