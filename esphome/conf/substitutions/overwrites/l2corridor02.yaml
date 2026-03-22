@@ -4,7 +4,7 @@
 # if there are no overrides the dummy value comes in handy ;-)
 dummy_value: "dummy value"
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
-# log_level: !secret LOG_LEVEL_WARN
+log_level: !secret LOG_LEVEL_DEBUG
 
 # reed_contact01_name: $friendly_name Switch Dishwasher
 # reed_contact02_name: $friendly_name Switch Microwave

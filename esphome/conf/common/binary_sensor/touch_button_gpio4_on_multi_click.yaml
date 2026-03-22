@@ -1,0 +1,44 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# TOUCH BUTTON
+
+- platform: gpio
+  name: $touchbutton01_name
+  id: ${touchbutton01_id}
+  pin:
+    number: !secret GPIO4_PIN
+    # mode can be INPUT, INPUT_PULLUP or OUTPUT
+    mode: INPUT
+    # mode: INPUT_PULLUP
+    inverted: false
+    # inverted: true
+  device_class: power
+  on_multi_click:
+    - timing:
+        - ON for 0.1s to 0.3s
+        - OFF for at least 1s
+      then:
+        # - logger.log: "ESPHome: Single short clicked. Prior exec script tb_gpio4_click_short."
+        - script.execute: tb_gpio4_click_short
+    - timing:
+        - ON for 1s to 7s
+        - OFF for at least 1s
+      then:
+        # - logger.log: "ESPHome: Single long clicked. Prior exec script tb_gpio4_click_long."
+        - script.execute: tb_gpio4_click_long
+    - timing:
+        - ON for 0.1s to 0.3s
+        - OFF for at most 0.4s
+        - ON for 0.1s to 0.3s
+        - OFF for at least 1s
+      then:
+        # - logger.log: "ESPHome: Double clicked. Prior exec script tb_gpio4_click_dbl."
+        # dummy action
+        - delay: 100ms
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -5,7 +5,8 @@
   - platform: gpio
     pin: GPIO8
     id: $esp32c3_onboard_led_id
-    inverted: true
+    # "inverted: false" works for l2lounge09 fine, does not work for l2corridor02, where the LED is always on. Setting "inverted: true" for l2corridor02 makes the LED work as expected, but then it does not work for l2lounge09. So I guess the onboard LED of l2lounge09 is connected in a different way than the one of l2corridor02. For now I will set "inverted: false" and see how it goes with the other microcontrollers.
+    inverted: false
 
 ####################################################################
 # EOF
