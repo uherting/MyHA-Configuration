@@ -2,11 +2,11 @@
 # SCRIPTS
 
 #script:
-  # on_press action of TB A4
-  - id: tb_gpio4_click_on_press
+  # on_multi_click action of TB GPIO4 (short click)
+  - id: tb_gpio4_click_short
     mode: single
     then:
-      # - logger.log: "script tb_gpio4_click_on_press action."
+      # - logger.log: "script tb_gpio4_click_short action."
       - if:
           condition:
             # execute this script only if we are offline
@@ -15,15 +15,15 @@
             # execute this script anyway (TM) for debugging purposes
             lambda: 'return (true);'
           then:
-            # - logger.log: "script tb_gpio4_click_on_press action."
-            - homeassistant.action:
-                action: script.switch_turn_off_by_esphome
-                data: 
-                  switch_id: 'switch.zb_plug_l2_lounge_tv'
+            # - logger.log: "script tb_gpio4_click_short action."
             - homeassistant.action:
                 action: script.switch_toggle_by_esphome
                 data:
                   switch_id: 'switch.zb_plug_l2_lounge_light_corner'
+            - homeassistant.action:
+                action: script.switch_turn_off_by_esphome
+                data: 
+                  switch_id: 'switch.zb_plug_l2_lounge_tv'
 
 ####################################################################
 # EOF

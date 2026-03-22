@@ -1,0 +1,23 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_multi_click action of TB GPIO4 (short click)
+  - id: tb_gpio4_click_long
+    mode: single
+    then:
+      # - logger.log: "script tb_gpio4_click_long action."
+      - if:
+          condition:
+            # execute this script only if we are offline
+            # lambda: 'return (!id(isDeviceConnected);'
+            
+            # execute this script anyway (TM) for debugging purposes
+            lambda: 'return (true);'
+          then:
+            # - logger.log: "script tb_gpio4_click_long action."
+            - output.turn_off: ${esp32c3_onboard_led_id}
+
+####################################################################
+# EOF
+####################################################################
