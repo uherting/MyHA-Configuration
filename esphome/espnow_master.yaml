@@ -1,0 +1,72 @@
+esphome:
+  name: test-com-offline-master
+  friendly_name: test comunicazione offline - master
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "___"
+
+ota:
+  - platform: esphome
+    password: "___"
+
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Test-Com-Offline-Master"
+    password: "12345678"
+
+captive_portal:
+
+# espnow:
+#   peers:
+#     - "4C:11:AE:B3:96:9C"  #Slave mac 
+#   on_receive:
+#     address: "4C:11:AE:B3:96:9C"
+#     then:
+#       - if:
+#           condition:
+#             lambda: 'return size > 0 && data[0] == 0x01;'
+#           then:
+#             - output.turn_on: led
+#             - logger.log: "Ricevuto dato Accensione"
+#       - if:
+#           condition:
+#             lambda: 'return size > 0 && data[0] == 0x00;'
+#           then:
+#             - output.turn_off: led
+#             - logger.log: "Ricevuto dato Spegnimento"
+
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO4
+    name: "Button"
+    on_press:
+      then:
+        # - espnow.send:
+        #     address: "4C:11:AE:B3:96:9C"  
+        #     data: [0x01]  # Accende il LED sullo slave
+        - logger.log: "Inviato dato Accensione"
+        - output.turn_on: led
+        - delay: 0.5s
+        # - espnow.send:
+        #     address: "4C:11:AE:B3:96:9C"
+        #     data: [0x00]  # Spegne il LED sullo slave
+        - logger.log: "Inviato dato Spegnimento"
+        - output.turn_off: led
+
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: led
+    inverted: False
