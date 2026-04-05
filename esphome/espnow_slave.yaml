@@ -1,0 +1,65 @@
+esphome:
+  name: test-com-offline-slave
+  friendly_name: test communication offline - slave
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api: !include conf/common/networking/api.yaml
+# api:
+#   encryption:
+#     key: "___"
+
+ota: !include conf/common/networking/ota.yaml
+# ota:
+#   - platform: esphome
+#     password: "___"
+
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Test-Com-Offline-Slave"
+    password: "12345678"
+
+captive_portal:
+
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_ESPNOW_MASTER #Master mac 
+  on_receive:
+    address: !secret ESPNOW_MAC_ESPNOW_MASTER
+    then:
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x01;'
+          then:
+            - output.turn_on: led
+            - logger.log: "Received data Power On"
+            - delay: 2s
+            - espnow.send:
+                address: !secret ESPNOW_MAC_ESPNOW_MASTER
+                data: [0x01]
+            - logger.log: "Sent data Power On"
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x00;'
+          then:
+            - output.turn_off: led
+            - logger.log: "Received data Power Off"
+            - delay: 2s
+            - espnow.send:
+                address: !secret ESPNOW_MAC_ESPNOW_MASTER
+                data: [0x00]
+            - logger.log: "Sent data Power Off"
+
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: led
+    inverted: False
