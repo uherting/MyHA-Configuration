@@ -1,6 +1,6 @@
 esphome:
   name: test-com-offline-slave
-  friendly_name: test comunicazione offline - slave
+  friendly_name: test communication offline - slave
 
 esp32:
   board: esp32dev
@@ -11,13 +11,15 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "___"
+api: !include conf/common/networking/api.yaml
+# api:
+#   encryption:
+#     key: "___"
 
-ota:
-  - platform: esphome
-    password: "___"
+ota: !include conf/common/networking/ota.yaml
+# ota:
+#   - platform: esphome
+#     password: "___"
 
 wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
@@ -27,34 +29,34 @@ wifi:
 
 captive_portal:
 
-# espnow:
-#   peers:
-#     - "F8:B3:B7:2A:0C:70" #Master mac 
-#   on_receive:
-#     address: "F8:B3:B7:2A:0C:70"
-#     then:
-#       - if:
-#           condition:
-#             lambda: 'return size > 0 && data[0] == 0x01;'
-#           then:
-#             - output.turn_on: led
-#             - logger.log: "Ricevuto dato Accensione"
-#             - delay: 2s
-#             - espnow.send:
-#                 address: "F8:B3:B7:2A:0C:70"
-#                 data: [0x01]
-#             - logger.log: "Inviato dato Accensione"
-#       - if:
-#           condition:
-#             lambda: 'return size > 0 && data[0] == 0x00;'
-#           then:
-#             - output.turn_off: led
-#             - logger.log: "Ricevuto dato Spegnimento"
-#             - delay: 2s
-#             - espnow.send:
-#                 address: "F8:B3:B7:2A:0C:70"
-#                 data: [0x00]
-#             - logger.log: "Inviato dato Spegnimento"
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_ESPNOW_MASTER #Master mac 
+  on_receive:
+    address: !secret ESPNOW_MAC_ESPNOW_MASTER
+    then:
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x01;'
+          then:
+            - output.turn_on: led
+            - logger.log: "Received data Power On"
+            - delay: 2s
+            - espnow.send:
+                address: !secret ESPNOW_MAC_ESPNOW_MASTER
+                data: [0x01]
+            - logger.log: "Sent data Power On"
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x00;'
+          then:
+            - output.turn_off: led
+            - logger.log: "Received data Power Off"
+            - delay: 2s
+            - espnow.send:
+                address: !secret ESPNOW_MAC_ESPNOW_MASTER
+                data: [0x00]
+            - logger.log: "Sent data Power Off"
 
 output:
   - platform: gpio
