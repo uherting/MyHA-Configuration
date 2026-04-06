@@ -16,14 +16,25 @@
             lambda: 'return (true);'
           then:
             # - logger.log: "script tb_gpio4_click_short action."
-            - homeassistant.action:
-                action: script.switch_toggle_by_esphome
-                data:
-                  switch_id: 'switch.zb_plug_l2_lounge_light_corner'
-            - homeassistant.action:
-                action: script.switch_turn_off_by_esphome
-                data: 
-                  switch_id: 'switch.zb_plug_l2_lounge_tv'
+            - output.turn_on: ${esp32c3_onboard_led_id}
+
+            - espnow.send:
+                address: !secret ESPNOW_MAC_L2BTPROXYKITCHEN
+                data: [0x01]  # Turns on the LED on the slave
+
+            - logger.log: "Sent data Power On"
+
+            - delay: 1s
+            - output.turn_off: ${esp32c3_onboard_led_id}
+
+            # - homeassistant.action:
+            #     action: script.switch_toggle_by_esphome
+            #     data:
+            #       switch_id: 'switch.zb_plug_l2_lounge_light_corner'
+            # - homeassistant.action:
+            #     action: script.switch_turn_off_by_esphome
+            #     data: 
+            #       switch_id: 'switch.zb_plug_l2_lounge_tv'
 
 ####################################################################
 # EOF

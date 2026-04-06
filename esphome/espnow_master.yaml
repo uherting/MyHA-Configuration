@@ -66,7 +66,7 @@ captive_portal:
 
 espnow:
   peers:
-    - !secret ESPNOW_MAC_ESPNOW_SLAVE  #Slave mac 
+    - !secret ESPNOW_MAC_ESPNOW_SLAVE  # slave MAC
   on_receive:
     address: !secret ESPNOW_MAC_ESPNOW_SLAVE
     then:
@@ -75,13 +75,13 @@ espnow:
             lambda: 'return size > 0 && data[0] == 0x01;'
           then:
             - output.turn_on: led
-            - logger.log: "Received data Power On"
+            - logger.log: "ESPNow: Received data Power On"
       - if:
           condition:
             lambda: 'return size > 0 && data[0] == 0x00;'
           then:
             - output.turn_off: led
-            - logger.log: "Received data Power Off"
+            - logger.log: "ESPNow: Received data Power Off"
 
 
 binary_sensor:
@@ -91,14 +91,14 @@ binary_sensor:
     on_press:
       then:
         - espnow.send:
-            address: !secret ESPNOW_MAC_ESPNOW_SLAVE  
-            data: [0x01]  # Accende il LED sullo slave
+            address: !secret ESPNOW_MAC_ESPNOW_SLAVE
+            data: [0x01]  # Turns on the LED on the slave
         - logger.log: "Sent data Power On"
         - output.turn_on: led
         - delay: 0.5s
         - espnow.send:
             address: !secret ESPNOW_MAC_ESPNOW_SLAVE
-            data: [0x00]  # Spegne il LED sullo slave
+            data: [0x00]  # Turns off the LED on the slave
         - logger.log: "Sent data Power Off"
         - output.turn_off: led
 

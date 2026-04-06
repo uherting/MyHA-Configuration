@@ -110,7 +110,7 @@ time:
 
 espnow:
   peers:
-    - !secret ESPNOW_MAC_ESPNOW_MASTER #Master mac 
+    - !secret ESPNOW_MAC_ESPNOW_MASTER # master MAC 
   on_receive:
     address: !secret ESPNOW_MAC_ESPNOW_MASTER
     then:
@@ -119,23 +119,23 @@ espnow:
             lambda: 'return size > 0 && data[0] == 0x01;'
           then:
             - output.turn_on: led
-            - logger.log: "Received data Power On"
+            - logger.log: "ESPNow: Received data Power On"
             - delay: 2s
             - espnow.send:
                 address: !secret ESPNOW_MAC_ESPNOW_MASTER
                 data: [0x01]
-            - logger.log: "Sent data Power On"
+            - logger.log: "ESPNow: Sent data Power On"
       - if:
           condition:
             lambda: 'return size > 0 && data[0] == 0x00;'
           then:
             - output.turn_off: led
-            - logger.log: "Received data Power Off"
+            - logger.log: "ESPNow: Received data Power Off"
             - delay: 2s
             - espnow.send:
                 address: !secret ESPNOW_MAC_ESPNOW_MASTER
                 data: [0x00]
-            - logger.log: "Sent data Power Off"
+            - logger.log: "ESPNow: Sent data Power Off"
 
 output:
   - platform: gpio

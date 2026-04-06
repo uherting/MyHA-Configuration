@@ -140,6 +140,36 @@ text_sensor:
 # Enable the BLE Tracker
 bluetooth_proxy:
 
+#-------------------------------------------------------------------
+# ESPNow
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_L2LOUNGE09 # master MAC 
+  on_receive:
+    address: !secret ESPNOW_MAC_L2LOUNGE09
+    then:
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x01;'
+          then:
+            - homeassistant.action:
+                action: script.switch_toggle_by_esphome
+                data:
+                  switch_id: 'switch.zb_plug_l2_lounge_light_corner'
+            - homeassistant.action:
+                action: script.switch_turn_off_by_esphome
+                data: 
+                  switch_id: 'switch.zb_plug_l2_lounge_tv'
+
+            - logger.log: "ESPNow: Received data Power Off"
+
+            - delay: 2s
+
+            - espnow.send:
+                address: !secret ESPNOW_MAC_L2LOUNGE09
+                data: [0x01]
+                
+            - logger.log: "ESPNow: Sent data Power Off"
 ####################################################################
 # EOF
 ####################################################################
