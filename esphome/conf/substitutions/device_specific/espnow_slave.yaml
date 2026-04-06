@@ -1,0 +1,20 @@
+####################################################################
+# SUBSTITUTIONS
+
+# device definitions
+device_name: test-com-offline-slave
+device_comment: test communication offline - slave
+device_area: L9
+
+device_platform: ESP32
+device_board: esp32dev
+wifi_static_ip: 192.168.178.30
+
+# the friendly name and id (outdated due to new naming scheme)
+friendly_name: ""
+friendly_id: ""
+
+####################################################################
+# EOF
+####################################################################
+

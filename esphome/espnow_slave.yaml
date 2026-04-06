@@ -1,25 +1,64 @@
-esphome:
-  name: test-com-offline-slave
-  friendly_name: test communication offline - slave
+####################################################################
+####################################################################
+#
+# DEVICE: espnow_slave
+#
+####################################################################
+####################################################################
 
-esp32:
-  board: esp32dev
-  framework:
-    type: esp-idf
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - This microcontroller uses ESP-NOW to receive commands from 
+#     the master and (one day) to send GPS data to the master.
+#
+# Hardware:
+#   - 1 ESP32 development board
+#   - 1 GPS module
+#
+# Automation:
+#   - undetermined
+#
+# WiFi:
+#   - no WiFi connection, only ESP-NOW communication with the master
+#
+# Input:
+#   - GPS data
+#
+# Output
+#   - 1 onboard LED to indicate received commands from the master
+#
+
+###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
+
+substitutions:
+  <<: !include conf/substitutions/device_specific/espnow_slave.yaml
+  <<: !include conf/substitutions/overwrites/espnow_slave.yaml
+
+# esphome:
+#   name: test-com-offline-slave
+#   friendly_name: test communication offline - slave
+
+# esp32:
+#   board: esp32dev
+#   framework:
+#     type: esp-idf
+
+packages:
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base_esp32.yaml
+  # wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
 
 # Enable logging
 logger:
 
 # Enable Home Assistant API
 api: !include conf/common/networking/api.yaml
-# api:
-#   encryption:
-#     key: "___"
 
 ota: !include conf/common/networking/ota.yaml
-# ota:
-#   - platform: esphome
-#     password: "___"
 
 wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
@@ -28,6 +67,46 @@ wifi:
     password: "12345678"
 
 captive_portal:
+
+uart: !include conf/common/device/uart01_esp32_gps.yaml
+
+gps:
+  id: ${friendly_id}_gps
+  uart_id: ${uart01_esp32_gps_id}
+  latitude:
+    name: "GPS Latitude"
+    id: gps_latitude
+  longitude:
+    name: "GPS Longitude"
+    id: gps_longitude
+  altitude:
+    name: "GPS Altitude"
+    id: gps_altitude
+  speed:
+    name: "GPS Speed"
+    id: gps_speed
+  course:
+    name: "GPS Course"
+    id: gps_course
+  satellites:
+    name: "GPS Visible Satellites"
+    id: gps_satellites
+  hdop:
+    name: "GPS HDOP"
+    id: gps_hdop
+  update_interval: 20s
+
+time:
+  - platform: gps
+    id: gps_time
+    on_time_sync:
+      if:
+        condition:
+          time.has_time:
+        then:
+          - logger.log: "GPS Time Updated"
+        else:
+          - logger.log: "GPS Time Sync Failed"
 
 espnow:
   peers:
@@ -63,3 +142,25 @@ output:
     pin: GPIO2
     id: led
     inverted: False
+
+interval:
+- interval: 10seconds
+  then:
+    - logger.log:
+        format: "GPS updated latitude / longitude: %.1f,%.1f"
+        args: [ 'id(gps_latitude).state', 'id(gps_longitude).state' ]
+    - output.turn_on: led
+    - delay: 2s
+    - output.turn_off: led
+
+    # if:
+    #   condition:
+    #     time.has_time:
+    #   then:
+    #     - logger.log:
+    #       format: "GPS updated to %.1f and humidity %.1f"
+    #       args: [ 'id(gps_latitude).state', 'id(gps_longitude).state' ]
+    #     # - logger.log: "GPS updated to Latitude: ${latitude}, Longitude: ${longitude}, Altitude: ${altitude}, Speed: ${speed}, Course: ${course}, Satellites: ${satellites}, HDOP: ${hdop}, Fix Type: ${fix_type}"
+####################################################################
+# EOF
+####################################################################

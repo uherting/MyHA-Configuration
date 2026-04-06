@@ -220,7 +220,12 @@ substitutions:
   # this is the id of the UART interface, used in the uart: section
   # and in the uart_esp32c3.yaml file
   uart01_esp32c3_id: ${friendly_id}_UART_01
-  
+
+  # UART ESP32
+  # this is the id of the UART interface, used in the uart: section
+  # and in the uart_esp32.yaml file
+  uart01_esp32_gps_id: ${friendly_id}_UART_GPS_01
+
 
   vl53l0x_unitofmeasurement_cm: "cm"
   vl53l0x_unitofmeasurement_mm: "mm"

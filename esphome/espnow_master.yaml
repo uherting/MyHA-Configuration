@@ -1,3 +1,38 @@
+####################################################################
+####################################################################
+#
+# DEVICE: espnow_slave
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - This microcontroller uses ESP-NOW to send commands to 
+#     the slave and (one day) to receive GPS data from the slave.
+#
+# Hardware:
+#   - 1 ESP32 development board
+#
+# Automation:
+#   - undetermined
+#
+# WiFi:
+#   - no WiFi connection, only ESP-NOW communication with the slave
+#
+# Input:
+#   - none
+#
+# Output
+#   - 1 onboard LED to indicate sent commands to the slave
+#
+
+###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
+
 esphome:
   name: test-com-offline-master
   friendly_name: test communication offline - master
@@ -72,3 +107,6 @@ output:
     pin: GPIO2
     id: led
     inverted: False
+####################################################################
+# EOF
+####################################################################
