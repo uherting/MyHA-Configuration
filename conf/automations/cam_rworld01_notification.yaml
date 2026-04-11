@@ -12,16 +12,20 @@
   id: "8eb2599a-157e-40a6-8d8b-a0a73a28a3a2"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.cam_rworld1_motion
       to: "on"
-    # - platform: state
-    #   entity_id: binary_sensor.rworld1_person
-    #   to: "on"
-    # - platform: state
-    #   entity_id: binary_sensor.rworld1_vehicle
-    #   to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.cam_rworld1_motion
+  #     to: "on"
+  #   # - platform: state
+  #   #   entity_id: binary_sensor.rworld1_person
+  #   #   to: "on"
+  #   # - platform: state
+  #   #   entity_id: binary_sensor.rworld1_vehicle
+  #   #   to: "on"
   # -------------------- CONDITIONS -------------------
   condition:
     # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
@@ -33,7 +37,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- CREATE NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "Camera RWorld01 sensed something"
         msg_text: "The camera RWorld01 sensed a person / vehicle."

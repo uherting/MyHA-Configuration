@@ -13,22 +13,25 @@
   initial_state: true
 
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "19:01:30"
+  # trigger:
+  #   - platform: time
+  #     at: "19:01:30"
 
   # -------------------- CONDITIONS -------------------
   condition:
     - condition: numeric_state
       entity_id: sensor.abholung_altpapier_d
       # attribute: remaining
-      below: "3"
-      above: "1"
+      below: 3
+      above: 1
 
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "Used paper collection info"
         msg_text: "Used paper collection is due the day *after tomorrow*"
@@ -43,22 +46,25 @@
   initial_state: true
 
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "19:02:30"
+  # trigger:
+  #   - platform: time
+  #     at: "19:02:30"
 
   # -------------------- CONDITIONS -------------------
   condition:
     - condition: numeric_state
       entity_id: sensor.abholung_restabfall_d
       # attribute: remaining
-      below: "3"
-      above: "1"
+      below: 3
+      above: 1
 
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "Rubbish collection info"
         msg_text: "Rubbish collection is due the day *after tomorrow*"
@@ -73,22 +79,25 @@
   initial_state: true
 
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "19:03:30"
+  # trigger:
+  #   - platform: time
+  #     at: "19:03:30"
 
   # -------------------- CONDITIONS -------------------
   condition:
     - condition: numeric_state
       entity_id: sensor.abholung_gelbetonne_d
       # attribute: remaining
-      below: "3"
-      above: "1"
+      below: 3
+      above: 1
 
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "Gelbe Tonne collection information"
         msg_text: "Gelbe Tonne collection is due the day *after tomorrow*"
@@ -103,22 +112,25 @@
   initial_state: true
 
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: time
-      at: "19:04:00"
+  triggers:
+    - trigger: time
+      at: "19:04:30"
+  # trigger:
+  #   - platform: time
+  #     at: "19:04:00"
 
   # -------------------- CONDITIONS -------------------
   condition:
     - condition: numeric_state
       entity_id: sensor.abholung_altglas_d
       # attribute: remaining
-      below: "3"
-      above: "1"
+      below: 3
+      above: 1
 
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "Recycling info"
         msg_text: "Glas will be collected the day *after tomorrow*"

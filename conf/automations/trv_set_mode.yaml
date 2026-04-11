@@ -14,21 +14,31 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "19:00:00"
-    - platform: time
+    - trigger: time
       at: "21:00:00"
+  # trigger:
+  #   - platform: time
+  #     at: "19:00:00"
+  #   - platform: time
+  #     at: "21:00:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: comfort
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_bedroom_l2
+      data:
+        preset_mode: comfort
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: comfort
+    #   target:
+    #     entity_id: climate.zb_trv_bedroom_l2
 
 # ############################################################
 # Bedroom_L2 preset mode eco
@@ -40,19 +50,27 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "10:30:00"
+  # trigger:
+  #   - platform: time
+  #     at: "10:30:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: eco
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_bedroom_l2
+      data:
+        preset_mode: eco
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: eco
+    #   target:
+    #     entity_id: climate.zb_trv_bedroom_l2
 
 # ############################################################
 # Kitchen_L2 preset mode comfort
@@ -64,23 +82,35 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "08:00:00"
-    - platform: time
+    - trigger: time
       at: "12:00:00"
-    - platform: time
+    - trigger: time
       at: "18:30:00"
+  # trigger:
+  #   - platform: time
+  #     at: "08:00:00"
+  #   - platform: time
+  #     at: "12:00:00"
+  #   - platform: time
+  #     at: "18:30:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: comfort
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_kitchen_l2
+      data:
+        preset_mode: comfort
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: comfort
+    #   target:
+    #     entity_id: climate.zb_trv_kitchen_l2
 
 # ############################################################
 # Kitchen_L2 preset mode eco
@@ -92,27 +122,41 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "10:00:00"
-    - platform: time
+    - trigger: time
       at: "13:30:00"
-    - platform: time
-      at: "15:30:00"
-    - platform: time
+    - trigger: time
       at: "19:00:00"
-    - platform: time
-      at: "22:00:00"
+    - trigger: time
+      at: "21:00:00"
+  # trigger:
+  #   - platform: time
+  #     at: "10:00:00"
+  #   - platform: time
+  #     at: "13:30:00"
+  #   - platform: time
+  #     at: "15:30:00"
+  #   - platform: time
+  #     at: "19:00:00"
+  #   - platform: time
+  #     at: "21:00:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: eco
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_kitchen_l2
+      data:
+        preset_mode: eco
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: eco
+    #   target:
+    #     entity_id: climate.zb_trv_kitchen_l2
 
 # ############################################################
 # Lounge_L2 preset mode comfort
@@ -124,23 +168,35 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "08:00:00"
-    - platform: time
+    - trigger: time
       at: "12:30:00"
-    - platform: time
+    - trigger: time
       at: "18:30:00"
+  # trigger:
+  #   - platform: time
+  #     at: "08:00:00"
+  #   - platform: time
+  #     at: "12:30:00"
+  #   - platform: time
+  #     at: "18:30:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: comfort
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_lounge_l2
+      data:
+        preset_mode: comfort
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: comfort
+    #   target:
+    #     entity_id: climate.zb_trv_lounge_l2
 
 # ############################################################
 # Lounge_L2 preset mode eco
@@ -152,23 +208,35 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
-    - platform: time
+  triggers:
+    - trigger: time
       at: "21:00:00"
-    - platform: time
+    - trigger: time
       at: "22:30:00"
-    - platform: time
+    - trigger: time
       at: "23:30:00"
+  # trigger:
+  #   - platform: time
+  #     at: "21:00:00"
+  #   - platform: time
+  #     at: "22:30:00"
+  #   - platform: time
+  #     at: "23:30:00"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: eco
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_lounge_l2
+      data:
+        preset_mode: eco
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: eco
+    #   target:
+    #     entity_id: climate.zb_trv_lounge_l2
 
 # ############################################################
 # all TRVs L2 preset mode eco because of all people gone
@@ -177,34 +245,53 @@
   id: "d9d190f6-e04d-4e0c-9747-c93346b82c1f"
   description: "This automation sets preset mode to eco in case everbody is gone"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
-  # time based execution
-  trigger:
-    # the last person left
-    - platform: state
+  # state based execution (the last person left)
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.home_all_are_gone
       to: "on"
+  # trigger:
+  #   # the last person left
+  #   - platform: state
+  #     entity_id: binary_sensor.home_all_are_gone
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: eco
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_bedroom_l2
-    - service: climate.set_preset_mode
       data:
         preset_mode: eco
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_kitchen_l2
-    - service: climate.set_preset_mode
       data:
         preset_mode: eco
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_lounge_l2
+      data:
+        preset_mode: eco
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: eco
+    #   target:
+    #     entity_id: climate.zb_trv_bedroom_l2
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: eco
+    #   target:
+    #     entity_id: climate.zb_trv_kitchen_l2
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: eco
+    #   target:
+    #     entity_id: climate.zb_trv_lounge_l2
 
 # ############################################################
 # all necessary TRVs L2 preset mode comfort because of some people are back
@@ -213,27 +300,37 @@
   id: "da31b093-9289-4e0f-a0de-ff500f15fcff"
   description: "This automation sets preset mode to comfort in case some people are back"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   # time based execution
-  trigger:
+  triggers:
     # GH came back
-    - platform: state
+    - trigger: state
       entity_id: binary_sensor.home_gillian_is_here
       to: "on"
-    # - platform: state
-    #   entity_id: binary_sensor.home_uwe_is_here
-    #   to: "on"
+  # trigger:
+  #   # GH came back
+  #   - platform: state
+  #     entity_id: binary_sensor.home_gillian_is_here
+  #     to: "on"
+  #   # - platform: state
+  #   #   entity_id: binary_sensor.home_uwe_is_here
+  #   #   to: "on"
   # -------------------- CONDITIONS -------------------
   # none so far
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    - service: climate.set_preset_mode
-      data:
-        preset_mode: comfort
+    - action: climate.set_preset_mode
       target:
         entity_id: climate.zb_trv_lounge_l2
+      data:
+        preset_mode: comfort
+    # - service: climate.set_preset_mode
+    #   data:
+    #     preset_mode: comfort
+    #   target:
+    #     entity_id: climate.zb_trv_lounge_l2
 ############################################################
 #  END OF FILE
 # ############################################################

@@ -13,20 +13,24 @@
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: switch.zb_plug_l2_kitchen_fridge
       to: "off"
+  # trigger:
+  #   - platform: state
+  #     entity_id: switch.zb_plug_l2_kitchen_fridge
+  #     to: "off"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # -------------------- SWITCH ZB PLUG ON --------------------
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_fridge
     # ------------------- CREATE NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "ZB plug L2 kitchen was switched fridge on"
         msg_text: "The ZB plug L2 kitchen fridge was switched on by an automation."

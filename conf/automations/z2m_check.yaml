@@ -13,19 +13,25 @@
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: switch.zb_plug_l2_kitchen_fridge
       to: "unavailable"
       for:
         minutes: 10
+  # trigger:
+  #   - platform: state
+  #     entity_id: switch.zb_plug_l2_kitchen_fridge
+  #     to: "unavailable"
+  #     for:
+  #       minutes: 10
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- CREATE NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "The Z2M addon needs to be restarted"
         msg_text: "The Z2M addon needs to be restarted"

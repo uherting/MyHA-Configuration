@@ -11,17 +11,21 @@
   id: "15cd9000-389a-4026-950a-8ead7f42305a"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.backups_stale
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.backups_stale
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data:
         msg_title: "Google Drive Backup"
         msg_text: "Snapshots of HA Google Drive Backup Add-On are stale. Please visit the <a href='/hassio/ingress/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details."

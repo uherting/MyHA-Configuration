@@ -11,17 +11,21 @@
   id: "0229adb7-ba47-47bf-ad42-8f1c4c18916a"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_coffeemachine
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_coffeemachine
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
-    service: switch.turn_off
-    entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+    - action: switch.turn_off
+      entity_id: switch.zb_plug_l2_kitchen_coffeemachine
 ############################################################
 #  END OF FILE
 # ############################################################
