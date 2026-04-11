@@ -131,6 +131,20 @@ text_sensor:
 output: !include conf/common/esp32c3/esp32c3_onboard_led_output.yaml
 light: !include conf/common/esp32c3/esp32c3_onboard_led_light.yaml
 
+#-------------------------------------------------------------------
+# ESPNow
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_L2BTPROXYKITCHEN  # slave MAC
+  on_receive:
+    address: !secret ESPNOW_MAC_L2BTPROXYKITCHEN
+    then:
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x01;'
+          then:
+            - logger.log: "ESPNow: Received data Power Off"
+
 ####################################################################
 # EOF
 ####################################################################
