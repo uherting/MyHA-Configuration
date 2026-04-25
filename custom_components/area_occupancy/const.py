@@ -29,7 +29,7 @@ PLATFORMS = [Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SENSOR]
 # Device information
 DEVICE_MANUFACTURER: Final = "Hankanman"
 DEVICE_MODEL: Final = "Area Occupancy Detector"
-DEVICE_SW_VERSION: Final = "2026.3.4"
+DEVICE_SW_VERSION: Final = "2026.4.1"
 CONF_VERSION: Final = 18
 CONF_VERSION_MINOR: Final = 0
 HA_RECORDER_DAYS: Final = 10  # days
@@ -171,6 +171,11 @@ MIN_PRIOR: Final[float] = 0.01
 MAX_PRIOR: Final[float] = 0.99
 MIN_WEIGHT: Final[float] = 0.01
 MAX_WEIGHT: Final[float] = 0.99
+
+# Margin kept between a prior *floor* (purpose min_prior, min_prior_override)
+# and the area's occupancy threshold. Floors alone must not be able to
+# hold an area above the threshold with no active evidence — see issue #435.
+PRIOR_FLOOR_THRESHOLD_MARGIN: Final[float] = 0.01
 
 # Time Prior Bounds
 TIME_PRIOR_MIN_BOUND: Final[float] = 0.03

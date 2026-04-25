@@ -19,6 +19,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .area import AllAreas, AreaDeviceHandle, FloorAreas
 from .const import ALL_AREAS_IDENTIFIER
 from .data.activity import ActivityId
+from .data.entity_type import InputType
 from .utils import format_float, format_percentage, generate_entity_unique_id
 
 if TYPE_CHECKING:
@@ -35,6 +36,7 @@ NAME_PRESENCE_PROBABILITY_SENSOR = "Presence Confidence"
 NAME_ENVIRONMENTAL_CONFIDENCE_SENSOR = "Environmental Confidence"
 NAME_DETECTED_ACTIVITY_SENSOR = "Detected Activity"
 NAME_ACTIVITY_CONFIDENCE_SENSOR = "Activity Confidence"
+NAME_SENSOR_HEALTH_SENSOR = "Sensor Health"
 
 
 class AreaOccupancySensorBase(CoordinatorEntity, SensorEntity):
@@ -192,6 +194,35 @@ class ProbabilitySensor(AreaOccupancySensorBase):
             return None
         return format_float(area.probability() * 100)
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return diagnostic attributes exposing what drives the probability.
+
+        Surfaces the prior's learned components and the floor (if any) that
+        was applied, plus lists of currently active and decaying entities
+        with their decay factors. Helps users diagnose "stuck" occupancy
+        reports without needing debug logging.
+        """
+        if self._all_areas is not None:
+            return {}
+        area = self._get_area()
+        if area is None:
+            return {}
+        try:
+            snapshot = area.prior.diagnostic_snapshot()
+            active_entities = [e.entity_id for e in area.entities.active_entities]
+            decaying_entities = [
+                {"entity_id": e.entity_id, "decay_factor": e.decay.decay_factor}
+                for e in area.entities.decaying_entities
+            ]
+        except (AttributeError, KeyError, TypeError):
+            return {}
+        return {
+            **snapshot,
+            "active_entities": active_entities,
+            "decaying_entities": decaying_entities,
+        }
+
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
@@ -246,6 +277,17 @@ class EvidenceSensor(AreaOccupancySensorBase):
                     if entity.name
                 ]
             )
+            health_monitor = area.health_monitor
+            excluded_ids = {
+                eid for eid in (area.wasp_entity_id, area.sleep_entity_id) if eid
+            }
+
+            def _health_status(entity_id: str, input_type: InputType) -> str:
+                if entity_id in excluded_ids or input_type == InputType.SLEEP:
+                    return "excluded"
+                issue = health_monitor.get_issue_for_entity(entity_id)
+                return issue.issue_type if issue else "healthy"
+
             return {
                 "evidence": active_entity_names,
                 "no_evidence": inactive_entity_names,
@@ -261,6 +303,9 @@ class EvidenceSensor(AreaOccupancySensorBase):
                         "state": entity.state,
                         "decaying": entity.decay.is_decaying,
                         "decay_factor": entity.decay.decay_factor,
+                        "health_status": _health_status(
+                            entity.entity_id, entity.type.input_type
+                        ),
                     }
                     for entity in sorted(
                         area.entities.entities.values(),
@@ -485,6 +530,73 @@ class ActivityConfidenceSensor(AreaOccupancySensorBase):
         return format_float(area.detected_activity().confidence * 100)
 
 
+class SensorHealthSensor(AreaOccupancySensorBase):
+    """Diagnostic sensor reporting sensor health issues for an area."""
+
+    _unrecorded_attributes = frozenset({"issues"})
+
+    def __init__(
+        self,
+        area_handle: AreaDeviceHandle,
+    ) -> None:
+        """Initialize the sensor health sensor."""
+        super().__init__(area_handle=area_handle)
+        self._attr_name = NAME_SENSOR_HEALTH_SENSOR
+        self._attr_unique_id = generate_entity_unique_id(
+            self._entry_id,
+            self.device_info,
+            NAME_SENSOR_HEALTH_SENSOR,
+        )
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_state_class = SensorStateClass.MEASUREMENT
+
+    @property
+    def native_value(self) -> int | None:
+        """Return the number of health issues (0 = all healthy)."""
+        area = self._get_area()
+        if area is None:
+            return None
+        return area.health_monitor.issue_count
+
+    @property
+    def icon(self) -> str:
+        """Return icon based on health status."""
+        area = self._get_area()
+        if area and area.health_monitor.issue_count > 0:
+            return "mdi:alert-circle"
+        return "mdi:heart-pulse"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return health issue details."""
+        try:
+            area = self._get_area()
+            if area is None:
+                return {}
+            monitor = area.health_monitor
+            return {
+                "issues": [
+                    {
+                        "entity_id": issue.entity_id,
+                        "type": issue.issue_type,
+                        "input_type": issue.input_type,
+                        "since": issue.since.isoformat() if issue.since else None,
+                        "duration_hours": issue.duration_hours,
+                        "details": issue.details,
+                    }
+                    for issue in monitor.issues
+                ],
+                "healthy_count": monitor.checked_count - monitor.issue_count,
+                "checked_count": monitor.checked_count,
+                "total_count": len(area.entities.entities),
+                "last_check": (
+                    monitor.last_check.isoformat() if monitor.last_check else None
+                ),
+            }
+        except (TypeError, AttributeError, KeyError):
+            return {}
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: Any
 ) -> None:
@@ -505,6 +617,7 @@ async def async_setup_entry(
             EnvironmentalConfidenceSensor(area_handle=area_handle),
             DetectedActivitySensor(area_handle=area_handle),
             ActivityConfidenceSensor(area_handle=area_handle),
+            SensorHealthSensor(area_handle=area_handle),
         ]
 
         async_add_entities(
