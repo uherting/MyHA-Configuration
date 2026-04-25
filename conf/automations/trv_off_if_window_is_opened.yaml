@@ -21,45 +21,27 @@
       id: "zb_dw_l2_bedroom_contact"
       entity_id: binary_sensor.zb_dw_l2_bedroom_contact
       to: "on"
-  # trigger:
-  #   # if the group zb_dw_l2_bedroom_contact goes to "on"
-  #   - platform: state
-  #     id: "zb_dw_l2_bedroom_contact"
-  #     entity_id: binary_sensor.zb_dw_l2_bedroom_contact
-  #     to: "on"
   # -------------------- CONDITIONS -------------------
-  # none whatsoever
-  condition: []
+  condition:
+    - alias: "Allowing the switching of trv hvac mode based on enable switch"
+      condition: state
+      entity_id: input_boolean.trv_enable_hvac_mode_switching
+      state: "on"
   # --------------------- ACTIONS ---------------------
-  action:
-    - choose:
-        # --------------------- zb_dw_l2_bedroom_contact
-        - conditions:
-            - condition: trigger
-              id: "zb_dw_l2_bedroom_contact"
-          sequence:
-            # ------------- TRV GETS SWITCHED OFF / BACK TO AUTO ----------
-            - action: climate.set_hvac_mode
-              target:
-                entity_id: climate.zb_trv_bedroom_l2
-              data:
-                hvac_mode: "off"
-            - delay: "00:20"
-            - action: climate.set_hvac_mode
-              target:
-                entity_id: climate.zb_trv_bedroom_l2
-              data:
-                hvac_mode: "auto"
-      default:
-        - action: system_log.write
-          data:
-            message: "Automation L2 TRV open window handling experienced unknown trigger @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-            level: "error"
-            logger: "system_log.external"
-        - action: persistent_notification.create
-          data:
-            title: "L2 TRV open window automation unknown activity"
-            message: "The automation experienced an unknown condition. See system log for details. Time: {{ now() }}"
-############################################################
+  actions:
+    # ------------- TRV GETS SWITCHED OFF / BACK TO AUTO ----------
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+      data:
+        hvac_mode: "off"
+    # 20 minutes delay till return to auto mode
+    - delay: "00:20"
+    - action: climate.set_hvac_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+      data:
+        hvac_mode: "auto"
+# ############################################################
 #  END OF FILE
 # ############################################################

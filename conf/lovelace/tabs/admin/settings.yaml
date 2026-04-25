@@ -15,6 +15,13 @@ cards:
     max_results: 15
 
   - type: entities
+    title: TRV related entities
+    show_header_toggle: false
+    entities:
+      - input_boolean.trv_enable_preset_mode_switching
+      - input_boolean.trv_enable_hvac_mode_switching
+
+  - type: entities
     title: General Notifications
     show_header_toggle: false
     entities:

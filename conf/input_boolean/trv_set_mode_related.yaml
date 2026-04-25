@@ -1,0 +1,21 @@
+# ############################################################
+#
+#  Input boolean
+#
+# ############################################################
+
+#input_boolean:
+trv_enable_preset_mode_switching:
+  name: Allowing the switching of trv preset mode
+  icon: mdi:swap-horizontal
+  # no need to define an initial value as it will be reloaded
+  # initial: off
+
+trv_enable_hvac_mode_switching:
+  name: Allowing the switching of trv hvac mode
+  icon: mdi:swap-horizontal
+# no need to define an initial value as it will be reloaded
+# initial: off
+# ############################################################
+#  END OF FILE
+# ############################################################
