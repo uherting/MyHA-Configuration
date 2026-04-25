@@ -8,14 +8,29 @@
 
 # who is at home?
 - binary_sensor:
+    # binary_sensor.home_uwe_is_here
     - name: "Home: Uwe is here"
       unique_id: "at home uwe yn"
       state: >
         {{ is_state('person.uwe', 'home') }}
+
+    # binary_sensor.home_gillian_is_here
     - name: "Home: Gillian is here"
       unique_id: "at home gillian yn"
       state: >
         {{ is_state('person.gillian', 'home') }}
+
+    # binary_sensor.home_someone_is_here
+    - name: "Home: someone is here"
+      unique_id: "at home someone yn"
+      state: >
+        {{
+          (is_state('person.uwe', 'home'))
+          or
+          (is_state('person.gillian', 'home'))
+        }}
+
+    # binary_sensor.home_all_are_here
     - name: "Home: all are here"
       unique_id: "at home all yn"
       state: >
@@ -24,6 +39,8 @@
           and
           (is_state('person.gillian', 'home'))
         }}
+
+    # binary_sensor.home_all_are_gone
     - name: "Home: all are gone"
       unique_id: "at home all gone"
       state: >
