@@ -41,7 +41,6 @@ substitutions:
 # esphome:
 #   name: test-com-offline-slave
 #   friendly_name: test communication offline - slave
-
 # esp32:
 #   board: esp32dev
 #   framework:
@@ -60,16 +59,18 @@ api: !include conf/common/networking/api.yaml
 
 ota: !include conf/common/networking/ota.yaml
 
+# WiFi configuration with fallback captive portal
 wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "Test-Com-Offline-Slave"
     password: "12345678"
-
 captive_portal:
 
+# UART configuration for GPS module
 uart: !include conf/common/device/uart01_esp32_gps.yaml
 
+# GPS sensor configuration
 gps:
   id: ${friendly_id}_gps
   uart_id: ${uart01_esp32_gps_id}
@@ -96,6 +97,7 @@ gps:
     id: gps_hdop
   update_interval: 20s
 
+# where does the time come from? We use GPS time.
 time:
   - platform: gps
     id: gps_time
@@ -108,6 +110,7 @@ time:
         else:
           - logger.log: "GPS Time Sync Failed"
 
+# espnow configuration to receive commands from the master
 espnow:
   peers:
     - !secret ESPNOW_MAC_ESPNOW_MASTER # master MAC 
@@ -116,7 +119,7 @@ espnow:
     then:
       - if:
           condition:
-            lambda: 'return size > 0 && data[0] == 0x01;'
+            lambda: 'return (size > 0) && (data[0] == 0x01);'
           then:
             - output.turn_on: led
             - logger.log: "ESPNow: Received data Power On"
@@ -127,7 +130,7 @@ espnow:
             - logger.log: "ESPNow: Sent data Power On"
       - if:
           condition:
-            lambda: 'return size > 0 && data[0] == 0x00;'
+            lambda: 'return (size > 0) && (data[0] == 0x00);'
           then:
             - output.turn_off: led
             - logger.log: "ESPNow: Received data Power Off"
@@ -137,12 +140,14 @@ espnow:
                 data: [0x00]
             - logger.log: "ESPNow: Sent data Power Off"
 
+# the onboard LED to indicate received commands from the master
 output:
   - platform: gpio
     pin: GPIO2
     id: led
     inverted: False
 
+# interval to log GPS data and test ESP-NOW communication with the master
 interval:
 - interval: 10seconds
   then:
