@@ -1,0 +1,151 @@
+####################################################################
+# LVGL config for ESP32-2432S028R aka CYD --- with onboard ESP32
+#####################################################################
+
+# lvgl:
+
+################################################################
+# initially taken from 
+# - https://github.com/pixelEDI/LVGL_ESP32_YT-Beispiele/blob/main/10_LVGL_HelloWorld_switch_mit_ESPHome/lvgl_helloworld.yaml
+#
+# added stuff later on from other sources
+# - https://github.com/agillis/esphome-modular-lvgl-buttons/blob/main/buttons/switch_button.yaml
+################################################################
+  buffer_size: 25%
+  theme:
+    button:
+      # This base is overridden by each button's bg_color
+      bg_color: default_btn_bg_color
+      # bg_opa: COVER
+      bg_opa: transp
+      border_color: default_btn_border_color
+      border_width: 1
+      text_color: default_btn_txt_color
+      pressed:
+        bg_color: 0x000000
+        bg_grad_color: 0xC0C0C0
+        bg_opa: COVER
+        text_color: default_btn_txt_pressed_color
+      checked:
+        bg_color: 0x000000
+        bg_grad_color: 0x000000
+        bg_opa: COVER
+        text_color: default_btn_txt_checked_color
+  pages:
+    - id: main_page
+      pad_all: 0
+      widgets:
+        - obj:
+            width: ${cyd_display_width_320}
+            height: ${cyd_display_height_240}
+            bg_color: room_bg_color
+            layout:
+              type: grid
+              grid_columns: [fr(1), fr(1), fr(1), fr(1)]
+              grid_rows: [fr(1), fr(1), fr(1)]
+            pad_all: 5px
+            outline_pad: 5px
+            widgets:
+              - button:
+                  id: btn_dishwasher
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_dishwasher
+                        text: "󰪬"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_dishwasher
+              - button:
+                  id: btn_microwave
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_microwave
+                        text: "󰲙"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_microwave
+              - button:
+                  id: btn_kettle
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_kettle
+                        text: "󰗺"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - homeassistant.action:
+                          action: switch.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_kettle
+              - button:
+                  id: btn_coffeemachine
+                  grid_cell_column_pos: 3
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_coffeemachine
+                        text: "󱂟"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - homeassistant.action:
+                          action: homeassistant.toggle
+                          data:
+                            entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
+              # - switch:
+              #     id: switch_antiburn_btn
+              #     grid_cell_column_pos: 3
+              #     grid_cell_row_pos: 2
+              #     # grid_cell_x_align: STRETCH
+              #     # grid_cell_y_align: STRETCH
+              #     widgets:
+              #       - label:
+              #           id: lbl_switch_antiburn
+              #           text: "Antiburn"
+              #           text_font: my_font16
+              #           align: center
+              #     on_click:
+              #       then:
+              #         - switch.toggle: switch_antiburn
+
+
+  on_idle:
+    timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
+    then:
+      - lvgl.pause:
+      - light.turn_off: display_backlight
+      - switch.turn_on: switch_antiburn
+
+####################################################################
+# EOF
+####################################################################
