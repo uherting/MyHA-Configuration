@@ -12,16 +12,20 @@
   id: "9ba5dd9f-ee29-407a-a4f6-ea0e7bd1c952"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.cam_rworld1_motion
       to: "on"
-    # - platform: state
-    #   entity_id: binary_sensor.rworld1_person
-    #   to: "on"
-    # - platform: state
-    #   entity_id: binary_sensor.rworld1_vehicle
-    #   to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.cam_rworld1_motion
+  #     to: "on"
+  #   # - platform: state
+  #   #   entity_id: binary_sensor.rworld1_person
+  #   #   to: "on"
+  #   # - platform: state
+  #   #   entity_id: binary_sensor.rworld1_vehicle
+  #   #   to: "on"
   # -------------------- CONDITIONS -------------------
   conditions:
     - or:
@@ -42,7 +46,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- START COOLDOWN ---------------------
-    - service: input_boolean.turn_on
+    - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.cam_rworld1_cooldown
 
@@ -53,19 +57,26 @@
   id: "07b3755b-d694-4cb8-9f1d-e2310d2546c5"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: input_boolean.cam_rworld1_cooldown
       to: "on"
       for:
         minutes: 1
         seconds: 30
+  # trigger:
+  #   - platform: state
+  #     entity_id: input_boolean.cam_rworld1_cooldown
+  #     to: "on"
+  #     for:
+  #       minutes: 1
+  #       seconds: 30
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- END COOLDOWN ---------------------
-    - service: input_boolean.turn_off
+    - action: input_boolean.turn_off
       target:
         entity_id: input_boolean.cam_rworld1_cooldown
 ############################################################

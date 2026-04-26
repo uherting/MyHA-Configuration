@@ -12,10 +12,14 @@
   initial_state: false
   # --------------------- TRIGGER ---------------------
   # civil dusk is detected
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.sun_dwn_dusk_civil
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.sun_dwn_dusk_civil
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   condition:
     - alias: "Has the plug the btproxy functionality"
@@ -25,21 +29,25 @@
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR ON ----------------------
-    service: switch.turn_off
-    entity_id: switch.zb_plug_l2_bedroom_misc01
+    - action: switch.turn_off
+      entity_id: switch.zb_plug_l2_bedroom_misc01
 
 # ############################################################
-# ZB_Plug_L2_Bedroom_Misc01 off depending on sun elevation
+# ZB_Plug_L2_Bedroom_Misc01 off depending on sun elevation if it is acting as BT proxy
 # ############################################################
 - alias: ZB_Plug_L2_Bedroom_Misc01 on depending on sun elevation
   id: "9d4162b3-7424-4911-a501-2ee63ec3ad86"
   initial_state: false
   # --------------------- TRIGGER ---------------------
   # civil dusk is detected
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.sun_up
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.sun_up
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   condition:
     - alias: "Has the plug the btproxy functionality"
@@ -49,8 +57,8 @@
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR ON ----------------------
-    service: switch.turn_on
-    entity_id: switch.zb_plug_l2_bedroom_misc01
+    - action: switch.turn_on
+      entity_id: switch.zb_plug_l2_bedroom_misc01
 # ############################################################
 #  END OF FILE
 # ############################################################

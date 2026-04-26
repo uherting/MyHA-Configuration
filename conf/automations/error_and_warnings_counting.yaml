@@ -15,11 +15,16 @@
   initial_state: true
   mode: parallel
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: event
+  triggers:
+    - trigger: event
       event_type: system_log_event
       event_data:
         level: ERROR
+  # trigger:
+  #   - platform: event
+  #     event_type: system_log_event
+  #     event_data:
+  #       level: ERROR
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -31,7 +36,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- INCREASE COUNTER ----------------
-    - service: counter.increment
+    - action: counter.increment
       entity_id: counter.homeassistant_errors
 
 # ############################################################
@@ -42,11 +47,16 @@
   initial_state: true
   mode: parallel
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: event
+  triggers:
+    - trigger: event
       event_type: system_log_event
       event_data:
         level: WARNING
+  # trigger:
+  #   - platform: event
+  #     event_type: system_log_event
+  #     event_data:
+  #       level: WARNING
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -57,7 +67,7 @@
   #     value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
   # --------------------- ACTIONS ---------------------
   action:
-    - service: counter.increment
+    - action: counter.increment
       entity_id: counter.homeassistant_warnings
 # ############################################################
 #  END OF FILE

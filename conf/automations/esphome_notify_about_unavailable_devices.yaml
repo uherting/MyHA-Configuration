@@ -13,19 +13,25 @@
   initial_state: true
 
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: template
-      value_template: "{{ 
-        ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and 
+  triggers:
+    - trigger: template
+      value_template: "{{
+        ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and
         states('binary_sensor.is_it_safe_to_send_notifications')
-      }}"
+        }}"
+  # trigger:
+  #   - platform: template
+  #     value_template: "{{
+  #       ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and
+  #       states('binary_sensor.is_it_safe_to_send_notifications')
+  #       }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - service: script.tg_send_txt
+    - action: script.tg_send_txt
       data_template:
         msg_title: "ESPHome (unavailable devices)"
         msg_text: "The following ESPHome devices are unavailable:\n- {{ state_attr('sensor.unavailable_esphome_devices_info', 'unavailable_device_names') | join('\n- ') }}\n"

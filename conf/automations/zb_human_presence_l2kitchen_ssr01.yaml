@@ -12,13 +12,20 @@
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
       to: "on"
-    - platform: state
+    - trigger: state
       entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
       to: "large"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
+  #     to: "on"
+  #   - platform: state
+  #     entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
+  #     to: "large"
   # -------------------- CONDITIONS -------------------
   condition: []
   # condition:
@@ -29,7 +36,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SSR01 on -------------------
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id: switch.l2kitchen01_ssr_01
 
 # ############################################################
@@ -40,16 +47,22 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # no motion is detected for x minutes or door is closed
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
       to: "off"
       for:
         minutes: 1
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
+  #     to: "off"
+  #     for:
+  #       minutes: 1
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR OFF ---------------------
-    - service: switch.turn_off
+    - action: switch.turn_off
       entity_id: switch.l2kitchen01_ssr_01
 # ############################################################
 #  END OF FILE

@@ -9,11 +9,11 @@ function c(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var r = Object.getOwnPropertySymbols(e);
-    t &&
+    (t &&
       (r = r.filter(function (t) {
         return Object.getOwnPropertyDescriptor(e, t).enumerable;
       })),
-      n.push.apply(n, r);
+      n.push.apply(n, r));
   }
   return n;
 }
@@ -25,29 +25,29 @@ function l(e) {
           d(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
-      ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-      : c(Object(n)).forEach(function (t) {
-          Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
-        });
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
+        : c(Object(n)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+          });
   }
   return e;
 }
 function d(e, t, n) {
   return (
-    (t = j(t)) in e
+    (t = O(t)) in e
       ? Object.defineProperty(e, t, { value: n, enumerable: !0, configurable: !0, writable: !0 })
       : (e[t] = n),
     e
   );
 }
-function f() {
+function h() {
   return (
-    (f =
+    (h =
       'undefined' != typeof Reflect && Reflect.get
         ? Reflect.get.bind()
         : function (e, t, n) {
             var r = (function (e, t) {
-              for (; !Object.prototype.hasOwnProperty.call(e, t) && null !== (e = A(e)); );
+              for (; !Object.prototype.hasOwnProperty.call(e, t) && null !== (e = k(e)); );
               return e;
             })(e, t);
             if (r) {
@@ -55,19 +55,19 @@ function f() {
               return o.get ? o.get.call(arguments.length < 3 ? e : n) : o.value;
             }
           }),
-    f.apply(this, arguments)
+    h.apply(this, arguments)
   );
 }
-function h(e) {
+function f(e) {
   return (
     (function (e) {
-      if (Array.isArray(e)) return C(e);
+      if (Array.isArray(e)) return A(e);
     })(e) ||
     (function (e) {
       if (('undefined' != typeof Symbol && null != e[Symbol.iterator]) || null != e['@@iterator'])
         return Array.from(e);
     })(e) ||
-    S(e) ||
+    E(e) ||
     (function () {
       throw new TypeError(
         'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -97,7 +97,7 @@ function p(e, t) {
             u = !1;
           } else for (; !(u = (r = i.call(n)).done) && (s.push(r.value), s.length !== t); u = !0);
         } catch (e) {
-          (c = !0), (o = e);
+          ((c = !0), (o = e));
         } finally {
           try {
             if (!u && null != n.return && ((a = n.return()), Object(a) !== a)) return;
@@ -108,7 +108,7 @@ function p(e, t) {
         return s;
       }
     })(e, t) ||
-    S(e, t) ||
+    E(e, t) ||
     (function () {
       throw new TypeError(
         'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -116,8 +116,213 @@ function p(e, t) {
     })()
   );
 }
-function v() {
-  v = function () {
+function v(e, t) {
+  if ('function' != typeof t && null !== t)
+    throw new TypeError('Super expression must either be null or a function');
+  ((e.prototype = Object.create(t && t.prototype, {
+    constructor: { value: e, writable: !0, configurable: !0 },
+  })),
+    Object.defineProperty(e, 'prototype', { writable: !1 }),
+    t && _(e, t));
+}
+function y(e) {
+  var t = w();
+  return function () {
+    var n,
+      r = k(e);
+    if (t) {
+      var o = k(this).constructor;
+      n = Reflect.construct(r, arguments, o);
+    } else n = r.apply(this, arguments);
+    return (function (e, t) {
+      if (t && ('object' === T(t) || 'function' == typeof t)) return t;
+      if (void 0 !== t)
+        throw new TypeError('Derived constructors may only return object or undefined');
+      return m(e);
+    })(this, n);
+  };
+}
+function m(e) {
+  if (void 0 === e)
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  return e;
+}
+function b(e) {
+  var t = 'function' == typeof Map ? new Map() : void 0;
+  return (
+    (b = function (e) {
+      if (
+        null === e ||
+        !(function (e) {
+          try {
+            return -1 !== Function.toString.call(e).indexOf('[native code]');
+          } catch (t) {
+            return 'function' == typeof e;
+          }
+        })(e)
+      )
+        return e;
+      if ('function' != typeof e)
+        throw new TypeError('Super expression must either be null or a function');
+      if (void 0 !== t) {
+        if (t.has(e)) return t.get(e);
+        t.set(e, n);
+      }
+      function n() {
+        return g(e, arguments, k(this).constructor);
+      }
+      return (
+        (n.prototype = Object.create(e.prototype, {
+          constructor: { value: n, enumerable: !1, writable: !0, configurable: !0 },
+        })),
+        _(n, e)
+      );
+    }),
+    b(e)
+  );
+}
+function g(e, t, n) {
+  return (
+    (g = w()
+      ? Reflect.construct.bind()
+      : function (e, t, n) {
+          var r = [null];
+          r.push.apply(r, t);
+          var o = new (Function.bind.apply(e, r))();
+          return (n && _(o, n.prototype), o);
+        }),
+    g.apply(null, arguments)
+  );
+}
+function w() {
+  if ('undefined' == typeof Reflect || !Reflect.construct) return !1;
+  if (Reflect.construct.sham) return !1;
+  if ('function' == typeof Proxy) return !0;
+  try {
+    return (Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})), !0);
+  } catch (e) {
+    return !1;
+  }
+}
+function _(e, t) {
+  return (
+    (_ = Object.setPrototypeOf
+      ? Object.setPrototypeOf.bind()
+      : function (e, t) {
+          return ((e.__proto__ = t), e);
+        }),
+    _(e, t)
+  );
+}
+function k(e) {
+  return (
+    (k = Object.setPrototypeOf
+      ? Object.getPrototypeOf.bind()
+      : function (e) {
+          return e.__proto__ || Object.getPrototypeOf(e);
+        }),
+    k(e)
+  );
+}
+function x(e, t) {
+  var n = ('undefined' != typeof Symbol && e[Symbol.iterator]) || e['@@iterator'];
+  if (!n) {
+    if (Array.isArray(e) || (n = E(e)) || (t && e && 'number' == typeof e.length)) {
+      n && (e = n);
+      var r = 0,
+        o = function () {};
+      return {
+        s: o,
+        n: function () {
+          return r >= e.length ? { done: !0 } : { done: !1, value: e[r++] };
+        },
+        e: function (e) {
+          throw e;
+        },
+        f: o,
+      };
+    }
+    throw new TypeError(
+      'Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
+    );
+  }
+  var i,
+    a = !0,
+    s = !1;
+  return {
+    s: function () {
+      n = n.call(e);
+    },
+    n: function () {
+      var e = n.next();
+      return ((a = e.done), e);
+    },
+    e: function (e) {
+      ((s = !0), (i = e));
+    },
+    f: function () {
+      try {
+        a || null == n.return || n.return();
+      } finally {
+        if (s) throw i;
+      }
+    },
+  };
+}
+function E(e, t) {
+  if (e) {
+    if ('string' == typeof e) return A(e, t);
+    var n = Object.prototype.toString.call(e).slice(8, -1);
+    return (
+      'Object' === n && e.constructor && (n = e.constructor.name),
+      'Map' === n || 'Set' === n
+        ? Array.from(e)
+        : 'Arguments' === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)
+          ? A(e, t)
+          : void 0
+    );
+  }
+}
+function A(e, t) {
+  (null == t || t > e.length) && (t = e.length);
+  for (var n = 0, r = new Array(t); n < t; n++) r[n] = e[n];
+  return r;
+}
+function $(e, t) {
+  if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
+}
+function S(e, t) {
+  for (var n = 0; n < t.length; n++) {
+    var r = t[n];
+    ((r.enumerable = r.enumerable || !1),
+      (r.configurable = !0),
+      'value' in r && (r.writable = !0),
+      Object.defineProperty(e, O(r.key), r));
+  }
+}
+function C(e, t, n) {
+  return (
+    t && S(e.prototype, t),
+    n && S(e, n),
+    Object.defineProperty(e, 'prototype', { writable: !1 }),
+    e
+  );
+}
+function O(e) {
+  var t = (function (e, t) {
+    if ('object' != T(e) || !e) return e;
+    var n = e[Symbol.toPrimitive];
+    if (void 0 !== n) {
+      var r = n.call(e, t || 'default');
+      if ('object' != T(r)) return r;
+      throw new TypeError('@@toPrimitive must return a primitive value.');
+    }
+    return ('string' === t ? String : Number)(e);
+  })(e, 'string');
+  return 'symbol' == T(t) ? t : String(t);
+}
+function P() {
+  P = function () {
     return t;
   };
   var e,
@@ -147,10 +352,10 @@ function v() {
     };
   }
   function l(e, t, n, r) {
-    var i = t && t.prototype instanceof b ? t : b,
+    var i = t && t.prototype instanceof m ? t : m,
       a = Object.create(i.prototype),
-      s = new T(r || []);
-    return o(a, '_invoke', { value: S(e, n, s) }), a;
+      s = new j(r || []);
+    return (o(a, '_invoke', { value: $(e, n, s) }), a);
   }
   function d(e, t, n) {
     try {
@@ -160,36 +365,36 @@ function v() {
     }
   }
   t.wrap = l;
-  var f = 'suspendedStart',
-    h = 'suspendedYield',
+  var h = 'suspendedStart',
+    f = 'suspendedYield',
     p = 'executing',
-    y = 'completed',
-    m = {};
+    v = 'completed',
+    y = {};
+  function m() {}
   function b() {}
   function g() {}
-  function w() {}
-  var _ = {};
-  c(_, a, function () {
+  var w = {};
+  c(w, a, function () {
     return this;
   });
-  var k = Object.getPrototypeOf,
-    x = k && k(k(j([])));
-  x && x !== n && r.call(x, a) && (_ = x);
-  var E = (w.prototype = b.prototype = Object.create(_));
-  function A(e) {
+  var _ = Object.getPrototypeOf,
+    k = _ && _(_(M([])));
+  k && k !== n && r.call(k, a) && (w = k);
+  var x = (g.prototype = m.prototype = Object.create(w));
+  function E(e) {
     ['next', 'throw', 'return'].forEach(function (t) {
       c(e, t, function (e) {
         return this._invoke(t, e);
       });
     });
   }
-  function $(e, t) {
+  function A(e, t) {
     function n(o, i, a, s) {
       var u = d(e[o], e, i);
       if ('throw' !== u.type) {
         var c = u.arg,
           l = c.value;
-        return l && 'object' == M(l) && r.call(l, '__await')
+        return l && 'object' == T(l) && r.call(l, '__await')
           ? t.resolve(l.__await).then(
               function (e) {
                 n('next', e, a, s);
@@ -200,7 +405,7 @@ function v() {
             )
           : t.resolve(l).then(
               function (e) {
-                (c.value = e), a(c);
+                ((c.value = e), a(c));
               },
               function (e) {
                 return n('throw', e, a, s);
@@ -221,39 +426,39 @@ function v() {
       },
     });
   }
-  function S(t, n, r) {
-    var o = f;
+  function $(t, n, r) {
+    var o = h;
     return function (i, a) {
       if (o === p) throw new Error('Generator is already running');
-      if (o === y) {
+      if (o === v) {
         if ('throw' === i) throw a;
         return { value: e, done: !0 };
       }
       for (r.method = i, r.arg = a; ; ) {
         var s = r.delegate;
         if (s) {
-          var u = C(s, r);
+          var u = S(s, r);
           if (u) {
-            if (u === m) continue;
+            if (u === y) continue;
             return u;
           }
         }
         if ('next' === r.method) r.sent = r._sent = r.arg;
         else if ('throw' === r.method) {
-          if (o === f) throw ((o = y), r.arg);
+          if (o === h) throw ((o = v), r.arg);
           r.dispatchException(r.arg);
         } else 'return' === r.method && r.abrupt('return', r.arg);
         o = p;
         var c = d(t, n, r);
         if ('normal' === c.type) {
-          if (((o = r.done ? y : h), c.arg === m)) continue;
+          if (((o = r.done ? v : f), c.arg === y)) continue;
           return { value: c.arg, done: r.done };
         }
-        'throw' === c.type && ((o = y), (r.method = 'throw'), (r.arg = c.arg));
+        'throw' === c.type && ((o = v), (r.method = 'throw'), (r.arg = c.arg));
       }
     };
   }
-  function C(t, n) {
+  function S(t, n) {
     var r = n.method,
       o = t.iterator[r];
     if (o === e)
@@ -261,14 +466,14 @@ function v() {
         (n.delegate = null),
         ('throw' === r &&
           t.iterator.return &&
-          ((n.method = 'return'), (n.arg = e), C(t, n), 'throw' === n.method)) ||
+          ((n.method = 'return'), (n.arg = e), S(t, n), 'throw' === n.method)) ||
           ('return' !== r &&
             ((n.method = 'throw'),
             (n.arg = new TypeError("The iterator does not provide a '" + r + "' method")))),
-        m
+        y
       );
     var i = d(o, t.iterator, n.arg);
-    if ('throw' === i.type) return (n.method = 'throw'), (n.arg = i.arg), (n.delegate = null), m;
+    if ('throw' === i.type) return ((n.method = 'throw'), (n.arg = i.arg), (n.delegate = null), y);
     var a = i.arg;
     return a
       ? a.done
@@ -276,27 +481,27 @@ function v() {
           (n.next = t.nextLoc),
           'return' !== n.method && ((n.method = 'next'), (n.arg = e)),
           (n.delegate = null),
-          m)
+          y)
         : a
       : ((n.method = 'throw'),
         (n.arg = new TypeError('iterator result is not an object')),
         (n.delegate = null),
-        m);
+        y);
   }
-  function P(e) {
+  function C(e) {
     var t = { tryLoc: e[0] };
-    1 in e && (t.catchLoc = e[1]),
+    (1 in e && (t.catchLoc = e[1]),
       2 in e && ((t.finallyLoc = e[2]), (t.afterLoc = e[3])),
-      this.tryEntries.push(t);
+      this.tryEntries.push(t));
   }
   function O(e) {
     var t = e.completion || {};
-    (t.type = 'normal'), delete t.arg, (e.completion = t);
+    ((t.type = 'normal'), delete t.arg, (e.completion = t));
   }
-  function T(e) {
-    (this.tryEntries = [{ tryLoc: 'root' }]), e.forEach(P, this), this.reset(!0);
+  function j(e) {
+    ((this.tryEntries = [{ tryLoc: 'root' }]), e.forEach(C, this), this.reset(!0));
   }
-  function j(t) {
+  function M(t) {
     if (t || '' === t) {
       var n = t[a];
       if (n) return n.call(t);
@@ -304,55 +509,55 @@ function v() {
       if (!isNaN(t.length)) {
         var o = -1,
           i = function n() {
-            for (; ++o < t.length; ) if (r.call(t, o)) return (n.value = t[o]), (n.done = !1), n;
-            return (n.value = e), (n.done = !0), n;
+            for (; ++o < t.length; ) if (r.call(t, o)) return ((n.value = t[o]), (n.done = !1), n);
+            return ((n.value = e), (n.done = !0), n);
           };
         return (i.next = i);
       }
     }
-    throw new TypeError(M(t) + ' is not iterable');
+    throw new TypeError(T(t) + ' is not iterable');
   }
   return (
-    (g.prototype = w),
-    o(E, 'constructor', { value: w, configurable: !0 }),
-    o(w, 'constructor', { value: g, configurable: !0 }),
-    (g.displayName = c(w, u, 'GeneratorFunction')),
+    (b.prototype = g),
+    o(x, 'constructor', { value: g, configurable: !0 }),
+    o(g, 'constructor', { value: b, configurable: !0 }),
+    (b.displayName = c(g, u, 'GeneratorFunction')),
     (t.isGeneratorFunction = function (e) {
       var t = 'function' == typeof e && e.constructor;
-      return !!t && (t === g || 'GeneratorFunction' === (t.displayName || t.name));
+      return !!t && (t === b || 'GeneratorFunction' === (t.displayName || t.name));
     }),
     (t.mark = function (e) {
       return (
         Object.setPrototypeOf
-          ? Object.setPrototypeOf(e, w)
-          : ((e.__proto__ = w), c(e, u, 'GeneratorFunction')),
-        (e.prototype = Object.create(E)),
+          ? Object.setPrototypeOf(e, g)
+          : ((e.__proto__ = g), c(e, u, 'GeneratorFunction')),
+        (e.prototype = Object.create(x)),
         e
       );
     }),
     (t.awrap = function (e) {
       return { __await: e };
     }),
-    A($.prototype),
-    c($.prototype, s, function () {
+    E(A.prototype),
+    c(A.prototype, s, function () {
       return this;
     }),
-    (t.AsyncIterator = $),
+    (t.AsyncIterator = A),
     (t.async = function (e, n, r, o, i) {
       void 0 === i && (i = Promise);
-      var a = new $(l(e, n, r, o), i);
+      var a = new A(l(e, n, r, o), i);
       return t.isGeneratorFunction(n)
         ? a
         : a.next().then(function (e) {
             return e.done ? e.value : a.next();
           });
     }),
-    A(E),
-    c(E, u, 'Generator'),
-    c(E, a, function () {
+    E(x),
+    c(x, u, 'Generator'),
+    c(x, a, function () {
       return this;
     }),
-    c(E, 'toString', function () {
+    c(x, 'toString', function () {
       return '[object Generator]';
     }),
     (t.keys = function (e) {
@@ -364,15 +569,15 @@ function v() {
         function e() {
           for (; n.length; ) {
             var r = n.pop();
-            if (r in t) return (e.value = r), (e.done = !1), e;
+            if (r in t) return ((e.value = r), (e.done = !1), e);
           }
-          return (e.done = !0), e;
+          return ((e.done = !0), e);
         }
       );
     }),
-    (t.values = j),
-    (T.prototype = {
-      constructor: T,
+    (t.values = M),
+    (j.prototype = {
+      constructor: j,
       reset: function (t) {
         if (
           ((this.prev = 0),
@@ -442,7 +647,7 @@ function v() {
         return (
           (a.type = e),
           (a.arg = t),
-          i ? ((this.method = 'next'), (this.next = i.finallyLoc), m) : this.complete(a)
+          i ? ((this.method = 'next'), (this.next = i.finallyLoc), y) : this.complete(a)
         );
       },
       complete: function (e, t) {
@@ -451,15 +656,15 @@ function v() {
           'break' === e.type || 'continue' === e.type
             ? (this.next = e.arg)
             : 'return' === e.type
-            ? ((this.rval = this.arg = e.arg), (this.method = 'return'), (this.next = 'end'))
-            : 'normal' === e.type && t && (this.next = t),
-          m
+              ? ((this.rval = this.arg = e.arg), (this.method = 'return'), (this.next = 'end'))
+              : 'normal' === e.type && t && (this.next = t),
+          y
         );
       },
       finish: function (e) {
         for (var t = this.tryEntries.length - 1; t >= 0; --t) {
           var n = this.tryEntries[t];
-          if (n.finallyLoc === e) return this.complete(n.completion, n.afterLoc), O(n), m;
+          if (n.finallyLoc === e) return (this.complete(n.completion, n.afterLoc), O(n), y);
         }
       },
       catch: function (e) {
@@ -478,245 +683,18 @@ function v() {
       },
       delegateYield: function (t, n, r) {
         return (
-          (this.delegate = { iterator: j(t), resultName: n, nextLoc: r }),
+          (this.delegate = { iterator: M(t), resultName: n, nextLoc: r }),
           'next' === this.method && (this.arg = e),
-          m
+          y
         );
       },
     }),
     t
   );
 }
-function y(e, t, n, r, o, i, a) {
-  try {
-    var s = e[i](a),
-      u = s.value;
-  } catch (e) {
-    return void n(e);
-  }
-  s.done ? t(u) : Promise.resolve(u).then(r, o);
-}
-function m(e) {
-  return function () {
-    var t = this,
-      n = arguments;
-    return new Promise(function (r, o) {
-      var i = e.apply(t, n);
-      function a(e) {
-        y(i, r, o, a, s, 'next', e);
-      }
-      function s(e) {
-        y(i, r, o, a, s, 'throw', e);
-      }
-      a(void 0);
-    });
-  };
-}
-function b(e, t) {
-  if ('function' != typeof t && null !== t)
-    throw new TypeError('Super expression must either be null or a function');
-  (e.prototype = Object.create(t && t.prototype, {
-    constructor: { value: e, writable: !0, configurable: !0 },
-  })),
-    Object.defineProperty(e, 'prototype', { writable: !1 }),
-    t && E(e, t);
-}
-function g(e) {
-  var t = x();
-  return function () {
-    var n,
-      r = A(e);
-    if (t) {
-      var o = A(this).constructor;
-      n = Reflect.construct(r, arguments, o);
-    } else n = r.apply(this, arguments);
-    return (function (e, t) {
-      if (t && ('object' === M(t) || 'function' == typeof t)) return t;
-      if (void 0 !== t)
-        throw new TypeError('Derived constructors may only return object or undefined');
-      return w(e);
-    })(this, n);
-  };
-}
-function w(e) {
-  if (void 0 === e)
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  return e;
-}
-function _(e) {
-  var t = 'function' == typeof Map ? new Map() : void 0;
+function T(e) {
   return (
-    (_ = function (e) {
-      if (
-        null === e ||
-        !(function (e) {
-          try {
-            return -1 !== Function.toString.call(e).indexOf('[native code]');
-          } catch (t) {
-            return 'function' == typeof e;
-          }
-        })(e)
-      )
-        return e;
-      if ('function' != typeof e)
-        throw new TypeError('Super expression must either be null or a function');
-      if (void 0 !== t) {
-        if (t.has(e)) return t.get(e);
-        t.set(e, n);
-      }
-      function n() {
-        return k(e, arguments, A(this).constructor);
-      }
-      return (
-        (n.prototype = Object.create(e.prototype, {
-          constructor: { value: n, enumerable: !1, writable: !0, configurable: !0 },
-        })),
-        E(n, e)
-      );
-    }),
-    _(e)
-  );
-}
-function k(e, t, n) {
-  return (
-    (k = x()
-      ? Reflect.construct.bind()
-      : function (e, t, n) {
-          var r = [null];
-          r.push.apply(r, t);
-          var o = new (Function.bind.apply(e, r))();
-          return n && E(o, n.prototype), o;
-        }),
-    k.apply(null, arguments)
-  );
-}
-function x() {
-  if ('undefined' == typeof Reflect || !Reflect.construct) return !1;
-  if (Reflect.construct.sham) return !1;
-  if ('function' == typeof Proxy) return !0;
-  try {
-    return Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})), !0;
-  } catch (e) {
-    return !1;
-  }
-}
-function E(e, t) {
-  return (
-    (E = Object.setPrototypeOf
-      ? Object.setPrototypeOf.bind()
-      : function (e, t) {
-          return (e.__proto__ = t), e;
-        }),
-    E(e, t)
-  );
-}
-function A(e) {
-  return (
-    (A = Object.setPrototypeOf
-      ? Object.getPrototypeOf.bind()
-      : function (e) {
-          return e.__proto__ || Object.getPrototypeOf(e);
-        }),
-    A(e)
-  );
-}
-function $(e, t) {
-  var n = ('undefined' != typeof Symbol && e[Symbol.iterator]) || e['@@iterator'];
-  if (!n) {
-    if (Array.isArray(e) || (n = S(e)) || (t && e && 'number' == typeof e.length)) {
-      n && (e = n);
-      var r = 0,
-        o = function () {};
-      return {
-        s: o,
-        n: function () {
-          return r >= e.length ? { done: !0 } : { done: !1, value: e[r++] };
-        },
-        e: function (e) {
-          throw e;
-        },
-        f: o,
-      };
-    }
-    throw new TypeError(
-      'Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
-    );
-  }
-  var i,
-    a = !0,
-    s = !1;
-  return {
-    s: function () {
-      n = n.call(e);
-    },
-    n: function () {
-      var e = n.next();
-      return (a = e.done), e;
-    },
-    e: function (e) {
-      (s = !0), (i = e);
-    },
-    f: function () {
-      try {
-        a || null == n.return || n.return();
-      } finally {
-        if (s) throw i;
-      }
-    },
-  };
-}
-function S(e, t) {
-  if (e) {
-    if ('string' == typeof e) return C(e, t);
-    var n = Object.prototype.toString.call(e).slice(8, -1);
-    return (
-      'Object' === n && e.constructor && (n = e.constructor.name),
-      'Map' === n || 'Set' === n
-        ? Array.from(e)
-        : 'Arguments' === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)
-        ? C(e, t)
-        : void 0
-    );
-  }
-}
-function C(e, t) {
-  (null == t || t > e.length) && (t = e.length);
-  for (var n = 0, r = new Array(t); n < t; n++) r[n] = e[n];
-  return r;
-}
-function P(e, t) {
-  if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
-}
-function O(e, t) {
-  for (var n = 0; n < t.length; n++) {
-    var r = t[n];
-    (r.enumerable = r.enumerable || !1),
-      (r.configurable = !0),
-      'value' in r && (r.writable = !0),
-      Object.defineProperty(e, j(r.key), r);
-  }
-}
-function T(e, t, n) {
-  return (
-    t && O(e.prototype, t), n && O(e, n), Object.defineProperty(e, 'prototype', { writable: !1 }), e
-  );
-}
-function j(e) {
-  var t = (function (e, t) {
-    if ('object' != M(e) || !e) return e;
-    var n = e[Symbol.toPrimitive];
-    if (void 0 !== n) {
-      var r = n.call(e, t || 'default');
-      if ('object' != M(r)) return r;
-      throw new TypeError('@@toPrimitive must return a primitive value.');
-    }
-    return ('string' === t ? String : Number)(e);
-  })(e, 'string');
-  return 'symbol' == M(t) ? t : String(t);
-}
-function M(e) {
-  return (
-    (M =
+    (T =
       'function' == typeof Symbol && 'symbol' == typeof Symbol.iterator
         ? function (e) {
             return typeof e;
@@ -729,50 +707,182 @@ function M(e) {
               ? 'symbol'
               : typeof e;
           }),
-    M(e)
+    T(e)
   );
 }
-function N(e, t, n, r) {
+function j(e, t, n, r, o, i, a) {
+  try {
+    var s = e[i](a),
+      u = s.value;
+  } catch (e) {
+    return void n(e);
+  }
+  s.done ? t(u) : Promise.resolve(u).then(r, o);
+}
+function M(e) {
+  return function () {
+    var t = this,
+      n = arguments;
+    return new Promise(function (r, o) {
+      var i = e.apply(t, n);
+      function a(e) {
+        j(i, r, o, a, s, 'next', e);
+      }
+      function s(e) {
+        j(i, r, o, a, s, 'throw', e);
+      }
+      a(void 0);
+    });
+  };
+}
+window.addEventListener(
+  'card-mod-bootstrap',
+  (function () {
+    var e = M(
+      P().mark(function e(t) {
+        return P().wrap(function (e) {
+          for (;;)
+            switch ((e.prev = e.next)) {
+              case 0:
+                (t.stopPropagation(),
+                  document.addEventListener('ll-custom', function (e) {
+                    var t = e.detail;
+                    if (t && 'object' === T(t)) {
+                      var n = t.card_mod;
+                      if (n && 'object' === T(n)) {
+                        var r = n.action;
+                        if (r && 'string' == typeof r && 'function' == typeof N[r])
+                          try {
+                            var o = N[r]();
+                            o &&
+                              'function' == typeof o.catch &&
+                              o.catch(function (e) {
+                                console.error('Error while executing action "'.concat(r, '":'), e);
+                              });
+                          } catch (e) {
+                            console.error('Error while executing action "'.concat(r, '":'), e);
+                          }
+                      }
+                    }
+                  }));
+              case 2:
+              case 'end':
+                return e.stop();
+            }
+        }, e);
+      })
+    );
+    return function (t) {
+      return e.apply(this, arguments);
+    };
+  })()
+);
+var N = (function () {
+  function e() {
+    $(this, e);
+  }
+  var t;
+  return (
+    C(e, null, [
+      {
+        key: 'clear_cache',
+        value:
+          ((t = M(
+            P().mark(function e() {
+              var t, n;
+              return P().wrap(
+                function (e) {
+                  for (;;)
+                    switch ((e.prev = e.next)) {
+                      case 0:
+                        if (!window.caches) {
+                          e.next = 18;
+                          break;
+                        }
+                        return ((e.prev = 1), (e.next = 4), window.caches.keys());
+                      case 4:
+                        return (
+                          (t = e.sent),
+                          (n = []),
+                          t.forEach(function (e) {
+                            n.push(window.caches.delete(e));
+                          }),
+                          (e.next = 9),
+                          Promise.all(n)
+                        );
+                      case 9:
+                        (window.location.reload(), (e.next = 16));
+                        break;
+                      case 12:
+                        ((e.prev = 12),
+                          (e.t0 = e.catch(1)),
+                          console.error('Failed to clear caches:', e.t0),
+                          window.location.reload());
+                      case 16:
+                        e.next = 19;
+                        break;
+                      case 18:
+                        window.location.reload();
+                      case 19:
+                      case 'end':
+                        return e.stop();
+                    }
+                },
+                e,
+                null,
+                [[1, 12]]
+              );
+            })
+          )),
+          function () {
+            return t.apply(this, arguments);
+          }),
+      },
+    ]),
+    e
+  );
+})();
+function R(e, t, n, r) {
   var o,
     i = arguments.length,
     a = i < 3 ? t : null === r ? (r = Object.getOwnPropertyDescriptor(t, n)) : r;
   if (
-    'object' === ('undefined' == typeof Reflect ? 'undefined' : M(Reflect)) &&
+    'object' === ('undefined' == typeof Reflect ? 'undefined' : T(Reflect)) &&
     'function' == typeof Reflect.decorate
   )
     a = Reflect.decorate(e, t, n, r);
   else
     for (var s = e.length - 1; s >= 0; s--)
       (o = e[s]) && (a = (i < 3 ? o(a) : i > 3 ? o(t, n, a) : o(t, n)) || a);
-  return i > 3 && a && Object.defineProperty(t, n, a), a;
+  return (i > 3 && a && Object.defineProperty(t, n, a), a);
 }
 'function' == typeof SuppressedError && SuppressedError;
-var R = globalThis,
-  L =
-    R.ShadowRoot &&
-    (void 0 === R.ShadyCSS || R.ShadyCSS.nativeShadow) &&
+var L = globalThis,
+  U =
+    L.ShadowRoot &&
+    (void 0 === L.ShadyCSS || L.ShadyCSS.nativeShadow) &&
     'adoptedStyleSheets' in Document.prototype &&
     'replace' in CSSStyleSheet.prototype,
-  U = Symbol(),
-  D = new WeakMap(),
-  H = (function () {
+  D = Symbol(),
+  H = new WeakMap(),
+  I = (function () {
     function e(t, n, r) {
-      if ((P(this, e), (this._$cssResult$ = !0), r !== U))
+      if (($(this, e), (this._$cssResult$ = !0), r !== D))
         throw Error('CSSResult is not constructable. Use `unsafeCSS` or `css` instead.');
-      (this.cssText = t), (this.t = n);
+      ((this.cssText = t), (this.t = n));
     }
     return (
-      T(e, [
+      C(e, [
         {
           key: 'styleSheet',
           get: function () {
             var e = this.o,
               t = this.t;
-            if (L && void 0 === e) {
+            if (U && void 0 === e) {
               var n = void 0 !== t && 1 === t.length;
-              n && (e = D.get(t)),
+              (n && (e = H.get(t)),
                 void 0 === e &&
-                  ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), n && D.set(t, e));
+                  ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), n && H.set(t, e)));
             }
             return e;
           },
@@ -787,7 +897,7 @@ var R = globalThis,
       e
     );
   })(),
-  I = L
+  q = U
     ? function (e) {
         return e;
       }
@@ -796,7 +906,7 @@ var R = globalThis,
           ? (function (e) {
               var t,
                 n = '',
-                r = $(e.cssRules);
+                r = x(e.cssRules);
               try {
                 for (r.s(); !(t = r.n()).done; ) {
                   n += t.value.cssText;
@@ -807,29 +917,29 @@ var R = globalThis,
                 r.f();
               }
               return (function (e) {
-                return new H('string' == typeof e ? e : e + '', void 0, U);
+                return new I('string' == typeof e ? e : e + '', void 0, D);
               })(n);
             })(e)
           : e;
       },
-  q = Object.is,
+  z = Object.is,
   V = Object.defineProperty,
-  z = Object.getOwnPropertyDescriptor,
-  B = Object.getOwnPropertyNames,
-  W = Object.getOwnPropertySymbols,
+  B = Object.getOwnPropertyDescriptor,
+  W = Object.getOwnPropertyNames,
+  F = Object.getOwnPropertySymbols,
   J = Object.getPrototypeOf,
-  F = globalThis,
-  G = F.trustedTypes,
-  Y = G ? G.emptyScript : '',
-  K = F.reactiveElementPolyfillSupport,
-  Z = function (e, t) {
+  Y = globalThis,
+  G = Y.trustedTypes,
+  K = G ? G.emptyScript : '',
+  Z = Y.reactiveElementPolyfillSupport,
+  X = function (e, t) {
     return e;
   },
-  X = {
+  Q = {
     toAttribute: function (e, t) {
       switch (t) {
         case Boolean:
-          e = e ? Y : null;
+          e = e ? K : null;
           break;
         case Object:
         case Array:
@@ -857,20 +967,21 @@ var R = globalThis,
       return n;
     },
   },
-  Q = function (e, t) {
-    return !q(e, t);
+  ee = function (e, t) {
+    return !z(e, t);
   },
-  ee = { attribute: !0, type: String, converter: X, reflect: !1, hasChanged: Q };
-(null !== (e = Symbol.metadata) && void 0 !== e) || (Symbol.metadata = Symbol('metadata')),
-  (null !== (t = F.litPropertyMetadata) && void 0 !== t) || (F.litPropertyMetadata = new WeakMap());
-var te = (function (e) {
-  b(r, _(HTMLElement));
+  te = { attribute: !0, type: String, converter: Q, reflect: !1, hasChanged: ee };
+((null !== (e = Symbol.metadata) && void 0 !== e) || (Symbol.metadata = Symbol('metadata')),
+  (null !== (t = Y.litPropertyMetadata) && void 0 !== t) ||
+    (Y.litPropertyMetadata = new WeakMap()));
+var ne = (function (e) {
+  v(r, b(HTMLElement));
   var t,
-    n = g(r);
+    n = y(r);
   function r() {
     var e;
     return (
-      P(this, r),
+      $(this, r),
       ((e = n.call(this))._$Ep = void 0),
       (e.isUpdatePending = !1),
       (e.hasUpdated = !1),
@@ -880,7 +991,7 @@ var te = (function (e) {
     );
   }
   return (
-    T(
+    C(
       r,
       [
         {
@@ -888,7 +999,7 @@ var te = (function (e) {
           value: function () {
             var e,
               t = this;
-            (this._$Eg = new Promise(function (e) {
+            ((this._$Eg = new Promise(function (e) {
               return (t.enableUpdating = e);
             })),
               (this._$AL = new Map()),
@@ -898,17 +1009,17 @@ var te = (function (e) {
                 void 0 === e ||
                 e.forEach(function (e) {
                   return e(t);
-                });
+                }));
           },
         },
         {
           key: 'addController',
           value: function (e) {
             var t, n;
-            (null !== (t = this._$E_) && void 0 !== t ? t : (this._$E_ = new Set())).add(e),
+            ((null !== (t = this._$E_) && void 0 !== t ? t : (this._$E_ = new Set())).add(e),
               void 0 !== this.renderRoot &&
                 this.isConnected &&
-                (null === (n = e.hostConnected) || void 0 === n || n.call(e));
+                (null === (n = e.hostConnected) || void 0 === n || n.call(e)));
           },
         },
         {
@@ -923,7 +1034,7 @@ var te = (function (e) {
           value: function () {
             var e,
               t = new Map(),
-              n = $(this.constructor.elementProperties.keys());
+              n = x(this.constructor.elementProperties.keys());
             try {
               for (n.s(); !(e = n.n()).done; ) {
                 var r = e.value;
@@ -947,21 +1058,21 @@ var te = (function (e) {
                   : this.attachShadow(this.constructor.shadowRootOptions);
             return (
               (function (e, t) {
-                if (L)
+                if (U)
                   e.adoptedStyleSheets = t.map(function (e) {
                     return e instanceof CSSStyleSheet ? e : e.styleSheet;
                   });
                 else {
                   var n,
-                    r = $(t);
+                    r = x(t);
                   try {
                     for (r.s(); !(n = r.n()).done; ) {
                       var o = n.value,
                         i = document.createElement('style'),
-                        a = R.litNonce;
-                      void 0 !== a && i.setAttribute('nonce', a),
+                        a = L.litNonce;
+                      (void 0 !== a && i.setAttribute('nonce', a),
                         (i.textContent = o.cssText),
-                        e.appendChild(i);
+                        e.appendChild(i));
                     }
                   } catch (e) {
                     r.e(e);
@@ -978,7 +1089,7 @@ var te = (function (e) {
           key: 'connectedCallback',
           value: function () {
             var e, t;
-            (null !== (e = this.renderRoot) && void 0 !== e) ||
+            ((null !== (e = this.renderRoot) && void 0 !== e) ||
               (this.renderRoot = this.createRenderRoot()),
               this.enableUpdating(!0),
               null === (t = this._$E_) ||
@@ -986,7 +1097,7 @@ var te = (function (e) {
                 t.forEach(function (e) {
                   var t;
                   return null === (t = e.hostConnected) || void 0 === t ? void 0 : t.call(e);
-                });
+                }));
           },
         },
         { key: 'enableUpdating', value: function (e) {} },
@@ -1018,11 +1129,11 @@ var te = (function (e) {
                 i = (
                   void 0 !== (null === (o = n.converter) || void 0 === o ? void 0 : o.toAttribute)
                     ? n.converter
-                    : X
+                    : Q
                 ).toAttribute(t, n.type);
-              (this._$Em = e),
+              ((this._$Em = e),
                 null == i ? this.removeAttribute(r) : this.setAttribute(r, i),
-                (this._$Em = null);
+                (this._$Em = null));
             }
           },
         },
@@ -1038,10 +1149,10 @@ var te = (function (e) {
                   'function' == typeof i.converter
                     ? { fromAttribute: i.converter }
                     : void 0 !==
-                      (null === (o = i.converter) || void 0 === o ? void 0 : o.fromAttribute)
-                    ? i.converter
-                    : X;
-              (this._$Em = r), (this[r] = a.fromAttribute(t, i.type)), (this._$Em = null);
+                        (null === (o = i.converter) || void 0 === o ? void 0 : o.fromAttribute)
+                      ? i.converter
+                      : Q;
+              ((this._$Em = r), (this[r] = a.fromAttribute(t, i.type)), (this._$Em = null));
             }
           },
         },
@@ -1054,7 +1165,7 @@ var te = (function (e) {
               var i, a;
               if (
                 ((null !== (i = n) && void 0 !== i) || (n = this.constructor.getPropertyOptions(e)),
-                !(null !== (a = n.hasChanged) && void 0 !== a ? a : Q)(r ? o : this[e], t))
+                !(null !== (a = n.hasChanged) && void 0 !== a ? a : ee)(r ? o : this[e], t))
               )
                 return;
               this.C(e, t, n);
@@ -1066,35 +1177,40 @@ var te = (function (e) {
           key: 'C',
           value: function (e, t, n) {
             var r;
-            this._$AL.has(e) || this._$AL.set(e, t),
+            (this._$AL.has(e) || this._$AL.set(e, t),
               !0 === n.reflect &&
                 this._$Em !== e &&
-                (null !== (r = this._$Ej) && void 0 !== r ? r : (this._$Ej = new Set())).add(e);
+                (null !== (r = this._$Ej) && void 0 !== r ? r : (this._$Ej = new Set())).add(e));
           },
         },
         {
           key: '_$EP',
           value:
-            ((t = m(
-              v().mark(function e() {
+            ((t = M(
+              P().mark(function e() {
                 var t;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
-                          return (this.isUpdatePending = !0), (e.prev = 1), (e.next = 4), this._$Eg;
+                          return (
+                            (this.isUpdatePending = !0),
+                            (e.prev = 1),
+                            (e.next = 4),
+                            this._$Eg
+                          );
                         case 4:
                           e.next = 9;
                           break;
                         case 6:
-                          (e.prev = 6), (e.t0 = e.catch(1)), Promise.reject(e.t0);
+                          ((e.prev = 6), (e.t0 = e.catch(1)), Promise.reject(e.t0));
                         case 9:
                           if (((t = this.scheduleUpdate()), (e.t1 = null != t), !e.t1)) {
                             e.next = 14;
                             break;
                           }
-                          return (e.next = 14), t;
+                          return ((e.next = 14), t);
                         case 14:
                           return e.abrupt('return', !this.isUpdatePending);
                         case 15:
@@ -1130,7 +1246,7 @@ var te = (function (e) {
                   this._$Ep)
                 ) {
                   var t,
-                    n = $(this._$Ep);
+                    n = x(this._$Ep);
                   try {
                     for (n.s(); !(t = n.n()).done; ) {
                       var r = p(t.value, 2),
@@ -1148,7 +1264,7 @@ var te = (function (e) {
                 var a = this.constructor.elementProperties;
                 if (a.size > 0) {
                   var s,
-                    u = $(a);
+                    u = x(a);
                   try {
                     for (u.s(); !(s = u.n()).done; ) {
                       var c = p(s.value, 2),
@@ -1166,24 +1282,24 @@ var te = (function (e) {
                   }
                 }
               }
-              var f = !1,
-                h = this._$AL;
+              var h = !1,
+                f = this._$AL;
               try {
                 var v;
-                (f = this.shouldUpdate(h))
-                  ? (this.willUpdate(h),
+                (h = this.shouldUpdate(f))
+                  ? (this.willUpdate(f),
                     null !== (v = this._$E_) &&
                       void 0 !== v &&
                       v.forEach(function (e) {
                         var t;
                         return null === (t = e.hostUpdate) || void 0 === t ? void 0 : t.call(e);
                       }),
-                    this.update(h))
+                    this.update(f))
                   : this._$ET();
-              } catch (h) {
-                throw ((f = !1), this._$ET(), h);
+              } catch (f) {
+                throw ((h = !1), this._$ET(), f);
               }
-              f && this._$AE(h);
+              h && this._$AE(f);
             }
           },
         },
@@ -1192,20 +1308,20 @@ var te = (function (e) {
           key: '_$AE',
           value: function (e) {
             var t;
-            null !== (t = this._$E_) &&
+            (null !== (t = this._$E_) &&
               void 0 !== t &&
               t.forEach(function (e) {
                 var t;
                 return null === (t = e.hostUpdated) || void 0 === t ? void 0 : t.call(e);
               }),
               this.hasUpdated || ((this.hasUpdated = !0), this.firstUpdated(e)),
-              this.updated(e);
+              this.updated(e));
           },
         },
         {
           key: '_$ET',
           value: function () {
-            (this._$AL = new Map()), (this.isUpdatePending = !1);
+            ((this._$AL = new Map()), (this.isUpdatePending = !1));
           },
         },
         {
@@ -1230,11 +1346,11 @@ var te = (function (e) {
           key: 'update',
           value: function (e) {
             var t = this;
-            this._$Ej &&
+            (this._$Ej &&
               (this._$Ej = this._$Ej.forEach(function (e) {
                 return t._$EO(e, t[e]);
               })),
-              this._$ET();
+              this._$ET());
           },
         },
         { key: 'updated', value: function (e) {} },
@@ -1245,19 +1361,19 @@ var te = (function (e) {
           key: 'addInitializer',
           value: function (e) {
             var t;
-            this._$Ei(), (null !== (t = this.l) && void 0 !== t ? t : (this.l = [])).push(e);
+            (this._$Ei(), (null !== (t = this.l) && void 0 !== t ? t : (this.l = [])).push(e));
           },
         },
         {
           key: 'observedAttributes',
           get: function () {
-            return this.finalize(), this._$Eh && h(this._$Eh.keys());
+            return (this.finalize(), this._$Eh && f(this._$Eh.keys()));
           },
         },
         {
           key: 'createProperty',
           value: function (e) {
-            var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : ee;
+            var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : te;
             if (
               (t.state && (t.attribute = !1),
               this._$Ei(),
@@ -1275,7 +1391,7 @@ var te = (function (e) {
           value: function (e, t, n) {
             var r,
               o =
-                null !== (r = z(this.prototype, e)) && void 0 !== r
+                null !== (r = B(this.prototype, e)) && void 0 !== r
                   ? r
                   : {
                       get: function () {
@@ -1293,7 +1409,7 @@ var te = (function (e) {
               },
               set: function (t) {
                 var r = null == i ? void 0 : i.call(this);
-                a.call(this, t), this.requestUpdate(e, r, n);
+                (a.call(this, t), this.requestUpdate(e, r, n));
               },
               configurable: !0,
               enumerable: !0,
@@ -1304,28 +1420,28 @@ var te = (function (e) {
           key: 'getPropertyOptions',
           value: function (e) {
             var t;
-            return null !== (t = this.elementProperties.get(e)) && void 0 !== t ? t : ee;
+            return null !== (t = this.elementProperties.get(e)) && void 0 !== t ? t : te;
           },
         },
         {
           key: '_$Ei',
           value: function () {
-            if (!this.hasOwnProperty(Z('elementProperties'))) {
+            if (!this.hasOwnProperty(X('elementProperties'))) {
               var e = J(this);
-              e.finalize(),
-                void 0 !== e.l && (this.l = h(e.l)),
-                (this.elementProperties = new Map(e.elementProperties));
+              (e.finalize(),
+                void 0 !== e.l && (this.l = f(e.l)),
+                (this.elementProperties = new Map(e.elementProperties)));
             }
           },
         },
         {
           key: 'finalize',
           value: function () {
-            if (!this.hasOwnProperty(Z('finalized'))) {
-              if (((this.finalized = !0), this._$Ei(), this.hasOwnProperty(Z('properties')))) {
+            if (!this.hasOwnProperty(X('finalized'))) {
+              if (((this.finalized = !0), this._$Ei(), this.hasOwnProperty(X('properties')))) {
                 var e,
                   t = this.properties,
-                  n = $([].concat(h(B(t)), h(W(t))));
+                  n = x([].concat(f(W(t)), f(F(t))));
                 try {
                   for (n.s(); !(e = n.n()).done; ) {
                     var r = e.value;
@@ -1342,7 +1458,7 @@ var te = (function (e) {
                 var i = litPropertyMetadata.get(o);
                 if (void 0 !== i) {
                   var a,
-                    s = $(i);
+                    s = x(i);
                   try {
                     for (s.s(); !(a = s.n()).done; ) {
                       var u = p(a.value, 2),
@@ -1359,9 +1475,9 @@ var te = (function (e) {
               }
               this._$Eh = new Map();
               var d,
-                f = $(this.elementProperties);
+                h = x(this.elementProperties);
               try {
-                for (f.s(); !(d = f.n()).done; ) {
+                for (h.s(); !(d = h.n()).done; ) {
                   var v = p(d.value, 2),
                     y = v[0],
                     m = v[1],
@@ -1369,9 +1485,9 @@ var te = (function (e) {
                   void 0 !== b && this._$Eh.set(b, y);
                 }
               } catch (e) {
-                f.e(e);
+                h.e(e);
               } finally {
-                f.f();
+                h.f();
               }
               this.elementStyles = this.finalizeStyles(this.styles);
             }
@@ -1383,18 +1499,18 @@ var te = (function (e) {
             var t = [];
             if (Array.isArray(e)) {
               var n,
-                r = $(new Set(e.flat(1 / 0).reverse()));
+                r = x(new Set(e.flat(1 / 0).reverse()));
               try {
                 for (r.s(); !(n = r.n()).done; ) {
                   var o = n.value;
-                  t.unshift(I(o));
+                  t.unshift(q(o));
                 }
               } catch (e) {
                 r.e(e);
               } finally {
                 r.f();
               }
-            } else void 0 !== e && t.push(I(e));
+            } else void 0 !== e && t.push(q(e));
             return t;
           },
         },
@@ -1405,10 +1521,10 @@ var te = (function (e) {
             return !1 === n
               ? void 0
               : 'string' == typeof n
-              ? n
-              : 'string' == typeof e
-              ? e.toLowerCase()
-              : void 0;
+                ? n
+                : 'string' == typeof e
+                  ? e.toLowerCase()
+                  : void 0;
           },
         },
       ]
@@ -1416,144 +1532,143 @@ var te = (function (e) {
     r
   );
 })();
-(te.elementStyles = []),
-  (te.shadowRootOptions = { mode: 'open' }),
-  (te[Z('elementProperties')] = new Map()),
-  (te[Z('finalized')] = new Map()),
-  null != K && K({ ReactiveElement: te }),
-  (null !== (n = F.reactiveElementVersions) && void 0 !== n
+((ne.elementStyles = []),
+  (ne.shadowRootOptions = { mode: 'open' }),
+  (ne[X('elementProperties')] = new Map()),
+  (ne[X('finalized')] = new Map()),
+  null != Z && Z({ ReactiveElement: ne }),
+  (null !== (n = Y.reactiveElementVersions) && void 0 !== n
     ? n
-    : (F.reactiveElementVersions = [])
-  ).push('2.0.2');
-var ne = globalThis,
-  re = ne.trustedTypes,
-  oe = re
-    ? re.createPolicy('lit-html', {
+    : (Y.reactiveElementVersions = [])
+  ).push('2.0.2'));
+var re = globalThis,
+  oe = re.trustedTypes,
+  ie = oe
+    ? oe.createPolicy('lit-html', {
         createHTML: function (e) {
           return e;
         },
       })
     : void 0,
-  ie = '$lit$',
-  ae = 'lit$'.concat((Math.random() + '').slice(9), '$'),
-  se = '?' + ae,
-  ue = '<'.concat(se, '>'),
-  ce = document,
-  le = function () {
-    return ce.createComment('');
+  ae = '$lit$',
+  se = 'lit$'.concat((Math.random() + '').slice(9), '$'),
+  ue = '?' + se,
+  ce = '<'.concat(ue, '>'),
+  le = document,
+  de = function () {
+    return le.createComment('');
   },
-  de = function (e) {
-    return null === e || ('object' != M(e) && 'function' != typeof e);
+  he = function (e) {
+    return null === e || ('object' != T(e) && 'function' != typeof e);
   },
   fe = Array.isArray,
-  he = '[ \t\n\f\r]',
-  pe = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,
-  ve = /-->/g,
-  ye = />/g,
-  me = RegExp(
+  pe = '[ \t\n\f\r]',
+  ve = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,
+  ye = /-->/g,
+  me = />/g,
+  be = RegExp(
     '>|'
-      .concat(he, '(?:([^\\s"\'>=/]+)(')
-      .concat(he, '*=')
-      .concat(he, '*(?:[^ \t\n\f\r"\'`<>=]|("|\')|))|$)'),
+      .concat(pe, '(?:([^\\s"\'>=/]+)(')
+      .concat(pe, '*=')
+      .concat(pe, '*(?:[^ \t\n\f\r"\'`<>=]|("|\')|))|$)'),
     'g'
   ),
-  be = /'/g,
-  ge = /"/g,
-  we = /^(?:script|style|textarea|title)$/i,
-  _e = (function (e) {
+  ge = /'/g,
+  we = /"/g,
+  _e = /^(?:script|style|textarea|title)$/i,
+  ke = (function (e) {
     return function (t) {
       for (var n = arguments.length, r = new Array(n > 1 ? n - 1 : 0), o = 1; o < n; o++)
         r[o - 1] = arguments[o];
       return { _$litType$: e, strings: t, values: r };
     };
   })(1),
-  ke = Symbol.for('lit-noChange'),
-  xe = Symbol.for('lit-nothing'),
-  Ee = new WeakMap(),
-  Ae = ce.createTreeWalker(ce, 129);
-function $e(e, t) {
+  xe = Symbol.for('lit-noChange'),
+  Ee = Symbol.for('lit-nothing'),
+  Ae = new WeakMap(),
+  $e = le.createTreeWalker(le, 129);
+function Se(e, t) {
   if (!Array.isArray(e) || !e.hasOwnProperty('raw')) throw Error('invalid template strings array');
-  return void 0 !== oe ? oe.createHTML(t) : t;
+  return void 0 !== ie ? ie.createHTML(t) : t;
 }
-var Se = function (e, t) {
-    for (var n, r = e.length - 1, o = [], i = 2 === t ? '<svg>' : '', a = pe, s = 0; s < r; s++) {
+var Ce = function (e, t) {
+    for (var n, r = e.length - 1, o = [], i = 2 === t ? '<svg>' : '', a = ve, s = 0; s < r; s++) {
       for (
-        var u = e[s], c = void 0, l = void 0, d = -1, f = 0;
-        f < u.length && ((a.lastIndex = f), null !== (l = a.exec(u)));
-
+        var u = e[s], c = void 0, l = void 0, d = -1, h = 0;
+        h < u.length && ((a.lastIndex = h), null !== (l = a.exec(u)));
       ) {
-        var h;
-        (f = a.lastIndex),
-          a === pe
+        var f;
+        ((h = a.lastIndex),
+          a === ve
             ? '!--' === l[1]
-              ? (a = ve)
-              : void 0 !== l[1]
               ? (a = ye)
-              : void 0 !== l[2]
-              ? (we.test(l[2]) && (n = RegExp('</' + l[2], 'g')), (a = me))
-              : void 0 !== l[3] && (a = me)
-            : a === me
-            ? '>' === l[0]
-              ? ((a = null !== (h = n) && void 0 !== h ? h : pe), (d = -1))
-              : void 0 === l[1]
-              ? (d = -2)
-              : ((d = a.lastIndex - l[2].length),
-                (c = l[1]),
-                (a = void 0 === l[3] ? me : '"' === l[3] ? ge : be))
-            : a === ge || a === be
-            ? (a = me)
-            : a === ve || a === ye
-            ? (a = pe)
-            : ((a = me), (n = void 0));
+              : void 0 !== l[1]
+                ? (a = me)
+                : void 0 !== l[2]
+                  ? (_e.test(l[2]) && (n = RegExp('</' + l[2], 'g')), (a = be))
+                  : void 0 !== l[3] && (a = be)
+            : a === be
+              ? '>' === l[0]
+                ? ((a = null !== (f = n) && void 0 !== f ? f : ve), (d = -1))
+                : void 0 === l[1]
+                  ? (d = -2)
+                  : ((d = a.lastIndex - l[2].length),
+                    (c = l[1]),
+                    (a = void 0 === l[3] ? be : '"' === l[3] ? we : ge))
+              : a === we || a === ge
+                ? (a = be)
+                : a === ye || a === me
+                  ? (a = ve)
+                  : ((a = be), (n = void 0)));
       }
-      var p = a === me && e[s + 1].startsWith('/>') ? ' ' : '';
+      var p = a === be && e[s + 1].startsWith('/>') ? ' ' : '';
       i +=
-        a === pe
-          ? u + ue
+        a === ve
+          ? u + ce
           : d >= 0
-          ? (o.push(c), u.slice(0, d) + ie + u.slice(d) + ae + p)
-          : u + ae + (-2 === d ? s : p);
+            ? (o.push(c), u.slice(0, d) + ae + u.slice(d) + se + p)
+            : u + se + (-2 === d ? s : p);
     }
-    return [$e(e, i + (e[r] || '<?>') + (2 === t ? '</svg>' : '')), o];
+    return [Se(e, i + (e[r] || '<?>') + (2 === t ? '</svg>' : '')), o];
   },
-  Ce = (function () {
+  Oe = (function () {
     function e(t, n) {
       var r,
         o = t.strings,
         i = t._$litType$;
-      P(this, e), (this.parts = []);
+      ($(this, e), (this.parts = []));
       var a = 0,
         s = 0,
         u = o.length - 1,
         c = this.parts,
-        l = p(Se(o, i), 2),
+        l = p(Ce(o, i), 2),
         d = l[0],
-        f = l[1];
-      if (((this.el = e.createElement(d, n)), (Ae.currentNode = this.el.content), 2 === i)) {
+        h = l[1];
+      if (((this.el = e.createElement(d, n)), ($e.currentNode = this.el.content), 2 === i)) {
         var v = this.el.content.firstChild;
-        v.replaceWith.apply(v, h(v.childNodes));
+        v.replaceWith.apply(v, f(v.childNodes));
       }
-      for (; null !== (r = Ae.nextNode()) && c.length < u; ) {
+      for (; null !== (r = $e.nextNode()) && c.length < u; ) {
         if (1 === r.nodeType) {
           if (r.hasAttributes()) {
             var y,
-              m = $(r.getAttributeNames());
+              m = x(r.getAttributeNames());
             try {
               for (m.s(); !(y = m.n()).done; ) {
                 var b = y.value;
-                if (b.endsWith(ie)) {
-                  var g = f[s++],
-                    w = r.getAttribute(b).split(ae),
+                if (b.endsWith(ae)) {
+                  var g = h[s++],
+                    w = r.getAttribute(b).split(se),
                     _ = /([.?@])?(.*)/.exec(g);
-                  c.push({
+                  (c.push({
                     type: 1,
                     index: a,
                     name: _[2],
                     strings: w,
-                    ctor: '.' === _[1] ? Me : '?' === _[1] ? Ne : '@' === _[1] ? Re : je,
+                    ctor: '.' === _[1] ? Ne : '?' === _[1] ? Re : '@' === _[1] ? Le : Me,
                   }),
-                    r.removeAttribute(b);
-                } else b.startsWith(ae) && (c.push({ type: 6, index: a }), r.removeAttribute(b));
+                    r.removeAttribute(b));
+                } else b.startsWith(se) && (c.push({ type: 6, index: a }), r.removeAttribute(b));
               }
             } catch (e) {
               m.e(e);
@@ -1561,31 +1676,31 @@ var Se = function (e, t) {
               m.f();
             }
           }
-          if (we.test(r.tagName)) {
-            var k = r.textContent.split(ae),
-              x = k.length - 1;
-            if (x > 0) {
-              r.textContent = re ? re.emptyScript : '';
-              for (var E = 0; E < x; E++)
-                r.append(k[E], le()), Ae.nextNode(), c.push({ type: 2, index: ++a });
-              r.append(k[x], le());
+          if (_e.test(r.tagName)) {
+            var k = r.textContent.split(se),
+              E = k.length - 1;
+            if (E > 0) {
+              r.textContent = oe ? oe.emptyScript : '';
+              for (var A = 0; A < E; A++)
+                (r.append(k[A], de()), $e.nextNode(), c.push({ type: 2, index: ++a }));
+              r.append(k[E], de());
             }
           }
         } else if (8 === r.nodeType)
-          if (r.data === se) c.push({ type: 2, index: a });
+          if (r.data === ue) c.push({ type: 2, index: a });
           else
-            for (var A = -1; -1 !== (A = r.data.indexOf(ae, A + 1)); )
-              c.push({ type: 7, index: a }), (A += ae.length - 1);
+            for (var S = -1; -1 !== (S = r.data.indexOf(se, S + 1)); )
+              (c.push({ type: 7, index: a }), (S += se.length - 1));
         a++;
       }
     }
     return (
-      T(e, null, [
+      C(e, null, [
         {
           key: 'createElement',
           value: function (e, t) {
-            var n = ce.createElement('template');
-            return (n.innerHTML = e), n;
+            var n = le.createElement('template');
+            return ((n.innerHTML = e), n);
           },
         },
       ]),
@@ -1600,9 +1715,9 @@ function Pe(e, t) {
     a,
     s = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : e,
     u = arguments.length > 3 ? arguments[3] : void 0;
-  if (t === ke) return t;
+  if (t === xe) return t;
   var c = void 0 !== u ? (null === (n = s._$Co) || void 0 === n ? void 0 : n[u]) : s._$Cl,
-    l = de(t) ? void 0 : t._$litDirective$;
+    l = he(t) ? void 0 : t._$litDirective$;
   return (
     (null === (r = c) || void 0 === r ? void 0 : r.constructor) !== l &&
       (null !== (o = c) && void 0 !== o && null !== (i = o._$AO) && void 0 !== i && i.call(o, !1),
@@ -1614,12 +1729,12 @@ function Pe(e, t) {
     t
   );
 }
-var Oe = (function () {
+var Te = (function () {
     function e(t, n) {
-      P(this, e), (this._$AV = []), (this._$AN = void 0), (this._$AD = t), (this._$AM = n);
+      ($(this, e), (this._$AV = []), (this._$AN = void 0), (this._$AD = t), (this._$AM = n));
     }
     return (
-      T(e, [
+      C(e, [
         {
           key: 'parentNode',
           get: function () {
@@ -1640,25 +1755,25 @@ var Oe = (function () {
               r = n.el.content,
               o = n.parts,
               i = (
-                null !== (t = null == e ? void 0 : e.creationScope) && void 0 !== t ? t : ce
+                null !== (t = null == e ? void 0 : e.creationScope) && void 0 !== t ? t : le
               ).importNode(r, !0);
-            Ae.currentNode = i;
-            for (var a = Ae.nextNode(), s = 0, u = 0, c = o[0]; void 0 !== c; ) {
+            $e.currentNode = i;
+            for (var a = $e.nextNode(), s = 0, u = 0, c = o[0]; void 0 !== c; ) {
               var l;
               if (s === c.index) {
                 var d = void 0;
-                2 === c.type
-                  ? (d = new Te(a, a.nextSibling, this, e))
+                (2 === c.type
+                  ? (d = new je(a, a.nextSibling, this, e))
                   : 1 === c.type
-                  ? (d = new c.ctor(a, c.name, c.strings, this, e))
-                  : 6 === c.type && (d = new Le(a, this, e)),
+                    ? (d = new c.ctor(a, c.name, c.strings, this, e))
+                    : 6 === c.type && (d = new Ue(a, this, e)),
                   this._$AV.push(d),
-                  (c = o[++u]);
+                  (c = o[++u]));
               }
               s !== (null === (l = c) || void 0 === l ? void 0 : l.index) &&
-                ((a = Ae.nextNode()), s++);
+                ((a = $e.nextNode()), s++);
             }
-            return (Ae.currentNode = ce), i;
+            return (($e.currentNode = le), i);
           },
         },
         {
@@ -1666,15 +1781,15 @@ var Oe = (function () {
           value: function (e) {
             var t,
               n = 0,
-              r = $(this._$AV);
+              r = x(this._$AV);
             try {
               for (r.s(); !(t = r.n()).done; ) {
                 var o = t.value;
-                void 0 !== o &&
+                (void 0 !== o &&
                   (void 0 !== o.strings
                     ? (o._$AI(e, o, n), (n += o.strings.length - 2))
                     : o._$AI(e[n])),
-                  n++;
+                  n++);
               }
             } catch (e) {
               r.e(e);
@@ -1687,21 +1802,21 @@ var Oe = (function () {
       e
     );
   })(),
-  Te = (function () {
+  je = (function () {
     function e(t, n, r, o) {
       var i;
-      P(this, e),
+      ($(this, e),
         (this.type = 2),
-        (this._$AH = xe),
+        (this._$AH = Ee),
         (this._$AN = void 0),
         (this._$AA = t),
         (this._$AB = n),
         (this._$AM = r),
         (this.options = o),
-        (this._$Cv = null === (i = null == o ? void 0 : o.isConnected) || void 0 === i || i);
+        (this._$Cv = null === (i = null == o ? void 0 : o.isConnected) || void 0 === i || i));
     }
     return (
-      T(e, [
+      C(e, [
         {
           key: '_$AU',
           get: function () {
@@ -1741,24 +1856,26 @@ var Oe = (function () {
         {
           key: '_$AI',
           value: function (e) {
-            (e = Pe(
+            ((e = Pe(
               this,
               e,
               arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this
             )),
-              de(e)
-                ? e === xe || null == e || '' === e
-                  ? (this._$AH !== xe && this._$AR(), (this._$AH = xe))
-                  : e !== this._$AH && e !== ke && this._(e)
+              he(e)
+                ? e === Ee || null == e || '' === e
+                  ? (this._$AH !== Ee && this._$AR(), (this._$AH = Ee))
+                  : e !== this._$AH && e !== xe && this._(e)
                 : void 0 !== e._$litType$
-                ? this.g(e)
-                : void 0 !== e.nodeType
-                ? this.$(e)
-                : (function (e) {
-                    return fe(e) || 'function' == typeof (null == e ? void 0 : e[Symbol.iterator]);
-                  })(e)
-                ? this.T(e)
-                : this._(e);
+                  ? this.g(e)
+                  : void 0 !== e.nodeType
+                    ? this.$(e)
+                    : (function (e) {
+                          return (
+                            fe(e) || 'function' == typeof (null == e ? void 0 : e[Symbol.iterator])
+                          );
+                        })(e)
+                      ? this.T(e)
+                      : this._(e));
           },
         },
         {
@@ -1776,10 +1893,10 @@ var Oe = (function () {
         {
           key: '_',
           value: function (e) {
-            this._$AH !== xe && de(this._$AH)
+            (this._$AH !== Ee && he(this._$AH)
               ? (this._$AA.nextSibling.data = e)
-              : this.$(ce.createTextNode(e)),
-              (this._$AH = e);
+              : this.$(le.createTextNode(e)),
+              (this._$AH = e));
           },
         },
         {
@@ -1791,21 +1908,21 @@ var Oe = (function () {
               o =
                 'number' == typeof r
                   ? this._$AC(e)
-                  : (void 0 === r.el && (r.el = Ce.createElement($e(r.h, r.h[0]), this.options)),
+                  : (void 0 === r.el && (r.el = Oe.createElement(Se(r.h, r.h[0]), this.options)),
                     r);
             if ((null === (t = this._$AH) || void 0 === t ? void 0 : t._$AD) === o) this._$AH.p(n);
             else {
-              var i = new Oe(o, this),
+              var i = new Te(o, this),
                 a = i.u(this.options);
-              i.p(n), this.$(a), (this._$AH = i);
+              (i.p(n), this.$(a), (this._$AH = i));
             }
           },
         },
         {
           key: '_$AC',
           value: function (e) {
-            var t = Ee.get(e.strings);
-            return void 0 === t && Ee.set(e.strings, (t = new Ce(e))), t;
+            var t = Ae.get(e.strings);
+            return (void 0 === t && Ae.set(e.strings, (t = new Oe(e))), t);
           },
         },
         {
@@ -1816,15 +1933,15 @@ var Oe = (function () {
               r,
               o = this._$AH,
               i = 0,
-              a = $(t);
+              a = x(t);
             try {
               for (a.s(); !(r = a.n()).done; ) {
                 var s = r.value;
-                i === o.length
-                  ? o.push((n = new e(this.k(le()), this.k(le()), this, this.options)))
+                (i === o.length
+                  ? o.push((n = new e(this.k(de()), this.k(de()), this, this.options)))
                   : (n = o[i]),
                   n._$AI(s),
-                  i++;
+                  i++);
               }
             } catch (e) {
               a.e(e);
@@ -1845,11 +1962,10 @@ var Oe = (function () {
             for (
               null === (n = this._$AP) || void 0 === n || n.call(this, !1, !0, t);
               e && e !== this._$AB;
-
             ) {
               var n,
                 r = e.nextSibling;
-              e.remove(), (e = r);
+              (e.remove(), (e = r));
             }
           },
         },
@@ -1865,11 +1981,11 @@ var Oe = (function () {
       e
     );
   })(),
-  je = (function () {
+  Me = (function () {
     function e(t, n, r, o, i) {
-      P(this, e),
+      ($(this, e),
         (this.type = 1),
-        (this._$AH = xe),
+        (this._$AH = Ee),
         (this._$AN = void 0),
         (this.element = t),
         (this.name = n),
@@ -1877,10 +1993,10 @@ var Oe = (function () {
         (this.options = i),
         r.length > 2 || '' !== r[0] || '' !== r[1]
           ? ((this._$AH = Array(r.length - 1).fill(new String())), (this.strings = r))
-          : (this._$AH = xe);
+          : (this._$AH = Ee));
     }
     return (
-      T(e, [
+      C(e, [
         {
           key: 'tagName',
           get: function () {
@@ -1902,20 +2018,20 @@ var Oe = (function () {
               o = this.strings,
               i = !1;
             if (void 0 === o)
-              (e = Pe(this, e, t, 0)),
-                (i = !de(e) || (e !== this._$AH && e !== ke)) && (this._$AH = e);
+              ((e = Pe(this, e, t, 0)),
+                (i = !he(e) || (e !== this._$AH && e !== xe)) && (this._$AH = e));
             else {
               var a,
                 s,
                 u = e;
               for (e = o[0], a = 0; a < o.length - 1; a++) {
                 var c;
-                (s = Pe(this, u[n + a], t, a)) === ke && (s = this._$AH[a]),
-                  i || (i = !de(s) || s !== this._$AH[a]),
-                  s === xe
-                    ? (e = xe)
-                    : e !== xe && (e += (null !== (c = s) && void 0 !== c ? c : '') + o[a + 1]),
-                  (this._$AH[a] = s);
+                ((s = Pe(this, u[n + a], t, a)) === xe && (s = this._$AH[a]),
+                  i || (i = !he(s) || s !== this._$AH[a]),
+                  s === Ee
+                    ? (e = Ee)
+                    : e !== Ee && (e += (null !== (c = s) && void 0 !== c ? c : '') + o[a + 1]),
+                  (this._$AH[a] = s));
               }
             }
             i && !r && this.O(e);
@@ -1924,7 +2040,7 @@ var Oe = (function () {
         {
           key: 'O',
           value: function (e) {
-            e === xe
+            e === Ee
               ? this.element.removeAttribute(this.name)
               : this.element.setAttribute(this.name, null != e ? e : '');
           },
@@ -1933,38 +2049,19 @@ var Oe = (function () {
       e
     );
   })(),
-  Me = (function (e) {
-    b(n, je);
-    var t = g(n);
-    function n() {
-      var e;
-      return P(this, n), ((e = t.apply(this, arguments)).type = 3), e;
-    }
-    return (
-      T(n, [
-        {
-          key: 'O',
-          value: function (e) {
-            this.element[this.name] = e === xe ? void 0 : e;
-          },
-        },
-      ]),
-      n
-    );
-  })(),
   Ne = (function (e) {
-    b(n, je);
-    var t = g(n);
+    v(n, Me);
+    var t = y(n);
     function n() {
       var e;
-      return P(this, n), ((e = t.apply(this, arguments)).type = 4), e;
+      return ($(this, n), ((e = t.apply(this, arguments)).type = 3), e);
     }
     return (
-      T(n, [
+      C(n, [
         {
           key: 'O',
           value: function (e) {
-            this.element.toggleAttribute(this.name, !!e && e !== xe);
+            this.element[this.name] = e === Ee ? void 0 : e;
           },
         },
       ]),
@@ -1972,14 +2069,33 @@ var Oe = (function () {
     );
   })(),
   Re = (function (e) {
-    b(n, je);
-    var t = g(n);
-    function n(e, r, o, i, a) {
-      var s;
-      return P(this, n), ((s = t.call(this, e, r, o, i, a)).type = 5), s;
+    v(n, Me);
+    var t = y(n);
+    function n() {
+      var e;
+      return ($(this, n), ((e = t.apply(this, arguments)).type = 4), e);
     }
     return (
-      T(n, [
+      C(n, [
+        {
+          key: 'O',
+          value: function (e) {
+            this.element.toggleAttribute(this.name, !!e && e !== Ee);
+          },
+        },
+      ]),
+      n
+    );
+  })(),
+  Le = (function (e) {
+    v(n, Me);
+    var t = y(n);
+    function n(e, r, o, i, a) {
+      var s;
+      return ($(this, n), ((s = t.call(this, e, r, o, i, a)).type = 5), s);
+    }
+    return (
+      C(n, [
         {
           key: '_$AI',
           value: function (e) {
@@ -1994,18 +2110,18 @@ var Oe = (function () {
                     0
                   )) && void 0 !== t
                   ? t
-                  : xe) !== ke
+                  : Ee) !== xe
             ) {
               var n = this._$AH,
                 r =
-                  (e === xe && n !== xe) ||
+                  (e === Ee && n !== Ee) ||
                   e.capture !== n.capture ||
                   e.once !== n.once ||
                   e.passive !== n.passive,
-                o = e !== xe && (n === xe || r);
-              r && this.element.removeEventListener(this.name, this, n),
+                o = e !== Ee && (n === Ee || r);
+              (r && this.element.removeEventListener(this.name, this, n),
                 o && this.element.addEventListener(this.name, this, e),
-                (this._$AH = e);
+                (this._$AH = e));
             }
           },
         },
@@ -2028,17 +2144,17 @@ var Oe = (function () {
       n
     );
   })(),
-  Le = (function () {
+  Ue = (function () {
     function e(t, n, r) {
-      P(this, e),
+      ($(this, e),
         (this.element = t),
         (this.type = 6),
         (this._$AN = void 0),
         (this._$AM = n),
-        (this.options = r);
+        (this.options = r));
     }
     return (
-      T(e, [
+      C(e, [
         {
           key: '_$AU',
           get: function () {
@@ -2055,29 +2171,31 @@ var Oe = (function () {
       e
     );
   })(),
-  Ue = ne.litHtmlPolyfillSupport;
-null != Ue && Ue(Ce, Te),
-  (null !== (r = ne.litHtmlVersions) && void 0 !== r ? r : (ne.litHtmlVersions = [])).push('3.1.0');
-var De = (function (e) {
-  b(n, te);
-  var t = g(n);
+  De = re.litHtmlPolyfillSupport;
+(null != De && De(Oe, je),
+  (null !== (r = re.litHtmlVersions) && void 0 !== r ? r : (re.litHtmlVersions = [])).push(
+    '3.1.0'
+  ));
+var He = (function (e) {
+  v(n, ne);
+  var t = y(n);
   function n() {
     var e;
     return (
-      P(this, n),
-      ((e = t.apply(this, arguments)).renderOptions = { host: w(e) }),
+      $(this, n),
+      ((e = t.apply(this, arguments)).renderOptions = { host: m(e) }),
       (e._$Do = void 0),
       e
     );
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'createRenderRoot',
         value: function () {
           var e,
             t,
-            r = f(A(n.prototype), 'createRenderRoot', this).call(this);
+            r = h(k(n.prototype), 'createRenderRoot', this).call(this);
           return (
             (null !== (t = (e = this.renderOptions).renderBefore) && void 0 !== t) ||
               (e.renderBefore = r.firstChild),
@@ -2089,8 +2207,8 @@ var De = (function (e) {
         key: 'update',
         value: function (e) {
           var t = this.render();
-          this.hasUpdated || (this.renderOptions.isConnected = this.isConnected),
-            f(A(n.prototype), 'update', this).call(this, e),
+          (this.hasUpdated || (this.renderOptions.isConnected = this.isConnected),
+            h(k(n.prototype), 'update', this).call(this, e),
             (this._$Do = (function (e, t, n) {
               var r,
                 o = null !== (r = null == n ? void 0 : n.renderBefore) && void 0 !== r ? r : t,
@@ -2098,56 +2216,56 @@ var De = (function (e) {
               if (void 0 === i) {
                 var a,
                   s = null !== (a = null == n ? void 0 : n.renderBefore) && void 0 !== a ? a : null;
-                o._$litPart$ = i = new Te(t.insertBefore(le(), s), s, void 0, null != n ? n : {});
+                o._$litPart$ = i = new je(t.insertBefore(de(), s), s, void 0, null != n ? n : {});
               }
-              return i._$AI(e), i;
-            })(t, this.renderRoot, this.renderOptions));
+              return (i._$AI(e), i);
+            })(t, this.renderRoot, this.renderOptions)));
         },
       },
       {
         key: 'connectedCallback',
         value: function () {
           var e;
-          f(A(n.prototype), 'connectedCallback', this).call(this),
-            null === (e = this._$Do) || void 0 === e || e.setConnected(!0);
+          (h(k(n.prototype), 'connectedCallback', this).call(this),
+            null === (e = this._$Do) || void 0 === e || e.setConnected(!0));
         },
       },
       {
         key: 'disconnectedCallback',
         value: function () {
           var e;
-          f(A(n.prototype), 'disconnectedCallback', this).call(this),
-            null === (e = this._$Do) || void 0 === e || e.setConnected(!1);
+          (h(k(n.prototype), 'disconnectedCallback', this).call(this),
+            null === (e = this._$Do) || void 0 === e || e.setConnected(!1));
         },
       },
       {
         key: 'render',
         value: function () {
-          return ke;
+          return xe;
         },
       },
     ]),
     n
   );
 })();
-(De._$litElement$ = !0),
-  (De.finalized = !0),
+((He._$litElement$ = !0),
+  (He.finalized = !0),
   null === (o = globalThis.litElementHydrateSupport) ||
     void 0 === o ||
-    o.call(globalThis, { LitElement: De });
-var He = globalThis.litElementPolyfillSupport;
-null == He || He({ LitElement: De }),
+    o.call(globalThis, { LitElement: He }));
+var Ie = globalThis.litElementPolyfillSupport;
+(null == Ie || Ie({ LitElement: He }),
   (null !== (i = globalThis.litElementVersions) && void 0 !== i
     ? i
     : (globalThis.litElementVersions = [])
-  ).push('4.0.2');
-var Ie,
-  qe = { attribute: !0, type: String, converter: X, reflect: !1, hasChanged: Q };
+  ).push('4.0.2'));
+var qe,
+  ze = { attribute: !0, type: String, converter: Q, reflect: !1, hasChanged: ee };
 function Ve(e) {
   return function (t, n) {
-    return 'object' == M(n)
+    return 'object' == T(n)
       ? (function () {
-          var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : qe,
+          var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : ze,
             t = arguments.length > 1 ? arguments[1] : void 0,
             n = arguments.length > 2 ? arguments[2] : void 0,
             r = n.kind,
@@ -2162,10 +2280,10 @@ function Ve(e) {
             return {
               set: function (n) {
                 var r = t.get.call(this);
-                t.set.call(this, n), this.requestUpdate(a, r, e);
+                (t.set.call(this, n), this.requestUpdate(a, r, e));
               },
               init: function (t) {
-                return void 0 !== t && this.C(a, void 0, e), t;
+                return (void 0 !== t && this.C(a, void 0, e), t);
               },
             };
           }
@@ -2173,7 +2291,7 @@ function Ve(e) {
             var s = n.name;
             return function (n) {
               var r = this[s];
-              t.call(this, n), this.requestUpdate(s, r, e);
+              (t.call(this, n), this.requestUpdate(s, r, e));
             };
           }
           throw Error('Unsupported decorator location: ' + r);
@@ -2187,39 +2305,39 @@ function Ve(e) {
         })(e, t, n);
   };
 }
-var ze = new WeakMap(),
-  Be = function () {},
-  We = (function () {
+var Be = new WeakMap(),
+  We = function () {},
+  Fe = (function () {
     function e(t) {
       var n = this;
-      P(this, e),
+      ($(this, e),
         (this.subscribers = []),
         (this.settlement = null),
-        (this[Ie] = 'Unpromise'),
-        (this.promise = 'function' == typeof t ? new Promise(t) : t);
+        (this[qe] = 'Unpromise'),
+        (this.promise = 'function' == typeof t ? new Promise(t) : t));
       var r = this.promise.then(function (e) {
         var t = n.subscribers;
-        (n.subscribers = null),
+        ((n.subscribers = null),
           (n.settlement = { status: 'fulfilled', value: e }),
           null == t ||
             t.forEach(function (t) {
               (0, t.resolve)(e);
-            });
+            }));
       });
       'catch' in r &&
         r.catch(function (e) {
           var t = n.subscribers;
-          (n.subscribers = null),
+          ((n.subscribers = null),
             (n.settlement = { status: 'rejected', reason: e }),
             null == t ||
               t.forEach(function (t) {
                 (0, t.reject)(e);
-              });
+              }));
         });
     }
     var t, n, r;
     return (
-      T(
+      C(
         e,
         [
           {
@@ -2236,14 +2354,14 @@ var ze = new WeakMap(),
                   var e, t;
                   return {
                     promise: new Promise(function (n, r) {
-                      (e = n), (t = r);
+                      ((e = n), (t = r));
                     }),
                     resolve: e,
                     reject: t,
                   };
                 })();
-                (this.subscribers = (function (e, t) {
-                  return [].concat(h(e), [t]);
+                ((this.subscribers = (function (e, t) {
+                  return [].concat(f(e), [t]);
                 })(this.subscribers, o)),
                   (e = o.promise),
                   (t = function () {
@@ -2252,15 +2370,15 @@ var ze = new WeakMap(),
                         var n = e.indexOf(t);
                         return -1 !== n
                           ? (function (e, t) {
-                              return [].concat(h(e.slice(0, t)), h(e.slice(t + 1)));
+                              return [].concat(f(e.slice(0, t)), f(e.slice(t + 1)));
                             })(e, n)
                           : e;
                       })(n.subscribers, o));
-                  });
+                  }));
               } else {
-                (e =
+                ((e =
                   'fulfilled' === r.status ? Promise.resolve(r.value) : Promise.reject(r.reason)),
-                  (t = Be);
+                  (t = We));
               }
               return Object.assign(e, { unsubscribe: t });
             },
@@ -2295,27 +2413,27 @@ var ze = new WeakMap(),
             key: 'proxy',
             value: function (t) {
               var n = e.getSubscribablePromise(t);
-              return M(n) < 'u' ? n : e.createSubscribablePromise(t);
+              return T(n) < 'u' ? n : e.createSubscribablePromise(t);
             },
           },
           {
             key: 'createSubscribablePromise',
             value: function (t) {
               var n = new e(t);
-              return ze.set(t, n), ze.set(n, n), n;
+              return (Be.set(t, n), Be.set(n, n), n);
             },
           },
           {
             key: 'getSubscribablePromise',
             value: function (e) {
-              return ze.get(e);
+              return Be.get(e);
             },
           },
           {
             key: 'resolve',
             value: function (t) {
               var n =
-                'object' == M(t) && null !== t && 'then' in t && 'function' == typeof t.then
+                'object' == T(t) && null !== t && 'then' in t && 'function' == typeof t.then
                   ? t
                   : Promise.resolve(t);
               return e.proxy(n).subscribe();
@@ -2324,16 +2442,16 @@ var ze = new WeakMap(),
           {
             key: 'any',
             value:
-              ((r = m(
-                v().mark(function t(n) {
+              ((r = M(
+                P().mark(function t(n) {
                   var r;
-                  return v().wrap(
+                  return P().wrap(
                     function (t) {
                       for (;;)
                         switch ((t.prev = t.next)) {
                           case 0:
                             return (
-                              (r = (Array.isArray(n) ? n : h(n)).map(e.resolve)),
+                              (r = (Array.isArray(n) ? n : f(n)).map(e.resolve)),
                               (t.prev = 1),
                               (t.next = 4),
                               Promise.any(r)
@@ -2366,16 +2484,16 @@ var ze = new WeakMap(),
           {
             key: 'race',
             value:
-              ((n = m(
-                v().mark(function t(n) {
+              ((n = M(
+                P().mark(function t(n) {
                   var r;
-                  return v().wrap(
+                  return P().wrap(
                     function (t) {
                       for (;;)
                         switch ((t.prev = t.next)) {
                           case 0:
                             return (
-                              (r = (Array.isArray(n) ? n : h(n)).map(e.resolve)),
+                              (r = (Array.isArray(n) ? n : f(n)).map(e.resolve)),
                               (t.prev = 1),
                               (t.next = 4),
                               Promise.race(r)
@@ -2408,19 +2526,19 @@ var ze = new WeakMap(),
           {
             key: 'raceReferences',
             value:
-              ((t = m(
-                v().mark(function e(t) {
+              ((t = M(
+                P().mark(function e(t) {
                   var n, r, o;
-                  return v().wrap(
+                  return P().wrap(
                     function (e) {
                       for (;;)
                         switch ((e.prev = e.next)) {
                           case 0:
-                            return (n = t.map(Fe)), (e.prev = 1), (e.next = 4), Promise.race(n);
+                            return ((n = t.map(Ye)), (e.prev = 1), (e.next = 4), Promise.race(n));
                           case 4:
                             return e.abrupt('return', e.sent);
                           case 5:
-                            (e.prev = 5), (r = $(n));
+                            ((e.prev = 5), (r = x(n)));
                             try {
                               for (r.s(); !(o = r.n()).done; ) o.value.unsubscribe();
                             } catch (e) {
@@ -2449,22 +2567,22 @@ var ze = new WeakMap(),
       e
     );
   })();
-Ie = Symbol.toStringTag;
-var Je = We;
-function Fe(e) {
+qe = Symbol.toStringTag;
+var Je = Fe;
+function Ye(e) {
   return Je.proxy(e).then(function () {
     return [e];
   });
 }
 function Ge() {
-  return Ye.apply(this, arguments);
+  return Ke.apply(this, arguments);
 }
-function Ye() {
+function Ke() {
   return (
-    (Ye = m(
-      v().mark(function e() {
+    (Ke = M(
+      P().mark(function e() {
         var t;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -2500,22 +2618,22 @@ function Ye() {
         }, e);
       })
     )),
-    Ye.apply(this, arguments)
+    Ke.apply(this, arguments)
   );
 }
-function Ke() {
-  return Ze.apply(this, arguments);
-}
 function Ze() {
+  return Xe.apply(this, arguments);
+}
+function Xe() {
   return (
-    (Ze = m(
-      v().mark(function e() {
+    (Xe = M(
+      P().mark(function e() {
         var t;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
-                return (e.next = 2), Ge();
+                return ((e.next = 2), Ge());
               case 2:
                 t = e.sent;
               case 3:
@@ -2541,23 +2659,23 @@ function Ze() {
         }, e);
       })
     )),
-    Ze.apply(this, arguments)
+    Xe.apply(this, arguments)
   );
 }
-var Xe = 'browser_mod-browser-id';
-var Qe = 'SELECTTREE-TIMEOUT';
-function et(e) {
-  return tt.apply(this, arguments);
+var Qe = 'browser_mod-browser-id';
+var et = 'SELECTTREE-TIMEOUT';
+function tt(e) {
+  return nt.apply(this, arguments);
 }
-function tt() {
+function nt() {
   return (
-    (tt = m(
-      v().mark(function e(t) {
+    (nt = M(
+      P().mark(function e(t) {
         var n,
           r,
           o,
           i = arguments;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -2568,13 +2686,13 @@ function tt() {
                   e.next = 4;
                   break;
                 }
-                return (e.next = 4), customElements.whenDefined(t.localName);
+                return ((e.next = 4), customElements.whenDefined(t.localName));
               case 4:
                 if (!t.updateComplete) {
                   e.next = 7;
                   break;
                 }
-                return (e.next = 7), t.updateComplete;
+                return ((e.next = 7), t.updateComplete);
               case 7:
                 if (!n) {
                   e.next = 18;
@@ -2584,7 +2702,7 @@ function tt() {
                   e.next = 11;
                   break;
                 }
-                return (e.next = 11), t.pageRendered;
+                return ((e.next = 11), t.pageRendered);
               case 11:
                 if (!t._panelState) {
                   e.next = 18;
@@ -2612,16 +2730,16 @@ function tt() {
         }, e);
       })
     )),
-    tt.apply(this, arguments)
+    nt.apply(this, arguments)
   );
 }
-function nt(e, t) {
-  return rt.apply(this, arguments);
+function rt(e, t) {
+  return ot.apply(this, arguments);
 }
-function rt() {
+function ot() {
   return (
-    (rt = m(
-      v().mark(function e(t, n) {
+    (ot = M(
+      P().mark(function e(t, n) {
         var r,
           o,
           i,
@@ -2630,7 +2748,7 @@ function rt() {
           u,
           c,
           l = arguments;
-        return v().wrap(
+        return P().wrap(
           function (e) {
             for (;;)
               switch ((e.prev = e.next)) {
@@ -2640,10 +2758,9 @@ function rt() {
                       o = [t],
                       'string' == typeof n && (n = n.split(/(\$| )/));
                     '' === n[n.length - 1];
-
                   )
                     n.pop();
-                  (i = $(n.entries())), (e.prev = 5), i.s();
+                  ((i = x(n.entries())), (e.prev = 5), i.s());
                 case 7:
                   if ((a = i.n()).done) {
                     e.next = 24;
@@ -2656,14 +2773,14 @@ function rt() {
                   return (
                     (e.next = 12),
                     Promise.all(
-                      h(o).map(function (e) {
-                        return et(e);
+                      f(o).map(function (e) {
+                        return tt(e);
                       })
                     )
                   );
                 case 12:
                   return (
-                    (o = h(o).map(function (e) {
+                    (o = f(o).map(function (e) {
                       return e.shadowRoot;
                     })),
                     e.abrupt('continue', 22)
@@ -2681,7 +2798,7 @@ function rt() {
                   }
                   return e.abrupt('continue', 22);
                 case 19:
-                  return (e.next = 21), et(c);
+                  return ((e.next = 21), tt(c));
                 case 21:
                   o = c.querySelectorAll(u);
                 case 22:
@@ -2691,9 +2808,9 @@ function rt() {
                   e.next = 29;
                   break;
                 case 26:
-                  (e.prev = 26), (e.t0 = e.catch(5)), i.e(e.t0);
+                  ((e.prev = 26), (e.t0 = e.catch(5)), i.e(e.t0));
                 case 29:
-                  return (e.prev = 29), i.f(), e.finish(29);
+                  return ((e.prev = 29), i.f(), e.finish(29));
                 case 32:
                   return e.abrupt('return', r ? o : o[0]);
                 case 33:
@@ -2707,20 +2824,20 @@ function rt() {
         );
       })
     )),
-    rt.apply(this, arguments)
+    ot.apply(this, arguments)
   );
 }
-function ot(e, t) {
-  return it.apply(this, arguments);
+function it(e, t) {
+  return at.apply(this, arguments);
 }
-function it() {
+function at() {
   return (
-    (it = m(
-      v().mark(function e(t, n) {
+    (at = M(
+      P().mark(function e(t, n) {
         var r,
           o,
           i = arguments;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -2730,14 +2847,14 @@ function it() {
                   e.abrupt(
                     'return',
                     Je.race([
-                      nt(t, n, r),
+                      rt(t, n, r),
                       new Promise(function (e, t) {
                         return setTimeout(function () {
-                          return t(new Error(Qe));
+                          return t(new Error(et));
                         }, o);
                       }),
                     ]).catch(function (e) {
-                      if (!e.message || e.message !== Qe) throw e;
+                      if (!e.message || e.message !== et) throw e;
                       return null;
                     })
                   )
@@ -2749,35 +2866,35 @@ function it() {
         }, e);
       })
     )),
-    it.apply(this, arguments)
+    at.apply(this, arguments)
   );
 }
-var at = null;
-function st(e) {
-  return ut.apply(this, arguments);
+var st = null;
+function ut(e) {
+  return ct.apply(this, arguments);
 }
-function ut() {
+function ct() {
   return (
-    (ut = m(
-      v().mark(function e(t) {
+    (ct = M(
+      P().mark(function e(t) {
         var n, r, o;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
                 return (
                   (o = function () {
                     return (
-                      (o = m(
-                        v().mark(function e(t) {
+                      (o = M(
+                        P().mark(function e(t) {
                           var n;
-                          return v().wrap(function (e) {
+                          return P().wrap(function (e) {
                             for (;;)
                               switch ((e.prev = e.next)) {
                                 case 0:
                                   return (
                                     (e.next = 2),
-                                    ot(
+                                    it(
                                       t,
                                       'home-assistant $ home-assistant-main $ partial-panel-resolver>*'
                                     )
@@ -2787,7 +2904,7 @@ function ut() {
                                     e.next = 7;
                                     break;
                                   }
-                                  return (e.next = 6), ot(t, 'hc-main $ hc-lovelace');
+                                  return ((e.next = 6), it(t, 'hc-main $ hc-lovelace'));
                                 case 6:
                                   n = e.sent;
                                 case 7:
@@ -2795,7 +2912,7 @@ function ut() {
                                     e.next = 11;
                                     break;
                                   }
-                                  return (e.next = 10), ot(t, 'hc-main $ hc-lovelace');
+                                  return ((e.next = 10), it(t, 'hc-main $ hc-lovelace'));
                                 case 10:
                                   n = e.sent;
                                 case 11:
@@ -2830,9 +2947,9 @@ function ut() {
                   })
                 );
               case 8:
-                return (e.next = 10), r(t);
+                return ((e.next = 10), r(t));
               case 10:
-                (n = e.sent), (e.next = 5);
+                ((n = e.sent), (e.next = 5));
                 break;
               case 13:
                 return e.abrupt('return', n);
@@ -2843,27 +2960,27 @@ function ut() {
         }, e);
       })
     )),
-    ut.apply(this, arguments)
+    ct.apply(this, arguments)
   );
 }
-function ct(e) {
+function lt(e) {
   var t, n, r;
   if (null === (t = null == e ? void 0 : e.hass) || void 0 === t ? void 0 : t.localize) {
     var o = (function (e) {
       return 'lovelace' === (null == e ? void 0 : e.url_path)
         ? 'panel.states'
         : 'profile' === (null == e ? void 0 : e.url_path)
-        ? 'panel.profile'
-        : 'panel.'.concat(null == e ? void 0 : e.title);
+          ? 'panel.profile'
+          : 'panel.'.concat(null == e ? void 0 : e.title);
     })(e.panel);
     return e.hass.localize(o) || (null === (n = e.panel) || void 0 === n ? void 0 : n.title) || '';
   }
   return (null === (r = null == e ? void 0 : e.panel) || void 0 === r ? void 0 : r.title) || '';
 }
-function lt(e) {
+function dt(e) {
   var t, n, r, o, i;
   return {
-    panelTitle: ct(e),
+    panelTitle: lt(e),
     panelUrlPath:
       (null ===
         (n = null === (t = null == e ? void 0 : e.route) || void 0 === t ? void 0 : t.prefix) ||
@@ -2881,15 +2998,15 @@ function lt(e) {
       !1,
   };
 }
-function dt(e) {
+function ht(e) {
   return ft.apply(this, arguments);
 }
 function ft() {
   return (
-    (ft = m(
-      v().mark(function e(t) {
-        var n, r, o, i, a, s, u, c, l, d, f, h, p;
-        return v().wrap(function (e) {
+    (ft = M(
+      P().mark(function e(t) {
+        var n, r, o, i, a, s, u, c, l, d, h, f, p;
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -2915,13 +3032,13 @@ function ft() {
                   viewNarrow: (null == t ? void 0 : t.narrow) || !1,
                 });
               case 2:
-                f = 0;
+                h = 0;
               case 3:
                 if (
                   (null === (i = t.shadowRoot) || void 0 === i
                     ? void 0
                     : i.querySelector('hui-root')) ||
-                  !(f < 100)
+                  !(h < 100)
                 ) {
                   e.next = 9;
                   break;
@@ -2933,23 +3050,23 @@ function ft() {
                   })
                 );
               case 6:
-                f++, (e.next = 3);
+                (h++, (e.next = 3));
                 break;
               case 9:
-                if ((h = t.shadowRoot.querySelector('hui-root'))) {
+                if ((f = t.shadowRoot.querySelector('hui-root'))) {
                   e.next = 12;
                   break;
                 }
                 return e.abrupt('return', {});
               case 12:
                 return (
-                  (p = h._curView || 0),
+                  (p = f._curView || 0),
                   e.abrupt('return', {
                     viewTitle:
                       (null ===
                         (u =
                           null ===
-                            (s = null === (a = h.config) || void 0 === a ? void 0 : a.views) ||
+                            (s = null === (a = f.config) || void 0 === a ? void 0 : a.views) ||
                           void 0 === s
                             ? void 0
                             : s[p]) || void 0 === u
@@ -2959,13 +3076,13 @@ function ft() {
                       (null ===
                         (d =
                           null ===
-                            (l = null === (c = h.config) || void 0 === c ? void 0 : c.views) ||
+                            (l = null === (c = f.config) || void 0 === c ? void 0 : c.views) ||
                           void 0 === l
                             ? void 0
                             : l[p]) || void 0 === d
                         ? void 0
                         : d.path) || ''.concat(p),
-                    viewNarrow: h.narrow || !1,
+                    viewNarrow: f.narrow || !1,
                   })
                 );
               case 14:
@@ -2978,20 +3095,20 @@ function ft() {
     ft.apply(this, arguments)
   );
 }
-function ht() {
-  return pt.apply(this, arguments);
-}
 function pt() {
-  return (pt = m(
-    v().mark(function e() {
+  return vt.apply(this, arguments);
+}
+function vt() {
+  return (vt = M(
+    P().mark(function e() {
       var t, n, r, o, i;
-      return v().wrap(function (e) {
+      return P().wrap(function (e) {
         for (;;)
           switch ((e.prev = e.next)) {
             case 0:
-              return (e.next = 2), st(document);
+              return ((e.next = 2), ut(document));
             case 2:
-              return (t = e.sent), (n = lt(t)), (e.next = 6), dt(t);
+              return ((t = e.sent), (n = dt(t)), (e.next = 6), ht(t));
             case 6:
               return (
                 (r = e.sent),
@@ -3017,21 +3134,21 @@ function pt() {
     })
   )).apply(this, arguments);
 }
-function vt() {
+function yt() {
   var e = (function () {
-    var e = m(
-      v().mark(function e() {
+    var e = M(
+      P().mark(function e() {
         var t, n, r, o;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
-                return (e.next = 2), ht();
+                return ((e.next = 2), pt());
               case 2:
-                (t = e.sent),
+                ((t = e.sent),
                   (n = window.location.pathname.slice(1).toLowerCase()),
                   (r = t.panel.fullUrlPath.toLowerCase()),
-                  (o = 0);
+                  (o = 0));
               case 6:
                 if (!(n !== r && o++ < 200)) {
                   e.next = 16;
@@ -3044,12 +3161,12 @@ function vt() {
                   })
                 );
               case 9:
-                return (e.next = 11), ht();
+                return ((e.next = 11), pt());
               case 11:
-                (t = e.sent),
+                ((t = e.sent),
                   (n = window.location.pathname.slice(1).toLowerCase()),
                   (r = t.panel.fullUrlPath.toLowerCase()),
-                  (e.next = 6);
+                  (e.next = 6));
                 break;
               case 16:
                 return (
@@ -3072,38 +3189,38 @@ function vt() {
       return e.apply(this, arguments);
     };
   })();
-  at = new Promise(function (t) {
+  st = new Promise(function (t) {
     return t(e());
   });
 }
-window.addEventListener(
+(window.addEventListener(
   'card-mod-bootstrap',
   (function () {
-    var e = m(
-      v().mark(function e(t) {
-        return v().wrap(function (e) {
+    var e = M(
+      P().mark(function e(t) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
-                t.stopPropagation(),
+                (t.stopPropagation(),
                   ['popstate', 'location-changed'].forEach(function (e) {
                     window.addEventListener(
                       e,
-                      m(
-                        v().mark(function e() {
-                          return v().wrap(function (e) {
+                      M(
+                        P().mark(function e() {
+                          return P().wrap(function (e) {
                             for (;;)
                               switch ((e.prev = e.next)) {
                                 case 0:
-                                  (at = null),
-                                    vt(),
-                                    at.then(function () {
+                                  ((st = null),
+                                    yt(),
+                                    st.then(function () {
                                       document.dispatchEvent(
                                         new CustomEvent('cm_update', {
                                           detail: { variablesChanged: !0 },
                                         })
                                       );
-                                    });
+                                    }));
                                 case 3:
                                 case 'end':
                                   return e.stop();
@@ -3112,7 +3229,7 @@ window.addEventListener(
                         })
                       )
                     );
-                  });
+                  }));
               case 2:
               case 'end':
                 return e.stop();
@@ -3125,38 +3242,53 @@ window.addEventListener(
     };
   })()
 ),
-  (window.cardMod_template_cache = window.cardMod_template_cache || {});
-var yt = window.cardMod_template_cache;
-function mt(e, t) {
-  var n = yt[e];
+  (window.cardMod_template_cache = window.cardMod_template_cache || {}));
+var mt = window.cardMod_template_cache;
+function bt(e, t) {
+  var n = mt[e];
   n &&
-    ((n.value = t.result),
-    n.debug &&
-      (console.groupCollapsed('CardMod: Template updated'),
-      console.log('Template:', n.template),
-      console.log('Variables:', n.variables),
-      console.log('Value:', n.value),
-      console.groupEnd()),
+    ('error' in t
+      ? ((n.error = t),
+        (n.value = ''),
+        n.debug &&
+          (console.groupCollapsed('CardMod: Template '.concat(n.error.level)),
+          console.log({
+            template: n.template,
+            variables: n.variables,
+            value: n.value,
+            error: n.error,
+          }),
+          console.groupEnd()))
+      : ((n.value = t.result),
+        n.debug &&
+          (console.groupCollapsed('CardMod: Template updated'),
+          console.log({
+            template: n.template,
+            variables: n.variables,
+            value: n.value,
+            error: n.error,
+          }),
+          console.groupEnd())),
     n.callbacks.forEach(function (e) {
-      return e(t.result);
+      return e(n.value);
     }));
 }
-function bt(e, t, n) {
-  return gt.apply(this, arguments);
+function gt(e, t, n) {
+  return wt.apply(this, arguments);
 }
-function gt() {
-  return (gt = m(
-    v().mark(function e(t, n, r) {
+function wt() {
+  return (wt = M(
+    P().mark(function e(t, n, r) {
       var o, i, a, s, u, c;
-      return v().wrap(function (e) {
+      return P().wrap(function (e) {
         for (;;)
           switch ((e.prev = e.next)) {
             case 0:
-              return (e.next = 2), Ke();
+              return ((e.next = 2), Ze());
             case 2:
-              return (o = e.sent), (e.next = 5), at || vt(), at;
+              return ((o = e.sent), (e.next = 5), st || yt(), st);
             case 5:
-              (i = e.sent),
+              ((i = e.sent),
                 (a = o.connection),
                 (r = Object.assign(
                   Object.assign(
@@ -3164,37 +3296,39 @@ function gt() {
                       user: o.user.name,
                       browser: document.querySelector('hc-main')
                         ? 'CAST'
-                        : localStorage[Xe]
-                        ? localStorage[Xe]
-                        : '',
+                        : localStorage[Qe]
+                          ? localStorage[Qe]
+                          : '',
                     },
                     i
                   ),
                   r
                 )),
                 (s = JSON.stringify([n, r])),
-                (u = yt[s])
+                (u = mt[s])
                   ? (u.debug &&
                       (console.groupCollapsed('CardMod: Reusing template'),
-                      console.log('Template:', u.template),
-                      console.log('Variables:', u.variables),
-                      console.log('Value:', u.value),
+                      console.log({
+                        template: u.template,
+                        variables: u.variables,
+                        value: u.value,
+                        error: u.error,
+                      }),
                       console.groupEnd()),
-                    u.callbacks.has(t) || wt(t),
+                    u.callbacks.has(t) || _t(t),
                     t(u.value),
                     u.callbacks.add(t),
                     u.cooldownTimeoutID && clearTimeout(u.cooldownTimeoutID),
                     (u.cooldownTimeoutID = void 0))
                   : ((c = !1),
-                    wt(t),
+                    _t(t),
                     t(''),
                     n.includes('card_mod.debug') &&
                       ((c = !0),
                       console.groupCollapsed('CardMod: Binding template'),
-                      console.log('Template:', n),
-                      console.log('Variables:', r),
+                      console.log({ template: n, variables: r }),
                       console.groupEnd()),
-                    (yt[s] = u =
+                    (mt[s] = u =
                       {
                         template: n,
                         variables: r,
@@ -3203,11 +3337,11 @@ function gt() {
                         debug: c,
                         unsubscribe: a.subscribeMessage(
                           function (e) {
-                            return mt(s, e);
+                            return bt(s, e);
                           },
-                          { type: 'render_template', template: n, variables: r }
+                          { type: 'render_template', template: n, variables: r, report_errors: c }
                         ),
-                      }));
+                      })));
             case 11:
             case 'end':
               return e.stop();
@@ -3216,18 +3350,18 @@ function gt() {
     })
   )).apply(this, arguments);
 }
-function wt(e) {
-  return _t.apply(this, arguments);
+function _t(e) {
+  return kt.apply(this, arguments);
 }
-function _t() {
-  return (_t = m(
-    v().mark(function e(t) {
+function kt() {
+  return (kt = M(
+    P().mark(function e(t) {
       var n, r, o, i, a;
-      return v().wrap(function (e) {
+      return P().wrap(function (e) {
         for (;;)
           switch ((e.prev = e.next)) {
             case 0:
-              (n = 0), (r = Object.entries(yt));
+              ((n = 0), (r = Object.entries(mt)));
             case 1:
               if (!(n < r.length)) {
                 e.next = 10;
@@ -3244,14 +3378,13 @@ function _t() {
                     (console.groupCollapsed(
                       'CardMod: Template unbound and will be unsubscribed after cooldown'
                     ),
-                    console.log('Template:', a.template),
-                    console.log('Variables:', a.variables),
+                    console.log({ template: a.template, variables: a.variables }),
                     console.groupEnd()),
-                  (a.cooldownTimeoutID = window.setTimeout(kt, 2e4, i))),
+                  (a.cooldownTimeoutID = window.setTimeout(xt, 2e4, i))),
                 e.abrupt('break', 10)
               );
             case 7:
-              n++, (e.next = 1);
+              (n++, (e.next = 1));
               break;
             case 10:
             case 'end':
@@ -3261,18 +3394,18 @@ function _t() {
     })
   )).apply(this, arguments);
 }
-function kt(e) {
-  return xt.apply(this, arguments);
+function xt(e) {
+  return Et.apply(this, arguments);
 }
-function xt() {
-  return (xt = m(
-    v().mark(function e(t) {
+function Et() {
+  return (Et = M(
+    P().mark(function e(t) {
       var n;
-      return v().wrap(function (e) {
+      return P().wrap(function (e) {
         for (;;)
           switch ((e.prev = e.next)) {
             case 0:
-              if ((n = yt[t])) {
+              if ((n = mt[t])) {
                 e.next = 3;
                 break;
               }
@@ -3282,15 +3415,14 @@ function xt() {
                 n.cooldownTimeoutID && clearTimeout(n.cooldownTimeoutID),
                 n.debug &&
                   (console.groupCollapsed('CardMod: Unsubscribing template after cooldown'),
-                  console.log('Template:', n.template),
-                  console.log('Variables:', n.variables),
+                  console.log({ template: n.template, variables: n.variables }),
                   console.groupEnd()),
-                delete yt[t],
+                delete mt[t],
                 (e.next = 8),
                 n.unsubscribe
               );
             case 8:
-              return (e.t0 = e.sent), (e.next = 11), (0, e.t0)();
+              return ((e.t0 = e.sent), (e.next = 11), (0, e.t0)());
             case 11:
             case 'end':
               return e.stop();
@@ -3299,67 +3431,125 @@ function xt() {
     })
   )).apply(this, arguments);
 }
-var Et = '4.1.0',
-  At = (function () {
-    var e = m(
-      v().mark(function e() {
-        var t, n;
-        return v().wrap(function (e) {
-          for (;;)
-            switch ((e.prev = e.next)) {
-              case 0:
-                if (!customElements.get('developer-tools-event')) {
-                  e.next = 2;
+var At = {
+    name: 'card-mod',
+    private: !0,
+    version: '4.2.1',
+    description: '',
+    scripts: { build: 'rollup -c', watch: 'rollup -c --watch' },
+    keywords: [],
+    author: 'Thomas Lovén',
+    license: 'MIT',
+    devDependencies: {
+      '@babel/core': '^7.23.6',
+      '@babel/preset-env': '^7.23.6',
+      '@rollup/plugin-babel': '^6.0.4',
+      '@rollup/plugin-json': '^6.1.0',
+      '@rollup/plugin-node-resolve': '^15.2.3',
+      rollup: '^2.79.2',
+      'rollup-plugin-terser': '^7.0.2',
+      'rollup-plugin-typescript2': '^0.36.0',
+      typescript: '^5.3.3',
+    },
+    dependencies: { '@watchable/unpromise': '^1.0.2', lit: '^3.1.0', tslib: '^2.6.2' },
+  },
+  $t = (function () {
+    var e = M(
+      P().mark(function e() {
+        var t, n, r, o;
+        return P().wrap(
+          function (e) {
+            for (;;)
+              switch ((e.prev = e.next)) {
+                case 0:
+                  if (!customElements.get('developer-tools-event')) {
+                    e.next = 2;
+                    break;
+                  }
+                  return e.abrupt('return');
+                case 2:
+                  return (
+                    (e.prev = 2),
+                    (e.next = 5),
+                    customElements.whenDefined('partial-panel-resolver')
+                  );
+                case 5:
+                  return (
+                    ((n = document.createElement('partial-panel-resolver')).hass = {
+                      panels: [{ url_path: 'tmp', component_name: 'config' }],
+                    }),
+                    n._updateRoutes(),
+                    (e.next = 10),
+                    n.routerOptions.routes.tmp.load()
+                  );
+                case 10:
+                  return ((e.next = 12), customElements.whenDefined('ha-panel-config'));
+                case 12:
+                  return (
+                    (r = document.createElement('ha-panel-config')),
+                    (e.next = 15),
+                    null === (t = r.routerOptions.routes['developer-tools']) || void 0 === t
+                      ? void 0
+                      : t.load()
+                  );
+                case 15:
+                  return ((e.next = 17), customElements.whenDefined('developer-tools-router'));
+                case 17:
+                  return (
+                    (o = document.createElement('developer-tools-router')),
+                    (e.next = 20),
+                    o.routerOptions.routes.event.load()
+                  );
+                case 20:
+                  e.next = 25;
                   break;
-                }
-                return e.abrupt('return');
-              case 2:
-                return (e.next = 4), customElements.whenDefined('partial-panel-resolver');
-              case 4:
-                return (
-                  ((t = document.createElement('partial-panel-resolver')).hass = {
-                    panels: [{ url_path: 'tmp', component_name: 'developer-tools' }],
-                  }),
-                  t._updateRoutes(),
-                  (e.next = 9),
-                  t.routerOptions.routes.tmp.load()
-                );
-              case 9:
-                return (e.next = 11), customElements.whenDefined('developer-tools-router');
-              case 11:
-                return (
-                  (n = document.createElement('developer-tools-router')),
-                  (e.next = 14),
-                  n.routerOptions.routes.event.load()
-                );
-              case 14:
-              case 'end':
-                return e.stop();
-            }
-        }, e);
+                case 22:
+                  ((e.prev = 22),
+                    (e.t0 = e.catch(2)),
+                    console.error('CARD-MOD: Error loading yaml2json:', e.t0));
+                case 25:
+                case 'end':
+                  return e.stop();
+              }
+          },
+          e,
+          null,
+          [[2, 22]]
+        );
       })
     );
     return function () {
       return e.apply(this, arguments);
     };
   })(),
-  $t = (function () {
-    var e = m(
-      v().mark(function e(t) {
+  St = (function () {
+    var e = M(
+      P().mark(function e(t) {
         var n;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
-                return (e.next = 2), At();
+                return ((e.next = 2), $t());
               case 2:
+                if (
+                  (((n = document.createElement('ha-yaml-editor')).hass = {}),
+                  (n.hass.localize = function (e) {
+                    return 'Invalid YAML';
+                  }),
+                  n._onChange(new CustomEvent('yaml', { detail: { value: t } })),
+                  n.isValid)
+                ) {
+                  e.next = 9;
+                  break;
+                }
                 return (
-                  (n = document.createElement('ha-yaml-editor'))._onChange(
-                    new CustomEvent('yaml', { detail: { value: t } })
-                  ),
-                  e.abrupt('return', n.value)
+                  console.error('CARD-MOD: Error loading theme yaml:', t),
+                  e.abrupt('return', {})
                 );
-              case 5:
+              case 9:
+                return e.abrupt('return', n.value);
+              case 10:
               case 'end':
                 return e.stop();
             }
@@ -3370,10 +3560,10 @@ var Et = '4.1.0',
       return e.apply(this, arguments);
     };
   })();
-function St() {
+function Ct() {
   document.dispatchEvent(new Event('cm_update'));
 }
-var Ct = [customElements.whenDefined('home-assistant'), customElements.whenDefined('hc-main')];
+var Ot = [customElements.whenDefined('home-assistant'), customElements.whenDefined('hc-main')];
 function Pt() {
   function e(e) {
     return (
@@ -3384,29 +3574,29 @@ function Pt() {
   }
   return new Promise(function (t, n) {
     var r = !1;
-    m(
-      v().mark(function o() {
+    M(
+      P().mark(function o() {
         var i, a;
-        return v().wrap(function (o) {
+        return P().wrap(function (o) {
           for (;;)
             switch ((o.prev = o.next)) {
               case 0:
-                return (o.next = 2), Ke();
+                return ((o.next = 2), Ze());
               case 2:
                 if (!e(o.sent)) {
                   o.next = 7;
                   break;
                 }
-                return (r = !0), t(), o.abrupt('return');
+                return ((r = !0), t(), o.abrupt('return'));
               case 7:
-                (i = window.setInterval(
-                  m(
-                    v().mark(function n() {
-                      return v().wrap(function (n) {
+                ((i = window.setInterval(
+                  M(
+                    P().mark(function n() {
+                      return P().wrap(function (n) {
                         for (;;)
                           switch ((n.prev = n.next)) {
                             case 0:
-                              return (n.next = 2), Ke();
+                              return ((n.next = 2), Ze());
                             case 2:
                               e(n.sent) &&
                                 (r || ((r = !0), clearInterval(i), clearTimeout(a), t()));
@@ -3424,7 +3614,7 @@ function Pt() {
                       ((r = !0),
                       clearInterval(i),
                       n(new Error('themesReady: Timeout waiting for themes to become ready')));
-                  }, 3e4));
+                  }, 3e4)));
               case 9:
               case 'end':
                 return o.stop();
@@ -3434,82 +3624,125 @@ function Pt() {
     )();
   });
 }
-function Ot(e) {
-  return Tt.apply(this, arguments);
+function Tt(e) {
+  if (!e) return !1;
+  var t = e.trim().toLowerCase();
+  return 'true' === t || '1' === t || 'yes' === t || 'on' === t;
 }
-function Tt() {
+function jt(e) {
+  return Mt.apply(this, arguments);
+}
+function Mt() {
   return (
-    (Tt = m(
-      v().mark(function e(t) {
-        var n, r, o, i, a;
-        return v().wrap(function (e) {
-          for (;;)
-            switch ((e.prev = e.next)) {
-              case 0:
-                if (t.type) {
-                  e.next = 2;
+    (Mt = M(
+      P().mark(function e(t) {
+        var n, r, o, i, a, s, u, c, l, d;
+        return P().wrap(
+          function (e) {
+            for (;;)
+              switch ((e.prev = e.next)) {
+                case 0:
+                  if (t.type) {
+                    e.next = 2;
+                    break;
+                  }
+                  return e.abrupt('return', null);
+                case 2:
+                  return ((e.next = 4), Pt());
+                case 4:
+                  ((r = t.parentElement ? t.parentElement : t),
+                    (o = window.getComputedStyle(r)),
+                    (i = o.getPropertyValue('--card-mod-theme')),
+                    (a = !1),
+                    Tt(o.getPropertyValue('--card-mod-'.concat(t.type, '-debug'))) && (a = !0),
+                    (s = x(t.classes)),
+                    (e.prev = 11),
+                    s.s());
+                case 13:
+                  if ((u = s.n()).done) {
+                    e.next = 21;
+                    break;
+                  }
+                  if (
+                    ((c = u.value),
+                    !Tt(o.getPropertyValue('--card-mod-'.concat(t.type, '-').concat(c, '-debug'))))
+                  ) {
+                    e.next = 19;
+                    break;
+                  }
+                  return ((a = !0), e.abrupt('break', 21));
+                case 19:
+                  e.next = 13;
                   break;
-                }
-                return e.abrupt('return', null);
-              case 2:
-                return (e.next = 4), Pt();
-              case 4:
-                return (
-                  (r = t.parentElement ? t.parentElement : t),
-                  (o = window.getComputedStyle(r).getPropertyValue('--card-mod-theme')),
-                  t.debug && console.log('CardMod Debug: Theme:', o),
-                  (e.next = 9),
-                  Ke()
-                );
-              case 9:
-                if ((i = e.sent)) {
-                  e.next = 12;
+                case 21:
+                  e.next = 26;
                   break;
-                }
-                return e.abrupt('return', {});
-              case 12:
-                if (
-                  (a =
-                    null !== (n = null == i ? void 0 : i.themes.themes) && void 0 !== n ? n : {})[o]
-                ) {
-                  e.next = 15;
-                  break;
-                }
-                return e.abrupt('return', {});
-              case 15:
-                if (!a[o]['card-mod-'.concat(t.type, '-yaml')]) {
-                  e.next = 19;
-                  break;
-                }
-                return e.abrupt('return', $t(a[o]['card-mod-'.concat(t.type, '-yaml')]));
-              case 19:
-                if (!a[o]['card-mod-'.concat(t.type)]) {
-                  e.next = 23;
-                  break;
-                }
-                return e.abrupt('return', { '.': a[o]['card-mod-'.concat(t.type)] });
-              case 23:
-                return e.abrupt('return', {});
-              case 24:
-              case 'end':
-                return e.stop();
-            }
-        }, e);
+                case 23:
+                  ((e.prev = 23), (e.t0 = e.catch(11)), s.e(e.t0));
+                case 26:
+                  return ((e.prev = 26), s.f(), e.finish(26));
+                case 29:
+                  return (
+                    t.debug || (t.debug = !!a),
+                    t.debug && console.log('CardMod Debug: Theme:', i),
+                    (e.next = 33),
+                    Ze()
+                  );
+                case 33:
+                  if ((l = e.sent)) {
+                    e.next = 36;
+                    break;
+                  }
+                  return e.abrupt('return', {});
+                case 36:
+                  if (
+                    (d =
+                      null !== (n = null == l ? void 0 : l.themes.themes) && void 0 !== n ? n : {})[
+                      i
+                    ]
+                  ) {
+                    e.next = 39;
+                    break;
+                  }
+                  return e.abrupt('return', {});
+                case 39:
+                  if (!d[i]['card-mod-'.concat(t.type, '-yaml')]) {
+                    e.next = 43;
+                    break;
+                  }
+                  return e.abrupt('return', St(d[i]['card-mod-'.concat(t.type, '-yaml')]));
+                case 43:
+                  if (!d[i]['card-mod-'.concat(t.type)]) {
+                    e.next = 47;
+                    break;
+                  }
+                  return e.abrupt('return', { '.': d[i]['card-mod-'.concat(t.type)] });
+                case 47:
+                  return e.abrupt('return', {});
+                case 48:
+                case 'end':
+                  return e.stop();
+              }
+          },
+          e,
+          null,
+          [[11, 23, 26, 29]]
+        );
       })
     )),
-    Tt.apply(this, arguments)
+    Mt.apply(this, arguments)
   );
 }
-Je.race(Ct).then(function () {
+Je.race(Ot).then(function () {
   window.setTimeout(
-    m(
-      v().mark(function e() {
+    M(
+      P().mark(function e() {
         var t, n, r;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
-                return (e.next = 2), Ke();
+                return ((e.next = 2), Ze());
               case 2:
                 r = e.sent;
               case 3:
@@ -3527,15 +3760,15 @@ Je.race(Ct).then(function () {
                 e.next = 3;
                 break;
               case 8:
-                r.connection.subscribeEvents(function () {
-                  window.setTimeout(St, 500);
+                (r.connection.subscribeEvents(function () {
+                  window.setTimeout(Ct, 500);
                 }, 'themes_updated'),
                   null === (t = document.querySelector('home-assistant')) ||
                     void 0 === t ||
-                    t.addEventListener('settheme', St),
+                    t.addEventListener('settheme', Ct),
                   null === (n = document.querySelector('hc-main')) ||
                     void 0 === n ||
-                    n.addEventListener('settheme', St);
+                    n.addEventListener('settheme', Ct));
               case 11:
               case 'end':
                 return e.stop();
@@ -3546,26 +3779,26 @@ Je.race(Ct).then(function () {
     1e3
   );
 });
-var jt = (function (e) {
-  b(n, De);
-  var t = g(n);
+var Nt = (function (e) {
+  v(n, He);
+  var t = y(n);
   function n() {
     var e;
-    return P(this, n), ((e = t.apply(this, arguments))._cardMod = []), e;
+    return ($(this, n), ((e = t.apply(this, arguments))._cardMod = []), e);
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'setConfig',
         value: function (e, t) {
           for (var n = arguments.length, r = new Array(n > 2 ? n - 2 : 0), o = 2; o < n; o++)
             r[o - 2] = arguments[o];
-          null == e || e.apply(void 0, [t].concat(r)),
+          (null == e || e.apply(void 0, [t].concat(r)),
             this._cardMod.forEach(function (e) {
               var n;
-              (e.variables = { config: t }),
-                (e.styles = (null === (n = t.card_mod) || void 0 === n ? void 0 : n.style) || {});
-            });
+              ((e.variables = { config: t }),
+                (e.styles = (null === (n = t.card_mod) || void 0 === n ? void 0 : n.style) || {}));
+            }));
         },
       },
       {
@@ -3577,26 +3810,26 @@ var jt = (function (e) {
             o++
           )
             r[o - 1] = arguments[o];
-          null == e || e.apply(void 0, r),
+          (null == e || e.apply(void 0, r),
             Promise.all([this.updateComplete]).then(function () {
               return t._cardMod.forEach(function (e) {
                 var t;
                 return null === (t = e.refresh) || void 0 === t ? void 0 : t.call(e);
               });
-            });
+            }));
         },
       },
     ]),
     n
   );
 })();
-function Mt(e, t) {
-  return Nt.apply(this, arguments);
+function Rt(e, t) {
+  return Lt.apply(this, arguments);
 }
-function Nt() {
+function Lt() {
   return (
-    (Nt = m(
-      v().mark(function e(t, n) {
+    (Lt = M(
+      P().mark(function e(t, n) {
         var r,
           o,
           i,
@@ -3605,7 +3838,7 @@ function Nt() {
           u,
           c,
           l = arguments;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -3627,12 +3860,12 @@ function Nt() {
                           null !== (s = null == r ? void 0 : r.style) && void 0 !== s
                             ? s
                             : null == r
-                            ? void 0
-                            : r.class) && void 0 !== u
+                              ? void 0
+                              : r.class) && void 0 !== u
                         ? u
                         : null == r
-                        ? void 0
-                        : r.debug) &&
+                          ? void 0
+                          : r.debug) &&
                     ((r = { style: r }), (c = !0)),
                   c &&
                     !window.cm_compatibility_warning &&
@@ -3646,7 +3879,7 @@ function Nt() {
                     ),
                     console.info('The card used card-mod to apply styles here:', t),
                     console.groupEnd()),
-                  e.abrupt('return', Rt(t, n, r, o, i, a))
+                  e.abrupt('return', Ut(t, n, r, o, i, a))
                 );
               case 11:
               case 'end':
@@ -3655,16 +3888,16 @@ function Nt() {
         }, e);
       })
     )),
-    Nt.apply(this, arguments)
+    Lt.apply(this, arguments)
   );
 }
-function Rt(e, t) {
-  return Lt.apply(this, arguments);
+function Ut(e, t) {
+  return Dt.apply(this, arguments);
 }
-function Lt() {
+function Dt() {
   return (
-    (Lt = m(
-      v().mark(function e(t, n) {
+    (Dt = M(
+      P().mark(function e(t, n) {
         var r,
           o,
           i,
@@ -3674,23 +3907,22 @@ function Lt() {
           c,
           l,
           d,
-          f,
+          h,
           p,
+          v,
           y,
-          b,
-          g,
-          w,
-          _ = arguments;
-        return v().wrap(function (e) {
+          m,
+          b = arguments;
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
                 if (
-                  ((i = _.length > 3 && void 0 !== _[3] ? _[3] : {}),
-                  (a = !(_.length > 4 && void 0 !== _[4]) || _[4]),
-                  (s = _.length > 5 && void 0 !== _[5] ? _[5] : void 0),
-                  (b = (
-                    null == (o = _.length > 2 && void 0 !== _[2] ? _[2] : void 0) ? void 0 : o.debug
+                  ((i = b.length > 3 && void 0 !== b[3] ? b[3] : {}),
+                  (a = !(b.length > 4 && void 0 !== b[4]) || b[4]),
+                  (s = b.length > 5 && void 0 !== b[5] ? b[5] : void 0),
+                  (y = (
+                    null == (o = b.length > 2 && void 0 !== b[2] ? b[2] : void 0) ? void 0 : o.debug
                   )
                     ? function () {
                         for (var e, t = arguments.length, n = new Array(t), r = 0; r < t; r++)
@@ -3698,10 +3930,10 @@ function Lt() {
                         return (e = console).log.apply(e, ['CardMod Debug:'].concat(n));
                       }
                     : function () {}),
-                  b.apply(
+                  y.apply(
                     void 0,
                     ['Applying card-mod to:'].concat(
-                      h(
+                      f(
                         (null == t ? void 0 : t.host)
                           ? ['#shadow-root of:', null == t ? void 0 : t.host]
                           : [t]
@@ -3720,45 +3952,63 @@ function Lt() {
                   e.next = 11;
                   break;
                 }
-                return (e.next = 11), customElements.whenDefined(t.localName);
+                return ((e.next = 11), customElements.whenDefined(t.localName));
               case 11:
+                if (((t._cardMod = t._cardMod || []), customElements.get('card-mod'))) {
+                  e.next = 16;
+                  break;
+                }
                 return (
-                  (t._cardMod = t._cardMod || []),
-                  (g =
+                  y('Waiting for card-mod customElement to be defined'),
+                  (e.next = 16),
+                  customElements.whenDefined('card-mod')
+                );
+              case 16:
+                return (
+                  (m =
                     null !==
                       (c = t._cardMod.find(function (e) {
                         return e.type === n;
                       })) && void 0 !== c
                       ? c
                       : document.createElement('card-mod')),
-                  b('Applying card-mod in:', g),
-                  (g.type = n),
-                  (g.debug = null !== (l = null == o ? void 0 : o.debug) && void 0 !== l && l),
-                  g.cancelStyleChild(),
-                  t._cardMod.includes(g) || t._cardMod.push(g),
+                  y('Applying card-mod in:', m),
+                  (m.type = n),
+                  (m.card_mod_class = s),
+                  (m.debug = null !== (l = null == o ? void 0 : o.debug) && void 0 !== l && l),
+                  m.cancelStyleChild(),
+                  t._cardMod.includes(m) || t._cardMod.push(m),
                   window.setTimeout(
-                    m(
-                      v().mark(function e() {
-                        var n, r, s, u;
-                        return v().wrap(function (e) {
+                    M(
+                      P().mark(function e() {
+                        var n, r, s, u, c, l;
+                        return P().wrap(function (e) {
                           for (;;)
                             switch ((e.prev = e.next)) {
                               case 0:
-                                return (e.next = 2), Promise.all([t.updateComplete]);
+                                return ((e.next = 2), Promise.all([t.updateComplete]));
                               case 2:
-                                (u =
+                                ((c =
                                   (null !== (n = t.modElement) && void 0 !== n ? n : a) &&
                                   null !== (r = t.shadowRoot) &&
                                   void 0 !== r
                                     ? r
-                                    : t).contains(g) ||
-                                  (u.appendChild(g),
-                                  (null == o ? void 0 : o.prepend) && u.prepend(g)),
-                                  (g.variables = i),
-                                  (g.styles =
-                                    null !== (s = null == o ? void 0 : o.style) && void 0 !== s
-                                      ? s
-                                      : '');
+                                    : t).contains(m) ||
+                                  ((l =
+                                    null ===
+                                    (null === (s = null == t ? void 0 : t.renderOptions) ||
+                                    void 0 === s
+                                      ? void 0
+                                      : s.renderBefore)) &&
+                                    y('Lit prepend workaround applied for:', t),
+                                  (null == o ? void 0 : o.prepend) || l
+                                    ? c.prepend(m)
+                                    : c.appendChild(m)),
+                                  (m.variables = i),
+                                  (m.styles =
+                                    null !== (u = null == o ? void 0 : o.style) && void 0 !== u
+                                      ? u
+                                      : ''));
                               case 6:
                               case 'end':
                                 return e.stop();
@@ -3768,95 +4018,99 @@ function Lt() {
                     ),
                     1
                   ),
-                  (w =
+                  (m.classes =
                     'string' == typeof (null == o ? void 0 : o.class)
                       ? null ===
-                          (f =
+                          (h =
                             null === (d = null == o ? void 0 : o.class) || void 0 === d
                               ? void 0
-                              : d.split) || void 0 === f
+                              : d.split) || void 0 === h
                         ? void 0
-                        : f.call(d, ' ')
-                      : h(null !== (p = null == o ? void 0 : o.class) && void 0 !== p ? p : [])),
-                  s && w.push(s),
-                  null === (y = t.classList) || void 0 === y || (r = y).add.apply(r, h(w)),
-                  e.abrupt('return', g)
+                        : h.call(d, ' ')
+                      : f(null !== (p = null == o ? void 0 : o.class) && void 0 !== p ? p : [])),
+                  s && m.classes.push(s),
+                  null === (v = t.classList) || void 0 === v || (r = v).add.apply(r, f(m.classes)),
+                  e.abrupt('return', m)
                 );
-              case 23:
+              case 28:
               case 'end':
                 return e.stop();
             }
         }, e);
       })
     )),
-    Lt.apply(this, arguments)
+    Dt.apply(this, arguments)
   );
 }
-function Ut(e, t) {
+function Ht(e, t) {
   var n = function (e) {
-    return e && 'object' === M(e) && !Array.isArray(e);
+    return e && 'object' === T(e) && !Array.isArray(e);
   };
   if (n(e) && n(t))
     for (var r in t)
       n(t[r])
         ? (e[r] || Object.assign(e, d({}, r, {})),
           'string' == typeof e[r] && (e[r] = { '.': e[r] }),
-          Ut(e[r], t[r]))
+          Ht(e[r], t[r]))
         : e[r]
-        ? (e[r] = t[r] + e[r])
-        : (e[r] = t[r]);
+          ? (e[r] = t[r] + e[r])
+          : (e[r] = t[r]);
   return e;
 }
-function Dt(e, t) {
+function It(e, t) {
   if (e === t) return !0;
-  if (M(e) !== M(t)) return !1;
+  if (T(e) !== T(t)) return !1;
   if (!(e instanceof Object && t instanceof Object)) return !1;
   for (var n in e)
     if (e.hasOwnProperty(n)) {
       if (!t.hasOwnProperty(n)) return !1;
       if (e[n] !== t[n]) {
-        if ('object' !== M(e[n])) return !1;
-        if (!Dt(e[n], t[n])) return !1;
+        if ('object' !== T(e[n])) return !1;
+        if (!It(e[n], t[n])) return !1;
       }
     }
   for (var r in t) if (t.hasOwnProperty(r) && !e.hasOwnProperty(r)) return !1;
   return !0;
 }
-var Ht = (function (e) {
-  b(s, De);
+var qt = (function (e) {
+  v(s, He);
   var t,
     n,
     r,
     o,
-    i = g(s);
+    i = y(s);
   function s() {
     var e;
     return (
-      P(this, s),
+      $(this, s),
       ((e = i.call(this)).dynamicVariablesHaveChanged = !1),
       (e.card_mod_children = {}),
       (e.card_mod_parent = void 0),
+      (e.card_mod_class = void 0),
+      (e.classes = []),
       (e.debug = !1),
       (e._fixed_styles = {}),
       (e._styles = ''),
+      (e._processStylesOnConnect = !1),
       (e._rendered_styles = ''),
       (e._cancel_style_child = []),
       (e._observer = new MutationObserver(function (t) {
+        e.debug && e._debug('Mutations observed:', t);
         var n,
           r = !0,
-          o = $(t);
+          o = x(t);
         try {
           for (o.s(); !(n = o.n()).done; ) {
             var i = n.value;
             if ('card-mod' === i.target.localName) return;
-            i.addedNodes.length &&
+            (i.addedNodes.length &&
               i.addedNodes.forEach(function (e) {
                 'card-mod' !== e.localName && (r = !1);
               }),
               i.removedNodes.length &&
                 i.removedNodes.forEach(function (e) {
                   'card-mod' !== e.localName && (r = !1);
-                });
+                }));
           }
         } catch (e) {
           o.e(e);
@@ -3867,31 +4121,57 @@ var Ht = (function (e) {
       })),
       document.addEventListener('cm_update', function (t) {
         var n;
-        e.isConnected &&
-          ((e.dynamicVariablesHaveChanged =
-            (null === (n = t.detail) || void 0 === n ? void 0 : n.variablesChanged) || !1),
-          e._process_styles(e.card_mod_input));
+        ((e.dynamicVariablesHaveChanged =
+          (null === (n = t.detail) || void 0 === n ? void 0 : n.variablesChanged) || !1),
+          e.isConnected ? e._process_styles(e.card_mod_input) : (e._processStylesOnConnect = !0));
       }),
       e
     );
   }
   return (
-    T(
+    C(
       s,
       [
         {
           key: 'connectedCallback',
           value: function () {
-            f(A(s.prototype), 'connectedCallback', this).call(this),
-              this.refresh(),
+            var e, t, n;
+            (h(k(s.prototype), 'connectedCallback', this).call(this),
+              this._processStylesOnConnect
+                ? ((this._processStylesOnConnect = !1),
+                  this._debug.apply(
+                    this,
+                    ['Processing styles on (Re)connect:', 'type:', this.type, 'for:'].concat(
+                      f(
+                        (
+                          null === (e = null == this ? void 0 : this.parentNode) || void 0 === e
+                            ? void 0
+                            : e.host
+                        )
+                          ? [
+                              '#shadow-root of:',
+                              null === (t = null == this ? void 0 : this.parentNode) || void 0 === t
+                                ? void 0
+                                : t.host,
+                            ]
+                          : [
+                              null !== (n = this.parentElement) && void 0 !== n
+                                ? n
+                                : this.parentNode,
+                            ]
+                      )
+                    )
+                  ),
+                  this._process_styles(this.card_mod_input))
+                : this.refresh(),
               this.setAttribute('slot', 'none'),
-              (this.style.display = 'none');
+              (this.style.display = 'none'));
           },
         },
         {
           key: 'disconnectedCallback',
           value: function () {
-            f(A(s.prototype), 'disconnectedCallback', this).call(this), this._disconnect();
+            (h(k(s.prototype), 'disconnectedCallback', this).call(this), this._disconnect());
           },
         },
         {
@@ -3900,7 +4180,9 @@ var Ht = (function (e) {
             return this._styles;
           },
           set: function (e) {
-            Dt(e, this.card_mod_input) || ((this.card_mod_input = e), this._process_styles(e));
+            It(e, this.card_mod_input) ||
+              ((this.card_mod_input = e),
+              this.isConnected ? this._process_styles(e) : (this._processStylesOnConnect = !0));
           },
         },
         {
@@ -3912,10 +4194,10 @@ var Ht = (function (e) {
         {
           key: 'cancelStyleChild',
           value: function () {
-            this._cancel_style_child.forEach(function (e) {
+            (this._cancel_style_child.forEach(function (e) {
               return e();
             }),
-              (this._cancel_style_child = []);
+              (this._cancel_style_child = []));
           },
         },
         {
@@ -3929,21 +4211,24 @@ var Ht = (function (e) {
         {
           key: '_process_styles',
           value:
-            ((o = m(
-              v().mark(function e(t) {
+            ((o = M(
+              P().mark(function e(t) {
                 var n, r;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
                           return (
-                            (n = 'string' == typeof t ? { '.': t } : JSON.parse(JSON.stringify(t))),
+                            (n =
+                              'string' == typeof t || void 0 === t
+                                ? { '.': null != t ? t : '' }
+                                : JSON.parse(JSON.stringify(t))),
                             (e.next = 3),
-                            Ot(this)
+                            jt(this)
                           );
                         case 3:
-                          (r = e.sent), Ut(n, r), (this._fixed_styles = n), this.refresh();
+                          ((r = e.sent), Ht(n, r), (this._fixed_styles = n), this.refresh());
                         case 7:
                         case 'end':
                           return e.stop();
@@ -3961,15 +4246,15 @@ var Ht = (function (e) {
         {
           key: '_style_child',
           value:
-            ((r = m(
-              v().mark(function e(t, n) {
+            ((r = M(
+              P().mark(function e(t, n) {
                 var r,
                   o,
                   i,
                   a,
                   s = this,
                   u = arguments;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
@@ -3978,7 +4263,7 @@ var Ht = (function (e) {
                             (r = u.length > 2 && void 0 !== u[2] ? u[2] : 0),
                             (o = this.parentElement || this.parentNode),
                             (e.next = 4),
-                            ot(o, t, !0)
+                            it(o, t, !0)
                           );
                         case 4:
                           if ((i = e.sent) && i.length) {
@@ -3993,7 +4278,7 @@ var Ht = (function (e) {
                         case 8:
                           return (
                             (a = new Promise(function (e, t) {
-                              setTimeout(e, 100 * r), s._cancel_style_child.push(t);
+                              (setTimeout(e, 100 * r), s._cancel_style_child.push(t));
                             })),
                             (e.next = 11),
                             a.catch(function (e) {
@@ -4005,18 +4290,18 @@ var Ht = (function (e) {
                         case 12:
                           return e.abrupt(
                             'return',
-                            h(i).map(
+                            f(i).map(
                               (function () {
-                                var e = m(
-                                  v().mark(function e(t) {
+                                var e = M(
+                                  P().mark(function e(t) {
                                     var r;
-                                    return v().wrap(function (e) {
+                                    return P().wrap(function (e) {
                                       for (;;)
                                         switch ((e.prev = e.next)) {
                                           case 0:
                                             return (
                                               (e.next = 2),
-                                              Rt(
+                                              Ut(
                                                 t,
                                                 ''.concat(s.type, '-child'),
                                                 { style: n, debug: s.debug },
@@ -4059,8 +4344,8 @@ var Ht = (function (e) {
         {
           key: '_connect',
           value:
-            ((n = m(
-              v().mark(function e() {
+            ((n = M(
+              P().mark(function e() {
                 var t,
                   n,
                   r,
@@ -4072,81 +4357,114 @@ var Ht = (function (e) {
                   c,
                   l,
                   d,
-                  f,
                   h,
-                  y = this;
-                return v().wrap(
+                  v,
+                  y,
+                  m,
+                  b = this;
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
-                          (i = null !== (t = this._fixed_styles) && void 0 !== t ? t : {}),
-                            (a = {}),
-                            (s = ''),
-                            (u = !1),
-                            this._debug('(Re)connecting', this),
+                          ((s = null !== (t = this._fixed_styles) && void 0 !== t ? t : {}),
+                            (u = {}),
+                            (c = ''),
+                            (l = !1),
+                            this._debug.apply(
+                              this,
+                              ['(Re)connecting:', 'type:', this.type, 'to:'].concat(
+                                f(
+                                  (
+                                    null === (n = null == this ? void 0 : this.parentNode) ||
+                                    void 0 === n
+                                      ? void 0
+                                      : n.host
+                                  )
+                                    ? [
+                                        '#shadow-root of:',
+                                        null === (r = null == this ? void 0 : this.parentNode) ||
+                                        void 0 === r
+                                          ? void 0
+                                          : r.host,
+                                      ]
+                                    : [
+                                        null !== (o = this.parentElement) && void 0 !== o
+                                          ? o
+                                          : this.parentNode,
+                                      ]
+                                )
+                              )
+                            ),
                             this.cancelStyleChild(),
-                            (c = v().mark(function e() {
+                            (d = P().mark(function e() {
                               var t, n, r;
-                              return v().wrap(function (e) {
+                              return P().wrap(function (e) {
                                 for (;;)
                                   switch ((e.prev = e.next)) {
                                     case 0:
-                                      (t = p(d[l], 2)),
+                                      ((t = p(v[h], 2)),
                                         (n = t[0]),
                                         (r = t[1]),
                                         '.' === n
                                           ? 'string' == typeof r
-                                            ? (s = r)
-                                            : y._debug("Style of '.' must be a string: ", r)
-                                          : ((u = !0),
-                                            (a[n] = y._style_child(n, r).catch(function (e) {
+                                            ? (c = r)
+                                            : b._debug("Style of '.' must be a string: ", r)
+                                          : ((l = !0),
+                                            (u[n] = b._style_child(n, r).catch(function (e) {
                                               if ('NoElements' != e.message) {
                                                 if ('Cancelled' != e.message) throw e;
-                                                y.debug &&
+                                                b.debug &&
                                                   (console.groupCollapsed(
                                                     'card-mod style_child cancelled while looking for elements'
                                                   ),
                                                   console.info('Looked for '.concat(n)),
-                                                  console.info(y),
+                                                  console.info(b),
                                                   console.groupEnd());
-                                              } else y.debug && (console.groupCollapsed('card-mod found no elements'), console.info('Looked for '.concat(n)), console.info(y), console.groupEnd());
-                                            })));
+                                              } else
+                                                b.debug &&
+                                                  (console.groupCollapsed(
+                                                    'card-mod found no elements'
+                                                  ),
+                                                  console.info('Looked for '.concat(n)),
+                                                  console.info(b),
+                                                  console.groupEnd());
+                                            }))));
                                     case 2:
                                     case 'end':
                                       return e.stop();
                                   }
                               }, e);
                             })),
-                            (l = 0),
-                            (d = Object.entries(i));
+                            (h = 0),
+                            (v = Object.entries(s)));
                         case 8:
-                          if (!(l < d.length)) {
+                          if (!(h < v.length)) {
                             e.next = 13;
                             break;
                           }
-                          return e.delegateYield(c(), 't0', 10);
+                          return e.delegateYield(d(), 't0', 10);
                         case 10:
-                          l++, (e.next = 8);
+                          (h++, (e.next = 8));
                           break;
                         case 13:
-                          e.t1 = v().keys(this.card_mod_children);
+                          e.t1 = P().keys(this.card_mod_children);
                         case 14:
                           if ((e.t2 = e.t1()).done) {
                             e.next = 30;
                             break;
                           }
-                          if (((f = e.t2.value), a[f])) {
+                          if (((y = e.t2.value), u[y])) {
                             e.next = 28;
                             break;
                           }
-                          return (e.next = 19), this.card_mod_children[f];
+                          return ((e.next = 19), this.card_mod_children[y]);
                         case 19:
-                          if (((e.t4 = n = e.sent), (e.t3 = null === e.t4), e.t3)) {
+                          if (((e.t4 = i = e.sent), (e.t3 = null === e.t4), e.t3)) {
                             e.next = 23;
                             break;
                           }
-                          e.t3 = void 0 === n;
+                          e.t3 = void 0 === i;
                         case 23:
                           if (!e.t3) {
                             e.next = 27;
@@ -4155,11 +4473,11 @@ var Ht = (function (e) {
                           e.next = 28;
                           break;
                         case 27:
-                          n.forEach(
+                          i.forEach(
                             (function () {
-                              var e = m(
-                                v().mark(function e(t) {
-                                  return v().wrap(function (e) {
+                              var e = M(
+                                P().mark(function e(t) {
+                                  return P().wrap(function (e) {
                                     for (;;)
                                       switch ((e.prev = e.next)) {
                                         case 0:
@@ -4190,39 +4508,38 @@ var Ht = (function (e) {
                           break;
                         case 30:
                           if (
-                            ((this.card_mod_children = a),
-                            this._styles !== s || this.dynamicVariablesHaveChanged)
+                            ((this.card_mod_children = u),
+                            l &&
+                              (this._observer.disconnect(),
+                              (m =
+                                null !== (a = this.parentElement) && void 0 !== a
+                                  ? a
+                                  : this.parentNode) &&
+                                (this.debug && this._debug('Observing for changes on:', m),
+                                this._observer.observe(m, { childList: !0 }),
+                                m.host &&
+                                  (this.debug && this._debug('Observing for changes on:', m.host),
+                                  this._observer.observe(m.host, { childList: !0 })))),
+                            this._styles !== c || this.dynamicVariablesHaveChanged)
                           ) {
-                            e.next = 33;
+                            e.next = 34;
                             break;
                           }
                           return e.abrupt('return');
-                        case 33:
-                          (this._styles = s),
+                        case 34:
+                          ((this._styles = c),
                             (this.dynamicVariablesHaveChanged = !1),
-                            (b = this._styles) &&
-                            (String(b).includes('{%') || String(b).includes('{{'))
+                            (g = this._styles) &&
+                            (String(g).includes('{%') || String(g).includes('{{'))
                               ? ((this._renderer =
                                   this._renderer || this._style_rendered.bind(this)),
-                                bt(this._renderer, this._styles, this.variables))
-                              : this._style_rendered(this._styles || ''),
-                            u &&
-                              (this._observer.disconnect(),
-                              (h =
-                                null !== (r = this.parentElement) && void 0 !== r
-                                  ? r
-                                  : this.parentNode) &&
-                                this._observer.observe(
-                                  null !== (o = null == h ? void 0 : h.host) && void 0 !== o
-                                    ? o
-                                    : h,
-                                  { childList: !0 }
-                                ));
+                                gt(this._renderer, this._styles, this.variables))
+                              : this._style_rendered(this._styles || ''));
                         case 37:
                         case 'end':
                           return e.stop();
                       }
-                    var b;
+                    var g;
                   },
                   e,
                   this
@@ -4236,10 +4553,10 @@ var Ht = (function (e) {
         {
           key: '_disconnect',
           value:
-            ((t = m(
-              v().mark(function e() {
+            ((t = M(
+              P().mark(function e() {
                 var t, n;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
@@ -4249,7 +4566,7 @@ var Ht = (function (e) {
                             (this._styles = ''),
                             this.cancelStyleChild(),
                             (e.next = 5),
-                            wt(this._renderer)
+                            _t(this._renderer)
                           );
                         case 5:
                           null ===
@@ -4276,8 +4593,8 @@ var Ht = (function (e) {
         {
           key: '_style_rendered',
           value: function (e) {
-            this._rendered_styles !== e && (this._rendered_styles = e),
-              this.dispatchEvent(new Event('card-mod-update'));
+            (this._rendered_styles !== e && (this._rendered_styles = e),
+              this.dispatchEvent(new Event('card-mod-update')));
           },
         },
         {
@@ -4289,7 +4606,7 @@ var Ht = (function (e) {
         {
           key: 'render',
           value: function () {
-            return _e(
+            return ke(
               a || (a = u(['\n      <style>\n        ', '\n      </style>\n    '])),
               this._rendered_styles
             );
@@ -4300,7 +4617,7 @@ var Ht = (function (e) {
         {
           key: 'applyToElement',
           get: function () {
-            return Mt;
+            return Rt;
           },
         },
       ]
@@ -4308,15 +4625,18 @@ var Ht = (function (e) {
     s
   );
 })();
-N([Ve({ attribute: 'card-mod-type', reflect: !0 })], Ht.prototype, 'type', void 0),
-  N([Ve()], Ht.prototype, '_rendered_styles', void 0),
+(R([Ve({ attribute: 'card-mod-type', reflect: !0 })], qt.prototype, 'type', void 0),
+  R([Ve()], qt.prototype, '_rendered_styles', void 0),
   customElements.get('card-mod') ||
-    (customElements.define('card-mod', Ht),
-    console.info('%cCARD-MOD '.concat(Et, ' IS INSTALLED'), 'color: green; font-weight: bold'),
+    (customElements.define('card-mod', qt),
+    console.info(
+      '%cCARD-MOD '.concat(At.version, ' IS INSTALLED'),
+      'color: green; font-weight: bold'
+    ),
     window.dispatchEvent(new Event('card-mod-bootstrap'))),
-  m(
-    v().mark(function e() {
-      return v().wrap(function (e) {
+  M(
+    P().mark(function e() {
+      return P().wrap(function (e) {
         for (;;)
           switch ((e.prev = e.next)) {
             case 0:
@@ -4334,7 +4654,7 @@ N([Ve({ attribute: 'card-mod-type', reflect: !0 })], Ht.prototype, 'type', void 
               e.next = 0;
               break;
             case 5:
-              customElements.get('card-mod') || customElements.define('card-mod', Ht);
+              customElements.get('card-mod') || customElements.define('card-mod', qt);
             case 6:
             case 'end':
               return e.stop();
@@ -4342,9 +4662,9 @@ N([Ve({ attribute: 'card-mod-type', reflect: !0 })], Ht.prototype, 'type', void 
       }, e);
     })
   )(),
-  (window.cardMod_patch_state = window.cardMod_patch_state || {});
-var It = window.cardMod_patch_state,
-  qt = function (e, t, n) {
+  (window.cardMod_patch_state = window.cardMod_patch_state || {}));
+var zt = window.cardMod_patch_state,
+  Vt = function (e, t, n) {
     if ('constructor' !== t) {
       var r = e[t];
       e[t] = function () {
@@ -4357,14 +4677,14 @@ var It = window.cardMod_patch_state,
       };
     }
   },
-  Vt = function (e, t) {
-    if (e) for (var n in Object.getOwnPropertyDescriptors(t.prototype)) qt(e, n, t.prototype[n]);
+  Bt = function (e, t) {
+    if (e) for (var n in Object.getOwnPropertyDescriptors(t.prototype)) Vt(e, n, t.prototype[n]);
   },
-  zt = (function () {
-    var e = m(
-      v().mark(function e(t, n, r) {
+  Wt = (function () {
+    var e = M(
+      P().mark(function e(t, n, r) {
         var o;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -4372,11 +4692,11 @@ var It = window.cardMod_patch_state,
                   e.next = 4;
                   break;
                 }
-                return (e.next = 3), customElements.whenDefined(t);
+                return ((e.next = 3), customElements.whenDefined(t));
               case 3:
                 t = customElements.get(t);
               case 4:
-                return (o = Vt(t.prototype, n)), null == r || r(), e.abrupt('return', o);
+                return ((o = Bt(t.prototype, n)), null == r || r(), e.abrupt('return', o));
               case 7:
               case 'end':
                 return e.stop();
@@ -4388,47 +4708,96 @@ var It = window.cardMod_patch_state,
       return e.apply(this, arguments);
     };
   })();
-function Bt(e, t) {
+function Ft(e, t) {
   return function (n) {
     var r,
-      o = 'string' == typeof e ? e : e.name,
-      i = null !== (r = It[o]) && void 0 !== r && r;
-    i
+      o,
+      i,
+      a = 'string' == typeof e ? e : e.name,
+      s =
+        null !==
+          (i =
+            null !== (o = null === (r = zt[a]) || void 0 === r ? void 0 : r.patched) && void 0 !== o
+              ? o
+              : zt[a]) &&
+        void 0 !== i &&
+        i;
+    s
       ? (function (e) {
+          var t;
           if (window.cm_patch_warning) return;
-          (window.cm_patch_warning = !0),
-            console.groupCollapsed(
-              '%cCARD-MOD: '.concat(e, ' already patched!'),
-              'color: red; font-weight: bold'
-            ),
-            console.info('Card-mod likely loaded twice with different resource URLs.'),
-            console.info('Make sure all card-mod resource URLs including hacstag match EXACTLY.'),
-            console.info(
-              'Also check other custom elemets inculding cards and themes which may load card-mod.'
-            ),
-            console.groupEnd();
-        })(o)
-      : ((It[o] = !0), zt(e, n, t));
+          window.cm_patch_warning = !0;
+          var n = 'CARD-MOD ('
+              .concat(At.version, '): ')
+              .concat(e, ' already patched by ')
+              .concat(
+                (null === (t = zt[e]) || void 0 === t ? void 0 : t.version) || 'unknown version',
+                '!'
+              ),
+            r = [
+              'Card-mod likely loaded twice with different resource URLs.',
+              'Make sure all card-mod resource URLs including hacstag match EXACTLY.',
+              'Also check other custom elements including cards and themes which may load card-mod.',
+              'See https://github.com/thomasloven/lovelace-card-mod/blob/master/README.md#performance-improvements for details.',
+              'If you have corrected this issue in config, then the device generating this notification needs its Frontend cache cleared.',
+            ];
+          it(document.body, 'home-assistant').then(function (e) {
+            var t, o, i, a;
+            if (null == e ? void 0 : e.hass) {
+              null !== (o = null === (t = e.hass.user) || void 0 === t ? void 0 : t.name) &&
+              void 0 !== o
+                ? o
+                : null === (i = e.hass.user) || void 0 === i
+                  ? void 0
+                  : i.id;
+              var s = 'User: '
+                .concat(
+                  (null === (a = e.hass.user) || void 0 === a ? void 0 : a.name) || 'unknown',
+                  '\n\nBrowser: '
+                )
+                .concat(navigator.userAgent);
+              e.hass
+                .callService(
+                  'system_log',
+                  'write',
+                  {
+                    logger: 'card-mod.'.concat(At.version),
+                    level: 'warning',
+                    message: ''.concat(n, ' ').concat(r.join(' '), ' ').concat(s),
+                  },
+                  void 0,
+                  !1
+                )
+                .catch(function (e) {
+                  console.error(
+                    'CARD-MOD: Failed to create duplicate patch warning notification',
+                    e
+                  );
+                });
+            }
+          });
+        })(a)
+      : ((zt[a] = { patched: !0, version: At.version }), Wt(e, n, t));
   };
 }
-var Wt = ['conditional', 'entity-filter'],
-  Jt = (function (e) {
-    b(r, jt);
+var Jt = ['conditional', 'entity-filter'],
+  Yt = (function (e) {
+    v(r, Nt);
     var t,
-      n = g(r);
+      n = y(r);
     function r() {
       var e;
-      return P(this, r), ((e = n.apply(this, arguments))._cardMod = []), e;
+      return ($(this, r), ((e = n.apply(this, arguments))._cardMod = []), e);
     }
     return (
-      T(r, [
+      C(r, [
         {
           key: '_add_card_mod',
           value:
-            ((t = m(
-              v().mark(function e() {
+            ((t = M(
+              P().mark(function e() {
                 var t, n, r, o, i, a, s;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
@@ -4440,7 +4809,7 @@ var Wt = ['conditional', 'entity-filter'],
                           return e.abrupt('return');
                         case 2:
                           if (
-                            !Wt.includes(
+                            !Jt.includes(
                               null ===
                                 (n =
                                   null === (t = this.config) || void 0 === t ? void 0 : t.type) ||
@@ -4470,7 +4839,7 @@ var Wt = ['conditional', 'entity-filter'],
                                 : o.call(r, ':', '-')
                             )),
                             (e.next = 9),
-                            Rt(
+                            Ut(
                               this._element,
                               'card',
                               null == a ? void 0 : a.card_mod,
@@ -4498,29 +4867,29 @@ var Wt = ['conditional', 'entity-filter'],
           value: function (e) {
             for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
               n[r - 1] = arguments[r];
-            null == e || e.apply(void 0, n), this._add_card_mod();
+            (null == e || e.apply(void 0, n), this._add_card_mod());
           },
         },
       ]),
       r
     );
   })();
-Jt = N([Bt('hui-card')], Jt);
-var Ft = (function (e) {
-  b(r, jt);
+Yt = R([Ft('hui-card')], Yt);
+var Gt = (function (e) {
+  v(r, Nt);
   var t,
-    n = g(r);
+    n = y(r);
   function r() {
     var e;
-    return P(this, r), ((e = n.apply(this, arguments))._cardMod = []), e;
+    return ($(this, r), ((e = n.apply(this, arguments))._cardMod = []), e);
   }
   return (
-    T(r, [
+    C(r, [
       {
         key: 'firstUpdated',
         value:
-          ((t = m(
-            v().mark(function e(t) {
+          ((t = M(
+            P().mark(function e(t) {
               var n,
                 r,
                 o,
@@ -4531,17 +4900,17 @@ var Ft = (function (e) {
                 c,
                 l,
                 d,
-                f,
                 h,
+                f,
                 p = arguments;
-              return v().wrap(
+              return P().wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
                         for (s = p.length, u = new Array(s > 1 ? s - 1 : 0), c = 1; c < s; c++)
                           u[c - 1] = p[c];
-                        return (e.next = 3), null == t ? void 0 : t.apply(void 0, u);
+                        return ((e.next = 3), null == t ? void 0 : t.apply(void 0, u));
                       case 3:
                         if (
                           !(l =
@@ -4558,14 +4927,14 @@ var Ft = (function (e) {
                         }
                         return e.abrupt('return');
                       case 6:
-                        if ((d = Gt(this))) {
+                        if ((d = Kt(this))) {
                           e.next = 9;
                           break;
                         }
                         return e.abrupt('return');
                       case 9:
                         return (
-                          (f = 'type-'.concat(
+                          (h = 'type-'.concat(
                             null ===
                               (i =
                                 null === (o = null == d ? void 0 : d.type) || void 0 === o
@@ -4575,18 +4944,18 @@ var Ft = (function (e) {
                               : i.call(o, ':', '-')
                           )),
                           (e.next = 12),
-                          Rt(this, 'card', null == d ? void 0 : d.card_mod, { config: d }, !1, f)
+                          Ut(this, 'card', null == d ? void 0 : d.card_mod, { config: d }, !1, h)
                         );
                       case 12:
                         if (
-                          (h = null === (a = this.parentNode) || void 0 === a ? void 0 : a.host)
+                          (f = null === (a = this.parentNode) || void 0 === a ? void 0 : a.host)
                         ) {
                           e.next = 15;
                           break;
                         }
                         return e.abrupt('return');
                       case 15:
-                        Vt(h, jt), (h._cardMod = this._cardMod);
+                        (Bt(f, Nt), (f._cardMod = this._cardMod));
                       case 17:
                       case 'end':
                         return e.stop();
@@ -4605,73 +4974,73 @@ var Ft = (function (e) {
     r
   );
 })();
-function Gt(e) {
+function Kt(e) {
   return e.config
     ? e.config
     : e._config
-    ? e._config
-    : e.host
-    ? Gt(e.host)
-    : e.parentElement
-    ? Gt(e.parentElement)
-    : e.parentNode
-    ? Gt(e.parentNode)
-    : null;
+      ? e._config
+      : e.host
+        ? Kt(e.host)
+        : e.parentElement
+          ? Kt(e.parentElement)
+          : e.parentNode
+            ? Kt(e.parentNode)
+            : null;
 }
-Ft = N([Bt('ha-card')], Ft);
-var Yt = (function (e) {
-  b(n, jt);
-  var t = g(n);
+Gt = R([Ft('ha-card')], Gt);
+var Zt = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'firstUpdated',
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n),
-            Rt(
+          (null == e || e.apply(void 0, n),
+            Ut(
               this,
               'grid-section',
               this._config.card_mod,
               { config: this._config },
               !0,
               'type-grid-section'
-            );
+            ));
         },
       },
     ]),
     n
   );
 })();
-Yt = N([Bt('hui-grid-section')], Yt);
-var Kt = (function (e) {
-  b(r, jt);
+Zt = R([Ft('hui-grid-section')], Zt);
+var Xt = (function (e) {
+  v(r, Nt);
   var t,
-    n = g(r);
+    n = y(r);
   function r() {
-    return P(this, r), n.apply(this, arguments);
+    return ($(this, r), n.apply(this, arguments));
   }
   return (
-    T(r, [
+    C(r, [
       {
         key: '_createCards',
         value:
-          ((t = m(
-            v().mark(function e(t) {
+          ((t = M(
+            P().mark(function e(t) {
               var n,
                 r,
                 o,
                 i = arguments;
-              return v().wrap(
+              return P().wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
-                        (r = null === (n = this.config) || void 0 === n ? void 0 : n.strategy),
+                        ((r = null === (n = this.config) || void 0 === n ? void 0 : n.strategy),
                           (o = Object.assign({}, i.length <= 1 ? void 0 : i[1])),
                           r &&
                             r.card_mod &&
@@ -4691,7 +5060,7 @@ var Kt = (function (e) {
                                   card_mod: r.card_mod[i.type],
                                 })));
                             }),
-                          null == t || t(o);
+                          null == t || t(o));
                       case 4:
                       case 'end':
                         return e.stop();
@@ -4710,24 +5079,24 @@ var Kt = (function (e) {
     r
   );
 })();
-Kt = N([Bt('hui-section')], Kt);
-var Zt = ['entity-filter'],
-  Xt = (function (e) {
-    b(r, jt);
+Xt = R([Ft('hui-section')], Xt);
+var Qt = ['entity-filter'],
+  en = (function (e) {
+    v(r, Nt);
     var t,
-      n = g(r);
+      n = y(r);
     function r() {
-      return P(this, r), n.apply(this, arguments);
+      return ($(this, r), n.apply(this, arguments));
     }
     return (
-      T(r, [
+      C(r, [
         {
           key: '_add_card_mod',
           value:
-            ((t = m(
-              v().mark(function e() {
+            ((t = M(
+              P().mark(function e() {
                 var t, n, r, o, i, a;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
@@ -4739,7 +5108,7 @@ var Zt = ['entity-filter'],
                           return e.abrupt('return');
                         case 2:
                           if (
-                            !Zt.includes(
+                            !Qt.includes(
                               null ===
                                 (n =
                                   null === (t = this.config) || void 0 === t ? void 0 : t.type) ||
@@ -4768,7 +5137,7 @@ var Zt = ['entity-filter'],
                                 : i.call(o, ':', '-')
                             )),
                             (e.next = 7),
-                            Rt(
+                            Ut(
                               this._element,
                               'badge',
                               this.config.card_mod,
@@ -4798,7 +5167,7 @@ var Zt = ['entity-filter'],
           value: function (e) {
             for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
               n[r - 1] = arguments[r];
-            null == e || e.apply(void 0, n), this._add_card_mod();
+            (null == e || e.apply(void 0, n), this._add_card_mod());
           },
         },
         {
@@ -4806,30 +5175,30 @@ var Zt = ['entity-filter'],
           value: function (e) {
             for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
               n[r - 1] = arguments[r];
-            null == e || e.apply(void 0, n), this._add_card_mod();
+            (null == e || e.apply(void 0, n), this._add_card_mod());
           },
         },
       ]),
       r
     );
   })();
-Xt = N([Bt('hui-badge')], Xt);
-var Qt = (function (e) {
-  b(r, jt);
+en = R([Ft('hui-badge')], en);
+var tn = (function (e) {
+  v(r, Nt);
   var t,
-    n = g(r);
+    n = y(r);
   function r() {
-    return P(this, r), n.apply(this, arguments);
+    return ($(this, r), n.apply(this, arguments));
   }
   return (
-    T(r, [
+    C(r, [
       {
         key: '_add_card_mod',
         value:
-          ((t = m(
-            v().mark(function e() {
+          ((t = M(
+            P().mark(function e() {
               var t, n, r, o;
-              return v().wrap(
+              return P().wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
@@ -4854,7 +5223,7 @@ var Qt = (function (e) {
                               : r.call(n, ':', '-')
                           )),
                           (e.next = 5),
-                          Rt(
+                          Ut(
                             this._element,
                             'heading-badge',
                             this.config.card_mod,
@@ -4884,7 +5253,7 @@ var Qt = (function (e) {
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), this._add_card_mod();
+          (null == e || e.apply(void 0, n), this._add_card_mod());
         },
       },
       {
@@ -4892,22 +5261,80 @@ var Qt = (function (e) {
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), this._add_card_mod();
+          (null == e || e.apply(void 0, n), this._add_card_mod());
         },
       },
     ]),
     r
   );
 })();
-Qt = N([Bt('hui-heading-badge')], Qt);
-var en = (function (e) {
-  b(n, jt);
-  var t = g(n);
-  function n() {
-    return P(this, n), t.apply(this, arguments);
+tn = R([Ft('hui-heading-badge')], tn);
+var nn = (function (e) {
+  v(r, Nt);
+  var t,
+    n = y(r);
+  function r() {
+    return ($(this, r), n.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(r, [
+      {
+        key: 'firstUpdated',
+        value:
+          ((t = M(
+            P().mark(function e(t) {
+              var n,
+                r,
+                o,
+                i,
+                a = arguments;
+              return P().wrap(
+                function (e) {
+                  for (;;)
+                    switch ((e.prev = e.next)) {
+                      case 0:
+                        for (r = a.length, o = new Array(r > 1 ? r - 1 : 0), i = 1; i < r; i++)
+                          o[i - 1] = a[i];
+                        return ((e.next = 3), null == t ? void 0 : t.apply(void 0, o));
+                      case 3:
+                        return (
+                          (e.next = 5),
+                          Ut(
+                            this,
+                            'assist-chip',
+                            null === (n = this.config) || void 0 === n ? void 0 : n.card_mod,
+                            { config: this.config },
+                            !0,
+                            'type-assist-chip'
+                          )
+                        );
+                      case 5:
+                      case 'end':
+                        return e.stop();
+                    }
+                },
+                e,
+                this
+              );
+            })
+          )),
+          function (e) {
+            return t.apply(this, arguments);
+          }),
+      },
+    ]),
+    r
+  );
+})();
+nn = R([Ft('ha-assist-chip')], nn);
+var rn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
+  function n() {
+    return ($(this, n), t.apply(this, arguments));
+  }
+  return (
+    C(n, [
       {
         key: '_renderEntity',
         value: function (e, t) {
@@ -4924,17 +5351,17 @@ var en = (function (e) {
                 )
               : 'type-entity',
             l = (function () {
-              var e = m(
-                v().mark(function e() {
-                  return v().wrap(function (e) {
+              var e = M(
+                P().mark(function e() {
+                  return P().wrap(function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
-                          return (e.next = 2), et(u);
+                          return ((e.next = 2), tt(u));
                         case 2:
-                          Vt(u, jt),
-                            Rt(u, 'row', null == t ? void 0 : t.card_mod, { config: t }, !0, c),
-                            u.addEventListener('ll-rebuild', l);
+                          (Bt(u, Nt),
+                            Ut(u, 'row', null == t ? void 0 : t.card_mod, { config: t }, !0, c),
+                            u.addEventListener('ll-rebuild', l));
                         case 5:
                         case 'end':
                           return e.stop();
@@ -4958,15 +5385,15 @@ var en = (function (e) {
     n
   );
 })();
-en = N([Bt('hui-entities-card')], en);
-var tn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+rn = R([Ft('hui-entities-card')], rn);
+var on = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'setConfig',
         value: function (e, t) {
@@ -4992,17 +5419,17 @@ var tn = (function (e) {
                   )
                 : 'type-entity',
               d = (function () {
-                var e = m(
-                  v().mark(function e() {
-                    return v().wrap(function (e) {
+                var e = M(
+                  P().mark(function e() {
+                    return P().wrap(function (e) {
                       for (;;)
                         switch ((e.prev = e.next)) {
                           case 0:
-                            return (e.next = 2), et(c);
+                            return ((e.next = 2), tt(c));
                           case 2:
-                            Vt(c, jt),
-                              Rt(c, 'row', t.row.card_mod, { config: t.row }, !0, l),
-                              c.addEventListener('ll-rebuild', d);
+                            (Bt(c, Nt),
+                              Ut(c, 'row', t.row.card_mod, { config: t.row }, !0, l),
+                              c.addEventListener('ll-rebuild', d));
                           case 5:
                           case 'end':
                             return e.stop();
@@ -5024,15 +5451,15 @@ var tn = (function (e) {
     n
   );
 })();
-tn = N([Bt('hui-conditional-row')], tn);
-var nn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+on = R([Ft('hui-conditional-row')], on);
+var an = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'updated',
         value: function (e) {
@@ -5044,30 +5471,29 @@ var nn = (function (e) {
             i[a - 1] = arguments[a];
           null == e || e.apply(void 0, i);
           var s,
-            u = $(this.shadowRoot.querySelectorAll('ha-card div.entity'));
+            u = x(this.shadowRoot.querySelectorAll('ha-card div.entity'));
           try {
             for (u.s(); !(s = u.n()).done; ) {
               var c = s.value;
-              Vt(c, jt);
+              Bt(c, Nt);
               for (
                 var l =
                   null !== (t = c.shadowRoot) && void 0 !== t
                     ? t
                     : c.attachShadow({ mode: 'open' });
                 c.firstChild;
-
               )
                 l.append(c.firstChild);
               var d =
                 null !== (n = c.querySelector('style[card-mod]')) && void 0 !== n
                   ? n
                   : document.createElement('style');
-              d.setAttribute('card-mod', ''),
+              (d.setAttribute('card-mod', ''),
                 (d.innerHTML =
                   '\ndiv {\n  width: 100%;\n  text-align: center;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.name {\n  min-height: var(--paper-font-body1_-_line-height, 20px);\n}\nstate-badge {\n  margin: 8px 0;\n}\n'),
-                l.append(d);
-              var f = null !== (r = c.config) && void 0 !== r ? r : c.entityConfig;
-              Rt(c, 'glance', null == f ? void 0 : f.card_mod, { config: f });
+                l.append(d));
+              var h = null !== (r = c.config) && void 0 !== r ? r : c.entityConfig;
+              Ut(c, 'glance', null == h ? void 0 : h.card_mod, { config: h });
             }
           } catch (e) {
             u.e(e);
@@ -5080,15 +5506,15 @@ var nn = (function (e) {
     n
   );
 })();
-nn = N([Bt('hui-glance-card')], nn);
-var rn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+an = R([Ft('hui-glance-card')], an);
+var sn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'setConfig',
         value: function (e) {
@@ -5100,23 +5526,23 @@ var rn = (function (e) {
             r[o - 1] = arguments[o];
           null == e || e.apply(void 0, r);
           var i = (function () {
-            var e = m(
-              v().mark(function e() {
+            var e = M(
+              P().mark(function e() {
                 var n, r, o, i, a, s, u, c, l;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
-                          (o = $(t._elements.entries())), (e.prev = 1), o.s();
+                          ((o = x(t._elements.entries())), (e.prev = 1), o.s());
                         case 3:
                           if ((i = o.n()).done) {
                             e.next = 13;
                             break;
                           }
-                          return (a = p(i.value, 2)), (s = a[0]), (u = a[1]), (e.next = 7), et(u);
+                          return ((a = p(i.value, 2)), (s = a[0]), (u = a[1]), (e.next = 7), tt(u));
                         case 7:
-                          Vt(u, jt),
+                          (Bt(u, Nt),
                             (c = t._config.elements[s]),
                             (l = 'type-'.concat(
                               null ===
@@ -5127,7 +5553,14 @@ var rn = (function (e) {
                                 ? void 0
                                 : r.call(n, ':', '-')
                             )),
-                            Rt(u, 'element', null == c ? void 0 : c.card_mod, { config: c }, !0, l);
+                            Ut(
+                              u,
+                              'element',
+                              null == c ? void 0 : c.card_mod,
+                              { config: c },
+                              !0,
+                              l
+                            ));
                         case 11:
                           e.next = 3;
                           break;
@@ -5135,9 +5568,9 @@ var rn = (function (e) {
                           e.next = 18;
                           break;
                         case 15:
-                          (e.prev = 15), (e.t0 = e.catch(1)), o.e(e.t0);
+                          ((e.prev = 15), (e.t0 = e.catch(1)), o.e(e.t0));
                         case 18:
-                          return (e.prev = 18), o.f(), e.finish(18);
+                          return ((e.prev = 18), o.f(), e.finish(18));
                         case 21:
                         case 'end':
                           return e.stop();
@@ -5162,15 +5595,15 @@ var rn = (function (e) {
     n
   );
 })();
-rn = N([Bt('hui-picture-elements-card')], rn);
-var on = (function (e) {
-  b(n, jt);
-  var t = g(n);
+sn = R([Ft('hui-picture-elements-card')], sn);
+var un = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'setConfig',
         value: function (e) {
@@ -5182,23 +5615,23 @@ var on = (function (e) {
             r[o - 1] = arguments[o];
           null == e || e.apply(void 0, r);
           var i = (function () {
-            var e = m(
-              v().mark(function e() {
+            var e = M(
+              P().mark(function e() {
                 var n, r, o, i, a, s, u, c, l;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
-                          (o = $(t._elements.entries())), (e.prev = 1), o.s();
+                          ((o = x(t._elements.entries())), (e.prev = 1), o.s());
                         case 3:
                           if ((i = o.n()).done) {
                             e.next = 13;
                             break;
                           }
-                          return (a = p(i.value, 2)), (s = a[0]), (u = a[1]), (e.next = 7), et(u);
+                          return ((a = p(i.value, 2)), (s = a[0]), (u = a[1]), (e.next = 7), tt(u));
                         case 7:
-                          Vt(u, jt),
+                          (Bt(u, Nt),
                             (c = t._config.elements[s]),
                             (l = 'type-'.concat(
                               null ===
@@ -5209,7 +5642,14 @@ var on = (function (e) {
                                 ? void 0
                                 : r.call(n, ':', '-')
                             )),
-                            Rt(u, 'element', null == c ? void 0 : c.card_mod, { config: c }, !0, l);
+                            Ut(
+                              u,
+                              'element',
+                              null == c ? void 0 : c.card_mod,
+                              { config: c },
+                              !0,
+                              l
+                            ));
                         case 11:
                           e.next = 3;
                           break;
@@ -5217,9 +5657,9 @@ var on = (function (e) {
                           e.next = 18;
                           break;
                         case 15:
-                          (e.prev = 15), (e.t0 = e.catch(1)), o.e(e.t0);
+                          ((e.prev = 15), (e.t0 = e.catch(1)), o.e(e.t0));
                         case 18:
-                          return (e.prev = 18), o.f(), e.finish(18);
+                          return ((e.prev = 18), o.f(), e.finish(18));
                         case 21:
                         case 'end':
                           return e.stop();
@@ -5244,38 +5684,38 @@ var on = (function (e) {
     n
   );
 })();
-on = N([Bt('hui-conditional-element')], on);
-var an = function (e) {
+un = R([Ft('hui-conditional-element')], un);
+var cn = function (e) {
     var t = window.getComputedStyle(e),
       n = t.getPropertyValue('--card-mod-icon');
     n && (e.icon = n.trim());
     var r = t.getPropertyValue('--card-mod-icon-color');
-    r && (e.style.color = r),
-      'none' === t.getPropertyValue('--card-mod-icon-dim') && (e.style.filter = 'none');
+    (r && (e.style.color = r),
+      'none' === t.getPropertyValue('--card-mod-icon-dim') && (e.style.filter = 'none'));
   },
-  sn = (function () {
-    var e = m(
-      v().mark(function e(t) {
+  ln = (function () {
+    var e = M(
+      P().mark(function e(t) {
         var n, r, o, i, a;
-        return v().wrap(
+        return P().wrap(
           function (e) {
             for (;;)
               switch ((e.prev = e.next)) {
                 case 0:
                   return (
-                    an(t),
+                    cn(t),
                     (t._boundCardMod =
                       null !== (n = t._boundCardMod) && void 0 !== n ? n : new Set()),
                     (e.next = 4),
-                    fn(t)
+                    vn(t)
                   );
                 case 4:
-                  (r = e.sent),
-                    (o = $(r)),
+                  ((r = e.sent),
+                    (o = x(r)),
                     (e.prev = 6),
-                    (a = v().mark(function e() {
+                    (a = P().mark(function e() {
                       var n;
-                      return v().wrap(function (e) {
+                      return P().wrap(function (e) {
                         for (;;)
                           switch ((e.prev = e.next)) {
                             case 0:
@@ -5285,17 +5725,17 @@ var an = function (e) {
                               }
                               return e.abrupt('return', 1);
                             case 3:
-                              n.addEventListener(
+                              (n.addEventListener(
                                 'card-mod-update',
-                                m(
-                                  v().mark(function e() {
-                                    return v().wrap(function (e) {
+                                M(
+                                  P().mark(function e() {
+                                    return P().wrap(function (e) {
                                       for (;;)
                                         switch ((e.prev = e.next)) {
                                           case 0:
-                                            return (e.next = 2), n.updateComplete;
+                                            return ((e.next = 2), n.updateComplete);
                                           case 2:
-                                            an(t);
+                                            cn(t);
                                           case 3:
                                           case 'end':
                                             return e.stop();
@@ -5304,14 +5744,14 @@ var an = function (e) {
                                   })
                                 )
                               ),
-                                t._boundCardMod.add(n);
+                                t._boundCardMod.add(n));
                             case 5:
                             case 'end':
                               return e.stop();
                           }
                       }, e);
                     })),
-                    o.s();
+                    o.s());
                 case 9:
                   if ((i = o.n()).done) {
                     e.next = 15;
@@ -5331,9 +5771,9 @@ var an = function (e) {
                   e.next = 20;
                   break;
                 case 17:
-                  (e.prev = 17), (e.t1 = e.catch(6)), o.e(e.t1);
+                  ((e.prev = 17), (e.t1 = e.catch(6)), o.e(e.t1));
                 case 20:
-                  return (e.prev = 20), o.f(), e.finish(20);
+                  return ((e.prev = 20), o.f(), e.finish(20));
                 case 23:
                   if (!(t.cm_retries < 5)) {
                     e.next = 26;
@@ -5344,7 +5784,7 @@ var an = function (e) {
                     e.abrupt(
                       'return',
                       window.setTimeout(function () {
-                        return sn(t);
+                        return ln(t);
                       }, 250 * t.cm_retries)
                     )
                   );
@@ -5363,79 +5803,79 @@ var an = function (e) {
       return e.apply(this, arguments);
     };
   })(),
-  un = (function (e) {
-    b(n, jt);
-    var t = g(n);
+  dn = (function (e) {
+    v(n, Nt);
+    var t = y(n);
     function n() {
       var e;
-      return P(this, n), ((e = t.apply(this, arguments)).cm_retries = 0), e;
+      return ($(this, n), ((e = t.apply(this, arguments)).cm_retries = 0), e);
     }
     return (
-      T(n, [
+      C(n, [
         {
           key: 'updated',
           value: function (e) {
             for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
               n[r - 1] = arguments[r];
-            null == e || e.apply(void 0, n), (this.cm_retries = 0), sn(this);
+            (null == e || e.apply(void 0, n), (this.cm_retries = 0), ln(this));
           },
         },
       ]),
       n
     );
   })();
-un = N([Bt('ha-state-icon')], un);
-var cn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+dn = R([Ft('ha-state-icon')], dn);
+var hn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
     var e;
-    return P(this, n), ((e = t.apply(this, arguments)).cm_retries = 0), e;
+    return ($(this, n), ((e = t.apply(this, arguments)).cm_retries = 0), e);
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'updated',
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), (this.cm_retries = 0), sn(this);
+          (null == e || e.apply(void 0, n), (this.cm_retries = 0), ln(this));
         },
       },
     ]),
     n
   );
 })();
-cn = N([Bt('ha-icon')], cn);
-var ln = (function (e) {
-  b(n, jt);
-  var t = g(n);
+hn = R([Ft('ha-icon')], hn);
+var fn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
     var e;
-    return P(this, n), ((e = t.apply(this, arguments)).cm_retries = 0), e;
+    return ($(this, n), ((e = t.apply(this, arguments)).cm_retries = 0), e);
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'updated',
         value: function (e) {
           for (var t, n, r = arguments.length, o = new Array(r > 1 ? r - 1 : 0), i = 1; i < r; i++)
             o[i - 1] = arguments[i];
-          null == e || e.apply(void 0, o),
+          (null == e || e.apply(void 0, o),
             'ha-icon' !==
               (null === (n = null === (t = this.parentNode) || void 0 === t ? void 0 : t.host) ||
               void 0 === n
                 ? void 0
-                : n.localName) && ((this.cm_retries = 0), sn(this));
+                : n.localName) && ((this.cm_retries = 0), ln(this)));
         },
       },
     ]),
     n
   );
 })();
-function dn(e, t) {
+function pn(e, t) {
   var n,
-    r = $(t);
+    r = x(t);
   try {
     for (r.s(); !(n = r.n()).done; ) {
       var o = n.value;
@@ -5447,20 +5887,20 @@ function dn(e, t) {
     r.f();
   }
 }
-function fn(e) {
-  return hn.apply(this, arguments);
+function vn(e) {
+  return yn.apply(this, arguments);
 }
-function hn() {
+function yn() {
   return (
-    (hn = m(
-      v().mark(function e(t) {
+    (yn = M(
+      P().mark(function e(t) {
         var n,
           r,
           o,
           i,
           a,
           s = arguments;
-        return v().wrap(function (e) {
+        return P().wrap(function (e) {
           for (;;)
             switch ((e.prev = e.next)) {
               case 0:
@@ -5480,10 +5920,10 @@ function hn() {
                   e.next = 9;
                   break;
                 }
-                return (e.next = 9), t.updateComplete;
+                return ((e.next = 9), t.updateComplete);
               case 9:
                 if (t._cardMod) {
-                  o = $(t._cardMod);
+                  o = x(t._cardMod);
                   try {
                     for (o.s(); !(i = o.n()).done; ) (a = i.value).styles && r.add(a);
                   } catch (e) {
@@ -5496,26 +5936,26 @@ function hn() {
                   e.next = 19;
                   break;
                 }
-                return (e.t0 = dn), (e.t1 = r), (e.next = 15), fn(t.parentElement, n + 1);
+                return ((e.t0 = pn), (e.t1 = r), (e.next = 15), vn(t.parentElement, n + 1));
               case 15:
-                (e.t2 = e.sent), (0, e.t0)(e.t1, e.t2), (e.next = 26);
+                ((e.t2 = e.sent), (0, e.t0)(e.t1, e.t2), (e.next = 26));
                 break;
               case 19:
                 if (!t.parentNode) {
                   e.next = 26;
                   break;
                 }
-                return (e.t3 = dn), (e.t4 = r), (e.next = 24), fn(t.parentNode, n + 1);
+                return ((e.t3 = pn), (e.t4 = r), (e.next = 24), vn(t.parentNode, n + 1));
               case 24:
-                (e.t5 = e.sent), (0, e.t3)(e.t4, e.t5);
+                ((e.t5 = e.sent), (0, e.t3)(e.t4, e.t5));
               case 26:
                 if (!t.host) {
                   e.next = 33;
                   break;
                 }
-                return (e.t6 = dn), (e.t7 = r), (e.next = 31), fn(t.host, n + 1);
+                return ((e.t6 = pn), (e.t7 = r), (e.next = 31), vn(t.host, n + 1));
               case 31:
-                (e.t8 = e.sent), (0, e.t6)(e.t7, e.t8);
+                ((e.t8 = e.sent), (0, e.t6)(e.t7, e.t8));
               case 33:
                 return e.abrupt('return', r);
               case 34:
@@ -5525,55 +5965,55 @@ function hn() {
         }, e);
       })
     )),
-    hn.apply(this, arguments)
+    yn.apply(this, arguments)
   );
 }
-ln = N([Bt('ha-svg-icon')], ln);
-var pn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+fn = R([Ft('ha-svg-icon')], fn);
+var mn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'updated',
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'view', void 0, {}, !1);
+          (null == e || e.apply(void 0, n), Ut(this, 'view', void 0, {}, !1));
         },
       },
     ]),
     n
   );
 })();
-pn = N([Bt('hui-view')], pn);
-var vn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+mn = R([Ft('hui-view')], mn);
+var bn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'firstUpdated',
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'root');
+          (null == e || e.apply(void 0, n), Ut(this, 'root'));
         },
       },
     ]),
     n
   );
 })();
-function yn(e) {
+function gn(e) {
   var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : new WeakSet();
   if (null == e) return e;
-  var n = M(e);
+  var n = T(e);
   if (
     'function' !== n &&
     !(
@@ -5586,7 +6026,7 @@ function yn(e) {
       if ((t.add(e), Array.isArray(e))) {
         var r = e
           .map(function (e) {
-            return yn(e, t);
+            return gn(e, t);
           })
           .filter(function (e) {
             return void 0 !== e;
@@ -5596,17 +6036,17 @@ function yn(e) {
       for (var o = {}, i = 0, a = Object.entries(e); i < a.length; i++) {
         var s = p(a[i], 2),
           u = s[0],
-          c = yn(s[1], t);
+          c = gn(s[1], t);
         void 0 !== c && (o[u] = c);
       }
       return o;
     }
   }
 }
-vn = N(
+bn = R(
   [
-    Bt('hui-root', function () {
-      ot(
+    Ft('hui-root', function () {
+      it(
         document,
         'home-assistant$home-assistant-main$partial-panel-resolver ha-panel-lovelace$hui-root',
         !1
@@ -5615,42 +6055,42 @@ vn = N(
       });
     }),
   ],
-  vn
+  bn
 );
-var mn = (function (e) {
-  b(r, jt);
+var wn = (function (e) {
+  v(r, Nt);
   var t,
-    n = g(r);
+    n = y(r);
   function r() {
-    return P(this, r), n.apply(this, arguments);
+    return ($(this, r), n.apply(this, arguments));
   }
   return (
-    T(r, [
+    C(r, [
       {
         key: 'showDialog',
         value:
-          ((t = m(
-            v().mark(function e(t, n) {
+          ((t = M(
+            P().mark(function e(t, n) {
               var r,
                 o,
                 i,
                 a = this,
                 s = arguments;
-              return v().wrap(
+              return P().wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
                         for (r = s.length, o = new Array(r > 2 ? r - 2 : 0), i = 2; i < r; i++)
                           o[i - 2] = s[i];
-                        return (e.next = 3), null == t ? void 0 : t.apply(void 0, [n].concat(o));
+                        return ((e.next = 3), null == t ? void 0 : t.apply(void 0, [n].concat(o)));
                       case 3:
-                        this.requestUpdate(),
+                        (this.requestUpdate(),
                           this.updateComplete.then(
-                            m(
-                              v().mark(function e() {
+                            M(
+                              P().mark(function e() {
                                 var t, r, o, i;
-                                return v().wrap(function (e) {
+                                return P().wrap(function (e) {
                                   for (;;)
                                     switch ((e.prev = e.next)) {
                                       case 0:
@@ -5666,12 +6106,12 @@ var mn = (function (e) {
                                         }
                                         return e.abrupt('return');
                                       case 6:
-                                        (i = 'type-'.concat(
+                                        ((i = 'type-'.concat(
                                           null === (r = (t = a.localName).replace) || void 0 === r
                                             ? void 0
                                             : r.call(t, 'ha-', '')
                                         )),
-                                          Rt(o, 'dialog', void 0, { params: yn(n) }, !1, i);
+                                          Ut(o, 'dialog', void 0, { params: gn(n) }, !1, i));
                                       case 8:
                                       case 'end':
                                         return e.stop();
@@ -5679,7 +6119,7 @@ var mn = (function (e) {
                                 }, e);
                               })
                             )
-                          );
+                          ));
                       case 5:
                       case 'end':
                         return e.stop();
@@ -5708,21 +6148,34 @@ window.addEventListener(
     o &&
       !(function (e) {
         var t,
-          n = 'string' == typeof e ? e : e.constructor.name;
-        return null !== (t = It[n]) && void 0 !== t && t;
+          n,
+          r,
+          o = 'string' == typeof e ? e : e.constructor.name;
+        return (
+          null !==
+            (r =
+              null !== (n = null === (t = zt[o]) || void 0 === t ? void 0 : t.patched) &&
+              void 0 !== n
+                ? n
+                : zt[o]) &&
+          void 0 !== r &&
+          r
+        );
       })(o) &&
-      ((r = 'string' == typeof (n = o) ? n : n.constructor.name), (It[r] = !0), zt(o, mn));
+      ((r = 'string' == typeof (n = o) ? n : n.constructor.name),
+      (zt[r] = { patched: !0, version: At.version }),
+      Wt(o, wn));
   },
   { capture: !0 }
 );
-var bn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+var _n = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'showDialog',
         value: function (e, t) {
@@ -5732,13 +6185,13 @@ var bn = (function (e) {
             i++
           )
             o[i - 2] = arguments[i];
-          null == e || e.apply(void 0, [t].concat(o)),
+          (null == e || e.apply(void 0, [t].concat(o)),
             this.requestUpdate(),
             this.updateComplete.then(
-              m(
-                v().mark(function e() {
+              M(
+                P().mark(function e() {
                   var r;
-                  return v().wrap(function (e) {
+                  return P().wrap(function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
@@ -5748,7 +6201,7 @@ var bn = (function (e) {
                           }
                           return e.abrupt('return');
                         case 3:
-                          Rt(r, 'more-info', void 0, { config: t }, !1);
+                          Ut(r, 'more-info', void 0, { config: t }, !1);
                         case 4:
                         case 'end':
                           return e.stop();
@@ -5756,52 +6209,52 @@ var bn = (function (e) {
                   }, e);
                 })
               )
-            );
+            ));
         },
       },
     ]),
     n
   );
 })();
-bn = N([Bt('ha-more-info-dialog')], bn);
-var gn = (function (e) {
-  b(n, jt);
-  var t = g(n);
+_n = R([Ft('ha-more-info-dialog')], _n);
+var kn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'firstUpdated',
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'sidebar');
+          (null == e || e.apply(void 0, n), Ut(this, 'sidebar'));
         },
       },
     ]),
     n
   );
 })();
-gn = N(
+kn = R(
   [
-    Bt('ha-sidebar', function () {
-      ot(document, 'home-assistant$home-assistant-main$ha-sidebar', !1).then(function (e) {
+    Ft('ha-sidebar', function () {
+      it(document, 'home-assistant$home-assistant-main$ha-sidebar', !1).then(function (e) {
         return null == e ? void 0 : e.firstUpdated();
       });
     }),
   ],
-  gn
+  kn
 );
-var wn = (function (e) {
-    b(n, De);
-    var t = g(n);
+var xn = (function (e) {
+    v(n, He);
+    var t = y(n);
     function n() {
-      return P(this, n), t.apply(this, arguments);
+      return ($(this, n), t.apply(this, arguments));
     }
     return (
-      T(n, [
+      C(n, [
         {
           key: 'setConfig',
           value: function (e, t) {
@@ -5817,7 +6270,7 @@ var wn = (function (e) {
               Array.isArray(s.entities))
             ) {
               var u,
-                c = $(
+                c = x(
                   null === (r = null === (n = s.entities) || void 0 === n ? void 0 : n.entries) ||
                     void 0 === r
                     ? void 0
@@ -5827,8 +6280,8 @@ var wn = (function (e) {
                 for (c.s(); !(u = c.n()).done; ) {
                   var l = p(u.value, 2),
                     d = l[0],
-                    f = l[1];
-                  (this._cardModData.entities[d] = f.card_mod), delete f.card_mod;
+                    h = l[1];
+                  ((this._cardModData.entities[d] = h.card_mod), delete h.card_mod);
                 }
               } catch (e) {
                 c.e(e);
@@ -5836,11 +6289,11 @@ var wn = (function (e) {
                 c.f();
               }
             }
-            for (var h = arguments.length, v = new Array(h > 2 ? h - 2 : 0), y = 2; y < h; y++)
+            for (var f = arguments.length, v = new Array(f > 2 ? f - 2 : 0), y = 2; y < f; y++)
               v[y - 2] = arguments[y];
             if ((e.apply(void 0, [s].concat(v)), Array.isArray(s.entities))) {
               var m,
-                b = $(
+                b = x(
                   null === (i = null === (o = s.entities) || void 0 === o ? void 0 : o.entries) ||
                     void 0 === i
                     ? void 0
@@ -5866,34 +6319,34 @@ var wn = (function (e) {
       n
     );
   })(),
-  _n = (function (e) {
-    b(r, De);
+  En = (function (e) {
+    v(r, He);
     var t,
-      n = g(r);
+      n = y(r);
     function r() {
-      return P(this, r), n.apply(this, arguments);
+      return ($(this, r), n.apply(this, arguments));
     }
     return (
-      T(r, [
+      C(r, [
         {
           key: 'getConfigElement',
           value:
-            ((t = m(
-              v().mark(function e(t) {
+            ((t = M(
+              P().mark(function e(t) {
                 var n,
                   r,
                   o,
                   i,
                   a = arguments;
-                return v().wrap(function (e) {
+                return P().wrap(function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
                         for (n = a.length, r = new Array(n > 1 ? n - 1 : 0), o = 1; o < n; o++)
                           r[o - 1] = a[o];
-                        return (e.next = 3), t.apply(void 0, r);
+                        return ((e.next = 3), t.apply(void 0, r));
                       case 3:
-                        return (i = e.sent), Vt(i, wn), e.abrupt('return', i);
+                        return ((i = e.sent), Bt(i, xn), e.abrupt('return', i));
                       case 6:
                       case 'end':
                         return e.stop();
@@ -5920,44 +6373,32 @@ var wn = (function (e) {
       r
     );
   })();
-_n = N([Bt('hui-card-element-editor')], _n);
-var kn = (function (e) {
-  b(n, De);
-  var t = g(n);
+En = R([Ft('hui-card-element-editor')], En);
+var An = (function (e) {
+  v(n, He);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'updated',
         value: function (e) {
-          for (
-            var t, n, r, o, i, a = arguments.length, s = new Array(a > 1 ? a - 1 : 0), u = 1;
-            u < a;
-            u++
-          )
-            s[u - 1] = arguments[u];
-          null == e || e.apply(void 0, s),
+          for (var t, n = arguments.length, r = new Array(n > 1 ? n - 1 : 0), o = 1; o < n; o++)
+            r[o - 1] = arguments[o];
+          (null == e || e.apply(void 0, r),
             this._cardModIcon ||
               ((this._cardModIcon = document.createElement('ha-icon')),
-              (this._cardModIcon.icon = 'mdi:brush'));
-          var c = this.shadowRoot.querySelector('mwc-button[slot=secondaryAction]');
-          c &&
-            (c.appendChild(this._cardModIcon),
-            (null === (t = this._cardConfig) || void 0 === t ? void 0 : t.card_mod) ||
-            (Array.isArray(null === (n = this._cardConfig) || void 0 === n ? void 0 : n.entities) &&
-              (null ===
-                (i =
-                  null ===
-                    (o = null === (r = this._cardConfig) || void 0 === r ? void 0 : r.entities) ||
-                  void 0 === o
-                    ? void 0
-                    : o.some) || void 0 === i
+              (this._cardModIcon.icon = 'mdi:brush')));
+          var i = this.shadowRoot.querySelector('ha-button[slot=secondaryAction]');
+          i &&
+            (i.appendChild(this._cardModIcon),
+            (
+              null === (t = JSON.stringify(this._cardConfig)) || void 0 === t
                 ? void 0
-                : i.call(o, function (e) {
-                    return e.card_mod;
-                  })))
+                : t.includes('card_mod')
+            )
               ? (this._cardModIcon.style.visibility = 'visible')
               : (this._cardModIcon.style.visibility = 'hidden'));
         },
@@ -5966,105 +6407,105 @@ var kn = (function (e) {
     n
   );
 })();
-kn = N([Bt('hui-dialog-edit-card')], kn);
-var xn = (function (e) {
-  b(n, jt);
-  var t = g(n);
-  function n() {
-    return P(this, n), t.apply(this, arguments);
-  }
-  return (
-    T(n, [
-      {
-        key: 'updated',
-        value: function (e) {
-          for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
-            n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'config', { prepend: !0 });
-        },
-      },
-    ]),
-    n
-  );
-})();
-xn = N([Bt('ha-panel-config')], xn);
-var En = (function (e) {
-  b(n, jt);
-  var t = g(n);
-  function n() {
-    return P(this, n), t.apply(this, arguments);
-  }
-  return (
-    T(n, [
-      {
-        key: 'updated',
-        value: function (e) {
-          for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
-            n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'panel-custom', { prepend: !0 });
-        },
-      },
-    ]),
-    n
-  );
-})();
-En = N([Bt('ha-panel-custom')], En);
-var An = (function (e) {
-  b(n, jt);
-  var t = g(n);
-  function n() {
-    return P(this, n), t.apply(this, arguments);
-  }
-  return (
-    T(n, [
-      {
-        key: 'updated',
-        value: function (e) {
-          for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
-            n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'top-app-bar-fixed');
-        },
-      },
-    ]),
-    n
-  );
-})();
-An = N([Bt('ha-top-app-bar-fixed')], An);
+An = R([Ft('hui-dialog-edit-card')], An);
 var $n = (function (e) {
-  b(n, jt);
-  var t = g(n);
+  v(n, Nt);
+  var t = y(n);
   function n() {
-    return P(this, n), t.apply(this, arguments);
+    return ($(this, n), t.apply(this, arguments));
   }
   return (
-    T(n, [
+    C(n, [
       {
         key: 'updated',
         value: function (e) {
           for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
             n[r - 1] = arguments[r];
-          null == e || e.apply(void 0, n), Rt(this, 'developer-tools');
+          (null == e || e.apply(void 0, n), Ut(this, 'config', { prepend: !0 }));
         },
       },
     ]),
     n
   );
 })();
-$n = N([Bt('ha-panel-developer-tools')], $n);
-var Sn,
-  Cn,
-  Pn,
-  On =
+$n = R([Ft('ha-panel-config')], $n);
+var Sn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
+  function n() {
+    return ($(this, n), t.apply(this, arguments));
+  }
+  return (
+    C(n, [
+      {
+        key: 'updated',
+        value: function (e) {
+          for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
+            n[r - 1] = arguments[r];
+          (null == e || e.apply(void 0, n), Ut(this, 'panel-custom', { prepend: !0 }));
+        },
+      },
+    ]),
+    n
+  );
+})();
+Sn = R([Ft('ha-panel-custom')], Sn);
+var Cn = (function (e) {
+  v(n, Nt);
+  var t = y(n);
+  function n() {
+    return ($(this, n), t.apply(this, arguments));
+  }
+  return (
+    C(n, [
+      {
+        key: 'updated',
+        value: function (e) {
+          for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
+            n[r - 1] = arguments[r];
+          (null == e || e.apply(void 0, n), Ut(this, 'top-app-bar-fixed'));
+        },
+      },
+    ]),
+    n
+  );
+})();
+Cn = R([Ft('ha-top-app-bar-fixed')], Cn);
+var On = (function (e) {
+  v(n, Nt);
+  var t = y(n);
+  function n() {
+    return ($(this, n), t.apply(this, arguments));
+  }
+  return (
+    C(n, [
+      {
+        key: 'updated',
+        value: function (e) {
+          for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
+            n[r - 1] = arguments[r];
+          (null == e || e.apply(void 0, n), Ut(this, 'developer-tools'));
+        },
+      },
+    ]),
+    n
+  );
+})();
+On = R([Ft('ha-panel-developer-tools')], On);
+var Pn,
+  Tn,
+  jn,
+  Mn =
     '\nha-card {\n  background: none;\n  box-shadow: none;\n  border: none;\n  transition: none;\n}',
-  Tn = (function (e) {
-    b(r, De);
+  Nn = (function (e) {
+    v(r, He);
     var t,
-      n = g(r);
+      n = y(r);
     function r() {
-      return P(this, r), n.apply(this, arguments);
+      return ($(this, r), n.apply(this, arguments));
     }
     return (
-      T(r, [
+      C(r, [
         {
           key: 'setConfig',
           value: function (e) {
@@ -6073,29 +6514,29 @@ var Sn,
             var r =
               (null === (t = this._config.card_mod) || void 0 === t ? void 0 : t.style) ||
               this._config.style;
-            void 0 === r
-              ? (r = On)
+            (void 0 === r
+              ? (r = Mn)
               : 'string' == typeof r
-              ? (r = On + r)
-              : r['.']
-              ? (r['.'] = On + r['.'])
-              : (r['.'] = On),
+                ? (r = Mn + r)
+                : r['.']
+                  ? (r['.'] = Mn + r['.'])
+                  : (r['.'] = Mn),
               (this._config.card_mod = {
                 style: r,
                 debug:
                   (null === (n = this._config.card_mod) || void 0 === n ? void 0 : n.debug) || !1,
               }),
-              this.build_card(e.card);
+              this.build_card(e.card));
           },
         },
         {
           key: 'build_card',
           value:
-            ((t = m(
-              v().mark(function e(t) {
+            ((t = M(
+              P().mark(function e(t) {
                 var n,
                   r = this;
-                return v().wrap(
+                return P().wrap(
                   function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
@@ -6112,12 +6553,14 @@ var Sn,
                           );
                         case 3:
                           return (
-                            (this._hassResolve = void 0), (e.next = 6), window.loadCardHelpers()
+                            (this._hassResolve = void 0),
+                            (e.next = 6),
+                            window.loadCardHelpers()
                           );
                         case 6:
-                          return (n = e.sent), (e.next = 9), n.createCardElement(t);
+                          return ((n = e.sent), (e.next = 9), n.createCardElement(t));
                         case 9:
-                          (this.card = e.sent), (this.card.hass = this._hass);
+                          ((this.card = e.sent), (this.card.hass = this._hass));
                         case 11:
                         case 'end':
                           return e.stop();
@@ -6158,15 +6601,15 @@ var Sn,
         {
           key: 'hass',
           set: function (e) {
-            (this._hass = e),
+            ((this._hass = e),
               this.card && (this.card.hass = e),
-              this._hassResolve && this._hassResolve();
+              this._hassResolve && this._hassResolve());
           },
         },
         {
           key: 'render',
           value: function () {
-            return _e(s || (s = u([' <ha-card modcard> ', ' </ha-card> '])), this.card);
+            return ke(s || (s = u([' <ha-card modcard> ', ' </ha-card> '])), this.card);
           },
         },
         {
@@ -6186,11 +6629,11 @@ var Sn,
       r
     );
   })();
-N([Ve()], Tn.prototype, 'card', void 0),
-  customElements.get('mod-card') || customElements.define('mod-card', Tn),
-  m(
-    v().mark(function e() {
-      return v().wrap(function (e) {
+(R([Ve()], Nn.prototype, 'card', void 0),
+  customElements.get('mod-card') || customElements.define('mod-card', Nn),
+  M(
+    P().mark(function e() {
+      return P().wrap(function (e) {
         for (;;)
           switch ((e.prev = e.next)) {
             case 0:
@@ -6208,55 +6651,55 @@ N([Ve()], Tn.prototype, 'card', void 0),
               e.next = 0;
               break;
             case 5:
-              customElements.get('mod-card') || customElements.define('mod-card', Tn);
+              customElements.get('mod-card') || customElements.define('mod-card', Nn);
             case 6:
             case 'end':
               return e.stop();
           }
       }, e);
     })
-  )();
-var jn,
-  Mn = [],
-  Nn = $(document.querySelectorAll('script'));
+  )());
+var Rn,
+  Ln = [],
+  Un = x(document.querySelectorAll('script'));
 try {
-  for (Nn.s(); !(jn = Nn.n()).done; ) {
-    var Rn = jn.value;
+  for (Un.s(); !(Rn = Un.n()).done; ) {
+    var Dn = Rn.value;
     if (
       null ===
-        (Cn =
-          null === (Sn = null == Rn ? void 0 : Rn.innerText) || void 0 === Sn
+        (Tn =
+          null === (Pn = null == Dn ? void 0 : Dn.innerText) || void 0 === Pn
             ? void 0
-            : Sn.trim()) || void 0 === Cn
+            : Pn.trim()) || void 0 === Tn
         ? void 0
-        : Cn.startsWith('import(')
+        : Tn.startsWith('import(')
     ) {
-      var Ln,
-        Un =
-          null === (Pn = Rn.innerText.split('\n')) || void 0 === Pn
+      var Hn,
+        In =
+          null === (jn = Dn.innerText.split('\n')) || void 0 === jn
             ? void 0
-            : Pn.map(function (e) {
+            : jn.map(function (e) {
                 return e.trim();
               }),
-        Dn = $(Un);
+        qn = x(In);
       try {
-        for (Dn.s(); !(Ln = Dn.n()).done; ) {
-          var Hn = Ln.value;
-          Mn.push(Hn.replace(/^import\(\"/, '').replace(/\"\);/, ''));
+        for (qn.s(); !(Hn = qn.n()).done; ) {
+          var zn = Hn.value;
+          Ln.push(zn.replace(/^import\(\"/, '').replace(/\"\);/, ''));
         }
       } catch (e) {
-        Dn.e(e);
+        qn.e(e);
       } finally {
-        Dn.f();
+        qn.f();
       }
     }
   }
 } catch (e) {
-  Nn.e(e);
+  Un.e(e);
 } finally {
-  Nn.f();
+  Un.f();
 }
-Mn.some(function (e) {
+Ln.some(function (e) {
   return e.includes('/card-mod.js');
 }) ||
   console.info(

@@ -12,10 +12,14 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # motion is detected or door is opened
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.l2storage01_pir_01
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.l2storage01_pir_01
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   # condition: []
   condition:
@@ -29,8 +33,8 @@
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR ON ----------------------
-    service: switch.turn_on
-    entity_id: switch.l2storage01_ssr_01
+    - action: switch.turn_on
+      entity_id: switch.l2storage01_ssr_01
 
 # ############################################################
 # L2 Storage: SSR01 off after there is no motion for x minutes
@@ -40,21 +44,27 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   # no motion is detected for x minutes or door is closed
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.l2storage01_pir_01
       to: "off"
       for:
         minutes: 2
-    # the following is configured in the ESPHome part of the device
-    # - platform: state
-    #   entity_id: binary_sensor.l2_storage01_door
-    #   to: "off"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.l2storage01_pir_01
+  #     to: "off"
+  #     for:
+  #       minutes: 2
+  # the following is configured in the ESPHome part of the device
+  # - platform: state
+  #   entity_id: binary_sensor.l2_storage01_door
+  #   to: "off"
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR OFF ---------------------
-    service: switch.turn_off
-    entity_id: switch.l2storage01_ssr_01
+    - action: switch.turn_off
+      entity_id: switch.l2storage01_ssr_01
 # ############################################################
 #  END OF FILE
 # ############################################################

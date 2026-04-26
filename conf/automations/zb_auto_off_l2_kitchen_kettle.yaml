@@ -11,17 +11,21 @@
   id: "fcd10427-4f0a-4f42-9247-d63271af5a83"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_kettle
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_kettle
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
-    service: switch.turn_off
-    entity_id: switch.zb_plug_l2_kitchen_kettle
+    - action: switch.turn_off
+      entity_id: switch.zb_plug_l2_kitchen_kettle
 ############################################################
 #  END OF FILE
 # ############################################################

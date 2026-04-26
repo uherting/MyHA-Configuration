@@ -11,17 +11,21 @@
   id: "f82631d9-628e-4afa-a224-2fe4b9bf15ed"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_microwave
       to: "on"
+  # trigger:
+  #   - platform: state
+  #     entity_id: binary_sensor.zb_plug_auto_off_l2_kitchen_microwave
+  #     to: "on"
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------ ZB Plug OFF ------------------
-    service: switch.turn_off
-    entity_id: switch.zb_plug_l2_kitchen_microwave
+    - action: switch.turn_off
+      entity_id: switch.zb_plug_l2_kitchen_microwave
 # ############################################################
 #  END OF FILE
 # ############################################################
