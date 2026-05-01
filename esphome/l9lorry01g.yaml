@@ -63,7 +63,19 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-time: !include conf/common/time.yaml
+# time: !include conf/common/time.yaml
+# where does the time come from? We use GPS time.
+time:
+  - platform: gps
+    id: gps_time
+    on_time_sync:
+      if:
+        condition:
+          time.has_time:
+        then:
+          - logger.log: "GPS Time Updated"
+        else:
+          - logger.log: "GPS Time Sync Failed"
 
 # sun: !include conf/common/sun.yaml
 
@@ -166,10 +178,10 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
-  - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_coffeemachine.yaml
-  - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_dishwasher.yaml
-  - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_kettle.yaml
-  - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_microwave.yaml
+  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_coffeemachine.yaml
+  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_dishwasher.yaml
+  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_kettle.yaml
+  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_microwave.yaml
   
 #-------------------------------------------------------------------
 # SENSORS
@@ -246,18 +258,6 @@ gps:
     id: gps_hdop
   update_interval: ${gps_update_interval}
 
-# where does the time come from? We use GPS time.
-time:
-  - platform: gps
-    id: gps_time
-    on_time_sync:
-      if:
-        condition:
-          time.has_time:
-        then:
-          - logger.log: "GPS Time Updated"
-        else:
-          - logger.log: "GPS Time Sync Failed"
 ####################################################################
 # EOF
 ####################################################################
