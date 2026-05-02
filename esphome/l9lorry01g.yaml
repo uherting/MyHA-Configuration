@@ -63,19 +63,23 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-# time: !include conf/common/time.yaml
+time: !include conf/common/time.yaml
+
+###########################
+# still to be done:
+###########################
 # where does the time come from? We use GPS time.
-time:
-  - platform: gps
-    id: gps_time
-    on_time_sync:
-      if:
-        condition:
-          time.has_time:
-        then:
-          - logger.log: "GPS Time Updated"
-        else:
-          - logger.log: "GPS Time Sync Failed"
+# time:
+#   - platform: gps
+#     id: gps_time
+#     on_time_sync:
+#       if:
+#         condition:
+#           time.has_time:
+#         then:
+#           - logger.log: "GPS Time Updated"
+#         else:
+#           - logger.log: "GPS Time Sync Failed"
 
 # sun: !include conf/common/sun.yaml
 
