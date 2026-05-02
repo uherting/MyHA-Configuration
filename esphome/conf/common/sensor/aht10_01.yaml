@@ -2,7 +2,7 @@
 # SENSORS
 
 ####################################################################
-# WiFi sensors
+# Temperature and humidity sensor AHT10
 #sensor:
   - platform: aht10
     variant: AHT10

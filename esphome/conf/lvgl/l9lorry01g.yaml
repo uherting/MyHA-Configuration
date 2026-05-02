@@ -61,10 +61,11 @@
                         align: center
                   on_click:
                     then:
-                      - homeassistant.action:
-                          action: switch.toggle
-                          data:
-                            entity_id: switch.zb_plug_l2_kitchen_dishwasher
+                      - delay: 100ms
+                      # - homeassistant.action:
+                      #     action: switch.toggle
+                      #     data:
+                      #       entity_id: switch.zb_plug_l2_kitchen_dishwasher
               - button:
                   id: btn_microwave
                   grid_cell_column_pos: 1
@@ -80,10 +81,11 @@
                         align: center
                   on_click:
                     then:
-                      - homeassistant.action:
-                          action: switch.toggle
-                          data:
-                            entity_id: switch.zb_plug_l2_kitchen_microwave
+                      - delay: 100ms
+                      # - homeassistant.action:
+                      #     action: switch.toggle
+                      #     data:
+                      #       entity_id: switch.zb_plug_l2_kitchen_microwave
               - button:
                   id: btn_kettle
                   grid_cell_column_pos: 2
@@ -99,10 +101,11 @@
                         align: center
                   on_click:
                     then:
-                      - homeassistant.action:
-                          action: switch.toggle
-                          data:
-                            entity_id: switch.zb_plug_l2_kitchen_kettle
+                      - delay: 100ms
+                      # - homeassistant.action:
+                      #     action: switch.toggle
+                      #     data:
+                      #       entity_id: switch.zb_plug_l2_kitchen_kettle
               - button:
                   id: btn_coffeemachine
                   grid_cell_column_pos: 3
@@ -118,10 +121,11 @@
                         align: center
                   on_click:
                     then:
-                      - homeassistant.action:
-                          action: homeassistant.toggle
-                          data:
-                            entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
+                      - delay: 100ms
+                      # - homeassistant.action:
+                      #     action: homeassistant.toggle
+                      #     data:
+                      #       entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
               # - switch:
               #     id: switch_antiburn_btn
               #     grid_cell_column_pos: 3

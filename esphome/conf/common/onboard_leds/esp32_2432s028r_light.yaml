@@ -1,0 +1,30 @@
+####################################################################
+# ESP32-2432S028R aka CYD - onboard LED
+
+# light:
+  # display backlight control
+  - platform: monochromatic
+    output: backlight_pwm
+    name: Display Backlight
+    id: display_backlight
+    restore_mode: ALWAYS_ON
+
+  # RGB LED control
+  - platform: rgb
+    name: "RGB LED"
+    red: output_red
+    green: output_green
+    blue: output_blue
+  # - platform: binary
+  #   output: gpio4_out
+  #   id: local_light
+  #   name: "GPIO 4 Light"
+  #   on_state:
+  #     - lvgl.widget.update:
+  #         id: light_switch3
+  #         state:
+  #           checked: !lambda return id(local_light).current_values.is_on();
+
+####################################################################
+# EOF
+####################################################################

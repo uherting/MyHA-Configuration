@@ -95,7 +95,7 @@ gps:
   hdop:
     name: "GPS HDOP"
     id: gps_hdop
-  update_interval: 20s
+  update_interval: ${gps_update_interval}
 
 # where does the time come from? We use GPS time.
 time:
