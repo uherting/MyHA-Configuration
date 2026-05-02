@@ -1,0 +1,25 @@
+####################################################################
+# ESP32-2432S028R aka CYD - onboard LED
+
+# output:
+  # backlight of the display
+  - platform: ledc
+    pin: GPIO21
+    id: backlight_pwm
+  # RGB LED red, green, blue
+  - platform: ledc
+    pin: GPIO4
+    id: output_red
+    inverted: true
+  - platform: ledc
+    pin: GPIO16
+    id: output_green
+    inverted: true
+  - platform: ledc
+    pin: GPIO17
+    id: output_blue
+    inverted: true
+
+####################################################################
+# EOF
+####################################################################
