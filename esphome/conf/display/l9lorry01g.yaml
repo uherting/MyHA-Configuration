@@ -25,7 +25,10 @@
   #auto_clear_enabled: false
   # rotation: valid values: 0, 90, 180 or 270. 180 equals to antenna on the left side
   # pay attention to the touchscreen, swap_xy: might be changed accordingly
-  rotation: ${cyd_display_rotation} 
+  # after changing the rotation to 180, ...
+  #   - having rotation: in display: does not get valitaded, so we put it into lvgl: config  
+  #   - swap_xy: true is needed for the touchscreen to work correctly in landscape mode
+  # rotation: ${cyd_display_rotation} 
   dimensions:
    width: ${cyd_display_width_320}
    height: ${cyd_display_height_240}

@@ -16,7 +16,7 @@ aht20_01_temp_id: ${friendly_id}_Lorry_AHT20_T_01
 aht20_01_hum_id: ${friendly_id}_Lorry_AHT20_H_01
 
 # antenna on the right side when looking at the display
-cyd_display_rotation: 0
+cyd_display_rotation: 180
 
 # log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
