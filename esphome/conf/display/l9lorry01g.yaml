@@ -9,6 +9,10 @@
 # config from https://community.home-assistant.io/t/faulty-cyd-or-config-error/908986
 # lambda added from below
 ####################################################################
+
+# during compilation, the following warning is shown:
+# WARNING The 'ili9xxx' component is deprecated, it is recommended to use 'mipi_spi' instead.
+
 - platform: ili9xxx
   id: esp_display
   model: ili9342
