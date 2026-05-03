@@ -142,10 +142,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_coffeemachine.yaml
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_dishwasher.yaml
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_kettle.yaml
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_microwave.yaml
+  # none so far
   
 #-------------------------------------------------------------------
 # SENSORS
@@ -195,32 +192,32 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # GPS related setup
-# uart: !include conf/common/device/uart01_esp32cyd_gps.yaml
-# gps:
-#   id: ${friendly_id}_gps
-#   uart_id: ${uart01_esp32_gps_id}
-#   latitude:
-#     name: "GPS Latitude"
-#     id: gps_latitude
-#   longitude:
-#     name: "GPS Longitude"
-#     id: gps_longitude
-#   altitude:
-#     name: "GPS Altitude"
-#     id: gps_altitude
-#   speed:
-#     name: "GPS Speed"
-#     id: gps_speed
-#   course:
-#     name: "GPS Course"
-#     id: gps_course
-#   satellites:
-#     name: "GPS Visible Satellites"
-#     id: gps_satellites
-#   hdop:
-#     name: "GPS HDOP"
-#     id: gps_hdop
-#   update_interval: ${gps_update_interval}
+uart: !include conf/common/device/uart01_esp32cyd_gps.yaml
+gps:
+  id: ${friendly_id}_gps
+  uart_id: ${uart01_esp32_gps_id}
+  latitude:
+    name: "GPS Latitude"
+    id: gps_latitude
+  longitude:
+    name: "GPS Longitude"
+    id: gps_longitude
+  altitude:
+    name: "GPS Altitude"
+    id: gps_altitude
+  speed:
+    name: "GPS Speed"
+    id: gps_speed
+  course:
+    name: "GPS Course"
+    id: gps_course
+  satellites:
+    name: "GPS Visible Satellites"
+    id: gps_satellites
+  hdop:
+    name: "GPS HDOP"
+    id: gps_hdop
+  update_interval: ${gps_update_interval}
 
 ####################################################################
 # EOF
