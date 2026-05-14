@@ -47,7 +47,7 @@
             outline_pad: 5px
             widgets:
               - button:
-                  id: btn_dishwasher
+                  id: btn_wifi
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -55,8 +55,8 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_dishwasher
-                        text: "󰪬"
+                        id: lbl_btn_wifi
+                        text: "󰖩"
                         text_font: mdi_icons
                         align: center
                   on_click:

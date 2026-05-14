@@ -19,6 +19,7 @@
 # Hardware:
 #   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32
 #   - GPS module
+#   - VEML7700 ambient light sensor
 #
 # Automation:
 #   - still to be determined / documented
@@ -63,24 +64,7 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-time: !include conf/common/time.yaml
-
-###########################
-# still to be done:
-###########################
-# where does the time come from? We use GPS time.
-# time:
-#   - platform: gps
-#     id: gps_time
-#     on_time_sync:
-#       if:
-#         condition:
-#           time.has_time:
-#         then:
-#           - logger.log: "GPS Time Updated"
-#         else:
-#           - logger.log: "GPS Time Sync Failed"
-
+time: !include conf/common/time_ntp.yaml
 # sun: !include conf/common/sun.yaml
 
 ############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
@@ -159,10 +143,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_coffeemachine.yaml
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_dishwasher.yaml
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_kettle.yaml
-  # - <<: !include conf/binary_sensor/l9lorry01g/l9lorry01g_microwave.yaml
+  # none so far
   
 #-------------------------------------------------------------------
 # SENSORS
@@ -172,6 +153,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/common/sensor/aht20_01.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_short.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
   # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
 
@@ -212,32 +194,32 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # GPS related setup
-# uart: !include conf/common/device/uart01_esp32cyd_gps.yaml
-# gps:
-#   id: ${friendly_id}_gps
-#   uart_id: ${uart01_esp32_gps_id}
-#   latitude:
-#     name: "GPS Latitude"
-#     id: gps_latitude
-#   longitude:
-#     name: "GPS Longitude"
-#     id: gps_longitude
-#   altitude:
-#     name: "GPS Altitude"
-#     id: gps_altitude
-#   speed:
-#     name: "GPS Speed"
-#     id: gps_speed
-#   course:
-#     name: "GPS Course"
-#     id: gps_course
-#   satellites:
-#     name: "GPS Visible Satellites"
-#     id: gps_satellites
-#   hdop:
-#     name: "GPS HDOP"
-#     id: gps_hdop
-#   update_interval: ${gps_update_interval}
+uart: !include conf/common/device/uart01_esp32cyd_gps.yaml
+gps:
+  id: ${friendly_id}_gps
+  uart_id: ${uart01_esp32_gps_id}
+  latitude:
+    name: "GPS Latitude"
+    id: gps_latitude
+  longitude:
+    name: "GPS Longitude"
+    id: gps_longitude
+  altitude:
+    name: "GPS Altitude"
+    id: gps_altitude
+  speed:
+    name: "GPS Speed"
+    id: gps_speed
+  course:
+    name: "GPS Course"
+    id: gps_course
+  satellites:
+    name: "GPS Visible Satellites"
+    id: gps_satellites
+  hdop:
+    name: "GPS HDOP"
+    id: gps_hdop
+  update_interval: ${gps_update_interval}
 
 ####################################################################
 # EOF

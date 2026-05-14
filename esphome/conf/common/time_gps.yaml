@@ -1,0 +1,19 @@
+####################################################################
+# TIME
+
+#time:
+  - platform: gps
+    id: gps_time
+    timezone: "Europe/Berlin"
+    on_time_sync:
+      if:
+        condition:
+          time.has_time:
+        then:
+          - logger.log: "GPS Time Updated"
+        else:
+          - logger.log: "GPS Time Sync Failed"
+
+####################################################################
+# EOF
+####################################################################
