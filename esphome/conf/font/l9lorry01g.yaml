@@ -26,7 +26,7 @@
       - "󰤯" # mdiWifiOff
       - "󰆤" # mdiCrosshairsGps
       - "󰆣" # mdiCrosshairsNoGps
-      - "" # 
+      # - "" # 
 
   # id: lbl_btn_wifiOnOff
   # text: "_"
