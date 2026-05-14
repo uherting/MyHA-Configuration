@@ -19,6 +19,7 @@
 # Hardware:
 #   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32
 #   - GPS module
+#   - VEML7700 ambient light sensor
 #
 # Automation:
 #   - still to be determined / documented
@@ -152,6 +153,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/common/sensor/aht20_01.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_short.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
   # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
 
