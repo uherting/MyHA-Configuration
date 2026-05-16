@@ -1,0 +1,46 @@
+# ############################################################
+#
+#  Available updates notification
+#
+# ############################################################
+
+# ############################################################
+#  Window contact detected open window
+# ############################################################
+- alias: Available updates notification
+  id: "0804cea0-b271-459b-80f7-9073b2d7a521"
+  description: "This automation informs about available updates"
+  mode: single
+  max_exceeded: silent
+
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: time
+      at: "09:30:00"
+  # -------------------- CONDITIONS -------------------
+  conditions:
+    - condition: template
+      value_template: "{{ states.update | selectattr('state', 'eq', 'on') | list | count > 0 }}"
+  # --------------------- ACTIONS ---------------------
+  actions:
+    - action: notify.mobile_app_juans_iphone
+      metadata: {}
+      data:
+        data:
+          url: /config/updates
+          group: updates_available
+        message: |-
+          {{ states.update 
+            | selectattr('state', 'eq', 'on') 
+            | map(attribute='attributes.friendly_name') 
+            | join('\n') }}
+        title: |-
+          {{ states.update 
+            | selectattr('state', 'eq', 'on') 
+            | list 
+            | count }} updates available
+      enabled: true
+# ############################################################
+#  END OF FILE
+# ############################################################
