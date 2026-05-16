@@ -24,23 +24,19 @@
       value_template: "{{ states.update | selectattr('state', 'eq', 'on') | list | count > 0 }}"
   # --------------------- ACTIONS ---------------------
   actions:
-    - action: notify.mobile_app_juans_iphone
-      metadata: {}
+    - action: script.tg_send_txt
       data:
-        data:
-          url: /config/updates
-          group: updates_available
-        message: |-
-          {{ states.update 
-            | selectattr('state', 'eq', 'on') 
-            | map(attribute='attributes.friendly_name') 
-            | join('\n') }}
-        title: |-
+        msg_title: "Updates are available"
+        msg_text: |-
           {{ states.update 
             | selectattr('state', 'eq', 'on') 
             | list 
             | count }} updates available
-      enabled: true
+          {{ states.update 
+            | selectattr('state', 'eq', 'on') 
+            | map(attribute='attributes.friendly_name') 
+            | join('\n') }}
+        msg_receiver: "admin"
 # ############################################################
 #  END OF FILE
 # ############################################################
