@@ -103,34 +103,11 @@ display: !include conf/display/l2kitchen12.yaml
 # config taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
 touchscreen: !include conf/touchscreen/l2kitchen12.yaml
 #-------------------------------------------------------------------
-# Setup a way to control the backlight of the display
-light:
-  # display backlight control
-  - platform: monochromatic
-    output: backlight_pwm
-    name: Display Backlight
-    id: display_backlight
-    restore_mode: ALWAYS_ON
-  # RGB LED to test output
-  # - platform: binary
-  #   output: gpio4_out
-  #   id: local_light
-  #   name: "GPIO 4 Light"
-  #   on_state:
-  #     - lvgl.widget.update:
-  #         id: light_switch3
-  #         state:
-  #           checked: !lambda return id(local_light).current_values.is_on();
-
-output:
-  - platform: ledc
-    pin: GPIO21
-    id: backlight_pwm
-  - platform: gpio
-    pin: GPIO4
-    id: gpio4_out
-    inverted: true
-
+# ESP32-2432S028R aka CYD - onboard RGB LED (GPIO4, GPIO16, GPIO17)
+output: !include conf/common/onboard_leds/esp32_2432s028r_output.yaml
+light: !include conf/common/onboard_leds/esp32_2432s028r_light.yaml
+#-------------------------------------------------------------------
+# screen saver timeout configuration
 number:
   - platform: template
     name: LVGL Screen timeout
@@ -153,8 +130,8 @@ number:
 
 globals:
   - <<: !include conf/common/globals/connectivity.yaml
-# interval: 
-#   - <<: !include conf/common/interval/connectivity.yaml
+interval: 
+  - <<: !include conf/common/interval/connectivity.yaml
   # - <<: !include conf/interval/l2kitchen12.yaml
 # script:
   # - <<: !include conf/script/l2kitchen12/foobar.yaml
