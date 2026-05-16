@@ -8,11 +8,13 @@ from typing import Any
 
 from .const import (
     DEVICE_TYPE_AIR_FRYER,
+    DEVICE_TYPE_BREAD_MAKER,
     DEVICE_TYPE_COFFEE_MACHINE,
     DEVICE_TYPE_DISHWASHER,
     DEVICE_TYPE_DRYER,
     DEVICE_TYPE_EV,
     DEVICE_TYPE_HEAT_PUMP,
+    DEVICE_TYPE_OVEN,
     DEVICE_TYPE_WASHER_DRYER,
     DEVICE_TYPE_WASHING_MACHINE,
 )
@@ -292,6 +294,60 @@ DEFAULT_PHASES_BY_DEVICE: dict[str, list[PhaseItem]] = {
             "is_default": True,
         },
     ],
+    DEVICE_TYPE_BREAD_MAKER: [
+        {
+            "name": "Kneading",
+            "description": "Motor-driven dough mixing and development. High power draw.",
+            "is_default": True,
+        },
+        {
+            "name": "Resting",
+            "description": "Short low-power pause between kneading stages for gluten relaxation.",
+            "is_default": True,
+        },
+        {
+            "name": "Proving",
+            "description": "Low-heat rising period to allow yeast fermentation and dough expansion.",
+            "is_default": True,
+        },
+        {
+            "name": "Baking",
+            "description": "High-temperature heating element active for crust and crumb formation.",
+            "is_default": True,
+        },
+        {
+            "name": "Keep Warm",
+            "description": "Low-heat holding stage to keep the loaf warm after baking.",
+            "is_default": True,
+        },
+    ],
+    DEVICE_TYPE_OVEN: [
+        {
+            "name": "Pre-Heat",
+            "description": "Heating element runs continuously to bring the cavity up to the target temperature.",
+            "is_default": True,
+        },
+        {
+            "name": "Heating",
+            "description": "Active heater bursts during cooking when the thermostat calls for heat.",
+            "is_default": True,
+        },
+        {
+            "name": "Maintaining Temp",
+            "description": "Thermostat-regulated holding period: heater cycles on and off to keep the set temperature.",
+            "is_default": True,
+        },
+        {
+            "name": "Cool Down",
+            "description": "Heater off after the cycle ends; residual heat dissipates and the cooling fan may continue to run.",
+            "is_default": True,
+        },
+        {
+            "name": "Pyrolytic Clean",
+            "description": "High-temperature self-clean phase that burns off residue. Optional and only active during pyrolytic programs.",
+            "is_default": True,
+        },
+    ],
 }
 
 
@@ -375,7 +431,7 @@ def merge_phase_catalog(device_type: str, custom_phases: list[PhaseItem] | None)
     seen_ids: set[str] = set(builtin_by_id.keys())
     seen_names: set[tuple[str, str]] = set(builtin_by_name.keys())
 
-    # All known built-in names — used to guard against polluting unrelated catalogs.
+    # All known built-in names - used to guard against polluting unrelated catalogs.
     all_builtin_names = {
         str(p.get("name", "")).strip().casefold()
         for phases_list in DEFAULT_PHASES_BY_DEVICE.values()
