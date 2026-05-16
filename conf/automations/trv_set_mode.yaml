@@ -73,10 +73,10 @@
   triggers:
     - trigger: time
       at: "08:00:00"
-    - trigger: time
-      at: "12:00:00"
-    - trigger: time
-      at: "18:30:00"
+    # - trigger: time
+    #   at: "12:00:00"
+    # - trigger: time
+    #   at: "18:30:00"
   # -------------------- CONDITIONS -------------------
   condition:
     - alias: "Allowing the switching of trv preset mode based on enable switch"
@@ -233,7 +233,6 @@
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  # time based execution
   triggers:
     # GH came back
     - trigger: state
