@@ -6,10 +6,10 @@
 #
 ##########################################################################################
 
-BNAME=`basename $0 .sh`
-DNAME=`dirname $0`
+BNAME=$(basename $0 .sh)
+DNAME=$(dirname $0)
 if [ "$DNAME" == "." ];then
- DNAME="`pwd`"
+ DNAME=$(pwd)
 fi
 
 # beta

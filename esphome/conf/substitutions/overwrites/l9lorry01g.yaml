@@ -1,0 +1,24 @@
+####################################################################
+# OVERWRITE COMMON SUBSTITUTIONS
+
+# if there are no overrides the dummy value comes in handy ;-)
+# dummy_value: "dummy value"
+
+# AHT20 sensor
+aht20_01_temp_name: $friendly_name Lorry AHT20 T 01
+aht20_01_hum_name: $friendly_name Lorry AHT20 H 01
+aht20_01_update_interval: 60s
+aht20_01_address: 0x38
+aht20_01_variant: AHT20
+aht20_01_temp_unit: "°C"
+aht20_01_hum_unit: "%"
+aht20_01_temp_id: ${friendly_id}_Lorry_AHT20_T_01
+aht20_01_hum_id: ${friendly_id}_Lorry_AHT20_H_01
+
+# antenna on the right side when looking at the display
+cyd_display_rotation: 180
+
+# log_level: !secret LOG_LEVEL_DEBUG
+####################################################################
+# EOF
+####################################################################

@@ -1,23 +1,28 @@
 ####################################################################
-# SUBSTITUTIONS
+# DEVICE SPECIFIC SUBSTITUTIONS
 
 # device definitions
-device_name: test-com-offline-slave
-device_comment: test communication offline - slave
+device_name: l9lorry01g
+device_comment: Level 9 Lorry 01G ESP32-2432S028R aka CYD
 device_area: L9
 
 device_platform: ESP32
-device_board: esp32dev
-wifi_static_ip: 192.168.178.30
+wifi_static_ip: 192.168.178.39
 
-# the friendly name and id (outdated due to new naming scheme)
+# The ESP32-2432S028R uses a standard ESP32-WROVER, 
+# so we use the esp32dev defintion here with the Arduino framework
+device_board: esp32dev
+device_framework: arduino
+
+# the friendly name and id
 friendly_name: ""
 friendly_id: ""
 
+# display
+display_id: ${device_name}_display
+
 # the update interval for the GPS sensor
 gps_update_interval: 20s
-
 ####################################################################
 # EOF
 ####################################################################
-

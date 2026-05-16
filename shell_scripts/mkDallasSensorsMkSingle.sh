@@ -1,4 +1,3 @@
-
 BNAME=`basename $0 .sh`
 
 if [ $# -eq 0 ];then

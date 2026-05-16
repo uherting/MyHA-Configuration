@@ -11,12 +11,12 @@
 # attn: see ../esphome/custom_components_dev/README for details on how to use the script
 #
 
-BNAME=`basename $0 .sh`
-DNAME=`dirname $0`
-# replace the current dir name ./ with the absolute path
+BNAME=$(basename $0 .sh)
+DNAME=$(dirname $0)
 if [ "$DNAME" == "." ];then
-  DNAME="`pwd`"
+ DNAME=$(pwd)
 fi
+
 # change the relative path to a absolute path
 if [ "`echo $DNAME | cut -c1-2`" == ".." ];then
   DNAME="`pwd`/${DNAME}"

@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l2kitchen12 (ESP32-2432S028R aka CYD --- with onboard ESP32)
+# DEVICE: l9lorry01g (ESP32-2432S028R aka CYD --- with onboard ESP32)
 #
 ####################################################################
 ####################################################################
@@ -11,13 +11,15 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for triggering scripts on HA related to l2kitchen
+#   - Microcontroller recording GPS data
 #
 # Future feature:
-#   - unknown
+#   - reporting GPS data to a MySQL database on the internet via WiFi
 #
 # Hardware:
 #   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32
+#   - GPS module
+#   - VEML7700 ambient light sensor
 #
 # Automation:
 #   - still to be determined / documented
@@ -37,8 +39,8 @@
 # naming conventions which override common behaviour
 
 substitutions: 
-  <<: !include conf/substitutions/device_specific/l2kitchen12.yaml
-  <<: !include conf/substitutions/overwrites/l2kitchen12.yaml
+  <<: !include conf/substitutions/device_specific/l9lorry01g.yaml
+  <<: !include conf/substitutions/overwrites/l9lorry01g.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -62,8 +64,7 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-time: !include conf/common/time.yaml
-
+time: !include conf/common/time_ntp.yaml
 # sun: !include conf/common/sun.yaml
 
 ############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
@@ -87,21 +88,21 @@ i2c: !include conf/common/device/i2c_esp32-2432s028r_v0.yaml
 spi: !include conf/common/device/spi_esp32-2432s028r_v0.yaml
 #-------------------------------------------------------------------
 # LVGL configuration
-lvgl: !include conf/lvgl/l2kitchen12.yaml
+lvgl: !include conf/lvgl/l9lorry01g.yaml
 #-------------------------------------------------------------------
 # COLOUR configuration
-color: !include conf/color/l2kitchen12.yaml
+color: !include conf/color/l9lorry01g.yaml
 #-------------------------------------------------------------------
 # FONT configuration
 # needs to be included before display configuration
-font: !include conf/font/l2kitchen12.yaml
+font: !include conf/font/l9lorry01g.yaml
 #-------------------------------------------------------------------
 # DISPLAY configuration
-display: !include conf/display/l2kitchen12.yaml
+display: !include conf/display/l9lorry01g.yaml
 #-------------------------------------------------------------------
 # TOUCHSCREEN configuration
 # config taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
-touchscreen: !include conf/touchscreen/l2kitchen12.yaml
+touchscreen: !include conf/touchscreen/l9lorry01g.yaml
 #-------------------------------------------------------------------
 # ESP32-2432S028R aka CYD - onboard RGB LED (GPIO4, GPIO16, GPIO17)
 output: !include conf/common/onboard_leds/esp32_2432s028r_output.yaml
@@ -132,9 +133,9 @@ globals:
   - <<: !include conf/common/globals/connectivity.yaml
 interval: 
   - <<: !include conf/common/interval/connectivity.yaml
-  # - <<: !include conf/interval/l2kitchen12.yaml
+  # - <<: !include conf/interval/l9lorry01g.yaml
 # script:
-  # - <<: !include conf/script/l2kitchen12/foobar.yaml
+  # - <<: !include conf/script/l9lorry01g/foobar.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -142,19 +143,8 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
-  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_coffeemachine.yaml
-  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_dishwasher.yaml
-  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_kettle.yaml
-  - <<: !include conf/binary_sensor/l2kitchen12/l2kitchen12_microwave.yaml
+  # none so far
   
-  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_pushbutton.yaml
-  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_backbutton.yaml
-  # - <<: !include conf/common/binary_sensor/rotary_encoder_01_confirmbutton.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A101_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A202_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A303_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
-
 #-------------------------------------------------------------------
 # SENSORS
 sensor:
@@ -162,15 +152,13 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/common/sensor/aht10_01.yaml
+  - <<: !include conf/common/sensor/aht20_01.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_short.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
   # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
-# switch:
-  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
 switch:
   - platform: template
     name: Antiburn
@@ -203,6 +191,35 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
+
+#-------------------------------------------------------------------
+# GPS related setup
+uart: !include conf/common/device/uart01_esp32cyd_gps.yaml
+gps:
+  id: ${friendly_id}_gps
+  uart_id: ${uart01_esp32_gps_id}
+  latitude:
+    name: "GPS Latitude"
+    id: gps_latitude
+  longitude:
+    name: "GPS Longitude"
+    id: gps_longitude
+  altitude:
+    name: "GPS Altitude"
+    id: gps_altitude
+  speed:
+    name: "GPS Speed"
+    id: gps_speed
+  course:
+    name: "GPS Course"
+    id: gps_course
+  satellites:
+    name: "GPS Visible Satellites"
+    id: gps_satellites
+  hdop:
+    name: "GPS HDOP"
+    id: gps_hdop
+  update_interval: ${gps_update_interval}
 
 ####################################################################
 # EOF

@@ -128,8 +128,8 @@ text_sensor:
 
 #-------------------------------------------------------------------
 # ESP32C3 - onboard LED
-output: !include conf/common/esp32c3/esp32c3_onboard_led_output.yaml
-light: !include conf/common/esp32c3/esp32c3_onboard_led_light.yaml
+output: !include conf/common/onboard_leds/esp32c3_output.yaml
+light: !include conf/common/onboard_leds/esp32c3_light.yaml
 
 #-------------------------------------------------------------------
 # ESPNow

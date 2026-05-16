@@ -1,0 +1,45 @@
+####################################################################
+# font config for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# font:
+
+# the standard / fall back font for labels and buttons
+  - file: ${ttf_font_directory}/Arimo-Regular.ttf
+    id: my_font12
+    size: 12
+    # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
+
+  - file: ${ttf_font_directory}/Arimo-Regular.ttf
+    id: my_font16
+    size: 16
+    # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
+
+# the font for the icons used in buttons
+  - file: ${ttf_font_directory}/materialdesignicons-webfont.ttf
+                               # Defining Material Design Icons as a font. This
+    id: mdi_icons              # will allow us to use them as button icons.
+    size: 48                   # You can get these glyphs from the https://pictogrammers.com/library/mdi/
+    bpp: 4                     # 4 bits per pixel for better quality
+    glyphs:                    # where you choose the icon, and then "copy glyph".
+      - "󰖩" # mdiWifi
+      - "󰤯" # mdiWifiOff
+      - "󰆤" # mdiCrosshairsGps
+      - "󰆣" # mdiCrosshairsNoGps
+      # - "" # 
+
+  # id: lbl_btn_wifiOnOff
+  # text: "_"
+  # id: lbl_btn_wifi
+  # text: "󰖩"
+  # id: lbl_btn_wifi_off
+  # text: "󰤯"
+
+  # id: lbl_btn_crosshairsgps
+  # text: "󰆤"
+  # id: lbl_btn_crosshairsnogps
+  # text: "󰆣"
+
+# ############################################################
+#  END OF FILE
+# ############################################################

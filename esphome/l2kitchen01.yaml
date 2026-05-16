@@ -28,6 +28,7 @@
 #   - 1 SSR module with 1 SSR
 #   - 1 PIR
 #   - 1 TP223 touch button
+#   - 1 VEML7700 light sensor
 #   - steel housing for external Dallas 18B20 sensors
 #   - heat shrink tube, misc diameter
 #   - case for the hardware
@@ -142,6 +143,7 @@ sensor:
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_case.yaml
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env01.yaml
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env10.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_short.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 

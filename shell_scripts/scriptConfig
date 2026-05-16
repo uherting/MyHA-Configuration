@@ -1,9 +1,11 @@
 HA_PATH="/usr/share/hassio/homeassistant"
 
+GIT_HOME_UH="/home/uwe/Git/UH"
+
 # if this script is not run on the HA server ESPHome is
 # located in a different directory
-if [ "`hostname`" != "alpha" ]; then
-  HA_PATH="/home/uwe/Git/UH/MyHAConfig"
+if [ "$(hostname)" != "alpha" ]; then
+  HA_PATH="${GIT_HOME_UH}/MyHAConfig"
 fi
 
 ESPHOMEDOCS_PATH="${HA_PATH}/../../esphome-docs"
@@ -16,7 +18,7 @@ ESPHOME_ENTITIES_SENSORS_PATH="${ESPHOME_CONF_PATH}/sensor"
 ESPHOME_ENTITIES_SWITCHES_PATH="${ESPHOME_CONF_PATH}/switch"
 
 # for local standalone ESPHome dashboard on other machine than HA server
-BUILD_DIR_FOR_DOCKER="/home/uwe/Git/UH/MyHAConfig/esphome"
+BUILD_DIR_FOR_DOCKER="${GIT_HOME_UH}/MyHAConfig/esphome"
 
 # for linting with docker
-ESPHOMELOCATION_FOR_DOCKER="/home/uwe/Git/UH/esphome"
+ESPHOMELOCATION_FOR_DOCKER="${GIT_HOME_UH}/esphome"
