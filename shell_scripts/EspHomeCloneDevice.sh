@@ -7,10 +7,10 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 
-# BNAME=(basename $0 .sh)
+BNAME=$(basename $0 .sh)
 DNAME=$(dirname $0)
 if [ "$DNAME" == "." ];then
- DNAME=(pwd)
+ DNAME=$(pwd)
 fi
 
 # remove the file extension to get the device name

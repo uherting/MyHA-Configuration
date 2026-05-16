@@ -1,9 +1,9 @@
 # this script updaates the local standalone ESPHome dashboard docker image
 
-BNAME=`basename $0 .sh`
-DNAME=`dirname $0`
+BNAME=$(basename $0 .sh)
+DNAME=$(dirname $0)
 if [ "$DNAME" == "." ];then
- DNAME="`pwd`"
+ DNAME=$(pwd)
 fi
 
 . ${DNAME}/scriptConfig

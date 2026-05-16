@@ -2,12 +2,9 @@
 
 ##########################################################################################
 #
-#  this script searches for a string in yaml files contained in the 
-#  root directory of the repository and its sub directories
+#  this script compares l9lorry01g config files with analogous files related to l2kitchen12
 #
 ##########################################################################################
-
-SEARCH_STRING=$1
 
 BNAME=$(basename $0 .sh)
 DNAME=$(dirname $0)
@@ -17,6 +14,3 @@ fi
 
 . ${DNAME}/scriptConfig
 
-cd ${HA_PATH}
-
-find . -name \*.yaml 2> /dev/null | grep -v _unused 2> /dev/null | xargs grep -ni $SEARCH_STRING | sort

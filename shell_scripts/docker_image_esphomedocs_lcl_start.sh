@@ -1,9 +1,9 @@
 # this script starts the local standalone ESPHome Docs container
 
-BNAME=`basename $0 .sh`
-DNAME=`dirname $0`
+BNAME=$(basename $0 .sh)
+DNAME=$(dirname $0)
 if [ "$DNAME" == "." ];then
- DNAME="`pwd`"
+ DNAME=$(pwd)
 fi
 
 . ${DNAME}/scriptConfig
