@@ -47,9 +47,25 @@
             outline_pad: 5px
             widgets:
               - button:
-                  id: btn_wifi
+                  id: btn_previous_page
                   grid_cell_column_pos: 0
-                  grid_cell_row_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_previous_page
+                        text: "󰧀"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
+              - button:
+                  id: btn_wifi
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   checkable: true
@@ -62,70 +78,38 @@
                   on_click:
                     then:
                       - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_dishwasher
               - button:
-                  id: btn_microwave
-                  grid_cell_column_pos: 1
-                  grid_cell_row_pos: 0
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_microwave
-                        text: "󰲙"
-                        text_font: mdi_icons
-                        align: center
-                  on_click:
-                    then:
-                      - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_microwave
-              - button:
-                  id: btn_kettle
+                  id: btn_gps
                   grid_cell_column_pos: 2
-                  grid_cell_row_pos: 0
+                  grid_cell_row_pos: 2
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_kettle
-                        text: "󰗺"
+                        id: lbl_btn_gps
+                        text: "󰤉"
                         text_font: mdi_icons
                         align: center
                   on_click:
                     then:
                       - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_kettle
               - button:
-                  id: btn_coffeemachine
+                  id: btn_next_page
                   grid_cell_column_pos: 3
-                  grid_cell_row_pos: 0
+                  grid_cell_row_pos: 2
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_coffeemachine
-                        text: "󱂟"
+                        id: lbl_btn_next_page
+                        text: "󰧂"
                         text_font: mdi_icons
                         align: center
                   on_click:
                     then:
                       - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: homeassistant.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
               # - switch:
               #     id: switch_antiburn_btn
               #     grid_cell_column_pos: 3

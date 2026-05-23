@@ -23,9 +23,10 @@
     bpp: 4                     # 4 bits per pixel for better quality
     glyphs:                    # where you choose the icon, and then "copy glyph".
       - "󰖩" # mdiWifi
-      - "󰤯" # mdiWifiOff
-      - "󰆤" # mdiCrosshairsGps
-      - "󰆣" # mdiCrosshairsNoGps
+      - "󰤉" # mdiSatelliteUplink
+      - "󰧀" # mdiArrowLeftBoldOutline
+      - "󰧂" # mdiArrowRightBoldOutline
+
       # - "" # 
 
   # id: lbl_btn_wifiOnOff
