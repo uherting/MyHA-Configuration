@@ -153,6 +153,7 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
   - <<: !include conf/common/sensor/aht20_01.yaml
+  - <<: !include conf/common/sensor/bmp280_01.yaml
   - <<: !include conf/common/sensor/cyd_brightness_01.yaml
   # - <<: !include conf/common/sensor/veml7700_standard_short.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
@@ -168,7 +169,7 @@ switch:
     optimistic: true
     entity_category: "config"
     turn_on_action:
-      - logger.log: "Starting Antiburn"
+      # - logger.log: "Starting Antiburn"
       - if:
           condition: lvgl.is_paused
           then:
@@ -177,7 +178,7 @@ switch:
       - lvgl.pause:
           show_snow: true
     turn_off_action:
-      - logger.log: "Stopping Antiburn"
+      # - logger.log: "Stopping Antiburn"
       - if:
           condition: lvgl.is_paused
           then:

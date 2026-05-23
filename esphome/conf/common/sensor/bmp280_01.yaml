@@ -1,0 +1,18 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# BMP280 sensor for temperature and pressure
+# see https://esphome.io/components/sensor/bmp280.html for details
+#sensor:
+  - platform: bmp280_i2c
+    temperature:
+      name: ${bmp280_01_temp_name}
+      oversampling: 16x
+    pressure:
+      name: ${bmp280_01_pressure_name}
+    address: ${bmp280_01_address}
+    update_interval: ${bmp280_01_update_interval}
+####################################################################
+# EOF
+####################################################################

@@ -6,8 +6,9 @@
 #sensor:
   - platform: adc 
     pin: 34 
-    name: "Brightness" 
-    update_interval: 10s
+    name: ${cyd_brightness_01_name}
+    id: ${cyd_brightness_01_id}
+    update_interval: ${cyd_brightness_01_update_interval}
 ####################################################################
 # EOF
 ####################################################################
