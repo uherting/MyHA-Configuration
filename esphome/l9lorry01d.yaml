@@ -1,7 +1,7 @@
 ####################################################################
 ####################################################################
 #
-# DEVICE: l9lorry01g (ESP32-2432S028R aka CYD --- with onboard ESP32)
+# DEVICE: l9lorry01d (ESP32-2432S028R aka CYD --- with onboard ESP32)
 #
 ####################################################################
 ####################################################################
@@ -40,8 +40,8 @@
 # naming conventions which override common behaviour
 
 substitutions: 
-  <<: !include conf/substitutions/device_specific/l9lorry01g.yaml
-  <<: !include conf/substitutions/overwrites/l9lorry01g.yaml
+  <<: !include conf/substitutions/device_specific/l9lorry01d.yaml
+  <<: !include conf/substitutions/overwrites/l9lorry01d.yaml
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
@@ -92,21 +92,21 @@ i2c: !include conf/common/device/i2c_esp32-2432s028r_v0.yaml
 spi: !include conf/common/device/spi_esp32-2432s028r_v0.yaml
 #-------------------------------------------------------------------
 # LVGL configuration
-lvgl: !include conf/lvgl/l9lorry01g.yaml
+lvgl: !include conf/lvgl/l9lorry01d.yaml
 #-------------------------------------------------------------------
 # COLOUR configuration
-color: !include conf/color/l9lorry01g.yaml
+color: !include conf/color/l9lorry01d.yaml
 #-------------------------------------------------------------------
 # FONT configuration
 # needs to be included before display configuration
-font: !include conf/font/l9lorry01g.yaml
+font: !include conf/font/l9lorry01d.yaml
 #-------------------------------------------------------------------
 # DISPLAY configuration
-display: !include conf/display/l9lorry01g.yaml
+display: !include conf/display/l9lorry01d.yaml
 #-------------------------------------------------------------------
 # TOUCHSCREEN configuration
 # config taken from https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/4-TouchDemo/yellowtft1.yaml
-touchscreen: !include conf/touchscreen/l9lorry01g.yaml
+touchscreen: !include conf/touchscreen/l9lorry01d.yaml
 #-------------------------------------------------------------------
 # ESP32-2432S028R aka CYD - onboard RGB LED (GPIO4, GPIO16, GPIO17)
 output: !include conf/common/onboard_leds/esp32_2432s028r_output.yaml
@@ -137,9 +137,9 @@ globals:
   - <<: !include conf/common/globals/connectivity.yaml
 interval: 
   - <<: !include conf/common/interval/connectivity.yaml
-  # - <<: !include conf/interval/l9lorry01g.yaml
+  # - <<: !include conf/interval/l9lorry01d.yaml
 # script:
-  # - <<: !include conf/script/l9lorry01g/foobar.yaml
+  # - <<: !include conf/script/l9lorry01d/foobar.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS

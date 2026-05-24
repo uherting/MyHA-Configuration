@@ -21,7 +21,7 @@ NEW_DEVICE=$(basename ${2} .yaml)
 CLONE_SRC_FILE="${OLD_DEVICE}.yaml"
 CLONE_TGT_FILE="${NEW_DEVICE}.yaml"
 
-if [ ${OLD_DEVICE} -eq ${NEW_DEVICE} ]; then
+if [ "${OLD_DEVICE}" == "${NEW_DEVICE}" ]; then
   echo "ERROR: source and target device names are the same. Exiting."
   exit 1
 fi
@@ -81,7 +81,6 @@ do
   echo "TGT: ${TGT_FILE}"
   echo ""
   sed -e "s/${OLD_DEVICE}/${NEW_DEVICE}/g" < ${SRC_FILE} > ${TGT_FILE}
-  rm -f ${SRC_FILE}
 done
 
 DIRS_FOUND=$(find . -type d -name ${OLD_DEVICE} 2> /dev/null)
