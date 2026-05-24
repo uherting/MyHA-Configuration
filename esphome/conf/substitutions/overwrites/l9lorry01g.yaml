@@ -16,8 +16,8 @@ aht20_01_temp_id: ${friendly_id}_Lorry_AHT20_T_01
 aht20_01_hum_id: ${friendly_id}_Lorry_AHT20_H_01
 
 # bmp280 sensor for temperature and pressure
-bmp280_01_temp_name: $friendly_name BMP280 temp 01
-bmp280_01_pressure_name: $friendly_name BMP280 pressure 01
+bmp280_01_temp_name: $friendly_name Lorry BMP280 T 01
+bmp280_01_pressure_name: $friendly_name Lorry BMP280 P 01
 bmp280_01_update_interval: 600s
 bmp280_01_address: 0x77
 
