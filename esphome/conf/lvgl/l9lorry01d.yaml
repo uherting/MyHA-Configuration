@@ -47,9 +47,9 @@
               grid_rows: [fr(1), fr(1), fr(1)]
             pad_all: 5px
             outline_pad: 5px
-            # ========================================================================
             # the main content of the page
             widgets:
+              # ------------- line 1 / 3 ------------- 
               - button:
                   id: btn_day_begin
                   grid_cell_column_pos: 0
@@ -99,7 +99,26 @@
                   on_click:
                     then:
                       - delay: 100ms
-              # ========================================================================
+              # ------------- line 2 / 3 ------------- 
+              - label:
+                  id: lbl_page_location_00
+                  text: "Time 1"
+                  text_font: my_font16
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 2
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_01
+                  text: "Time 2"
+                  text_font: my_font16
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 2
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              # ------------- line 3 / 3 ------------- 
               # the buttons at the bottom of the screen
               - button:
                   id: btn_previous_page_0
@@ -177,6 +196,7 @@
             # ========================================================================
             # the main content of the page
             widgets:
+              # ------------- line 1 / 3 ------------- 
               # you can replace this with your own widgets, e.g. a dashboard with sensor values, or whatever you like
               - label:
                   id: lbl_page_location_10
@@ -205,7 +225,8 @@
                   grid_cell_column_span: 2
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
-              # ========================================================================
+              # ------------- line 2 / 3 ------------- 
+              # ------------- line 3 / 3 ------------- 
               # the buttons at the bottom of the screen
               - button:
                   id: btn_previous_page_1
