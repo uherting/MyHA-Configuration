@@ -73,7 +73,8 @@
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   grid_cell_column_span: 2
-                  checkable: true
+                  # checkable: true
+                  checkable: false
                   widgets:
                     - label:
                         id: lbl_btn_point_of_interest
