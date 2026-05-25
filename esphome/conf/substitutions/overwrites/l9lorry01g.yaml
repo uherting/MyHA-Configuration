@@ -15,9 +15,22 @@ aht20_01_hum_unit: "%"
 aht20_01_temp_id: ${friendly_id}_Lorry_AHT20_T_01
 aht20_01_hum_id: ${friendly_id}_Lorry_AHT20_H_01
 
+# bmp280 sensor for temperature and pressure
+bmp280_01_temp_name: $friendly_name Lorry BMP280 T 01
+bmp280_01_pressure_name: $friendly_name Lorry BMP280 P 01
+bmp280_01_update_interval: 600s
+bmp280_01_address: 0x77
+
+# cyd brightness sensor
+cyd_brightness_01_update_interval: 10s
+
 # antenna on the right side when looking at the display
 cyd_display_rotation: 180
 
+# the update interval for the GPS sensor
+gps_update_interval: 20s
+
+# log level for this device, default is "INFO", but for debugging you might want to set it to "DEBUG"
 # log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
 # EOF

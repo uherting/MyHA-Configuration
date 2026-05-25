@@ -79,6 +79,17 @@ substitutions:
   binary_template_sensor_main_light_id: ${friendly_id}_BIN_TEMPL_MAINLIGHT
   binary_template_sensor_main_light_name: friendly_name BIN_TEMPL MAINLIGHT
 
+  # bmp280 sensor for temperature and pressure
+  bmp280_01_temp_name: $friendly_name BMP280 temp 01
+  bmp280_01_pressure_name: $friendly_name BMP280 pressure 01
+  bmp280_01_update_interval: 600s
+  bmp280_01_address: 0x77
+
+  # ADC brightness sensor on CYD (ESP32-2432S028R)
+  cyd_brightness_01_name: $friendly_name Brightness
+  cyd_brightness_01_id: ${friendly_id}_Brightness_01
+  cyd_brightness_01_update_interval: 10s
+
   # Dallas sensors update time
   dallas_upd: !secret DALLAS_UPDATE_INTERVAL_005M
 
@@ -103,6 +114,9 @@ substitutions:
   ESP_ONBOARD_LED_PIN_NUMBER: "2"
   # ESP_ONBOARD_RESTART_ID: "${friendly_id}_Restart"
   # ESP_ONBOARD_RESTART_NAME: "${friendly_name} Restart"
+
+  # the update interval for the GPS sensor
+  gps_update_interval: 60s
 
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01

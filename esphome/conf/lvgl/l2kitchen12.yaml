@@ -32,6 +32,8 @@
         bg_opa: COVER
         text_color: default_btn_txt_checked_color
   pages:
+    # =========================================================================
+    # main page with a grid layout
     - id: main_page
       pad_all: 0
       widgets:
@@ -45,6 +47,8 @@
               grid_rows: [fr(1), fr(1), fr(1)]
             pad_all: 5px
             outline_pad: 5px
+            # ========================================================================
+            # the main content of the page
             widgets:
               - button:
                   id: btn_dishwasher
@@ -122,6 +126,8 @@
                           action: homeassistant.toggle
                           data:
                             entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
+              # ========================================================================
+              # just some example buttons in the grid, you can replace them with your own widgets
               # - switch:
               #     id: switch_antiburn_btn
               #     grid_cell_column_pos: 3

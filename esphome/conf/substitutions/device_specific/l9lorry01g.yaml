@@ -21,8 +21,6 @@ friendly_id: ""
 # display
 display_id: ${device_name}_display
 
-# the update interval for the GPS sensor
-gps_update_interval: 20s
 ####################################################################
 # EOF
 ####################################################################

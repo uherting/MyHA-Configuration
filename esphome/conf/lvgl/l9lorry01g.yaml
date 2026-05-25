@@ -32,7 +32,9 @@
         bg_opa: COVER
         text_color: default_btn_txt_checked_color
   pages:
-    - id: main_page
+    # =========================================================================
+    # location page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
+    - id: page_location
       pad_all: 0
       widgets:
         - obj:
@@ -45,87 +47,205 @@
               grid_rows: [fr(1), fr(1), fr(1)]
             pad_all: 5px
             outline_pad: 5px
+            # ========================================================================
+            # the main content of the page
             widgets:
-              - button:
-                  id: btn_wifi
+              # you can replace this with your own widgets, e.g. a dashboard with sensor values, or whatever you like
+              - label:
+                  id: lbl_page_location_00
+                  text: "Location page"
+                  text_font: my_font16
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 0
+                  grid_cell_column_span: 4
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_01
+                  text: "Time 1"
+                  text_font: my_font16
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 2
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_02
+                  text: "Time 2"
+                  text_font: my_font16
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 2
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              # ========================================================================
+              # the buttons at the bottom of the screen
+              - button:
+                  id: btn_previous_page_0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_wifi
+                        id: lbl_btn_previous_page_0
+                        text: "󰧀"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
+              - button:
+                  id: btn_wifi_0
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_wifi_0
                         text: "󰖩"
                         text_font: mdi_icons
                         align: center
-                  on_click:
-                    then:
-                      - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_dishwasher
               - button:
-                  id: btn_microwave
-                  grid_cell_column_pos: 1
-                  grid_cell_row_pos: 0
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_microwave
-                        text: "󰲙"
-                        text_font: mdi_icons
-                        align: center
-                  on_click:
-                    then:
-                      - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_microwave
-              - button:
-                  id: btn_kettle
+                  id: btn_gps_0
                   grid_cell_column_pos: 2
-                  grid_cell_row_pos: 0
+                  grid_cell_row_pos: 2
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_kettle
-                        text: "󰗺"
+                        id: lbl_btn_gps_0
+                        text: "󰤉"
                         text_font: mdi_icons
                         align: center
-                  on_click:
-                    then:
-                      - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: switch.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_kettle
               - button:
-                  id: btn_coffeemachine
+                  id: btn_next_page_0
                   grid_cell_column_pos: 3
-                  grid_cell_row_pos: 0
+                  grid_cell_row_pos: 2
                   grid_cell_x_align: STRETCH
                   grid_cell_y_align: STRETCH
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_coffeemachine
-                        text: "󱂟"
+                        id: lbl_btn_next_page_0
+                        text: "󰧂"
                         text_font: mdi_icons
                         align: center
                   on_click:
                     then:
                       - delay: 100ms
-                      # - homeassistant.action:
-                      #     action: homeassistant.toggle
-                      #     data:
-                      #       entity_id: switch.zb_plug_l2_kitchen_coffeemachine                    
+    # =========================================================================
+    # status page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
+    - id: page_status
+      pad_all: 0
+      widgets:
+        - obj:
+            width: ${cyd_display_width_320}
+            height: ${cyd_display_height_240}
+            bg_color: room_bg_color
+            layout:
+              type: grid
+              grid_columns: [fr(1), fr(1), fr(1), fr(1)]
+              grid_rows: [fr(1), fr(1), fr(1)]
+            pad_all: 5px
+            outline_pad: 5px
+            # ========================================================================
+            # the main content of the page
+            widgets:
+              # you can replace this with your own widgets, e.g. a dashboard with sensor values, or whatever you like
+              - label:
+                  id: lbl_page_location_10
+                  text: "Status Page"
+                  text_font: my_font16
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_column_span: 4
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_11
+                  text: "Time 11"
+                  text_font: my_font16
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 2
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_12
+                  text: "Time 2"
+                  text_font: my_font16
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 2
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              # ========================================================================
+              # the buttons at the bottom of the screen
+              - button:
+                  id: btn_previous_page_1
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_previous_page_1
+                        text: "󰧀"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
+              - button:
+                  id: btn_wifi_1
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_wifi_1
+                        text: "󰖩"
+                        text_font: mdi_icons
+                        align: center
+              - button:
+                  id: btn_gps_1
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_gps
+                        text: "󰤉"
+                        text_font: mdi_icons
+                        align: center
+              - button:
+                  id: btn_next_page_1
+                  grid_cell_column_pos: 3
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_next_page_1
+                        text: "󰧂"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
+              # ========================================================================
+              # just some example buttons in the grid, you can replace them with your own widgets
               # - switch:
               #     id: switch_antiburn_btn
               #     grid_cell_column_pos: 3
@@ -141,6 +261,9 @@
               #     on_click:
               #       then:
               #         - switch.toggle: switch_antiburn
+    # =========================================================================
+    # end of pages, you can add more pages here if you like
+    # =========================================================================
 
   # rotation: valid values: 0, 90, 180 or 270. 180 equals to antenna on the left side
   # pay attention to the touchscreen, swap_xy: might be changed accordingly
