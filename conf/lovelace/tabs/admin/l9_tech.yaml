@@ -21,7 +21,7 @@ cards:
       - sensor.l9lorry01d_uptime
       - sensor.l9lorry01d_uptime_human_readable
       - binary_sensor.l9lorry01d_status
-      - update.l9lorry01d_firmware
+      # - update.l9lorry01d_firmware
       - sensor.l9lorry01d_esphome_version
       - switch.l9lorry01d_restart_device
 ####################################################################
