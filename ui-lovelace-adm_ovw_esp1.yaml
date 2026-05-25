@@ -12,14 +12,16 @@ title: Home 431
 # background: center / cover no-repeat url("/background.png") fixed
 
 views:
-  # - !include /config/conf/lovelace/tabs/admin/esp_test_devices.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp_general.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp_l2btproxies_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp8266_l9.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp8266_l2_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp8266_l2_details.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp8266_l0_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/esp8266_l0_details.yaml
+  # - !include /config/conf/lovelace/tabs/admin/test_devices.yaml
+  - !include /config/conf/lovelace/tabs/admin/general.yaml
+  - !include /config/conf/lovelace/tabs/admin/l2_btproxies_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_cams.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_details.yaml
+  - !include /config/conf/lovelace/tabs/admin/l2_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l2_details.yaml
+  - !include /config/conf/lovelace/tabs/admin/l0_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l0_details.yaml
   - !include /config/conf/lovelace/tabs/admin/ble_temp_humidity_batteries.yaml
   - !include /config/conf/lovelace/tabs/user/ble_temperature_humidity.yaml
 

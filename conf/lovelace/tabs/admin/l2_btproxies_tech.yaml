@@ -1,13 +1,13 @@
 ####################################################################
 ####################################################################
 #
-# esp8266 level l2 tab --- lovelace configuration
+# l2_btproxies_tech tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
 
 title: ESP l2 BT Proxies Tech
-path: esp_l2btproxies_tech
+path: l2_btproxies_tech
 badges: []
 cards:
   # - type: entities

@@ -1,0 +1,27 @@
+####################################################################
+####################################################################
+#
+# l9_details tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l9 Details
+path: l9_details
+badges: []
+cards:
+  - type: entities
+    title: L9 Lorry0 1d
+    show_header_toggle: false
+    entities:
+      - light.l9lorry01d_display_backlight
+      - light.l9lorry01d_rgb_led
+      - switch.l9lorry01d_antiburn
+      - sensor.l9lorry01d_lorry_aht20_h_01
+      - sensor.l9lorry01d_lorry_aht20_t_01
+      - sensor.l9lorry01d_lorry_bmp280_p_01
+      - sensor.l9lorry01d_lorry_bmp280_t_01
+      - number.l9lorry01d_lvgl_screen_timeout
+####################################################################
+# EOF
+####################################################################

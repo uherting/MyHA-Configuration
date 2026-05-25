@@ -1,0 +1,29 @@
+####################################################################
+####################################################################
+#
+# l9_tech tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP8266 l9 Tech
+path: l9_tech
+badges: []
+cards:
+  - type: entities
+    title: L9 Lorry 01d
+    show_header_toggle: false
+    entities:
+      - sensor.l9lorry01d_conn_ip_addr
+      - sensor.l9lorry01d_wifi_signal
+      - sensor.l9lorry01d_conn_ssid
+      - sensor.l9lorry01d_conn_bssid
+      - sensor.l9lorry01d_uptime
+      - sensor.l9lorry01d_uptime_human_readable
+      - binary_sensor.l9lorry01d_status
+      - update.l9lorry01d_firmware
+      - sensor.l9lorry01d_esphome_version
+      - switch.l9lorry01d_restart_device
+####################################################################
+# EOF
+####################################################################
