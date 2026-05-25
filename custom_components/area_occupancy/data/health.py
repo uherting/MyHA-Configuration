@@ -27,6 +27,7 @@ from homeassistant.util import dt as dt_util
 
 from ..const import DOMAIN
 from .entity_type import BINARY_INPUT_TYPES, InputType
+from .purpose import AreaPurpose
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -47,15 +48,36 @@ _EXCLUDED_TYPES: set[InputType] = {
     InputType.SLEEP,
 }
 
-# How long a binary sensor can be stuck in its *active* state before flagging
+# How long a binary sensor can be stuck in its *active* state before flagging.
+# The motion default was 2h, which fired false-positives daily for bedrooms,
+# offices with stationary users, and any mmWave/presence sensor that
+# legitimately stays on for hours (#465, #468). 8h is a more realistic floor
+# for the base case; purpose-aware multipliers below extend it further for
+# rooms where long active periods are explicitly expected.
 STUCK_ACTIVE_THRESHOLDS: dict[InputType, timedelta] = {
-    InputType.MOTION: timedelta(hours=2),
+    InputType.MOTION: timedelta(hours=8),
     InputType.MEDIA: timedelta(hours=12),
     InputType.APPLIANCE: timedelta(hours=24),
     InputType.DOOR: timedelta(hours=48),
     InputType.WINDOW: timedelta(hours=72),
     InputType.COVER: timedelta(hours=24),
 }
+
+# Per-purpose multiplier applied on top of ``STUCK_ACTIVE_THRESHOLDS``. Rooms
+# where long stationary occupancy is normal (sleeping, relaxing, working) get
+# extended thresholds so a bedroom mmWave sensor doesn't trip every night
+# (#468). Purposes not listed use the base threshold unmodified.
+_PURPOSE_STUCK_ACTIVE_MULTIPLIER: dict[AreaPurpose, float] = {
+    AreaPurpose.SLEEPING: 6.0,  # 8h base × 6 = 48h for bedrooms
+    AreaPurpose.RELAXING: 4.0,  # 8h × 4 = 32h for media rooms
+    AreaPurpose.WORKING: 3.0,  # 8h × 3 = 24h for offices
+}
+
+# Entity-id domain prefixes whose ``unavailable`` state is normal operation
+# rather than a sensor fault. ``media_player.*`` becomes unavailable whenever
+# a TV or speaker is powered off — flagging that as a repair issue every
+# night was the root complaint behind #466's "TV off overnight" report.
+_UNAVAILABLE_EXEMPT_PREFIXES: tuple[str, ...] = ("media_player.",)
 
 # How long a binary sensor can remain *inactive* before flagging
 STUCK_INACTIVE_THRESHOLDS: dict[InputType, timedelta] = {
@@ -163,6 +185,24 @@ def _format_duration_human(hours: float) -> str:
     return f"{total_seconds // 86400}d"
 
 
+def _stuck_active_threshold(
+    input_type: InputType, purpose: AreaPurpose | None
+) -> timedelta | None:
+    """Return the stuck-active threshold for ``input_type`` in this area.
+
+    Applies ``_PURPOSE_STUCK_ACTIVE_MULTIPLIER`` if the area's purpose
+    expects long stationary occupancy. Returns ``None`` when ``input_type``
+    isn't tracked by the stuck-active check.
+    """
+    base = STUCK_ACTIVE_THRESHOLDS.get(input_type)
+    if base is None:
+        return None
+    multiplier = _PURPOSE_STUCK_ACTIVE_MULTIPLIER.get(purpose, 1.0) if purpose else 1.0
+    if multiplier == 1.0:
+        return base
+    return timedelta(seconds=base.total_seconds() * multiplier)
+
+
 def _issue_id(area_id: str, entity_id: str | None, issue_type: HealthIssueType) -> str:
     """Build a unique repair issue ID using the stable area_id.
 
@@ -188,17 +228,26 @@ class HealthMonitor:
     so issues survive area renames.
     """
 
-    def __init__(self, area_name: str, area_id: str, hass: HomeAssistant) -> None:
+    def __init__(
+        self,
+        area_name: str,
+        area_id: str,
+        hass: HomeAssistant,
+        purpose: AreaPurpose | None = None,
+    ) -> None:
         """Initialize health monitor for an area.
 
         Args:
             area_name: Human-readable area name (for log messages and translations)
             area_id: Stable HA area registry ID (for repair issue keys)
             hass: Home Assistant instance
+            purpose: Area purpose, used to scale stuck-active thresholds.
+                ``None`` falls back to the base thresholds (multiplier 1.0).
         """
         self._area_name = area_name
         self._area_id = area_id
         self._hass = hass
+        self._purpose = purpose
         self._issues: list[HealthIssue] = []
         self._checked_count: int = 0
         self._last_check: datetime | None = None
@@ -240,6 +289,38 @@ class HealthMonitor:
                 exc_info=True,
             )
             return set()
+
+    def _is_ignored(self, issue_id: str) -> bool:
+        """Whether the user has marked this repair issue as Ignored in HA.
+
+        Without this guard the next ``_update_repair_issues`` call deletes
+        any issue whose condition has cleared. That delete also wipes HA's
+        ignore state, so when the condition recurs (TV unavailable again
+        the following evening) a fresh issue is created and the user's
+        prior "Ignore" is silently forgotten. Treating an ignored issue as
+        if it had already been deleted lets the registry's own suppression
+        survive these flap cycles.
+
+        HA represents the ignore state on ``IssueEntry`` via
+        ``dismissed_version: str | None`` — populated with the HA version
+        at the moment the user clicked Ignore (see
+        ``IssueRegistry.async_ignore`` in homeassistant/helpers/issue_registry.py).
+        It is preserved across restart even for non-persistent issues, so a
+        plain ``is not None`` test is the canonical "is ignored" check.
+
+        We require ``isinstance(..., str)`` rather than ``is not None`` so a
+        bare ``unittest.mock.Mock()`` standing in for the ``ir`` module
+        (used by older tests) — whose attribute access yields another
+        Mock, which is itself ``not None`` — doesn't accidentally suppress
+        deletion. The real registry only stores string versions.
+        """
+        try:
+            entry = ir.async_get(self._hass).async_get_issue(DOMAIN, issue_id)
+        except (AttributeError, KeyError, TypeError):
+            return False
+        if entry is None:
+            return False
+        return isinstance(getattr(entry, "dismissed_version", None), str)
 
     @property
     def issues(self) -> list[HealthIssue]:
@@ -361,6 +442,30 @@ class HealthMonitor:
         self._issues.clear()
         self._unavailable_since.clear()
 
+    def clear_all_issues(self) -> None:
+        """Delete every active repair issue without resetting runtime state.
+
+        Used when the integration-level ``health_enabled`` toggle is turned
+        off: existing repairs should disappear immediately, but the
+        in-memory ``_unavailable_since`` clock is left intact so re-enabling
+        the toggle later doesn't make every currently-unavailable sensor
+        instantly trip the threshold.
+
+        ``_issues`` is cleared unconditionally so any in-memory state that
+        isn't (yet) mirrored to ``_active_issue_ids`` doesn't linger after
+        a toggle-off.
+        """
+        for issue_id in self._active_issue_ids:
+            ir.async_delete_issue(self._hass, DOMAIN, issue_id)
+        if self._active_issue_ids:
+            _LOGGER.debug(
+                "Cleared %d repair issue(s) for area '%s' (health monitoring disabled)",
+                len(self._active_issue_ids),
+                self._area_name,
+            )
+        self._active_issue_ids.clear()
+        self._issues.clear()
+
     def check_pipeline_health(
         self,
         *,
@@ -435,7 +540,7 @@ class HealthMonitor:
 
         # Check stuck active
         if evidence is True:
-            threshold = STUCK_ACTIVE_THRESHOLDS.get(entity.type.input_type)
+            threshold = _stuck_active_threshold(entity.type.input_type, self._purpose)
             if threshold and duration >= threshold:
                 hours = duration.total_seconds() / 3600
                 return HealthIssue(
@@ -483,7 +588,18 @@ class HealthMonitor:
         threshold the moment the source integration (Z2M, ESPHome, etc.)
         is slow to load on HA startup, producing a false-positive repair
         for every sensor in the area.
+
+        Some entity domains report ``unavailable`` as a normal off-state
+        (notably ``media_player.*`` for TVs and speakers that are simply
+        powered off) and are exempted via
+        ``_UNAVAILABLE_EXEMPT_PREFIXES``. This stops the repair from
+        firing every night a TV is off, which was the loudest complaint
+        in #466.
         """
+        if entity.entity_id.startswith(_UNAVAILABLE_EXEMPT_PREFIXES):
+            self._unavailable_since.pop(entity.entity_id, None)
+            return None
+
         if entity.available:
             # Recovered (or never was unavailable in this session) — clear
             # any tracked start so the next outage starts a fresh clock.
@@ -761,9 +877,27 @@ class HealthMonitor:
         # the new-issue path below. The repair_id prefix is the source of
         # truth (``_issue_id`` chooses ``pipeline_health_*`` for any issue
         # type in ``_PIPELINE_ISSUE_TYPES``).
-        resolved_ids = self._active_issue_ids - current_issue_ids
+        #
+        # Issues the user has explicitly Ignored in HA's Repairs UI are
+        # left in place: deleting would also wipe HA's ignore state, so
+        # the next time the condition recurs (e.g. TV unavailable again
+        # tomorrow night) a fresh issue would appear and the user's
+        # Ignore would be silently forgotten. Drop them from our active
+        # set instead so we don't re-create them on the next cycle
+        # (HA will keep them suppressed; if the user un-ignores, the
+        # condition either resolves or persists naturally).
+        candidate_ids = self._active_issue_ids - current_issue_ids
+        ignored_ids = {i for i in candidate_ids if self._is_ignored(i)}
+        resolved_ids = candidate_ids - ignored_ids
         for resolved_id in resolved_ids:
             ir.async_delete_issue(self._hass, DOMAIN, resolved_id)
+        if ignored_ids:
+            _LOGGER.debug(
+                "Preserved %d user-ignored repair issue(s) in area '%s' "
+                "despite condition clearing",
+                len(ignored_ids),
+                self._area_name,
+            )
 
         pipeline_prefix = f"pipeline_health_{self._area_id}_"
         resolved_pipeline_ids = {
@@ -816,4 +950,8 @@ class HealthMonitor:
                     ", ".join(pipeline_descriptions),
                 )
 
-        self._active_issue_ids = current_issue_ids
+        # Keep ignored-but-resolved ids in the tracked active set so a
+        # later recurrence of the same condition isn't logged as a "new"
+        # issue. ``async_create_issue`` is idempotent and preserves HA's
+        # ``dismissed_version`` on existing entries.
+        self._active_issue_ids = current_issue_ids | ignored_ids
