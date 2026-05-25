@@ -160,7 +160,7 @@ sensor:
   - <<: !include conf/common/sensor/bmp280_01.yaml
   # the light sensitive resistor R21 on the CYD board connected to GPIO34 (which is an ADC pin) 
   # does not work as expected, so it is currently not included in the configuration.
-  # - <<: !include conf/common/sensor/cyd_brightness_01.yaml
+  - <<: !include conf/common/sensor/cyd_brightness_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
