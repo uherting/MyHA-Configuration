@@ -50,34 +50,55 @@
             # ========================================================================
             # the main content of the page
             widgets:
-              # you can replace this with your own widgets, e.g. a dashboard with sensor values, or whatever you like
-              - label:
-                  id: lbl_page_location_00
-                  text: "Location page"
-                  text_font: my_font16
+              - button:
+                  id: btn_day_begin
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 0
-                  grid_cell_column_span: 4
-                  grid_cell_x_align: CENTER
-                  grid_cell_y_align: CENTER
-              - label:
-                  id: lbl_page_location_01
-                  text: "Time 1"
-                  text_font: my_font16
-                  grid_cell_column_pos: 0
-                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_day_begin
+                        text: "󰖜"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
+              - button:
+                  id: btn_point_of_interest
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
                   grid_cell_column_span: 2
-                  grid_cell_x_align: CENTER
-                  grid_cell_y_align: CENTER
-              - label:
-                  id: lbl_page_location_02
-                  text: "Time 2"
-                  text_font: my_font16
-                  grid_cell_column_pos: 2
-                  grid_cell_row_pos: 1
-                  grid_cell_column_span: 2
-                  grid_cell_x_align: CENTER
-                  grid_cell_y_align: CENTER
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_point_of_interest
+                        text: "󰓎"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
+              - button:
+                  id: btn_day_end
+                  grid_cell_column_pos: 3
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_day_end
+                        text: "󰖜"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      - delay: 100ms
               # ========================================================================
               # the buttons at the bottom of the screen
               - button:

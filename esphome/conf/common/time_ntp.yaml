@@ -3,7 +3,7 @@
 
 #time:
   - platform: sntp
-    id: sntp_time
+    id: esphome_time
     timezone: Europe/Berlin
     servers:
      - 0.pool.ntp.org
