@@ -291,7 +291,7 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: "ZB Plugs"
+            name: "Kitchen"
           - type: "custom:button-card"
             entity: switch.zb_plug_l2_kitchen_dishwasher
             name: "Dishw"
