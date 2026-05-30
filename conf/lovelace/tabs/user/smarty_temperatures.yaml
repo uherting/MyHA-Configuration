@@ -105,7 +105,7 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: Bedroom
+            name: "Bedroom 1"
           - type: "custom:button-card"
             entity: sensor.temperature_humidity_sensor_8eec_temperature
             name: " "
@@ -130,7 +130,7 @@ cards:
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: "Bedroom"
+            name: "Bedroom 2"
           - type: "custom:button-card"
             # entity: snsor.temeperature_humidity_sensor_8eec_temperature
             name: " "
