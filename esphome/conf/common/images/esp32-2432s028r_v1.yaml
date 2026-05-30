@@ -1,0 +1,17 @@
+####################################################################
+# image configuration for ESP32-2432S028R aka CYD --- with onboard ESP32
+####################################################################
+
+# image:
+
+  # the boot screen image, which is shown during the boot process until the "on_boot" action hides it
+  # image taken from https://media.esphome.io/logo/logo.png
+  - file: conf/common/images/logos/boot_logo.png
+    id: boot_logo
+    resize: 200x200
+    type: RGB565
+    transparency: alpha_channel
+
+# ############################################################
+#  END OF FILE
+# ############################################################

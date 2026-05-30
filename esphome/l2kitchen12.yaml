@@ -162,6 +162,9 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
+  # the light sensitive resistor R21 on the CYD board connected to GPIO34 (which is an ADC pin) 
+  # does not work as expected, so it is currently not included in the configuration.
+  - <<: !include conf/common/sensor/cyd_brightness_01.yaml
   # - <<: !include conf/common/sensor/aht10_01.yaml
   # - <<: !include conf/common/sensor/vl53L0x_01_single.yaml
   # - <<: !include conf/common/sensor/rotary_encoder_01.yaml
