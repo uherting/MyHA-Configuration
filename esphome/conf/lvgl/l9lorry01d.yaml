@@ -145,7 +145,7 @@
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               - label:
-                  id: lbl_page_location_temp_01
+                  id: lbl_page_location_centre_left_01
                   text: "Temp"
                   text_font: my_font16
                   grid_cell_column_pos: 1
@@ -153,15 +153,15 @@
                   grid_cell_column_span: 1
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
-              - label:
-                  id: lbl_page_location_hum_01
-                  text: "Hum"
-                  text_font: my_font16
-                  grid_cell_column_pos: 2
-                  grid_cell_row_pos: 1
-                  grid_cell_column_span: 1
-                  grid_cell_x_align: CENTER
-                  grid_cell_y_align: CENTER
+              # - label:
+              #     id: lbl_page_location_centre_right_01
+              #     text: "Hum"
+              #     text_font: my_font16
+              #     grid_cell_column_pos: 2
+              #     grid_cell_row_pos: 1
+              #     grid_cell_column_span: 1
+              #     grid_cell_x_align: CENTER
+              #     grid_cell_y_align: CENTER
               - label:
                   id: lbl_page_location_time_end
                   text: "Time\nEnd"
