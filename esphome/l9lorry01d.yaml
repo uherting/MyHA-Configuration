@@ -201,6 +201,7 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
+  # - <<: !include conf/text_sensor/l9lorry01d.yaml
 
 # #-------------------------------------------------------------------
 # # GPS related setup

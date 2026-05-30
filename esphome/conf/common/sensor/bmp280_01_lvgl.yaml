@@ -1,0 +1,28 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# BMP280 sensor for temperature and pressure
+# see https://esphome.io/components/sensor/bmp280.html for details
+#sensor:
+  - platform: bmp280_i2c
+    temperature:
+      name: ${bmp280_01_temp_name}
+      oversampling: 16x
+      # temperature is superfluous as the AHT20 also measures temperature, 
+      # but it is included for testing purposes and to have a backup in case the AHT20 fails
+      # on_value:
+      #   then:
+      #     - lambda: |-
+      #         id(lbl_page_location_temp_01).set_text(to_string(x) + " ${bmp280_01_temp_unit}");
+    pressure:
+      name: ${bmp280_01_pressure_name}
+      on_value:
+        then:
+          - lambda: |-
+              id(lbl_page_location_pressure_01).set_text(to_string(x) + "  ${bmp280_01_pressure_unit}");
+    address: ${bmp280_01_address}
+    update_interval: ${bmp280_01_update_interval}
+####################################################################
+# EOF
+####################################################################
