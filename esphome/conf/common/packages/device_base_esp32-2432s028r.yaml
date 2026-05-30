@@ -11,7 +11,7 @@ esphome:
   on_boot:
     priority: -100
     then:
-      - delay: 5s
+      - delay: 3s
       - lvgl.widget.hide: boot_screen
 
 

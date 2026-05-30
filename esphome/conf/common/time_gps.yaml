@@ -3,7 +3,7 @@
 
 #time:
   - platform: gps
-    id: gps_time
+    id: esphome_time
     timezone: "Europe/Berlin"
     on_time_sync:
       if:

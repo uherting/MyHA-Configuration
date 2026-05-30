@@ -66,10 +66,10 @@ ota: !include conf/common/networking/ota.yaml
 
 api: !include conf/common/networking/api.yaml
 time: !include conf/common/time_ntp.yaml
-# as this device is mobile, it does not make sense to include a fixed location
-# so the sun configuration is currently not included. If you want to include it, 
-# you can use the following line and adjust the location in conf/common/sun.yaml accordingly.
-# sun: !include conf/common/sun.yaml
+# as this device is mobile, it does not make sense to include a fixed location.
+# However, we might want to use the sun component anyhow, e.g. to have 
+# a visual representation of sunrise and sunset times on the display.
+sun: !include conf/common/sun.yaml
 
 ############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
 web_server:
@@ -201,7 +201,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-  # - <<: !include conf/text_sensor/l9lorry01d.yaml
 
 # #-------------------------------------------------------------------
 # # GPS related setup
