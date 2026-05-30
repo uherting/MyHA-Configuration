@@ -223,7 +223,7 @@ substitutions:
   ssr09_name: $friendly_name SSR 09
 
   # TTF fonts
-  ttf_font_directory: "conf/common/font"
+  ttf_font_directory: "conf/common/fonts"
 
   # touch buttons
   touchbutton01_id: ${friendly_id}_TB_01

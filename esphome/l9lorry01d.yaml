@@ -86,10 +86,10 @@ web_server:
 #===================================================================
 #-------------------------------------------------------------------
 # I2C from docs located at 
-i2c: !include conf/common/device/i2c_esp32-2432s028r_v0.yaml
+i2c: !include conf/common/device/i2c_esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # SPI (default ESP32 platform)
-spi: !include conf/common/device/spi_esp32-2432s028r_v0.yaml
+spi: !include conf/common/device/spi_esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # LVGL configuration
 lvgl: !include conf/lvgl/l9lorry01d.yaml
@@ -100,6 +100,9 @@ color: !include conf/color/l9lorry01d.yaml
 # FONT configuration
 # needs to be included before display configuration
 font: !include conf/font/l9lorry01d.yaml
+#-------------------------------------------------------------------
+# images configuration (e.g. boot screen)
+image: !include conf/common/images/esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # DISPLAY configuration
 display: !include conf/display/l9lorry01d.yaml
@@ -161,8 +164,8 @@ sensor:
   - <<: !include conf/common/sensor/cyd_brightness_01.yaml
   # aht20 and bmp280 are currently not included as they are not not reccognized by the 
   # device, even though they are connected to the I2C bus.
-  # - <<: !include conf/common/sensor/aht20_01.yaml
-  # - <<: !include conf/common/sensor/bmp280_01.yaml
+  - <<: !include conf/common/sensor/aht20_01.yaml
+  - <<: !include conf/common/sensor/bmp280_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES

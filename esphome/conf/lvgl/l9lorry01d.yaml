@@ -13,6 +13,8 @@
 ################################################################
   buffer_size: 25%
   theme:
+    label:
+      text_color: default_label_txt_color
     button:
       # This base is overridden by each button's bg_color
       bg_color: default_btn_bg_color
@@ -31,6 +33,38 @@
         bg_grad_color: 0x000000
         bg_opa: COVER
         text_color: default_btn_txt_checked_color
+  top_layer:
+    widgets:
+      # make sure it's the last one in this list:
+      - obj:
+          id: boot_screen
+          x: 0
+          y: 0
+          width: 100%
+          height: 100%
+          bg_color: 0xffffff
+          bg_opa: COVER
+          radius: 0
+          pad_all: 0
+          border_width: 0
+          widgets:
+            - image:
+                align: CENTER
+                src: boot_logo
+                y: -50
+            - spinner:
+                align: CENTER
+                y: 50
+                height: 50
+                width: 50
+                spin_time: 1s
+                arc_length: 60deg
+                arc_width: 8
+                indicator:
+                  arc_color: 0x18bcf2
+                  arc_width: 8
+          on_press:
+            - lvgl.widget.hide: boot_screen
   pages:
     # =========================================================================
     # location page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
@@ -107,16 +141,34 @@
                   text_font: my_font16
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 1
-                  grid_cell_column_span: 2
+                  grid_cell_column_span: 1
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               - label:
                   id: lbl_page_location_01
-                  text: "Time 01"
+                  text: "Temp"
+                  text_font: my_font16
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 1
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_02
+                  text: "Hum"
                   text_font: my_font16
                   grid_cell_column_pos: 2
                   grid_cell_row_pos: 1
-                  grid_cell_column_span: 2
+                  grid_cell_column_span: 1
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_03
+                  text: "Time 01"
+                  text_font: my_font16
+                  grid_cell_column_pos: 3
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 1
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
