@@ -2,11 +2,22 @@
 # DISPLAY INTERVAL
 
 # show the next page every x seconds, and update the display
-  - interval: 3s
+  - interval: 1s
     then:
-      - lvgl.page.next:
+      - lvgl.label.update:
+          id: lbl_page_location_time_start
+          text:
+            format: "%02d:%02d:%02d"
+            args: [ 'id(esphome_time).now().hour', 
+                    'id(esphome_time).now().minute', 
+                    'id(esphome_time).now().second' ]
       # the nest cannot be validated.
       # - component.update: ${display_id}
+  # - interval: 3s
+  #   then:
+  #     - lvgl.page.next:
+  #     # the nest cannot be validated.
+  #     # - component.update: ${display_id}
 
 # ############################################################
 #  END OF FILE

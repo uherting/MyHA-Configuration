@@ -150,7 +150,7 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
-  # none so far
+  - <<: !include conf/binary_sensor/l9lorry01d/l9lorry01d.yaml
   
 #-------------------------------------------------------------------
 # SENSORS
