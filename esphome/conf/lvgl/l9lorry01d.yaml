@@ -35,7 +35,79 @@
         text_color: default_btn_txt_checked_color
   top_layer:
     widgets:
-      # make sure it's the last one in this list:
+      - obj:
+          # the navigation buttons at the bottom of the screen
+          width: ${cyd_display_width_320}
+          height: ${cyd_display_height_240}
+          bg_color: room_bg_color
+          bg_opa: TRANSP
+          layout:
+            type: grid
+            grid_columns: [fr(1), fr(1), fr(1), fr(1)]
+            grid_rows: [fr(1), fr(1), fr(1)]
+          pad_all: 5px
+          outline_pad: 5px
+          # the main content of the page
+          widgets:
+            - button:
+                id: btn_previous_page_0
+                grid_cell_column_pos: 0
+                grid_cell_row_pos: 2
+                grid_cell_x_align: STRETCH
+                grid_cell_y_align: STRETCH
+                checkable: true
+                widgets:
+                  - label:
+                      id: lbl_btn_previous_page_0
+                      text: "󰧀"
+                      text_font: mdi_icons
+                      align: center
+                on_click:
+                  then:
+                    - lvgl.page.previous:
+            - button:
+                id: btn_wifi_0
+                grid_cell_column_pos: 1
+                grid_cell_row_pos: 2
+                grid_cell_x_align: STRETCH
+                grid_cell_y_align: STRETCH
+                checkable: true
+                widgets:
+                  - label:
+                      id: lbl_btn_wifi_0
+                      text: "󰖩"
+                      text_font: mdi_icons
+                      align: center
+            - button:
+                id: btn_gps_0
+                grid_cell_column_pos: 2
+                grid_cell_row_pos: 2
+                grid_cell_x_align: STRETCH
+                grid_cell_y_align: STRETCH
+                checkable: true
+                widgets:
+                  - label:
+                      id: lbl_btn_gps_0
+                      text: "󰤉"
+                      text_font: mdi_icons
+                      align: center
+            - button:
+                id: btn_next_page_0
+                grid_cell_column_pos: 3
+                grid_cell_row_pos: 2
+                grid_cell_x_align: STRETCH
+                grid_cell_y_align: STRETCH
+                checkable: true
+                widgets:
+                  - label:
+                      id: lbl_btn_next_page_0
+                      text: "󰧂"
+                      text_font: mdi_icons
+                      align: center
+                on_click:
+                  then:
+                    - lvgl.page.next:
+      # the boot screen --- make sure it's the last one in this list:
       - obj:
           id: boot_screen
           x: 0
@@ -173,64 +245,64 @@
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
               # the navigation buttons at the bottom of the screen
-              - button:
-                  id: btn_previous_page_0
-                  grid_cell_column_pos: 0
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_previous_page_0
-                        text: "󰧀"
-                        text_font: mdi_icons
-                        align: center
-                  on_click:
-                    then:
-                      - lvgl.page.previous:
-              - button:
-                  id: btn_wifi_0
-                  grid_cell_column_pos: 1
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_wifi_0
-                        text: "󰖩"
-                        text_font: mdi_icons
-                        align: center
-              - button:
-                  id: btn_gps_0
-                  grid_cell_column_pos: 2
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_gps_0
-                        text: "󰤉"
-                        text_font: mdi_icons
-                        align: center
-              - button:
-                  id: btn_next_page_0
-                  grid_cell_column_pos: 3
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_next_page_0
-                        text: "󰧂"
-                        text_font: mdi_icons
-                        align: center
-                  on_click:
-                    then:
-                      - lvgl.page.next:
+              # - button:
+              #     id: btn_previous_page_0
+              #     grid_cell_column_pos: 0
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_previous_page_0
+              #           text: "󰧀"
+              #           text_font: mdi_icons
+              #           align: center
+              #     on_click:
+              #       then:
+              #         - lvgl.page.previous:
+              # - button:
+              #     id: btn_wifi_0
+              #     grid_cell_column_pos: 1
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_wifi_0
+              #           text: "󰖩"
+              #           text_font: mdi_icons
+              #           align: center
+              # - button:
+              #     id: btn_gps_0
+              #     grid_cell_column_pos: 2
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_gps_0
+              #           text: "󰤉"
+              #           text_font: mdi_icons
+              #           align: center
+              # - button:
+              #     id: btn_next_page_0
+              #     grid_cell_column_pos: 3
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_next_page_0
+              #           text: "󰧂"
+              #           text_font: mdi_icons
+              #           align: center
+              #     on_click:
+              #       then:
+              #         - lvgl.page.next:
     # =========================================================================
     # status page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
     - id: page_status
@@ -280,65 +352,65 @@
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
-              # the buttons at the bottom of the screen
-              - button:
-                  id: btn_previous_page_1
-                  grid_cell_column_pos: 0
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_previous_page_1
-                        text: "󰧀"
-                        text_font: mdi_icons
-                        align: center
-                  on_click:
-                    then:
-                      - lvgl.page.previous:
-              - button:
-                  id: btn_wifi_1
-                  grid_cell_column_pos: 1
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_wifi_1
-                        text: "󰖩"
-                        text_font: mdi_icons
-                        align: center
-              - button:
-                  id: btn_gps_1
-                  grid_cell_column_pos: 2
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_gps
-                        text: "󰤉"
-                        text_font: mdi_icons
-                        align: center
-              - button:
-                  id: btn_next_page_1
-                  grid_cell_column_pos: 3
-                  grid_cell_row_pos: 2
-                  grid_cell_x_align: STRETCH
-                  grid_cell_y_align: STRETCH
-                  checkable: true
-                  widgets:
-                    - label:
-                        id: lbl_btn_next_page_1
-                        text: "󰧂"
-                        text_font: mdi_icons
-                        align: center
-                  on_click:
-                    then:
-                      - lvgl.page.next:
+              # # the buttons at the bottom of the screen
+              # - button:
+              #     id: btn_previous_page_1
+              #     grid_cell_column_pos: 0
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_previous_page_1
+              #           text: "󰧀"
+              #           text_font: mdi_icons
+              #           align: center
+              #     on_click:
+              #       then:
+              #         - lvgl.page.previous:
+              # - button:
+              #     id: btn_wifi_1
+              #     grid_cell_column_pos: 1
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_wifi_1
+              #           text: "󰖩"
+              #           text_font: mdi_icons
+              #           align: center
+              # - button:
+              #     id: btn_gps_1
+              #     grid_cell_column_pos: 2
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_gps
+              #           text: "󰤉"
+              #           text_font: mdi_icons
+              #           align: center
+              # - button:
+              #     id: btn_next_page_1
+              #     grid_cell_column_pos: 3
+              #     grid_cell_row_pos: 2
+              #     grid_cell_x_align: STRETCH
+              #     grid_cell_y_align: STRETCH
+              #     checkable: true
+              #     widgets:
+              #       - label:
+              #           id: lbl_btn_next_page_1
+              #           text: "󰧂"
+              #           text_font: mdi_icons
+              #           align: center
+              #     on_click:
+              #       then:
+              #         - lvgl.page.next:
     # - id: keypad_page
     #   widgets:
     #     - led:

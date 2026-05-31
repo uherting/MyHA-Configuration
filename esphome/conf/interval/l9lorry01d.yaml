@@ -5,6 +5,7 @@
   - interval: 3s
     then:
       - lvgl.page.next:
+      # the nest cannot be validated.
       # - component.update: ${display_id}
 
 # ############################################################
