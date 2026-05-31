@@ -172,7 +172,7 @@
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
-              # the buttons at the bottom of the screen
+              # the navigation buttons at the bottom of the screen
               - button:
                   id: btn_previous_page_0
                   grid_cell_column_pos: 0
