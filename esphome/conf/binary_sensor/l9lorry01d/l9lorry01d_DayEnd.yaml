@@ -7,35 +7,11 @@
 #binary_sensor:
 
 ###########################################################################
-# import sensor from home assistant
+# handle the times for the start and end of the day for the location 
+# tracking, as well as the button states for the same
 ###########################################################################
-  - platform: lvgl
-    name: "Location day start"
-    id: location_day_start
-    widget: lbl_btn_day_start
-    on_state:
-      - if:
-          condition:
-            - binary_sensor.is_on: location_day_start
-          then:
-            - lambda: |-
-                ESP_LOGD("binary_sensor", "Location day start is ON");
-            - lvgl.widget.update:
-                id: lbl_btn_day_start
-                text_color: default_btn_txt_checked_color
-            - lvgl.label.update:
-                id: lbl_page_location_time_start
-                text:
-                  format: "%02d:%02d:%02d"
-                  args: [ 'id(esphome_time).now().hour', 
-                          'id(esphome_time).now().minute', 
-                          'id(esphome_time).now().second' ]
-          else:
-            - lambda: |-
-               ESP_LOGD("binary_sensor", "Location day start is OFF");
-            - lvgl.widget.update:
-                id: lbl_btn_day_start
-                text_color: default_btn_txt_color
+  # ---------------------------------------------------------------------------
+  # end of the day for location tracking, e.g. when arriving at a poarking lot in the evening
   - platform: lvgl
     name: "Location day end"
     id: location_day_end
@@ -46,7 +22,7 @@
             - binary_sensor.is_on: location_day_end
           then:
             - lambda: |-
-               ESP_LOGD("binary_sensor", "Location day end is OFF");
+               ESP_LOGD("binary_sensor", "Location day end is ON");
             - lvgl.widget.update:
                 id: lbl_btn_day_end
                 text_color: default_btn_txt_checked_color
@@ -57,13 +33,17 @@
                   args: [ 'id(esphome_time).now().hour', 
                           'id(esphome_time).now().minute', 
                           'id(esphome_time).now().second' ]
-            - delay: 2000ms
+            # clear the fields for the start time and end time after a short delay, so they are ready for the next day
+            - delay: 4000ms
             - lvgl.label.update:
-                  id: lbl_page_location_time_start
-                  text: ""
+                id: lbl_page_location_time_start
+                text: " "
             - lvgl.label.update:
-                  id: lbl_page_location_time_end
-                  text: ""
+                id: lbl_page_location_poi
+                text: " "
+            - lvgl.label.update:
+                id: lbl_page_location_time_end
+                text: " "
           else:
             - lambda: |-
                ESP_LOGD("binary_sensor", "Location day end is OFF");

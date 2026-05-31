@@ -23,7 +23,7 @@
       unit_of_measurement: ${bmp280_01_pressure_unit}
       on_value:
         - lvgl.label.update:
-            id: lbl_page_location_centre_left_01
+            id: lbl_page_location_centre_right_01
             text:
               format: "%.1f ${aht20_01_temp_unit}\n%.1f %%\n%.1f ${bmp280_01_pressure_unit}"
               args: [ 'id(${aht20_01_temp_id}).get_state()', 

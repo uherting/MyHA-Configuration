@@ -6,6 +6,10 @@
 # WiFi settings
 wifi:
   networks:
+    - ssid: !secret WIFI_L95_SSID
+      password: !secret WIFI_L95_PW
+    - ssid: !secret WIFI_L96_SSID
+      password: !secret WIFI_L96_PW
     - ssid: !secret WIFI_L0_SSID
       password: !secret WIFI_L0_PW
     - ssid: !secret WIFI_L2_SSID

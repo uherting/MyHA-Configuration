@@ -140,7 +140,7 @@
   pages:
     # =========================================================================
     # location page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
-    - id: page_location
+    - id: page_01
       pad_all: 0
       widgets:
         - obj:
@@ -171,9 +171,11 @@
                         align: center
                   on_click:
                     then:
+                      - lambda: |-
+                          ESP_LOGD("lvgl btn", "day start button clicked");
                       - delay: 500ms
               - button:
-                  id: btn_point_of_interest
+                  id: btn_poi
                   grid_cell_column_pos: 1
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -182,12 +184,14 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_point_of_interest
+                        id: lbl_btn_poi
                         text: "󰓎"
                         text_font: mdi_icons
                         align: center
                   on_click:
                     then:
+                      - lambda: |-
+                          ESP_LOGD("lvgl btn", "poi button clicked");
                       - delay: 500ms
               - button:
                   id: btn_day_end
@@ -204,6 +208,8 @@
                         align: center
                   on_click:
                     then:
+                      - lambda: |-
+                          ESP_LOGD("lvgl btn", "day end button clicked");
                       - delay: 500ms
               # ------------- line 2 / 3 ------------- 
               - label:
@@ -216,23 +222,32 @@
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               - label:
-                  id: lbl_page_location_centre_left_01
-                  text: "Temp"
+                  id: lbl_page_location_poi
+                  text: "POI"
                   text_font: my_font16
                   grid_cell_column_pos: 1
                   grid_cell_row_pos: 1
-                  grid_cell_column_span: 2
+                  grid_cell_column_span: 1
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               # - label:
-              #     id: lbl_page_location_centre_right_01
-              #     text: "Hum"
+              #     id: lbl_page_location_centre_left_01
+              #     text: "Info"
               #     text_font: my_font16
-              #     grid_cell_column_pos: 2
-              #     grid_cell_row_pos: 1
+              #     grid_cell_column_pos: 1
+              #     grid_cell_row_pos: 2
               #     grid_cell_column_span: 1
               #     grid_cell_x_align: CENTER
               #     grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_centre_right_01
+                  text: "Data"
+                  text_font: my_font16
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 1
+                  grid_cell_column_span: 1
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
               - label:
                   id: lbl_page_location_time_end
                   text: "Time\nEnd"
@@ -244,9 +259,10 @@
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
               # the navigation buttons are on the top layer, so we don't need to add them here again
+              # just for testting:
     # =========================================================================
     # status page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
-    - id: page_status
+    - id: page_02
       pad_all: 0
       widgets:
         - obj:
@@ -294,33 +310,6 @@
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
               # the navigation buttons are on the top layer, so we don't need to add them here again
-    - id: page_dummy
-      pad_all: 0
-      widgets:
-        - obj:
-            width: ${cyd_display_width_320}
-            height: ${cyd_display_height_240}
-            bg_color: room_bg_color
-            layout:
-              type: grid
-              grid_columns: [fr(1), fr(1), fr(1), fr(1)]
-              grid_rows: [fr(1), fr(1), fr(1)]
-            pad_all: 5px
-            outline_pad: 5px
-            # ========================================================================
-            # the main content of the page
-            widgets:
-              # ------------- line 1 / 3 ------------- 
-              # you can replace this with your own widgets, e.g. a dashboard with sensor values, or whatever you like
-              - label:
-                  id: lbl_page_location_1011
-                  text: "dummy Page"
-                  text_font: my_font16
-                  grid_cell_column_pos: 0
-                  grid_cell_row_pos: 0
-                  grid_cell_column_span: 4
-                  grid_cell_x_align: CENTER
-                  grid_cell_y_align: CENTER
     # - id: keypad_page
     #   widgets:
     #     - led:

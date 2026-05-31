@@ -1,0 +1,45 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+###########################################################################
+# handle the times for the start and end of the day for the location 
+# tracking, as well as the button states for the same
+###########################################################################
+  # ---------------------------------------------------------------------------
+  # point of interest (POI) reached, e.g. when arriving at a customer, terminal or depot during the day
+  - platform: lvgl
+    name: "Location POI"
+    id: location_poi
+    widget: lbl_btn_poi
+    on_state:
+      - if:
+          condition:
+            - binary_sensor.is_on: location_poi
+          then:
+            - lambda: |-
+               ESP_LOGD("binary_sensor", "Location POI is ON");
+            - lvgl.widget.update:
+                id: lbl_btn_poi
+                text_color: default_btn_txt_checked_color
+            - lvgl.label.update:
+                id: lbl_page_location_poi
+                text:
+                  format: "%02d:%02d:%02d"
+                  args: [ 'id(esphome_time).now().hour', 
+                          'id(esphome_time).now().minute', 
+                          'id(esphome_time).now().second' ]
+          else:
+            - lambda: |-
+               ESP_LOGD("binary_sensor", "Location POI is OFF");
+            - lvgl.widget.update:
+                id: lbl_btn_poi
+                text_color: default_btn_txt_color  
+
+# ############################################################
+#  END OF FILE
+# ############################################################

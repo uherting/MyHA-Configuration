@@ -5,7 +5,7 @@
   - interval: 1s
     then:
       - lvgl.label.update:
-          id: lbl_page_location_time_start
+          id: lbl_page_location_centre_right_01
           text:
             format: "%02d:%02d:%02d"
             args: [ 'id(esphome_time).now().hour', 
