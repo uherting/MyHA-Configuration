@@ -51,6 +51,8 @@ secrets.yaml
 watchman_report.txt
 
 .ha_run.lock
+
+justForWritingDownIdeas.txt
 # ############################################################
 #  EOF
 # ############################################################

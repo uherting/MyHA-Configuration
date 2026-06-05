@@ -31,7 +31,7 @@ cyd_display_rotation: 180
 gps_update_interval: 20s
 
 # log level for this device, default is "INFO", but for debugging you might want to set it to "DEBUG"
-# log_level: !secret LOG_LEVEL_DEBUG
+log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
 # EOF
 ####################################################################
