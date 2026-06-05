@@ -214,6 +214,10 @@ template: !include_dir_merge_list conf/templates
 # python_script:
 
 switch: !include_dir_merge_list conf/switches
+
+# sensors for the database size of MariaDB and (theoretically) InfluxDB
+sql: !include_dir_merge_list conf/sql
+
 # DOODS
 #image_processing: !include conf/doods/image_processing.yaml
 
