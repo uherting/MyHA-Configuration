@@ -1,13 +1,15 @@
 ##########################################################################################
-# Sensors
+# mariadb recorder db size sensor
 ##########################################################################################
 
 ##########################################################################################
 # SQL platform
 
 # sql:
-  # mariadb recorder db size sensor
-  - platform: sql
+  # - platform: sql 
+  # from the good ol times when this was a sensor platform. 
+  #   HA 'kindly asked' that this is to be moved to a 'sql' platform, but the sensor
+  #   functionality is still there, just with a different syntax.
     db_url: !secret MARIADB_DBURL
     queries:
       - name: DB size MariaDb
