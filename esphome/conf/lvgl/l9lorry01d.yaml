@@ -172,7 +172,7 @@
                   on_click:
                     then:
                       - lambda: |-
-                          ESP_LOGD("lvgl btn", "day start button clicked");
+                          ESP_LOGD("binary_sensor", "day start button clicked");
                       - delay: 500ms
               - button:
                   id: btn_poi
@@ -191,7 +191,7 @@
                   on_click:
                     then:
                       - lambda: |-
-                          ESP_LOGD("lvgl btn", "poi button clicked");
+                          ESP_LOGD("binary_sensor", "poi button clicked");
                       - delay: 500ms
               - button:
                   id: btn_day_end
@@ -209,7 +209,7 @@
                   on_click:
                     then:
                       - lambda: |-
-                          ESP_LOGD("lvgl btn", "day end button clicked");
+                          ESP_LOGD("binary_sensor", "day end button clicked");
                       - delay: 500ms
               # ------------- line 2 / 3 ------------- 
               - label:
