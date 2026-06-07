@@ -65,7 +65,7 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-time: !include conf/common/time_ntp.yaml
+time: !include conf/common/time_ntp_cyd.yaml
 # as this device is mobile, it does not make sense to include a fixed location.
 # However, we might want to use the sun component anyhow, e.g. to have 
 # a visual representation of sunrise and sunset times on the display.

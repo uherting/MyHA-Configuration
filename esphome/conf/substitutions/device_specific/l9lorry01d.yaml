@@ -21,6 +21,11 @@ friendly_id: ""
 # display
 display_id: ${device_name}_display
 
+# template text sensor
+location_time_day_start: ${device_name}_location_time_day_start
+location_time_day_poi: ${device_name}_location_time_day_poi
+location_time_day_end: ${device_name}_location_time_day_end
+location_time_now: ${device_name}_location_time_now
 ####################################################################
 # EOF
 ####################################################################

@@ -5,20 +5,12 @@
   - interval: 1s
     then:
       - lvgl.label.update:
-          id: lbl_page_location_centre_right_01
+          id: lbl_page_location_time
           text:
             format: "%02d:%02d:%02d"
             args: [ 'id(esphome_time).now().hour', 
                     'id(esphome_time).now().minute', 
                     'id(esphome_time).now().second' ]
-      # the nest cannot be validated.
-      # - component.update: ${display_id}
-  # - interval: 3s
-  #   then:
-  #     - lvgl.page.next:
-  #     # the nest cannot be validated.
-  #     # - component.update: ${display_id}
-
 # ############################################################
 #  END OF FILE
 # ############################################################

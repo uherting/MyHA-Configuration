@@ -12,7 +12,7 @@
       unit_of_measurement: ${aht20_01_temp_unit}
       on_value:
         - lvgl.label.update:
-            id: lbl_page_location_centre_right_01
+            id: lbl_page_location_data
             text:
               format: "%.1f ${aht20_01_temp_unit}\n%.1f %%\n%.1f ${bmp280_01_pressure_unit}"
               args: [ 'id(${aht20_01_temp_id}).get_state()', 
@@ -24,19 +24,12 @@
       unit_of_measurement: ${aht20_01_hum_unit}
       on_value:
         - lvgl.label.update:
-            id: lbl_page_location_centre_right_01
+            id: lbl_page_location_data
             text:
               format: "%.1f ${aht20_01_temp_unit}\n%.1f %%\n%.1f ${bmp280_01_pressure_unit}"
               args: [ 'id(${aht20_01_temp_id}).get_state()', 
                       'id(${aht20_01_hum_id}).get_state()', 
                       'id(${bmp280_01_pressure_id}).get_state()' ]      
-      # on_value:
-      #   then:
-      #     - lvgl.label.update:
-      #         id: lbl_page_location_hum_01
-      #         text: !lambda return (id('sensor.l9lorry01d_lorry_aht20_h_01').state).c_str();        
-      #     # - lambda: |-
-      #     #     id(lbl_page_location_hum_01).set_text(to_string(x) + " ${aht20_01_hum_unit}");
     address: ${aht20_01_address}
     update_interval: ${aht20_01_update_interval}
 ####################################################################

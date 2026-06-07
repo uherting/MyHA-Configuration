@@ -33,17 +33,19 @@
                   args: [ 'id(esphome_time).now().hour', 
                           'id(esphome_time).now().minute', 
                           'id(esphome_time).now().second' ]
-            # clear the fields for the start time and end time after a short delay, so they are ready for the next day
+            # have a short delay so the times can be seen on the display
+            # before clearing the fields for the start/poi/end time, so they are ready for the next day
             - delay: 4000ms
+            # clearing the fields for the start/poi/end time, so they are ready for the next day
             - lvgl.label.update:
                 id: lbl_page_location_time_start
-                text: " "
+                text: "Time\nStart"
             - lvgl.label.update:
                 id: lbl_page_location_poi
-                text: " "
+                text: "Time\nPOI"
             - lvgl.label.update:
                 id: lbl_page_location_time_end
-                text: " "
+                text: "Time\nEnd"
           else:
             - lambda: |-
                ESP_LOGD("binary_sensor", "Location day end is OFF");

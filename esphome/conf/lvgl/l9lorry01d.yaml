@@ -33,8 +33,65 @@
         bg_grad_color: 0x000000
         bg_opa: COVER
         text_color: default_btn_txt_checked_color
+  style_definitions:
+    - id: header_footer
+      bg_color: 0x2F8CD8
+      bg_grad_color: 0x005782
+      bg_grad_dir: VER
+      bg_opa: COVER
+      border_opa: TRANSP
+      radius: 0
+      pad_all: 0
+      pad_row: 0
+      pad_column: 0
+      border_color: 0x0077b3
+      text_color: 0xFFFFFF
+      width: 100%
+      height: 30
   top_layer:
     widgets:
+      - buttonmatrix:
+          align: bottom_mid
+          styles: header_footer
+          pad_all: 0
+          outline_width: 0
+          id: top_layer
+          items:
+            styles: header_footer
+          rows:
+            - buttons:
+              - id: page_prev
+                text: "\uF053"
+                on_press:
+                  then:
+                    lvgl.page.previous:
+              - id: page_home
+                text: "\uF015"
+                on_press:
+                  then:
+                    lvgl.page.show: page_01
+              - id: page_next
+                text: "\uF054"
+                on_press:
+                  then:
+                    lvgl.page.next:
+            # - buttons:
+            #     - text: "󰧀"
+            #       id: btn_previous_page_0
+            #       control:
+            #         no_repeat: true
+            #     - text: "󰖩"
+            #       id: btn_wifi_0
+            #       control:
+            #         no_repeat: true
+            #     - text: "󰤉"
+            #       id: btn_gps_0
+            #       control:
+            #         no_repeat: true
+            #     - text: "󰧂"
+            #       id: btn_next_page_0
+            #       control:
+            #         no_repeat: true
       # # the navigation buttons at the bottom of the screen
       # - obj:
       #     width: ${cyd_display_width_320}
@@ -150,7 +207,7 @@
             layout:
               type: grid
               grid_columns: [fr(1), fr(1), fr(1), fr(1)]
-              grid_rows: [fr(1), fr(1), fr(1)]
+              grid_rows: [fr(1), fr(1), fr(1), fr(1)]
             pad_all: 5px
             outline_pad: 5px
             # the main content of the page
@@ -223,11 +280,11 @@
                   grid_cell_y_align: CENTER
               - label:
                   id: lbl_page_location_poi
-                  text: "POI"
+                  text: "Time\nPOI"
                   text_font: my_font16
                   grid_cell_column_pos: 1
                   grid_cell_row_pos: 1
-                  grid_cell_column_span: 1
+                  grid_cell_column_span: 2
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               # - label:
@@ -240,15 +297,6 @@
               #     grid_cell_x_align: CENTER
               #     grid_cell_y_align: CENTER
               - label:
-                  id: lbl_page_location_centre_right_01
-                  text: "Data"
-                  text_font: my_font16
-                  grid_cell_column_pos: 2
-                  grid_cell_row_pos: 1
-                  grid_cell_column_span: 1
-                  grid_cell_x_align: CENTER
-                  grid_cell_y_align: CENTER
-              - label:
                   id: lbl_page_location_time_end
                   text: "Time\nEnd"
                   text_font: my_font16
@@ -258,8 +306,24 @@
                   grid_cell_x_align: CENTER
                   grid_cell_y_align: CENTER
               # ------------- line 3 / 3 ------------- 
-              # the navigation buttons are on the top layer, so we don't need to add them here again
-              # just for testting:
+              - label:
+                  id: lbl_page_location_time
+                  text: "Current\nTime"
+                  text_font: my_font16
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_column_span: 1
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
+              - label:
+                  id: lbl_page_location_data
+                  text: "Current\nData"
+                  text_font: my_font16
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_column_span: 1
+                  grid_cell_x_align: CENTER
+                  grid_cell_y_align: CENTER
     # =========================================================================
     # status page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
     - id: page_02
