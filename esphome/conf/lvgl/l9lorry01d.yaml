@@ -246,7 +246,7 @@
             layout:
               type: grid
               grid_columns: [fr(1), fr(1), fr(1), fr(1)]
-              grid_rows: [fr(1), fr(1), fr(1)]
+              grid_rows: [fr(1), fr(1), fr(1), fr(1)]
             pad_all: 5px
             outline_pad: 5px
             # ========================================================================
@@ -254,7 +254,7 @@
             widgets:
               # ------------- line 1 / 3 ------------- 
               - button:
-                  id: btn_day_activity_start
+                  id: btn_day_activity_drive
                   grid_cell_column_pos: 0
                   grid_cell_row_pos: 0
                   grid_cell_x_align: STRETCH
@@ -262,14 +262,68 @@
                   checkable: true
                   widgets:
                     - label:
-                        id: lbl_btn_day_activity_start
+                        id: lbl_btn_day_activity_drive
                         text: "󰖜"
                         text_font: mdi_icons
                         align: center
                   on_click:
                     then:
                       # - lambda: |-
-                      #     ESP_LOGD("binary_sensor", "day start button clicked");
+                      #     ESP_LOGD("binary_sensor", "activity drive button clicked");
+                      - delay: 500ms
+              - button:
+                  id: btn_day_activity_work
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_day_activity_work
+                        text: "󰖜"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      # - lambda: |-
+                      #     ESP_LOGD("binary_sensor", "activity work button clicked");
+                      - delay: 500ms
+              - button:
+                  id: btn_day_activity_rest
+                  grid_cell_column_pos: 2
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_day_activity_rest
+                        text: "󰓎"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      # - lambda: |-
+                      #     ESP_LOGD("binary_sensor", "activity rest button clicked");
+                      - delay: 500ms
+              - button:
+                  id: btn_day_activity_misc
+                  grid_cell_column_pos: 3
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  checkable: true
+                  widgets:
+                    - label:
+                        id: lbl_btn_day_activity_misc
+                        text: "󰓎"
+                        text_font: mdi_icons
+                        align: center
+                  on_click:
+                    then:
+                      # - lambda: |-
+                      #     ESP_LOGD("binary_sensor", "activity misc button clicked");
                       - delay: 500ms
               # ------------- line 2 / 3 ------------- 
               # here comes the numbers related to the buttons above, e.g. 
