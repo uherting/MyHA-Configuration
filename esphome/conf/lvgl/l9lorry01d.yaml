@@ -69,7 +69,7 @@
                 text: "\uF015"
                 on_press:
                   then:
-                    lvgl.page.show: page_01
+                    lvgl.page.show: page_location
               - id: page_next
                 text: "\uF054"
                 on_press:
@@ -197,7 +197,7 @@
   pages:
     # =========================================================================
     # location page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
-    - id: page_01
+    - id: page_location
       pad_all: 0
       widgets:
         - obj:
@@ -326,7 +326,7 @@
                   grid_cell_y_align: CENTER
     # =========================================================================
     # status page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
-    - id: page_02
+    - id: page_status
       pad_all: 0
       widgets:
         - obj:
