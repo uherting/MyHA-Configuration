@@ -3,7 +3,7 @@
 
 # device definitions
 device_name: l9lorry01d
-device_comment: Level 9 Lorry 01G ESP32-2432S028R aka CYD
+device_comment: Level 9 Lorry 01D ESP32-2432S028R aka CYD
 device_area: L9
 
 device_platform: ESP32
