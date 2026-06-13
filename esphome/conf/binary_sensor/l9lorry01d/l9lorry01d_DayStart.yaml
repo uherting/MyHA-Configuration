@@ -23,14 +23,27 @@
           then:
             - lambda: |-
                 ESP_LOGD("binary_sensor", "Location day start is ON");
-            - lvgl.widget.update:
-                id: lbl_btn_day_start
-                text_color: default_btn_txt_checked_color
+            # clearing the fields for the start/poi/end time, so 
+            # they are ready for the next day
+            # - lvgl.label.update:
+            #     id: lbl_page_location_time_start
+            #     text: "Time\nStart"
             - lvgl.label.update:
                 id: lbl_page_location_time_start
                 text:
                   format: "%s\n%s"
-                  args: [ 'id(${loc_now_time_id}).state.c_str()', 'id(${loc_now_date_id}).state.c_str()' ]
+                  args: [ 'id(${loc_starttime_id}).state.c_str()', 
+                          'id(${loc_startdate_id}).state.c_str()' 
+                        ]
+            - lvgl.label.update:
+                id: lbl_page_location_poi
+                text: "Time\nPOI"
+            - lvgl.label.update:
+                id: lbl_page_location_time_end
+                text: "Time\nEnd"
+            - lvgl.widget.update:
+                id: lbl_btn_day_start
+                text_color: default_btn_txt_checked_color
           else:
             - lambda: |-
                ESP_LOGD("binary_sensor", "Location day start is OFF");
