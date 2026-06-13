@@ -202,7 +202,8 @@ text_sensor:
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
-  - <<: !include conf/text_sensor/l9lorry01d_time_now.yaml
+  - <<: !include conf/text_sensor/l9lorry01d_now_time.yaml
+  - <<: !include conf/text_sensor/l9lorry01d_now_date.yaml
   # - <<: !include conf/text_sensor/l9lorry01d_loc_day_start.yaml
   # - <<: !include conf/text_sensor/l9lorry01d_loc_day_end.yaml
   # - <<: !include conf/text_sensor/l9lorry01d_loc_day_poi.yaml

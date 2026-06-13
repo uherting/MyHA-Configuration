@@ -28,8 +28,10 @@ location_time_day_poi_name: $friendly_name Location time day poi
 location_time_day_poi_id: ${friendly_id}_location_time_day_poi
 location_time_day_end_name: $friendly_name Location time day end
 location_time_day_end_id: ${friendly_id}_location_time_day_end
-location_time_now_name: $friendly_name Location time now
-location_time_now_id: ${friendly_id}_location_time_now
+location_now_time_name: $friendly_name Location time now
+location_now_time_id: ${friendly_id}_location_time_now
+location_now_date_name: $friendly_name Location date now
+location_now_date_id: ${friendly_id}_location_date_now
 ####################################################################
 # EOF
 ####################################################################

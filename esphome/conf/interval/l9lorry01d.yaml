@@ -7,8 +7,13 @@
       - lvgl.label.update:
           id: lbl_page_location_time
           text:
-            format: "%02d:%02d:%02d\n  %02d:%02d."
-            args: [ 'id()' ]
+            format: "%s\n  %s"
+            args: [ 'id(${location_now_time_id}).state.c_str()', 
+                    'id(${location_now_date_id}).state.c_str())' 
+                  ]
+      - lambda: |-
+          ESP_LOGD("text_sensor", "time_now: %s", id(${location_now_time_id}).state.c_str());
+
 # ############################################################
 #  END OF FILE
 # ############################################################

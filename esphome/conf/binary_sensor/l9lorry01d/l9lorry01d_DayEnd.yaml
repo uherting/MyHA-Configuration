@@ -30,8 +30,8 @@
             - lvgl.label.update:
                 id: lbl_page_location_time_end
                 text:
-                  format: "%s"
-                  args: [ 'id(location_time_now_id).state' ]
+                  format: "%s\n  %s"
+                  args: [ 'id(${location_now_time_id}).state', 'id(${location_now_date_id}).state' ]
             # have a short delay so the times can be seen on the display
             # before clearing the fields for the start/poi/end time, so they are ready for the next day
             - delay: 4000ms

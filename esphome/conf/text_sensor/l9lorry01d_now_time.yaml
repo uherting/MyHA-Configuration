@@ -6,15 +6,15 @@
 
 # text_sensor:
   - platform: template
-    name: ${location_time_now_name}
-    id: ${location_time_now_id}
+    name: ${location_now_time_name}
+    id: ${location_now_time_id}
     lambda: |-
       if (id(esphome_time).now().is_valid()) {
-        return (id(esphome_time).now().strftime("%H:%M:%S\n  %d.%m."));
+        return (id(esphome_time).now().strftime("%H:%M:%S"));
       } else {
         return ( "NoTime" );
       }
-    update_interval: 1s
+    update_interval: 5s
 # ############################################################
 #  END OF FILE
 # ############################################################
