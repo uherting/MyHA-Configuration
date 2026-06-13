@@ -164,10 +164,10 @@ sensor:
   # the light sensitive resistor R21 on the CYD board connected to GPIO34 (which is an ADC pin) 
   # does not work as expected, so it is currently included in the configuration 'as is' but not used in the automations.
   - <<: !include conf/common/sensor/cyd_brightness_01.yaml
-  # aht20 and bmp280 are currently not included as they are not not reccognized by the 
-  # device, even though they are connected to the I2C bus.
-  - <<: !include conf/common/sensor/aht20_01_lvgl.yaml
-  - <<: !include conf/common/sensor/bmp280_01_lvgl.yaml
+  # # aht20 and bmp280 are currently not included as they are not not reccognized by the 
+  # # device, even though they are connected to the I2C bus.
+  # - <<: !include conf/common/sensor/aht20_01_lvgl.yaml
+  # - <<: !include conf/common/sensor/bmp280_01_lvgl.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
@@ -202,8 +202,10 @@ text_sensor:
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
-  # none so far
-
+  - <<: !include conf/text_sensor/l9lorry01d_time_now.yaml
+  # - <<: !include conf/text_sensor/l9lorry01d_loc_day_start.yaml
+  # - <<: !include conf/text_sensor/l9lorry01d_loc_day_end.yaml
+  # - <<: !include conf/text_sensor/l9lorry01d_loc_day_poi.yaml
 # #-------------------------------------------------------------------
 # # GPS related setup
 # # GPS module: EstarDyn GY-NEO6MV2 New NEO-6M GPS Module NEO6MV2 with Flight Control EEPROM MWC APM2.5 large Antenna)

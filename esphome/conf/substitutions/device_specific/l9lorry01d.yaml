@@ -19,13 +19,17 @@ friendly_name: ""
 friendly_id: ""
 
 # display
-display_id: ${device_name}_display
+display_id: cyd_display
 
 # template text sensor
-location_time_day_start: ${device_name}_location_time_day_start
-location_time_day_poi: ${device_name}_location_time_day_poi
-location_time_day_end: ${device_name}_location_time_day_end
-location_time_now: ${device_name}_location_time_now
+location_time_day_start_name: $friendly_name Location time day start
+location_time_day_start_id: ${friendly_id}_location_time_day_start
+location_time_day_poi_name: $friendly_name Location time day poi
+location_time_day_poi_id: ${friendly_id}_location_time_day_poi
+location_time_day_end_name: $friendly_name Location time day end
+location_time_day_end_id: ${friendly_id}_location_time_day_end
+location_time_now_name: $friendly_name Location time now
+location_time_now_id: ${friendly_id}_location_time_now
 ####################################################################
 # EOF
 ####################################################################

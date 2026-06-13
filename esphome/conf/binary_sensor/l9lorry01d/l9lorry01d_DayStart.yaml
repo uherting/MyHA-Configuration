@@ -29,10 +29,8 @@
             - lvgl.label.update:
                 id: lbl_page_location_time_start
                 text:
-                  format: "%02d:%02d:%02d"
-                  args: [ 'id(esphome_time).now().hour', 
-                          'id(esphome_time).now().minute', 
-                          'id(esphome_time).now().second' ]
+                  format: "%s"
+                  args: [ 'id(location_time_now_id).state' ]
           else:
             - lambda: |-
                ESP_LOGD("binary_sensor", "Location day start is OFF");

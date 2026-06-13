@@ -7,8 +7,8 @@
       - lvgl.label.update:
           id: lbl_page_location_time
           text:
-            format: "%s"
-            args: [ 'id(location_time_now).state']
+            format: "%02d:%02d:%02d\n  %02d:%02d."
+            args: [ 'id()' ]
 # ############################################################
 #  END OF FILE
 # ############################################################

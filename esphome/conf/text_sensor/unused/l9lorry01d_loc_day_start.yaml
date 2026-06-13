@@ -1,0 +1,22 @@
+# ############################################################
+#
+#  templated text sensor
+#
+# ############################################################
+
+# text_sensor:
+  - platform: template
+    name: ${location_time_day_start_name}
+    id: ${location_time_day_start_id}
+    lambda: |-
+      if (id(esphome_time).now().is_valid()) {
+        return (id(esphome_time).now().strftime("%H:%M:%S\n  %d.%m."));
+      } else {
+        return ( "NoTime" );
+      }
+    update_interval: 10s
+# ############################################################
+#  END OF FILE
+# ############################################################
+
+
