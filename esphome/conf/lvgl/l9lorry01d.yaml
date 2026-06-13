@@ -311,7 +311,7 @@
                   on_click:
                     then:
                       # - lambda: |-
-                      #     ESP_LOGD("binary_sensor", "day start button clicked");
+                      #     ESP_LOGD("binary_sensor", "day activity start button clicked");
                       - delay: 500ms
               # more labels probably need to be added here, e.g. for the total time 
               # of the day activity, the total distance of the day activity, etc.
@@ -331,7 +331,7 @@
                   on_click:
                     then:
                       # - lambda: |-
-                      #     ESP_LOGD("binary_sensor", "day start button clicked");
+                      #     ESP_LOGD("binary_sensor", "day activity end button clicked");
                       - delay: 500ms
     # - id: keypad_page
     #   widgets:
