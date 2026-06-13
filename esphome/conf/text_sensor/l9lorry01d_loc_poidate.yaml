@@ -6,8 +6,8 @@
 
 # text_sensor:
   - platform: template
-    name: ${loc_now_date_name}
-    id: ${loc_now_date_id}
+    name: ${loc_poitime_name}
+    id: ${loc_poitime_id}
     lambda: |-
       if (id(esphome_time).now().is_valid()) {
         return (id(esphome_time).now().strftime("%d.%m.%y"));

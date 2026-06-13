@@ -6,7 +6,7 @@
 
 # text_sensor:
   - platform: template
-    name: ${location_time_day_start}
+    name: ${loc_starttime}
     lambda: |-
       char str[6];
       if (id(my_time).now().is_valid()) {
@@ -18,7 +18,7 @@
       }
     update_interval: 20s
   - platform: template
-    name: ${location_time_day_poi}
+    name: ${loc_poitime}
     lambda: |-
       char str[6];
       if (id(my_time).now().is_valid()) {
@@ -30,7 +30,7 @@
       }
     update_interval: 20s
   - platform: template
-    name: ${location_time_day_end}
+    name: ${loc_endtime}
     lambda: |-
       char str[6];
       if (id(my_time).now().is_valid()) {

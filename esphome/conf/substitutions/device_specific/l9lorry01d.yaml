@@ -22,16 +22,22 @@ friendly_id: ""
 display_id: cyd_display
 
 # template text sensor
-location_time_day_start_name: $friendly_name Location time day start
-location_time_day_start_id: ${friendly_id}_location_time_day_start
-location_time_day_poi_name: $friendly_name Location time day poi
-location_time_day_poi_id: ${friendly_id}_location_time_day_poi
-location_time_day_end_name: $friendly_name Location time day end
-location_time_day_end_id: ${friendly_id}_location_time_day_end
-location_now_time_name: $friendly_name Location time now
-location_now_time_id: ${friendly_id}_location_time_now
-location_now_date_name: $friendly_name Location date now
-location_now_date_id: ${friendly_id}_location_date_now
+loc_starttime_name: $friendly_name Location time day start
+loc_starttime_id: ${friendly_id}_loc_starttime
+loc_startdate_name: $friendly_name Location date day start
+loc_startdate_id: ${friendly_id}_loc_startdate
+loc_poitime_name: $friendly_name Location time day poi
+loc_poitime_id: ${friendly_id}_loc_poitime
+loc_poidate_name: $friendly_name Location date day poi
+loc_poidate_id: ${friendly_id}_loc_poidate
+loc_endtime_name: $friendly_name Location time day end
+loc_endtime_id: ${friendly_id}_loc_endtime
+loc_enddate_name: $friendly_name Location date day end
+loc_enddate_id: ${friendly_id}_loc_enddate
+loc_now_time_name: $friendly_name Location time now
+loc_now_time_id: ${friendly_id}_location_time_now
+loc_now_date_name: $friendly_name Location date now
+loc_now_date_id: ${friendly_id}_location_date_now
 ####################################################################
 # EOF
 ####################################################################

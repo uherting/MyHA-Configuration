@@ -6,11 +6,11 @@
 
 # text_sensor:
   - platform: template
-    name: ${location_time_day_start_name}
-    id: ${location_time_day_start_id}
+    name: ${loc_endtime_name}
+    id: ${loc_endtime_id}
     lambda: |-
       if (id(esphome_time).now().is_valid()) {
-        return (id(esphome_time).now().strftime("%H:%M:%S\n  %d.%m."));
+        return (id(esphome_time).now().strftime("%H:%M:%S"));
       } else {
         return ( "NoTime" );
       }
