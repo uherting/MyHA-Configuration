@@ -32,18 +32,6 @@
 
       # - "" # 
 
-  # id: lbl_btn_wifiOnOff
-  # text: "_"
-  # id: lbl_btn_wifi
-  # text: "󰖩"
-  # id: lbl_btn_wifi_off
-  # text: "󰤯"
-
-  # id: lbl_btn_crosshairsgps
-  # text: "󰆤"
-  # id: lbl_btn_crosshairsnogps
-  # text: "󰆣"
-
 # ############################################################
 #  END OF FILE
 # ############################################################
