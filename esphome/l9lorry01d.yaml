@@ -203,14 +203,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   - <<: !include conf/text_sensor/l9lorry01d/l9lorry01d_now_time_and_date.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_now_time.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_now_date.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_loc_starttime.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_loc_startdate.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_loc_poitime.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_loc_poidate.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_loc_endtime.yaml
-  # - <<: !include conf/text_sensor/l9lorry01d_loc_enddate.yaml
 # #-------------------------------------------------------------------
 # # GPS related setup
 # # GPS module: EstarDyn GY-NEO6MV2 New NEO-6M GPS Module NEO6MV2 with Flight Control EEPROM MWC APM2.5 large Antenna)

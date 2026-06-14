@@ -25,9 +25,6 @@
                 ESP_LOGD("binary_sensor", "Location day start is ON");
             # clearing the fields for the start/poi/end time, so 
             # they are ready for the next day
-            # - lvgl.label.update:
-            #     id: lbl_page_location_time_start
-            #     text: "Time\nStart"
             - lvgl.label.update:
                 id: lbl_page_location_time_start
                 text:
