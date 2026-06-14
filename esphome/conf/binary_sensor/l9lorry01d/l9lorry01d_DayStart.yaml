@@ -31,10 +31,8 @@
             - lvgl.label.update:
                 id: lbl_page_location_time_start
                 text:
-                  format: "%s\n%s"
-                  args: [ 'id(${loc_starttime_id}).state.c_str()', 
-                          'id(${loc_startdate_id}).state.c_str()' 
-                        ]
+                  format: "%s"
+                  args: [ 'id(${loc_now_timedate_id}).state.c_str()' ]
             - lvgl.label.update:
                 id: lbl_page_location_poi
                 text: "Time\nPOI"

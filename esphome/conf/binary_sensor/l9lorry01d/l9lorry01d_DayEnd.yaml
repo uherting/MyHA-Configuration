@@ -30,10 +30,8 @@
             - lvgl.label.update:
                 id: lbl_page_location_time_end
                 text:
-                  format: "%s\n%s"
-                  args: [ 'id(${loc_endtime_id}).state.c_str()', 
-                          'id(${loc_enddate_id}).state.c_str()' 
-                        ]
+                  format: "%s"
+                  args: [ 'id(${loc_now_timedate_id}).state.c_str()' ]
           else:
             - lambda: |-
                ESP_LOGD("binary_sensor", "Location day end is OFF");
