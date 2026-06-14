@@ -32,10 +32,12 @@ cyd_brightness_01_update_interval: 10s
 cyd_display_rotation: 180
 
 # the update interval for the GPS sensor
-gps_update_interval: 20s
+# GSP data is retrieved from some other source via ESPNow and 
+#not directly from a GPS module, so the update interval is not relevant for this device.
+# gps_update_interval: 20s
 
 # log level for this device, default is "INFO", but for debugging you might want to set it to "DEBUG"
-log_level: !secret LOG_LEVEL_DEBUG
+# log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
 # EOF
 ####################################################################

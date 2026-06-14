@@ -1,16 +1,18 @@
 ####################################################################
 # DISPLAY INTERVAL
 
+# interval:
+
 # show the next page every x seconds, and update the display
-  - interval: 1s
+  - interval: ${update_interval_label_lbl_page_location_time}
     then:
       - lvgl.label.update:
           id: lbl_page_location_time
           text:
             format: "%s"
             args: [ 'id(${loc_now_timedate_id}).state.c_str()' ]
-      - lambda: |-
-          ESP_LOGD("text_sensor", "loc_now_timedate: %s", id(${loc_now_timedate_id}).state.c_str());
+      # - lambda: |-
+      #     ESP_LOGD("text_sensor", "loc_now_timedate: %s", id(${loc_now_timedate_id}).state.c_str());
 
 # ############################################################
 #  END OF FILE
