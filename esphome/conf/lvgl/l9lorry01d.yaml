@@ -281,7 +281,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_work
-                        text: "󰌢"
+                        text: "󰢷"
                         text_font: mdi_icons
                         align: center
                   on_click:
