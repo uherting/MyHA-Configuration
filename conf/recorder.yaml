@@ -66,6 +66,12 @@ exclude:
     - sensor.l9cam3203_scan_results
     - sensor.l9cam3203_uptime
     - sensor.l9cam3203_uptime_human_readable
+    - sensor.l9lorry01d_uptime
+    - sensor.l9lorry01d_uptime_human_readable
+    - sensor.roamingaroundarea_l9lorry01d_location_time_now
+    - binary_sensor.l9lorry01d_location_day_end
+    - binary_sensor.l9lorry01d_location_day_start
+    - binary_sensor.l9lorry01d_location_poi
     - sensor.zb_charger_gh_last_seen
     - sensor.zb_charger_uh_last_seen
     - sensor.zb_dw_l2_bedroom_01_last_seen

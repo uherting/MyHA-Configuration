@@ -18,10 +18,6 @@ cards:
       - light.l9lorry01d_rgb_led
       - switch.l9lorry01d_antiburn
       - number.l9lorry01d_lvgl_screen_timeout
-      # - sensor.l9lorry01d_lorry_aht20_h_01
-      # - sensor.l9lorry01d_lorry_aht20_t_01
-      # - sensor.l9lorry01d_lorry_bmp280_p_01
-      # - sensor.l9lorry01d_lorry_bmp280_t_01
 ####################################################################
 # EOF
 ####################################################################
