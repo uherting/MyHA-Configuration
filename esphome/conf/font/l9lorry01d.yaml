@@ -29,6 +29,12 @@
       - "󰖩" # mdiWifi
       - "󰖜" # mdiWeatherSunsetUp
       - "󰖛" # mdiWeatherSunsetDown
+      - "󰪥" # mdiCircleSlice8 (drive)
+      - "󰌢" # mdiPickaxe (work)
+      - "󰋣" # mdiBed (rest)
+      - "󱥫" # mdiArrowTopRightBoldBoxOutline (misc)
+      - "󰅕" # mdiClockStart
+      - "󰅑" # mdiClockEnd
 
       # - "" # 
 

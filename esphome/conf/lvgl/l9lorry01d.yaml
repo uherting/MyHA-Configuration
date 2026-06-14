@@ -263,7 +263,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_drive
-                        text: "󰖜"
+                        text: "󰪥"
                         text_font: mdi_icons
                         align: center
                   on_click:
@@ -281,7 +281,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_work
-                        text: "󰖜"
+                        text: "󰌢"
                         text_font: mdi_icons
                         align: center
                   on_click:
@@ -299,7 +299,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_rest
-                        text: "󰓎"
+                        text: "󰋣"
                         text_font: mdi_icons
                         align: center
                   on_click:
@@ -317,7 +317,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_misc
-                        text: "󰓎"
+                        text: "󱥫"
                         text_font: mdi_icons
                         align: center
                   on_click:
@@ -359,7 +359,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_start
-                        text: "󰖜"
+                        text: "󰅕"
                         text_font: mdi_icons
                         align: center
                   on_click:
@@ -379,7 +379,7 @@
                   widgets:
                     - label:
                         id: lbl_btn_day_activity_end
-                        text: "�"
+                        text: "󰅑"
                         text_font: mdi_icons
                         align: center
                   on_click:
