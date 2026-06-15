@@ -50,6 +50,24 @@
       height: 30
   top_layer:
     widgets:
+      - label:
+          text: "T"
+          id: lbl_time_status
+          hidden: true
+          align: bottom_right
+          x: -37
+          y: -35
+          text_align: right
+          text_color: 0xFFFFFF
+      - label:
+          text: "\uF1EB"
+          id: lbl_wifi_status
+          hidden: true
+          align: bottom_right
+          x: -7
+          y: -35
+          text_align: right
+          text_color: 0xFFFFFF
       - buttonmatrix:
           align: bottom_mid
           styles: header_footer
@@ -387,90 +405,90 @@
                       # - lambda: |-
                       #     ESP_LOGD("binary_sensor", "day activity end button clicked");
                       - delay: 500ms
-    # - id: keypad_page
-    #   widgets:
-    #     - led:
-    #         id: lvgl_led
-    #         x: 30
-    #         y: 47
-    #         color: 0xFF0000
-    #         brightness: 70%
-    #     - obj:
-    #         width: 140
-    #         height: 25
-    #         align_to:
-    #           id: lvgl_led
-    #           align: OUT_RIGHT_MID
-    #           x: 17
-    #         border_width: 1
-    #         border_color: 0
-    #         border_opa: 50%
-    #         pad_all: 0
-    #         bg_opa: 80%
-    #         bg_color: 0xFFFFFF
-    #         shadow_color: 0
-    #         shadow_opa: 50%
-    #         shadow_width: 10
-    #         shadow_spread: 3
-    #         radius: 5
-    #         widgets:
-    #           - label:
-    #               id: lvgl_label
-    #               align: CENTER
-    #               text: "Enter code and \uF00C"
-    #               text_align: CENTER
-    #     - buttonmatrix:
-    #         id: lvgl_keypad
-    #         x: 20
-    #         y: 85
-    #         width: 200
-    #         height: 190
-    #         items:
-    #           pressed:
-    #             bg_color: 0xFFFF00
-    #         rows:
-    #           - buttons:
-    #               - text: 1
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 2
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 3
-    #                 control:
-    #                   no_repeat: true
-    #           - buttons:
-    #               - text: 4
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 5
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 6
-    #                 control:
-    #                   no_repeat: true
-    #           - buttons:
-    #               - text: 7
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 8
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 9
-    #                 control:
-    #                   no_repeat: true
-    #           - buttons:
-    #               - text: "\uF55A"
-    #                 key_code: "*"
-    #                 control:
-    #                   no_repeat: true
-    #               - text: 0
-    #                 control:
-    #                   no_repeat: true
-    #               - text: "\uF00C"
-    #                 key_code: "#"
-    #                 control:
-    #                   no_repeat: true
+    - id: keypad_page
+      widgets:
+        - led:
+            id: lvgl_led
+            x: 30
+            y: 47
+            color: 0xFF0000
+            brightness: 70%
+        - obj:
+            width: 140
+            height: 25
+            align_to:
+              id: lvgl_led
+              align: OUT_RIGHT_MID
+              x: 17
+            border_width: 1
+            border_color: 0
+            border_opa: 50%
+            pad_all: 0
+            bg_opa: 80%
+            bg_color: 0xFFFFFF
+            shadow_color: 0
+            shadow_opa: 50%
+            shadow_width: 10
+            shadow_spread: 3
+            radius: 5
+            widgets:
+              - label:
+                  id: lvgl_label
+                  align: CENTER
+                  text: "Enter code and \uF00C"
+                  text_align: CENTER
+        - buttonmatrix:
+            id: lvgl_keypad
+            x: 20
+            y: 85
+            width: 200
+            height: 190
+            items:
+              pressed:
+                bg_color: 0xFFFF00
+            rows:
+              - buttons:
+                  - text: 1
+                    control:
+                      no_repeat: true
+                  - text: 2
+                    control:
+                      no_repeat: true
+                  - text: 3
+                    control:
+                      no_repeat: true
+              - buttons:
+                  - text: 4
+                    control:
+                      no_repeat: true
+                  - text: 5
+                    control:
+                      no_repeat: true
+                  - text: 6
+                    control:
+                      no_repeat: true
+              - buttons:
+                  - text: 7
+                    control:
+                      no_repeat: true
+                  - text: 8
+                    control:
+                      no_repeat: true
+                  - text: 9
+                    control:
+                      no_repeat: true
+              - buttons:
+                  - text: "\uF55A"
+                    key_code: "*"
+                    control:
+                      no_repeat: true
+                  - text: 0
+                    control:
+                      no_repeat: true
+                  - text: "\uF00C"
+                    key_code: "#"
+                    control:
+                      no_repeat: true
 
               # ========================================================================
               # just some example buttons in the grid, you can replace them with your own widgets
