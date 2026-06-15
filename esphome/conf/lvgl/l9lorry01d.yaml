@@ -11,7 +11,21 @@
 # added stuff later on from other sources
 # - https://github.com/agillis/esphome-modular-lvgl-buttons/blob/main/buttons/switch_button.yaml
 ################################################################
+  # rotation: valid values: 0, 90, 180 or 270. 180 equals to antenna on the left side
+  # pay attention to the touchscreen, swap_xy: might be changed accordingly
+  # after changing the rotation to 180, ...
+  #   - having rotation: in display: does not get valitaded, so we put it into lvgl: config  
+  #   - swap_xy: true is needed for the touchscreen to work correctly in landscape mode
+  rotation: ${cyd_display_rotation} 
+
   buffer_size: 25%
+
+  on_idle:
+    timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
+    then:
+      - lvgl.pause:
+      - light.turn_off: display_backlight
+      - switch.turn_on: switch_antiburn
   theme:
     label:
       text_color: default_label_txt_color
@@ -524,20 +538,6 @@
     # =========================================================================
     # end of pages, you can add more pages here if you like
     # =========================================================================
-
-  # rotation: valid values: 0, 90, 180 or 270. 180 equals to antenna on the left side
-  # pay attention to the touchscreen, swap_xy: might be changed accordingly
-  # after changing the rotation to 180, ...
-  #   - having rotation: in display: does not get valitaded, so we put it into lvgl: config  
-  #   - swap_xy: true is needed for the touchscreen to work correctly in landscape mode
-  rotation: ${cyd_display_rotation} 
-
-  on_idle:
-    timeout: !lambda "return (id(cyd_display_timeout_s).state * 1000);"
-    then:
-      - lvgl.pause:
-      - light.turn_off: display_backlight
-      - switch.turn_on: switch_antiburn
 
 ####################################################################
 # EOF
