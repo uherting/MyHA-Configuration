@@ -489,7 +489,21 @@
                     key_code: "#"
                     control:
                       no_repeat: true
-
+    - id: page_dummy
+      pad_all: 0
+      widgets:
+        - obj:
+            width: ${cyd_display_width_320}
+            height: ${cyd_display_height_240}
+            bg_color: room_bg_color
+            layout:
+              type: grid
+              grid_columns: [fr(1), fr(1), fr(1), fr(1)]
+              grid_rows: [fr(1), fr(1), fr(1), fr(1)]
+            pad_all: 5px
+            outline_pad: 5px
+            # the main content of the page
+            widgets:
               # ========================================================================
               # just some example buttons in the grid, you can replace them with your own widgets
               # - switch:
