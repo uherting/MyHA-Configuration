@@ -2,8 +2,36 @@
 # OVERWRITE COMMON SUBSTITUTIONS
 
 # if there are no overrides the dummy value comes in handy ;-)
-dummy_value: "dummy value"
-# log_level: !secret LOG_LEVEL_WARN
+# dummy_value: "dummy value"
+
+# AHT20 sensor
+aht20_01_temp_name: $friendly_name Lorry AHT20 T 01
+aht20_01_hum_name: $friendly_name Lorry AHT20 H 01
+aht20_01_update_interval: 60s
+aht20_01_address: 0x38
+aht20_01_variant: AHT20
+aht20_01_temp_unit: "°C"
+aht20_01_hum_unit: "%"
+aht20_01_temp_id: ${friendly_id}_Lorry_AHT20_T_01
+aht20_01_hum_id: ${friendly_id}_Lorry_AHT20_H_01
+
+# bmp280 sensor for temperature and pressure
+bmp280_01_temp_name: $friendly_name Lorry BMP280 T 01
+bmp280_01_temp_id: ${friendly_id}_Lorry_BMP280_T_01
+bmp280_01_pressure_name: $friendly_name Lorry BMP280 P 01
+bmp280_01_pressure_id: ${friendly_id}_Lorry_BMP280_P_01
+bmp280_01_temp_unit: "°C"
+bmp280_01_pressure_unit: "hPa"
+bmp280_01_update_interval: 600s
+bmp280_01_address: 0x77
+
+# the update interval for the GPS sensor
+# GSP data is retrieved from some other source via ESPNow and 
+#not directly from a GPS module, so the update interval is not relevant for this device.
+gps_update_interval: 20s
+
+# log level for this device, default is "INFO", but for debugging you might want to set it to "DEBUG"
+log_level: !secret LOG_LEVEL_DEBUG
 ####################################################################
 # EOF
 ####################################################################
