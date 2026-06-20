@@ -1,0 +1,123 @@
+####################################################################
+####################################################################
+#
+# DEVICE: espnow_slave
+#
+####################################################################
+####################################################################
+
+####################################################################
+# DESCRIPTION
+####################################################################
+#
+# Purpose:
+#   - This microcontroller uses ESP-NOW to send commands to 
+#     the slave and (one day) to receive GPS data from the slave.
+#
+# Hardware:
+#   - 1 ESP32 development board
+#
+# Automation:
+#   - undetermined
+#
+# WiFi:
+#   - no WiFi connection, only ESP-NOW communication with the slave
+#
+# Input:
+#   - none
+#
+# Output
+#   - 1 onboard LED to indicate sent commands to the slave
+#
+
+###################### PACKAGES CONFIGURATION ######################
+# naming conventions which override common behaviour
+
+substitutions:
+  <<: !include conf/substitutions/device_specific/espnow_master.yaml
+  <<: !include conf/substitutions/overwrites/espnow_slave.yaml
+
+# esphome:
+#   name: test-com-offline-master
+#   friendly_name: test communication offline - master
+# esp32:
+#   board: esp32dev
+#   framework:
+#     type: esp-idf
+
+packages:
+  substitutions_common: !include conf/common/packages/substitutions/common.yaml
+  device_base_common: !include conf/common/packages/device_base_esp32.yaml
+  # wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api: !include conf/common/networking/api.yaml
+# api:
+#   encryption:
+#     key: "___"
+
+ota: !include conf/common/networking/ota.yaml
+# ota:
+#   - platform: esphome
+#     password: "___"
+
+# WiFi configuration with fallback captive portal
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Test-Com-Offline-Master"
+    password: "12345678"
+captive_portal:
+
+# espnow configuration to send commands to the slave
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_ESPNOW_SLAVE  # slave MAC
+  on_receive:
+    address: !secret ESPNOW_MAC_ESPNOW_SLAVE
+    then:
+      - if:
+          condition:
+            lambda: 'return (size > 0) && (data[0] == 0x01);'
+          then:
+            - output.turn_on: led
+            - logger.log: "ESPNow: Received data Power On"
+      - if:
+          condition:
+            lambda: 'return (size > 0) && (data[0] == 0x00);'
+          then:
+            - output.turn_off: led
+            - logger.log: "ESPNow: Received data Power Off"
+
+# the touch button configuration to send commands to the slave
+binary_sensor:
+  - platform: gpio
+    pin: GPIO4
+    name: "Button"
+    on_press:
+      then:
+        - espnow.send:
+            address: !secret ESPNOW_MAC_ESPNOW_SLAVE
+            data: [0x01]  # Turns on the LED on the slave
+        - logger.log: "Sent data Power On"
+        - output.turn_on: led
+        - delay: 0.5s
+        - espnow.send:
+            address: !secret ESPNOW_MAC_ESPNOW_SLAVE
+            data: [0x00]  # Turns off the LED on the slave
+        - logger.log: "Sent data Power Off"
+        - output.turn_off: led
+
+# the onboard LED to indicate received commands from the slave 
+# and for debugging purposes when sending commands to the slave
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: led
+    inverted: False
+####################################################################
+# EOF
+####################################################################
