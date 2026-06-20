@@ -1,0 +1,31 @@
+####################################################################
+# WIFI - multiple networks
+####################################################################
+
+# ---------------------------------------------------------------------
+# WiFi settings
+wifi:
+  networks:
+    - ssid: !secret WIFI_L95_SSID
+      password: !secret WIFI_L95_PW
+    - ssid: !secret WIFI_L96_SSID
+      password: !secret WIFI_L96_PW
+    - ssid: !secret WIFI_L0_SSID
+      password: !secret WIFI_L0_PW
+    - ssid: !secret WIFI_L2_SSID
+      password: !secret WIFI_L2_PW
+    - ssid: !secret WIFI_L91_SSID
+      password: !secret WIFI_L91_PW
+    - ssid: !secret WIFI_L92_SSID
+      password: !secret WIFI_L92_PW
+  domain: !secret WIFI_DOMAIN
+  min_auth_mode: WPA2  # Reject WPA-only networks
+  
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: $device_name Fallback Hotspot
+    password: !secret AP_PASSWORD_ESP322432S028R_AKA_CYD
+
+# ############################################################
+#  END OF FILE
+# ############################################################

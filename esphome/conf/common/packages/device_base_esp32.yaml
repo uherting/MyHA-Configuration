@@ -15,9 +15,11 @@ esphome:
 # taken from https://esphome.io/components/esp32
 esp32:
   board: $device_board
-  # this is now working due to a change in esphome/conf/common/sensor/uptime.yaml (was: String(..), now std::to_string(...))
   framework:
-    type: esp-idf
+    # this can be customized for each device in the device specific substitutions file
+    type: $device_framework
+    # was before:
+    # type: esp-idf
 
 ####################################################################
 # LOGGING (central setup)
