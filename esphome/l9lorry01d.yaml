@@ -82,8 +82,8 @@ web_server:
 #   - I2C: https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
 #===================================================================
 #-------------------------------------------------------------------
-# I2C for the CYD
-i2c: !include conf/common/device/i2c_esp32-2432s028r_v1.yaml
+# I2C for the CYD (no longer used, as the CYD has no I2C devices connected to it)
+# i2c: !include conf/common/device/i2c_esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # SPI (default ESP32 platform)
 spi: !include conf/common/device/spi_esp32-2432s028r_v1.yaml
