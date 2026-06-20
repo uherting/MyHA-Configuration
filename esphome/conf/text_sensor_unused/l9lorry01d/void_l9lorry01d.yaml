@@ -1,0 +1,60 @@
+# ############################################################
+#
+#  templated text sensor
+#
+# ############################################################
+
+# text_sensor:
+  - platform: template
+    name: ${loc_starttime}
+    lambda: |-
+      char str[6];
+      if (id(my_time).now().is_valid()) {
+        time_t currTime = id(esphome_time).now().timestamp;
+        strftime(str, sizeof(str), “%H:%M”, localtime(&currTime));
+        return { str };
+      } else {
+        return { "" };
+      }
+    update_interval: 20s
+  - platform: template
+    name: ${loc_poitime}
+    lambda: |-
+      char str[6];
+      if (id(my_time).now().is_valid()) {
+      time_t currTime = id(esphome_time).now().timestamp;
+      strftime(str, sizeof(str), “%H:%M”, localtime(&currTime));
+      return { str };
+      } else {
+        return { "" };
+      }
+    update_interval: 20s
+  - platform: template
+    name: ${loc_endtime}
+    lambda: |-
+      char str[6];
+      if (id(my_time).now().is_valid()) {
+        time_t currTime = id(esphome_time).now().timestamp;
+        strftime(str, sizeof(str), “%H:%M”, localtime(&currTime));
+        return { str };
+      } else {
+        return { "" };
+      }
+    update_interval: 20s
+  - platform: template
+    name: ${location_time_now}
+    lambda: |-
+      char str[9];
+      if (id(my_time).now().is_valid()) {
+        time_t currTime = id(esphome_time).now().timestamp;
+        strftime(str, sizeof(str), “%H:%M”, localtime(&currTime));
+        return { str };
+      } else {
+        return { "" };
+      }
+    update_interval: 20s
+# ############################################################
+#  END OF FILE
+# ############################################################
+
+

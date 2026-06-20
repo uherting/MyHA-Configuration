@@ -2,18 +2,13 @@
 # TIME
 
 #time:
-  - platform: gps
+  - platform: sntp
     id: esphome_time
-    timezone: "Europe/Berlin"
-    on_time_sync:
-      if:
-        condition:
-          time.has_time:
-        then:
-          - logger.log: "GPS Time Updated"
-        else:
-          - logger.log: "GPS Time Sync Failed"
-
+    timezone: Europe/Berlin
+    servers:
+     - 0.pool.ntp.org
+     - 1.pool.ntp.org
+     - 2.pool.ntp.org
 ####################################################################
 # EOF
 ####################################################################

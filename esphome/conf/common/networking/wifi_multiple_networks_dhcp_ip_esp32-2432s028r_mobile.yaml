@@ -20,6 +20,22 @@ wifi:
       password: !secret WIFI_L92_PW
   domain: !secret WIFI_DOMAIN
   min_auth_mode: WPA2  # Reject WPA-only networks
+  on_connect:
+    then:
+      - lvgl.widget.show: lbl_wifi_status
+      # - lambda: |-
+      #     id(btn_wifi_status).set_hidden(false);
+      #     ESP_LOGD("wifi", "Connected to WiFi network: %s", WiFi.SSID().c_str());
+      - lambda: |-
+          ESP_LOGD("wifi", "Connected to WiFi network: %s", WiFi.SSID().c_str());
+  on_disconnect:
+    then:
+      - lvgl.widget.hide: lbl_wifi_status
+      # - lambda: |-
+      #     id(btn_wifi_status).set_hidden(true);
+      #     ESP_LOGD("wifi", "Disconnected from WiFi network");
+      - lambda: |-
+          ESP_LOGD("wifi", "Disconnected from WiFi network");
   
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
