@@ -1,0 +1,21 @@
+####################################################################
+# DEVICE SPECIFIC SUBSTITUTIONS
+
+# device definitions
+device_name: l9lorry01g
+device_comment: Level 9 Lorry 01G
+device_area: L9
+
+device_platform: ESP32
+wifi_static_ip: 192.168.178.40
+
+# ESP32-WROOM-32D uses the esp32dev definition with the Arduino framework
+device_board: esp32dev
+device_framework: arduino
+
+# the friendly name and id
+friendly_name: ""
+friendly_id: ""
+####################################################################
+# EOF
+####################################################################

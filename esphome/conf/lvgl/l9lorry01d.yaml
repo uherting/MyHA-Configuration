@@ -518,6 +518,24 @@
             outline_pad: 5px
             # the main content of the page
             widgets:
+              # some dummy widget which is hopefully working
+              - switch:
+                  id: switch_antiburn_btn
+                  grid_cell_column_pos: 3
+                  grid_cell_row_pos: 2
+                  # grid_cell_x_align: STRETCH
+                  # grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        id: lbl_switch_antiburn
+                        text: "Antiburn"
+                        text_font: my_font16
+                        align: center
+                  on_click:
+                    then:
+                      - switch.toggle: switch_antiburn
+
+
               # ========================================================================
               # just some example buttons in the grid, you can replace them with your own widgets
               # - switch:

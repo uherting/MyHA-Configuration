@@ -11,16 +11,13 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller recording GPS data
+#   - display for the lorry01g device
 #
 # Future feature:
-#   - reporting GPS data to a MySQL database on the internet via WiFi
+#   - no idea so far
 #
 # Hardware:
 #   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32, MAC: C0:CD:D6:84:D1:EC
-#   - a module for T / H / P measurement (AHT20 and BMP280)
-#     - AHT20 (temperature and humidity sensor)
-#     - BMP280 (temperature and pressure sensor)
 #
 # Automation:
 #   - still to be determined / documented
@@ -55,11 +52,11 @@ packages:
   # ota: contained an error which got validated nevertheless. 
   # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
   # ota: !include conf/common/networking/ota.yaml
-
 ota: !include conf/common/networking/ota.yaml
 
 # in case of no connection to the Wifi
 # for details see https://esphome.io/components/captive_portal.html
+# captive_portal: conf/common/networking/captive_portal.yaml
 # captive_portal:
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
@@ -85,8 +82,8 @@ web_server:
 #   - I2C: https://github.com/RyanEwen/esphome-lvgl/blob/main/devices/ESP32-2432S028R.yaml
 #===================================================================
 #-------------------------------------------------------------------
-# I2C from docs located at 
-i2c: !include conf/common/device/i2c_esp32-2432s028r_v1.yaml
+# I2C for the CYD (no longer used, as the CYD has no I2C devices connected to it)
+# i2c: !include conf/common/device/i2c_esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # SPI (default ESP32 platform)
 spi: !include conf/common/device/spi_esp32-2432s028r_v1.yaml
@@ -204,35 +201,7 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   - <<: !include conf/text_sensor/l9lorry01d/l9lorry01d_now_time_and_date.yaml
-# #-------------------------------------------------------------------
-# # GPS related setup
-# # GPS module: EstarDyn GY-NEO6MV2 New NEO-6M GPS Module NEO6MV2 with Flight Control EEPROM MWC APM2.5 large Antenna)
-# uart: !include conf/common/device/uart01_esp32cyd_gps.yaml
-# gps:
-#   id: ${friendly_id}_gps
-#   uart_id: ${uart01_esp32_gps_id}
-#   latitude:
-#     name: "GPS Latitude"
-#     id: gps_latitude
-#   longitude:
-#     name: "GPS Longitude"
-#     id: gps_longitude
-#   altitude:
-#     name: "GPS Altitude"
-#     id: gps_altitude
-#   speed:
-#     name: "GPS Speed"
-#     id: gps_speed
-#   course:
-#     name: "GPS Course"
-#     id: gps_course
-#   satellites:
-#     name: "GPS Visible Satellites"
-#     id: gps_satellites
-#   hdop:
-#     name: "GPS HDOP"
-#     id: gps_hdop
-#   update_interval: ${gps_update_interval}
+
 
 ####################################################################
 # EOF
