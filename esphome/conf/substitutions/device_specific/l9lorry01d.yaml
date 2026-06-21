@@ -3,7 +3,7 @@
 
 # device definitions
 device_name: l9lorry01d
-device_comment: Level 9 Lorry 01G ESP32-2432S028R aka CYD
+device_comment: Level 9 Lorry 01D ESP32-2432S028R aka CYD
 device_area: L9
 
 device_platform: ESP32
@@ -19,8 +19,15 @@ friendly_name: ""
 friendly_id: ""
 
 # display
-display_id: ${device_name}_display
+display_id: cyd_display
 
+# the interval for updating the location time on the display
+update_interval_label_lbl_page_location_time: 1s
+update_interval_template_text_sensor_loc_now_timedate: 1s
+
+# template text sensor
+loc_now_timedate_name: $friendly_name Location time now
+loc_now_timedate_id: ${friendly_id}_location_time_now_id
 ####################################################################
 # EOF
 ####################################################################

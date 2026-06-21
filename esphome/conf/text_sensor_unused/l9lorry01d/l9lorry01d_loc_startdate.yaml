@@ -1,0 +1,22 @@
+# ############################################################
+#
+#  templated text sensor
+#
+# ############################################################
+
+# text_sensor:
+  - platform: template
+    name: ${loc_startdate_name}
+    id: ${loc_startdate_id}
+    lambda: |-
+      if (id(esphome_time).now().is_valid()) {
+        return (id(esphome_time).now().strftime("%d.%m.%y"));
+      } else {
+        return ( "NoDate" );
+      }
+    update_interval: 60s
+# ############################################################
+#  END OF FILE
+# ############################################################
+
+

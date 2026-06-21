@@ -48,14 +48,14 @@ substitutions:
 
   # AHT20
   aht20_01_temp_name: $friendly_name AHT20 temp 01
+  aht20_01_temp_id: ${friendly_id}_AHT20_Temp_01
+  aht20_01_temp_unit: "°C"
   aht20_01_hum_name: $friendly_name AHT20 hum 01
+  aht20_01_hum_id: ${friendly_id}_AHT20_Hum_01
+  aht20_01_hum_unit: "%"
   aht20_01_update_interval: 60s
   aht20_01_address: 0x38
   aht20_01_variant: AHT20
-  aht20_01_temp_unit: "°C"
-  aht20_01_hum_unit: "%"
-  aht20_01_temp_id: ${friendly_id}_AHT20_Temp_01
-  aht20_01_hum_id: ${friendly_id}_AHT20_Hum_01
 
   # BH1750 Ambient Light Sensor
   bh1750_01_address: !secret BH1750_0X23_ADDRESS
@@ -81,8 +81,12 @@ substitutions:
 
   # bmp280 sensor for temperature and pressure
   bmp280_01_temp_name: $friendly_name BMP280 temp 01
+  bmp280_01_temp_id: ${friendly_id}_BMP280_Temp_01
   bmp280_01_pressure_name: $friendly_name BMP280 pressure 01
+  bmp280_01_pressure_id: ${friendly_id}_BMP280_Pressure_01
   bmp280_01_update_interval: 600s
+  bmp280_01_temp_unit: "°C"
+  bmp280_01_pressure_unit: "hPa"
   bmp280_01_address: 0x77
 
   # ADC brightness sensor on CYD (ESP32-2432S028R)

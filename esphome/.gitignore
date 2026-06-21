@@ -13,3 +13,4 @@
 **/build/
 /secrets.yaml
 /trash/*.yaml
+.device-builder*

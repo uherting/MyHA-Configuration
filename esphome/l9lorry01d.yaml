@@ -17,7 +17,7 @@
 #   - reporting GPS data to a MySQL database on the internet via WiFi
 #
 # Hardware:
-#   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32
+#   - 1 ESP32-2432S028R aka CYD --- with onboard ESP32, MAC: C0:CD:D6:84:D1:EC
 #   - a module for T / H / P measurement (AHT20 and BMP280)
 #     - AHT20 (temperature and humidity sensor)
 #     - BMP280 (temperature and pressure sensor)
@@ -50,7 +50,7 @@ substitutions:
 packages:
   substitutions_common: !include conf/common/packages/substitutions/common.yaml
   device_base_common: !include conf/common/packages/device_base_esp32-2432s028r.yaml
-  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r_mobile.yaml
 
   # ota: contained an error which got validated nevertheless. 
   # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
@@ -65,11 +65,11 @@ ota: !include conf/common/networking/ota.yaml
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
-time: !include conf/common/time_ntp.yaml
-# as this device is mobile, it does not make sense to include a fixed location
-# so the sun configuration is currently not included. If you want to include it, 
-# you can use the following line and adjust the location in conf/common/sun.yaml accordingly.
-# sun: !include conf/common/sun.yaml
+time: !include conf/common/time_ntp_cyd.yaml
+# as this device is mobile, it does not make sense to include a fixed location.
+# However, we might want to use the sun component anyhow, e.g. to have 
+# a visual representation of sunrise and sunset times on the display.
+sun: !include conf/common/sun.yaml
 
 ############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
 web_server:
@@ -140,9 +140,10 @@ globals:
   - <<: !include conf/common/globals/connectivity.yaml
 interval: 
   - <<: !include conf/common/interval/connectivity.yaml
-  # - <<: !include conf/interval/l9lorry01d.yaml
+  - <<: !include conf/interval/l9lorry01d_time_update.yaml
 # script:
   # - <<: !include conf/script/l9lorry01d/foobar.yaml
+  
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -150,7 +151,9 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # device related
   # --------------
-  # none so far
+  - <<: !include conf/binary_sensor/l9lorry01d/l9lorry01d_DayStart.yaml
+  - <<: !include conf/binary_sensor/l9lorry01d/l9lorry01d_DayEnd.yaml
+  - <<: !include conf/binary_sensor/l9lorry01d/l9lorry01d_POI.yaml
   
 #-------------------------------------------------------------------
 # SENSORS
@@ -162,10 +165,10 @@ sensor:
   # the light sensitive resistor R21 on the CYD board connected to GPIO34 (which is an ADC pin) 
   # does not work as expected, so it is currently included in the configuration 'as is' but not used in the automations.
   - <<: !include conf/common/sensor/cyd_brightness_01.yaml
-  # aht20 and bmp280 are currently not included as they are not not reccognized by the 
-  # device, even though they are connected to the I2C bus.
-  - <<: !include conf/common/sensor/aht20_01.yaml
-  - <<: !include conf/common/sensor/bmp280_01.yaml
+  # # aht20 and bmp280 are currently not included as they are not not reccognized by the 
+  # # device, even though they are connected to the I2C bus.
+  # - <<: !include conf/common/sensor/aht20_01_lvgl.yaml
+  # - <<: !include conf/common/sensor/bmp280_01_lvgl.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
@@ -200,8 +203,7 @@ text_sensor:
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
-  # none so far
-
+  - <<: !include conf/text_sensor/l9lorry01d/l9lorry01d_now_time_and_date.yaml
 # #-------------------------------------------------------------------
 # # GPS related setup
 # # GPS module: EstarDyn GY-NEO6MV2 New NEO-6M GPS Module NEO6MV2 with Flight Control EEPROM MWC APM2.5 large Antenna)

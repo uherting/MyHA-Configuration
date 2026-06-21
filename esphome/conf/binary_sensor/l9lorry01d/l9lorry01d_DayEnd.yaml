@@ -1,0 +1,43 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+###########################################################################
+# handle the times for the start and end of the day for the location 
+# tracking, as well as the button states for the same
+###########################################################################
+  # ---------------------------------------------------------------------------
+  # end of the day for location tracking, e.g. when arriving at a poarking lot in the evening
+  # the button lbl_btn_day_end has to be pressed to trigger this here
+  - platform: lvgl
+    name: "Location day end"
+    id: location_day_end
+    widget: lbl_btn_day_end
+    on_state:
+      - if:
+          condition:
+            - binary_sensor.is_on: location_day_end
+          then:
+            - lambda: |-
+               ESP_LOGD("binary_sensor", "Location day end is ON");
+            - lvgl.widget.update:
+                id: lbl_btn_day_end
+                text_color: default_btn_txt_checked_color
+            - lvgl.label.update:
+                id: lbl_page_location_time_end
+                text:
+                  format: "%s"
+                  args: [ 'id(${loc_now_timedate_id}).state.c_str()' ]
+          else:
+            - lambda: |-
+               ESP_LOGD("binary_sensor", "Location day end is OFF");
+            - lvgl.widget.update:
+                id: lbl_btn_day_end
+                text_color: default_btn_txt_color
+# ############################################################
+#  END OF FILE
+# ############################################################
