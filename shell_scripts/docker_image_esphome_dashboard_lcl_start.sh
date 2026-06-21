@@ -25,7 +25,4 @@ else
 fi
 
 # create a container and start it. if the container is stopped it will be removed (--rm)
-sudo docker run --rm --net=host -v "${BUILD_DIR_FOR_DOCKER}":/config "${ADDITIONAL_USB}" -it esphome/esphome
-####################################################################
-# EOF
-####################################################################
+sudo docker run --rm --net=host -v "${BUILD_DIR_FOR_DOCKER}":/config ${ADDITIONAL_USB} -it esphome/esphome
