@@ -1,0 +1,31 @@
+ESPTOOL
+=======
+
+Installation of esptool
+-----------------------
+  - sudo apt install esptool
+
+Prerequisites to flashing
+-------------------------
+  - make the user member of the dialout group: sudo usermod -a -G dialout uwe
+
+Example on how to use esptool
+-----------------------------
+  - ~/bin/esptool/esptool --chip auto -p /dev/ttyUSB0 write-flash 0x0 l9lorry01g-firmware.factory.bin
+
+whereas ...
+ - ~/bin/esptool/esptool is the location of the tool (to be fine tuned)
+ - /dev/ttyUSB0 is the USB port to be used. See script docker_image_esphome_dashboard_lcl_start.sh 
+    for detecting the USB port in question or here:
+      USB_TO_TEST="/dev/ttyUSB0 /dev/ttyACM0"
+      ADDITIONAL_USB=""
+
+      for USB in ${USB_TO_TEST}; do
+        if [ -e ${USB} ]; then
+          ADDITIONAL_USB="${ADDITIONAL_USB} --device=${USB}"
+        fi
+      done
+ - l9lorry01g-firmware.factory.bin is the downloaded firmware binary from the end of the install process
+####################################################################
+# EOF
+####################################################################
