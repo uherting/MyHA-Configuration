@@ -106,7 +106,10 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # non so far...
+  # aht20 and bmp280 are currently not included as they are not not reccognized by the 
+  # device, even though they are connected to the I2C bus.
+  - <<: !include conf/common/sensor/aht20_01.yaml
+  - <<: !include conf/common/sensor/bmp280_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
