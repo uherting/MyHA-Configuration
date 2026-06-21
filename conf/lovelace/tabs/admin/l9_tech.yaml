@@ -24,6 +24,20 @@ cards:
       # - update.l9lorry01d_firmware
       - sensor.l9lorry01d_esphome_version
       - switch.l9lorry01d_restart_device
+  - type: entities
+    title: L9 Lorry 01g
+    show_header_toggle: false
+    entities:
+      - sensor.l9lorry01g_conn_ip_addr
+      - sensor.l9lorry01g_wifi_signal
+      - sensor.l9lorry01g_conn_ssid
+      - sensor.l9lorry01g_conn_bssid
+      - sensor.l9lorry01g_uptime
+      - sensor.l9lorry01g_uptime_human_readable
+      - binary_sensor.l9lorry01g_status
+      # - update.l9lorry01g_firmware
+      - sensor.l9lorry01g_esphome_version
+      - switch.l9lorry01g_restart_device
 ####################################################################
 # EOF
 ####################################################################

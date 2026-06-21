@@ -11,13 +11,28 @@ path: l9_details
 badges: []
 cards:
   - type: entities
-    title: L9 Lorry0 1d
+    title: L9 Lorry 01d
     show_header_toggle: false
     entities:
       - light.l9lorry01d_display_backlight
       - light.l9lorry01d_rgb_led
       - switch.l9lorry01d_antiburn
       - number.l9lorry01d_lvgl_screen_timeout
+  - type: entities
+    title: L9 Lorry 01g
+    show_header_toggle: false
+    entities:
+      - sensor.roamingaroundarea_l9lorry01g_lorry_aht20_t_01
+      - sensor.roamingaroundarea_l9lorry01g_lorry_aht20_h_01
+      - sensor.roamingaroundarea_l9lorry01g_lorry_bmp280_t_01
+      - sensor.roamingaroundarea_l9lorry01g_lorry_bmp280_p_01
+      - sensor.l9lorry01g_gps_latitude
+      - sensor.l9lorry01g_gps_longitude
+      - sensor.l9lorry01g_gps_altitude
+      - sensor.l9lorry01g_gps_course
+      - sensor.l9lorry01g_gps_hdop
+      - sensor.l9lorry01g_gps_speed
+      - sensor.l9lorry01g_gps_visible_satellites
 ####################################################################
 # EOF
 ####################################################################
