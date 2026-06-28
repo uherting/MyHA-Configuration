@@ -14,14 +14,6 @@ esphome:
   #     # the boot screen is hidden only if wifi and time are available
   #     - lvgl.widget.hide: boot_screen
 
-
-esp32:
-  board: $device_board
-  # this is now working due to a change in esphome/conf/common/sensor/uptime.yaml (was: String(..), now std::to_string(...))
-  framework:
-    type: $device_framework
-  # platform: $device_platform
-
 # edited due to changes ahead
 # for details see https://github.com/esphome/esphome/pull/8118
 # taken from https://esphome.io/components/esp32
