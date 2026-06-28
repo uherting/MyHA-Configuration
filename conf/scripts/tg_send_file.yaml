@@ -29,6 +29,20 @@ tg_send_one_file:
       required: false
       example: "admin"
       default: "admin"
+    msg_text_prefix:
+      # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
+      description: "The optional message prefix content"
+      advanced: true
+      required: false
+      example: "The light "
+      default: ""
+    msg_text_suffix:
+      # theoretically optional, maybe way better solution would be to used the combination of selector: / text: / default: like at https://community.home-assistant.io/t/default-values-for-script-parameters/199161/19
+      description: "The optional message suffix content"
+      advanced: true
+      required: false
+      example: "is on!"
+      default: ""
   mode: queued
   sequence:
     - choose:
@@ -37,37 +51,54 @@ tg_send_one_file:
             - condition: template
               value_template: "{{ msg_receiver == 'admin' }}"
           sequence:
-            - service: notify.tg_admin_grp
-              data_template:
-                # dummy values for title and message
-                title: "m_title"
-                message: "m_msg"
-                data:
-                  photo:
-                    - file: "{{ msg_filename }}"
-                      caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            - service: script.persis_notif_create
+              data:
+                msg_title: "{{ msg_caption }}"
+                msg_text: "{{ msg_filename }}"
+                msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+                msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
+            # - service: notify.tg_admin_grp
+            #   data_template:
+            #     # dummy values for title and message
+            #     title: "m_title"
+            #     message: "m_msg"
+            #     data:
+            #       photo:
+            #         - file: "{{ msg_filename }}"
+            #           caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
         # general notification group
         - conditions:
             - condition: template
               value_template: "{{ msg_receiver == 'notify' }}"
           sequence:
-            - service: notify.tg_notification_grp
-              data_template:
-                # dummy values for title and message
-                title: "m_title"
-                message: "m_msg"
-                data:
-                  photo:
-                    - file: "{{ msg_filename }}"
-                      caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            - service: script.persis_notif_create
+              data:
+                msg_title: "{{ msg_caption }}"
+                msg_text: "{{ msg_filename }}"
+                msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+                msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
+            # - service: notify.tg_notification_grp
+            #   data_template:
+            #     # dummy values for title and message
+            #     title: "m_title"
+            #     message: "m_msg"
+            #     data:
+            #       photo:
+            #         - file: "{{ msg_filename }}"
+            #           caption: "{{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
       # receiver does not exist
       default:
-        - service: notify.tg_admin_grp
-          data_template:
-            title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
-            message: >
-              {{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
-
+        - service: script.persis_notif_create
+          data:
+            msg_title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+            msg_text: "{{ msg_caption_1 }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            msg_text_prefix: "{{msg_text_prefix if msg_text_prefix is defined and msg_text_prefix != none else '' }}"
+            msg_text_suffix: "{{msg_text_suffix if msg_text_suffix is defined and msg_text_suffix != none else ''}}"
+        # - service: notify.tg_admin_grp
+        #   data_template:
+        #     title: "receiver '{{ msg_receiver }}' does not exist. Title: {{ msg_title }}"
+        #     message: >
+        #       {{ msg_caption }} @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}
 # ############################################################
 #  END OF FILE
 # ############################################################
