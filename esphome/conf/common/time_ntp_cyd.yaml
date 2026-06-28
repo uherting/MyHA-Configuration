@@ -9,6 +9,17 @@
      - 0.pool.ntp.org
      - 1.pool.ntp.org
      - 2.pool.ntp.org
+    on_time_sync:
+      then:
+        - lvgl.label.update:
+            id: lbl_wait_booting_up
+            text: "Time was retrieved, ..."
+        - delay: 3s
+        - lvgl.label.update:
+            id: lbl_wait_booting_up
+            text: "will start the app now ..."
+        - delay: 3s
+        - lvgl.widget.hide: boot_screen
 ####################################################################
 # EOF
 ####################################################################

@@ -15,6 +15,11 @@
     size: 16
     # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
 
+  # - file: ${ttf_font_directory}/Datatype-Bold.ttf
+  #   id: my_font18
+  #   size: 20
+  #   # glyphs: "!\"%()+=,-_.:°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ abcdefghijklmnopqrstuvwxyzåäö"
+
 # the font for the icons used in buttons
   - file: ${ttf_font_directory}/materialdesignicons-webfont.ttf
                                # Defining Material Design Icons as a font. This

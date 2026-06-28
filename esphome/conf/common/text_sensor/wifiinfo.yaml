@@ -5,6 +5,7 @@
 - platform: wifi_info
   ip_address:
     name: ${wifi_conn_ip_addr_name}
+    id: ${wifi_conn_ip_addr_id}
   ssid:
     name: ${wifi_conn_ssid_name}
   bssid:

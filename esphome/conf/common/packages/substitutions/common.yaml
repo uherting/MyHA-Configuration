@@ -14,6 +14,7 @@ substitutions:
   # wifi settings
   wifi_conn_bssid_name: ${friendly_name} Conn BSSID
   wifi_conn_ip_addr_name: ${friendly_name} Conn IP addr
+  wifi_conn_ip_addr_id: ${friendly_id}_Conn_IP_addr
   wifi_conn_ssid_name: ${friendly_name} Conn SSID
   wifi_conn_mac_address_name: ${friendly_name} MAC address
   wifi_conn_scanresults_name: ${friendly_name} Scan Results

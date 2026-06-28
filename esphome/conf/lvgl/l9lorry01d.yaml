@@ -122,10 +122,10 @@
             - image:
                 align: CENTER
                 src: boot_logo
-                y: -50
+                y: -70
             - spinner:
                 align: CENTER
-                y: 50
+                y: 30
                 height: 50
                 width: 50
                 spin_time: 1s
@@ -134,8 +134,25 @@
                 indicator:
                   arc_color: 0x18bcf2
                   arc_width: 8
-          on_press:
-            - lvgl.widget.hide: boot_screen
+            - label:
+                text: "IP Address: not connected"
+                id: lbl_ip_address
+                align: CENTER
+                y: 85
+                text_font: montserrat_18
+                text_align: right
+                text_color: 0x000000
+            - label:
+                text: "Please wait, booting up..."
+                id: lbl_wait_booting_up 
+                align: CENTER
+                y: 105
+                text_font: montserrat_18
+                text_align: right
+                text_color: 0x000000
+          # boot screen is hidden only if wifi and time are available
+          # on_press:
+          #   - lvgl.widget.hide: boot_screen
   pages:
     # =========================================================================
     # location page with a grid layout plus buttons at the bottom for page navigation, wifi and gps status
