@@ -53,7 +53,6 @@ packages:
 ############### OTA CONFIGURATION ###############
   # ota: contained an error which got validated nevertheless. 
   # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
-  # ota: !include conf/common/networking/ota.yaml
 ota: !include conf/common/networking/ota.yaml
 
 ############### API ###############
