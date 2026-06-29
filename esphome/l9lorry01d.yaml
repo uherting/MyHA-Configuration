@@ -47,8 +47,8 @@ substitutions:
 packages:
   substitutions_common: !include conf/common/packages/substitutions/common.yaml
   device_base_common: !include conf/common/packages/device_base_esp32-2432s028r.yaml
-  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r_mobile_nowifi.yaml
-  # wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r_mobile.yaml
+  # wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r_mobile_nowifi.yaml
+  wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32-2432s028r_mobile.yaml
 
 ############### OTA CONFIGURATION ###############
   # ota: contained an error which got validated nevertheless. 
@@ -80,7 +80,8 @@ captive_portal:
 # it is either webserver or the captive portal, but not both at the same time.
 # if both are enabled, the webserver will be used and the captive portal will be ignored.
 #-----------
-# for details see https://esphome.io/components/web_server/
+# for some RTFM see https://esphome.io/components/web_server/
+#-----------
 # web_server:
 #   port: 8888
 #   # local: Include supporting javascript locally allowing it to work without internet access. 
