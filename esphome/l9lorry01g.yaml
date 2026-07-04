@@ -184,8 +184,9 @@ gps:
 # and so on ... 
 
 # examplefrom https://esphome.io/components/packet_transport/espnow/#simple-example : 
-#
-# Temperature Provider:
+# ---------------------
+# Temperature Provider
+# ---------------------
 # espnow:
 #   peers:
 #     - "AA:BB:CC:DD:EE:01"  # Consumer mac address
@@ -203,7 +204,9 @@ gps:
 #       name: "Outdoor Temperature"
 #       id: outdoor_temp
 
-# Temperature Consumer:
+# ---------------------
+# Temperature Consumer
+# ---------------------
 # espnow:
 #   peers:
 #     - "AA:BB:CC:DD:EE:00"  # Provider mac address
