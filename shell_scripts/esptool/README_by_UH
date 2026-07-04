@@ -12,6 +12,8 @@ Prerequisites to flashing
 Example on how to use esptool
 -----------------------------
   - ~/bin/esptool/esptool --chip auto -p /dev/ttyUSB0 write-flash 0x0 l9lorry01g-firmware.factory.bin
+    or rather a lengthy version:
+  - /home/uwe/myHAConfig/shell_scripts/esptool/esptool --chip auto -p /dev/ttyUSB0 write-flash 0x0 /home/uwe/Downloads/l9lorry01d-firmware.factory.bin; rm /home/uwe/Downloads/l9lorry01d-firmware.factory.bin
 
 whereas ...
  - ~/bin/esptool/esptool is the location of the tool (to be fine tuned)
