@@ -54,8 +54,6 @@ packages:
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32_mobile.yaml
 
 ############### OTA CONFIGURATION ###############
-# ota: contained an error which got validated nevertheless. 
-# After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
 ota: !include conf/common/networking/ota.yaml
 
 ############### API ###############
@@ -178,40 +176,84 @@ gps:
 
 #-------------------------------------------------------------------
 # ESPNow
+# for details see https://esphome.io/components/packet_transport/espnow/#simple-example
+#-------------------------------------------------------------------
 # espnow:
 #   peers:
-#     - !secret ESPNOW_MAC_L2LOUNGE09 # master MAC 
+#     - !secret ESPNOW_MAC_L2LOUNGE09 # consumer MAC 
+# and so on ... 
+
+# examplefrom https://esphome.io/components/packet_transport/espnow/#simple-example : 
+#
+# Temperature Provider:
+# espnow:
+#   peers:
+#     - "AA:BB:CC:DD:EE:01"  # Consumer mac address
+
+# packet_transport:
+#   - platform: espnow
+#     peer_address: "AA:BB:CC:DD:EE:01"  # Consumer mac address
+#     encryption: "MySecretKey123"
+#     sensors:
+#       - outdoor_temp
+
+# sensor:
+#   - platform: ...
+#     temperature:
+#       name: "Outdoor Temperature"
+#       id: outdoor_temp
+
+# Temperature Consumer:
+# espnow:
+#   peers:
+#     - "AA:BB:CC:DD:EE:00"  # Provider mac address
+
+# packet_transport:
+#   - platform: espnow
+#     encryption: "MySecretKey123"
+#     providers:
+#       - name: temp-sensor  # Provider device name
+
+# sensor:
+#   - platform: packet_transport
+#     provider: temp-sensor
+#     id: remote_temp
+#     remote_id: outdoor_temp
+#     name: "Remote Outdoor Temperature"
+
 
 #-------------------------------------------------------------------
 # ESPNow
-# espnow:
-#   peers:
-#     - !secret ESPNOW_MAC_L2LOUNGE09 # master MAC 
-#   on_receive:
-#     address: !secret ESPNOW_MAC_L2LOUNGE09
-#     then:
-#       - if:
-#           condition:
-#             lambda: 'return size > 0 && data[0] == 0x01;'
-#           then:
-#             - homeassistant.action:
-#                 action: script.switch_toggle_by_esphome
-#                 data:
-#                   switch_id: 'switch.zb_plug_l2_lounge_light_corner'
-#             - homeassistant.action:
-#                 action: script.switch_turn_off_by_esphome
-#                 data: 
-#                   switch_id: 'switch.zb_plug_l2_lounge_tv'
+# for details see https://esphome.io/components/packet_transport/espnow/#simple-example
+#-------------------------------------------------------------------
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_L2LOUNGE09 # consumer MAC 
+  on_receive:
+    address: !secret ESPNOW_MAC_L2LOUNGE09
+    then:
+      - if:
+          condition:
+            lambda: 'return size > 0 && data[0] == 0x01;'
+          then:
+            - homeassistant.action:
+                action: script.switch_toggle_by_esphome
+                data:
+                  switch_id: 'switch.zb_plug_l2_lounge_light_corner'
+            - homeassistant.action:
+                action: script.switch_turn_off_by_esphome
+                data: 
+                  switch_id: 'switch.zb_plug_l2_lounge_tv'
 
-#             - logger.log: "ESPNow: Received data Power Off"
+            - logger.log: "ESPNow: Received data Power Off"
 
-#             - delay: 2s
+            - delay: 2s
 
-#             - espnow.send:
-#                 address: !secret ESPNOW_MAC_L2LOUNGE09
-#                 data: [0x01]
+            - espnow.send:
+                address: !secret ESPNOW_MAC_L2LOUNGE09
+                data: [0x01]
                 
-#             - logger.log: "ESPNow: Sent data Power Off"
+            - logger.log: "ESPNow: Sent data Power Off"
 ####################################################################
 # EOF
 ####################################################################
