@@ -1,0 +1,65 @@
+####################################################################
+####################################################################
+#
+# ha-haghs tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:bottle-tonic-plus
+title: HAGHS (Home Assistant Global Health System)
+path: haghs-lite
+badges: []
+
+cards:
+  - type: vertical-stack
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: sensor.system_ha_global_health_score
+            name: HAGHS
+            unit: " "
+            needle: true
+            severity:
+              green: 90
+              yellow: 75
+              red: 0
+          - type: markdown
+            content: >
+              {% set e = 'sensor.system_ha_global_health_score' %} {% set hw =
+              state_attr(e, 'hardware_score') | int(0) %} {% set app = state_attr(e,
+              'application_score') | int(0) %} {% set rec = state_attr(e,
+              'recommendations') | default('', true) %} {% set updates = state_attr(e,
+              'pending_updates') | default([], true) | list %} {% set zombies =
+              state_attr(e, 'zombie_count') | int(0) %} {% set psi = state_attr(e,
+              'psi_available') | default(false, true) %} {% set _upd =
+              '/config/updates' %} {% set _ent = '/config/entities' %}
+
+              Hardware **{{ hw }}**/100 | Application **{{ app }}**/100
+
+              {% if updates | length > 0 %} 📦 {{ updates | length }} update(s) pending
+              — [Open Updates](https://raw.githubusercontent.com/HA-Pulse/home-assistant-global-health-score/v2.3.0/{{ _upd }}) {% endif %}
+
+              {% if zombies > 0 %} 🧟 {{ zombies }} zombie(s) — [Check
+              Entities]({{ _ent }}) {% endif %}
+
+              {% if rec not in [none, 'unknown', 'unavailable'] and '✅' not in rec %}
+              {{ rec }}
+              {% else %} --- ✅ System healthy. No recommendations. {% endif %}
+
+              {% set keep = state_attr(e, 'recorder_keep_days') %}
+              {% set filter = state_attr(e, 'recorder_filter_active') | default(false, true) %}
+              {% if keep in [none, 'unknown'] or not filter %}
+              💡 Tips to improve your score:
+              {% if keep in [none, 'unknown'] %} &nbsp;&nbsp; • Set `purge_keep_days` in your recorder configuration (+5 pts){% endif %}
+              {% if not filter %} &nbsp;&nbsp; • Configure an `include` / `exclude` entity filter for the recorder (+5 pts){% endif %}
+              {% endif %}
+
+              **Metric source**: {% if psi %}🟢 PSI active (CPU + RAM + I/O + Disk) —
+              hardware score uses 4 components{% else %}⚙️ Classic sensors (CPU + RAM +
+              Disk) — hardware score uses 3 components{% endif %}
+
+####################################################################
+# EOF
+####################################################################

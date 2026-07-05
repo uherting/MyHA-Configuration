@@ -1,0 +1,161 @@
+####################################################################
+####################################################################
+#
+# ha-haghs tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:bottle-tonic-plus-outline
+title: HAGHS (Home Assistant Global Health System pro)
+path: haghs-pro
+badges: []
+
+cards:
+  - type: vertical-stack
+    cards:
+      - type: gauge
+        entity: sensor.system_ha_global_health_score
+        name: HAGHS
+        unit: " "
+        needle: true
+        severity:
+          green: 90
+          yellow: 75
+          red: 0
+      - type: markdown
+        title: Score Breakdown
+        content: >
+          {% set e = 'sensor.system_ha_global_health_score' %} {% set hw =
+          state_attr(e, 'hardware_score') | int(0) %} {% set app = state_attr(e,
+          'application_score') | int(0) %} {% set score = states(e) | int(0) %}
+
+          Hardware **{{ hw }}**/100 | Application **{{ app }}**/100
+
+          Formula: ({{ hw }} × 0.4) + ({{ app }} × 0.6) = {{ score }}
+      - type: markdown
+        title: 🛡️ Advisor
+        content: >
+          {% set e = 'sensor.system_ha_global_health_score' %} {% set rec =
+          state_attr(e, 'recommendations') | default('', true) %}
+
+          {% if states(e) in ['unavailable', 'unknown'] %}
+            ⚠️ Health Advisor sensor is offline.
+          {% elif rec not in [none, 'unknown', 'unavailable'] and '✅' not in rec %}
+            {{ rec }}
+          {% else %}
+            ✅ System healthy. No recommendations.
+          {% endif %}
+      - type: conditional
+        conditions:
+          - condition: numeric_state
+            entity: sensor.system_ha_global_health_score
+            attribute: zombie_count
+            above: -1
+        card:
+          type: markdown
+          title: 📦 Updates & Maintenance
+          content: >
+            {% set e = 'sensor.system_ha_global_health_score' %} {% set updates =
+            state_attr(e, 'pending_updates') | default([], true) | list %} {% set
+            db_mb = state_attr(e, 'db_size_mb') | float(0) %} {% set keep =
+            state_attr(e, 'recorder_keep_days') %} {% set filter = state_attr(e,
+            'recorder_filter_active') | default(false, true) %} {% set psi =
+            state_attr(e, 'psi_available') | default(false, true) %} {% set _upd =
+            '/config/updates' %}
+
+            {% if updates | length > 0 %}{{ updates | length }} update(s) pending:<br>
+            {% for u in updates %}&nbsp;&nbsp; • {{ u }}<br>{% endfor %}
+            [→ Open Updates](https://raw.githubusercontent.com/HA-Pulse/home-assistant-global-health-score/v2.3.0/{{ _upd }})
+            {% else %} ✅ All updates installed {% endif %}
+
+            <hr>
+
+            Database: {{ db_mb | round(1) }} MB {% if db_mb == 0.0 %}*(external DB
+            detected)*{% endif %}
+
+
+            Recorder: {% if keep not in [none, 'unknown'] %}purge active ({{ keep }}
+            days){% else %}no purge configured — DB may grow indefinitely{% endif %}
+
+
+            {{ 'Entity filter active' if filter else 'No entity filter' }}
+
+
+            {% if keep in [none, 'unknown'] or not filter %}
+            💡 Tips to improve your score:
+            {% if keep in [none, 'unknown'] %} &nbsp;&nbsp; • Set `purge_keep_days` in your recorder configuration (+5 pts){% endif %}
+            {% if not filter %} &nbsp;&nbsp; • Configure an `include` / `exclude` entity filter for the recorder (+5 pts){% endif %}
+            {% endif %}
+
+
+            ---
+
+            **Metric source**: {% if psi %}🟢 PSI active (CPU + RAM + I/O + Disk) —
+            hardware score uses 4 components{% else %}⚙️ Classic sensors (CPU + RAM
+            + Disk) — hardware score uses 3 components{% endif %}
+      - type: markdown
+        title: 🧟 Zombie Entities
+        content: >
+          {% set e = 'sensor.system_ha_global_health_score' %} {% set z_raw =
+          state_attr(e, 'zombie_entities') | default([], true) %} {% set z_count =
+          state_attr(e, 'zombie_count') | int(0) %}
+
+          {% if z_count == 0 %}
+            ✅ No zombie entities detected.
+          {% else %}
+            {% if z_raw is string %}
+              {% set z_list = z_raw.split(',') | map('trim') | list %}
+            {% else %}
+              {% set z_list = z_raw | list %}
+            {% endif %}
+            {% set ghosts = z_list | select('match', '^\\[unregistered\\]') | list %}
+            {% set tracked = z_list | reject('match', '^\\[unregistered\\]') | list %}
+            {% set grouped = expand(tracked) | groupby('domain') %}
+
+            {# Domain count: prefer the HAGHS v2.3+ attribute when present.
+              Fall back to extracting the distinct domains from z_list so the
+              card keeps working on older HAGHS versions that do not expose
+              zombie_count_per_domain. #}
+            {% set per_domain = state_attr(e, 'zombie_count_per_domain') %}
+            {% if per_domain %}
+              {% set domain_count = per_domain | length %}
+            {% else %}
+              {% set ns = namespace(seen=[]) %}
+              {% for entry in z_list %}
+                {% set dom = (entry | replace('[unregistered] ', '')).split('.')[0] %}
+                {% if dom not in ns.seen %}
+                  {% set ns.seen = ns.seen + [dom] %}
+                {% endif %}
+              {% endfor %}
+              {% set domain_count = ns.seen | length %}
+            {% endif %}
+
+            {{ z_count }} zombie(s) across {{ domain_count }} domain(s)
+            {% if per_domain %} ({% for dom, cnt in per_domain.items() %}{{ dom }}: {{ cnt }}{% if not loop.last %}, {% endif %}{% endfor %}){% endif %}
+            {% if z_count > z_list | length %}*(showing first {{ z_list | length }} — {{ z_count - z_list | length }} more hidden)*{% endif %}
+
+            {% set _ent = '/config/entities' %}[→ Check Entities](https://raw.githubusercontent.com/HA-Pulse/home-assistant-global-health-score/v2.3.0/{{ _ent }})
+
+            {% for domain in grouped %}
+            <details>
+            <summary>{{ domain[0] | title }}: {{ domain[1] | count }}</summary>
+            {% for item in domain[1] %}
+            &nbsp;&nbsp; • {{ device_attr(item.entity_id, 'name') | default('unknown device', true) }} — {{ item.name }} (`{{ item.entity_id }}`): {{ item.state }}
+            {% endfor %}
+            </details>
+            {% endfor %}
+
+            {% if ghosts | length > 0 %}
+            <details>
+            <summary>⚠️ Unregistered: {{ ghosts | length }}</summary>
+            {% for entry in ghosts %}
+            &nbsp;&nbsp; • `{{ entry | replace('[unregistered] ', '') }}`
+            {% endfor %}
+            </details>
+            {% endif %}
+          {% endif %}
+
+####################################################################
+# EOF
+####################################################################

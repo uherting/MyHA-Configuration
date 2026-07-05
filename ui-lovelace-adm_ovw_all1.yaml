@@ -13,6 +13,8 @@ title: Home 431
 
 views:
   - !include /config/conf/lovelace/tabs/admin/ha-messages.yaml
+  - !include /config/conf/lovelace/tabs/admin/haghs-lite.yaml
+  - !include /config/conf/lovelace/tabs/admin/haghs-pro.yaml
   - !include /config/conf/lovelace/tabs/admin/system_monitor_01.yaml
   - !include /config/conf/lovelace/tabs/admin/ble_temp_humidity_batteries.yaml
   - !include /config/conf/lovelace/tabs/admin/settings.yaml
