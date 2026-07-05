@@ -26,8 +26,6 @@ bmp280_01_update_interval: 600s
 bmp280_01_address: 0x77
 
 # the update interval for the GPS sensor
-# GSP data is retrieved from some other source via ESPNow and 
-#not directly from a GPS module, so the update interval is not relevant for this device.
 gps_update_interval: 20s
 
 # log level for this device, default is "INFO", but for debugging you might want to set it to "DEBUG"

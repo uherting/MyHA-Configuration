@@ -149,29 +149,30 @@ text_sensor:
 # UART configuration for GPS module
 uart: !include conf/common/device/uart01_esp32_gps.yaml
 gps:
-  id: ${friendly_id}_gps
+  id: ${gps_id}
+  name: ${gps_name}
   uart_id: ${uart01_esp32_gps_id}
   latitude:
-    name: "GPS Latitude"
-    id: gps_latitude
+    name: ${gps_latitude_name}
+    id: ${gps_latitude_id}
   longitude:
-    name: "GPS Longitude"
-    id: gps_longitude
+    name: ${gps_longitude_name}
+    id: ${gps_longitude_id}
   altitude:
-    name: "GPS Altitude"
-    id: gps_altitude
+    name: ${gps_altitude_name}
+    id: ${gps_altitude_id}
   speed:
-    name: "GPS Speed"
-    id: gps_speed
+    name: ${gps_speed_name}
+    id: ${gps_speed_id}
   course:
-    name: "GPS Course"
-    id: gps_course
+    name: ${gps_course_name}
+    id: ${gps_course_id}
   satellites:
-    name: "GPS Visible Satellites"
-    id: gps_satellites
+    name: ${gps_satellites_name}
+    id: ${gps_satellites_id}
   hdop:
-    name: "GPS HDOP"
-    id: gps_hdop
+    name: ${gps_hdop_name}
+    id: ${gps_hdop_id}
   update_interval: ${gps_update_interval}
 
 #-------------------------------------------------------------------

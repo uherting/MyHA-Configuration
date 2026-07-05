@@ -16,6 +16,22 @@ device_framework: arduino
 # the friendly name and id
 friendly_name: ""
 friendly_id: ""
+
+# GPS related definitions
+gps_name: $friendly_name GPS
+gps_id: ${friendly_id}_gps
+gps_latitude_name: $friendly_name GPS latitude
+gps_latitude_id: ${friendly_id}_gps_latitude_id
+gps_longitude_name: $friendly_name GPS longitude
+gps_longitude_id: ${friendly_id}_gps_longitude_id
+gps_altitude_name: $friendly_name GPS altitude
+gps_altitude_id: ${friendly_id}_gps_altitude_id
+gps_speed_name: $friendly_name GPS speed
+gps_speed_id: ${friendly_id}_gps_speed_id
+gps_course_name: $friendly_name GPS course
+gps_course_id: ${friendly_id}_gps_course_id
+gps_satellites_name: $friendly_name GPS visible satellites
+gps_satellites_id: ${friendly_id}_gps_satellites_id
 ####################################################################
 # EOF
 ####################################################################
