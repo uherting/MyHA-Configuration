@@ -218,6 +218,27 @@ text_sensor:
   # device related
   - <<: !include conf/text_sensor/l9lorry01d/l9lorry01d_now_time_and_date.yaml
 
+#-------------------------------------------------------------------
+# ESPNow on Data Consumer (l9lorry01d)
+# for details see https://esphome.io/components/packet_transport/espnow/#simple-example
+#-------------------------------------------------------------------
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_L9LORRY01G # provider MAC address
+
+packet_transport:
+  - platform: espnow
+    encryption: "MySecretKey123"
+    providers:
+      - name: temp-sensor  # Provider device name
+
+# example sensor from https://esphome.io/components/packet_transport/espnow/#simple-example :
+# sensor:
+#   - platform: packet_transport
+#     provider: temp-sensor
+#     id: remote_temp
+#     remote_id: outdoor_temp
+#     name: "Remote Outdoor Temperature"
 
 ####################################################################
 # EOF

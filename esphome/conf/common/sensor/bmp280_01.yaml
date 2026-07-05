@@ -8,9 +8,11 @@
   - platform: bmp280_i2c
     temperature:
       name: ${bmp280_01_temp_name}
+      id: ${bmp280_01_temp_id}
       oversampling: 16x
     pressure:
       name: ${bmp280_01_pressure_name}
+      id: ${bmp280_01_pressure_id}
     address: ${bmp280_01_address}
     update_interval: ${bmp280_01_update_interval}
 ####################################################################

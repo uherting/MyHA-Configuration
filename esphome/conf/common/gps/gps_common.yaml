@@ -1,0 +1,32 @@
+####################################################################
+# GPS module
+
+#gps:
+  id: ${gps_id}
+  # name: ${gps_name}  # not accepted by ESPHome, so it is not used
+  uart_id: ${uart01_esp32_gps_id}
+  latitude:
+    name: ${gps_latitude_name}
+    id: ${gps_latitude_id}
+  longitude:
+    name: ${gps_longitude_name}
+    id: ${gps_longitude_id}
+  altitude:
+    name: ${gps_altitude_name}
+    id: ${gps_altitude_id}
+  speed:
+    name: ${gps_speed_name}
+    id: ${gps_speed_id}
+  course:
+    name: ${gps_course_name}
+    id: ${gps_course_id}
+  satellites:
+    name: ${gps_satellites_name}
+    id: ${gps_satellites_id}
+  hdop:
+    name: ${gps_hdop_name}
+    id: ${gps_hdop_id}
+  update_interval: ${gps_update_interval}
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -25,8 +25,24 @@ bmp280_01_pressure_unit: "hPa"
 bmp280_01_update_interval: 600s
 bmp280_01_address: 0x77
 
+  # GPS related definitions
 # the update interval for the GPS sensor
 gps_update_interval: 20s
+gps_id: ${friendly_id}_Lorry_gps
+gps_latitude_name: $friendly_name Lorry  GPS latitude
+gps_latitude_id: ${friendly_id}_Lorry_gps_latitude_id
+gps_longitude_name: $friendly_name Lorry  GPS longitude
+gps_longitude_id: ${friendly_id}_Lorry_gps_longitude_id
+gps_altitude_name: $friendly_name Lorry  GPS altitude
+gps_altitude_id: ${friendly_id}_Lorry_gps_altitude_id
+gps_speed_name: $friendly_name Lorry  GPS speed
+gps_speed_id: ${friendly_id}_Lorry_gps_speed_id
+gps_course_name: $friendly_name Lorry  GPS course
+gps_course_id: ${friendly_id}_Lorry_gps_course_id
+gps_satellites_name: $friendly_name Lorry  GPS visible satellites
+gps_satellites_id: ${friendly_id}_Lorry_gps_satellites_id
+gps_hdop_name: $friendly_name Lorry  GPS HDOP
+gps_hdop_id: ${friendly_id}_Lorry_gps_hdop_id
 
 # log level for this device, default is "INFO", but for debugging you might want to set it to "DEBUG"
 log_level: !secret LOG_LEVEL_DEBUG

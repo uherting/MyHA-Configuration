@@ -148,116 +148,78 @@ text_sensor:
 # GPS module: EstarDyn GY-NEO6MV2 New NEO-6M GPS Module NEO6MV2 with Flight Control EEPROM MWC APM2.5 large Antenna)
 # UART configuration for GPS module
 uart: !include conf/common/device/uart01_esp32_gps.yaml
-gps:
-  id: ${gps_id}
-  name: ${gps_name}
-  uart_id: ${uart01_esp32_gps_id}
-  latitude:
-    name: ${gps_latitude_name}
-    id: ${gps_latitude_id}
-  longitude:
-    name: ${gps_longitude_name}
-    id: ${gps_longitude_id}
-  altitude:
-    name: ${gps_altitude_name}
-    id: ${gps_altitude_id}
-  speed:
-    name: ${gps_speed_name}
-    id: ${gps_speed_id}
-  course:
-    name: ${gps_course_name}
-    id: ${gps_course_id}
-  satellites:
-    name: ${gps_satellites_name}
-    id: ${gps_satellites_id}
-  hdop:
-    name: ${gps_hdop_name}
-    id: ${gps_hdop_id}
-  update_interval: ${gps_update_interval}
+gps: !include conf/common/gps/gps_common.yaml
 
 #-------------------------------------------------------------------
-# ESPNow
+# ESPNow on this device (Data Provider)
 # for details see https://esphome.io/components/packet_transport/espnow/#simple-example
 #-------------------------------------------------------------------
-# espnow:
-#   peers:
-#     - !secret ESPNOW_MAC_L2LOUNGE09 # consumer MAC 
-# and so on ... 
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_L9LORRY01D # consumer MAC address
 
-# examplefrom https://esphome.io/components/packet_transport/espnow/#simple-example : 
-# ---------------------
-# Temperature Provider
-# ---------------------
-# espnow:
-#   peers:
-#     - "AA:BB:CC:DD:EE:01"  # Consumer mac address
+packet_transport:
+  - platform: espnow
+    peer_address: !secret ESPNOW_MAC_L9LORRY01D # consumer MAC address
+    encryption: "MySecretKey123"
+    sensors:
+      - ${gps_latitude_id}
+      - ${gps_longitude_id}
+      - ${gps_altitude_id}
+      - ${gps_speed_id}
+      - ${gps_course_id}
+      - ${gps_satellites_id}
+      - ${gps_hdop_id}
+      - ${aht20_01_temp_id}
+      - ${aht20_01_hum_id}
+      - ${bmp280_01_temp_id}
+      - ${bmp280_01_pressure_id}
 
-# packet_transport:
-#   - platform: espnow
-#     peer_address: "AA:BB:CC:DD:EE:01"  # Consumer mac address
-#     encryption: "MySecretKey123"
-#     sensors:
-#       - outdoor_temp
-
+# example sensor from https://esphome.io/components/packet_transport/espnow/#simple-example :
 # sensor:
 #   - platform: ...
 #     temperature:
 #       name: "Outdoor Temperature"
 #       id: outdoor_temp
 
-# ---------------------
-# Temperature Consumer
-# ---------------------
-# espnow:
-#   peers:
-#     - "AA:BB:CC:DD:EE:00"  # Provider mac address
-
-# packet_transport:
-#   - platform: espnow
-#     encryption: "MySecretKey123"
-#     providers:
-#       - name: temp-sensor  # Provider device name
-
-# sensor:
-#   - platform: packet_transport
-#     provider: temp-sensor
-#     id: remote_temp
-#     remote_id: outdoor_temp
-#     name: "Remote Outdoor Temperature"
 
 
 #-------------------------------------------------------------------
 # ESPNow
 # for details see https://esphome.io/components/packet_transport/espnow/#simple-example
 #-------------------------------------------------------------------
-espnow:
-  peers:
-    - !secret ESPNOW_MAC_L2LOUNGE09 # consumer MAC 
-  on_receive:
-    address: !secret ESPNOW_MAC_L2LOUNGE09
-    then:
-      - if:
-          condition:
-            lambda: 'return size > 0 && data[0] == 0x01;'
-          then:
-            - homeassistant.action:
-                action: script.switch_toggle_by_esphome
-                data:
-                  switch_id: 'switch.zb_plug_l2_lounge_light_corner'
-            - homeassistant.action:
-                action: script.switch_turn_off_by_esphome
-                data: 
-                  switch_id: 'switch.zb_plug_l2_lounge_tv'
+# This is an example of how to receive data via ESPNow from another device (l2lounge09) 
+# and trigger actions based on the received data. This section is currently commented 
+# out as the packet transport ESPNow is preferred for this device. 
+#-------------------------------------------------------------------
+# espnow:
+#   peers:
+#     - !secret ESPNOW_MAC_L2LOUNGE09 # consumer MAC 
+#   on_receive:
+#     address: !secret ESPNOW_MAC_L2LOUNGE09
+#     then:
+#       - if:
+#           condition:
+#             lambda: 'return size > 0 && data[0] == 0x01;'
+#           then:
+#             - homeassistant.action:
+#                 action: script.switch_toggle_by_esphome
+#                 data:
+#                   switch_id: 'switch.zb_plug_l2_lounge_light_corner'
+#             - homeassistant.action:
+#                 action: script.switch_turn_off_by_esphome
+#                 data: 
+#                   switch_id: 'switch.zb_plug_l2_lounge_tv'
 
-            - logger.log: "ESPNow: Received data Power Off"
+#             - logger.log: "ESPNow: Received data Power Off"
 
-            - delay: 2s
+#             - delay: 2s
 
-            - espnow.send:
-                address: !secret ESPNOW_MAC_L2LOUNGE09
-                data: [0x01]
+#             - espnow.send:
+#                 address: !secret ESPNOW_MAC_L2LOUNGE09
+#                 data: [0x01]
                 
-            - logger.log: "ESPNow: Sent data Power Off"
+#             - logger.log: "ESPNow: Sent data Power Off"
 ####################################################################
 # EOF
 ####################################################################
