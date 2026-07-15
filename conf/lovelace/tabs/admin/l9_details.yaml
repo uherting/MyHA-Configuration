@@ -22,17 +22,17 @@ cards:
     title: L9 Lorry 01g
     show_header_toggle: false
     entities:
-      - sensor.roamingaroundarea_l9lorry01g_lorry_aht20_t_01
-      - sensor.roamingaroundarea_l9lorry01g_lorry_aht20_h_01
-      - sensor.roamingaroundarea_l9lorry01g_lorry_bmp280_t_01
-      - sensor.roamingaroundarea_l9lorry01g_lorry_bmp280_p_01
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_altitude
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_latitude
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_longitude
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_course
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_hdop
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_speed
-      - sensor.roamingaroundarea_l9lorry01g_lorry_gps_visible_satellites
+      - sensor.roamingaroundarea_l9lorry01g_aht20_t_01
+      - sensor.roamingaroundarea_l9lorry01g_aht20_h_01
+      - sensor.roamingaroundarea_l9lorry01g_bmp280_t_01
+      - sensor.roamingaroundarea_l9lorry01g_bmp280_p_01
+      - sensor.roamingaroundarea_l9lorry01g_gps_altitude
+      - sensor.roamingaroundarea_l9lorry01g_gps_latitude
+      - sensor.roamingaroundarea_l9lorry01g_gps_longitude
+      - sensor.roamingaroundarea_l9lorry01g_gps_course
+      - sensor.roamingaroundarea_l9lorry01g_gps_hdop
+      - sensor.roamingaroundarea_l9lorry01g_gps_speed
+      - sensor.roamingaroundarea_l9lorry01g_gps_visible_satellites
 ####################################################################
 # EOF
 ####################################################################
