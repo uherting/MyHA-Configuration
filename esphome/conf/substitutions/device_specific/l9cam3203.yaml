@@ -4,10 +4,10 @@
 # device definitions
 device_name: l9cam3203
 device_comment: Level 9 ESP32-cam device 03
-device_area: L2
+device_area: L9
 
 device_platform: ESP32
-wifi_static_ip: 192.168.178.183
+wifi_static_ip: 192.168.178.182
 
 # # from the french guy @ 20190712
 # # - https://www.youtube.com/watch?v=fHgqFuGaTGE)

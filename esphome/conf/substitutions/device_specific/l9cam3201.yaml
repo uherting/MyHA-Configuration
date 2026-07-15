@@ -4,7 +4,7 @@
 # device definitions
 device_name: l9cam3201
 device_comment: Level 9 ESP32-cam device 01
-device_area: L2
+device_area: L9
 
 device_platform: ESP32
 wifi_static_ip: 192.168.178.181
@@ -26,10 +26,6 @@ device_framework: arduino
 # the friendly name / id
 friendly_name: ""
 friendly_id: ""
-
-# PIR
-pir01_name: $friendly_name PIR 01
-pir01_id: ${friendly_id}_PIR_01
 ###################################################################
 # EOF
 ####################################################################
