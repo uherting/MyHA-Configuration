@@ -109,11 +109,10 @@ sensor:
 
 #-------------------------------------------------------------------
 # SERVOS
-# servo:
-#   - <<: !include conf/common/servo/servo01.yaml
-# output:
-#   - <<: !include conf/common/output/servo01.yaml
-
+automation:
+  - <<: !include conf/common/automation/espcam32_auto_flashlight_off.yaml
+  - <<: !include conf/common/automation/espcam32_auto_restart.yaml
+  
 #-------------------------------------------------------------------
 # SWITCHES
 # switch:

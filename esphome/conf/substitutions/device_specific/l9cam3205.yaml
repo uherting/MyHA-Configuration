@@ -27,10 +27,6 @@ device_framework: arduino
 friendly_name: ""
 friendly_id: ""
 
-# LED
-cam_light_name: $friendly_name CamLight
-cam_light_id: ${friendly_id}_CamLight
-
 # PIR
 pir01_name: $friendly_name PIR 01
 pir01_id: ${friendly_id}_PIR_01
