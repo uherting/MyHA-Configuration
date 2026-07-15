@@ -53,27 +53,43 @@ packages:
   device_base_common: !include conf/common/packages/device_base_esp32.yaml
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip_esp32_mobile.yaml
 
-# ota: contained an error which got validated nevertheless. 
-# After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
+############### OTA CONFIGURATION ###############
 ota: !include conf/common/networking/ota.yaml
 
-# in case of no connection to the Wifi
-# for details see https://esphome.io/components/captive_portal.html
-# captive_portal: conf/common/networking/captive_portal.yaml
-# captive_portal:
-
-############### BASIC CONFIGURATION FOR THIS DEVICE ###############
-
+############### API ###############
 api: !include conf/common/networking/api.yaml
+
+############### TIME ###############
 time: !include conf/common/time_ntp.yaml
+
+############### SUN COMPONENT ###############
 # as this device is mobile, it does not make sense to include a fixed location.
 # However, we might want to use the sun component anyhow, e.g. to have 
 # a visual representation of sunrise and sunset times on the display.
 sun: !include conf/common/sun.yaml
 
+############### THE FALLBACK HOTSPOT ###############
+# it is either webserver or the captive portal, but not both at the same time.
+# if both are enabled, the webserver will be used and the captive portal will be ignored.
+#-----------
+# in case of no connection to the Wifi
+# for details see https://esphome.io/components/captive_portal.html
+captive_portal:
+
+############### BASIC CONFIGURATION FOR THIS DEVICE ###############
+
 ############### THE WEB SERVER LOCATED ON THIS DEVICE ###############
-web_server:
-  port: 8888
+# it is either webserver or the captive portal, but not both at the same time.
+# if both are enabled, the webserver will be used and the captive portal will be ignored.
+#-----------
+# for some RTFM see https://esphome.io/components/web_server/
+#-----------
+# web_server:
+#   port: 8888
+#   # local: Include supporting javascript locally allowing it to work without internet access. 
+#   local: true
+#   # include_internal: Whether internal entities should be displayed on the web interface
+#   include_internal: true
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
@@ -132,43 +148,53 @@ text_sensor:
 # GPS module: EstarDyn GY-NEO6MV2 New NEO-6M GPS Module NEO6MV2 with Flight Control EEPROM MWC APM2.5 large Antenna)
 # UART configuration for GPS module
 uart: !include conf/common/device/uart01_esp32_gps.yaml
-gps:
-  id: ${friendly_id}_gps
-  uart_id: ${uart01_esp32_gps_id}
-  latitude:
-    name: "GPS Latitude"
-    id: gps_latitude
-  longitude:
-    name: "GPS Longitude"
-    id: gps_longitude
-  altitude:
-    name: "GPS Altitude"
-    id: gps_altitude
-  speed:
-    name: "GPS Speed"
-    id: gps_speed
-  course:
-    name: "GPS Course"
-    id: gps_course
-  satellites:
-    name: "GPS Visible Satellites"
-    id: gps_satellites
-  hdop:
-    name: "GPS HDOP"
-    id: gps_hdop
-  update_interval: ${gps_update_interval}
+gps: !include conf/common/gps/gps_common.yaml
+
+#-------------------------------------------------------------------
+# ESPNow on this device (Data Provider)
+# for details see https://esphome.io/components/packet_transport/espnow/#simple-example
+#-------------------------------------------------------------------
+espnow:
+  peers:
+    - !secret ESPNOW_MAC_L9LORRY01D # consumer MAC address
+
+packet_transport:
+  - platform: espnow
+    peer_address: !secret ESPNOW_MAC_L9LORRY01D # consumer MAC address
+    encryption: "MySecretKey123"
+    sensors:
+      - ${gps_latitude_id}
+      - ${gps_longitude_id}
+      - ${gps_altitude_id}
+      - ${gps_speed_id}
+      - ${gps_course_id}
+      - ${gps_satellites_id}
+      - ${gps_hdop_id}
+      - ${aht20_01_temp_id}
+      - ${aht20_01_hum_id}
+      - ${bmp280_01_temp_id}
+      - ${bmp280_01_pressure_id}
+
+# example sensor from https://esphome.io/components/packet_transport/espnow/#simple-example :
+# sensor:
+#   - platform: ...
+#     temperature:
+#       name: "Outdoor Temperature"
+#       id: outdoor_temp
+
+
 
 #-------------------------------------------------------------------
 # ESPNow
-# espnow:
-#   peers:
-#     - !secret ESPNOW_MAC_L2LOUNGE09 # master MAC 
-
+# for details see https://esphome.io/components/packet_transport/espnow/#simple-example
 #-------------------------------------------------------------------
-# ESPNow
+# This is an example of how to receive data via ESPNow from another device (l2lounge09) 
+# and trigger actions based on the received data. This section is currently commented 
+# out as the packet transport ESPNow is preferred for this device. 
+#-------------------------------------------------------------------
 # espnow:
 #   peers:
-#     - !secret ESPNOW_MAC_L2LOUNGE09 # master MAC 
+#     - !secret ESPNOW_MAC_L2LOUNGE09 # consumer MAC 
 #   on_receive:
 #     address: !secret ESPNOW_MAC_L2LOUNGE09
 #     then:

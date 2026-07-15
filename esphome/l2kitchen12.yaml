@@ -81,10 +81,10 @@ web_server:
 #===================================================================
 #-------------------------------------------------------------------
 # I2C from docs located at 
-i2c: !include conf/common/device/i2c_esp32-2432s028r_v0.yaml
+i2c: !include conf/common/device/i2c_esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # SPI (default ESP32 platform)
-spi: !include conf/common/device/spi_esp32-2432s028r_v0.yaml
+spi: !include conf/common/device/spi_esp32-2432s028r_v1.yaml
 #-------------------------------------------------------------------
 # LVGL configuration
 lvgl: !include conf/lvgl/l2kitchen12.yaml
