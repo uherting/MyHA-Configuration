@@ -39,6 +39,9 @@ substitutions:
   # esp32cam flash LED
   cam_light_name: $friendly_name CamLight
   cam_light_id: ${friendly_id}_CamLight
+  cam_light_pin: GPIO04
+  cam_light_restore_mode: ALWAYS_OFF
+  cam_light_delay_till_off: 500ms
 
   # ================= CONNECTED SENSORS / INTERFACES =================
 

@@ -101,21 +101,25 @@ text_sensor:
 
 #################### DETAILED CONFIGURATION CAM ######################
 
+#-------------------------------------------------------------------
 # cam device
 psram:
   id: psram1
 esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
-
+#-------------------------------------------------------------------
 # web server on cam device
 # esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
-
 #-------------------------------------------------------------------
 # flashlight
-output: !include conf/common/esp32_camera/esp32cam_output.yaml
-
+# output: !include conf/common/esp32_camera/esp32cam_output.yaml
 #-------------------------------------------------------------------
 # cam light
-light: !include conf/common/esp32_camera/esp32cam_light.yaml
+# light: !include conf/common/esp32_camera/esp32cam_light.yaml
+#-------------------------------------------------------------------
+switch:
+  # flash LED
+  - <<: !include conf/common/switch/esp32cam_flashlight.yaml
+
 ####################################################################
 # EOF
 ####################################################################
