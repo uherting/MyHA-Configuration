@@ -15,8 +15,9 @@ views:
   - !include /config/conf/lovelace/tabs/user/smarty_temperatures.yaml
   - !include /config/conf/lovelace/tabs/user/smarty_heating.yaml
   - !include /config/conf/lovelace/tabs/user/information.yaml
-  - !include /config/conf/lovelace/tabs/user/cctv_01.yaml
-  - !include /config/conf/lovelace/tabs/user/cctv_02.yaml
+  - !include /config/conf/lovelace/tabs/user/cctv_general.yaml
+  - !include /config/conf/lovelace/tabs/user/cctv_outside.yaml
+  - !include /config/conf/lovelace/tabs/user/cctv_esp32cams.yaml
   - !include /config/conf/lovelace/tabs/user/tankerkoenig.yaml
   # - !include /config/conf/lovelace/tabs/user/youtube.yaml
   - !include /config/conf/lovelace/tabs/user/weather.yaml

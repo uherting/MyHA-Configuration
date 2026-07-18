@@ -1,0 +1,27 @@
+####################################################################
+####################################################################
+#
+# a cctv tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+icon: mdi:cctv
+title: CCTV H431 outside
+path: cctv-outside
+badges: []
+
+cards:
+  - type: custom:advanced-camera-card
+    cameras:
+      - camera_entity: camera.rworld3_fluent
+      - camera_entity: camera.rworld1_fluent_lens_0
+      - camera_entity: camera.rworld1_fluent_lens_1
+    live:
+      display:
+        mode: grid
+    # profiles:
+    #   - scrubbing
+####################################################################
+# EOF
+####################################################################

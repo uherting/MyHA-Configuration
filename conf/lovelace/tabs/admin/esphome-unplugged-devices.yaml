@@ -22,12 +22,19 @@ cards:
     state_filter:
       - "off"
     entities:
+      - binary_sensor.l2bathroom01a_status
       - binary_sensor.l2btproxykitchen_status
       - binary_sensor.l2kitchen01_status
-      - binary_sensor.l2lounge09_status
-      - binary_sensor.l2storage01_status
+      - binary_sensor.l2kitchen12_status
+      - binary_sensor.l9cam3201_status
+      - binary_sensor.l9cam3202_status
       - binary_sensor.l9cam3202_status
       - binary_sensor.l9cam3203_status
+      - binary_sensor.l9cam3203_status
+      - binary_sensor.l9cam3204_status
+      - binary_sensor.l9cam3205_status
+      - binary_sensor.l9lorry01d_status
+      - binary_sensor.l9lorry01g_status
       # - binary_sensor.l0corridor01_status
       # - binary_sensor.l0corridor02_status
       # - binary_sensor.l0entrance01_status
@@ -38,9 +45,9 @@ cards:
       # - binary_sensor.l2btproxy_bathroom_status
       # - binary_sensor.l2btproxy_lounge_status
       # - binary_sensor.l2btproxybedroom_status
+      # - binary_sensor.l2lounge09_status
+      # - binary_sensor.l2storage01_status
       # - binary_sensor.l2thermo01_status
-      # - binary_sensor.l9cam3201_status
-      # - binary_sensor.l9cam3204_status
 ####################################################################
 # EOF
 ####################################################################
