@@ -18,6 +18,7 @@ cards:
       - light.l9lorry01d_rgb_led
       - switch.l9lorry01d_antiburn
       - number.l9lorry01d_lvgl_screen_timeout
+
   - type: entities
     title: L9 Lorry 01g
     show_header_toggle: false

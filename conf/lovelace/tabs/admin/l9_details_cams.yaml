@@ -1,0 +1,44 @@
+####################################################################
+####################################################################
+#
+# l9_cams tab --- lovelace configuration
+#
+####################################################################
+####################################################################
+
+title: ESP cams L9
+path: l9_details_cams
+badges: []
+cards:
+  - type: entities
+    title: L9 Cam32 01
+    show_header_toggle: false
+    entities:
+      - switch.level_9_l9cam3201_camlight
+
+  - type: entities
+    title: L9 Cam32 02
+    show_header_toggle: false
+    entities:
+      - switch.level_9_l9cam3202_camlight
+
+  - type: entities
+    title: L9 Cam32 03
+    show_header_toggle: false
+    entities:
+      - switch.level_9_l9cam3203_camlight
+
+  - type: entities
+    title: L9 Cam32 04
+    show_header_toggle: false
+    entities:
+      - switch.level_9_l9cam3204_camlight
+
+  - type: entities
+    title: L9 Cam32 05
+    show_header_toggle: false
+    entities:
+      - switch.level_9_l9cam3205_camlight
+####################################################################
+# EOF
+####################################################################

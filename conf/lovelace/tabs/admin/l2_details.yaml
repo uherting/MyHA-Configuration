@@ -26,16 +26,16 @@ cards:
     entities:
       - light.l2corridor02_onboardled
 
-  - type: entities
-    title: L2 Storage 01
-    show_header_toggle: false
-    entities:
-      - sensor.l2storage01_tempcase_01
-      - sensor.temperature_humidity_sensor_d59f_temperature
-      - binary_sensor.l2storage01_pir_01
-      - binary_sensor.l2storage01_door_storage
-      - switch.l2storage01_ssr_01
-      - switch.l2storage01_l2_kitchen01_ssr_09
+  # - type: entities
+  #   title: L2 Storage 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - sensor.l2storage01_tempcase_01
+  #     - sensor.temperature_humidity_sensor_d59f_temperature
+  #     - binary_sensor.l2storage01_pir_01
+  #     - binary_sensor.l2storage01_door_storage
+  #     - switch.l2storage01_ssr_01
+  #     - switch.l2storage01_l2_kitchen01_ssr_09
 
   - type: entities
     title: L2 Bathroom 01a
@@ -45,11 +45,11 @@ cards:
       - binary_sensor.l2bathroom01a_reed_01
       - binary_sensor.l2bathroom01a_reed_02
 
-  - type: entities
-    title: L2 Lounge 09
-    show_header_toggle: false
-    entities:
-      - light.l2lounge09_onboardled
+  # - type: entities
+  #   title: L2 Lounge 09
+  #   show_header_toggle: false
+  #   entities:
+  #     - light.l2lounge09_onboardled
 
   - type: custom:mini-graph-card
     title: Temperatures Kitchen
