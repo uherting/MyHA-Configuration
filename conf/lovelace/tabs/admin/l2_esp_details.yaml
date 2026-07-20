@@ -1,13 +1,13 @@
 ####################################################################
 ####################################################################
 #
-# l2_details tab --- lovelace configuration
+# lovelace configuration
 #
 ####################################################################
 ####################################################################
 
-title: ESP8266 l2 Details
-path: l2_details
+title: L2 ESP Details
+path: l2_esp_details
 badges: []
 cards:
   - type: entities
@@ -19,12 +19,6 @@ cards:
       - switch.l2kitchen01_ssr_01
       - switch.l2kitchen01_ssr_02
       - switch.l2storage01_l2_kitchen01_ssr_09
-
-  - type: entities
-    title: L2 Corridor 02
-    show_header_toggle: false
-    entities:
-      - light.l2corridor02_onboardled
 
   # - type: entities
   #   title: L2 Storage 01

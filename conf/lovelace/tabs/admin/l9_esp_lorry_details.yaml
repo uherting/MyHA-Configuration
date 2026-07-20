@@ -1,13 +1,13 @@
 ####################################################################
 ####################################################################
 #
-# l9_details tab --- lovelace configuration
+# lovelace configuration
 #
 ####################################################################
 ####################################################################
 
-title: ESP8266 l9 Details
-path: l9_details
+title: L9 ESP Lorry Details
+path: l9_esp_lorry_details
 badges: []
 cards:
   - type: entities

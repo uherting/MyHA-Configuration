@@ -1,13 +1,13 @@
 ####################################################################
 ####################################################################
 #
-# l0_details tab --- lovelace configuration
+# l0 esp details tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
 
-title: ESP8266 l0 Details
-path: l0_details
+title: L0 ESP Details
+path: l0_esp_details
 badges: []
 cards:
   # - type: entities

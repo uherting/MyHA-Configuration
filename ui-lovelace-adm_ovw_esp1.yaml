@@ -15,13 +15,14 @@ views:
   # - !include /config/conf/lovelace/tabs/admin/test_devices.yaml
   - !include /config/conf/lovelace/tabs/admin/general.yaml
   - !include /config/conf/lovelace/tabs/admin/l2_btproxies_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/l9_cams.yaml
-  - !include /config/conf/lovelace/tabs/admin/l9_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/l9_details.yaml
-  - !include /config/conf/lovelace/tabs/admin/l2_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/l2_details.yaml
-  - !include /config/conf/lovelace/tabs/admin/l0_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/l0_details.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_esp_cams_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_esp_cams_details.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_esp_lorry_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l9_esp_lorry_details.yaml
+  - !include /config/conf/lovelace/tabs/admin/l2_esp_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l2_esp_details.yaml
+  - !include /config/conf/lovelace/tabs/admin/l0_esp_tech.yaml
+  - !include /config/conf/lovelace/tabs/admin/l0_esp_details.yaml
   - !include /config/conf/lovelace/tabs/admin/ble_temp_humidity_batteries.yaml
   - !include /config/conf/lovelace/tabs/user/ble_temperature_humidity.yaml
 
