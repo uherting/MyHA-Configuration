@@ -1,5 +1,7 @@
 """Entity model."""
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass
@@ -620,7 +622,7 @@ class EntityFactory:
 
     def __init__(
         self,
-        coordinator: "AreaOccupancyCoordinator",
+        coordinator: AreaOccupancyCoordinator,
         area_name: str,
     ) -> None:
         """Initialize the factory.
@@ -640,7 +642,7 @@ class EntityFactory:
             )
         self.config = coordinator.areas[area_name].config
 
-    def create_from_db(self, entity_obj: "DB.Entities") -> Entity:
+    def create_from_db(self, entity_obj: DB.Entities) -> Entity:
         """Create entity from storage data.
 
         Args:
@@ -977,7 +979,7 @@ class EntityManager:
 
     def __init__(
         self,
-        coordinator: "AreaOccupancyCoordinator",
+        coordinator: AreaOccupancyCoordinator,
         area_name: str | None = None,
     ) -> None:
         """Initialize the entity manager.
@@ -1008,9 +1010,7 @@ class EntityManager:
         """Get the entities."""
         return self._entities
 
-    def get_entities_by_input_type(
-        self, input_type: "InputType"
-    ) -> dict[str, "Entity"]:
+    def get_entities_by_input_type(self, input_type: InputType) -> dict[str, Entity]:
         """Get entities filtered by InputType."""
         return {
             entity_id: entity

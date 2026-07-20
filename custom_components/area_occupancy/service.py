@@ -1,5 +1,7 @@
 """Service definitions for the Area Occupancy Detection integration."""
 
+from __future__ import annotations
+
 import contextlib
 from dataclasses import asdict
 import logging
@@ -29,7 +31,7 @@ PURGE_AREA_HISTORY_SCHEMA = vol.Schema(
 )
 
 
-def _collect_entity_states(hass: HomeAssistant, area: "Area") -> dict[str, str]:
+def _collect_entity_states(hass: HomeAssistant, area: Area) -> dict[str, str]:
     """Collect current states for all entities in an area.
 
     Args:
@@ -49,7 +51,7 @@ def _collect_entity_states(hass: HomeAssistant, area: "Area") -> dict[str, str]:
     return entity_states
 
 
-def _collect_likelihood_data(area: "Area") -> dict[str, dict[str, Any]]:
+def _collect_likelihood_data(area: Area) -> dict[str, dict[str, Any]]:
     """Collect likelihood data for all entities in an area.
 
     Args:
@@ -122,7 +124,7 @@ def _collect_likelihood_data(area: "Area") -> dict[str, dict[str, Any]]:
 
 
 def _build_analysis_data(
-    hass: HomeAssistant, area: "Area", area_name: str
+    hass: HomeAssistant, area: Area, area_name: str
 ) -> dict[str, Any]:
     """Build analysis data dictionary for an area.
 
@@ -221,7 +223,7 @@ async def _export_config(hass: HomeAssistant, call: ServiceCall) -> dict[str, An
 
 def _find_area_by_area_id(
     coordinator: Any, area_id: str
-) -> tuple[str | None, "Area | None"]:
+) -> tuple[str | None, Area | None]:
     """Look up an area by its Home Assistant area_id.
 
     Args:
@@ -239,9 +241,9 @@ def _find_area_by_area_id(
 
 async def async_purge_area_data(
     hass: HomeAssistant,
-    coordinator: "AreaOccupancyCoordinator",
+    coordinator: AreaOccupancyCoordinator,
     area_name: str,
-    area: "Area",
+    area: Area,
 ) -> dict[str, Any]:
     """Purge DB rows + in-memory state for a single configured area.
 

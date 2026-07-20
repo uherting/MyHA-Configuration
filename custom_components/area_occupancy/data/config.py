@@ -1,5 +1,7 @@
 """Configuration model and manager for Area Occupancy Detection."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 import logging
@@ -14,6 +16,7 @@ from homeassistant.util import dt as dt_util
 
 from ..const import (
     ANALYSIS_INTERVAL,
+    CONF_ADJACENT_AREAS,
     CONF_AIR_QUALITY_SENSORS,
     CONF_APPLIANCE_ACTIVE_STATES,
     CONF_APPLIANCES,
@@ -50,6 +53,7 @@ from ..const import (
     CONF_POWER_SENSORS,
     CONF_PRESSURE_SENSORS,
     CONF_PURPOSE,
+    CONF_SENSOR_PRECISION,
     CONF_SLEEP_END,
     CONF_SLEEP_START,
     CONF_SOUND_PRESSURE_SENSORS,
@@ -85,6 +89,7 @@ from ..const import (
     DEFAULT_MOTION_PROB_GIVEN_TRUE,
     DEFAULT_MOTION_TIMEOUT,
     DEFAULT_PURPOSE,
+    DEFAULT_SENSOR_PRECISION,
     DEFAULT_SLEEP_CONFIDENCE_THRESHOLD,
     DEFAULT_SLEEP_END,
     DEFAULT_SLEEP_START,
@@ -139,7 +144,7 @@ class IntegrationConfig:
 
     def __init__(
         self,
-        coordinator: "AreaOccupancyCoordinator",
+        coordinator: AreaOccupancyCoordinator,
         config_entry: ConfigEntry,
     ) -> None:
         """Initialize the integration configuration.
@@ -193,6 +198,19 @@ class IntegrationConfig:
         return bool(
             self.config_entry.options.get(CONF_HEALTH_ENABLED, DEFAULT_HEALTH_ENABLED)
         )
+
+    @property
+    def sensor_precision(self) -> int:
+        """Get global sensor state precision (clamped to 0-2) from config entry options."""
+        try:
+            precision = int(
+                self.config_entry.options.get(
+                    CONF_SENSOR_PRECISION, DEFAULT_SENSOR_PRECISION
+                )
+            )
+        except (ValueError, TypeError, OverflowError):
+            return DEFAULT_SENSOR_PRECISION
+        return max(0, min(2, precision))
 
     @property
     def people(self) -> list[PersonConfig]:
@@ -282,9 +300,9 @@ class Sensors:
     door: list[str] = field(default_factory=list)
     window: list[str] = field(default_factory=list)
     cover: list[str] = field(default_factory=list)
-    _parent_config: "AreaConfig | None" = field(default=None, repr=False, compare=False)
+    _parent_config: AreaConfig | None = field(default=None, repr=False, compare=False)
 
-    def get_motion_sensors(self, coordinator: "AreaOccupancyCoordinator") -> list[str]:
+    def get_motion_sensors(self, coordinator: AreaOccupancyCoordinator) -> list[str]:
         """Get motion sensors including wasp sensor if enabled and available.
 
         Args:
@@ -327,7 +345,7 @@ class Sensors:
 
         return motion_sensors
 
-    def get_sleep_sensors(self, coordinator: "AreaOccupancyCoordinator") -> list[str]:
+    def get_sleep_sensors(self, coordinator: AreaOccupancyCoordinator) -> list[str]:
         """Get sleep presence sensors assigned to this area.
 
         Args:
@@ -407,7 +425,7 @@ class AreaConfig:
 
     def __init__(
         self,
-        coordinator: "AreaOccupancyCoordinator",
+        coordinator: AreaOccupancyCoordinator,
         area_name: str | None = None,
         area_data: dict[str, Any] | None = None,
     ):
@@ -466,6 +484,15 @@ class AreaConfig:
         self.purpose = data.get(CONF_PURPOSE, DEFAULT_PURPOSE)
         # Get area_id from data
         self.area_id = data.get(CONF_AREA_ID)
+        # Adjacent area_ids (list of HA area_ids configured as neighbours).
+        # Symmetric write happens at the config-flow persistence layer; this
+        # field defaults to [] for entries that pre-date adjacency support.
+        raw_adjacent = data.get(CONF_ADJACENT_AREAS, [])
+        self.adjacent_areas: list[str] = (
+            [str(a) for a in raw_adjacent if a]
+            if isinstance(raw_adjacent, list)
+            else []
+        )
         if not self.area_id:
             _LOGGER.warning(
                 "Area config missing area_id for area '%s'.",

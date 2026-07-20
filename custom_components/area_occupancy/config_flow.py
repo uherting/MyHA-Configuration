@@ -48,6 +48,7 @@ from .const import (
     CONF_ACTION_ADD_AREA,
     CONF_ACTION_GLOBAL_SETTINGS,
     CONF_ACTION_MANAGE_PEOPLE,
+    CONF_ADJACENT_AREAS,
     CONF_AIR_QUALITY_SENSORS,
     CONF_APPLIANCE_ACTIVE_STATES,
     CONF_APPLIANCES,
@@ -85,6 +86,7 @@ from .const import (
     CONF_POWER_SENSORS,
     CONF_PRESSURE_SENSORS,
     CONF_PURPOSE,
+    CONF_SENSOR_PRECISION,
     CONF_SLEEP_END,
     CONF_SLEEP_START,
     CONF_SOUND_PRESSURE_SENSORS,
@@ -120,6 +122,7 @@ from .const import (
     DEFAULT_MOTION_PROB_GIVEN_TRUE,
     DEFAULT_MOTION_TIMEOUT,
     DEFAULT_PURPOSE,
+    DEFAULT_SENSOR_PRECISION,
     DEFAULT_SLEEP_CONFIDENCE_THRESHOLD,
     DEFAULT_SLEEP_END,
     DEFAULT_SLEEP_START,
@@ -464,8 +467,6 @@ def _get_include_entities(hass: HomeAssistant) -> dict[str, list[str]]:
 def _create_motion_section_schema(
     defaults: dict[str, Any],
     motion_entities: list[str],
-    *,
-    show_advanced: bool = False,
 ) -> vol.Schema:
     """Create schema for the motion section."""
     fields: dict[vol.Marker, Any] = {
@@ -495,39 +496,33 @@ def _create_motion_section_schema(
                 defaults.get(CONF_MOTION_TIMEOUT, DEFAULT_MOTION_TIMEOUT)
             ),
         ): DurationSelector(DurationSelectorConfig(enable_day=False)),
-    }
-
-    if show_advanced:
-        fields[
-            vol.Optional(
-                CONF_MOTION_PROB_GIVEN_TRUE,
-                default=defaults.get(
-                    CONF_MOTION_PROB_GIVEN_TRUE, DEFAULT_MOTION_PROB_GIVEN_TRUE
-                ),
-            )
-        ] = NumberSelector(
+        vol.Optional(
+            CONF_MOTION_PROB_GIVEN_TRUE,
+            default=defaults.get(
+                CONF_MOTION_PROB_GIVEN_TRUE, DEFAULT_MOTION_PROB_GIVEN_TRUE
+            ),
+        ): NumberSelector(
             NumberSelectorConfig(
                 min=MIN_PROBABILITY,
                 max=MAX_PROBABILITY,
                 step=0.01,
                 mode=NumberSelectorMode.BOX,
             )
-        )
-        fields[
-            vol.Optional(
-                CONF_MOTION_PROB_GIVEN_FALSE,
-                default=defaults.get(
-                    CONF_MOTION_PROB_GIVEN_FALSE, DEFAULT_MOTION_PROB_GIVEN_FALSE
-                ),
-            )
-        ] = NumberSelector(
+        ),
+        vol.Optional(
+            CONF_MOTION_PROB_GIVEN_FALSE,
+            default=defaults.get(
+                CONF_MOTION_PROB_GIVEN_FALSE, DEFAULT_MOTION_PROB_GIVEN_FALSE
+            ),
+        ): NumberSelector(
             NumberSelectorConfig(
                 min=0.001,
                 max=MAX_PROBABILITY,
                 step=0.001,
                 mode=NumberSelectorMode.BOX,
             )
-        )
+        ),
+    }
 
     return vol.Schema(fields)
 
@@ -880,8 +875,6 @@ def _create_power_section_schema(defaults: dict[str, Any]) -> vol.Schema:
 
 def _create_parameters_section_schema(
     defaults: dict[str, Any],
-    *,
-    show_advanced: bool = False,
 ) -> vol.Schema:
     """Create schema for the parameters section."""
     # Default decay half-life to 0 (use purpose value)
@@ -904,23 +897,14 @@ def _create_parameters_section_schema(
             CONF_DECAY_ENABLED,
             default=defaults.get(CONF_DECAY_ENABLED, DEFAULT_DECAY_ENABLED),
         ): BooleanSelector(),
-    }
-
-    if show_advanced:
-        fields[
-            vol.Optional(
-                CONF_DECAY_HALF_LIFE,
-                default=_seconds_to_duration(decay_half_life_default),
-            )
-        ] = DurationSelector(DurationSelectorConfig(enable_day=False))
-        fields[
-            vol.Optional(
-                CONF_MIN_PRIOR_OVERRIDE,
-                default=defaults.get(
-                    CONF_MIN_PRIOR_OVERRIDE, DEFAULT_MIN_PRIOR_OVERRIDE
-                ),
-            )
-        ] = NumberSelector(
+        vol.Optional(
+            CONF_DECAY_HALF_LIFE,
+            default=_seconds_to_duration(decay_half_life_default),
+        ): DurationSelector(DurationSelectorConfig(enable_day=False)),
+        vol.Optional(
+            CONF_MIN_PRIOR_OVERRIDE,
+            default=defaults.get(CONF_MIN_PRIOR_OVERRIDE, DEFAULT_MIN_PRIOR_OVERRIDE),
+        ): NumberSelector(
             NumberSelectorConfig(
                 min=0.0,
                 max=1.0,
@@ -928,7 +912,8 @@ def _create_parameters_section_schema(
                 mode=NumberSelectorMode.SLIDER,
                 unit_of_measurement="probability",
             )
-        )
+        ),
+    }
 
     return vol.Schema(fields)
 
@@ -981,8 +966,6 @@ def create_schema(
     defaults: dict[str, Any] | None = None,
     is_options: bool = False,
     include_entities: dict[str, list[str]] | None = None,
-    *,
-    show_advanced: bool = False,
 ) -> dict:
     """Create a schema with optional default values, using helper functions.
 
@@ -992,7 +975,6 @@ def create_schema(
         is_options: Whether this is for options flow (vs initial config flow)
         include_entities: Optional pre-computed entity lists. If not provided,
             will be computed from hass.
-        show_advanced: Whether to show advanced options (motion probs, decay half-life, min prior)
 
     Returns:
         Schema dictionary for form
@@ -1031,9 +1013,7 @@ def create_schema(
 
     # Add sections by assigning keys directly to the dictionary
     schema_dict[vol.Required("motion")] = section(
-        _create_motion_section_schema(
-            defaults, include_entities["motion"], show_advanced=show_advanced
-        ),
+        _create_motion_section_schema(defaults, include_entities["motion"]),
         {"collapsed": True},
     )
     schema_dict[vol.Required("windows_and_doors")] = section(
@@ -1081,7 +1061,7 @@ def create_schema(
         _create_wasp_in_box_section_schema(defaults), {"collapsed": True}
     )
     schema_dict[vol.Required("parameters")] = section(
-        _create_parameters_section_schema(defaults, show_advanced=show_advanced),
+        _create_parameters_section_schema(defaults),
         {"collapsed": True},
     )
 
@@ -1092,8 +1072,20 @@ def create_schema(
 # ── Wizard step schemas ──────────────────────────────────────────────
 
 
-def _create_basics_step_schema(*, is_editing: bool = False) -> dict[vol.Marker, Any]:
-    """Create schema for wizard step 1: area selection and purpose."""
+def _create_basics_step_schema(
+    *,
+    is_editing: bool = False,
+    adjacent_options: list[SelectOptionDict] | None = None,
+) -> dict[vol.Marker, Any]:
+    """Create schema for wizard step 1: area selection and purpose.
+
+    Args:
+        is_editing: True if editing an existing area (skips area selector).
+        adjacent_options: Other areas in this entry available as adjacency
+            choices. Each option is `{"value": area_id, "label": area_name}`.
+            When None or empty, the adjacency field is omitted (e.g. the
+            first area being added has no neighbours to pick from).
+    """
     fields: dict[vol.Marker, Any] = {}
     if not is_editing:
         fields[vol.Required(CONF_AREA_ID)] = AreaSelector()
@@ -1103,14 +1095,20 @@ def _create_basics_step_schema(*, is_editing: bool = False) -> dict[vol.Marker, 
             mode=SelectSelectorMode.DROPDOWN,
         )
     )
+    if adjacent_options:
+        fields[vol.Optional(CONF_ADJACENT_AREAS, default=[])] = SelectSelector(
+            SelectSelectorConfig(
+                options=adjacent_options,
+                multiple=True,
+                mode=SelectSelectorMode.DROPDOWN,
+            )
+        )
     return fields
 
 
 def _create_motion_step_schema(
     hass: HomeAssistant,
     include_entities: dict[str, list[str]] | None = None,
-    *,
-    show_advanced: bool = False,
 ) -> dict[vol.Marker, Any]:
     """Create schema for wizard step 2: motion sensor configuration."""
     if include_entities is None:
@@ -1136,35 +1134,29 @@ def _create_motion_step_schema(
             CONF_MOTION_TIMEOUT,
             default=_seconds_to_duration(DEFAULT_MOTION_TIMEOUT),
         ): DurationSelector(DurationSelectorConfig(enable_day=False)),
-    }
-
-    if show_advanced:
-        fields[
-            vol.Optional(
-                CONF_MOTION_PROB_GIVEN_TRUE,
-                default=DEFAULT_MOTION_PROB_GIVEN_TRUE,
-            )
-        ] = NumberSelector(
+        vol.Optional(
+            CONF_MOTION_PROB_GIVEN_TRUE,
+            default=DEFAULT_MOTION_PROB_GIVEN_TRUE,
+        ): NumberSelector(
             NumberSelectorConfig(
                 min=MIN_PROBABILITY,
                 max=MAX_PROBABILITY,
                 step=0.01,
                 mode=NumberSelectorMode.BOX,
             )
-        )
-        fields[
-            vol.Optional(
-                CONF_MOTION_PROB_GIVEN_FALSE,
-                default=DEFAULT_MOTION_PROB_GIVEN_FALSE,
-            )
-        ] = NumberSelector(
+        ),
+        vol.Optional(
+            CONF_MOTION_PROB_GIVEN_FALSE,
+            default=DEFAULT_MOTION_PROB_GIVEN_FALSE,
+        ): NumberSelector(
             NumberSelectorConfig(
                 min=0.001,
                 max=MAX_PROBABILITY,
                 step=0.001,
                 mode=NumberSelectorMode.BOX,
             )
-        )
+        ),
+    }
 
     return fields
 
@@ -1231,8 +1223,6 @@ def _create_sensors_step_schema(
 
 def _create_behavior_step_schema(
     defaults: dict[str, Any] | None = None,
-    *,
-    show_advanced: bool = False,
 ) -> dict[vol.Marker, Any]:
     """Create schema for wizard step 4: thresholds, decay, and wasp-in-box."""
     defaults = defaults or {}
@@ -1252,21 +1242,14 @@ def _create_behavior_step_schema(
         vol.Optional(
             CONF_EXCLUDE_FROM_ALL_AREAS, default=DEFAULT_EXCLUDE_FROM_ALL_AREAS
         ): BooleanSelector(),
-    }
-
-    if show_advanced:
-        fields[
-            vol.Optional(
-                CONF_DECAY_HALF_LIFE,
-                default=_seconds_to_duration(DEFAULT_DECAY_HALF_LIFE),
-            )
-        ] = DurationSelector(DurationSelectorConfig(enable_day=False))
-        fields[
-            vol.Optional(
-                CONF_MIN_PRIOR_OVERRIDE,
-                default=DEFAULT_MIN_PRIOR_OVERRIDE,
-            )
-        ] = NumberSelector(
+        vol.Optional(
+            CONF_DECAY_HALF_LIFE,
+            default=_seconds_to_duration(DEFAULT_DECAY_HALF_LIFE),
+        ): DurationSelector(DurationSelectorConfig(enable_day=False)),
+        vol.Optional(
+            CONF_MIN_PRIOR_OVERRIDE,
+            default=DEFAULT_MIN_PRIOR_OVERRIDE,
+        ): NumberSelector(
             NumberSelectorConfig(
                 min=0.0,
                 max=1.0,
@@ -1274,13 +1257,12 @@ def _create_behavior_step_schema(
                 mode=NumberSelectorMode.SLIDER,
                 unit_of_measurement="probability",
             )
-        )
-
-    # Wasp-in-box fields in collapsible section
-    fields[vol.Required("wasp_in_box")] = section(
-        _create_wasp_in_box_section_schema(defaults),
-        {"collapsed": True},
-    )
+        ),
+        vol.Required("wasp_in_box"): section(
+            _create_wasp_in_box_section_schema(defaults),
+            {"collapsed": True},
+        ),
+    }
 
     return fields
 
@@ -1629,12 +1611,128 @@ def _find_area_by_id(
     return None
 
 
+def _normalize_adjacent_areas(value: Any) -> list[str]:
+    """Coerce a `CONF_ADJACENT_AREAS` value to a clean list of area_id strings.
+
+    The persistence layer normally writes a list, but config storage is JSON
+    and a hand-edited file (or an old import) can supply other shapes. The
+    mirror/strip helpers do set ops over the values, so a stray string would
+    be iterated character-by-character and silently corrupt the data. This
+    helper folds every shape into a `list[str]`:
+
+    - ``None`` → ``[]``
+    - empty string → ``[]``
+    - non-empty string → ``[value]`` (treated as a single area_id, not a
+      sequence of characters)
+    - list / tuple / set → list of non-empty stringified items (drops falsy
+      entries like ``""`` or ``None``)
+    - anything else → ``[str(value)]`` (best-effort preservation; the helper
+      never raises, so an unexpected scalar is kept as a single id rather
+      than silently dropped)
+    """
+    if value is None:
+        return []
+    if isinstance(value, str):
+        # A bare string is a single area_id, not a sequence to iterate.
+        return [value] if value else []
+    if isinstance(value, (list, tuple, set)):
+        return [str(v) for v in value if v]
+    # Best-effort: keep the value as a single entry rather than crashing.
+    return [str(value)]
+
+
+def _apply_symmetric_adjacency(
+    areas: list[dict[str, Any]], updated_area: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Mirror an area's adjacency edits across the paired areas.
+
+    The adjacency UI is per-area (a flat multi-select of neighbours), but
+    the underlying relation is mutual. When the user saves area A with
+    adjacents `[B, C]`:
+      * Add A to B's and C's adjacents (if not already there).
+      * Remove A from any other area X that previously listed A but
+        isn't in A's new list.
+
+    Returns a new list — does not mutate inputs.
+    """
+    target_area_id = updated_area.get(CONF_AREA_ID)
+    if not target_area_id:
+        return areas
+
+    target_adjacents = set(
+        _normalize_adjacent_areas(updated_area.get(CONF_ADJACENT_AREAS))
+    )
+    # Defensive: the UI excludes self from the multi-select, but a
+    # hand-edited storage file or imported config could carry a stray
+    # self-reference. Drop it before any set ops so downstream callers
+    # never see an area listed as adjacent to itself.
+    target_adjacents.discard(target_area_id)
+
+    result: list[dict[str, Any]] = []
+    sanitized_target_adjacents = sorted(target_adjacents)
+    for area in areas:
+        area_id = area.get(CONF_AREA_ID)
+        # The target row was substituted in by the caller; rewrite its
+        # adjacents field to the normalised+self-stripped value so any
+        # malformed input (non-list, self-link) doesn't survive a save.
+        if area_id == target_area_id:
+            cleaned_target = dict(area)
+            cleaned_target[CONF_ADJACENT_AREAS] = list(sanitized_target_adjacents)
+            result.append(cleaned_target)
+            continue
+        if not area_id:
+            result.append(area)
+            continue
+
+        current_adjacents = set(
+            _normalize_adjacent_areas(area.get(CONF_ADJACENT_AREAS))
+        )
+        # Same defensive guard for the partner row.
+        current_adjacents.discard(area_id)
+
+        if area_id in target_adjacents:
+            new_adjacents = current_adjacents | {target_area_id}
+        else:
+            new_adjacents = current_adjacents - {target_area_id}
+
+        if new_adjacents != current_adjacents:
+            mirrored = dict(area)
+            mirrored[CONF_ADJACENT_AREAS] = sorted(new_adjacents)
+            result.append(mirrored)
+        else:
+            result.append(area)
+    return result
+
+
+def _strip_adjacency_references(
+    areas: list[dict[str, Any]], removed_area_id: str
+) -> list[dict[str, Any]]:
+    """Remove a deleted area_id from every other area's adjacents list."""
+    if not removed_area_id:
+        return areas
+    result: list[dict[str, Any]] = []
+    for area in areas:
+        normalized = _normalize_adjacent_areas(area.get(CONF_ADJACENT_AREAS))
+        if removed_area_id in normalized:
+            cleaned = dict(area)
+            cleaned[CONF_ADJACENT_AREAS] = [
+                a for a in normalized if a != removed_area_id
+            ]
+            result.append(cleaned)
+        else:
+            result.append(area)
+    return result
+
+
 def _update_area_in_list(
     areas: list[dict[str, Any]],
     updated_area: dict[str, Any],
     area_id: str | None,
 ) -> list[dict[str, Any]]:
     """Update or add an area in a list of areas.
+
+    After the update or add, mirrors any adjacency changes across the
+    other areas (adjacency is mutual; the UI is per-area).
 
     Args:
         areas: List of area configuration dictionaries
@@ -1659,13 +1757,16 @@ def _update_area_in_list(
         # Add new area
         updated_areas.append(updated_area)
 
-    return updated_areas
+    return _apply_symmetric_adjacency(updated_areas, updated_area)
 
 
 def _remove_area_from_list(
     areas: list[dict[str, Any]], area_id: str
 ) -> list[dict[str, Any]]:
     """Remove an area from a list of areas.
+
+    Also strips the removed area_id from every surviving area's
+    adjacents list so we don't leave dangling references.
 
     Args:
         areas: List of area configuration dictionaries
@@ -1674,7 +1775,8 @@ def _remove_area_from_list(
     Returns:
         Updated list of areas with specified area removed
     """
-    return [area for area in areas if area.get(CONF_AREA_ID) != area_id]
+    surviving = [area for area in areas if area.get(CONF_AREA_ID) != area_id]
+    return _strip_adjacency_references(surviving, area_id)
 
 
 def _validate_person_input(user_input: dict[str, Any]) -> dict[str, Any]:
@@ -1830,6 +1932,20 @@ def _create_global_settings_schema(defaults: dict[str, Any]) -> vol.Schema:
                 CONF_HEALTH_ENABLED,
                 default=defaults.get(CONF_HEALTH_ENABLED, DEFAULT_HEALTH_ENABLED),
             ): BooleanSelector(),
+            vol.Required(
+                CONF_SENSOR_PRECISION,
+                default=defaults.get(CONF_SENSOR_PRECISION, DEFAULT_SENSOR_PRECISION),
+            ): vol.All(
+                NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=2,
+                        step=1,
+                        mode=NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Coerce(int),
+            ),
         }
     )
 
@@ -2025,6 +2141,36 @@ class BaseOccupancyFlow:
         """Handle completion of the area config wizard. Overridden by subclasses."""
         raise NotImplementedError
 
+    def _build_adjacent_area_options(self) -> list[SelectOptionDict]:
+        """Build the multi-select options for the adjacency field.
+
+        Returns options for every area configured in this entry except the
+        one currently being edited (you can't be adjacent to yourself).
+        Labels resolve to the HA area registry name when possible, falling
+        back to the raw area_id.
+        """
+        options: list[SelectOptionDict] = []
+        seen: set[str] = set()
+        editing_area_id = self._area_being_edited
+        for area in self._get_wizard_areas():
+            other_area_id = area.get(CONF_AREA_ID)
+            # Defensive: malformed persisted data could leave a non-string
+            # value here. Comparison still works but downstream
+            # ``_resolve_area_id_to_name`` and ``SelectOptionDict`` both
+            # expect str — skip rather than crash later.
+            if not isinstance(other_area_id, str) or not other_area_id:
+                continue
+            if other_area_id == editing_area_id or other_area_id in seen:
+                continue
+            seen.add(other_area_id)
+            label = other_area_id
+            if self.hass:
+                with contextlib.suppress(ValueError):
+                    label = _resolve_area_id_to_name(self.hass, other_area_id)
+            options.append(SelectOptionDict(value=other_area_id, label=label))
+        options.sort(key=lambda opt: opt["label"].lower())
+        return options
+
     def _init_area_wizard(self) -> None:
         """Initialize the area config wizard draft."""
         if self._area_being_edited:
@@ -2077,8 +2223,10 @@ class BaseOccupancyFlow:
                 self._area_config_draft.update(user_input)
                 return await self.async_step_area_motion()
 
+        adjacent_options = self._build_adjacent_area_options()
         schema_dict = _create_basics_step_schema(
-            is_editing=self._area_being_edited is not None
+            is_editing=self._area_being_edited is not None,
+            adjacent_options=adjacent_options,
         )
         base_schema = vol.Schema(schema_dict)
 
@@ -2087,7 +2235,8 @@ class BaseOccupancyFlow:
             user_input
             if user_input is not None
             else _draft_to_suggested(
-                self._area_config_draft, {CONF_AREA_ID, CONF_PURPOSE}
+                self._area_config_draft,
+                {CONF_AREA_ID, CONF_PURPOSE, CONF_ADJACENT_AREAS},
             )
         )
         if suggested:
@@ -2139,9 +2288,7 @@ class BaseOccupancyFlow:
                 self._area_config_draft.update(flattened)
                 return await self.async_step_area_sensors()
 
-        schema_dict = _create_motion_step_schema(
-            self.hass, show_advanced=self.show_advanced_options
-        )
+        schema_dict = _create_motion_step_schema(self.hass)
         base_schema = vol.Schema(schema_dict)
 
         # Suggested values
@@ -2264,10 +2411,7 @@ class BaseOccupancyFlow:
 
             errors.update(validation_errors)
 
-        schema_dict = _create_behavior_step_schema(
-            self._area_config_draft,
-            show_advanced=self.show_advanced_options,
-        )
+        schema_dict = _create_behavior_step_schema(self._area_config_draft)
         base_schema = vol.Schema(schema_dict)
 
         # Suggested values - top-level behavior + nested wasp section
@@ -2851,6 +2995,10 @@ class AreaOccupancyOptionsFlow(OptionsFlow, BaseOccupancyFlow):
     ) -> ConfigFlowResult:
         """Manage global settings."""
         if user_input is not None:
+            # Validate and coerce using the schema
+            schema = _create_global_settings_schema(self.config_entry.options)
+            user_input = schema(user_input)
+
             # Update the config entry options directly
             new_options = dict(self.config_entry.options)
             new_options.update(user_input)
@@ -2867,6 +3015,9 @@ class AreaOccupancyOptionsFlow(OptionsFlow, BaseOccupancyFlow):
             ),
             CONF_HEALTH_ENABLED: self.config_entry.options.get(
                 CONF_HEALTH_ENABLED, DEFAULT_HEALTH_ENABLED
+            ),
+            CONF_SENSOR_PRECISION: self.config_entry.options.get(
+                CONF_SENSOR_PRECISION, DEFAULT_SENSOR_PRECISION
             ),
         }
 
