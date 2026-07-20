@@ -236,16 +236,21 @@ cards:
               action: call-service
               service: script.lovelace_l2_bathroom01a_ssr_01_01
           - type: "custom:button-card"
-            name: "SpyMod"
-            entity: binary_sensor.l2storage_spymode
-            icon: mdi:incognito-circle
-            color: yellow
+            # entity:
+            name: " "
             show_state: false
-            tap_action:
-              action: call-service
-              service: automation.toggle
-              service_data:
-                entity_id: automation.l2_storage_motion_detected_ssr01_on
+            color: yellow
+          # - type: "custom:button-card"
+          #   name: "SpyMod"
+          #   entity: binary_sensor.l2storage_spymode
+          #   icon: mdi:incognito-circle
+          #   color: yellow
+          #   show_state: false
+          #   tap_action:
+          #     action: call-service
+          #     service: automation.toggle
+          #     service_data:
+          #       entity_id: automation.l2_storage_motion_detected_ssr01_on
 
       # South L2
       - type: grid

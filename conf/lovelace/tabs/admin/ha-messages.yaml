@@ -42,7 +42,7 @@ cards:
             columns: 5
             cards:
               - type: "custom:button-card"
-                entity: binary_sensor.l2storage_spymode
+                # entity: binary_sensor.l2storage_spymode
                 name: "Restart HA"
                 color: yellow
                 show_state: false
