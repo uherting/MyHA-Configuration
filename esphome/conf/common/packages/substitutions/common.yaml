@@ -120,8 +120,24 @@ substitutions:
   # ESP_ONBOARD_RESTART_ID: "${friendly_id}_Restart"
   # ESP_ONBOARD_RESTART_NAME: "${friendly_name} Restart"
 
-  # the update interval for the GPS sensor
+  # GPS related definitions
   gps_update_interval: 60s
+  # gps_name: $friendly_name GPS # not accepted by ESPHome, so it is not used
+  gps_id: ${friendly_id}_gps
+  gps_latitude_name: $friendly_name GPS latitude
+  gps_latitude_id: ${friendly_id}_gps_latitude_id
+  gps_longitude_name: $friendly_name GPS longitude
+  gps_longitude_id: ${friendly_id}_gps_longitude_id
+  gps_altitude_name: $friendly_name GPS altitude
+  gps_altitude_id: ${friendly_id}_gps_altitude_id
+  gps_speed_name: $friendly_name GPS speed
+  gps_speed_id: ${friendly_id}_gps_speed_id
+  gps_course_name: $friendly_name GPS course
+  gps_course_id: ${friendly_id}_gps_course_id
+  gps_satellites_name: $friendly_name GPS visible satellites
+  gps_satellites_id: ${friendly_id}_gps_satellites_id
+  gps_hdop_name: $friendly_name GPS HDOP
+  gps_hdop_id: ${friendly_id}_gps_hdop_id
 
   # MCP23017 hub ids
   mcp23017_hub01_id: ${friendly_id}_mcp23017_hub01
