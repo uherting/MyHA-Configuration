@@ -1,15 +1,9 @@
 # ############################################################
-#
-#  Turn the ZB plug UH on simple
-#
+#  Turn the ZB plug on UH
 # ############################################################
-
-# ############################################################
-#  Turn the ZB plug on UH simple
-# ############################################################
-- alias: Turn the ZB plug UH on simple
+- alias: Turn the ZB plug UH on
   id: "ff716105-8398-4292-ad51-d69de18ac007"
-  description: "This automation turns on the ZB plug UH the simple way"
+  description: "This automation turns on the ZB plug UH"
   mode: single
   initial_state: true
   # --------------------- TRIGGER ---------------------
@@ -23,16 +17,6 @@
     - trigger: template
       id: "delayed_charging_on"
       value_template: "{{ (is_state('binary_sensor.zb_charger_uh_delayed_charging_on_trigger', 'on')) }}"
-  # trigger:
-  #   - platform: template
-  #     id: "low_percentage_on"
-  #     value_template: "{{ (is_state('binary_sensor.zb_charger_uh_low_percentage_on_trigger', 'on')) }}"
-  #   - platform: template
-  #     id: "emergency_charging_on"
-  #     value_template: "{{ (is_state('binary_sensor.zb_charger_uh_emergency_charging_on_trigger', 'on')) }}"
-  #   - platform: template
-  #     id: "delayed_charging_on"
-  #     value_template: "{{ (is_state('binary_sensor.zb_charger_uh_delayed_charging_on_trigger', 'on')) }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -45,10 +29,6 @@
           sequence:
             - action: switch.turn_on
               entity_id: switch.zb_charger_uh
-            # - action: persistent_notification.create
-            #   data:
-            #     title: "ZB Plug UH switched on (low_percentage_on)"
-            #     message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
             - action: input_select.select_option
               target:
                 entity_id: input_select.zb_charger_uh_state_current
@@ -60,10 +40,6 @@
           sequence:
             - action: switch.turn_on
               entity_id: switch.zb_charger_uh
-            # - action: persistent_notification.create
-            #   data:
-            #     title: "ZB Plug UH switched on (emergency_charging_on)"
-            #     message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
             - action: input_select.select_option
               target:
                 entity_id: input_select.zb_charger_uh_state_current
@@ -75,10 +51,6 @@
           sequence:
             - action: switch.turn_on
               entity_id: switch.zb_charger_uh
-            # - action: persistent_notification.create
-            #   data:
-            #     title: "ZB Plug UH switched on (delayed_charging_on)"
-            #     message: "The phone is at {{ states('sensor.spuhnote10pro_battery_level') | int(0) }}% now. Time: {{ now() }}"
             - action: input_select.select_option
               target:
                 entity_id: input_select.zb_charger_uh_state_current
@@ -90,6 +62,6 @@
             message: "ZB plug UH on default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
-############################################################
+# ############################################################
 #  END OF FILE
 # ############################################################

@@ -19,13 +19,6 @@
     - trigger: state
       entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
       to: "large"
-  # trigger:
-  #   - platform: state
-  #     entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
-  #     to: "on"
-  #   - platform: state
-  #     entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
-  #     to: "large"
   # -------------------- CONDITIONS -------------------
   condition: []
   # condition:
@@ -53,12 +46,6 @@
       to: "off"
       for:
         minutes: 1
-  # trigger:
-  #   - platform: state
-  #     entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
-  #     to: "off"
-  #     for:
-  #       minutes: 1
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- SSR OFF ---------------------
