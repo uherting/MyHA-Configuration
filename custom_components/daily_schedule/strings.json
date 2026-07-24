@@ -24,5 +24,57 @@
         }
       }
     }
+  },
+  "conditions": {
+    "is_off": {
+      "description": "Tests if a daily schedule is currently off.",
+      "fields": {
+        "behavior": {
+          "name": "Condition passes if"
+        },
+        "for": {
+          "name": "For at least"
+        }
+      },
+      "name": "Daily schedule is off"
+    },
+    "is_on": {
+      "description": "Tests if a daily schedule is currently on.",
+      "fields": {
+        "behavior": {
+          "name": "Condition passes if"
+        },
+        "for": {
+          "name": "For at least"
+        }
+      },
+      "name": "Daily schedule is on"
+    }
+  },
+  "triggers": {
+    "turned_off": {
+      "description": "Triggers when a daily schedule turns off.",
+      "fields": {
+        "behavior": {
+          "name": "Trigger when"
+        },
+        "for": {
+          "name": "For at least"
+        }
+      },
+      "name": "Daily schedule turned off"
+    },
+    "turned_on": {
+      "description": "Triggers when a daily schedule turns on.",
+      "fields": {
+        "behavior": {
+          "name": "Trigger when"
+        },
+        "for": {
+          "name": "For at least"
+        }
+      },
+      "name": "Daily schedule turned on"
+    }
   }
 }
