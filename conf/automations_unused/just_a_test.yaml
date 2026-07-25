@@ -1,0 +1,50 @@
+# ############################################################
+#  Turn the ZB plug on test
+# ############################################################
+# automation.turn_the_zb_plug_gh_on_simple
+- alias: AAAATurn the ZB plug test on
+  id: "019f97c4-6641-7792-9754-7f34b584b696"
+  description: "This automation test turns on"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: template
+      id: "emergency_charging_on"
+      value_template: "{{ states('input_select.zb_charger_uh_state_current') ==  states('input_text.zb_charger_state_current_ordinary_charging_finished') }}"
+    - trigger: template
+      id: "delayed_charging_on"
+      value_template: "{{ states('input_select.zb_charger_uh_state_current') ==  states('input_text.zb_charger_state_current_ordinary_charging_finished') }}"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: "emergency_charging_on"
+          sequence:
+            - action: script.tg_send_txt
+              data:
+                msg_title: "emergency_charging_on"
+                msg_text: ".*"
+                msg_receiver: "notify"
+        - conditions:
+            - condition: trigger
+              id: "delayed_charging_on"
+          sequence:
+            - action: script.tg_send_txt
+              data:
+                msg_title: "delayed_charging_on"
+                msg_text: ".*"
+                msg_receiver: "notify"
+      default:
+        - action: script.tg_send_txt
+          data:
+            msg_title: "default"
+            msg_text: ".*"
+            msg_receiver: "notify"
+# ############################################################
+#  END OF FILE
+# ############################################################
