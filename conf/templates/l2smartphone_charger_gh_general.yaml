@@ -11,7 +11,8 @@
     - name: "zb_charger_gh_functionality_athome"
       unique_id: "zb_charger_gh_functionality_athome"
       state: >
-        {{ is_state('input_boolean.zb_charger_gh_functionality', 'on') and is_state('binary_sensor.home_gillian_is_here', 'on') }}
+        {{ is_state('input_boolean.zb_charger_gh_functionality', 'on') and 
+          is_state('binary_sensor.home_gillian_is_here', 'on') }}
 
     - name: "zb_charger_gh_timeframe_in"
       unique_id: "zb_charger_gh_timeframe_in"
