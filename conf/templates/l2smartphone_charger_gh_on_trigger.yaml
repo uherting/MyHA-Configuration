@@ -6,11 +6,6 @@
 
 # template:
 - binary_sensor:
-    - name: "zb_charger_gh_low_percentage_on_trigger"
-      unique_id: "zb_charger_gh_low_percentage_on_trigger"
-      state: >
-        {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and (is_state('switch.zb_charger_gh', 'off')) and (is_state('input_boolean.zb_charger_gh_force_delayed', 'off')) and ((states('sensor.sp_ghnote8pro_battery_level') | int(0)) <= (states('input_number.zb_charger_gh_min_percentage_low_percentage') | int(0))) }}
-
     - name: "zb_charger_gh_emergency_charging_on_trigger"
       unique_id: "zb_charger_gh_emergency_charging_on_trigger"
       state: >
@@ -32,6 +27,14 @@
            (is_state('zb_charger_gh_timeframe_in', 'on')) and 
            ((states('sensor.sp_ghnote8pro_battery_level') | int(0)) < (states('input_number.zb_charger_gh_max_percentage_delayed') | int(0)))
         }}
+
+    - name: "zb_charger_gh_low_percentage_on_trigger"
+      unique_id: "zb_charger_gh_low_percentage_on_trigger"
+      state: >
+        {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and 
+        (is_state('switch.zb_charger_gh', 'off')) and 
+        (is_state('input_boolean.zb_charger_gh_force_delayed', 'off')) and 
+        ((states('sensor.sp_ghnote8pro_battery_level') | int(0)) <= (states('input_number.zb_charger_gh_min_percentage_low_percentage') | int(0))) }}
 
 ####################################################################
 # EOF
