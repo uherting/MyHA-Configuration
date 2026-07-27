@@ -8,13 +8,20 @@
 
 # we run the normal
 - binary_sensor:
-    # GH is at home and the charging functionality is enabled while charger is off
+    # the charging functionality is enabled, GH is at home and charger is off
     - name: "zb_charger_gh_functionality_athome_charger_off"
       unique_id: "zb_charger_gh_functionality_athome_charger_off"
       state: >
         {{ is_state('input_boolean.zb_charger_gh_functionality', 'on') and 
           is_state('binary_sensor.home_uwe_is_here', 'on') and 
           (is_state('switch.zb_charger_gh', 'off')) }}
+
+    # the charging functionality is enabled, and charger is on
+    - name: "zb_charger_gh_functionality_charger_on"
+      unique_id: "zb_charger_gh_functionality_charger_on"
+      state: >
+        {{ is_state('input_boolean.zb_charger_gh_functionality', 'on') and 
+          (is_state('switch.zb_charger_gh', 'on')) }}
 
     # we are in the time frame as set for GH
     - name: "zb_charger_gh_timeframe_in"
@@ -31,10 +38,10 @@
         {{ (now() < today_at(states('input_datetime.zb_charger_gh_charging_delayed_start_at'))) }}
 
     # current battery level below delayed charging level
-    - name: "zb_charger_gh_cur_batt_lvl_below_max_delayed_chrg_level"
-      unique_id: "zb_charger_gh_cur_batt_lvl_below_max_delayed_chrg_level"
+    - name: "zb_charger_gh_cur_batt_lvl_below_max_delayed_charge_level"
+      unique_id: "zb_charger_gh_cur_batt_lvl_below_max_delayed_charge_level"
       state: >
-        {{ ((states('sensor.batt_lvl_current_gh') | int(0)) < (states('input_number.zb_charger_gh_max_percentage_delayed') | int(0))) }}
+        {{ ((states('sensor.batt_lvl_current_gh') | int(0)) < (states('input_number.zb_charger_gh_max_percentage') | int(0))) }}
 
     # current battery level below low charging level
     - name: "zb_charger_gh_cur_batt_lvl_below_low_chrg_level"
@@ -47,6 +54,18 @@
       unique_id: "zb_charger_gh_current_state_is_not_delayed_charging_finished"
       state: >
         {{ (states('input_select.zb_charger_gh_state_current') !=  states('input_text.zb_charger_state_current_delayed_charging_finished')) }}
+
+    # current state is delayed_charging_in_progress
+    - name: "zb_charger_gh_current_state_is_delayed_charging_in_progress"
+      unique_id: "zb_charger_gh_current_state_is_delayed_charging_in_progress"
+      state: >
+        {{ (states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_delayed_charging_in_progress')) }}
+
+    # current state is ordinary_charging_in_progress
+    - name: "zb_charger_gh_current_state_is_ordinary_charging_in_progress"
+      unique_id: "zb_charger_gh_current_state_is_ordinary_charging_in_progress"
+      state: >
+        {{ (states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_ordinary_charging_in_progress')) }}
 
 ####################################################################
 # EOF

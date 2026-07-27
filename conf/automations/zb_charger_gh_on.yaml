@@ -23,17 +23,6 @@
     - choose:
         - conditions:
             - condition: trigger
-              id: "low_percentage_on"
-          sequence:
-            - action: switch.turn_on
-              entity_id: switch.zb_charger_gh
-            - action: input_select.select_option
-              target:
-                entity_id: input_select.zb_charger_gh_state_current
-              data:
-                option: "{{ states('input_text.zb_charger_state_current_ordinary_charging_in_progress') }}"
-        - conditions:
-            - condition: trigger
               id: "delayed_charging_on"
           sequence:
             - action: switch.turn_on
@@ -43,10 +32,21 @@
                 entity_id: input_select.zb_charger_gh_state_current
               data:
                 option: "{{ states('input_text.zb_charger_state_current_delayed_charging_in_progress') }}"
+        - conditions:
+            - condition: trigger
+              id: "low_percentage_on"
+          sequence:
+            - action: switch.turn_on
+              entity_id: switch.zb_charger_gh
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.zb_charger_gh_state_current
+              data:
+                option: "{{ states('input_text.zb_charger_state_current_ordinary_charging_in_progress') }}"
       default:
         - action: system_log.write
           data:
-            message: "ZB plug GH on default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            message: "ZB plug GH on default action which is not defined @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
 # ############################################################

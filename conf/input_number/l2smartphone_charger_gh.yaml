@@ -9,31 +9,11 @@
 # ############################################################
 # input_number:
 
-# charge if below x% (normal charging)
-zb_charger_gh_min_percentage_low_percentage:
-  name: Charging min
-  min: 10
-  max: 90
-  step: 1
-  unit_of_measurement: "%"
-  mode: slider
-  icon: mdi:percent
-
 # charge up to x% (normal charging)
-zb_charger_gh_max_percentage_low_percentage:
+zb_charger_gh_max_percentage:
   name: Charging max
-  min: 50
-  max: 100
-  step: 1
-  unit_of_measurement: "%"
-  mode: slider
-  icon: mdi:percent
-
-# charge up to x% b/c of delayed charging is enabled and performed
-zb_charger_gh_max_percentage_delayed:
-  name: Charging max delayed
-  min: 50
-  max: 100
+  min: 80
+  max: 99
   step: 1
   unit_of_measurement: "%"
   mode: slider

@@ -38,10 +38,10 @@
         {{ (now() < today_at(states('input_datetime.zb_charger_uh_charging_delayed_start_at'))) }}
 
     # current battery level below delayed charging level
-    - name: "zb_charger_uh_cur_batt_lvl_below_max_delayed_chrg_level"
-      unique_id: "zb_charger_uh_cur_batt_lvl_below_max_delayed_chrg_level"
+    - name: "zb_charger_uh_cur_batt_lvl_below_max_delayed_charge_level"
+      unique_id: "zb_charger_uh_cur_batt_lvl_below_max_delayed_charge_level"
       state: >
-        {{ ((states('sensor.batt_lvl_current_uh') | int(0)) < (states('input_number.zb_charger_uh_max_percentage_delayed') | int(0))) }}
+        {{ ((states('sensor.batt_lvl_current_uh') | int(0)) < (states('input_number.zb_charger_uh_max_percentage') | int(0))) }}
 
     # current battery level below low charging level
     - name: "zb_charger_uh_cur_batt_lvl_below_low_chrg_level"

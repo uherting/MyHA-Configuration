@@ -45,7 +45,7 @@
       default:
         - action: system_log.write
           data:
-            message: "ZB plug UH on default action @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            message: "ZB plug UH on default action which is not defined @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
             level: "error"
             logger: "system_log.external"
 # ############################################################
