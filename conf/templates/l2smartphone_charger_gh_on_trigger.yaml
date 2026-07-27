@@ -6,17 +6,6 @@
 
 # template:
 - binary_sensor:
-    # trigger for emergency charging
-    - name: "zb_charger_gh_emergency_charging_on_trigger"
-      unique_id: "zb_charger_gh_emergency_charging_on_trigger"
-      state: >
-        {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome_charger_off', 'on')) and 
-           (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and 
-           (is_state('binary_sensor.zb_charger_gh_ahead_of_delayed_charging', 'on')) and 
-           (is_state('binary_sensor.zb_charger_gh_current_state_is_not_emergency_charging_finished', 'on')) and 
-           (is_state('binary_sensor.zb_charger_gh_cur_batt_lvl_below_emergency_chrg_level', 'on'))
-        }}
-
     # trigger for delayed charging
     - name: "zb_charger_gh_delayed_charging_on_trigger"
       unique_id: "zb_charger_gh_elayed_charging_on_trigger"

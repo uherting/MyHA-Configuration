@@ -11,9 +11,6 @@ zb_charger_gh_state_current:
   options:
     - "ordinary charging in progress"
     - "ordinary charging finished"
-    - "emergency charging in progress"
-    - "emergency charging finished"
-    - "awaiting delayed charging"
     - "delayed charging in progress"
     - "delayed charging finished"
     - "the current state is undefined"

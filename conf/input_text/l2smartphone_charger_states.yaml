@@ -13,14 +13,6 @@ zb_charger_state_current_ordinary_charging_finished:
   name: "zb charger state current ordinary charging finished"
   initial: "ordinary charging finished"
 
-zb_charger_state_current_emergency_charging_in_progress:
-  name: "zb charger state current emergency charging in progress"
-  initial: "emergency charging in progress"
-
-zb_charger_state_current_emergency_charging_finished:
-  name: "zb charger state current emergency charging finished"
-  initial: "emergency charging finished"
-
 zb_charger_state_current_awaiting_delayed_charging:
   name: "zb charger state current awaiting delayed charging"
   initial: "awaiting delayed charging"

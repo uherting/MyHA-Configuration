@@ -23,8 +23,6 @@ cards:
       - input_datetime.zb_charger_gh_charging_delayed_start_at
       - input_number.zb_charger_gh_timeframe_length
       - input_number.zb_charger_gh_max_percentage_delayed
-      - input_number.zb_charger_gh_min_percentage_emergency
-      - input_number.zb_charger_gh_max_percentage_emergency
       - input_select.zb_charger_gh_state_current
 
   - type: entities
@@ -40,8 +38,6 @@ cards:
       - input_datetime.zb_charger_uh_charging_delayed_start_at
       - input_number.zb_charger_uh_timeframe_length
       - input_number.zb_charger_uh_max_percentage_delayed
-      - input_number.zb_charger_uh_min_percentage_emergency
-      - input_number.zb_charger_uh_max_percentage_emergency
       - input_select.zb_charger_uh_state_current
 
   - type: entities
