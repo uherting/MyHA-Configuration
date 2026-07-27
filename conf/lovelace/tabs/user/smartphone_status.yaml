@@ -12,17 +12,6 @@ badges: []
 
 cards:
   - type: entities
-    title: Smartphone UH Note10pro
-    show_header_toggle: false
-    entities:
-      - device_tracker.spuhnote10pro
-      - sensor.spuhnote10pro_battery_state
-      - sensor.spuhnote10pro_battery_level
-      - sensor.spuhnote10pro_battery_temperature
-      - sensor.spuhnote10pro_charger_type
-      - binary_sensor.spuhnote10pro_is_charging
-
-  - type: entities
     title: Smartphone GH Note8pro
     show_header_toggle: false
     entities:
@@ -32,6 +21,17 @@ cards:
       - sensor.sp_ghnote8pro_battery_temperature
       - sensor.sp_ghnote8pro_charger_type
       - binary_sensor.sp_ghnote8pro_is_charging
+
+  - type: entities
+    title: Smartphone UH Note10pro
+    show_header_toggle: false
+    entities:
+      - device_tracker.spuhnote10pro
+      - sensor.spuhnote10pro_battery_state
+      - sensor.spuhnote10pro_battery_level
+      - sensor.spuhnote10pro_battery_temperature
+      - sensor.spuhnote10pro_charger_type
+      - binary_sensor.spuhnote10pro_is_charging
 
   - type: entities
     title: FireHD10
