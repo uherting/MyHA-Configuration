@@ -16,6 +16,15 @@
       state: >
         {{ is_state('binary_sensor.home_uwe_is_here', 'on') }}
 
+    # the charging functionality is enabled, person is at home, charger is on and state is undefined
+    - name: "zb_charger_uh_functionality_athome_charger_on_state_undefined"
+      unique_id: "zb_charger_uh_functionality_athome_charger_on_state_undefined"
+      state: >
+        {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and 
+          is_state('binary_sensor.person_uh_at_home', 'on') and 
+          (is_state('switch.zb_charger_uh', 'on')) and
+          (states('input_select.zb_charger_uh_state_current') ==  states('input_text.zb_charger_state_current_state_is_undefined')) }}
+
     # the charging functionality is enabled, person is at home and charger is off
     - name: "zb_charger_uh_functionality_athome_charger_off"
       unique_id: "zb_charger_uh_functionality_athome_charger_off"
@@ -24,12 +33,19 @@
           is_state('binary_sensor.person_uh_at_home', 'on') and 
           (is_state('switch.zb_charger_uh', 'off')) }}
 
-    # the charging functionality is enabled, and charger is on
+    # the charging functionality is enabled and charger is on
     - name: "zb_charger_uh_functionality_charger_on"
       unique_id: "zb_charger_uh_functionality_charger_on"
       state: >
         {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and 
           (is_state('switch.zb_charger_uh', 'on')) }}
+
+    # the charging functionality is enabled and charger is off
+    - name: "zb_charger_uh_functionality_charger_off"
+      unique_id: "zb_charger_uh_functionality_charger_off"
+      state: >
+        {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and 
+          (is_state('switch.zb_charger_uh', 'off')) }}
 
     # we are in the time frame as set for delayed charging
     - name: "zb_charger_uh_timeframe_in"

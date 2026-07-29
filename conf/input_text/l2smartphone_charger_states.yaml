@@ -10,8 +10,8 @@ zb_charger_state_current_normal_charging_in_progress:
   initial: "normal charging in progress"
 
 zb_charger_state_current_charging_finished:
-  name: "zb charger state current normal charging finished"
-  initial: "normal charging finished"
+  name: "zb charger state current charging finished"
+  initial: "charging finished"
 
 zb_charger_state_current_delayed_charging_in_progress:
   name: "zb charger state current delayed charging in progress"

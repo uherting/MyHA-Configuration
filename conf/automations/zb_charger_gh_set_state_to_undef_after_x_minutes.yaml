@@ -1,6 +1,6 @@
 # ############################################################
 #
-#  Set the state of the ZB plug GH to undefined
+#  Set the state of the ZB plug GH depending on the state of the switch / the current state
 #
 # ############################################################
 
@@ -11,13 +11,14 @@
   id: "082f3aa7-1fdc-47a2-a6d3-44e91679c4ac"
   description: "This automation sets the state of the ZB plug GH to undefined"
   mode: single
-  initial_state: false
+  initial_state: true
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: template
-      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_charging_finished') }}"
+      value_template: "{{ is_state('binary_sensor.zb_charger_gh_functionality_charger_off', 'on') }}"
       for:
-        minutes: 5
+        minutes: 3
+        seconds: 0
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
@@ -28,6 +29,29 @@
         entity_id: input_select.zb_charger_gh_state_current
       data:
         option: "{{ states('input_text.zb_charger_state_current_state_is_undefined') }}"
+
+# ############################################################
+#  Set the state of the ZB plug GH to charging
+# ############################################################
+- alias: Set the state of the ZB plug GH to charging
+  id: "019fae84-c923-739f-b297-d68213f83340"
+  description: "This automation sets the state of the ZB plug GH to charging"
+  mode: single
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: template
+      value_template: "{{ is_state('binary_sensor.zb_charger_gh_functionality_athome_charger_on_state_undefined', 'on') }}"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.zb_charger_gh_state_current
+      data:
+        option: "{{ states('input_text.zb_charger_state_current_normal_charging_in_progress') }}"
 # ############################################################
 #  END OF FILE
 # ############################################################
