@@ -9,7 +9,17 @@
 # ############################################################
 # input_number:
 
-# charge up to x% (normal charging)
+# charging starts at/below x per cent
+zb_charger_uh_min_percentage:
+  name: Charging min
+  min: 30
+  max: 79
+  step: 1
+  unit_of_measurement: "%"
+  mode: slider
+  icon: mdi:percent
+
+# charge up to x per cent
 zb_charger_uh_max_percentage:
   name: Charging max
   min: 80

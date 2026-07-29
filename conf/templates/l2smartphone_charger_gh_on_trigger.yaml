@@ -12,9 +12,8 @@
       state: >
         {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome_charger_off', 'on')) and 
            (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and 
-           (is_state('binary_sensor.zb_charger_gh_current_state_is_not_delayed_charging_finished', 'on')) and 
            (is_state('zb_charger_gh_timeframe_in', 'on')) and 
-           (is_state('binary_sensor.zb_charger_gh_cur_batt_lvl_below_max_delayed_chrg_level', 'on'))
+           (is_state('binary_sensor.zb_charger_gh_cur_batt_lvl_below_charge_level', 'on'))
         }}
 
     # trigger for low percentage charging
@@ -22,8 +21,7 @@
       unique_id: "zb_charger_gh_low_percentage_on_trigger"
       state: >
         {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome_charger_off', 'on')) and 
-           (is_state('input_boolean.zb_charger_gh_force_delayed', 'off')) and 
-           (is_state('binary_sensor.zb_charger_gh_cur_batt_lvl_below_low_chrg_level', 'on'))
+           (is_state('binary_sensor.zb_charger_gh_cur_batt_lvl_below_charge_level', 'on'))
         }}
 
 ####################################################################

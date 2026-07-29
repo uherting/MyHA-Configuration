@@ -15,11 +15,7 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: template
-      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_ordinary_charging_finished') }}"
-      for:
-        minutes: 5
-    - trigger: template
-      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_delayed_charging_finished') }}"
+      value_template: "{{ states('input_select.zb_charger_gh_state_current') ==  states('input_text.zb_charger_state_current_charging_finished') }}"
       for:
         minutes: 5
   # -------------------- CONDITIONS -------------------

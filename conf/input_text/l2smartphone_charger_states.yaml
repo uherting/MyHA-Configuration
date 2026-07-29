@@ -5,29 +5,17 @@
 ##########################################################################################
 
 # input_text:
-zb_charger_state_current_ordinary_charging_in_progress:
-  name: "zb charger state current ordinary charging in progress"
-  initial: "ordinary charging in progress"
+zb_charger_state_current_normal_charging_in_progress:
+  name: "zb charger state current normal charging in progress"
+  initial: "normal charging in progress"
 
-zb_charger_state_current_ordinary_charging_finished:
-  name: "zb charger state current ordinary charging finished"
-  initial: "ordinary charging finished"
-
-zb_charger_state_current_awaiting_delayed_charging:
-  name: "zb charger state current awaiting delayed charging"
-  initial: "awaiting delayed charging"
+zb_charger_state_current_charging_finished:
+  name: "zb charger state current normal charging finished"
+  initial: "normal charging finished"
 
 zb_charger_state_current_delayed_charging_in_progress:
   name: "zb charger state current delayed charging in progress"
   initial: "delayed charging in progress"
-
-zb_charger_state_current_delayed_charging_finished:
-  name: "zb charger state current delayed charging finished"
-  initial: "delayed charging finished"
-
-zb_charger_state_current_state_manually_triggered_charging_in_process:
-  name: "zb charger state current manual triggered charging in process"
-  initial: "manual triggered charging in process"
 
 zb_charger_state_current_state_is_undefined:
   name: "zb charger state current the current state is undefined"

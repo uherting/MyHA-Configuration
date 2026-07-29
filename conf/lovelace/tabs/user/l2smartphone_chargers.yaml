@@ -17,6 +17,7 @@ cards:
       - switch.zb_charger_gh
       - input_boolean.zb_charger_gh_functionality
       - sensor.sp_ghnote8pro_battery_level
+      - input_number.zb_charger_gh_min_percentage
       - input_number.zb_charger_gh_max_percentage
       - input_boolean.zb_charger_gh_force_delayed
       - input_datetime.zb_charger_gh_charging_delayed_start_at
@@ -30,6 +31,7 @@ cards:
       - switch.zb_charger_uh
       - input_boolean.zb_charger_uh_functionality
       - sensor.spuhnote10pro_battery_level
+      - input_number.zb_charger_uh_min_percentage
       - input_number.zb_charger_uh_max_percentage
       - input_boolean.zb_charger_uh_force_delayed
       - input_datetime.zb_charger_uh_charging_delayed_start_at
