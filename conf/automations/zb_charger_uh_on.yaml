@@ -41,7 +41,7 @@
               target:
                 entity_id: input_select.zb_charger_uh_state_current
               data:
-                option: "{{ states('input_text.zb_charger_state_current_normal_charging_in_progress') }}"
+                option: "{{ states('input_text.zb_charger_state_current_charging_in_progress') }}"
       default:
         - action: system_log.write
           data:

@@ -5,9 +5,9 @@
 ##########################################################################################
 
 # input_text:
-zb_charger_state_current_normal_charging_in_progress:
+zb_charger_state_current_charging_in_progress:
   name: "zb charger state current normal charging in progress"
-  initial: "normal charging in progress"
+  initial: "charging in progress"
 
 zb_charger_state_current_charging_finished:
   name: "zb charger state current charging finished"
