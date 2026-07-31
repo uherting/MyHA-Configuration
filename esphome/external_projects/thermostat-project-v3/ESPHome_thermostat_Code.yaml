@@ -242,14 +242,15 @@ animation:
 ##### Breaking Change: Added type: binary as a "Group" #####
 image:
   binary:
-    - file: "_icons/thermostat/home-thermometer.png"
-      id: home_thermometer
-    - file: "_icons/thermostat/arrow-left-circle-outline.png"
-      id: arrow_left
-    - file: "_icons/thermostat/arrow-right-circle-outline.png"
-      id: arrow_right
-    - file: "_icons/thermostat/lightbulb-on-outline.png"
-      id: bulb
+    - platform: file
+      - file: "_icons/thermostat/home-thermometer.png"
+        id: home_thermometer
+      - file: "_icons/thermostat/arrow-left-circle-outline.png"
+        id: arrow_left
+      - file: "_icons/thermostat/arrow-right-circle-outline.png"
+        id: arrow_right
+      - file: "_icons/thermostat/lightbulb-on-outline.png"
+        id: bulb
 
 font:
   - file: "_fonts/nasalization.ttf"

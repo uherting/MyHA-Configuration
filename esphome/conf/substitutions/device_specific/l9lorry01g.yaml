@@ -16,6 +16,12 @@ device_framework: arduino
 # the friendly name and id
 friendly_name: ""
 friendly_id: ""
+
+# template text sensor
+local_time_timestamp_name: $friendly_name Location timestamp now
+local_time_timestamp_id: ${friendly_id}_location_timestamp_now_id
+update_interval_template_text_sensor_local_time_timestamp: 1s
+
 ####################################################################
 # EOF
 ####################################################################

@@ -141,7 +141,7 @@ text_sensor:
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
-  # none so far
+  - <<: !include conf/text_sensor/l9lorry01g/l9lorry01g_now_timestamp.yaml
 
 #-------------------------------------------------------------------
 # GPS related setup
@@ -161,8 +161,9 @@ espnow:
 packet_transport:
   - platform: espnow
     peer_address: !secret ESPNOW_MAC_L9LORRY01D # consumer MAC address
-    encryption: "MySecretKey123"
+    encryption: !secret ESPNOW_PACKET_TRANSFER_ENCRYPTION_01
     sensors:
+      - ${local_time_timestamp_id}
       - ${gps_latitude_id}
       - ${gps_longitude_id}
       - ${gps_altitude_id}

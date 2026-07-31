@@ -29,7 +29,7 @@
                 id: lbl_page_location_time_start
                 text:
                   format: "%s"
-                  args: [ 'id(${loc_now_timedate_id}).state.c_str()' ]
+                  args: [ 'id(${local_now_timedate_id}).state.c_str()' ]
             - lvgl.label.update:
                 id: lbl_page_location_poi
                 text: "Time\nPOI"
