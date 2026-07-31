@@ -33,6 +33,13 @@
           is_state('binary_sensor.person_uh_at_home', 'on') and 
           (is_state('switch.zb_charger_uh', 'off')) }}
 
+    # the charging functionality is enabled and person is at home
+    - name: "zb_charger_uh_functionality_athome"
+      unique_id: "zb_charger_uh_functionality_athome"
+      state: >
+        {{ is_state('input_boolean.zb_charger_uh_functionality', 'on') and 
+          is_state('binary_sensor.person_uh_at_home', 'on') }}
+
     # the charging functionality is enabled and charger is on
     - name: "zb_charger_uh_functionality_charger_on"
       unique_id: "zb_charger_uh_functionality_charger_on"

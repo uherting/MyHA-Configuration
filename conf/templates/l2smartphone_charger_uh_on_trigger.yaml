@@ -10,10 +10,9 @@
     - name: "zb_charger_uh_delayed_charging_on_trigger"
       unique_id: "zb_charger_uh_elayed_charging_on_trigger"
       state: >
-        {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome_charger_off', 'on')) and 
+        {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and 
            (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and 
-           (is_state('zb_charger_uh_timeframe_in', 'on')) and 
-           (is_state('binary_sensor.zb_charger_uh_cur_batt_lvl_below_charge_level', 'on'))
+           (is_state('zb_charger_uh_timeframe_in', 'on'))
         }}
 
     # trigger for low percentage charging
