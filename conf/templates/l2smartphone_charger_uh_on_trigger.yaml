@@ -12,7 +12,7 @@
       state: >
         {{ (is_state('binary_sensor.zb_charger_uh_functionality_athome', 'on')) and 
            (is_state('input_boolean.zb_charger_uh_force_delayed', 'on')) and 
-           (is_state('zb_charger_uh_timeframe_in', 'on'))
+           (is_state('binary_sensor.zb_charger_uh_timeframe_in', 'on'))
         }}
 
     # trigger for low percentage charging
