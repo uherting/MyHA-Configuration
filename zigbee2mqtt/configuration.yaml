@@ -116,8 +116,9 @@ devices:
   '0xa4c1384ef5d61314':
     friendly_name: ZB_Plug_L2_Lounge_TV
     icon: device_icons/891fe1ea30760e219004850d8ff8ade0.png
-    power_precision: 1
+    power_precision: 2
     state_action: false
+    current_precision: 2
   '0x7cc6b6fffe9b0688':
     friendly_name: ZB_Router-SLZB-06M-01
     icon: device_icons/50d06336eb89ac636a88288cbdce8be3.png
