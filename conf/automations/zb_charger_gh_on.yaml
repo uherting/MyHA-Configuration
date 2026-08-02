@@ -1,9 +1,8 @@
 # ############################################################
 #  Turn the ZB plug on GH
 # ############################################################
-# automation.turn_the_zb_plug_gh_on_simple
 - alias: Turn the ZB plug GH on
-  id: "d7241af0-3816-43b4-8642-47499504882c"
+  id: "019fc1a7-7d2a-73ea-b778-b0355f8ec6e0"
   description: "This automation turns on the ZB plug GH"
   mode: single
   initial_state: true

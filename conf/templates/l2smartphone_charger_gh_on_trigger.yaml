@@ -8,7 +8,7 @@
 - binary_sensor:
     # trigger for delayed charging
     - name: "zb_charger_gh_delayed_charging_on_trigger"
-      unique_id: "zb_charger_gh_elayed_charging_on_trigger"
+      unique_id: "zb_charger_gh_delayed_charging_on_trigger"
       state: >
         {{ (is_state('binary_sensor.zb_charger_gh_functionality_athome', 'on')) and 
            (is_state('input_boolean.zb_charger_gh_force_delayed', 'on')) and 
