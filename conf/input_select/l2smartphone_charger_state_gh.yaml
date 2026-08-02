@@ -10,9 +10,8 @@ zb_charger_gh_state_current:
   icon: mdi:strategy
   options:
     - "charging in progress"
-    - "charging finished"
     - "delayed charging in progress"
-    - "delayed charging finished"
+    - "charging finished"
     - "the current state is undefined"
   initial: "the current state is undefined"
 ####################################################################
