@@ -7,6 +7,12 @@
 # template:
 - binary_sensor:
     # trigger for delayed charging
+    # ----
+    # attn: if the charging level is reached the switch is turned off and the status
+    # 'charging finished' is set. x minutes later the status is reset to 'undefined'.
+    # as the conditions above stayed true no delayed charging is triggered after the
+    # first delayed charging.
+    # ----
     - name: "zb_charger_uh_delayed_charging_on_trigger"
       unique_id: "zb_charger_uh_elayed_charging_on_trigger"
       state: >
