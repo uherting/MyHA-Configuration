@@ -1,0 +1,15 @@
+# ############################################################
+#
+#  Input boolean
+#
+# ############################################################
+
+#input_boolean:
+notebook_can_be_charged_at_night:
+  name: Allowing the charging of the notebook at night
+  icon: mdi:ev-station
+  # no need to define an initial value as it will be reloaded
+  # initial: off
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -40,7 +40,11 @@
       at: "07:01:00"
 
   # -------------------- CONDITIONS -------------------
-  condition: []
+  condition:
+    - alias: "Checking if charging is allowed to take place at night"
+      condition: state
+      entity_id: input_boolean.notebook_can_be_charged_at_night
+      state: "on"
 
   # --------------------- ACTIONS ---------------------
   action:
