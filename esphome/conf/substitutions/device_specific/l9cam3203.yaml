@@ -30,6 +30,9 @@ friendly_id: ""
 # PIR
 pir01_name: $friendly_name PIR 01
 pir01_id: ${friendly_id}_PIR_01
+
+# esp32cam flash LED: keep it on for a maximum time of 5 minutes (300 seconds) after turning it on
+cam_light_delay_till_off: 300s
 ###################################################################
 # EOF
 ####################################################################
