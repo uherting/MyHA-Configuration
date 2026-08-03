@@ -1,0 +1,35 @@
+####################################################################
+# SENSORS
+
+####################################################################
+# remote sensors from l9lorry01g via ESP-NOW packet transport
+  - platform: packet_transport
+    provider: ${espnow_packet_transport_provider_name_01}
+    # name: ${local_location_timestamp_name}
+    id: ${local_location_timestamp_id}
+    remote_id: ${remote_location_timestamp_id}
+
+      # - ${local_time_timestamp_id}
+      # - ${gps_latitude_id}
+      # - ${gps_longitude_id}
+      # - ${gps_altitude_id}
+      # - ${gps_speed_id}
+      # - ${gps_course_id}
+      # - ${gps_satellites_id}
+      # - ${gps_hdop_id}
+      # - ${aht20_01_temp_id}
+      # - ${aht20_01_hum_id}
+      # - ${bmp280_01_temp_id}
+      # - ${bmp280_01_pressure_id}
+
+# example sensor from https://esphome.io/components/packet_transport/espnow/#simple-example :
+# sensor:
+#   - platform: packet_transport
+#     provider: temp-sensor
+#     id: remote_temp
+#     remote_id: outdoor_temp
+#     name: "Remote Outdoor Temperature"
+
+####################################################################
+# EOF
+####################################################################

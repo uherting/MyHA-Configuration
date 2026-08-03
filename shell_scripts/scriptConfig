@@ -1,6 +1,8 @@
 HA_PATH="/usr/share/hassio/homeassistant"
 
-GIT_HOME_UH="/home/uwe/Git/UH"
+HOME_UH="/home/uwe"
+GIT_HOME_UH="${HOME_UH}/Git/UH"
+FIRMWARE_HOME_UH="${HOME_UH}/Downloads/"
 
 # if this script is not run on the HA server ESPHome is
 # located in a different directory

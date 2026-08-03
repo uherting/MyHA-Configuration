@@ -16,15 +16,14 @@
 #   - ESP32-cam
 #
 # Automation:
-#   - nope. and if it is HA internal only
+#   - HA internal only for switching the cam light off after a certain time
 #
 # WiFi:
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - 1 button
-#   - future plan:
-#     - 1 PIR sensor via I2C / MCP23017
+#   - none
+#
 # Output
 #   - none
 #
@@ -45,31 +44,25 @@ packages:
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
 
-  # Contained an error which got validated nevertheless. 
-  # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
-  # ota: !include conf/common/networking/ota.yaml
-
 ota: !include conf/common/networking/ota.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
 
 # change the log level temporary for this very device
 
-# this has to be done in conf/substitutions/overwrites/<devive>.yaml
+# this has to be done in conf/substitutions/overwrites/<device_name>.yaml
 # by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
 api: !include conf/common/networking/api.yaml
 time: !include conf/common/time.yaml
-# sun: !include conf/common/sun.yaml
+sun: !include conf/common/sun.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
 i2c: !include conf/common/device/i2c_esp32cam_v1.yaml
-# dallas: !include conf/common/device/dallas.yaml
-# mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
 ###################### DETAILED CONFIGURATION ######################
@@ -81,20 +74,11 @@ i2c: !include conf/common/device/i2c_esp32cam_v1.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: 
   - <<: !include conf/common/interval/connectivity.yaml
-  # - <<: !include conf/common/interval/cam32_auto_restart.yaml
-# script:
-#   - <<: !include conf/common/script/pir1_to_ssr1.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status_espcam.yaml
-  # - <<: !include conf/common/binary_sensor/pir01.yaml
-  # - <<: !include conf/common/binary_sensor/pir02.yaml
-  # - <<: !include conf/common/binary_sensor/reed01.yaml
-  # - <<: !include conf/common/binary_sensor/reed02.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -103,22 +87,7 @@ sensor:
   - <<: !include conf/common/sensor/wifisignal.yaml
   - <<: !include conf/common/sensor/uptime.yaml
   # device related
-  # - <<: !include conf/sensor/l9cam3202/l9cam3202.yaml
-  # - <<: !include conf/common/sensor/bh1750_01.yaml
-  # - <<: !include conf/common/sensor/dht_esp32_GPIO14_upd_01min.yaml
-
-#-------------------------------------------------------------------
-# SERVOS
-# servo:
-#   - <<: !include conf/common/servo/servo01.yaml
-# output:
-#   - <<: !include conf/common/output/servo01.yaml
-
-#-------------------------------------------------------------------
-# SWITCHES
-# switch:
-  # - <<: !include conf/common/switch/ssr01_B0_via_resistor.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_resistor.yaml
+  # none so far
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -132,30 +101,25 @@ text_sensor:
 
 #################### DETAILED CONFIGURATION CAM ######################
 
+#-------------------------------------------------------------------
 # cam device
-
-# 1st option: psram
 psram:
   id: psram1
-
-# 2nd option: the complete config of the cam in an extra file
-# esp32_camera: !include conf/common/esp32_camera/esp32cam_640x480.yaml
 esp32_camera: !include conf/common/esp32_camera/esp32cam_800x600.yaml
-
+#-------------------------------------------------------------------
 # web server on cam device
 # esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
-
 #-------------------------------------------------------------------
 # flashlight
-output: !include conf/common/esp32_camera/esp32cam_output.yaml
-
+# output: !include conf/common/esp32_camera/esp32cam_output.yaml
 #-------------------------------------------------------------------
 # cam light
-light: !include conf/common/esp32_camera/esp32cam_light.yaml
-
+# light: !include conf/common/esp32_camera/esp32cam_light.yaml
 #-------------------------------------------------------------------
-# web server
-# esp32_camera_web_server: !include conf/common/esp32_camera/esp32_camera_web_server.yaml
+switch:
+  # flash LED
+  - <<: !include conf/common/switch/esp32cam_flashlight.yaml
+
 ####################################################################
 # EOF
 ####################################################################
