@@ -31,7 +31,7 @@
                 id: lbl_page_location_poi
                 text:
                   format: "%s"
-                  args: [ 'id(${loc_now_timedate_id}).state.c_str()' ]
+                  args: [ 'id(${local_now_timedate_id}).state.c_str()' ]
           else:
             - lambda: |-
                ESP_LOGD("binary_sensor", "Location POI is OFF");

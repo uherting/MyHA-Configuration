@@ -126,6 +126,8 @@ sensor:
   # device, even though they are connected to the I2C bus.
   - <<: !include conf/common/sensor/aht20_01.yaml
   - <<: !include conf/common/sensor/bmp280_01.yaml
+  # the timestamp sensor is used to provide a timestamp for the data sent via ESPNow to the l9lorry01d device.
+  - <<: !include conf/text_sensor/l9lorry01g/l9lorry01g_now_timestamp.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
@@ -161,8 +163,9 @@ espnow:
 packet_transport:
   - platform: espnow
     peer_address: !secret ESPNOW_MAC_L9LORRY01D # consumer MAC address
-    encryption: "MySecretKey123"
+    encryption: !secret ESPNOW_PACKET_TRANSFER_ENCRYPTION_01
     sensors:
+      - ${local_time_timestamp_id}
       - ${gps_latitude_id}
       - ${gps_longitude_id}
       - ${gps_altitude_id}

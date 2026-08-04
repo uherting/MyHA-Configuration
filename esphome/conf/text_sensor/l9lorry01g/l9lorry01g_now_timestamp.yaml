@@ -1,22 +1,20 @@
 # ############################################################
 #
-#  templated text sensor
+#  templated sensor
 #
 # ############################################################
 
-# text_sensor:
+# sensor:
   - platform: template
-    name: ${local_now_timedate_name}
-    id: ${local_now_timedate_id}
+    name: ${local_time_timestamp_name}
+    id: ${local_time_timestamp_id}
     lambda: |-
       if (id(esphome_time).now().is_valid()) {
-        return (id(esphome_time).now().strftime("%H:%M:%S\n%d.%m.%y"));
+        return (id(esphome_time).now().timestamp);
       } else {
-        return ( "NoTime\nNoDate" );
+        return ( 0 );
       }
-    update_interval: ${update_interval_template_text_sensor_loc_now_timedate}
+    update_interval: ${update_interval_template_text_sensor_local_time_timestamp}
 # ############################################################
 #  END OF FILE
 # ############################################################
-
-

@@ -13,8 +13,8 @@
     name: "L2 Kitchen12 Microwave Sensor"
     id: widget_sensor_microwave
     entity_id: switch.zb_plug_l2_kitchen_microwave
-    # trigger_on_initial_state: true
-    publish_initial_state: true
+    trigger_on_initial_state: true
+    # publish_initial_state: true
     on_state:
       - if:
           condition:

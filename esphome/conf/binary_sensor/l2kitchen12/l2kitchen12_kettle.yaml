@@ -13,8 +13,8 @@
     name: "L2 Kitchen12 Kettle Sensor"
     id: widget_sensor_kettle
     entity_id: switch.zb_plug_l2_kitchen_kettle
-    # trigger_on_initial_state: true
-    publish_initial_state: true
+    trigger_on_initial_state: true
+    # publish_initial_state: true
     on_state:
       - if:
           condition:

@@ -12,8 +12,7 @@ esphome:
   on_boot:
     priority: -100
     then:
-      - output.turn_off:
-          id: ${cam_light_id}
+      - switch.turn_off: $cam_light_id
 
 # edited due to changes ahead
 # for details see https://github.com/esphome/esphome/pull/8118

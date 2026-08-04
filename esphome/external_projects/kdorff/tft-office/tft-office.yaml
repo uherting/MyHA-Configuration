@@ -123,7 +123,8 @@ font:
     size: 30
 
 image:
-  - file: "images/butterfly.png"
+  - platform: file
+    file: "images/butterfly.png"
     id: butterfly_image
     type: RGB565
     resize: 200x200

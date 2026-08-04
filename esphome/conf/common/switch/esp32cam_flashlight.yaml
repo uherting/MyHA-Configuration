@@ -1,0 +1,20 @@
+####################################################################
+# SWITCHES
+
+# switch:
+
+#############################
+# flash LED
+  - platform: gpio
+    pin: $cam_light_pin
+    id: $cam_light_id
+    name: $cam_light_name
+    icon: mdi:flashlight
+    restore_mode: $cam_light_restore_mode
+    on_turn_on:
+    - delay: $cam_light_delay_till_off
+    - switch.turn_off: $cam_light_id
+
+####################################################################
+# EOF
+####################################################################

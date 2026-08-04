@@ -34,6 +34,15 @@ substitutions:
   restart_device_switch_id: ${friendly_id}_Restart_Device
   restart_device_switch_name: $friendly_name Restart Device
 
+  # ================= ESP32CAM related stuff =================
+
+  # esp32cam flash LED
+  cam_light_name: $friendly_name CamLight
+  cam_light_id: ${friendly_id}_CamLight
+  cam_light_pin: GPIO04
+  cam_light_restore_mode: ALWAYS_OFF
+  cam_light_delay_till_off: 500ms
+
   # ================= CONNECTED SENSORS / INTERFACES =================
 
   # AHT10
