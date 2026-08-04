@@ -12,10 +12,11 @@
   id: "8eb2599a-157e-40a6-8d8b-a0a73a28a3a2"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  triggers:
-    - trigger: state
-      entity_id: binary_sensor.cam_rworld1_motion
-      to: "on"
+  # triggers:
+  #   -or
+  #     trigger: state
+  #       entity_id: binary_sensor.cam_rworld1_motion
+  #       to: "on"
   # trigger:
   #   - platform: state
   #     entity_id: binary_sensor.cam_rworld1_motion
@@ -31,24 +32,24 @@
     # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
     - alias: "Cam cooldown RWorld01 not activated"
       condition: state
-      entity_id: input_boolean.cam_rworld1_cooldown
-      state: "off"
+      entity_id: input_boolean.cam_rworld1_snapshot_enabled
+      state: on
   # --------------------- ACTIONS ---------------------
   action:
     # ------------------- SEND NOTIFICATION -------------------
-    - action: script.tg_send_txt
-      data:
-        msg_title: "Camera RWorld01 sensed something"
-        msg_text: "The camera RWorld01 sensed a person / vehicle."
-        msg_receiver: "admin"
+    # - action: script.tg_send_txt
+    #   data:
+    #     msg_title: "Camera RWorld01 sensed something"
+    #     msg_text: "The camera RWorld01 sensed a person / vehicle."
+    #     msg_receiver: "admin"
     # - service: script.tg_send_one_file
     #   data:
     #     msg_filename: ""
     #     msg_caption: "The camera RWorld01 sensed a person."
     #     msg_receiver: "notify"
-    - action: input_boolean.turn_on
+    - action: input_boolean.turn_off
       target:
-        entity_id: input_boolean.cam_rworld1_cooldown
+        entity_id: input_boolean.cam_rworld1_snapshot_enabled
 ############################################################
 #  END OF FILE
 # ############################################################
