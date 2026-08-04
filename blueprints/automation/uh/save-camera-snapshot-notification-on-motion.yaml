@@ -64,7 +64,7 @@ variables:
   archive_file2: !input archive_file
   delay: !input "delay"
 action:
-  - delay: "{{ delay }}"
+  - delay: !input delay
   - service: camera.snapshot
     entity_id: !input "camera"
     data:

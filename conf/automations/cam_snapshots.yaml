@@ -15,10 +15,10 @@
   # -------------------- CONDITIONS -------------------
   condition:
     # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
-    - alias: "Cam cooldown RWorld01 not activated"
+    - alias: "Cam RWorld01 snapshots enabled"
       condition: state
       entity_id: input_boolean.cam_rworld1_snapshot_enabled
-      state: "off"
+      state: "on"
   # --------------------- BLUEPRINT --------------------
   use_blueprint:
     path: uh/save-camera-snapshot-notification-on-motion.yaml

@@ -6,7 +6,7 @@
 
 #input_boolean:
 cam_rworld1_snapshot_enabled:
-  name: "Cam Rworld1 CoolDown"
+  name: "Cam Rworld1 snapshot enabled"
   icon: mdi:coolant-temperature
   initial: true
 # ############################################################

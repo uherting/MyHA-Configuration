@@ -1,45 +1,18 @@
 # ############################################################
-#
-#  Handling the cooldown
-#    Automation related to motion detection and further notifications
-#
+# Camera RWorld01 related automations
 # ############################################################
 
 # ############################################################
-# Camera RWorld01 snapshot disabled
+# Camera RWorld01 snapshot reenabling
 # ############################################################
-- alias: Camera RWorld01 snapshot disabled
-  id: "9ba5dd9f-ee29-407a-a4f6-ea0e7bd1c952"
-  initial_state: true
-  # --------------------- TRIGGER ---------------------
-  triggers:
-    - trigger: state
-      entity_id: binary_sensor.cam_rworld1_motion
-      to: "on"
-  # -------------------- CONDITIONS -------------------
-  conditions:
-    - condition: state
-      entity_id: input_boolean.cam_rworld1_snapshot_enabled
-      state: true
-  # --------------------- ACTIONS ---------------------
-  action:
-    # --------------------- START COOLDOWN ---------------------
-    - delay: 1s
-    # - action: input_boolean.turn_on
-    #   target:
-    #     entity_id: input_boolean.cam_rworld1_snapshot_enabled
-
-# ############################################################
-# Camera RWorld01 snapshot enabled
-# ############################################################
-- alias: Camera RWorld01 snapshot enabled
+- alias: Camera RWorld01 snapshot reenabling
   id: "07b3755b-d694-4cb8-9f1d-e2310d2546c5"
   initial_state: true
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: state
       entity_id: input_boolean.cam_rworld1_snapshot_enabled
-      to: true
+      to: "true"
       for:
         minutes: 1
         seconds: 30
@@ -48,7 +21,7 @@
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- END COOLDOWN ---------------------
-    - action: input_boolean.turn_off
+    - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.cam_rworld1_snapshot_enabled
 ############################################################
