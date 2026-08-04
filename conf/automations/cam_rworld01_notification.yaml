@@ -33,10 +33,9 @@
       condition: state
       entity_id: input_boolean.cam_rworld1_cooldown
       state: "off"
-  # condition: []
   # --------------------- ACTIONS ---------------------
   action:
-    # ------------------- CREATE NOTIFICATION -------------------
+    # ------------------- SEND NOTIFICATION -------------------
     - action: script.tg_send_txt
       data:
         msg_title: "Camera RWorld01 sensed something"
@@ -47,6 +46,9 @@
     #     msg_filename: ""
     #     msg_caption: "The camera RWorld01 sensed a person."
     #     msg_receiver: "notify"
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.cam_rworld1_cooldown
 ############################################################
 #  END OF FILE
 # ############################################################
