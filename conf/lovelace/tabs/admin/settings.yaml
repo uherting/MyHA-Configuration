@@ -26,6 +26,7 @@ cards:
     show_header_toggle: false
     entities:
       - input_boolean.notebook_can_be_charged_at_night
+      - input_boolean.cam_rworld1_snapshot_enabled
       - input_boolean.zb_plug_l2_bedroom_misc01_btproxy
       - input_boolean.system_notify_general
       - input_boolean.system_notify_debugging

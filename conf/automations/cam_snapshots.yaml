@@ -14,7 +14,7 @@
   initial_state: true
   # -------------------- CONDITIONS -------------------
   condition:
-    # only the 1st occurance gets attention. next trigger will be accepted after the cooldown time
+    # are we allowed to take a snapshot?
     - alias: "Cam RWorld01 snapshots enabled"
       condition: state
       entity_id: input_boolean.cam_rworld1_snapshot_enabled
@@ -31,7 +31,7 @@
       camera2: camera.l9cam3202_cam
       file2: /media/l9cam3202/last_motion.jpg
       archive_file2: /media/l9cam3202/archive/motion_{{ now().strftime("%Y%m%d-%H%M%S")}}.jpg
-      delay: 1s
+      delay: 00:00:01
 ############################################################
 #  END OF FILE
 # ############################################################

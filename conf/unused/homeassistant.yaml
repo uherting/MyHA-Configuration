@@ -11,17 +11,9 @@ external_url: !secret HA_EXTERNAL_URL
 internal_url: !secret HA_INTERNAL_URL
 
 allowlist_external_dirs:
-  - /config/var/opt/stream
-  - /config/var/opt/tg/l9esp32cam01
-  - /config/var/opt/tg/l9esp32cam02
-  - /config/var/opt/tg/l9esp32cam03
-  - /config/var/opt/tg/l9esp32cam04
-  - /config/var/opt/tg/l9esp32cam05
-  - /config/var/opt/tg/l9esp32cam06
-  - /config/var/opt/tg/l9esp32cam07
-  - /config/var/opt/tg/l9esp32cam08
-  - /config/var/opt/tg/l9ttgocam01
-  - /config/var/opt/tg/l9ttgocam02
-  - /config/var/opt/tg/ipcam_ker01
+  - /media/l9cam3202
+  - /media/l9cam3202/archive
+  - /media/rworld1
+  - /media/rworld1/archive
 
 customize: !include customization.yaml
