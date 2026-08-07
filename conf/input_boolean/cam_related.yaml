@@ -5,10 +5,30 @@
 # ############################################################
 
 #input_boolean:
+
+# taking snapshots
 cam_rworld1_snapshot_enabled:
   name: "Cam Rworld1 snapshot enabled"
   icon: mdi:check
   initial: true
+
+# counting people / vehicles
+cam_cnt_rworld1_person_enabled:
+  name: Cam cnt Rworld1 person enabled
+  icon: mdi:check
+  initial: false
+cam_cnt_rworld1_vehicle_enabled:
+  name: Cam cnt Rworld1 vehicle enabled
+  icon: mdi:check
+  initial: false
+cam_cnt_rworld3_person_enabled:
+  name: Cam cnt Rworld3 person enabled
+  icon: mdi:check
+  initial: false
+cam_cnt_rworld3_vehicle_enabled:
+  name: Cam cnt Rworld3 vehicle enabled
+  icon: mdi:check
+  initial: false
 # ############################################################
 #  END OF FILE
 # ############################################################

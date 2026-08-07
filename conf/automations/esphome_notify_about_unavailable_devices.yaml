@@ -19,12 +19,6 @@
         ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and
         states('binary_sensor.is_it_safe_to_send_notifications')
         }}"
-  # trigger:
-  #   - platform: template
-  #     value_template: "{{
-  #       ((state_attr('sensor.unavailable_esphome_devices_info', 'device_list_length') | int(0)) > 0) and
-  #       states('binary_sensor.is_it_safe_to_send_notifications')
-  #       }}"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []

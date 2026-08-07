@@ -20,19 +20,9 @@
       event_type: system_log_event
       event_data:
         level: ERROR
-  # trigger:
-  #   - platform: event
-  #     event_type: system_log_event
-  #     event_data:
-  #       level: ERROR
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
-  # condition:
-  #   - condition: template
-  #     value_template: "{{ states(trigger.entity_id) != 'unknown'}}"
-  #   - condition: template
-  #     value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- INCREASE COUNTER ----------------
@@ -52,19 +42,9 @@
       event_type: system_log_event
       event_data:
         level: WARNING
-  # trigger:
-  #   - platform: event
-  #     event_type: system_log_event
-  #     event_data:
-  #       level: WARNING
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
-  # condition:
-  #   - condition: template
-  #     value_template: "{{ states(trigger.entity_id) != 'unknown'}}"
-  #   - condition: template
-  #     value_template: "{{ (states(trigger.entity_id) | int(0) ) != 0}}"
   # --------------------- ACTIONS ---------------------
   action:
     - action: counter.increment

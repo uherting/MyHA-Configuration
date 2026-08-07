@@ -1,0 +1,29 @@
+# ############################################################
+#
+#  Count Home Assistant errors and warnings
+#
+#   from: https://community.home-assistant.io/t/counter-warning-error-issue/85490/11
+#
+# ############################################################
+
+# counter:
+
+cam_counting_rworld1_person:
+  name: Cam counting Rworld1 person
+  icon: mdi:account-plus
+  restore: true
+cam_counting_rworld1_vehicle:
+  name: Cam counting Rworld1 vehicle
+  icon: mdi:car-2-plus
+  restore: true
+cam_counting_rworld3_person:
+  name: Cam counting Rworld3 person
+  icon: mdi:account-plus
+  restore: true
+cam_counting_rworld3_vehicle:
+  name: Cam counting Rworld3 vehicle
+  icon: mdi:car-2-plus
+  restore: true
+# ############################################################
+#  END OF FILE
+# ############################################################

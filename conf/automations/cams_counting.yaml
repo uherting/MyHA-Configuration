@@ -1,0 +1,161 @@
+# ############################################################
+#
+#  Count vehicles or people detected by a cam --- counting
+#
+# ############################################################
+
+# ############################################################
+# Count vehicles or people detected by a cam
+# ############################################################
+- alias: Count vehicles or people detected by a cam
+  id: "019fdc52-5949-76fc-aba4-e69b24306f1a"
+  initial_state: true
+  mode: parallel
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.rworld1_person
+      id: "rworld1_person"
+      to: "on"
+    - trigger: state
+      entity_id: binary_sensor.rworld1_vehicle
+      id: "rworld1_vehicle"
+      to: "on"
+    - trigger: state
+      entity_id: binary_sensor.rworld3_person
+      id: "rworld3_person"
+      to: "on"
+    - trigger: state
+      entity_id: binary_sensor.rworld3_vehicle
+      id: "rworld3_vehicle"
+      to: "on"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    - choose:
+        # vehicle counter rworld1
+        - conditions:
+            - condition: trigger
+              id: "rworld1_vehicle"
+          sequence:
+            - if:
+                - condition: state
+                  entity_id: input_boolean.cam_cnt_rworld1_vehicle_enabled
+                  state: "on"
+              then:
+                - action: counter.increment
+                  entity_id: counter.cam_counting_rworld1_vehicle
+    - choose:
+        # person counter rworld1
+        - conditions:
+            - condition: trigger
+              id: "rworld1_person"
+          sequence:
+            - if:
+                - condition: state
+                  entity_id: input_boolean.cam_cnt_rworld1_person_enabled
+                  state: "on"
+              then:
+                - action: counter.increment
+                  entity_id: counter.cam_counting_rworld1_person
+    - choose:
+        # person counter rworld3
+        - conditions:
+            - condition: trigger
+              id: "rworld3_person"
+          sequence:
+            - if:
+                - condition: state
+                  entity_id: input_boolean.cam_cnt_rworld3_person_enabled
+                  state: "on"
+              then:
+                - action: counter.increment
+                  entity_id: counter.cam_counting_rworld3_person
+    - choose:
+        # vehicle counter rworld3
+        - conditions:
+            - condition: trigger
+              id: "rworld3_vehicle"
+          sequence:
+            - if:
+                - condition: state
+                  entity_id: input_boolean.cam_cnt_rworld3_vehicle_enabled
+                  state: "on"
+              then:
+                - action: counter.increment
+                  entity_id: counter.cam_counting_rworld3_vehicle
+      default:
+        - action: system_log.write
+          data:
+            message: "Count based on a cam default action (ERROR) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+            level: "error"
+            logger: "system_log.external"
+
+# ############################################################
+# Inform admin about vehicles and people count and reset the counters
+# ############################################################
+- alias: Inform admin about vehicles and people count and reset the counters
+  id: "019fdd3a-3107-706a-aead-6e275b9812e9"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: time
+      at: "08:00:00"
+  # -------------------- CONDITIONS -------------------
+  # none whatsoever
+  condition:
+    - condition: numeric_state
+      entity_id: counter.homeassistant_errors
+      above: 0
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ---------------- SEND NOTIFICATION ---------------
+    - if:
+        - condition: state
+          entity_id: input_boolean.cam_cnt_rworld1_person_enabled
+          state: "on"
+      then:
+        - action: script.tg_send_txt
+          data_template:
+            msg_title: "Cams counter Rworld1 people"
+            msg_text: "People counted since midnight: {{ states('counter.cam_counting_rworld1_person') | string }}\n"
+            msg_receiver: "admin"
+    - if:
+        - condition: state
+          entity_id: input_boolean.cam_cnt_rworld1_vehicle_enabled
+          state: "on"
+      then:
+        - action: script.tg_send_txt
+          data_template:
+            msg_title: "Cams counter Rworld1 vehicles"
+            msg_text: "Vehicles counted since midnight: {{ states('counter.cam_counting_rworld1_vehicle') | string }}\n"
+            msg_receiver: "admin"
+    - if:
+        - condition: state
+          entity_id: input_boolean.cam_cnt_rworld3_person_enabled
+          state: "on"
+      then:
+        - action: script.tg_send_txt
+          data_template:
+            msg_title: "Cams counter Rworld3 people"
+            msg_text: "People counted since midnight: {{ states('counter.cam_counting_rworld3_people') | string }}\n"
+            msg_receiver: "admin"
+    - if:
+        - condition: state
+          entity_id: input_boolean.cam_cnt_rworld3_vehicle_enabled
+          state: "on"
+      then:
+        - action: script.tg_send_txt
+          data_template:
+            msg_title: "Cams counter Rworld3 vehicles"
+            msg_text: "Vehicles counted since midnight: {{ states('counter.cam_counting_rworld3_vehicle') | string }}\n"
+            msg_receiver: "admin"
+    - action: cams_counter_reset_rworld1_person
+    - action: cams_counter_reset_rworld1_vehicle
+    - action: cams_counter_reset_rworld3_person
+    - action: cams_counter_reset_rworld3_vehicle
+# ############################################################
+#  END OF FILE
+# ############################################################
