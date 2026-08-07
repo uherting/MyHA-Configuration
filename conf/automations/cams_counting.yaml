@@ -152,10 +152,10 @@
             msg_title: "Cams counter Rworld3 vehicles"
             msg_text: "Vehicles counted since midnight: {{ states('counter.cam_counting_rworld3_vehicle') | string }}\n"
             msg_receiver: "admin"
-    - action: cams_counter_reset_rworld1_person
-    - action: cams_counter_reset_rworld1_vehicle
-    - action: cams_counter_reset_rworld3_person
-    - action: cams_counter_reset_rworld3_vehicle
+    - action: script.cams_counter_reset_rworld1_person
+    - action: script.cams_counter_reset_rworld1_vehicle
+    - action: script.cams_counter_reset_rworld3_person
+    - action: script.cams_counter_reset_rworld3_vehicle
 # ############################################################
 #  END OF FILE
 # ############################################################
