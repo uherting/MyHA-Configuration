@@ -140,7 +140,7 @@
         - action: script.tg_send_txt
           data_template:
             msg_title: "Cams counter Rworld3 people"
-            msg_text: "People counted since midnight: {{ states('counter.cam_counting_rworld3_people') | string }}\n"
+            msg_text: "People counted since midnight: {{ states('counter.cam_counting_rworld3_person') | string }}\n"
             msg_receiver: "admin"
     - if:
         - condition: state
