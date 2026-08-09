@@ -102,7 +102,7 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: time
-      at: "08:00:40"
+      at: "14:13:40"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition:

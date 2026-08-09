@@ -9,28 +9,28 @@ cams_counter_reset_rworld1_person:
   sequence:
     service: counter.reset
     data:
-      entity_id: cam_counting_rworld1_person
+      entity_id: counter.cam_counting_rworld1_person
 
 cams_counter_reset_rworld1_vehicle:
   alias: "Reset cam counter rworld1 vehicle"
   sequence:
     service: counter.reset
     data:
-      entity_id: cam_counting_rworld1_vehicle
+      entity_id: counter.cam_counting_rworld1_vehicle
 
 cams_counter_reset_rworld3_person:
   alias: "Reset cam counter rworld3 person"
   sequence:
     service: counter.reset
     data:
-      entity_id: cam_counting_rworld3_person
+      entity_id: counter.cam_counting_rworld3_person
 
 cams_counter_reset_rworld3_vehicle:
   alias: "Reset cam counter rworld3 vehicle"
   sequence:
     service: counter.reset
     data:
-      entity_id: cam_counting_rworld3_vehicle
+      entity_id: counter.cam_counting_rworld3_vehicle
 # ############################################################
 #  END OF FILE
 # ############################################################
