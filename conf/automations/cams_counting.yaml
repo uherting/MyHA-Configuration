@@ -102,13 +102,10 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: time
-      at: "14:13:40"
+      at: "00:00:40"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
-  condition:
-    - condition: numeric_state
-      entity_id: counter.homeassistant_errors
-      above: 0
+  condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # ---------------- SEND NOTIFICATION ---------------
