@@ -124,7 +124,7 @@ script:
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # - <<: !include conf/common/binary_sensor/pir_A0.yaml
-  # reed relay from bathroom window
+  # reed relay from bathroom window (replaced by ZB sensor)
   # - <<: !include conf/common/binary_sensor/reed_window_noexecute_A710.yaml
   # the touch buttons
   - <<: !include conf/common/binary_sensor/touch_button_A303_on_multi_click.yaml
@@ -144,6 +144,7 @@ sensor:
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env01.yaml
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env10.yaml
   - <<: !include conf/common/sensor/veml7700_standard_short.yaml
+  - <<: !include conf/common/sensor/vl53L0x_single.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 

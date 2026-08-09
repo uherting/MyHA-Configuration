@@ -291,12 +291,22 @@ substitutions:
   vl53l0x_01_enablepin: GPIO19
   vl53l0x_01_timeout: 200us
   vl53l0x_01_updateinterval: 500ms
+  vl53l0x_01_unitofmeasurement: ${vl53l0x_unitofmeasurement_mm}
 
-  # VEML7700 (ambient light sensor)
-  veml7700_01_name: $friendly_name veml7700 01
-  veml7700_01_id: ${friendly_id}_veml7700_01
+  vl53l0x_02_name: $friendly_name Distance
+  vl53l0x_02_id: ${friendly_id}_distance
+  vl53l0x_02_address: "0x29"
+  vl53l0x_02_enablepin: GPIO19
+  vl53l0x_02_timeout: 200us
+  vl53l0x_02_updateinterval: 500ms
+  vl53l0x_02_unitofmeasurement: ${vl53l0x_unitofmeasurement_mm}
+
+  # VEML7700 (ambient light sensor via I2C)
+  veml7700_01_name: $friendly_name Ambient Light Sensor 01
+  veml7700_01_id: ${friendly_id}_ambient_light_sensor_01
   veml7700_01_address: "0x10"
   veml7700_01_updateinterval: 60s
+  veml7700_01_ambient_light: "Ambient light"
 ####################################################################
 # EOF
 ####################################################################
