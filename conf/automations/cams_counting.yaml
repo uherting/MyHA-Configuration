@@ -35,19 +35,6 @@
   # --------------------- ACTIONS ---------------------
   action:
     - choose:
-        # vehicle counter rworld1
-        - conditions:
-            - condition: trigger
-              id: "rworld1_vehicle"
-          sequence:
-            - if:
-                - condition: state
-                  entity_id: input_boolean.cam_cnt_rworld1_vehicle_enabled
-                  state: "on"
-              then:
-                - action: counter.increment
-                  entity_id: counter.cam_counting_rworld1_vehicle
-    - choose:
         # person counter rworld1
         - conditions:
             - condition: trigger
@@ -60,6 +47,19 @@
               then:
                 - action: counter.increment
                   entity_id: counter.cam_counting_rworld1_person
+    - choose:
+        # vehicle counter rworld1
+        - conditions:
+            - condition: trigger
+              id: "rworld1_vehicle"
+          sequence:
+            - if:
+                - condition: state
+                  entity_id: input_boolean.cam_cnt_rworld1_vehicle_enabled
+                  state: "on"
+              then:
+                - action: counter.increment
+                  entity_id: counter.cam_counting_rworld1_vehicle
     - choose:
         # person counter rworld3
         - conditions:
@@ -102,7 +102,7 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: time
-      at: "08:00:00"
+      at: "08:00:40"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition:

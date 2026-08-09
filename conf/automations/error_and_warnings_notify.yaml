@@ -16,7 +16,7 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: time
-      at: "08:00:00"
+      at: "08:00:30"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition:
@@ -40,9 +40,9 @@
   id: "c4a32259-0632-4155-a923-6f5462bbc45e"
   initial_state: true
   # --------------------- TRIGGER ---------------------
-  trigger:
-    - platform: time
-      at: "08:00:00"
+  triggers:
+    - trigger: time
+      at: "08:00:30"
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition:
