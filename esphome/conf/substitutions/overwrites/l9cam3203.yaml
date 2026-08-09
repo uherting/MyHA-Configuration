@@ -6,6 +6,8 @@ dummy_value: "dummy value"
 
 # see secrets.yaml for log level definitions
 # log_level: !secret LOG_LEVEL_DEBUG
+
+cam_light_delay_till_off: 360s
 ####################################################################
 # EOF
 ####################################################################
