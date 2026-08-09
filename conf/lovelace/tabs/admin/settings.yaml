@@ -15,6 +15,19 @@ cards:
     max_results: 15
 
   - type: entities
+    title: Cam counting
+    show_header_toggle: false
+    entities:
+      - input_boolean.cam_cnt_rworld1_person_enabled
+      - counter.cam_counting_rworld1_person
+      - input_boolean.cam_cnt_rworld1_vehicle_enabled
+      - counter.cam_counting_rworld1_vehicle
+      - input_boolean.cam_cnt_rworld3_person_enabled
+      - counter.cam_counting_rworld3_person
+      - input_boolean.cam_cnt_rworld3_vehicle_enabled
+      - counter.cam_counting_rworld3_vehicle
+
+  - type: entities
     title: TRV related entities
     show_header_toggle: false
     entities:
@@ -32,19 +45,6 @@ cards:
       - input_boolean.system_notify_debugging
       - binary_sensor.ha_started_up_and_running
       - sensor.uptime
-
-  - type: entities
-    title: Cam counting
-    show_header_toggle: false
-    entities:
-      - input_boolean.cam_cnt_rworld1_person_enabled
-      - counter.cam_counting_rworld1_person
-      - input_boolean.cam_cnt_rworld1_vehicle_enabled
-      - counter.cam_counting_rworld1_vehicle
-      - input_boolean.cam_cnt_rworld3_person_enabled
-      - counter.cam_counting_rworld3_person
-      - input_boolean.cam_cnt_rworld3_vehicle_enabled
-      - counter.cam_counting_rworld3_vehicle
 
   # no such service available
   # - type: entities
