@@ -1,0 +1,65 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01 (no matter whether the device is online or offline)
+  # just dummy action for testing
+  - id: device_bootup_script
+    mode: restart
+    then:
+      # ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script b4 action.");
+      - lambda: |-
+          float sensor_value_old = id(your_sensor_id).state;
+          id("${ssr03_id}").turn_on();
+          delay(300); // Delay for 500 milliseconds
+          id("${ssr03_id}").turn_off();
+          delay(300); // Delay for 500 milliseconds
+          float sensor_value_new = id(your_sensor_id).state;
+          // if the sensor value increased, the light bar got brighter otherwise it is off
+          if (sensor_value_new > sensor_value_old) {
+            ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value increased from %.2f to %.2f.",sensor_value_old, sensor_value_new);
+            sensor_value_old = sensor_value_new; // Update the old value to the new value
+            id("${ssr03_id}").turn_on();
+            delay(300); // Delay for 500 milliseconds
+            id("${ssr03_id}").turn_off();
+            delay(300); // Delay for 500 milliseconds
+            sensor_value_new = id(your_sensor_id).state;
+            // if the sensor value increased, the light bar got brighter otherwise it is off
+            if (sensor_value_new > sensor_value_old) {
+              ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value increased from %.2f to %.2f.",sensor_value_old, sensor_value_new);
+              sensor_value_old = sensor_value_new; // Update the old value to the new value
+              id("${ssr03_id}").turn_on();
+              delay(300); // Delay for 500 milliseconds
+              id("${ssr03_id}").turn_off();
+              delay(300); // Delay for 500 milliseconds
+              sensor_value_new = id(your_sensor_id).state;
+              // if the sensor value increased, the light bar got brighter otherwise it is off
+              if (sensor_value_new > sensor_value_old) {
+                ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value increased from %.2f to %.2f.",sensor_value_old, sensor_value_new);
+                sensor_value_old = sensor_value_new; // Update the old value to the new value
+                id("${ssr03_id}").turn_on();
+                delay(300); // Delay for 500 milliseconds
+                id("${ssr03_id}").turn_off();
+                delay(300); // Delay for 500 milliseconds
+                sensor_value_new = id(your_sensor_id).state;
+                // if the sensor value increased, the light bar got brighter otherwise it is off
+                if (sensor_value_new > sensor_value_old) {
+                  ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value increased from %.2f to %.2f.",sensor_value_old, sensor_value_new);
+                  ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor greater than the old value. This should not happen.(ERROR)");
+                } else {
+                  ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value decreased/changed from %.2f to %.2f.", sensor_value_old, sensor_value_new");
+                  ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The lightbar should be off now. (SUCCESS)");
+                }
+              } else {
+                ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value decreased/changed from %.2f to %.2f.", sensor_value_old, sensor_value_new);
+              }
+            } else {
+              ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value decreased/changed from %.2f to %.2f.", sensor_value_old, sensor_value_new);
+            }
+          } else {
+            ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script: The sensor value decreased/changed from %.2f to %.2f.", sensor_value_old, sensor_value_new);
+          }
+      # ESP_LOGD("binary_sensor", "l2kitchen01: device_bootup_script after action.");
+####################################################################
+# EOF
+####################################################################

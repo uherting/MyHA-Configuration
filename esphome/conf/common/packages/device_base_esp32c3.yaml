@@ -9,7 +9,6 @@ esphome:
   area: $device_area
   build_path: ./build/${device_name}
   # platform: $device_platform
-
   on_boot:
     priority: -100
     then:
