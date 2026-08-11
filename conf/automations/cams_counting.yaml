@@ -87,11 +87,17 @@
                 - action: counter.increment
                   entity_id: counter.cam_counting_rworld3_vehicle
       default:
-        - action: system_log.write
-          data:
-            message: "Count based on a cam default action (ERROR) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
-            level: "error"
-            logger: "system_log.external"
+        - delay: 1s
+        - action: script.tg_send_txt
+          data_template:
+            msg_title: "Cams counting (unknown trigger)"
+            msg_text: "The automation which counts vehicles / people detected by a cam had an unknown trigger.\n"
+            msg_receiver: "admin"
+        # - action: system_log.write
+        #   data:
+        #     message: "Count based on a cam default action (ERROR) @ {{ (now().timestamp()) | timestamp_custom('%Y%m%d%H%M%S') }}"
+        #     level: "error"
+        #     logger: "system_log.external"
 
 # ############################################################
 # Inform admin about vehicles and people count and reset the counters
