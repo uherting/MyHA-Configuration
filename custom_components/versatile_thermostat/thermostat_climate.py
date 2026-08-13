@@ -174,6 +174,29 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
             )
             return
 
+        if self.vtherm_hvac_mode not in (VThermHvacMode_HEAT, VThermHvacMode_COOL):
+            _LOGGER.debug(
+                "%s - auto-regulation is disabled cause VTherm hvac_mode is %s (not heat nor cool). Sending the raw target temperature",
+                self,
+                self.vtherm_hvac_mode,
+            )
+            # Outside of heat/cool the device is active but must receive the original
+            # (non regulated) target temperature. Force the regulated temperature to the
+            # target temperature and send it to all underlyings only when it differs from
+            # the last sent value, to avoid resending the same setpoint on each cycle.
+            self._regulated_target_temp = self.target_temperature
+            for under in self._underlyings:
+                if under.last_sent_temperature == self.target_temperature:
+                    continue
+                await under.set_temperature(
+                    self.target_temperature,
+                    self._attr_max_temp,
+                    self._attr_min_temp,
+                )
+            # Reset the timer of last regulation change to avoid time delta too high
+            self._last_regulation_change = self.now
+            return
+
         _LOGGER.info(
             "%s - Calling ThermostatClimate._send_regulated_temperature force=%s",
             self,
@@ -416,8 +439,10 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
                     DOMAIN,
                 )
 
-        if not self._regulation_algo:
-            # A default empty algo (which does nothing)
+        if self._auto_regulation_mode == CONF_AUTO_REGULATION_NONE or not self._regulation_algo:
+            # A default empty algo (which does nothing). It must also replace any
+            # previously active algo when switching to None at runtime, else the
+            # old regulator keeps sending regulated setpoints to the underlyings.
             self._regulation_algo = PITemperatureRegulator(self.target_temperature, 0, 0, 0, 0, 0, True)
 
     def choose_auto_fan_mode(self, auto_fan_mode: str):
@@ -440,8 +465,8 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
                 return None
 
         def determine_fan_mode_contains_speed(fan_modes: list[str]) -> bool:
-            """Determine if the fan_modes contains speed modes by searching for the keywords "low"/"1"."""
-            for val in ["low", "1"]:
+            """Determine if the fan_modes contains speed modes by searching for the keywords "low"/"1"/"one"/"speed_1"."""
+            for val in ["low", "1", "one", "speed_1"]:
                 if find_fan_mode(fan_modes, val):
                     return True
             return False
@@ -453,6 +478,10 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
                 index = speed_modes.index("low")
             elif "1" in speed_modes:
                 index = speed_modes.index("1")
+            elif "one" in speed_modes:
+                index = speed_modes.index("one")
+            elif "speed_1" in speed_modes:
+                index = speed_modes.index("speed_1")
 
             if index > -1 and index >= len(speed_modes) / 2:
                 speed_modes.reverse()
