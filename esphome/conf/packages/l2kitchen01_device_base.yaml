@@ -9,6 +9,11 @@ esphome:
   area: $device_area
   build_path: ./build/${device_name}
   # platform: $device_platform
+  #
+  #
+  # bootup script for l2kitchen01 device, executed after the device is online
+  # in order to teach the lightbar to be off when the device is booted up in 
+  # order to have a known state for the lightbar (off) when the device is booted up
   # on_boot:
   #   priority: -200
   #   then:
