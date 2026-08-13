@@ -9,71 +9,71 @@ esphome:
   area: $device_area
   build_path: ./build/${device_name}
   # platform: $device_platform
-  on_boot:
-    priority: -200
-    then:
-      # - delay: 5s
-      # - script.execute: device_bootup_script
-      # // ESP_LOGD("bootup_script", "L2Kitchen01: device_bootup_script b4 action.");
-      # // delay(50); // Delay for x milliseconds
-      - lambda: |-
-          float sensor_value_old;
-          float sensor_value_new;
-          sensor_value_old = id("${veml7700_01_id}").state;
-          id("${ssr03_id}").turn_on();
-          delay(300); // Delay for x milliseconds
-          id("${ssr03_id}").turn_off();
-          delay(300); // Delay for x milliseconds
-          sensor_value_new = id("${veml7700_01_id}").state;
-          // if the sensor value increased, the light bar got brighter otherwise it is off
-          if (sensor_value_new > sensor_value_old) {
-            ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
-            sensor_value_old = sensor_value_new; // Update the old value to the new value
-            id("${ssr03_id}").turn_on();
-            delay(300); // Delay for x milliseconds
-            id("${ssr03_id}").turn_off();
-            delay(300); // Delay for x milliseconds
-            sensor_value_new = id("${veml7700_01_id}").state;
-            // if the sensor value increased, the light bar got brighter otherwise it is off
-            if (sensor_value_new > sensor_value_old) {
-              ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
-              sensor_value_old = sensor_value_new; // Update the old value to the new value
-              id("${ssr03_id}").turn_on();
-              delay(300); // Delay for x milliseconds
-              id("${ssr03_id}").turn_off();
-              delay(300); // Delay for x milliseconds
-              sensor_value_new = id("${veml7700_01_id}").state;
-              // if the sensor value increased, the light bar got brighter otherwise it is off
-              if (sensor_value_new > sensor_value_old) {
-                ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
-                sensor_value_old = sensor_value_new; // Update the old value to the new value
-                id("${ssr03_id}").turn_on();
-                delay(300); // Delay for x milliseconds
-                id("${ssr03_id}").turn_off();
-                delay(300); // Delay for x milliseconds
-                sensor_value_new = id("${veml7700_01_id}").state;
-                // if the sensor value increased, the light bar got brighter otherwise it is off
-                if (sensor_value_new > sensor_value_old) {
-                  delay(100); // Delay for x milliseconds
-                  ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
-                } else {
-                  delay(100); // Delay for x milliseconds
-                  ESP_LOGD("bootup_script", "old/new %.2f / % .2f.", sensor_value_old, sensor_value_new);
-                }
-              } else {
-                delay(100); // Delay for x milliseconds
-                ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
-              }
-            } else {
-              delay(100); // Delay for x milliseconds
-              ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
-            }
-          } else {
-            delay(100); // Delay for x milliseconds
-            ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
-          }
-          // delay(50); // Delay for x milliseconds
-          // ESP_LOGD("bootup_script", "L2Kitchen01: device_bootup_script after action.");
+  # on_boot:
+  #   priority: -200
+  #   then:
+  #     # - delay: 5s
+  #     # - script.execute: device_bootup_script
+  #     # // ESP_LOGD("bootup_script", "L2Kitchen01: device_bootup_script b4 action.");
+  #     # // delay(50); // Delay for x milliseconds
+  #     - lambda: |-
+  #         float sensor_value_old;
+  #         float sensor_value_new;
+  #         sensor_value_old = id("${veml7700_01_id}").state;
+  #         id("${ssr03_id}").turn_on();
+  #         delay(300); // Delay for x milliseconds
+  #         id("${ssr03_id}").turn_off();
+  #         delay(300); // Delay for x milliseconds
+  #         sensor_value_new = id("${veml7700_01_id}").state;
+  #         // if the sensor value increased, the light bar got brighter otherwise it is off
+  #         if (sensor_value_new > sensor_value_old) {
+  #           ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #           sensor_value_old = sensor_value_new; // Update the old value to the new value
+  #           id("${ssr03_id}").turn_on();
+  #           delay(300); // Delay for x milliseconds
+  #           id("${ssr03_id}").turn_off();
+  #           delay(300); // Delay for x milliseconds
+  #           sensor_value_new = id("${veml7700_01_id}").state;
+  #           // if the sensor value increased, the light bar got brighter otherwise it is off
+  #           if (sensor_value_new > sensor_value_old) {
+  #             ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #             sensor_value_old = sensor_value_new; // Update the old value to the new value
+  #             id("${ssr03_id}").turn_on();
+  #             delay(300); // Delay for x milliseconds
+  #             id("${ssr03_id}").turn_off();
+  #             delay(300); // Delay for x milliseconds
+  #             sensor_value_new = id("${veml7700_01_id}").state;
+  #             // if the sensor value increased, the light bar got brighter otherwise it is off
+  #             if (sensor_value_new > sensor_value_old) {
+  #               ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #               sensor_value_old = sensor_value_new; // Update the old value to the new value
+  #               id("${ssr03_id}").turn_on();
+  #               delay(300); // Delay for x milliseconds
+  #               id("${ssr03_id}").turn_off();
+  #               delay(300); // Delay for x milliseconds
+  #               sensor_value_new = id("${veml7700_01_id}").state;
+  #               // if the sensor value increased, the light bar got brighter otherwise it is off
+  #               if (sensor_value_new > sensor_value_old) {
+  #                 delay(100); // Delay for x milliseconds
+  #                 ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #               } else {
+  #                 delay(100); // Delay for x milliseconds
+  #                 ESP_LOGD("bootup_script", "old/new %.2f / % .2f.", sensor_value_old, sensor_value_new);
+  #               }
+  #             } else {
+  #               delay(100); // Delay for x milliseconds
+  #               ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
+  #             }
+  #           } else {
+  #             delay(100); // Delay for x milliseconds
+  #             ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
+  #           }
+  #         } else {
+  #           delay(100); // Delay for x milliseconds
+  #           ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
+  #         }
+  #         // delay(50); // Delay for x milliseconds
+  #         // ESP_LOGD("bootup_script", "L2Kitchen01: device_bootup_script after action.");
 
 # edited due to changes ahead 
 # for details see https://github.com/esphome/esphome/pull/8118
