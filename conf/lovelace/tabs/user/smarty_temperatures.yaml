@@ -405,6 +405,37 @@ cards:
         sort:
           method: state
           numeric: true
+
+      - type: markdown
+        content: >-
+          {% for sens in integration_entities("aliexpress_package_tracker") %}
+          {% set entity = states[sens] %}
+          >- {% if "carrier_url" in entity.attributes-%}[<ha-icon icon="mdi:information-outline"></ha-icon>]({{entity.attributes.carrier_url}}){%endif %} **{{ entity.attributes.title }} ({{
+          entity.attributes.order_number }}{% if "realMailNo" in entity.attributes-%}
+              / {{entity.attributes.realMailNo }}
+          {%- endif %}):**
+          {% if "last_update_status" in entity.attributes-%}
+              {{entity.attributes.last_update_status }}
+          {%- endif %}
+          {% if "daysNumber" in entity.attributes-%}  In Transit: {{entity.attributes.daysNumber  }}{%- endif %}
+          {% endfor %}
+
+      - type: custom:aliexpress-package-card
+        card:
+          # Optional Configuration
+          title: AliExpress Packages # Custom title for the card
+          hide_add_tracking: false # Set to true to hide the 'Add Tracking' input field
+          # exclude_attributes: # Optional: List of attributes to hide from the card
+          #   - orignal_track_id
+          #   - order_number
+          #   - status
+          #   - last_update_time
+          #   - last_update_status
+          #   - progressStatus
+          #   - carrier
+          #   - carrier_url
+          #   - daysNumber
+          #   - order_url
 ####################################################################
 # EOF
 ####################################################################
