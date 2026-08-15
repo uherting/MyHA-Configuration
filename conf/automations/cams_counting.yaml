@@ -11,6 +11,7 @@
   id: "019fdc52-5949-76fc-aba4-e69b24306f1a"
   initial_state: true
   mode: parallel
+  max: 5
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: state
