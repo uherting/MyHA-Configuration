@@ -75,8 +75,9 @@ resources:
   - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
     type: module
 
-  - url: /hacsfiles/lovelace-aliexpress-package-card/aliexpress_package_card.js
-    type: module
+  # Aliexpress Tracking Card
+  # - url: /hacsfiles/../lovelace-aliexpress-package-card/aliexpress_package_card.js
+  #   type: module
 
   # Tankerkoenig
   # - url: /hacsfiles/lovelace-tankerkoenig-card/tankerkoenig-card.js

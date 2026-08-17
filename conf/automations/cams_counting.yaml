@@ -47,7 +47,6 @@
               then:
                 - action: counter.increment
                   entity_id: counter.cam_counting_rworld1_person
-    - choose:
         # vehicle counter rworld1
         - conditions:
             - condition: trigger
@@ -60,7 +59,6 @@
               then:
                 - action: counter.increment
                   entity_id: counter.cam_counting_rworld1_vehicle
-    - choose:
         # person counter rworld3
         - conditions:
             - condition: trigger
@@ -73,7 +71,6 @@
               then:
                 - action: counter.increment
                   entity_id: counter.cam_counting_rworld3_person
-    - choose:
         # vehicle counter rworld3
         - conditions:
             - condition: trigger
