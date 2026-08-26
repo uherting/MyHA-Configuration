@@ -282,6 +282,7 @@ substitutions:
   uart01_esp32_gps_id: ${friendly_id}_UART_GPS_01
 
   # VL53L0X (distance sensor, aka ToF sensor)
+  vl53l0x_unitofmeasurement_meter: "m"
   vl53l0x_unitofmeasurement_cm: "cm"
   vl53l0x_unitofmeasurement_mm: "mm"
 
@@ -291,7 +292,7 @@ substitutions:
   vl53l0x_01_enablepin: GPIO19
   vl53l0x_01_timeout: 200us
   vl53l0x_01_updateinterval: 500ms
-  vl53l0x_01_unitofmeasurement: ${vl53l0x_unitofmeasurement_mm}
+  vl53l0x_01_unitofmeasurement: ${vl53l0x_unitofmeasurement_meter}
 
   vl53l0x_02_name: $friendly_name Distance
   vl53l0x_02_id: ${friendly_id}_distance
@@ -299,7 +300,7 @@ substitutions:
   vl53l0x_02_enablepin: GPIO19
   vl53l0x_02_timeout: 200us
   vl53l0x_02_updateinterval: 500ms
-  vl53l0x_02_unitofmeasurement: ${vl53l0x_unitofmeasurement_mm}
+  vl53l0x_02_unitofmeasurement: ${vl53l0x_unitofmeasurement_meter}
 
   # VEML7700 (ambient light sensor via I2C)
   veml7700_01_name: $friendly_name Ambient Light Sensor 01
@@ -307,6 +308,14 @@ substitutions:
   veml7700_01_address: "0x10"
   veml7700_01_updateinterval: 60s
   veml7700_01_ambient_light: "Ambient light"
+  veml7700_01_ambient_light_counts: "Ambient light counts"
+  veml7700_01_full_spectrum: "Full spectrum"
+  veml7700_01_infrared: "Infrared"
+  veml7700_01_full_spectrum_counts: "Full spectrum counts"
+  veml7700_01_actual_gain: "Actual gain"
+  veml7700_01_actual_integration_time: "Actual integration time"
+
+
 ####################################################################
 # EOF
 ####################################################################

@@ -6,6 +6,8 @@ dummy_value: "dummy value"
 # dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 # log_level: !secret LOG_LEVEL_DEBUG
 
+# value based on integration time and gain settings
+veml7700_01_updateinterval: 1s
 ####################################################################
 # EOF
 ####################################################################

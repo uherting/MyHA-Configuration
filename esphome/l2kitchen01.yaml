@@ -70,10 +70,6 @@ packages:
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
 
-  # Contained an error which got validated nevertheless. 
-  # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
-  # ota: !include conf/common/networking/ota.yaml
-
 ota: !include conf/common/networking/ota.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
@@ -143,7 +139,7 @@ sensor:
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_case.yaml
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env01.yaml
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env10.yaml
-  - <<: !include conf/common/sensor/veml7700_standard_short.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_long.yaml
   - <<: !include conf/common/sensor/vl53L0x_single.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
