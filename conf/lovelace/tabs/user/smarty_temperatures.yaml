@@ -127,10 +127,12 @@ cards:
             name: "Bedroom 2"
           - type: "custom:button-card"
             # entity: snsor.temeperature_humidity_sensor_8eec_temperature
+            entity: sensor.l2kitchen01_ambient_light
             name: " "
             show_state: true
           - type: "custom:button-card"
             # entity: sensor.temperature_humidity_sensor_8eec_humidity
+            entity: sensor.l2kitchen01_distance
             name: " "
             show_state: true
           - type: "custom:button-card"
