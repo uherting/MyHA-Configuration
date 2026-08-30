@@ -53,6 +53,8 @@ from .const import (
     CONF_ANTI_WRINKLE_ENABLED,
     CONF_ANTI_WRINKLE_EXIT_POWER,
     CONF_ANTI_WRINKLE_IDLE_TIMEOUT,
+    CONF_DISHWASHER_END_SPIKE_QUIET_RELEASE,
+    CONF_SMART_TERMINATION_DURATION_RATIO,
     CONF_ANTI_WRINKLE_MAX_DURATION,
     CONF_ANTI_WRINKLE_MAX_POWER,
     CONF_COMPLETION_MIN_SECONDS,
@@ -74,19 +76,24 @@ from .const import (
     CONF_STOP_THRESHOLD_W,
     CYCLE_OVERRUN_ANOMALY_RATIO,
     CYCLE_UNDERRUN_ANOMALY_RATIO,
+    DEFAULT_DTW_BANDWIDTH,
     DEFAULT_MATCH_PERSISTENCE,
     DEFAULT_NOTIFY_BEFORE_END_MINUTES,
     DEFAULT_NOTIFY_MILESTONES,
+    DEFAULT_PROFILE_MATCH_MAX_DURATION_RATIO,
+    DEFAULT_PROFILE_MATCH_MIN_DURATION_RATIO,
     MATCH_CORR_WEIGHT,
     MATCH_DDTW_DIST_SCALE,
     MATCH_DTW_BLEND,
     MATCH_DTW_DIST_SCALE,
     MATCH_DTW_ENSEMBLE_W,
+    MATCH_DTW_REFINE_TOP_N,
     MATCH_DTW_RESAMPLE_N,
     MATCH_DURATION_SCALE,
     MATCH_DURATION_WEIGHT,
     MATCH_ENERGY_SCALE,
     MATCH_ENERGY_WEIGHT,
+    MATCH_KEEP_MIN_SCORE,
     MATCH_MAE_PEAK_FLOOR,
     MATCH_MAE_REF_PEAK,
     MATCH_MAE_SCALE,
@@ -109,7 +116,11 @@ from .const import (
     TerminationReason,
 )
 from .cycle_detector import CycleDetector, CycleDetectorConfig
-from .profile_store import _ambiguity_from_candidates, decompress_power_data
+from .profile_store import (
+    _ambiguity_from_candidates,
+    _match_prefix_ambiguity,
+    decompress_power_data,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -161,6 +172,8 @@ _OVERRIDE_FIELD_MAP: dict[str, tuple[str, Callable[[Any], Any]]] = {
     CONF_ANTI_WRINKLE_MAX_DURATION: ("anti_wrinkle_max_duration", float),
     CONF_ANTI_WRINKLE_EXIT_POWER: ("anti_wrinkle_exit_power", float),
     CONF_ANTI_WRINKLE_IDLE_TIMEOUT: ("anti_wrinkle_idle_timeout", float),
+    CONF_DISHWASHER_END_SPIKE_QUIET_RELEASE: ("dishwasher_end_spike_quiet_release", float),
+    CONF_SMART_TERMINATION_DURATION_RATIO: ("smart_termination_duration_ratio", float),
     CONF_OFF_DELAY: ("off_delay", int),
     CONF_MIN_OFF_GAP: ("min_off_gap", int),
     CONF_COMPLETION_MIN_SECONDS: ("completion_min_seconds", int),
@@ -200,6 +213,112 @@ _MATCH_OVERRIDE_KEYS: dict[str, tuple[str, Callable[[Any], Any]]] = {
 }
 
 
+# Canonical default for every matching override key, keyed by the OPTION key the
+# Playground uses. The Stage 2-4 entries are code constants (not stored options),
+# so this table is the only place the panel can read them from; ``ws_get_constants``
+# ships it as ``pg_match_defaults`` and ``effective_settings`` falls back to it for
+# any key the live matcher config does not carry.
+MATCH_DEFAULTS_BY_OPTION: dict[str, Any] = {
+    CONF_PROFILE_MATCH_MIN_DURATION_RATIO: DEFAULT_PROFILE_MATCH_MIN_DURATION_RATIO,
+    CONF_PROFILE_MATCH_MAX_DURATION_RATIO: DEFAULT_PROFILE_MATCH_MAX_DURATION_RATIO,
+    "corr_weight": MATCH_CORR_WEIGHT,
+    "keep_min_score": MATCH_KEEP_MIN_SCORE,
+    "dtw_bandwidth": DEFAULT_DTW_BANDWIDTH,
+    "dtw_blend": MATCH_DTW_BLEND,
+    "dtw_ensemble_w": MATCH_DTW_ENSEMBLE_W,
+    "dtw_ddtw_scale": MATCH_DDTW_DIST_SCALE,
+    "dtw_refine_top_n": MATCH_DTW_REFINE_TOP_N,
+    "duration_weight": MATCH_DURATION_WEIGHT,
+    "energy_weight": MATCH_ENERGY_WEIGHT,
+    "duration_scale": MATCH_DURATION_SCALE,
+    "energy_scale": MATCH_ENERGY_SCALE,
+}
+
+# Every option key the Playground control panel may carry (detection + matching).
+# This is the allow-list for a saved Playground preset: anything else submitted by
+# a client is dropped rather than stored.
+SETTING_KEYS: frozenset[str] = frozenset(_OVERRIDE_FIELD_MAP) | frozenset(_MATCH_OVERRIDE_KEYS)
+
+# The subset a user may publish from the Playground back into the live config:
+# exactly the override keys that are REAL config-entry options (``CONF_*``). The
+# Stage 2-4 scoring knobs above are sandbox-only code constants - there is no
+# option behind them, so writing them into ``entry.options`` would create dead
+# keys the integration never reads. The panel gates its publish buttons on this
+# list (shipped by ``get_playground_settings``).
+PUBLISHABLE_SETTING_KEYS: frozenset[str] = frozenset(_OVERRIDE_FIELD_MAP) | {
+    CONF_PROFILE_MATCH_MIN_DURATION_RATIO,
+    CONF_PROFILE_MATCH_MAX_DURATION_RATIO,
+}
+
+
+def effective_settings(
+    base_config: CycleDetectorConfig, match_config: dict[str, Any] | None
+) -> dict[str, Any]:
+    """Option-keyed view of the values a simulation runs with when NO override is
+    staged - i.e. the device's live, fully-resolved settings.
+
+    The exact inverse of ``build_sim_config`` / ``apply_match_overrides``: it reads
+    back the same fields those two write, so the Playground control panel shows the
+    values the integration actually uses (device-type defaults included) instead of
+    a static schema default that may have drifted. Never raises.
+    """
+    out: dict[str, Any] = {}
+    for opt_key, (field, coerce) in _OVERRIDE_FIELD_MAP.items():
+        value = getattr(base_config, field, None)
+        if value is None:
+            continue
+        try:
+            out[opt_key] = coerce(value)
+        except (TypeError, ValueError):  # pragma: no cover - defensive
+            continue
+    cfg = match_config or {}
+    for opt_key, (cfg_key, coerce) in _MATCH_OVERRIDE_KEYS.items():
+        value = cfg.get(cfg_key, MATCH_DEFAULTS_BY_OPTION.get(opt_key))
+        if value is None:
+            continue
+        try:
+            out[opt_key] = coerce(value)
+        except (TypeError, ValueError):  # pragma: no cover - defensive
+            continue
+    return out
+
+
+def sanitize_setting_values(values: Any) -> dict[str, Any]:
+    """Filter a client-supplied settings map down to storable Playground values.
+
+    Keeps only keys in :data:`SETTING_KEYS`, coerced with the same coercers the
+    simulation uses, so a preset can never carry an unknown key or a value that
+    would be silently ignored at replay time. Never raises.
+    """
+    if not isinstance(values, dict):
+        return {}
+    out: dict[str, Any] = {}
+    for key, value in values.items():
+        if value is None:
+            continue
+        mapping = _OVERRIDE_FIELD_MAP.get(key) or _MATCH_OVERRIDE_KEYS.get(key)
+        if mapping is None:
+            continue
+        _target, coerce = mapping
+        try:
+            coerced = coerce(value)
+        except (TypeError, ValueError):
+            continue
+        if isinstance(coerced, float) and not math.isfinite(coerced):
+            continue
+        # Every Playground setting is a physical quantity - watts, seconds, a
+        # count, or a ratio - so a negative value is structurally meaningless and
+        # would make the replayed detector behave in ways the live one never can
+        # (e.g. an off_delay that expires before it starts). Rejected rather than
+        # clamped: silently rewriting a value the user typed would make the sim
+        # disagree with the control panel showing it back.
+        if isinstance(coerced, (int, float)) and not isinstance(coerced, bool):
+            if coerced < 0:
+                continue
+        out[key] = coerced
+    return out
+
+
 def apply_match_overrides(
     match_config: dict[str, Any], settings_override: dict[str, Any] | None
 ) -> dict[str, Any]:
@@ -207,7 +326,8 @@ def apply_match_overrides(
     ``settings_override`` overlaid onto the matcher-config keys they drive.
     Unknown/None/malformed values are ignored, so a detection-only override leaves
     matching byte-identical to the live config."""
-    if not settings_override:
+    settings_override = sanitize_setting_values(settings_override)
+    if not isinstance(settings_override, dict) or not settings_override:
         return match_config
     out = dict(match_config)
     for opt_key, (cfg_key, coerce) in _MATCH_OVERRIDE_KEYS.items():
@@ -229,6 +349,7 @@ def build_sim_config(
     Unknown keys and un-coercible values are ignored so a malformed override can
     never break a simulation. ``base`` is left untouched.
     """
+    settings_override = sanitize_setting_values(settings_override)
     if not isinstance(settings_override, dict) or not settings_override:
         return base
     changes: dict[str, Any] = {}
@@ -296,13 +417,34 @@ def _build_match_snapshots(
     snapshots: list[dict[str, Any]] = []
     try:
         data = getattr(store, "_data", {}) or {}
-        profiles = data.get("profiles", {}) or {}
-        # Include imported reference cycles: an import-only profile samples from
-        # reference_cycles, so without them it would be dropped as a candidate and
-        # the Playground auto-detect would never match a downloaded profile.
-        past = data.get("past_cycles", []) or []
-        refs = data.get("reference_cycles", []) or []
-        by_id = {c.get("id"): c for c in (list(past) + list(refs)) if isinstance(c, dict)}
+        # Snapshot the profiles dict before iterating: this runs in an executor thread
+        # (ws_api dispatches _build_match_snapshots via async_add_executor_job) while the
+        # event loop may add/remove a profile (cycle-end creation, GC, auto-label), and a
+        # live `.items()` walk would raise "dictionary changed size during iteration" -
+        # the same race get_export_inventory was moved on-loop to avoid. dict() is a cheap
+        # shallow copy of the top-level mapping (values are read-only here). iter_evidence_
+        # cycles() below returns a fresh list, so its .extend() is already snapshot-safe.
+        profiles = dict(data.get("profiles", {}) or {})
+        # Include every cycle the live matcher would consider, via the store's own
+        # evidence view: an import-only profile samples from reference_cycles or
+        # backfill_cycles, so a snapshot pool built from past_cycles alone would drop it
+        # as a candidate and the Playground's auto-detect would never match a downloaded
+        # or backfilled profile - silently reporting it as unmatched. Reading the same
+        # gated view the matcher reads also keeps the sandbox honest when the user has
+        # excluded a category from shaping profiles.
+        try:
+            pool = store.iter_evidence_cycles()
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Older store without the evidence view: fall back to the raw lists. Include
+            # backfill_cycles too (the evidence view does), else a profile whose sample
+            # lives only in imported history has no snapshot and the sim reports it
+            # unmatched though live matching can use it.
+            pool = (
+                list(data.get("past_cycles", []) or [])
+                + list(data.get("reference_cycles", []) or [])
+                + list(data.get("backfill_cycles", []) or [])
+            )
+        by_id = {c.get("id"): c for c in pool if isinstance(c, dict)}
         for name, profile in profiles.items():
             if not isinstance(profile, dict):
                 continue
@@ -322,6 +464,11 @@ def _build_match_snapshots(
                     "name": name,
                     "avg_duration": float(avg_dur),
                     "sample_power": [p for _, p in sample_p],
+                    # The trace's own time span, which is NOT avg_duration (a trimmed
+                    # mean across cycles). `analysis._prefix_point_count` converts
+                    # elapsed time to an index with it, so omitting it made the sim
+                    # truncate the prefix at a different point than production.
+                    "sample_span_s": float(sample_p[-1][0] - sample_p[0][0]),
                 }
             )
     except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -348,6 +495,8 @@ def _matching_config(store: Any) -> dict[str, Any]:
         "min_duration_ratio": float(getattr(store, "_min_duration_ratio", 0.07)),
         "max_duration_ratio": float(getattr(store, "_max_duration_ratio", 1.5)),
         "dtw_bandwidth": float(getattr(store, "dtw_bandwidth", 0.2)),
+        # Mirror the live Stage-4 energy discriminator so the sim is byte-identical.
+        "energy_mode": str(getattr(store, "energy_mode", "mean")),
     }
     try:
         overrides = store._matching_overrides()  # pylint: disable=protected-access
@@ -755,10 +904,17 @@ class _DetailSim:
             members = self.group_members.get(gkey, [])
             if members and self.store is not None:
                 try:
-                    member_name, _, _ = self.store._stage5_pick_member(  # noqa: SLF001
+                    member_name, _, member_dur = self.store._stage5_pick_member(  # noqa: SLF001
                         list(powers), duration, members, self.member_snaps or {}
                     )
-                    candidates[0] = dict(candidates[0], name=member_name)
+                    # Carry the member's duration as well, exactly as
+                    # `async_match_profile` relabels the winner: leaving the group's
+                    # aggregate duration here fed the wrong expected value to the
+                    # detector AND to the #364 prefix guard below.
+                    resolved = dict(candidates[0], name=member_name)
+                    if member_dur:
+                        resolved["profile_duration"] = float(member_dur)
+                    candidates[0] = resolved
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass
         best = candidates[0]
@@ -798,7 +954,31 @@ class _DetailSim:
 
         # The DETECTOR still receives the RAW top-1, so detection / smart-termination
         # behaviour is byte-identical to before this reporting change.
-        return (raw_name, raw_conf, raw_expected, None, False, bool(is_ambiguous))
+        # Elements 7-9 (#364): without them the prefix-landscape and power-plausibility
+        # guards were never exercised in a simulation, so the exact failure the
+        # Playground exists to reproduce was invisible here.
+        full_shape_hit, prefix_fit_hit = _match_prefix_ambiguity(candidates, raw_expected)
+        # Guard the store call like iter_evidence_cycles above: on an older store or a
+        # partial test double without profile_tail_power the AttributeError would
+        # bubble through _try_profile_match, which drops the match at debug - so EVERY
+        # match in the sim would be silently reported as unmatched.
+        tail_power = None
+        if self.store is not None and raw_name:
+            try:
+                tail_power = self.store.profile_tail_power(raw_name)
+            except Exception:  # pylint: disable=broad-exception-caught
+                tail_power = None
+        return (
+            raw_name,
+            raw_conf,
+            raw_expected,
+            None,
+            False,
+            bool(is_ambiguous),
+            bool(full_shape_hit or prefix_fit_hit),
+            bool(full_shape_hit),
+            tail_power,
+        )
 
     def _sample(self, ts: datetime) -> None:
         if not self.compute_series:
@@ -830,7 +1010,10 @@ class _DetailSim:
             phase_result = None
             if len(trace) >= 10 and program != "detecting...":
                 phase_result = progress_mod.estimate_phase_progress(
-                    self.store, trace, offset, program
+                    self.store, trace, offset, program,
+                    quiet_threshold_w=float(
+                        getattr(self.detector.config, "stop_threshold_w", 0.0) or 0.0
+                    ),
                 )
             ml_pct = progress_mod.ml_progress_percent(
                 self.store, self.options, matched_dur, trace, program, self._end_exp_fn
@@ -1238,6 +1421,8 @@ def _sim_config_summary(config: CycleDetectorConfig) -> dict[str, Any]:
         "anti_wrinkle_max_duration": getattr(config, "anti_wrinkle_max_duration", None),
         "anti_wrinkle_exit_power": getattr(config, "anti_wrinkle_exit_power", None),
         "anti_wrinkle_idle_timeout": getattr(config, "anti_wrinkle_idle_timeout", None),
+        "dishwasher_end_spike_quiet_release": getattr(config, "dishwasher_end_spike_quiet_release", None),
+        "smart_termination_duration_ratio": getattr(config, "smart_termination_duration_ratio", None),
     }
 
 

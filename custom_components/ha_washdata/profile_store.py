@@ -49,6 +49,8 @@ from .const import (
     PHASE_HEAT_CV_WARN,
     PHASE_HEAT_OCC_MIXED_LO,
     PHASE_HEAT_OCC_MIXED_HI,
+    PLAYGROUND_PRESET_MAX,
+    PLAYGROUND_PRESET_NAME_MAX,
     REFERENCE_PROFILE_CURVE_POINTS,
     SHAPE_DRIFT_MIN_CYCLES,
     SHAPE_DRIFT_RESAMPLE_N,
@@ -56,11 +58,19 @@ from .const import (
     SHAREABLE_SETTING_KEYS,
     SMART_TERM_LANDSCAPE_RATIO,
     SMART_TERM_LANDSCAPE_MIN_SHAPE,
+    SMART_TERM_PREFIX_MARGIN,
+    SMART_TERM_PREFIX_MIN_RATIO,
+    SMART_TERM_PREFIX_MIN_SHAPE,
+    SMART_TERM_TAIL_WINDOW_FRAC,
     STORAGE_KEY,
     STORAGE_VERSION,
     DEFAULT_MAX_PAST_CYCLES,
     DEFAULT_MAX_FULL_TRACES_PER_PROFILE,
     DEFAULT_MAX_FULL_TRACES_UNLABELED,
+    EVIDENCE_BACKFILL_CYCLES,
+    EVIDENCE_REAL_CYCLES,
+    EVIDENCE_REFERENCE_CYCLES,
+    PROFILE_EVIDENCE_SOURCES,
     DEFAULT_DTW_BANDWIDTH,
 )
 from .features import compute_signature
@@ -95,8 +105,23 @@ _LOGGER = logging.getLogger(__name__)
 # and reference selection so degenerate cycles never become the matching template.
 _DEGENERATE_POWER_FLOOR = 15.0  # watts
 
+# How far outside the requested trim window a stored sample may still be snapped
+# to. Trim boundaries arrive quantized to whole seconds (panel number input, the
+# trim_cycle service), so one second is exactly the input's own resolution -- it
+# absorbs that rounding without letting the kept window grow measurably.
+_TRIM_SNAP_TOLERANCE_S = 1.0
+
 JSONDict: TypeAlias = dict[str, Any]
 CycleDict: TypeAlias = dict[str, Any]
+
+# Label sources that mean "the matcher guessed this", as opposed to a user confirming it.
+# Consulted before overwriting a label, so the original guess is preserved exactly once.
+# `auto_label_backfill` is the #344 import's own marker: an auto-labelled backfilled cycle
+# feeds its profile's envelope immediately, so a wrong guess shifts what later cycles match
+# against and has to stay distinguishable from a confirmed label.
+_AUTO_LABEL_SOURCES = (
+    "auto_match", "auto_label_post", "auto_label_service", "auto_label_backfill",
+)
 
 
 def _is_recorded_cycle(cycle: dict[str, Any]) -> bool:
@@ -338,6 +363,12 @@ class MatchResult:
     is_confident_mismatch: bool = False
     mismatch_reason: str | None = None
     is_prefix_ambiguous: bool = False
+    # The LEGACY (#288-only, full-envelope shape) half of the verdict above.
+    # `is_prefix_ambiguous` is widened by #364's prefix scoring, which is safe for
+    # the ENDING Smart-Termination gate (a false fire only delays the finish) but
+    # NOT for the anti-crease finalize, where blocking can re-hang a cycle the way
+    # #296 described. That consumer reads this narrower flag instead.
+    is_prefix_ambiguous_full_shape: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary with JSON-serializable types, excluding heavy arrays."""
@@ -828,6 +859,15 @@ class WashDataStore(Store[JSONDict]):
             _LOGGER.info("Migrating storage from v%s to v11 (phase-profile cache marker)",
                          old_major_version)
 
+        if old_major_version < 12:
+            # Cycles recovered from raw power history that predates the integration
+            # (issue #344) get their own list. They are auto-detected and unverified, so
+            # they belong in neither past_cycles (lifetime stats, ML training labels, the
+            # feedback queue, retention eviction) nor reference_cycles (curated
+            # community-store templates, golden by construction). Additive + idempotent.
+            _LOGGER.info("Migrating storage from v%s to v12", old_major_version)
+            old_data.setdefault("backfill_cycles", [])
+
         return old_data
 
 def _ambiguity_from_candidates(candidates: list[dict]) -> tuple[float, bool]:
@@ -841,6 +881,67 @@ def _ambiguity_from_candidates(candidates: list[dict]) -> tuple[float, bool]:
     if len(candidates) > 1:
         margin = candidates[0]["score"] - candidates[1]["score"]
     return margin, margin < MATCH_AMBIGUITY_MARGIN
+
+
+def _match_prefix_ambiguity(
+    candidates: list[dict], best_duration: float
+) -> tuple[bool, bool]:
+    """``(full_shape_hit, prefix_fit_hit)`` for the prefix-landscape guard.
+
+    Both terms answer the same question - "might this trace be a *prefix* of a
+    longer programme rather than a complete short one?" - by two different routes,
+    and either one blocks Smart Termination:
+
+    * ``full_shape_hit`` (#288, unchanged): a non-winning candidate is at least
+      ``SMART_TERM_LANDSCAPE_RATIO`` longer than the winner and still scored
+      ``SMART_TERM_LANDSCAPE_MIN_SHAPE`` against its **full** envelope.
+    * ``prefix_fit_hit`` (#364): a longer candidate's score against its curve
+      **truncated to the elapsed duration** (``prefix_score``, computed in
+      ``analysis.annotate_prefix_scores``) beats the winner's own score by
+      ``SMART_TERM_PREFIX_MARGIN``. The margin is the load-bearing term - it is
+      scale-free, and asks whether the longer programme explains the trace
+      materially better than the short one does. The absolute floor only rejects
+      candidates that fit nothing.
+
+    The full-envelope term alone has three structural false negatives on real
+    devices (see the #364 block in const.py); the prefix term exists because a
+    trace part-way through a longer programme cannot score well against that
+    programme's whole curve. Returned separately because the widened verdict is
+    only safe for the ENDING gate - see ``MatchResult.is_prefix_ambiguous_full_shape``.
+
+    Pure function, no I/O. ``prefix_score`` absent (Stage 4 skipped, a mocked
+    executor, an older snapshot) degrades to the legacy term alone, so this can
+    never fire *less* often than the #288 predicate did.
+    """
+    if best_duration <= 0 or len(candidates) < 2:
+        return False, False
+    # Compare against the winner's SHAPE score, not its blended final score: prefix_score
+    # is a shape-scale value (Stage-2 + Stage-3, no Stage-4 duration/energy agreement), so
+    # measuring the margin against the blended score mixed scales and made 0.15 too strict.
+    # Fall back to the blended score only when shape_score is absent (older snapshot).
+    _best_shape = candidates[0].get("shape_score")
+    best_score = float(
+        (_best_shape if _best_shape is not None else candidates[0].get("score")) or 0.0
+    )
+    full_shape_hit = False
+    prefix_fit_hit = False
+    for cand in candidates[1:]:
+        prof_dur = float(cand.get("profile_duration") or 0)
+        if prof_dur > best_duration * SMART_TERM_LANDSCAPE_RATIO and float(
+            cand.get("shape_score", cand.get("score", 0))
+        ) >= SMART_TERM_LANDSCAPE_MIN_SHAPE:
+            full_shape_hit = True
+        prefix_score = cand.get("prefix_score")
+        if (
+            prefix_score is not None
+            and prof_dur > best_duration * SMART_TERM_PREFIX_MIN_RATIO
+            and float(prefix_score) >= SMART_TERM_PREFIX_MIN_SHAPE
+            and float(prefix_score) >= best_score + SMART_TERM_PREFIX_MARGIN
+        ):
+            prefix_fit_hit = True
+        if full_shape_hit and prefix_fit_hit:
+            break
+    return full_shape_hit, prefix_fit_hit
 
 
 # ── Selective export/import taxonomy ────────────────────────────────────────────
@@ -1063,6 +1164,8 @@ def unwrap_import_payload(payload: Any) -> tuple[dict[str, Any], dict[str, Any]]
         data_dict["past_cycles"] = []
     if not isinstance(data_dict.get("reference_cycles"), list):
         data_dict["reference_cycles"] = []
+    if not isinstance(data_dict.get("backfill_cycles"), list):
+        data_dict["backfill_cycles"] = []
     data_dict.setdefault("envelopes", {})
 
     fingerprint = payload.get("device_fingerprint")
@@ -1216,6 +1319,14 @@ class ProfileStore:
         self._match_threshold = match_threshold
         self._unmatch_threshold = unmatch_threshold
         self.dtw_bandwidth: float = DEFAULT_DTW_BANDWIDTH
+        # Stage-4 energy-agreement mode ("mean"|"integrated"); the manager sets it
+        # from the device type via analysis.stage4_energy_mode. Default "mean"
+        # keeps behaviour byte-identical until wired.
+        self.energy_mode: str = "mean"
+        # Which cycle categories may shape a profile (see CONF_PROFILE_EVIDENCE_SOURCES).
+        # Pushed in by the manager from entry options, the way energy_mode is; the store
+        # has no access to them itself. Defaults to all three, i.e. pre-setting behaviour.
+        self._evidence_sources: tuple[str, ...] = tuple(PROFILE_EVIDENCE_SOURCES)
         self._save_debug_traces = save_debug_traces
 
         # Cache for resampled sample segments: key=(cycle_id, dt)
@@ -1246,6 +1357,8 @@ class ProfileStore:
             "profiles": {},
             "past_cycles": [],
             "reference_cycles": [],  # Imported store cycles: envelope/matcher only, never usage stats
+            "backfill_cycles": [],  # Cycles recovered from raw history (#344): unverified,
+                                    # envelope/matcher only, never stats/ML/shareable
             "envelopes": {},  # Cached statistical envelopes per profile
             "auto_adjustments": [],  # Log of automatic setting changes
             "suggestions": {},  # Suggested settings (do NOT change user options)
@@ -1255,6 +1368,7 @@ class ProfileStore:
             "ml_model_versions": {},  # On-device trained model specs (Stage 4)
             "profile_groups": {},  # Named groups of near-duplicate profiles (Stage 5)
             "maintenance_log": [],  # User-logged maintenance events (Group E)
+            "playground_presets": {},  # Named Playground setting snapshots (sandbox only)
         }
 
 
@@ -1301,6 +1415,31 @@ class ProfileStore:
         """Remove a single suggestion entry by key."""
         suggestions: JSONDict = self._data.setdefault("suggestions", {})
         suggestions.pop(key, None)
+
+    def get_locked_suggestions(self) -> list[str]:
+        """Return the setting keys the user has locked against auto-tuning (#343).
+
+        A locked key is never re-surfaced as a suggestion, so the auto-tuner stops
+        repeatedly proposing a value the user has rejected (e.g. a stop/start
+        threshold that breaks an anti-crease-tuned device). Never raises.
+        """
+        raw = self._data.get("locked_suggestions")
+        return [str(k) for k in raw] if isinstance(raw, list) else []
+
+    async def set_suggestion_locked(self, key: str, locked: bool) -> None:
+        """Lock or unlock a suggestion key and persist (#343).
+
+        Locking also drops any currently-pending suggestion for the key so it
+        disappears immediately; unlocking lets the auto-tuner surface it again.
+        """
+        cur = set(self.get_locked_suggestions())
+        if locked:
+            cur.add(key)
+            self.delete_suggestion(key)
+        else:
+            cur.discard(key)
+        self._data["locked_suggestions"] = sorted(cur)
+        await self.async_save()
 
     async def clear_suggestions(self) -> None:
         """Clear all pending suggestions and persist."""
@@ -1693,6 +1832,96 @@ class ProfileStore:
             return cast(list[CycleDict], raw)
         return []
 
+    def get_backfill_cycles(self) -> list[CycleDict]:
+        """Return the cycles recovered from raw power history (issue #344).
+
+        A third list, deliberately neither of the other two. Like ``reference_cycles``
+        these shape the envelope and can serve as a matching template once labelled, and
+        never touch usage/energy/count stats. Unlike them they are **not** curated: they
+        were auto-detected by replaying a history export, nothing has verified them, so
+        they are never golden, never shareable, and never training data.
+        """
+        raw = self._data.setdefault("backfill_cycles", [])
+        if isinstance(raw, list):
+            return cast(list[CycleDict], raw)
+        return []
+
+    def iter_stored_cycles(self) -> list[CycleDict]:
+        """Every stored cycle, from all three lists.
+
+        The single source for "find a cycle by id" and "is this id still real?". Profile
+        garbage collection and sample repair delete a profile whose ``sample_cycle_id``
+        resolves to nothing, so a read path that forgets one of the lists silently
+        destroys an import-only profile. Route those lookups through here rather than
+        open-coding the union.
+        """
+        return [
+            *self.get_past_cycles(),
+            *self.get_reference_cycles(),
+            *self.get_backfill_cycles(),
+        ]
+
+    @property
+    def evidence_sources(self) -> tuple[str, ...]:
+        """Categories currently allowed to shape a profile."""
+        return self._evidence_sources
+
+    @evidence_sources.setter
+    def evidence_sources(self, value: Any) -> None:
+        """Accept a user selection, falling back to all categories.
+
+        An empty or unrecognised selection is treated as "all": with nothing allowed
+        every envelope would be empty and every profile unmatchable, which is worse than
+        ignoring the setting. Unknown names are dropped rather than trusted.
+        """
+        wanted = tuple(
+            name for name in PROFILE_EVIDENCE_SOURCES
+            if isinstance(value, (list, tuple, set, frozenset)) and name in value
+        )
+        if not wanted:
+            if value:
+                self._logger.warning(
+                    "Ignoring profile-evidence selection %s: no known category left, "
+                    "falling back to all", value,
+                )
+            wanted = tuple(PROFILE_EVIDENCE_SOURCES)
+        self._evidence_sources = wanted
+
+    def iter_evidence_cycles(self) -> list[CycleDict]:
+        """Stored cycles the user allows to shape a profile.
+
+        The gated twin of :meth:`iter_stored_cycles`. Use this for the envelope, the
+        matcher's snapshot pool and the matching template - anything that answers "what
+        does this profile look like". Never use it for a lookup by id or a validity check:
+        an excluded cycle still exists, and profile garbage collection reading this view
+        would delete a profile whose only cycles the user had merely stopped trusting.
+        """
+        allowed = self._evidence_sources
+        out: list[CycleDict] = []
+        if EVIDENCE_REAL_CYCLES in allowed:
+            out.extend(self.get_past_cycles())
+        if EVIDENCE_REFERENCE_CYCLES in allowed:
+            out.extend(self.get_reference_cycles())
+        if EVIDENCE_BACKFILL_CYCLES in allowed:
+            out.extend(self.get_backfill_cycles())
+        return out
+
+    def find_stored_cycle(self, cycle_id: str) -> tuple[CycleDict | None, str]:
+        """Locate a cycle by id, returning it with the name of the list holding it.
+
+        The origin is what decides capability: ``past`` cycles are fully editable,
+        ``reference`` and ``backfill`` cycles can be labelled but not trimmed or split.
+        """
+        for origin, cycles in (
+            ("past", self.get_past_cycles()),
+            ("reference", self.get_reference_cycles()),
+            ("backfill", self.get_backfill_cycles()),
+        ):
+            match = next((c for c in cycles if c.get("id") == cycle_id), None)
+            if match is not None:
+                return match, origin
+        return None, ""
+
     def get_shareable_cycles(self) -> list[dict[str, Any]]:
         """Recorded/golden reference cycles eligible to share to the community store.
 
@@ -1746,7 +1975,7 @@ class ProfileStore:
         if pairs[0][0] != 0.0:
             origin = pairs[0][0]
             pairs = [[p[0] - origin, p[1]] for p in pairs]
-        now = dt_util.now()
+        now = dt_util.as_utc(dt_util.now())
         store_id = str(meta.get("store_cycle_id") or "")
         cycle: CycleDict = {
             "profile_name": profile_name,
@@ -1979,6 +2208,7 @@ class ProfileStore:
         n = 200
         agg_curves: dict[str, list[np.ndarray]] = {}
         agg_durs: dict[str, list[float]] = {}
+        agg_spans: dict[str, list[float]] = {}
         member_snaps: dict[str, dict[str, Any]] = {}
         out: list[dict[str, Any]] = []
         for s in snapshots:
@@ -1993,15 +2223,21 @@ class ProfileStore:
                 agg_curves.setdefault(g, []).append(
                     np.interp(np.linspace(0, 1, n), np.linspace(0, 1, arr.size), arr)
                 )
-                agg_durs.setdefault(g, []).append(float(s.get("avg_duration") or 0.0))
+                _dur = float(s.get("avg_duration") or 0.0)
+                agg_durs.setdefault(g, []).append(_dur)
+                # Members are resampled onto a normalized 0..1 axis above, so the
+                # aggregate's own time span is the mean of its members' (#364).
+                agg_spans.setdefault(g, []).append(float(s.get("sample_span_s") or _dur))
         group_members: dict[str, list[str]] = {}
         for g, curves in agg_curves.items():
             key = f"__group__{g}"
             durs = [d for d in agg_durs[g] if d > 0]
+            spans = [v for v in agg_spans.get(g, []) if v > 0]
             out.append({
                 "name": key,
                 "avg_duration": float(np.mean(durs)) if durs else 0.0,
                 "sample_power": np.mean(np.array(curves), axis=0).tolist(),
+                "sample_span_s": float(np.mean(spans)) if spans else 0.0,
             })
             group_members[key] = [m for m in member_to_group if member_to_group[m] == g and m in member_snaps]
         return out, group_members, member_snaps
@@ -2010,14 +2246,31 @@ class ProfileStore:
         self, current_power: list[float], current_duration: float,
         members: list[str], member_snaps: dict[str, dict[str, Any]],
     ) -> tuple[str, float | None, float | None]:
-        """Within a winning group, pick the member whose duration + mean power +
-        peak best match the cycle (temperature -> mean power, spin -> peak).
+        """Within a winning group, pick the member whose integrated ENERGY best
+        matches the cycle.
+
+        Group members already share shape and duration (that is what the cohesion
+        gate collapses them for), so the within-group discriminator is temperature
+        / spin, and the clean signal for that is integrated energy (Sum P*dt) --
+        NOT whole-cycle mean power (diluted, because hotter cycles also run longer)
+        nor peak (dominated by the ~constant heating-element draw, so it is flat
+        across variants). Validated on real store data (leave-one-cycle-out member
+        pick, 196 cycles): energy-only 73.3% vs the old duration*mean*peak product
+        63.3%; adding any duration term back regressed it (grouped members are
+        duration-cohesive, so duration only adds noise). Duration is still returned
+        (for ETA and the overrun guard) but is intentionally not part of selection.
+
         Returns (member_name, individual_fit_score, member_avg_duration). The fit
         score is the chosen member's own alignment score, used as a sanity check."""
         cur = np.asarray(current_power, dtype=float)
         if cur.size == 0 or not members:
             return (members[0] if members else ""), None, None
-        cur_mp = float(cur.mean()); cur_pk = float(cur.max())
+        # Energy proxy = mean power * duration; the 1/3600 Wh factor cancels in the
+        # log-ratio, so this is exact up to that constant.  This proxy equals the
+        # true integral only because `current_power` is already resampled onto a
+        # uniform grid by the matcher; raw or irregular traces must use
+        # signal_processing.integrate_wh instead.
+        cur_energy = float(cur.mean()) * float(current_duration)
 
         def agree(a: float, b: float, scale: float) -> float:
             if a <= 0 or b <= 0:
@@ -2033,9 +2286,9 @@ class ProfileStore:
             if sp.size == 0:
                 continue
             md = float(snap.get("avg_duration") or 0.0)
-            sc = (agree(current_duration, md, 0.15)
-                  * agree(cur_mp, float(sp.mean()), 0.20)
-                  * agree(cur_pk, float(sp.max()), 0.20))
+            mem_energy = float(sp.mean()) * md
+            # Scale 0.30 is validated as insensitive over 0.25-0.40 on real data.
+            sc = agree(cur_energy, mem_energy, 0.30)
             if sc > best_sc:
                 best_sc, best_m, best_dur = sc, m, md
         fit = None
@@ -2284,6 +2537,83 @@ class ProfileStore:
             return False
         self._data["maintenance_log"] = remaining
         await self.async_save()
+        return True
+
+    # ─── Playground presets ────────────────────────────────────────────────────
+    # Named snapshots of the Playground's settings control panel. Sandbox data:
+    # nothing here ever reaches the live detector or matcher - the user publishes
+    # individual values to entry.options explicitly (ws_set_options) if they want
+    # them live. Stored per device because the values are device-scale (watts,
+    # seconds tuned for THIS appliance).
+
+    def get_playground_presets(self) -> dict[str, JSONDict]:
+        """Return the mutable playground-presets mapping (name -> record).
+
+        Each record is ``{"values": {...}, "created_at": iso, "updated_at": iso}``.
+        Self-heals a corrupt/missing key to an empty mapping. Never raises.
+        """
+        raw = self._data.setdefault("playground_presets", {})
+        if not isinstance(raw, dict):
+            self._data["playground_presets"] = {}
+            return cast(dict[str, JSONDict], self._data["playground_presets"])
+        return cast(dict[str, JSONDict], raw)
+
+    @staticmethod
+    def _playground_preset_key(name: str) -> str:
+        """Canonical storage key for a Playground preset name.
+
+        Save and delete MUST derive the key the same way: truncating only on save
+        meant a name longer than the cap was stored truncated but looked up in
+        full, leaving a preset that could never be deleted. The trailing strip()
+        runs after the clamp so a cut landing mid-space cannot bake a trailing
+        space into the key.
+        """
+        return (name or "").strip()[:PLAYGROUND_PRESET_NAME_MAX].strip()
+
+    async def async_save_playground_preset(
+        self, name: str, values: dict[str, Any]
+    ) -> JSONDict:
+        """Create or overwrite a named Playground preset and persist it.
+
+        ``values`` must already be sanitized by ``playground.sanitize_setting_values``
+        (the store deliberately does not import the playground module - that would
+        be a cycle). Raises ``ValueError`` for an empty name, an empty value map, or
+        when the per-device preset cap is reached by a NEW name.
+        """
+        name = self._playground_preset_key(name)
+        if not name:
+            raise ValueError("Preset name is required")
+        if not isinstance(values, dict) or not values:
+            raise ValueError("Preset has no settings to save")
+        presets = self.get_playground_presets()
+        existing = presets.get(name)
+        if existing is None and len(presets) >= PLAYGROUND_PRESET_MAX:
+            raise ValueError(
+                f"Preset limit reached ({PLAYGROUND_PRESET_MAX}); delete one first"
+            )
+        now = dt_util.now().isoformat()
+        created = now
+        if isinstance(existing, dict) and isinstance(existing.get("created_at"), str):
+            created = existing["created_at"]
+        record: JSONDict = {
+            "values": dict(values),
+            "created_at": created,
+            "updated_at": now,
+        }
+        presets[name] = record
+        await self.async_save()
+        self._logger.info(
+            "Saved playground preset %r with %d values", name, len(values)
+        )
+        return record
+
+    async def async_delete_playground_preset(self, name: str) -> bool:
+        """Remove a Playground preset by name; report whether one was removed."""
+        presets = self.get_playground_presets()
+        if presets.pop(self._playground_preset_key(name), None) is None:
+            return False
+        await self.async_save()
+        self._logger.info("Deleted playground preset %r", name)
         return True
 
     def cycles_since_maintenance(self, event_type: str) -> int:
@@ -3321,16 +3651,15 @@ class ProfileStore:
 
         profiles: dict[str, dict[str, Any]] = self._data.get("profiles", {}) or {}
         cycles: list[dict[str, Any]] = self._data.get("past_cycles", []) or []
-        ref_cycles: list[dict[str, Any]] = self._data.get("reference_cycles", []) or []
         if not profiles or not cycles:
             return stats
 
-        # Sample validity must recognise imported reference cycles: an import-only
-        # profile legitimately points its sample at a reference cycle. Without this,
-        # such a sample looks "missing" and the repair below would steal an unrelated
-        # unlabeled real cycle into the imported profile.
+        # Sample validity must recognise imported and backfilled cycles: an import-only
+        # profile legitimately points its sample at one of those. Without this, such a
+        # sample looks "missing" and the repair below would steal an unrelated unlabeled
+        # real cycle into the imported profile.
         by_id: dict[str, dict[str, Any]] = {
-            c["id"]: c for c in list(cycles) + list(ref_cycles) if c.get("id")
+            c["id"]: c for c in self.iter_stored_cycles() if c.get("id")
         }
 
         def newest_unlabeled_with_power_data() -> dict[str, Any] | None:
@@ -3718,13 +4047,10 @@ class ProfileStore:
     def cleanup_orphaned_profiles(self) -> int:
         """Remove profiles that reference non-existent cycles.
         Returns number of profiles removed."""
-        # Imported reference cycles are valid sample targets too (an import-only
-        # profile points its sample there), so include them or such profiles would
-        # be wrongly deleted as orphans.
-        cycle_ids = {c["id"] for c in self._data.get("past_cycles", [])}
-        cycle_ids |= {
-            c["id"] for c in self._data.get("reference_cycles", []) if c.get("id")
-        }
+        # Imported reference cycles and backfilled history cycles are valid sample
+        # targets too (an import-only profile points its sample at one), so every list
+        # counts here or such profiles would be wrongly deleted as orphans.
+        cycle_ids = {c["id"] for c in self.iter_stored_cycles() if c.get("id")}
         orphaned: list[str] = []
         for name, profile in self._data["profiles"].items():
             ref = profile.get("sample_cycle_id")
@@ -3835,9 +4161,11 @@ class ProfileStore:
                         if first_offset > 0:
                             # Leading zeros removed - Must shift start_time forward
                             try:
-                                start_dt = datetime.fromisoformat(cycle["start_time"])
+                                start_dt = _parse_start_dt(cycle["start_time"])
+                                if start_dt is None:
+                                    raise ValueError("unparseable start_time")
                                 new_start = start_dt + timedelta(seconds=first_offset)
-                                cycle["start_time"] = new_start.isoformat()
+                                cycle["start_time"] = dt_util.as_utc(new_start).isoformat()
 
                                 # Re-normalize offsets to 0
                                 shifted_data: list[list[float]] = []
@@ -4094,7 +4422,7 @@ class ProfileStore:
         not chosen). Returns a cycle id, or None if there are no usable cycles.
         """
         cands = [
-            c for c in list(self._data.get("past_cycles", [])) + list(self._data.get("reference_cycles", []))
+            c for c in self.iter_evidence_cycles()
             if c.get("profile_name") == profile_name
             and c.get("status") in ("completed", "force_stopped")
             and isinstance(c.get("power_data"), list) and len(c["power_data"]) >= 3
@@ -4217,11 +4545,23 @@ class ProfileStore:
                 and c.get("duration", 0) > 60
             ]
 
-        # Real cycles drive usage stats (energy/count). Imported reference cycles
-        # additionally shape the curves + matching duration, but never usage stats.
+        # Real cycles drive usage stats (energy/count). Imported reference cycles and
+        # backfilled history cycles additionally shape the curves + matching duration,
+        # but never usage stats.
+        #
+        # Which of the three may shape the curve is the user's choice
+        # (CONF_PROFILE_EVIDENCE_SOURCES); usage stats are not evidence and keep counting
+        # real cycles either way, so unticking "real cycles" removes them from the curve
+        # without making the profile claim it has never run.
+        allowed = self._evidence_sources
         real_cycles = _eligible(self._data["past_cycles"])
-        ref_cycles = _eligible(self._data.get("reference_cycles", []))
-        shape_cycles = real_cycles + ref_cycles
+        shape_real = real_cycles if EVIDENCE_REAL_CYCLES in allowed else []
+        ref_cycles: list[CycleDict] = []
+        if EVIDENCE_REFERENCE_CYCLES in allowed:
+            ref_cycles += _eligible(self._data.get("reference_cycles", []))
+        if EVIDENCE_BACKFILL_CYCLES in allowed:
+            ref_cycles += _eligible(self._data.get("backfill_cycles", []))
+        shape_cycles = shape_real + ref_cycles
 
         if not shape_cycles:
             if profile_name in self._data.get("envelopes", {}):
@@ -4500,6 +4840,150 @@ class ProfileStore:
             env = envelopes_map.get(profile_name)
             return cast(JSONDict, env) if isinstance(env, dict) else None
         return None
+
+    @staticmethod
+    def _envelope_time_power(
+        envelope: JSONDict | None,
+    ) -> tuple[list[float], list[float]] | None:
+        """Extract (time_grid, power) from an envelope's ``avg`` curve, or None.
+
+        Handles both the new ``[[t, p], ...]`` and legacy ``[p, ...]`` formats
+        (reconstructing the grid from ``time_grid`` / ``target_duration`` / a 60 s
+        fallback). Single source of the envelope time axis for both the alignment
+        worker and the Smart-Termination release span (#348), so the mapped position
+        and the span it is compared against always live on the same grid.
+        """
+        if not envelope:
+            return None
+        env_avg_raw = envelope.get("avg", [])
+        if not env_avg_raw:
+            return None
+        try:
+            if isinstance(env_avg_raw[0], (list, tuple)) and len(env_avg_raw[0]) >= 2:
+                env_points = cast(list[list[Any] | tuple[Any, ...]], env_avg_raw)
+                env_time = [float(p[0]) for p in env_points]
+                env_power = [float(p[1]) for p in env_points]
+            else:
+                env_values = cast(list[float | int], env_avg_raw)
+                env_power = [float(p) for p in env_values]
+                env_time_raw = envelope.get("time_grid")
+                env_time = cast(list[float], env_time_raw) if isinstance(env_time_raw, list) else None
+                if not env_time or len(env_time) != len(env_power):
+                    target_dur = float(envelope.get("target_duration", 0.0) or 0.0)
+                    if target_dur > 0:
+                        env_time = cast(list[float], np.linspace(0, target_dur, len(env_power)).tolist())
+                    else:
+                        env_time = [float(i * 60) for i in range(len(env_power))]
+            # Inside the try: a stored time_grid with non-numeric entries must
+            # yield the safe None fallback, not propagate to async_verify_alignment.
+            return [float(t) for t in env_time], env_power
+        except (TypeError, ValueError, IndexError):
+            return None
+
+    @staticmethod
+    def _resample_trace_to_grid(
+        offsets: list[float], powers: list[float], env_time: list[float]
+    ) -> list[float]:
+        """Resample a live ``(offsets, powers)`` trace onto the envelope's uniform
+        time step, so its sample index maps to elapsed seconds on the envelope grid
+        (#350). Linear interpolation (matching the envelope build side), bounded at
+        2x the envelope length. Falls back to the raw powers when a grid cannot be
+        formed (too few points / non-positive step), leaving behavior unchanged.
+        """
+        if len(offsets) < 2 or len(env_time) < 2:
+            return list(powers)
+        diffs = np.diff(np.asarray(env_time, dtype=float))
+        pos = diffs[diffs > 0]
+        if pos.size == 0:
+            return list(powers)
+        step = float(np.median(pos))
+        span = float(env_time[-1])
+        # Sort and deduplicate before computing t_max so the grid span reflects the
+        # true maximum offset even when the raw trace is non-monotonic.
+        off_arr = np.asarray(offsets, dtype=float)
+        pow_arr = np.asarray(powers, dtype=float)
+        order = np.argsort(off_arr, kind="stable")
+        off_arr, pow_arr = off_arr[order], pow_arr[order]
+        # Remove duplicate offsets; np.unique keeps the first occurrence after sorting.
+        off_arr, unique_idx = np.unique(off_arr, return_index=True)
+        pow_arr = pow_arr[unique_idx]
+        t_max = min(float(off_arr[-1]), 2.0 * span) if span > 0 else float(off_arr[-1])
+        if step <= 0 or t_max <= 0:
+            return list(powers)
+        n = max(2, round(t_max / step) + 1)
+        grid = np.arange(n, dtype=float) * step
+        return np.interp(grid, off_arr, pow_arr).tolist()
+
+    def envelope_time_span(self, profile_name: str) -> float:
+        """Total time span (seconds) of a profile's envelope grid, 0 if unavailable.
+
+        This is exactly the maximum value ``async_verify_alignment`` maps onto, so
+        dividing a mapped position by it yields a true 0..1 fraction through the
+        cycle - unlike ``avg_duration`` (a differently-derived trimmed mean) which
+        could push the 0.95 Smart-Termination release threshold out of reach (#348).
+        """
+        curves = self._envelope_time_power(self.get_envelope(profile_name))
+        if not curves or not curves[0]:
+            return 0.0
+        return float(curves[0][-1])
+
+    def profile_tail_power(
+        self,
+        profile_name: str,
+        window_frac: float = SMART_TERM_TAIL_WINDOW_FRAC,
+    ) -> float | None:
+        """Mean power (W) a profile draws over the last ``window_frac`` of its own
+        run, or None when the profile has no usable trace.  Never raises.
+
+        This is the reference level the Smart-Termination power-plausibility guard
+        compares the live trailing power against (#364).  Both Smart-Termination
+        paths key on ``elapsed >= 0.98 * expected``; when the matcher has locked onto
+        a *shorter* look-alike profile that anchor lands mid-wash, and neither path
+        asks whether the appliance is still working.  "Several times what this
+        programme draws at its own end" is the signal that it is.
+
+        Prefers the profile's envelope average curve; falls back to the sample
+        cycle's raw trace, because a thinly-trained profile (one labelled cycle, so
+        no envelope) is still a match candidate and would otherwise get no guard at
+        all.  Pure statistics, no ML - same never-raises contract as
+        ``compute_envelope_conformance``.
+        """
+        try:
+            frac = min(max(float(window_frac), 0.01), 1.0)
+
+            curves = self._envelope_time_power(self.get_envelope(profile_name))
+            if curves and len(curves[0]) >= 2:
+                env_time, env_power = curves
+                cutoff = float(env_time[-1]) * (1.0 - frac)
+                tail = [p for t, p in zip(env_time, env_power) if t >= cutoff]
+                if tail:
+                    return float(np.mean(tail))
+
+            profile = self.get_profiles().get(profile_name)
+            if not isinstance(profile, dict):
+                return None
+            sample_id = profile.get("sample_cycle_id")
+            if not sample_id:
+                return None
+            cycle, _ = self.find_stored_cycle(str(sample_id))
+            if not cycle:
+                return None
+            # Through decompress_power_data, not raw power_data: a legacy cycle stores
+            # (iso_string, power) pairs, and float() on the ISO string would raise into
+            # the broad except below, silently leaving the #364 guard inert for that
+            # profile. The isinstance check does not catch it - [iso_str, power] is a list.
+            points = decompress_power_data(cycle)
+            if len(points) < 2:
+                return None
+            offsets = [float(pt[0]) for pt in points]
+            powers = [float(pt[1]) for pt in points]
+            cutoff = offsets[-1] * (1.0 - frac)
+            tail = [p for t, p in zip(offsets, powers) if t >= cutoff]
+            if not tail:
+                return None
+            return float(np.mean(tail))
+        except Exception:  # noqa: BLE001
+            return None
 
     def reference_curve(
         self, profile_name: str, n: int = REFERENCE_PROFILE_CURVE_POINTS
@@ -4958,9 +5442,11 @@ class ProfileStore:
 
             current_power_list = current_seg.power.tolist()
 
-            # Prepare Snapshots. Imported reference cycles are eligible as matching
-            # templates alongside real cycles (so an import-only profile can match).
-            all_cycles = list(self._data["past_cycles"]) + list(self._data.get("reference_cycles", []))
+            # Prepare Snapshots. Imported reference cycles and backfilled history
+            # cycles are eligible as matching templates alongside real cycles (so an
+            # import-only profile can match) - subject to the user's evidence choice, so
+            # the pool and the envelope always agree about what a profile looks like.
+            all_cycles = self.iter_evidence_cycles()
             # Precompute per-profile lookups ONCE so the loop below is O(profiles),
             # not O(profiles x cycles). Rescanning all_cycles with next()/any() for
             # every profile made matching quadratic and stalled low-power hosts on
@@ -5039,6 +5525,12 @@ class ProfileStore:
                         "name": name,
                         "avg_duration": float(avg_duration),
                         "sample_power": avg_y,
+                        # True wall-clock span of `sample_power` (#364). NOT the same
+                        # as avg_duration, which prefers target_duration / the
+                        # profile's rolling mean - so index fraction only equals time
+                        # fraction against this. Needed to truncate the curve to an
+                        # elapsed duration for prefix scoring.
+                        "sample_span_s": float(_env_ts_duration or avg_duration),
                     })
                     continue
 
@@ -5081,7 +5573,12 @@ class ProfileStore:
                     "name": name,
                     "avg_duration": float(avg_dur),
                     "sample_power": sample_seg.power.tolist(),
-                    "sample_dt": used_dt
+                    "sample_dt": used_dt,
+                    # True wall-clock span of `sample_power` (#364). _get_cached_sample_segment
+                    # keeps only the LONGEST gap-free segment, so a cycle with an internal
+                    # outage yields a curve covering less than avg_dur - truncating by a
+                    # fraction of avg_dur would then cut the wrong place.
+                    "sample_span_s": float(_seg_ts_duration or avg_dur),
                 })
 
             if skipped_profiles:
@@ -5099,6 +5596,7 @@ class ProfileStore:
                 "min_duration_ratio": self._min_duration_ratio,
                 "max_duration_ratio": self._max_duration_ratio,
                 "dtw_bandwidth": self.dtw_bandwidth,
+                "energy_mode": self.energy_mode,
                 # On-device tuned scoring weights (opt-in); empty = shipped defaults.
                 **self._matching_overrides(),
             }
@@ -5175,12 +5673,10 @@ class ProfileStore:
         # current trace may be a prefix of that longer program, not a complete
         # short cycle. Signal cycle_detector to block Smart Termination; the
         # power-based fallback timeout will decide instead.
-        best_dur = best_duration or 0.0
-        is_prefix_ambiguous = best_dur > 0 and any(
-            float(c.get("profile_duration") or 0) > best_dur * SMART_TERM_LANDSCAPE_RATIO
-            and float(c.get("shape_score", c.get("score", 0))) >= SMART_TERM_LANDSCAPE_MIN_SHAPE
-            for c in candidates[1:]
+        full_shape_hit, prefix_fit_hit = _match_prefix_ambiguity(
+            candidates, best_duration or 0.0
         )
+        is_prefix_ambiguous = full_shape_hit or prefix_fit_hit
 
         return MatchResult(
             best_name,
@@ -5192,6 +5688,7 @@ class ProfileStore:
             margin,
             ranking=candidates[:5],  # populate ranking (consumed for training snapshots)
             is_prefix_ambiguous=is_prefix_ambiguous,
+            is_prefix_ambiguous_full_shape=full_shape_hit,
         )
 
     async def async_verify_alignment(
@@ -5203,48 +5700,50 @@ class ProfileStore:
         Verify if the current power trace aligns with an expected low-power region in the envelope.
         Returns: (is_confirmed_low_power, mapped_envelope_time, mapped_envelope_power)
         """
+        if not current_power_data:
+            return False, 0.0, 9999.0
+
+        # "avg" can be a list of [t, p] (new) or [p, ...] (legacy); the shared helper
+        # normalizes both to (time_grid, power) - identical to envelope_time_span so
+        # the mapped position and the release span live on the same grid (#348).
         envelope = self.get_envelope(profile_name)
-        if not envelope or not envelope.get("avg") or not current_power_data:
+        curves = self._envelope_time_power(envelope)
+        if curves is None:
+            if envelope and envelope.get("avg"):
+                self._logger.error(
+                    "Malformed envelope 'avg' data for %s", profile_name
+                )
             return False, 0.0, 9999.0
+        env_time, env_power = curves
 
-        # Extract envelope curves
-        # "avg" can be list of [t, p] (new) or [p, ...] (legacy)
-        env_avg_raw = envelope.get("avg", [])
-        if not env_avg_raw:
-            return False, 0.0, 9999.0
-
+        # Resample the live trace onto the envelope's own time step BEFORE alignment,
+        # so its sample index corresponds to elapsed SECONDS, not sample count (#350).
+        # The worker warps power-vs-power; with no shared time axis an irregularly or
+        # sparsely sampled tail (e.g. 0 W keepalives every off_delay) maps one grid
+        # step per sample regardless of wall-clock, so the position crawls - and a
+        # dense short prefix instead races to the end. Linear interpolation matches
+        # the envelope build side so the two curves stay comparable.
         try:
-            # Handle both formats: [[t, y], ...] (new) or [y, ...] (legacy)
-            if isinstance(env_avg_raw[0], (list, tuple)) and len(env_avg_raw[0]) >= 2:
-                # New format: [[t, y], ...]
-                env_points = cast(list[list[Any] | tuple[Any, ...]], env_avg_raw)
-                env_time = [float(p[0]) for p in env_points]
-                env_power = [float(p[1]) for p in env_points]
-            else:
-                # Legacy format: [y, ...]
-                env_values = cast(list[float | int], env_avg_raw)
-                env_power = [float(p) for p in env_values]
-                # Reconstruct time grid from envelope if available, or assume 60s intervals
-                env_time_raw = envelope.get("time_grid")
-                env_time = cast(list[float], env_time_raw) if isinstance(env_time_raw, list) else None
-                if not env_time or len(env_time) != len(env_power):
-                    target_dur = float(envelope.get("target_duration", 0.0) or 0.0)
-                    if target_dur > 0:
-                        env_time = cast(list[float], np.linspace(0, target_dur, len(env_power)).tolist())
-                    else:
-                        env_time = [float(i * 60) for i in range(len(env_power))]
-        except (TypeError, ValueError, IndexError) as e:
-            first_type_name = type(env_avg_raw[0]).__name__ if env_avg_raw else "None"
-            self._logger.error(
-                "Malformed envelope 'avg' data for %s. Type: %s, Length: %d, Error: %s",
-                profile_name, first_type_name, len(env_avg_raw), e
+            offsets = [float(x[0]) for x in current_power_data]
+            powers = [float(x[1]) for x in current_power_data]
+        except (TypeError, ValueError, IndexError):
+            # A legacy ISO-timestamped trace (x[0] is a string) lands here. The
+            # signature admits ``list[tuple[Any, ...]]``, so normalize through the
+            # shared helper instead of bailing out: returning early skipped
+            # alignment entirely, which silently reduced the legacy-envelope guard
+            # in tests/repro/test_issue_112.py to a no-op. Production callers pass
+            # offsets and never reach this branch, so the fast path is unchanged.
+            normalized = power_data_to_offsets(
+                cast(list[list[Any] | tuple[Any, ...]], current_power_data)
             )
-            return False, 0.0, 9999.0
-
-        try:
-            current_power_list = [float(x[1]) for x in current_power_data]
-        except Exception:  # pylint: disable=broad-exception-caught
-            return False, 0.0, 9999.0
+            if not normalized:
+                return False, 0.0, 9999.0
+            try:
+                offsets = [float(x[0]) for x in normalized]
+                powers = [float(x[1]) for x in normalized]
+            except (TypeError, ValueError, IndexError):
+                return False, 0.0, 9999.0
+        current_power_list = self._resample_trace_to_grid(offsets, powers, env_time)
 
         # Offload to worker
         mapped_time, mapped_power, score = await self.hass.async_add_executor_job(
@@ -5309,10 +5808,19 @@ class ProfileStore:
 
 
     async def create_profile(self, name: str, source_cycle_id: str) -> None:
-        """Create a new profile from a past cycle."""
-        cycle = next(
-            (c for c in self._data["past_cycles"] if c["id"] == source_cycle_id), None
-        )
+        """Create a new profile from a cycle, real or imported.
+
+        ``reference_cycles`` are searched too: an imported cycle (community store, or a
+        historical import per issue #344) is a legitimate source for a brand-new profile,
+        and for a history import it is the *primary* one - the whole point is to name the
+        programs found in months of past data. Looking only in ``past_cycles`` made
+        "Label -> Create new profile..." fail outright on those cycles.
+
+        The envelope is rebuilt here rather than left for the next match or maintenance
+        pass, so the profile is usable the moment it is created (mirroring
+        :meth:`assign_profile_to_cycle`).
+        """
+        cycle, _origin = self.find_stored_cycle(source_cycle_id)
         if not cycle:
             raise ValueError("Cycle not found")
 
@@ -5323,36 +5831,29 @@ class ProfileStore:
             "sample_cycle_id": source_cycle_id,
         }
 
+        await self.async_rebuild_envelope(name)
         # Save to persist the label
         await self.async_save()
 
     @property
     def has_real_profiles(self) -> bool:
-        """True if at least one stored profile is backed by a real cycle.
+        """True if at least one stored profile is backed by a cycle that counts as evidence.
 
-        A profile counts as "real" when it has a labelled cycle in ``past_cycles``
-        OR an imported ``reference_cycle`` (store-adopted templates that the matcher
-        treats as eligible snapshots — see the snapshot builder in async_match). An
-        import-only install has zero past_cycles but is fully matchable, so it must
-        pass this gate too, otherwise matching and the setup notifications are
-        skipped for it entirely.
+        A profile with no cycle behind it cannot be matched, so this gates matching and
+        the setup notifications. Imported reference cycles and backfilled history cycles
+        count: an import-only install has zero `past_cycles` and is still fully matchable.
+        Evidence-gated, so a profile whose only cycles the user has excluded reads as not
+        matchable - which is what excluding them means.
         """
         profile_names = self._data.get("profiles", {}).keys()
         if not profile_names:
             return False
         assigned = {
             c.get("profile_name")
-            for c in self._data.get("past_cycles", [])
+            for c in self.iter_evidence_cycles()
             if c.get("profile_name")
         }
-        if assigned.intersection(profile_names):
-            return True
-        ref_assigned = {
-            c.get("profile_name")
-            for c in self._data.get("reference_cycles", [])
-            if c.get("profile_name")
-        }
-        return bool(ref_assigned.intersection(profile_names))
+        return bool(assigned.intersection(profile_names))
 
     def list_profiles(self) -> list[dict[str, Any]]:
         """List all profiles with metadata."""
@@ -5428,6 +5929,13 @@ class ProfileStore:
                     "total_cost": total_cost,
                     "signature_curve": sig_curve,
                     "is_imported": self.profile_has_reference_cycles(name),
+                    # Cycles recovered from imported history (#344). Reported separately
+                    # from cycle_count, which counts only real observed cycles, so a
+                    # profile built purely from backfilled history does not look empty.
+                    "backfill_count": sum(
+                        1 for c in self.get_backfill_cycles()
+                        if c.get("profile_name") == name
+                    ),
                 }
             )
         return sorted(profiles, key=lambda p: profile_sort_key(p.get("name", "")))
@@ -5447,7 +5955,7 @@ class ProfileStore:
         profile_data: JSONDict = {}
         if reference_cycle_id:
             cycle = next(
-                (c for c in self._data["past_cycles"] if c["id"] == reference_cycle_id),
+                (c for c in self.iter_stored_cycles() if c.get("id") == reference_cycle_id),
                 None,
             )
             if cycle:
@@ -5518,12 +6026,9 @@ class ProfileStore:
         # Update cycles and feedback if renamed
         count = 0
         if renamed:
-            # 1. Update past + imported reference cycles (imports carry profile_name
+            # 1. Update every stored cycle (imports and backfills carry profile_name
             #    too; leaving them under the old name orphans them from the matcher).
-            for cycle in (
-                list(self._data.get("past_cycles", []))
-                + list(self._data.get("reference_cycles", []))
-            ):
+            for cycle in self.iter_stored_cycles():
                 if cycle.get("profile_name") == old_name:
                     cycle["profile_name"] = new_name
                     count += 1
@@ -5569,13 +6074,11 @@ class ProfileStore:
         # Delete profile
         del self._data["profiles"][name]
 
-        # Handle cycles (past + imported reference; both carry profile_name, so an
-        # imported cycle would otherwise keep a dangling label for a deleted profile).
+        # Handle cycles from every list: imported and backfilled cycles carry
+        # profile_name too, so they would otherwise keep a dangling label for a
+        # deleted profile.
         count = 0
-        for cycle in (
-            list(self._data.get("past_cycles", []))
-            + list(self._data.get("reference_cycles", []))
-        ):
+        for cycle in self.iter_stored_cycles():
             if cycle.get("profile_name") == name:
                 if unlabel_cycles:
                     cycle["profile_name"] = None
@@ -5590,9 +6093,11 @@ class ProfileStore:
         """Clear all profiles, cycle data, and derived state."""
         self._data["past_cycles"] = []
         self._data["reference_cycles"] = []
+        self._data["backfill_cycles"] = []
         self._data["profiles"] = {}
         self._data["envelopes"] = {}
         self._data["suggestions"] = {}
+        self._data["locked_suggestions"] = []
         self._data["feedback_history"] = {}
         self._data["pending_feedback"] = {}
         self._data["auto_adjustments"] = []
@@ -5604,6 +6109,7 @@ class ProfileStore:
         self._data["ml_model_versions"] = {}
         self._data["profile_groups"] = {}
         self._data["maintenance_log"] = []
+        self._data["playground_presets"] = {}
         self._data["matching_config"] = {}
         self._data["match_ranking_history"] = []
         self._data["ml_last_training_run"] = None
@@ -5623,20 +6129,16 @@ class ProfileStore:
     ) -> None:
         """Assign an existing profile to a cycle. Rebuilds envelope."""
         old_profile = None
-        cycle = next(
-            (c for c in self._data["past_cycles"] if c["id"] == cycle_id), None
-        )
-        if not cycle:
-            # Imported reference recording (separate list, never in usage stats):
-            # relabelling just moves which profile's template it seeds.
-            ref = next(
-                (c for c in self.get_reference_cycles() if c.get("id") == cycle_id),
-                None,
-            )
-            if ref is not None:
-                await self._assign_reference_cycle_profile(ref, profile_name)
-                return
+        found, origin = self.find_stored_cycle(cycle_id)
+        if found is None:
             raise ValueError(f"Cycle {cycle_id} not found")
+        if origin != "past":
+            # An imported store recording or a backfilled history cycle (separate lists,
+            # never in usage stats): relabelling just moves which profile's template it
+            # seeds.
+            await self._assign_reference_cycle_profile(found, profile_name)
+            return
+        cycle = found
 
         # Track old profile for envelope rebuild
         old_profile = cycle.get("profile_name")
@@ -5647,7 +6149,7 @@ class ProfileStore:
         # Preserve original auto-assigned label before first manual relabeling
         if profile_name and old_profile and not cycle.get("original_auto_label"):
             orig_src = cycle.get("label_source", "")
-            if orig_src in ("auto_match", "auto_label_post", "auto_label_service"):
+            if orig_src in _AUTO_LABEL_SOURCES:
                 cycle["original_auto_label"] = old_profile
 
         # Update cycle
@@ -5674,40 +6176,73 @@ class ProfileStore:
         # Trigger smart processing to potentially merge now-labeled cycle
         await self.async_smart_process_history()
 
-    async def _assign_reference_cycle_profile(
+    def _relabel_non_real_cycle(
         self, ref: CycleDict, profile_name: str | None
-    ) -> None:
-        """Reassign an imported reference recording to a different profile.
+    ) -> set[str]:
+        """Move a non-real cycle onto a profile, returning the envelopes to rebuild.
 
-        The cycle stays in ``reference_cycles`` (out of usage stats); only which
-        profile envelope it seeds changes. Rebuilds the old and new envelopes.
-        ``profile_name=None`` clears the label (the recording then seeds nothing).
+        The bookkeeping half of :meth:`_assign_reference_cycle_profile`, split out so a
+        bulk caller (:meth:`auto_label_cycles`) can apply it to many cycles and then
+        rebuild and save **once** instead of per cycle - the same batching the real-cycle
+        path uses, and the difference between one store write and one per imported cycle.
+
+        Synchronous and self-contained: it validates the target, moves the label, clears a
+        stale ``sample_cycle_id`` on the profile the cycle is leaving, and drops that
+        profile outright when nothing is left in it (mirrors `_delete_non_real_cycle`;
+        without it a sampleless profile would later be re-populated by sample repair
+        stealing an unrelated real cycle). Returns the names whose envelope the caller
+        must rebuild - a profile this dropped is deliberately absent from that set.
         """
         if profile_name and profile_name not in self._data.get("profiles", {}):
             raise ValueError(f"Profile '{profile_name}' not found. Create it first.")
         old_profile = ref.get("profile_name")
         ref_id = ref.get("id")
         ref["profile_name"] = profile_name if profile_name else None
+        touched: set[str] = set()
         if old_profile and old_profile != profile_name:
-            # The moved cycle may have been the old profile's sample. Clear that
-            # stale pointer so the old profile can't resolve the moved trace (now
-            # another profile's) by id, and drop the old profile if it is now empty
-            # (mirrors _delete_reference_cycle; prevents repair adopting a real cycle).
             op = self._data.get("profiles", {}).get(old_profile)
             if op is not None and op.get("sample_cycle_id") == ref_id:
                 op["sample_cycle_id"] = None
             old_has_cycles = any(
                 c.get("profile_name") == old_profile
-                for c in list(self._data.get("past_cycles", []))
-                + list(self._data.get("reference_cycles", []))
+                for c in self.iter_stored_cycles()
             )
             if old_has_cycles:
-                await self.async_rebuild_envelope(old_profile)
+                touched.add(old_profile)
             else:
                 self._data.get("profiles", {}).pop(old_profile, None)
                 self._data.get("envelopes", {}).pop(old_profile, None)
         if profile_name:
-            await self.async_rebuild_envelope(profile_name)
+            touched.add(profile_name)
+        return touched
+
+    async def _assign_reference_cycle_profile(
+        self, ref: CycleDict, profile_name: str | None
+    ) -> None:
+        """Reassign a non-real cycle - an imported store recording or a backfilled
+        history cycle - to a different profile.
+
+        The cycle stays in its own list (out of usage stats); only which profile envelope
+        it seeds changes. Rebuilds the old and new envelopes. ``profile_name=None`` clears
+        the label (the cycle then seeds nothing).
+
+        This is the *manual* (user-driven) relabel path, so it stamps provenance exactly
+        like the real-cycle path in ``assign_profile_to_cycle``: preserve the original
+        auto-guess once, then mark the label ``manual``. Without the manual stamp a later
+        ``auto_label_cycles(overwrite=True)`` would still see an auto ``label_source`` on a
+        backfilled cycle and silently overwrite the user's correction.
+        """
+        old_profile = ref.get("profile_name")
+        # Preserve the original auto-assigned label before the first manual relabel.
+        if profile_name and old_profile and not ref.get("original_auto_label"):
+            if ref.get("label_source", "") in _AUTO_LABEL_SOURCES:
+                ref["original_auto_label"] = old_profile
+        touched = self._relabel_non_real_cycle(ref, profile_name)
+        # _relabel_non_real_cycle only moves profile_name (it is shared with the auto
+        # bulk path, which sets its own source); stamp the manual provenance here.
+        ref["label_source"] = "manual" if profile_name else None
+        for name in touched:
+            await self.async_rebuild_envelope(name)
         await self.async_save()
         self._logger.info(
             "Reassigned imported reference cycle %s to profile '%s'",
@@ -5724,20 +6259,52 @@ class ProfileStore:
             overwrite: If True, re-evaluates already labeled cycles.
 
         Returns stats: {labeled: int, relabeled: int, skipped: int, total: int}
+
+        Covers **backfilled history cycles** (#344) as well as real ones. Nobody remembers
+        which wash was Eco 40 six months later, so an import that left dozens of unnamed
+        cycles to hand-label would be barely better than no import at all. The gate is the
+        same for both (``confidence >= threshold`` and not ambiguous), but a backfilled
+        cycle is written through :meth:`_relabel_non_real_cycle` rather than mutated like a
+        real one, because moving one off a profile has to clear a stale sample pointer and
+        may leave that profile empty.
+
+        A label applied here is stamped ``auto_label_backfill``, distinct from the
+        real-cycle ``auto_label_service``. That distinction matters: an auto-labelled
+        backfill cycle immediately feeds its profile's envelope, so a wrong guess shifts
+        what later cycles match against, and the marker is what makes that recoverable -
+        by the user or by a later pass - rather than indistinguishable from a confirmed
+        label.
+
+        NB on a fresh install with no profiles there is nothing to match against, so the
+        real sequence is "hand-label a couple, then auto-label the rest": each label
+        strengthens the envelope the next batch matches against. There is no
+        self-matching circularity - with ``overwrite=False`` only unlabelled cycles are
+        touched, and an unlabelled cycle is in no envelope yet.
         """
         stats = {"labeled": 0, "relabeled": 0, "skipped": 0, "total": 0}
 
-        cycles = self._data.get("past_cycles", [])
-
-        # Filter down if not overwriting
+        # (cycle, is_backfill) so the write path can differ while the gate does not.
+        candidates: list[tuple[CycleDict, bool]] = [
+            *((c, False) for c in self._data.get("past_cycles", [])),
+            *((c, True) for c in self.get_backfill_cycles()),
+        ]
         if not overwrite:
-            target_cycles = [c for c in cycles if not c.get("profile_name")]
-        else:
-            target_cycles = cycles
+            candidates = [(c, b) for c, b in candidates if not c.get("profile_name")]
 
-        stats["total"] = len(target_cycles)
+        stats["total"] = len(candidates)
+        # Envelopes are rebuilt once at the end, not per cycle: this is a bulk pass and
+        # `_assign_reference_cycle_profile`'s per-call rebuild+save would mean one whole
+        # store write per imported cycle.
+        touched: set[str] = set()
 
-        for cycle in target_cycles:
+        for cycle, is_backfill in candidates:
+            # Never overwrite a user's manual label, even with overwrite=True: a manual
+            # correction is exactly the ground truth this pass should defer to (real and
+            # non-real alike - the non-real manual relabel now stamps this too).
+            if cycle.get("label_source") == "manual":
+                stats["skipped"] += 1
+                continue
+
             # Reconstruct power data for matching
             power_data = decompress_power_data(cycle)
             if not power_data or len(power_data) < 10:
@@ -5760,19 +6327,46 @@ class ProfileStore:
                     for c in (getattr(result, "ranking", []) or [])[:5]
                 ]
 
+                label_source = "auto_label_backfill" if is_backfill else "auto_label_service"
+
+                def _apply(
+                    target: CycleDict = cycle,
+                    backfill: bool = is_backfill,
+                    match: MatchResult = result,
+                    source: str = label_source,
+                    ranking: list[dict[str, Any]] = ranking_top5,
+                ) -> None:
+                    """Move the label, then stamp the provenance the mover does not.
+
+                    `_relabel_non_real_cycle` only moves `profile_name`, so without this
+                    an auto-labelled imported cycle would carry no confidence for the
+                    Cycles list to show and no marker saying the matcher guessed it.
+
+                    EVERY loop value it reads is bound as a default, not closed over: the
+                    call happens in the same iteration today, but a later change that
+                    defers it (collect the callables, run them after the loop) would
+                    otherwise silently apply the LAST iteration's match to every cycle.
+                    """
+                    if backfill:
+                        touched.update(
+                            self._relabel_non_real_cycle(target, match.best_profile)
+                        )
+                    else:
+                        target["profile_name"] = match.best_profile
+                    target["match_confidence"] = float(match.confidence)
+                    target["label_source"] = source
+                    if ranking:
+                        target["match_ranking_top5"] = ranking
+
                 # If overwriting, check if new match is different and better/valid
                 if current_label:
                     if current_label != result.best_profile:
                         # Preserve original label before first auto-service relabeling
                         if not cycle.get("original_auto_label"):
                             orig_src = cycle.get("label_source", "")
-                            if orig_src in ("auto_match", "auto_label_post", "auto_label_service"):
+                            if orig_src in _AUTO_LABEL_SOURCES:
                                 cycle["original_auto_label"] = current_label
-                        cycle["profile_name"] = result.best_profile
-                        cycle["match_confidence"] = float(result.confidence)
-                        cycle["label_source"] = "auto_label_service"
-                        if ranking_top5:
-                            cycle["match_ranking_top5"] = ranking_top5
+                        _apply()
                         stats["relabeled"] += 1
                         self._logger.info(
                             "Relabeled cycle %s: '%s' -> '%s' (confidence: %.2f)",
@@ -5782,11 +6376,7 @@ class ProfileStore:
                             result.confidence,
                         )
                 else:
-                    cycle["profile_name"] = result.best_profile
-                    cycle["match_confidence"] = float(result.confidence)
-                    cycle["label_source"] = "auto_label_service"
-                    if ranking_top5:
-                        cycle["match_ranking_top5"] = ranking_top5
+                    _apply()
                     stats["labeled"] += 1
                     self._logger.info(
                         "Auto-labeled cycle %s as '%s' (confidence: %.2f)",
@@ -5798,6 +6388,11 @@ class ProfileStore:
                 stats["skipped"] += 1
 
         if stats["labeled"] > 0 or stats["relabeled"] > 0:
+            # A labelled backfill cycle exists only to shape its profile's envelope, so
+            # rebuild what changed before saving - otherwise the import accomplishes
+            # nothing until some unrelated later trigger.
+            for name in touched:
+                await self.async_rebuild_envelope(name)
             await self.async_save()
             # Trigger smart processing after bulk labeling
             await self.async_smart_process_history()
@@ -6261,8 +6856,8 @@ class ProfileStore:
         for c in self._data.get("reference_cycles", []):
             if not isinstance(c, dict):
                 continue
-            meta = c.get("meta")
-            src = meta.get("source") if isinstance(meta, dict) else None
+            cyc_meta = c.get("meta")
+            src = cyc_meta.get("source") if isinstance(cyc_meta, dict) else None
             if src:
                 existing_ref_sources.add(_ref_dedup_key(src))
 
@@ -6423,9 +7018,9 @@ class ProfileStore:
         initial_len = len(cycles)
         cycle_to_delete = next((c for c in cycles if c.get("id") == cycle_id), None)
         if not cycle_to_delete:
-            # Not a real cycle -- it may be an imported store recording, which
-            # lives in the separate reference_cycles list (never in usage stats).
-            return await self._delete_reference_cycle(cycle_id)
+            # Not a real cycle -- it may be an imported store recording or a backfilled
+            # history cycle, which live in their own lists (never in usage stats).
+            return await self._delete_non_real_cycle(cycle_id)
 
         profile_name = cycle_to_delete.get("profile_name")
         self._data["past_cycles"] = [c for c in cycles if c.get("id") != cycle_id]
@@ -6448,19 +7043,23 @@ class ProfileStore:
             return True
         return False
 
-    async def _delete_reference_cycle(self, cycle_id: str) -> bool:
-        """Delete a single imported store recording from ``reference_cycles``.
+    async def _delete_non_real_cycle(self, cycle_id: str) -> bool:
+        """Delete a single imported store recording or backfilled history cycle.
 
-        Rebuilds the affected profile's envelope so removing a bad import
-        immediately stops influencing the matcher template. Returns False when
-        no reference cycle carries that id.
+        Rebuilds the affected profile's envelope so removing a bad import immediately
+        stops influencing the matcher template. Returns False when neither list carries
+        that id.
         """
-        refs = cast(list[CycleDict], self._data.get("reference_cycles", []))
-        cycle = next((c for c in refs if c.get("id") == cycle_id), None)
+        cycle: CycleDict | None = None
+        for key in ("reference_cycles", "backfill_cycles"):
+            items = cast(list[CycleDict], self._data.get(key, []))
+            cycle = next((c for c in items if c.get("id") == cycle_id), None)
+            if cycle is not None:
+                self._data[key] = [c for c in items if c.get("id") != cycle_id]
+                break
         if cycle is None:
             return False
         profile_name = cycle.get("profile_name")
-        self._data["reference_cycles"] = [c for c in refs if c.get("id") != cycle_id]
         # Clear any profile that sampled this now-deleted reference cycle, mirroring
         # the real-cycle path in delete_cycle, so no sample id is left dangling.
         for _p_name, p_data in self.get_profiles().items():
@@ -6473,8 +7072,7 @@ class ProfileStore:
             # async_repair_profile_samples stealing an unlabeled real cycle into it.
             remaining = any(
                 c.get("profile_name") == profile_name
-                for c in list(self._data.get("past_cycles", []))
-                + list(self._data.get("reference_cycles", []))
+                for c in self.iter_stored_cycles()
             )
             if remaining:
                 await self.async_rebuild_envelope(profile_name)
@@ -6489,16 +7087,9 @@ class ProfileStore:
 
         Returns an empty list if the cycle is not found or has no power data.
         """
-        cycle = next(
-            (c for c in self.get_past_cycles() if c.get("id") == cycle_id), None
-        )
-        if cycle is None:
-            # Imported store recordings live in a separate list; the panel opens
-            # them from the same Cycles table, so look them up here too.
-            cycle = next(
-                (c for c in self.get_reference_cycles() if c.get("id") == cycle_id),
-                None,
-            )
+        # Imported and backfilled cycles live in their own lists; the panel opens them
+        # from the same Cycles table, so all three are searched.
+        cycle, _origin = self.find_stored_cycle(cycle_id)
         if cycle is None:
             return []
         return decompress_power_data(cycle)
@@ -6530,6 +7121,36 @@ class ProfileStore:
         new_start_s = max(0.0, float(new_start_s))
         new_end_s = float(new_end_s)
 
+        # Guard against a destructive trim (#366): an inverted/empty window would
+        # produce a zero- or single-sample segment that collapses the cycle to
+        # duration 0 / energy 0. Reject before touching the cycle.
+        if new_end_s <= new_start_s:
+            return False
+
+        # Snap both boundaries to a real sample offset (#373). Trim inputs round
+        # to whole seconds, but sample offsets are frequently fractional -- a
+        # nominal 10 s cadence drifts, so ~3132.3 is the norm -- and the
+        # [start, end] filter below is inclusive, so a whole-second entry lands
+        # just below the sample the user aimed at and silently drops it. Snapping
+        # against the full-resolution stored trace (independent of any client-side
+        # curve decimation) makes the kept window land on the samples the
+        # boundaries name, on both ends.
+        #
+        # Snap *inward*, tolerating only the whole-second input quantization
+        # (_TRIM_SNAP_TOLERANCE_S). Nearest-in-either-direction snapping could
+        # widen the window by up to half a sample interval per side -- on a
+        # coarse trace (samples at 0 s and 100 s, request 40-60 s) that silently
+        # kept the entire cycle while meta["trim"] claimed a narrow window.
+        offsets = [float(offset) for offset, _ in p_data]
+        starts = [o for o in offsets if o >= new_start_s - _TRIM_SNAP_TOLERANCE_S]
+        ends = [o for o in offsets if o <= new_end_s + _TRIM_SNAP_TOLERANCE_S]
+        if not starts or not ends:
+            return False
+        new_start_s = min(starts)
+        new_end_s = max(ends)
+        if new_end_s <= new_start_s:
+            return False
+
         kept = sorted(
             (
                 (offset, power)
@@ -6546,6 +7167,13 @@ class ProfileStore:
         renorm: list[list[float]] = [
             [round(offset - base, 2), power] for offset, power in kept
         ]
+
+        # A window that keeps fewer than two samples (or whose kept span is zero)
+        # would collapse the cycle to duration 0 with no recovery. Reject here,
+        # BEFORE the start_time mutation below, so the stored cycle is untouched
+        # and the caller reports a failure instead of destroying data (#366).
+        if len(renorm) < 2 or round(renorm[-1][0], 1) <= 0.0:
+            return False
 
         # Advance start_time when trimming from the front
         if base > 0:
@@ -6817,8 +7445,8 @@ class ProfileStore:
 
             # Create Cycle Record
             new_cycle: dict[str, Any] = {
-                "start_time": new_cycle_start.isoformat(),
-                "end_time": (new_cycle_start + timedelta(seconds=seg_dur)).isoformat(),
+                "start_time": dt_util.as_utc(new_cycle_start).isoformat(),
+                "end_time": dt_util.as_utc(new_cycle_start + timedelta(seconds=seg_dur)).isoformat(),
                 "duration": round(seg_dur, 1),
                 "status": "completed",
                 "power_data": p_data_abs,
@@ -6859,6 +7487,10 @@ class ProfileStore:
                     touched.add(seg_prof)
         for name in touched:
             await self.async_rebuild_envelope(name)
+
+        # The original cycle is gone; drop its now-orphaned pending feedback so the
+        # "needs review" badge stays consistent with the review list (#362).
+        self.prune_orphaned_feedback()
 
         await self.async_save()
         self._logger.info("Interactive Split Applied to %s -> %s", cycle_id, new_ids)
@@ -6995,7 +7627,8 @@ class ProfileStore:
 
         new_dur = (final_end_dt - c1_start_dt).total_seconds()
 
-        c1["end_time"] = final_end_dt.isoformat()
+        c1["start_time"] = dt_util.as_utc(c1_start_dt).isoformat()
+        c1["end_time"] = dt_util.as_utc(final_end_dt).isoformat()
         c1["duration"] = round(new_dur, 1)
         c1["max_power"] = max_power
         c1["profile_name"] = target_profile
@@ -7049,6 +7682,10 @@ class ProfileStore:
                 c1["signature"] = dataclasses.asdict(sig)
         except Exception as e:  # pylint: disable=broad-exception-caught
             self._logger.warning("Failed to update signature for merged cycle %s: %s", new_id, e)
+
+        # Consumed cycles are gone; drop any pending feedback that pointed at them so
+        # the "needs review" badge does not keep counting non-existent cycles (#362).
+        self.prune_orphaned_feedback()
 
         await self.async_save()
         self._logger.info("Interactive Merge Applied: %s -> %s", cycle_ids, new_id)
