@@ -14,7 +14,7 @@
         condition:
           sun.is_below_horizon:
         then:
-          - script.execute: lightbar_script_oc_trigger_on
+          - script.execute: script.lightbar_script_oc_trigger_on
           - globals.set:
             id: isLightBarOnViaPIR
             value: "true"
