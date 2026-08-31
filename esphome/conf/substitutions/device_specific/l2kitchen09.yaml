@@ -3,7 +3,7 @@
 
 # device definitions
 device_name: l2kitchen09
-device_comment: Level 2 Kitchen 02
+device_comment: Level 2 Kitchen 09
 device_area: L2
 
 # device_platform: ESP32

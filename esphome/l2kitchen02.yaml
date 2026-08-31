@@ -11,9 +11,12 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for measuring distance to the diswasher door 
-#     and the ambience light of the kitchen used to automate kitchen 
-#     lighting and dishwasher ZB plug through door open/close status
+#   measuring ...
+#   - distance to the diswasher door (upper corner) to check if the
+#       door is open or closed
+#   - ambience light under the dishwasher to check if the dishwasher
+#       is running or not (-> controlling the ZB plug for the dishwasher)
+#   - presence in the kitchen (-> controlling the lights in the kitchen)
 #
 # Future feature:
 #   - unknown
@@ -28,8 +31,9 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
-#   - VEML7700 (ambient light sensor, not installed yet)
+#   - VEML7700 (ambient light sensor)
 #   - VL53L0X (distance sensor)
+#   - LD2410C sensor
 #
 # Output
 #   - the device reports to HA only 
@@ -67,7 +71,9 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-i2c: !include conf/common/device/i2c_esp32c3.yaml
+i2c: !include conf/common/device/i2c_esp32c3_v1.yaml
+
+# no dallas or mcp23017 devices are used in this device, so no need to include them
 # dallas: !include conf/common/device/dallas.yaml
 # mcp23017: !include conf/common/device/mcp23017.yaml
 
@@ -86,19 +92,35 @@ globals:
 interval: !include conf/common/interval/connectivity.yaml
 # script:
 #   - <<: !include conf/script/l2kitchen02/reed01_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen02/reed02_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen02/reed03_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen02/reed04_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen02/reed05_click_on_press.yaml
+
+#-------------------------------------------------------------------
+# ESP32C3 - onboard LED
+output: !include conf/common/onboard_leds/esp32c3_output.yaml
+light: !include conf/common/onboard_leds/esp32c3_light.yaml
+
+#-------------------------------------------------------------------
+# LD2410C SENSOR
+# The LD2410C sensor is a presence sensor that can detect motion and presence in a room. 
+# It uses a UART interface for communication with the ESP32 microcontroller.
+uart:
+  - <<: !include conf/common/device/uart01_esp32c3_ld2410c.yaml
+ld2410:
+  - <<: !include conf/common/sensor/ld2410c_general.yaml
+
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  # - <<: !include conf/common/binary_sensor/reed_A1_onpress.yaml
-  # - <<: !include conf/common/binary_sensor/reed_A2_onpress.yaml
-  # - <<: !include conf/common/binary_sensor/reed_A3_onpress.yaml
-  # - <<: !include conf/common/binary_sensor/reed_A4_onpress.yaml
-  # - <<: !include conf/common/binary_sensor/reed_A5_onpress.yaml
+  - <<: !include conf/common/binary_sensor/ld2410c.yaml
+
+#-------------------------------------------------------------------
+# NUMBERS
+number:
+  # common numbers
+  # none so far
+  # device related
+  - <<: !include conf/common/number/ld2410c.yaml
+
 #-------------------------------------------------------------------
 # SENSORS
 sensor:
@@ -107,8 +129,14 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
-  - <<: !include conf/common/sensor/vl53L0x_single_mm.yaml
-  # - <<: !include conf/common/sensor/veml7700_standard_short.yaml
+  - <<: !include conf/common/sensor/vl53L0x_single.yaml
+  - <<: !include conf/common/sensor/ld2410c.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_long.yaml
+
+#-------------------------------------------------------------------
+# SWITCHES
+switch:
+  - <<: !include conf/common/switch/ld2410c.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -118,7 +146,7 @@ text_sensor:
   - <<: !include conf/common/text_sensor/wifiinfo.yaml
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
-  # none so far
+  - <<: !include conf/common/text_sensor/ld2410c.yaml
 
 ####################################################################
 # EOF

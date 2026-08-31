@@ -11,7 +11,12 @@
 ####################################################################
 #
 # Purpose:
-#   - Microcontroller for testing the LD2410C sensor in the kitchen
+#   measuring ...
+#   - distance to the diswasher door (upper corner) to check if the
+#       door is open or closed
+#   - ambience light under the dishwasher to check if the dishwasher
+#       is running or not (-> controlling the ZB plug for the dishwasher)
+#   - presence in the kitchen (-> controlling the lights in the kitchen)
 #
 # Future feature:
 #   - unknown
@@ -26,6 +31,8 @@
 #   - connects to the strongest WiFi configured
 #
 # Input:
+#   - VEML7700 (ambient light sensor)
+#   - VL53L0X (distance sensor)
 #   - LD2410C sensor
 #
 # Output
@@ -64,7 +71,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 # IC2 needs another file for the ESP32 platform
-# i2c: !include conf/common/device/i2c_esp32c3_v1.yaml
+i2c: !include conf/common/device/i2c_esp32c3_v1.yaml
 
 # no dallas or mcp23017 devices are used in this device, so no need to include them
 # dallas: !include conf/common/device/dallas.yaml
@@ -85,10 +92,6 @@ globals:
 interval: !include conf/common/interval/connectivity.yaml
 # script:
 #   - <<: !include conf/script/l2kitchen09/reed01_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen09/reed02_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen09/reed03_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen09/reed04_click_on_press.yaml
-#   - <<: !include conf/script/l2kitchen09/reed05_click_on_press.yaml
 
 #-------------------------------------------------------------------
 # ESP32C3 - onboard LED
@@ -126,9 +129,9 @@ sensor:
   - <<: !include conf/common/sensor/uptime.yaml
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
+  - <<: !include conf/common/sensor/vl53L0x_single.yaml
   - <<: !include conf/common/sensor/ld2410c.yaml
-  # - <<: !include conf/common/sensor/vl53L0x_single_mm.yaml
-  # - <<: !include conf/common/sensor/veml7700_standard_short.yaml
+  - <<: !include conf/common/sensor/veml7700_standard_long.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
