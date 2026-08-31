@@ -1,0 +1,20 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# ld2410c sensor
+  - platform: ld2410
+    has_target:
+      name: "Presence"
+      device_class: presence
+    has_moving_target:
+      name: "Moving Target"
+    has_still_target:
+      name: "Still Target"
+    out_pin_presence_status:
+      name: "OUT Pin Presence Status"
+# ############################################################
+#  END OF FILE
+# ############################################################
