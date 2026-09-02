@@ -122,6 +122,10 @@ substitutions:
   dht01_name_temperature: ${dht01_name} Temp
   dht01_upd: !secret DHT_UPDATE_INTERVAL_05MIN
 
+  # ESP32C3 onboard LED
+  esp32c3_onboard_led_name: $friendly_name OnboardLED
+  esp32c3_onboard_led_id: ${friendly_id}_OnboardLED
+
   # LED on ESP32Cam modules
   ESP_ONBOARD_LED_PIN_ID: "${friendly_id}_Onboard_LED"
   ESP_ONBOARD_LED_PIN_NAME: "${friendly_name} Onboard LED"

@@ -1,0 +1,65 @@
+####################################################################
+# NUMBERS
+
+#number:
+
+####################################################################
+# ld2410c sensor
+
+  - platform: ld2410
+    timeout:
+      name: "Presence Timeout"
+    light_threshold:
+      name: "Light Threshold"
+    max_move_distance_gate:
+      name: "Max Move Distance Gate"
+    max_still_distance_gate:
+      name: "Max Still Distance Gate"
+    g0:
+      move_threshold:
+        name: "Gate 0 Move Threshold"
+      still_threshold:
+        name: "Gate 0 Still Threshold"
+    g1:
+      move_threshold:
+        name: "Gate 1 Move Threshold"
+      still_threshold:
+        name: "Gate 1 Still Threshold"
+    g2:
+      move_threshold:
+        name: "Gate 2 Move Threshold"
+      still_threshold:
+        name: "Gate 2 Still Threshold"
+    g3:
+      move_threshold:
+        name: "Gate 3 Move Threshold"
+      still_threshold:
+        name: "Gate 3 Still Threshold"
+    g4:
+      move_threshold:
+        name: "Gate 4 Move Threshold"
+      still_threshold:
+        name: "Gate 4 Still Threshold"
+    g5:
+      move_threshold:
+        name: "Gate 5 Move Threshold"
+      still_threshold:
+        name: "Gate 5 Still Threshold"
+    g6:
+      move_threshold:
+        name: "Gate 6 Move Threshold"
+      still_threshold:
+        name: "Gate 6 Still Threshold"
+    g7:
+      move_threshold:
+        name: "Gate 7 Move Threshold"
+      still_threshold:
+        name: "Gate 7 Still Threshold"
+    g8:
+      move_threshold:
+        name: "Gate 8 Move Threshold"
+      still_threshold:
+        name: "Gate 8 Still Threshold"
+# ############################################################
+#  END OF FILE
+# ############################################################

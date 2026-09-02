@@ -1,0 +1,19 @@
+####################################################################
+# SELECTS
+
+#select:
+
+####################################################################
+# ld2410c sensor
+  - platform: ld2410
+    distance_resolution:
+      name: "Distance Resolution"
+    baud_rate:
+      name: "Baud Rate"
+    light_function:
+      name: "Light Function"
+    out_pin_level:
+      name: "OUT Pin Level"
+# ############################################################
+#  END OF FILE
+# ############################################################
