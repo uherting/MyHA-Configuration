@@ -1,0 +1,110 @@
+####################################################################
+# PACKAGES --- GENERAL CONFIGURATION FOR ALL ESP8266 DEVICES
+
+####################################################################
+# DEVICE DEFINITION
+esphome:
+  name: $device_name
+  comment: $device_comment
+  area: $device_area
+  build_path: ./build/${device_name}
+  # platform: $device_platform
+  #
+  #
+  # bootup script for l2kitchen01 device, executed after the device is online
+  # in order to teach the lightbar to be off when the device is booted up in 
+  # order to have a known state for the lightbar (off) when the device is booted up
+  # on_boot:
+  #   priority: -200
+  #   then:
+  #     # - delay: 5s
+  #     # - script.execute: device_bootup_script
+  #     # // ESP_LOGD("bootup_script", "L2Kitchen01: device_bootup_script b4 action.");
+  #     # // delay(50); // Delay for x milliseconds
+  #     - lambda: |-
+  #         float sensor_value_old;
+  #         float sensor_value_new;
+  #         sensor_value_old = id("${veml7700_01_id}").state;
+  #         id("${ssr03_id}").turn_on();
+  #         delay(300); // Delay for x milliseconds
+  #         id("${ssr03_id}").turn_off();
+  #         delay(300); // Delay for x milliseconds
+  #         sensor_value_new = id("${veml7700_01_id}").state;
+  #         // if the sensor value increased, the light bar got brighter otherwise it is off
+  #         if (sensor_value_new > sensor_value_old) {
+  #           ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #           sensor_value_old = sensor_value_new; // Update the old value to the new value
+  #           id("${ssr03_id}").turn_on();
+  #           delay(300); // Delay for x milliseconds
+  #           id("${ssr03_id}").turn_off();
+  #           delay(300); // Delay for x milliseconds
+  #           sensor_value_new = id("${veml7700_01_id}").state;
+  #           // if the sensor value increased, the light bar got brighter otherwise it is off
+  #           if (sensor_value_new > sensor_value_old) {
+  #             ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #             sensor_value_old = sensor_value_new; // Update the old value to the new value
+  #             id("${ssr03_id}").turn_on();
+  #             delay(300); // Delay for x milliseconds
+  #             id("${ssr03_id}").turn_off();
+  #             delay(300); // Delay for x milliseconds
+  #             sensor_value_new = id("${veml7700_01_id}").state;
+  #             // if the sensor value increased, the light bar got brighter otherwise it is off
+  #             if (sensor_value_new > sensor_value_old) {
+  #               ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #               sensor_value_old = sensor_value_new; // Update the old value to the new value
+  #               id("${ssr03_id}").turn_on();
+  #               delay(300); // Delay for x milliseconds
+  #               id("${ssr03_id}").turn_off();
+  #               delay(300); // Delay for x milliseconds
+  #               sensor_value_new = id("${veml7700_01_id}").state;
+  #               // if the sensor value increased, the light bar got brighter otherwise it is off
+  #               if (sensor_value_new > sensor_value_old) {
+  #                 delay(100); // Delay for x milliseconds
+  #                 ESP_LOGD("bootup_script", "old/new %.2f / %.2f.",sensor_value_old, sensor_value_new);
+  #               } else {
+  #                 delay(100); // Delay for x milliseconds
+  #                 ESP_LOGD("bootup_script", "old/new %.2f / % .2f.", sensor_value_old, sensor_value_new);
+  #               }
+  #             } else {
+  #               delay(100); // Delay for x milliseconds
+  #               ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
+  #             }
+  #           } else {
+  #             delay(100); // Delay for x milliseconds
+  #             ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
+  #           }
+  #         } else {
+  #           delay(100); // Delay for x milliseconds
+  #           ESP_LOGD("bootup_script", "old/new %.2f / %.2f.", sensor_value_old, sensor_value_new);
+  #         }
+  #         // delay(50); // Delay for x milliseconds
+  #         // ESP_LOGD("bootup_script", "L2Kitchen01: device_bootup_script after action.");
+
+# edited due to changes ahead 
+# for details see https://github.com/esphome/esphome/pull/8118
+# taken from https://esphome.io/components/esp8266
+esp8266:
+  board: $device_board
+  framework:
+    version: recommended
+
+
+####################################################################
+# LOGGING (central setup)
+#
+# according to:
+#  - https://esphome.io/components/logger.html?highlight=logger#log-levels
+#  - see secrets.yaml for definitions
+logger:
+  level: ${log_level}
+
+####################################################################
+# Switches (central setup)
+#
+switch:
+  - platform: restart
+    name: ${restart_device_switch_name}
+    id: ${restart_device_switch_id}
+####################################################################
+# EOF
+####################################################################

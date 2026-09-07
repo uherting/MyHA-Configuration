@@ -14,7 +14,7 @@
   #   - delayed_off: 70ms
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
-    number: !secret MCP23017_PIN_A7
+    number: !secret MCP23017_PIN_A5
     #
     # TODO: before installation change settings for mode / inverted
     # production => inverted: false / mode: INPUT

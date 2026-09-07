@@ -1,0 +1,13 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # bootup script for l2kitchen01 device, executed after the device is online
+  # in order to teach the lightbar to be off when the device is booted up in 
+  # order to have a known state for the lightbar (off) when the device is booted up
+  #
+  # the code was moved to conf/packages/l2kitchen01_device_base.yaml as it was not possible to include it
+  # 
+####################################################################
+# EOF
+####################################################################

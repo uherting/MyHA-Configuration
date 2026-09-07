@@ -10,15 +10,21 @@
   - platform: veml7700
     id: $veml7700_01_id
     # name: $veml7700_01_name
-    
+
     # I2C address of the sensor, defaults to 0x10
     address: $veml7700_01_address
 
     # update_interval: defaults to 60s
     update_interval: $veml7700_01_updateinterval
 
-    # short variant in case you don’t need any other options
+    # the entities below are optional
     ambient_light: $veml7700_01_ambient_light
+    ambient_light_counts: $veml7700_01_ambient_light_counts
+    full_spectrum: $veml7700_01_full_spectrum
+    infrared: $veml7700_01_infrared
+    full_spectrum_counts: $veml7700_01_full_spectrum_counts
+    actual_gain: $veml7700_01_actual_gain
+    actual_integration_time: $veml7700_01_actual_integration_time
 
 ####################################################################
 # EOF
