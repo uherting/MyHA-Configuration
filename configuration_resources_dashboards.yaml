@@ -9,9 +9,6 @@ resource_mode: yaml
 
 # external resources
 resources:
-  - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
-    type: module
-
   - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
     type: module
 
@@ -48,6 +45,10 @@ resources:
   - url: /hacsfiles/banner-card/banner-card.js
     type: module
 
+  # unknown lovelace card
+  # - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
+  #   type: module
+
   # Thermal Comfort Icons (for the HACS integration Thermal Comfort)
   # for details see
   #   - https://github.com/dolezsa/thermal_comfort?tab=readme-ov-file
@@ -57,10 +58,6 @@ resources:
 
   # Battery State Card
   - url: /hacsfiles/battery-state-card/battery-state-card.js
-    type: module
-
-  # Zigbee map card
-  - url: /hacsfiles/homed-zigbee-networkmap/homed-zigbee-networkmap.js
     type: module
 
   # Advanced Camera Card, FKA Frigate Card
@@ -74,6 +71,10 @@ resources:
   # Calendar Card Pro
   - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
     type: module
+
+  # Zigbee map card
+  # - url: /hacsfiles/homed-zigbee-networkmap/homed-zigbee-networkmap.js
+  #   type: module
 
   # Aliexpress Tracking Card
   # - url: /hacsfiles/../lovelace-aliexpress-package-card/aliexpress_package_card.js

@@ -17,8 +17,8 @@ views:
   - !include /config/conf/lovelace/tabs/admin/l2_btproxies_tech.yaml
   - !include /config/conf/lovelace/tabs/admin/l9_esp_cams_tech.yaml
   - !include /config/conf/lovelace/tabs/admin/l9_esp_cams_details.yaml
-  - !include /config/conf/lovelace/tabs/admin/l9_esp_lorry_tech.yaml
-  - !include /config/conf/lovelace/tabs/admin/l9_esp_lorry_details.yaml
+  # - !include /config/conf/lovelace/tabs/admin/l9_esp_lorry_tech.yaml
+  # - !include /config/conf/lovelace/tabs/admin/l9_esp_lorry_details.yaml
   - !include /config/conf/lovelace/tabs/admin/l2_esp_tech.yaml
   - !include /config/conf/lovelace/tabs/admin/l2_esp_details.yaml
   - !include /config/conf/lovelace/tabs/admin/l0_esp_tech.yaml
