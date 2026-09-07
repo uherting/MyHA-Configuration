@@ -9,6 +9,7 @@
   - platform: gpio
     name: $reed_contact02_name
     id: ${reed_contact02_id}
+    device_class: door
     pin:
       mcp23xxx: ${mcp23017_hub01_id}
       number: !secret MCP23017_PIN_A3
@@ -19,7 +20,7 @@
     filters:
       - delayed_on: 100ms
       - delayed_off: 100ms
-    device_class: door
+    # when the reed contact is closed (released) switch off the SSR01
     on_release:
       then:
         - script.execute: ssr_script_reed_02
