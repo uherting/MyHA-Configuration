@@ -73,10 +73,6 @@ substitutions:
   bh1750_01_name: $friendly_name BH1750 Illuminance 01
   bh1750_01_update_interval: !secret BH1750_UPDATE_INTERVAL_60SEC
 
-  # spy mode (light is not trigered by motion)
-  binary_template_sensor_spy_mode_id: ${friendly_id}_BIN_TEMPL_SPYMODE
-  binary_template_sensor_spy_mode_name: $friendly_name BIN_TEMPL SPYMODE
-
   # # zb_plug_microwave (switching the plug)
   # binary_template_sensor_zb_plug_microwave_id: ${friendly_id}_BIN_TEMPL_ZBPLUGMICROWAVE
   # binary_template_sensor_zb_plug_microwave_name: $friendly_name BIN_TEMPL ZBPLUGMICROWAVE
