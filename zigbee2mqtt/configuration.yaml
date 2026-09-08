@@ -5,8 +5,7 @@ mqtt:
   user: mqtt_user
   password: lifetec
 serial:
-  port: >-
-    /dev/serial/by-id/usb-Silicon_Labs_Sonoff_Zigbee_3.0_USB_Dongle_Plus_0001-if00-port0
+  port: /dev/serial/by-id/usb-Silicon_Labs_Sonoff_Zigbee_3.0_USB_Dongle_Plus_0001-if00-port0
   adapter: zstack
 frontend:
   enabled: true
@@ -86,9 +85,6 @@ devices:
   '0xa4c138cb4a160c30':
     friendly_name: ZB_DW_L2_Bedroom_01
     icon: device_icons/b1976e8cc79f1e6878223c613c53fe63.png
-  '0xa4c138b55bafbf81':
-    friendly_name: ZB_DW_L2_Bedroom_02
-    icon: device_icons/b1976e8cc79f1e6878223c613c53fe63.png
   '0xa4c1388148217706':
     friendly_name: ZB_Plug_L2_Kitchen_Kettle
     icon: device_icons/891fe1ea30760e219004850d8ff8ade0.png
@@ -125,6 +121,8 @@ devices:
   '0xa4c1384df171e927':
     friendly_name: ZB_Plug_L2_Bedroom_Lotus_Lantern
     icon: device_icons/891fe1ea30760e219004850d8ff8ade0.png
+  '0xa4c138632749c29e':
+    friendly_name: ZB_DW_L2_Bedroom_02
 groups:
   '1':
     friendly_name: level2-TRVs
