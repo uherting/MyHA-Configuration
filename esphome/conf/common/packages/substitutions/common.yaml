@@ -252,6 +252,11 @@ substitutions:
   ssr09_id: ${friendly_id}_SSR09
   ssr09_name: $friendly_name SSR 09
 
+  # sun down twilight sensor from home assistant
+  sun_dwn_twilight_name: ${friendly_name} Sun Down Twilight
+  sun_dwn_twilight_id: ${friendly_id}_Sun_Down_Twilight
+  sun_dwn_twilight_device_class: "light"
+
   # TTF fonts
   ttf_font_directory: "conf/common/fonts"
 
