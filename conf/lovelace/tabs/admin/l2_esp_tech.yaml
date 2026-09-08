@@ -40,20 +40,20 @@ cards:
   #     - sensor.l2corridor02_esphome_version
   #     - switch.l2corridor02_restart_device
 
-  # - type: entities
-  #   title: L2 Storage 01
-  #   show_header_toggle: false
-  #   entities:
-  #     - sensor.l2storage01_conn_ip_addr
-  #     - sensor.l2storage01_wifi_signal
-  #     - sensor.l2storage01_conn_ssid
-  #     - sensor.l2storage01_conn_bssid
-  #     - sensor.l2storage01_uptime
-  #     - sensor.l2storage01_uptime_human_readable
-  #     - binary_sensor.l2storage01_status
-  #     - update.l2storage01_firmware
-  #     - sensor.l2storage01_esphome_version
-  #     - switch.l2storage01_restart_device
+  - type: entities
+    title: L2 Storage 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2storage01_conn_ip_addr
+      - sensor.l2storage01_wifi_signal
+      - sensor.l2storage01_conn_ssid
+      - sensor.l2storage01_conn_bssid
+      - sensor.l2storage01_uptime
+      - sensor.l2storage01_uptime_human_readable
+      - binary_sensor.l2storage01_status
+      - update.l2storage01_firmware
+      - sensor.l2storage01_esphome_version
+      - switch.l2storage01_restart_device
 
   - type: entities
     title: L2 Bathroom 01a

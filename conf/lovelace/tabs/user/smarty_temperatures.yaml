@@ -237,14 +237,14 @@ cards:
             show_state: false
             color: yellow
 
-      # South L2
+      # East L2
       - type: grid
         square: false
-        # title: OutSouth
+        # title: OutEast
         columns: 5
         cards:
           - type: "custom:button-card"
-            name: "OutSouth"
+            name: "OutEast"
           - type: "custom:button-card"
             name: " "
             entity: sensor.zb_th_l2_storage_out_temperature
