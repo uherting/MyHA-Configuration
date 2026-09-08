@@ -2,19 +2,20 @@
 # SCRIPTS
 
 #script:
-  # on_press action of PIR #01 (offline automation)
+  # on_press action of PIR #01 (no matter whether the device is online or offline)
   - id: ssr_script_pir_01
     mode: restart
     then:
       - if:
           condition:
-            lambda: 'return (!id(isDeviceConnected));'
+            lambda: 'return (!id($sun_dwn_twilight_id));'
           then:
-            # - logger.log: "Turning SSR01 on as part of offline automation."
+            # - logger.log: "Turning SSR01 on b/c of twilight automation."
             - switch.turn_on: ${ssr01_id}
             - delay: !secret DELAY_02MIN
             - switch.turn_off: ${ssr01_id}
-            # - logger.log: "Turning SSR01 off as part of offline automation."
+            # - logger.log: "Turning SSR01 off b/c of twilight automation."
+
 ####################################################################
 # EOF
 ####################################################################

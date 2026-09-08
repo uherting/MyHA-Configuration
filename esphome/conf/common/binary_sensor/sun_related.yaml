@@ -1,0 +1,22 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# sun related binary sensors
+
+  - platform: homeassistant
+    name: $sun_dwn_twilight_name
+    id: ${sun_dwn_twilight_id}
+    device_class: $sun_dwn_twilight_device_class
+    entity_id: binary_sensor.sun_dwn_twilight
+    # lambda: |-
+    #   if (id(sun).is_below_horizon()) {
+    #     return true;
+    #   } else {
+    #     return false;
+    #   }
+# ############################################################
+#  END OF FILE
+# ############################################################
