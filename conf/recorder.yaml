@@ -36,81 +36,17 @@ exclude:
     - weblink
   #  - device_tracker
   entities:
+    - entity_globs:
+        - sensor.l*_scan_results
+        - sensor.l*_uptime
+        - sensor.l*_uptime_human_readable
+        - sensor.zb_*_last_seen
     - sensor.basics_of_sikhi
+    - sensor.tyt_investigates
     - sensor.date
     - sensor.date_time
-    - sensor.l2bathroom01a_scan_results
-    - sensor.l2bathroom01a_uptime
-    - sensor.l2bathroom01a_uptime_human_readable
-    - sensor.l2btproxykitchen_scan_results
-    - sensor.l2btproxykitchen_uptime
-    - sensor.l2btproxykitchen_uptime_human_readable
-    # - sensor.l2corridor02_scan_results
-    # - sensor.l2corridor02_uptime
-    # - sensor.l2corridor02_uptime_human_readable
-    # - sensor.l2corridor02_scan_results
-    # - sensor.l2corridor02_uptime
-    # - sensor.l2corridor02_uptime_human_readable
-    # - sensor.l2kitchen12_scan_results
-    - sensor.l2kitchen01_scan_results
-    - sensor.l2kitchen01_uptime
-    - sensor.l2kitchen01_uptime_human_readable
-    - sensor.l2kitchen11_scan_results
-    - sensor.l2kitchen11_uptime
-    - sensor.l2kitchen11_uptime_human_readable
-    - sensor.l2kitchen12_scan_results
-    - sensor.l2kitchen12_uptime
-    - sensor.l2kitchen12_uptime_human_readable
-    # - sensor.l2storage01_scan_results
-    # - sensor.l2storage01_uptime
-    # - sensor.l2storage01_uptime_human_readable
-    - sensor.l9cam3201_scan_results
-    - sensor.l9cam3201_uptime
-    - sensor.l9cam3201_uptime_human_readable
-    - sensor.l9cam3202_scan_results
-    - sensor.l9cam3202_uptime
-    - sensor.l9cam3202_uptime_human_readable
-    - sensor.l9cam3203_scan_results
-    - sensor.l9cam3203_uptime
-    - sensor.l9cam3203_uptime_human_readable
-    - sensor.l9cam3204_scan_results
-    - sensor.l9cam3204_uptime
-    - sensor.l9cam3204_uptime_human_readable
-    - sensor.l9cam3205_scan_results
-    - sensor.l9cam3205_uptime
-    - sensor.l9cam3205_uptime_human_readable
-    - sensor.l9lorry01d_scan_results
-    - sensor.l9lorry01d_uptime
-    - sensor.l9lorry01d_uptime_human_readable
-    - sensor.l9lorry01g_scan_results
-    - sensor.l9lorry01g_uptime
-    - sensor.l9lorry01g_uptime_human_readable
-    - sensor.roamingaroundarea_l9lorry01d_location_time_now
-    - binary_sensor.l9lorry01d_location_day_end
-    - binary_sensor.l9lorry01d_location_day_start
-    - binary_sensor.l9lorry01d_location_poi
-    - sensor.zb_charger_gh_last_seen
-    - sensor.zb_charger_uh_last_seen
-    - sensor.zb_dw_l2_bedroom_01_last_seen
-    - sensor.zb_dw_l2_bedroom_02_last_seen
-    - sensor.zb_humanpresence_l2_kitchen_01_last_seen
-    - sensor.zb_plug_l2_misc_01_last_seen
-    - sensor.zb_plug_l2_misc_02_last_seen
-    - sensor.zb_plug_l2_lounge_tv_last_seen
-    - sensor.zb_plug_l2_bedroom_misc01_last_seen
-    - sensor.zb_plug_l2_kitchen_coffeemachine_last_seen
-    - sensor.zb_plug_l2_kitchen_kettle_last_seen
-    - sensor.zb_plug_l2_kitchen_microwave_last_seen
-    - sensor.zb_plug_l2_kitchen_fridge_last_seen
-    - sensor.zb_th_l2_lounge_last_seen
-    - sensor.zb_th_l2_kitchen_last_seen
-    - sensor.zb_th_l2_storage_out_last_seen
-    - sensor.zb_trv_bedroom_l2_last_seen
-    - sensor.zb_trv_kitchen_l2_last_seen
-    - sensor.zb_trv_lounge_l2_last_seen
     - sensor.last_boot
     - sensor.time
-    - sensor.tyt_investigates
     - sun.sun
     - zone.home
 # ############################################################
