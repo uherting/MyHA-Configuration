@@ -25,11 +25,11 @@ cards:
     entities:
       - entity: calendar.allgemein
       - entity: calendar.birthdays
-      - entity: calendar.fahrschule
       - entity: calendar.feiertage_in_belgien
       - entity: calendar.feiertage_in_den_niederlande
       - entity: calendar.feiertage_in_deutschland
       - entity: calendar.lkw_job
+      - entity: calendar.lkw_schulung
     days_to_show: 7
     compact_events_to_show: 10
     show_location: true
