@@ -622,7 +622,13 @@ class UnderlyingClimate(UnderlyingEntity):
         if hvac_mode in (VThermHvacMode_HEAT, VThermHvacMode_COOL):
 
             async def callback_resend_temp(_):
-                await self.set_temperature(self._thermostat.target_temperature, None, None)
+                temperature = self.last_sent_temperature
+                if temperature is None:
+                    temperature = getattr(self._thermostat, "regulated_target_temperature", None)
+                if temperature is None:
+                    temperature = self._thermostat.target_temperature
+                if temperature is not None:
+                    await self.set_temperature(temperature, None, None)
 
             if self._cancel_set_temperature_later:
                 self._cancel_set_temperature_later()
@@ -1128,6 +1134,13 @@ class UnderlyingClimate(UnderlyingEntity):
             return False
 
         if str(hvac_mode) == str(under_hvac_mode):
+            return False
+
+        if self._thermostat.now < self._last_command_sent_datetime + timedelta(seconds=resend_delay_sec):
+            _LOGGER.debug(
+                "%s - Skipping climate state repair while waiting for the last command to be applied",
+                self,
+            )
             return False
 
         await self.set_hvac_mode(hvac_mode)
