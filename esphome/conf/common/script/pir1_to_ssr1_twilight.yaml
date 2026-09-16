@@ -8,7 +8,7 @@
     then:
       - if:
           condition:
-            lambda: 'return (!id($sun_dwn_twilight_id));'
+            - binary_sensor.is_on: ${sun_dwn_twilight_id}
           then:
             # - logger.log: "Turning SSR01 on b/c of twilight automation."
             - switch.turn_on: ${ssr01_id}
