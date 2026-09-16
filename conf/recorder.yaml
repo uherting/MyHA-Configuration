@@ -35,12 +35,12 @@ exclude:
     - script
     - weblink
   #  - device_tracker
+  entity_globs:
+    - sensor.l*_scan_results
+    - sensor.l*_uptime
+    - sensor.l*_uptime_human_readable
+    - sensor.zb_*_last_seen
   entities:
-    - entity_globs:
-        - sensor.l*_scan_results
-        - sensor.l*_uptime
-        - sensor.l*_uptime_human_readable
-        - sensor.zb_*_last_seen
     - sensor.basics_of_sikhi
     - sensor.tyt_investigates
     - sensor.date
