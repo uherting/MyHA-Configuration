@@ -66,7 +66,7 @@ ota: !include conf/common/networking/ota.yaml
 
 api: !include conf/common/networking/api.yaml
 time: !include conf/common/time.yaml
-# sun: !include conf/common/sun.yaml
+sun: !include conf/common/sun.yaml
 
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
@@ -130,8 +130,8 @@ sensor:
   # - <<: !include conf/common/sensor/dht_esp32_01.yaml
   # device related
   - <<: !include conf/common/sensor/vl53L0x_single.yaml
-  - <<: !include conf/common/sensor/ld2410c.yaml
   - <<: !include conf/common/sensor/veml7700_standard_long.yaml
+  - <<: !include conf/common/sensor/ld2410c.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
