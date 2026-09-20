@@ -31,6 +31,7 @@
           "auto_start_stop": "Auto Start und Stop",
           "valve_regulation": "Konfiguration Ventilsteuerung",
           "sync_device_internal_temp": "Synchronisierung der Gerätetemperatur",
+          "humidity": "Luftfeuchtigkeit",
           "lock": "Sperrenverwaltung",
           "heating_failure_detection": "Heizungsausfallerkennung",
           "auto_tpi_configuration": "Auto TPI - Konfiguration",
@@ -110,6 +111,10 @@
           "auto_regulation_mode": "Selbstregelung",
           "auto_regulation_dtemp": "Regelungsschwelle",
           "auto_regulation_periode_min": "Mindestzeitraum Regelung",
+          "opening_threshold_degree": "Öffnungsschwelle",
+          "min_opening_degrees": "Minimaler Öffnungsweite",
+          "max_opening_degrees": "Maximale Öffnungsweite",
+          "max_closing_degree": "Maximale Schließweite",
           "auto_regulation_use_device_temp": "Interne Bezugstemperatur ausgleichen",
           "inverse_switch_command": "Umgekehrter Schalterbefehl",
           "auto_fan_mode": "Automatischer Lüftermodus",
@@ -127,6 +132,10 @@
           "auto_regulation_mode": "Selbstregulierung durch VTherm verwenden",
           "auto_regulation_dtemp": "Schwellenwert in ° (oder % bei Ventilen), unterhalb dessen die Regelung nicht aktiviert wird",
           "auto_regulation_periode_min": "Dauer in Minuten zwischen zwei Regelungsaktualisierungen",
+          "opening_threshold_degree": "Öffnungsschwelle des Ventils, unterhalb derer das Ventil als geschlossen gilt (und dann 'max_closing_degree' gilt)",
+          "min_opening_degrees": "Eine kommaseparierte Liste der Mindestöffnung. Standardwert ist 0. Beispiel: 20, 25, 30",
+          "max_opening_degrees": "Maximaler Öffnungsgrad für jedes zugeordnete Gerät, durch Kommas getrennt. Standardwert 100. Das Ventil öffnet sich niemals über diesen Wert hinaus. Beispiel: 80, 85, 90",
+          "max_closing_degree": "Maximale Schließung. Das Ventil wird niemals über diesen Wert hinaus geschlossen. Zum vollständigen Schliessen auf 100 einstellen.",
           "auto_regulation_use_device_temp": "Geräteinnentemperatur ausgleichen, zur Selbstregulierungsbeschleunigung (in den meisten Fällen nicht erforderlich)",
           "inverse_switch_command": "Schaltersteuerung umkehren für Installationen mit Pilotdraht und Diode.",
           "auto_fan_mode": "Automatisch Belüftung bei großen Abweichungen",
@@ -353,6 +362,18 @@
           "sync_entity_ids": "Entitie-Liste, die zur Synchronisierung der internen Temperatur der zugeordneten Geräte verwendet werden. Es muss eine pro zugeordnetem Gerät vorhanden sein. Wenn es aktiviert ist, muss eine Kalibrierungsentität vorhanden sein, ansonsten eine Temperaturentity. Beides sind Entities vom Typ `number`."
         }
       },
+      "humidity": {
+        "title": "Luftfeuchtigkeit",
+        "description": "Externen Luftfeuchtigkeitssensor verwenden. Erkannter Sensor: {humidity_detected}",
+        "data": {
+          "use_humidity_feature": "Luftfeuchtigkeitssensor verwenden",
+          "humidity_sensor_entity_id": "Luftfeuchtigkeitssensor"
+        },
+        "data_description": {
+          "use_humidity_feature": "Deaktivieren Sie diese Option, um nur die Luftfeuchtigkeit der zugrunde liegenden Klimaanlage zu verwenden.",
+          "humidity_sensor_entity_id": "Leer lassen, um den erkannten Sensor automatisch zu verwenden."
+        }
+      },
       "heating_failure_detection": {
         "title": "Erkennung von Heizungsausfällen",
         "description": "Konfiguration der Heizungsausfallerkennung. Diese Funktion erkennt Anomalien, wenn Heizleistung angefordert wird, die Temperatur jedoch nicht steigt, oder wenn die Heizung ausgeschaltet ist, die Temperatur jedoch weiter steigt.",
@@ -387,6 +408,7 @@
       "min_opening_degrees_format": "Es wird eine Liste positiver Ganzzahlen erwartet, die durch Komma getrennte sind. Beispiel: 20, 25, 30",
       "max_opening_degrees_format": "Es wird eine Liste positiver Ganzzahlen zwischen 0 und der maximalen Ventilöffnung erwartet, die durch Kommas getrennt sind. Beispiel: 80, 85, 90",
       "min_max_opening_degrees_inconsistent": "Für jedes zugeordnete Gerät muss max_opening_degrees absolut größer als min_opening_degrees sein. Bitte die Konfiguration überprüfen.",
+      "valve_control_parameters_cardinality_incorrect": "Die Listen der minimalen und maximalen Öffnungsgrade dürfen nicht mehr Werte enthalten als Ventile konfiguriert sind",
       "vswitch_configuration_incorrect": "Die Konfiguration der Befehlsanpassung ist falsch. Sie ist für nicht umschaltbare Basiswerte erforderlich und muss das Format 'service_name[/attribut:wert]' haben. Weitere Informationen in der README-Datei."
     },
     "abort": {
@@ -424,6 +446,7 @@
           "auto_start_stop": "Auto Start/Stopp",
           "valve_regulation": "Ventilsteuerung",
           "sync_device_internal_temp": "Synchronisierung der Gerätetemperatur",
+          "humidity": "Luftfeuchtigkeit",
           "lock": "Sperrenverwaltung",
           "heating_failure_detection": "Heizungsausfallerkennung",
           "finalize": "Abschliessen",
@@ -498,6 +521,10 @@
           "auto_regulation_mode": "Selbstregelnd",
           "auto_regulation_dtemp": "Regelschwelle",
           "auto_regulation_periode_min": "Minimale Regelzeit",
+          "opening_threshold_degree": "Öffnungsschwelle",
+          "min_opening_degrees": "Minimaler Öffnungsweite",
+          "max_opening_degrees": "Maximale Öffnungsweite",
+          "max_closing_degree": "Maximale Schließweite",
           "auto_regulation_use_device_temp": "Ausgleich der Innentemperatur vom Gerät",
           "inverse_switch_command": "Umgekehrter Schaltbefehl",
           "auto_fan_mode": "Automatischer Lüfterbetrieb",
@@ -515,6 +542,10 @@
           "auto_regulation_mode": "Verwendung der Selbstregulierung durch VTherm",
           "auto_regulation_dtemp": "Der Schwellenwert in ° (oder % bei Ventilen), unter dem die Regelung nicht aktiviert wird",
           "auto_regulation_periode_min": "Dauer in Minuten zwischen zwei Regelungsaktualisierungen",
+          "opening_threshold_degree": "Öffnungsschwelle des Ventils, unterhalb derer das Ventil als geschlossen gilt (und dann 'max_closing_degree' gilt)",
+          "min_opening_degrees": "Eine kommaseparierte Liste der Mindestöffnung. Standardwert ist 0. Beispiel: 20, 25, 30",
+          "max_opening_degrees": "Maximaler Öffnungsgrad für jedes zugeordnete Gerät, durch Kommas getrennt. Standardwert 100. Das Ventil öffnet sich niemals über diesen Wert hinaus. Beispiel: 80, 85, 90",
+          "max_closing_degree": "Maximale Schließung. Das Ventil wird niemals über diesen Wert hinaus geschlossen. Zum vollständigen Schliessen auf 100 einstellen.",
           "auto_regulation_use_device_temp": "Ausgleich der eventuell vorhandenen Innentemperatur vom zugeordneten Gerät benutzen, zur Beschleunigung der Selbstregulierung (ist in den meisten Fällen nicht erforderlich)",
           "inverse_switch_command": "Kehrt die Schaltersteuerung bei Installationen mit Pilotdraht und Diode um.",
           "auto_fan_mode": "Aktiviert die Belüftung automatisch bei großen Abweichugnen.",
@@ -697,6 +728,18 @@
           "sync_entity_ids": "Entitie-Liste, die zur Synchronisierung der internen Temperatur der zugeordneten Geräte verwendet werden. Es muss eine pro zugeordnetem Gerät vorhanden sein. Wenn es aktiviert ist, muss eine Kalibrierungsentität vorhanden sein, ansonsten eine Temperaturentity. Beides sind Entities vom Typ `number`."
         }
       },
+      "humidity": {
+        "title": "Luftfeuchtigkeit - {name}",
+        "description": "Externen Luftfeuchtigkeitssensor verwenden. Erkannter Sensor: {humidity_detected}",
+        "data": {
+          "use_humidity_feature": "Luftfeuchtigkeitssensor verwenden",
+          "humidity_sensor_entity_id": "Luftfeuchtigkeitssensor"
+        },
+        "data_description": {
+          "use_humidity_feature": "Deaktivieren Sie diese Option, um nur die Luftfeuchtigkeit der zugrunde liegenden Klimaanlage zu verwenden.",
+          "humidity_sensor_entity_id": "Leer lassen, um den erkannten Sensor automatisch zu verwenden."
+        }
+      },
       "auto_tpi_configuration": {
         "title": "Auto TPI - Konfiguration - {name}",
         "description": "Allgemeine Parameter für das Auto-TPI-Lernen.",
@@ -777,6 +820,7 @@
       "min_opening_degrees_format": "Es wird eine Liste positiver Ganzzahlen erwartet, die durch Komma getrennte sind. Beispiel: 20, 25, 30",
       "max_opening_degrees_format": "Es wird eine Liste positiver Ganzzahlen zwischen 0 und der maximalen Ventilöffnung erwartet, die durch Kommas getrennt sind. Beispiel: 80, 85, 90",
       "min_max_opening_degrees_inconsistent": "Für jedes zugeordnete Gerät muss max_opening_degrees absolut größer als min_opening_degrees sein. Bitte die Konfiguration überprüfen.",
+      "valve_control_parameters_cardinality_incorrect": "Die Listen der minimalen und maximalen Öffnungsgrade dürfen nicht mehr Werte enthalten als Ventile konfiguriert sind",
       "vswitch_configuration_incorrect": "Die Konfiguration der Befehlsanpassung ist falsch. Sie ist für nicht umschaltbare Basiswerte erforderlich und muss das Format 'service_name[/attribut:wert]' haben. Weitere Informationen dazu in der README-Datei."
     },
     "abort": {
@@ -953,6 +997,10 @@
     }
   },
   "services": {
+    "set_hvac_mode_sleep": {
+      "name": "HVAC-Modus auf Ruhemodus setzen",
+      "description": "Versetzt einen VTherm in den saisonalen Ruhemodus. Er wird als ausgeschaltet angezeigt und sendet bei over_climate mit direkter Ventilregelung und over_valve eine rohe Ventilöffnungsanforderung von 100 %. Die physische Öffnung unterliegt weiterhin der konfigurierten Ventilsteuerung und den Grenzen der number-Entity."
+    },
     "set_auto_tpi_mode": {
       "name": "Auto-TPI-Modus einstellen",
       "description": "Aktiviert oder deaktiviert den Auto-TPI-Lernmodus.",

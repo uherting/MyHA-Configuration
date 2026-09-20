@@ -31,6 +31,7 @@
           "auto_start_stop": "AutoSTART i autoSTOP",
           "valve_regulation": "Konfiguracja regulacji zaworu",
           "sync_device_internal_temp": "Synchronizacja temperatury urządzenia",
+          "humidity": "Wilgotność",
           "lock": "Zarządzanie blokadą",
           "finalize": "Wszystko zrobione",
           "configuration_not_complete": "Konfiguracja niekompletna",
@@ -107,6 +108,10 @@
           "auto_regulation_mode": "Autoregulacja",
           "auto_regulation_dtemp": "Próg regulacji",
           "auto_regulation_periode_min": "Minimalny okres regulacji",
+          "opening_threshold_degree": "Próg otwarcia zaworu",
+          "min_opening_degrees": "Minimalny stopień otwarcia",
+          "max_opening_degrees": "Maksymalny stopień otwarcia",
+          "max_closing_degree": "Maksymalny stopień zamknięcia",
           "auto_regulation_use_device_temp": "Użyj temperatury wewnętrznej urządzenia",
           "inverse_switch_command": "Polecenie odwrócenia przełącznika",
           "auto_fan_mode": "Tryb autowentylacji",
@@ -124,6 +129,10 @@
           "auto_regulation_mode": "Automatyczna regulacja temperatury docelowej",
           "auto_regulation_dtemp": "Próg otwarcia w ° (dla zaworu w %), poniżej którego zmiana temperatury nie będzie uwzględniana",
           "auto_regulation_periode_min": "Czas (w min.) między dwiema aktualizacjami regulacji",
+          "opening_threshold_degree": "Próg otwarcia zaworu, poniżej którego zawór powinien być uważany za zamknięty (wówczas będzie obowiązywał parametr maksymalnego stopnia zamknięcia)",
+          "min_opening_degrees": "Minimalne wartości stopnia otwarcia zaworu dla każdego urządzenia, oddzielone przecinkiem. Domyślnie: 0. Przykład: 20, 25, 30",
+          "max_opening_degrees": "Maksymalna wartość stopnia otwarcia zaworu. Zawór nigdy się nie otworzy więcej niż ta wartość",
+          "max_closing_degree": "Maksymalna wartość stopnia zamknięcia zaworu. Powyżej tej wartości zawór nigdy nie zostanie zamknięty. Ustaw wartość tego parametru na `100`, aby całkowicie zamknąć zawór, jeśli ogrzewanie jest już niepotrzebne",
           "auto_regulation_use_device_temp": "Użyj ewentualnego wewnętrznego czujnika temperatury urządzenia, aby przyspieszyć autoregulację (w większości przypadków nie jest to konieczne)",
           "inverse_switch_command": "W przypadku przełącznika z przewodem sterującym może być konieczne odwrócenie kolejności poleceń",
           "auto_fan_mode": "Automatycznie uruchom wentylator, gdy konieczne jest intensywne ogrzewanie/chłodzenie",
@@ -304,6 +313,18 @@
           "sync_entity_ids": "Lista encji używanych do synchronizacji temperatury wewnętrznej urządzeń bazowych. Każde urządzenie bazowe musi mieć jedną taką encję. Jeśli pole wyboru jest zaznaczone, powinna to być encja kalibracji. W przeciwnym razie powinna to być encja temperatury. Obie encje mają typ numeryczny `number`."
         }
       },
+      "humidity": {
+        "title": "Wilgotność",
+        "description": "Użyj zewnętrznego czujnika wilgotności. Wykryty czujnik: {humidity_detected}",
+        "data": {
+          "use_humidity_feature": "Użyj czujnika wilgotności",
+          "humidity_sensor_entity_id": "Czujnik wilgotności"
+        },
+        "data_description": {
+          "use_humidity_feature": "Wyłącz tę opcję, aby używać tylko wilgotności z bazowego termostatu climate.",
+          "humidity_sensor_entity_id": "Pozostaw puste, aby automatycznie użyć wykrytego czujnika."
+        }
+      },
       "heating_failure_detection": {
         "title": "Wykrywanie awarii ogrzewania",
         "description": "Konfiguracja funkcji wykrywania awarii ogrzewania. Wykrywa anomalie, gdy ogrzewanie jest oczekiwane, ale temperatura nie wzrasta, lub gdy ogrzewanie jest wyłączone, ale temperatura nadal rośnie.",
@@ -338,6 +359,7 @@
       "min_opening_degrees_format": "Oczekiwany separator przecinkowy listy lub dodatnia liczba całkowita. Przykład: 20, 25, 30",
       "max_opening_degrees_format": "Oczekiwana jest lista dodatnich liczb całkowitych między 0 a 100 oddzielonych przecinkami. Przykład: 80, 85, 90",
       "min_max_opening_degrees_inconsistent": "Dla każdego urządzenia bazowego max_opening_degrees musi być ściśle większy niż min_opening_degrees. Sprawdź swoją konfigurację.",
+      "valve_control_parameters_cardinality_incorrect": "Listy minimalnych i maksymalnych stopni otwarcia nie mogą zawierać więcej wartości niż skonfigurowane zawory",
       "vswitch_configuration_incorrect": "Błąd konfiguracji poleceń własnych. Wymagane są one dla urządzeń nie będących przełącznikami. Ich format musi być następujący: `service_name[/attribute:value]`. Więcej informacji znajdziesz w dokumentacji"
     },
     "abort": {
@@ -375,6 +397,7 @@
           "auto_start_stop": "AutoSTART i autoSTOP",
           "valve_regulation": "Konfiguracja regulacji zaworu",
           "sync_device_internal_temp": "Synchronizacja temperatury urządzenia",
+          "humidity": "Wilgotność",
           "lock": "Blokada",
           "auto_tpi_configuration": "Auto TPI - Ogólne",
           "auto_tpi_avg_settings": "Auto TPI - Średnia",
@@ -452,6 +475,10 @@
           "auto_regulation_mode": "Autoregulacja",
           "auto_regulation_dtemp": "Próg regulacji",
           "auto_regulation_periode_min": "Minimalny okres regulacji",
+          "opening_threshold_degree": "Próg otwarcia zaworu",
+          "min_opening_degrees": "Minimalny stopień otwarcia",
+          "max_opening_degrees": "Maksymalny stopień otwarcia",
+          "max_closing_degree": "Maksymalny stopień zamknięcia",
           "auto_regulation_use_device_temp": "Użyj temperatury wewnętrznej z urządzenia",
           "inverse_switch_command": "Polecenie odwrócenia przełącznika",
           "auto_fan_mode": "Tryb autowentylacji",
@@ -469,6 +496,10 @@
           "auto_regulation_mode": "Automatyczna regulacja temperatury docelowej",
           "auto_regulation_dtemp": "Próg otwarcia w ° (dla zaworu w %), poniżej którego zmiana temperatury nie będzie uwzględniana",
           "auto_regulation_periode_min": "Czas (w min.) między dwiema aktualizacjami regulacji",
+          "opening_threshold_degree": "Próg otwarcia zaworu, poniżej którego zawór powinien być uważany za zamknięty (wówczas będzie obowiązywał parametr maksymalnego stopnia zamknięcia)",
+          "min_opening_degrees": "Minimalne wartości stopnia otwarcia zaworu dla każdego urządzenia, oddzielone przecinkiem. Domyślnie: 0. Przykład: 20, 25, 30",
+          "max_opening_degrees": "Maksymalna wartość stopnia otwarcia zaworu. Zawór nigdy się nie otworzy więcej niż ta wartość",
+          "max_closing_degree": "Maksymalna wartość stopnia zamknięcia zaworu. Powyżej tej wartości zawór nigdy nie zostanie zamknięty. Ustaw wartość tego parametru na `100`, aby całkowicie zamknąć zawór, jeśli ogrzewanie jest już niepotrzebne",
           "auto_regulation_use_device_temp": "Użyj ewentualnego wewnętrznego sensora temperatury urządzenia, aby przyspieszyć autoregulację (w większości przypadków nie jest to konieczne)",
           "inverse_switch_command": "W przypadku przełącznika z przewodem sterującym może być konieczna odwrotna kolejność polecenia",
           "auto_fan_mode": "Automatycznie aktywuj wentylator, gdy konieczne jest intensywne ogrzewanie/chłodzenie",
@@ -639,6 +670,18 @@
           "max_closing_degree": "Maksymalna wartość stopnia zamknięcia zaworu. Powyżej tej wartości zawór nigdy nie zostanie zamknięty. Ustaw wartość tego parametru na `100`, aby całkowicie zamknąć zawór, jeśli ogrzewanie jest już niepotrzebne"
         }
       },
+      "humidity": {
+        "title": "Wilgotność - {name}",
+        "description": "Użyj zewnętrznego czujnika wilgotności. Wykryty czujnik: {humidity_detected}",
+        "data": {
+          "use_humidity_feature": "Użyj czujnika wilgotności",
+          "humidity_sensor_entity_id": "Czujnik wilgotności"
+        },
+        "data_description": {
+          "use_humidity_feature": "Wyłącz tę opcję, aby używać tylko wilgotności z bazowego termostatu climate.",
+          "humidity_sensor_entity_id": "Pozostaw puste, aby automatycznie użyć wykrytego czujnika."
+        }
+      },
       "auto_tpi_configuration": {
         "title": "Auto TPI - Ogólne - {name}",
         "description": "Ogólne parametry nauki Auto TPI.",
@@ -718,6 +761,7 @@
       "min_opening_degrees_format": "Oczekiwany separator przecinkowy listy lub dodatnia liczba całkowita. Przykład: 20, 25, 30",
       "max_opening_degrees_format": "Oczekiwana jest lista dodatnich liczb całkowitych między 0 a 100 oddzielonych przecinkami. Przykład: 80, 85, 90",
       "min_max_opening_degrees_inconsistent": "Dla każdego urządzenia bazowego max_opening_degrees musi być ściśle większy niż min_opening_degrees. Sprawdź swoją konfigurację.",
+      "valve_control_parameters_cardinality_incorrect": "Listy minimalnych i maksymalnych stopni otwarcia nie mogą zawierać więcej wartości niż skonfigurowane zawory",
       "vswitch_configuration_incorrect": "Błąd konfiguracji poleceń własnych. Wymagane są one dla urządzeń nie będących przełącznikami. Ich format musi być następujący: `service_name[/attribute:value]`. Więcej informacji znajdziesz w dokumentacji"
     },
     "abort": {
@@ -862,6 +906,10 @@
     }
   },
   "services": {
+    "set_hvac_mode_sleep": {
+      "name": "Ustaw tryb HVAC na uśpienie",
+      "description": "Przełącza VTherm w sezonowy tryb uśpienia. Jest wyświetlany jako wyłączony, a dla over_climate z bezpośrednim sterowaniem zaworem i over_valve wysyła surowe żądanie otwarcia zaworu na 100%. Fizyczne otwarcie nadal podlega skonfigurowanemu sterowaniu zaworem i ograniczeniom encji number."
+    },
     "set_auto_tpi_mode": {
       "name": "Tryb Auto TPI",
       "description": "Załącz lub wyłącz tryb nauki Auto TPI",
