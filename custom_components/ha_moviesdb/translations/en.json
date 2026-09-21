@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HA MoviesDB",
+        "description": "Enter your free themoviedb.org (TMDB) API key. You can create one at {url}.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The API key was rejected by themoviedb.org.",
+      "cannot_connect": "Could not connect to themoviedb.org."
+    },
+    "abort": {
+      "already_configured": "HA MoviesDB is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HA MoviesDB settings",
+        "description": "Choose the region used for streaming availability and your own subscribed providers. Changing the region takes full effect the next time you open this dialog.",
+        "data": {
+          "region": "Region",
+          "provider_ids": "My streaming providers"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not load region/provider data from themoviedb.org, using a fallback list."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "movie_status": {
+        "name": "Status"
+      }
+    }
+  }
+}

@@ -1,0 +1,221 @@
+"""HA MoviesDB – Film-Watchlist mit themoviedb.org als Datenquelle."""
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+
+import voluptuous as vol
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.dispatcher import async_dispatcher_send
+
+from .api import TMDBAuthError, TMDBClient, TMDBError
+from .const import (
+    ATTR_ARCHIVED,
+    ATTR_MOVIE_ID,
+    ATTR_WATCHED,
+    CARD_FILENAME,
+    CARD_VERSION,
+    CONF_API_KEY,
+    CONF_REGION,
+    DEFAULT_REGION,
+    DOMAIN,
+    PLATFORMS,
+    SERVICE_ADD_MOVIE,
+    SERVICE_REFRESH,
+    SERVICE_REFRESH_WATCH_PROVIDERS,
+    SERVICE_REMOVE_MOVIE,
+    SERVICE_SET_ARCHIVED,
+    SERVICE_SET_WATCHED,
+    SIGNAL_MOVIE_ADDED,
+    SIGNAL_MOVIE_REMOVED,
+    STATIC_BASE_PATH,
+)
+from .coordinator import TMDBCoordinator
+from .frontend import LovelaceResourceRegistration
+from .store import TMDBStore
+from .websocket_api import async_register_commands
+
+_LOGGER = logging.getLogger(__name__)
+
+WWW_DIR = Path(__file__).parent / "www"
+CARD_URL_PATH = f"{STATIC_BASE_PATH}/{CARD_FILENAME}?v={CARD_VERSION}"
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    session = async_get_clientsession(hass)
+    client = TMDBClient(session, entry.data[CONF_API_KEY])
+
+    try:
+        await client.async_test_connection()
+    except TMDBAuthError as err:
+        raise ConfigEntryAuthFailedCompat(str(err)) from err
+    except TMDBError as err:
+        raise ConfigEntryNotReadyCompat(str(err)) from err
+
+    store = TMDBStore(hass)
+    await store.async_load()
+
+    region = entry.options.get(CONF_REGION, DEFAULT_REGION)
+    coordinator = TMDBCoordinator(hass, client, store, region)
+    await coordinator.async_config_entry_first_refresh()
+
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][entry.entry_id] = {
+        "client": client,
+        "store": store,
+        "coordinator": coordinator,
+        "entry": entry,
+    }
+
+    # WebSocket-Befehle, Karten-Bereitstellung und Services nur beim
+    # allerersten Setup registrieren.
+    if len(hass.data[DOMAIN]) == 1:
+        async_register_commands(hass)
+        await _async_register_static_files(hass)
+        _async_register_services(hass)
+        # Erst NACH dem Setup versuchen (Lovelace ist zu diesem Zeitpunkt in
+        # aller Regel bereits verfügbar, egal ob beim initialen Einrichten
+        # über die UI oder bei einem Neustart mit bestehendem Config Entry).
+        # Fehler hier dürfen das Setup der Integration selbst nicht zum
+        # Scheitern bringen - deshalb bewusst nicht awaited/blockierend und
+        # mit eigenem Try/Except innerhalb von LovelaceResourceRegistration.
+        hass.async_create_task(LovelaceResourceRegistration(hass).async_register())
+
+    # Ändert der Nutzer Region/Anbieter über den Options-Flow, wird die
+    # Integration einfach neu geladen - das ist der einfachste korrekte Weg,
+    # um Client/Store/Coordinator mit den neuen Optionen neu aufzusetzen, und
+    # passiert erfahrungsgemäß selten genug, dass der kurze Reload nicht stört.
+    entry.async_on_unload(entry.add_update_listener(_async_reload_entry))
+
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    return True
+
+
+async def _async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id, None)
+    return unload_ok
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Wird aufgerufen, wenn die Integration vollständig entfernt wird (nicht
+    bei einem einfachen Neuladen). Entfernt in diesem Fall auch die
+    Lovelace-Ressource wieder, damit nichts verwaist zurückbleibt."""
+    if not hass.data.get(DOMAIN):
+        await LovelaceResourceRegistration(hass).async_unregister()
+
+
+async def _async_register_static_files(hass: HomeAssistant) -> None:
+    """Stellt den www/-Ordner (Karte, Icon, TMDB-Logo) statisch bereit."""
+    from homeassistant.components.http import StaticPathConfig
+
+    await hass.http.async_register_static_paths(
+        [StaticPathConfig(STATIC_BASE_PATH, str(WWW_DIR), cache_headers=True)]
+    )
+    _LOGGER.debug("HA MoviesDB: Karte wird ausgeliefert unter %s", CARD_URL_PATH)
+
+
+def _async_register_services(hass: HomeAssistant) -> None:
+    def _entry_data() -> dict:
+        return next(iter(hass.data[DOMAIN].values()))
+
+    async def _handle_add_movie(call: ServiceCall) -> None:
+        data = _entry_data()
+        movie_id = str(call.data[ATTR_MOVIE_ID])
+        info = await data["client"].async_get_movie(movie_id)
+        await data["store"].async_add_movie(movie_id, info)
+        await data["coordinator"].async_refresh_watch_providers(movie_id)
+        async_dispatcher_send(hass, SIGNAL_MOVIE_ADDED, movie_id)
+
+    async def _handle_remove_movie(call: ServiceCall) -> None:
+        movie_id = str(call.data[ATTR_MOVIE_ID])
+        await _entry_data()["store"].async_remove_movie(movie_id)
+        async_dispatcher_send(hass, SIGNAL_MOVIE_REMOVED, movie_id)
+
+    async def _handle_set_watched(call: ServiceCall) -> None:
+        await _entry_data()["store"].async_set_watched(
+            str(call.data[ATTR_MOVIE_ID]), bool(call.data.get(ATTR_WATCHED, True))
+        )
+
+    async def _handle_set_archived(call: ServiceCall) -> None:
+        await _entry_data()["store"].async_set_archived(
+            str(call.data[ATTR_MOVIE_ID]), bool(call.data.get(ATTR_ARCHIVED, True))
+        )
+
+    async def _handle_refresh(call: ServiceCall) -> None:
+        await _entry_data()["coordinator"].async_request_refresh()
+
+    async def _handle_refresh_watch_providers(call: ServiceCall) -> None:
+        movie_id = call.data.get(ATTR_MOVIE_ID)
+        coordinator = _entry_data()["coordinator"]
+        if movie_id:
+            await coordinator.async_refresh_watch_providers(str(movie_id))
+        else:
+            await coordinator.async_request_refresh()
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_ADD_MOVIE,
+        _handle_add_movie,
+        schema=vol.Schema({vol.Required(ATTR_MOVIE_ID): cv.string}),
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_REMOVE_MOVIE,
+        _handle_remove_movie,
+        schema=vol.Schema({vol.Required(ATTR_MOVIE_ID): cv.string}),
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_WATCHED,
+        _handle_set_watched,
+        schema=vol.Schema(
+            {
+                vol.Required(ATTR_MOVIE_ID): cv.string,
+                vol.Optional(ATTR_WATCHED, default=True): cv.boolean,
+            }
+        ),
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_ARCHIVED,
+        _handle_set_archived,
+        schema=vol.Schema(
+            {
+                vol.Required(ATTR_MOVIE_ID): cv.string,
+                vol.Optional(ATTR_ARCHIVED, default=True): cv.boolean,
+            }
+        ),
+    )
+    hass.services.async_register(DOMAIN, SERVICE_REFRESH, _handle_refresh, schema=vol.Schema({}))
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_REFRESH_WATCH_PROVIDERS,
+        _handle_refresh_watch_providers,
+        schema=vol.Schema({vol.Optional(ATTR_MOVIE_ID): cv.string}),
+    )
+
+
+# -- Kompatibilitäts-Hilfen -----------------------------------------------
+# Unterschiedliche HA-Versionen benennen diese Exceptions leicht anders /
+# haben sie an leicht unterschiedlichen Stellen. Wir importieren sie lokal,
+# damit die Integration gegen mehrere Core-Versionen funktioniert.
+
+try:
+    from homeassistant.exceptions import ConfigEntryAuthFailed as ConfigEntryAuthFailedCompat
+except ImportError:  # pragma: no cover
+    from homeassistant.exceptions import HomeAssistantError as ConfigEntryAuthFailedCompat
+
+try:
+    from homeassistant.exceptions import ConfigEntryNotReady as ConfigEntryNotReadyCompat
+except ImportError:  # pragma: no cover
+    from homeassistant.exceptions import HomeAssistantError as ConfigEntryNotReadyCompat

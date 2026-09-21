@@ -1,0 +1,70 @@
+add_movie:
+  name: Film hinzufügen
+  description: Fügt einen Film anhand seiner TMDB-ID zur Watchlist hinzu.
+  fields:
+    movie_id:
+      name: Film-ID
+      description: Die numerische TMDB-ID des Films (z.B. aus der Suche in der Karte).
+      required: true
+      example: "27205"
+      selector:
+        text:
+
+remove_movie:
+  name: Film entfernen
+  description: Entfernt einen Film samt Sehstatus aus der Watchlist bzw. dem Archiv.
+  fields:
+    movie_id:
+      name: Film-ID
+      description: Die TMDB-ID des zu entfernenden Films.
+      required: true
+      example: "27205"
+      selector:
+        text:
+
+set_watched:
+  name: Sehstatus setzen
+  description: Markiert einen Film als gesehen oder ungesehen.
+  fields:
+    movie_id:
+      name: Film-ID
+      required: true
+      selector:
+        text:
+    watched:
+      name: Gesehen
+      description: true = als gesehen markieren, false = Markierung entfernen.
+      default: true
+      selector:
+        boolean:
+
+set_archived:
+  name: Archivstatus setzen
+  description: Verschiebt einen Film ins Archiv oder holt ihn wieder zurück.
+  fields:
+    movie_id:
+      name: Film-ID
+      required: true
+      selector:
+        text:
+    archived:
+      name: Archiviert
+      description: true = archivieren, false = aus dem Archiv zurückholen.
+      default: true
+      selector:
+        boolean:
+
+refresh:
+  name: Aktualisieren
+  description: Ruft sofort neue Watch-Provider-Daten für die gesamte Watchlist von themoviedb.org ab.
+
+refresh_watch_providers:
+  name: Verfügbarkeit aktualisieren
+  description: Aktualisiert die Streaming-Verfügbarkeit gezielt für einen Film (oder für die gesamte Watchlist, wenn keine Film-ID angegeben wird).
+  fields:
+    movie_id:
+      name: Film-ID
+      description: Optional - ohne Angabe wird die gesamte Watchlist aktualisiert.
+      required: false
+      selector:
+        text:

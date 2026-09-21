@@ -1,0 +1,13 @@
+{
+  "domain": "ha_moviesdb",
+  "name": "HA MoviesDB",
+  "codeowners": ["@charly166"],
+  "config_flow": true,
+  "dependencies": ["frontend", "http"],
+  "documentation": "https://github.com/charly166/ha-moviesdb",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/charly166/ha-moviesdb/issues",
+  "requirements": [],
+  "version": "1.0.4"
+}
