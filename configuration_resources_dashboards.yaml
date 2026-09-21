@@ -52,6 +52,7 @@ resources:
   # HA MoviesDB – Home Assistant Custom Integration
   - url: /ha_moviesdb/ha-moviesdb-card.js?v=1
     type: module
+
   # unknown lovelace card
   # - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
   #   type: module
