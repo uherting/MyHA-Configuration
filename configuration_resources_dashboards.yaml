@@ -45,6 +45,13 @@ resources:
   - url: /hacsfiles/banner-card/banner-card.js
     type: module
 
+  # HA SeriesDB – Home Assistant Custom Integration
+  - url: /ha_seriesdb/ha-seriesdb-card.js?v=15
+    type: module
+
+  # HA MoviesDB – Home Assistant Custom Integration
+  - url: /ha_moviesdb/ha-moviesdb-card.js?v=1
+    type: module
   # unknown lovelace card
   # - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
   #   type: module
