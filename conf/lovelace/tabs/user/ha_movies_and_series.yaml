@@ -1,27 +1,19 @@
 ####################################################################
 ####################################################################
 #
-# a cctv tab --- lovelace configuration
+# ble_temperature_humidity tab --- lovelace configuration
 #
 ####################################################################
 ####################################################################
 
-icon: mdi:cctv
-title: CCTV H431 outside
-path: cctv-outside
+icon: mdi:movie
+title: Movies and series
+path: movies_and_series
 badges: []
-
 cards:
-  - type: custom:advanced-camera-card
-    cameras:
-      - camera_entity: camera.rworld3_fluent
-      - camera_entity: camera.rworld1_fluent_lens_0
-      - camera_entity: camera.rworld1_fluent_lens_1
-    live:
-      display:
-        mode: grid
-    # profiles:
-    #   - scrubbing
+  - type: custom:ha-seriesdb-card
+
+  - type: custom:ha-moviesdb-card
 
 ####################################################################
 # EOF
