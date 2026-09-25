@@ -22,7 +22,7 @@ advanced:
     protocol: udp4
     type: '5424'
   last_seen: ISO_8601_local
-  log_level: warning
+  log_level: error
 device_options:
   homeassistant:
     last_seen:
@@ -30,9 +30,6 @@ device_options:
 devices:
   '0x1c34f1fffe095fa9':
     friendly_name: ZB_TRV_Kitchen_L2
-    icon: device_icons/19dcc5d3226aeff036720630326723a4.png
-  '0x1c34f1fffe095fc2':
-    friendly_name: ZB_TRV_Lounge_L2
     icon: device_icons/19dcc5d3226aeff036720630326723a4.png
   '0xa4c1382e5e523972':
     friendly_name: ZB_Plug_L2_Lounge_Light_Corner
@@ -123,6 +120,8 @@ devices:
     icon: device_icons/891fe1ea30760e219004850d8ff8ade0.png
   '0xa4c138632749c29e':
     friendly_name: ZB_DW_L2_Bedroom_02
+  '0x1c34f1fffe095fc2':
+    friendly_name: ZB_TRV_Lounge_L2
 groups:
   '1':
     friendly_name: level2-TRVs
