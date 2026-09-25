@@ -32,7 +32,17 @@ if [ ! -d ${FIRMWARE_HOME_UH} ];then
   exit 99
 fi
 
-FLASH_FILE="${FIRMWARE_HOME_UH}/${1}-firmware.factory.bin"
+FLASH_FILE_1="${FIRMWARE_HOME_UH}/${1}-firmware.factory.bin"
+FLASH_FILE_2="${FIRMWARE_HOME_UH}/${1}-firmware.bin"
+
+if [ -e ${FLASH_FILE_1} ]; then
+  FLASH_FILE=${FLASH_FILE_1}
+elif [ -e ${FLASH_FILE_2} ]; then
+  FLASH_FILE=${FLASH_FILE_2}
+else
+  echo "ERROR: neither ${FLASH_FILE_1} nor ${FLASH_FILE_2} exist. No flashing will take place."
+  exit 81
+fi
 
 # does the file to be flashed exist? yes == great
 if [ ! -e ${FLASH_FILE} ]; then

@@ -24,8 +24,7 @@
 #   - 1 MCP23017 modul
 #   - x Dallas 18B20 sensors with / without steel housing
 #   - 1 SSR module with 1 SSR (light in the heating room area)
-#   - 1 PIR (?) for motion detection
-#   - 1 RCWL for motion detection
+#   - 1 PIR or RCWL for motion detection
 #   - 1 TP223 touch button (usage unclear)
 #   - case for the hardware
 #   - PCB
@@ -56,14 +55,21 @@ substitutions:
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
-# log_level can be overwritten in overwrites/<device_name>.yaml
 
 packages:
   substitutions_common: !include conf/common/packages/substitutions/common.yaml
   device_base_common: !include conf/common/packages/device_base.yaml
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
-  ota: !include conf/common/networking/ota.yaml
+
+ota: !include conf/common/networking/ota.yaml
+
+################# CUSTOMISED LOGGING (if necessary) ################
+
+# change the log level temporary for this very device
+
+# this has to be done in conf/substitutions/overwrites/<device>.yaml
+# by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
 
@@ -74,7 +80,7 @@ time: !include conf/common/time.yaml
 ############### COMMON CONFIGURATION FOR THIS DEVICE ###############
 
 i2c: !include conf/common/device/i2c_v2.yaml
-dallas: !include conf/common/device/dallas.yaml
+one_wire: !include conf/common/device/dallas.yaml
 mcp23017: !include conf/common/device/mcp23017.yaml
 
 ####################################################################
@@ -82,13 +88,13 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 ####################################################################
 
 #-------------------------------------------------------------------
-# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+# MISC STUFF
 
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
-script:
-  - <<: !include conf/common/script/pir1_to_ssr1_offline.yaml
-  - <<: !include conf/common/script/pir2_to_ssr1_02.yaml
+# script:
+#   - <<: !include conf/common/script/pir1_to_ssr1_offline.yaml
+#   - <<: !include conf/common/script/pir2_to_ssr1_02.yaml
   # - <<: !include conf/common/script/pir2_to_ssr2.yaml
   # - <<: !include conf/common/script/reed1_to_ssr1.yaml
   # - <<: !include conf/common/script/reed2_to_ssr2.yaml
@@ -97,13 +103,10 @@ script:
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
-  - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  # - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # - <<: !include conf/common/binary_sensor/pir_A1.yaml
-  # - <<: !include conf/binary_sensor/l0heatingroomarea01.yaml
-  # - <<: !include conf/common/binary_sensor/reed01_A2.yaml
-  # - <<: !include conf/common/binary_sensor/reed02_A3.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button01.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button02.yaml
+  # the touch button(s)
+  # - <<: !include conf/common/binary_sensor/touch_button_A707_on_multi_click.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
