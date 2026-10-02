@@ -15,7 +15,7 @@ __pycache__
 .storage/*
 
 # cached files
-?cache/
+.cache/**/
 
 # some Google token. I cannot tell the purpose of this file anymore. :-(
 .google.token
