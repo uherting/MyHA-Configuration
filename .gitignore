@@ -14,8 +14,8 @@ __pycache__
 # settings in general(???) I still do not know! :-(
 .storage/*
 
-# cahed files (???)
-.cache/**
+# cached files
+.cache
 
 # some Google token. I cannot tell the purpose of this file anymore. :-(
 .google.token
