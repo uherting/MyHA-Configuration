@@ -13,9 +13,13 @@ from sqlalchemy.sql import literal
 from homeassistant.util import dt as dt_util
 
 from ..const import DEFAULT_TIME_PRIOR
-from ..data.entity_type import DEFAULT_TYPES, InputType
+from ..data.entity_type import InputType
 from ..time_utils import from_db_utc, to_db_utc, to_utc
-from .utils import apply_motion_timeout, merge_overlapping_intervals
+from .utils import (
+    apply_motion_timeout,
+    area_active_states_by_type,
+    merge_overlapping_intervals,
+)
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Query, Session
@@ -110,6 +114,55 @@ def get_time_prior(
         return default_prior
 
 
+def get_stored_time_priors(
+    db: AreaOccupancyDB,
+    entry_id: str,
+    area_name: str,
+) -> dict[tuple[int, int], tuple[float, int]] | None:
+    """Get only the time priors actually stored for an area.
+
+    Unlike :func:`get_all_time_priors`, missing slots are *not* filled with a
+    default: the caller can tell "learned to be empty" apart from "never
+    observed". That distinction matters because the two must not be rendered —
+    or fed to the Bayesian prior — as the same number.
+
+    Args:
+        db: Database instance
+        entry_id: The area entry ID to filter by
+        area_name: The area name to filter by
+
+    Returns:
+        Dictionary mapping (day_of_week, time_slot) to
+        (prior_value, data_points), with slots that have no stored row
+        absent — or ``None`` when the read fails, so callers can tell a
+        database error apart from a genuinely empty table and avoid
+        caching a fallback-only grid.
+    """
+    try:
+        with db.get_session() as session:
+            priors = (
+                session.query(db.Priors)
+                .filter_by(entry_id=entry_id, area_name=area_name)
+                .all()
+            )
+            return {
+                (p.day_of_week, p.time_slot): (
+                    float(p.prior_value),
+                    int(p.data_points or 0),
+                )
+                for p in priors
+            }
+    except (
+        SQLAlchemyError,
+        ValueError,
+        TypeError,
+        RuntimeError,
+        OSError,
+    ) as e:
+        _LOGGER.error("Error getting stored time priors: %s", e)
+        return None
+
+
 def get_all_time_priors(
     db: AreaOccupancyDB,
     entry_id: str,
@@ -196,12 +249,14 @@ def get_occupied_intervals(
         with db.get_session() as session:
             base_filters = build_base_filters(db, entry_id, lookback_date_db, area_name)
             motion_query = build_motion_query(session, db, base_filters)
-            presence_query = build_presence_query(session, db, base_filters)
+            presence_query = build_presence_query(session, db, base_filters, area_name)
 
             all_results = execute_union_queries(
                 session, db, [motion_query, presence_query]
             )
-            all_intervals, motion_raw = process_query_results(all_results)
+            all_intervals, motion_raw = process_query_results(
+                all_results, _stuck_limits(db, area_name)
+            )
 
         query_time = (dt_util.utcnow() - start_time).total_seconds()
         _LOGGER.debug(
@@ -373,26 +428,48 @@ def build_motion_query(
 
 
 def build_presence_query(
-    session: Session, db: AreaOccupancyDB, base_filters: list[sa.ColumnElement[bool]]
-) -> Query[Any]:
+    session: Session,
+    db: AreaOccupancyDB,
+    base_filters: list[sa.ColumnElement[bool]],
+    area_name: str,
+) -> Query[Any] | None:
     """Create query selecting sleep and media presence intervals.
 
     These sensors indicate sustained presence (e.g., sleeping, watching TV)
     that motion sensors may miss.
+
+    Active states come from the area's *configured* values, not from
+    ``DEFAULT_TYPES``. Deriving them from defaults meant a user who removed
+    ``paused`` from ``CONF_MEDIA_ACTIVE_STATES`` still had every ``paused``
+    stretch counted as occupancy ground truth, pinning ``global_prior`` at the
+    0.99 clamp while live evidence read ~0.01 — issue #520.
+
+    Each type is matched against its own state set rather than the union, so a
+    sleep sensor can never be matched by a media state (or vice versa).
+
+    Returns ``None`` when the area has no configured presence sensors, so the
+    caller can skip the query entirely rather than emit an always-false filter.
     """
-    # Collect active states from DEFAULT_TYPES for each presence type.
-    presence_types = [InputType.MEDIA, InputType.SLEEP]
-    active_states: set[str] = set()
-    for ptype in presence_types:
-        defaults = DEFAULT_TYPES.get(ptype)
-        if defaults and defaults.get("active_states"):
-            active_states.update(defaults["active_states"])
+    states_by_type = area_active_states_by_type(
+        db.coordinator, area_name, (InputType.MEDIA, InputType.SLEEP)
+    )
+
+    type_clauses = [
+        (db.Entities.entity_type == input_type.value)
+        & db.Intervals.state.in_(sorted(active_states))
+        for input_type, active_states in sorted(
+            states_by_type.items(), key=lambda item: item[0].value
+        )
+        if active_states
+    ]
+    if not type_clauses:
+        return None
 
     return (
         session.query(
             db.Intervals.start_time,
             db.Intervals.end_time,
-            literal("presence").label("sensor_type"),
+            db.Entities.entity_type.label("sensor_type"),
         )
         .join(
             db.Entities,
@@ -401,8 +478,7 @@ def build_presence_query(
         )
         .filter(
             *base_filters,
-            db.Entities.entity_type.in_([InputType.MEDIA.value, InputType.SLEEP.value]),
-            db.Intervals.state.in_(sorted(active_states)),
+            sa.or_(*type_clauses),
         )
     )
 
@@ -425,20 +501,51 @@ def execute_union_queries(
     return combined.order_by(db.Intervals.start_time).all()
 
 
+def _stuck_limits(db: AreaOccupancyDB, area_name: str) -> dict[str, timedelta]:
+    """The longest believable active stretch per ground-truth sensor type.
+
+    The health check's stuck-active thresholds for this area's purpose: a
+    stretch longer than that gets flagged as a stuck sensor, so it can't be
+    trusted as occupancy history either. Sleep has no threshold and is never
+    clipped.
+    """
+    from ..data.health import stuck_active_threshold  # noqa: PLC0415
+
+    area = db.coordinator.get_area(area_name)
+    purpose = area.purpose.purpose if area is not None else None
+    limits: dict[str, timedelta] = {}
+    for input_type in (InputType.MOTION, InputType.MEDIA, InputType.SLEEP):
+        limit = stuck_active_threshold(input_type, purpose)
+        if limit is not None:
+            limits[input_type.value] = limit
+    return limits
+
+
 def process_query_results(
     results: list[tuple[datetime, datetime, str]],
+    max_durations: dict[str, timedelta] | None = None,
 ) -> tuple[list[tuple[datetime, datetime]], list[tuple[datetime, datetime]]]:
     """Process query results into all intervals and motion-only intervals.
 
     Motion intervals are tracked separately because apply_motion_timeout()
     only extends motion segments (not sleep/media presence).
+
+    An interval longer than its sensor type's ``max_durations`` entry is cut
+    to that length: past it the sensor would be flagged stuck active, so the
+    rest is a stuck sensor, not someone present. Without the cut, one
+    player left paused for a day taught the area a prior and likelihoods
+    as if it had been occupied all day.
     """
     motion_raw: list[tuple[datetime, datetime]] = []
     all_intervals: list[tuple[datetime, datetime]] = []
+    limits = max_durations or {}
 
     for start, end, sensor_type in results:
         # DB stores naive UTC; convert to aware UTC for runtime computations
         interval = (from_db_utc(start), from_db_utc(end))
+        limit = limits.get(sensor_type)
+        if limit is not None and interval[1] - interval[0] > limit:
+            interval = (interval[0], interval[0] + limit)
         all_intervals.append(interval)
         if sensor_type == "motion":
             motion_raw.append(interval)

@@ -93,6 +93,7 @@ def _create_delegated_methods() -> dict[str, Any]:
         "get_entities_without_intervals": queries.get_entities_without_intervals,
         # Sync methods
         "sync_states": sync.sync_states,
+        "coalesce_stored_intervals": sync.coalesce_stored_intervals,
         # Aggregation methods
         "aggregate_raw_to_daily": aggregation.aggregate_raw_to_daily,
         "aggregate_daily_to_weekly": aggregation.aggregate_daily_to_weekly,
@@ -318,6 +319,26 @@ class AreaOccupancyDB:
             self.coordinator.entry_id,
             area_name,
             default_prior,
+        )
+
+    def get_stored_time_priors(
+        self,
+        area_name: str,
+    ) -> dict[tuple[int, int], tuple[float, int]] | None:
+        """Get only the slots actually stored for an area, with their sample counts.
+
+        Args:
+            area_name: The area name to filter by
+
+        Returns:
+            Dictionary mapping (day_of_week, time_slot) to
+            (prior_value, data_points), unlearned slots absent — or ``None``
+            when the database read fails (see queries.get_stored_time_priors).
+        """
+        return queries.get_stored_time_priors(
+            self,
+            self.coordinator.entry_id,
+            area_name,
         )
 
     def get_occupied_intervals(

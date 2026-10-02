@@ -27,16 +27,50 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN: Final = "area_occupancy"
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SENSOR]
 
+# Bundled Lovelace card, served by the integration itself (see async_setup).
+# The URL carries the integration version as a cache-busting query string, so
+# every release is a new cache key despite the long-lived cache headers.
+FRONTEND_DIR: Final = "frontend"
+FRONTEND_URL_BASE: Final = f"/{DOMAIN}/frontend"
+TIME_PRIORS_CARD_FILENAME: Final = "area-occupancy-time-priors-card.js"
+FRONTEND_REGISTERED_KEY: Final = f"{DOMAIN}_frontend_registered"
+
 # Device information
 DEVICE_MANUFACTURER: Final = "Hankanman"
 DEVICE_MODEL: Final = "Area Occupancy Detector"
-DEVICE_SW_VERSION: Final = "2026.8.1"
-CONF_VERSION: Final = 18
+DEVICE_SW_VERSION: Final = "2026.9.4"
+# Config entry format. v19 moves each area out of the legacy CONF_AREAS list
+# into its own config subentry (see migrations.py). Bumping this no longer
+# costs anyone their learned history -- that is what DB_SCHEMA_VERSION below
+# is for.
+CONF_VERSION: Final = 19
 CONF_VERSION_MINOR: Final = 0
+# Version stamp of the SQLite schema, stored in the ``metadata`` table as
+# ``db_version``. Deliberately independent of ``CONF_VERSION`` (the config
+# entry format version): a config-entry migration must never cost users their
+# learned history. Bump this ONLY for an incompatible SQLite schema change --
+# ``db/maintenance.py::_ensure_schema_up_to_date`` deletes and recreates the
+# whole database on mismatch.
+#
+# 18 -> 19: widened the aggregation/interval/numeric-sample unique constraints
+# and grouping keys to include entry_id (#533) -- two config entries sharing a
+# physical entity_id no longer collide. A genuine constraint change, not
+# additive, so it does need the destructive recreate; an in-place ALTER isn't
+# possible since the old constraint is narrower than the new one. This bump
+# used to ride on CONF_VERSION, which is why decoupling the two mattered:
+# without it this schema change would have silently not applied.
+DB_SCHEMA_VERSION: Final = 19
 HA_RECORDER_DAYS: Final = 10  # days
 
 # Multi-area architecture constants
-CONF_AREAS: Final = "areas"  # Key for storing list of area configurations
+# Subentry type for a configured area. Since CONF_VERSION 19 each area is a
+# config subentry of the single entry rather than an item in the CONF_AREAS
+# list, which gives the integration page a native per-area list with its own
+# reconfigure and delete. CONF_AREAS remains defined only so the v18 migration
+# can read the old shape.
+SUBENTRY_TYPE_AREA: Final = "area"
+
+CONF_AREAS: Final = "areas"  # Legacy (<= v18) key holding the list of areas
 ALL_AREAS_IDENTIFIER: Final = (
     "all_areas"  # Identifier for "All Areas" aggregation device
 )
@@ -81,6 +115,14 @@ CONF_WINDOW_ACTIVE_STATE: Final = "window_active_state"
 CONF_COVER_SENSORS: Final = "cover_sensors"
 CONF_COVER_ACTIVE_STATES: Final = "cover_active_states"
 CONF_APPLIANCE_ACTIVE_STATES: Final = "appliance_active_states"
+# Custom entities (#531): unlike every other sensor type, these have no
+# domain/device_class filter at all — the whole point is supporting
+# entities today's typed sections reject (e.g. an MQTT/HASS.Agent sensor).
+CONF_CUSTOM_BINARY_SENSORS: Final = "custom_binary_sensors"
+CONF_CUSTOM_BINARY_ACTIVE_STATES: Final = "custom_binary_active_states"
+CONF_CUSTOM_NUMERIC_SENSORS: Final = "custom_numeric_sensors"
+CONF_CUSTOM_NUMERIC_ACTIVE_MIN: Final = "custom_numeric_active_min"
+CONF_CUSTOM_NUMERIC_ACTIVE_MAX: Final = "custom_numeric_active_max"
 CONF_THRESHOLD: Final = "threshold"
 CONF_DECAY_ENABLED: Final = "decay_enabled"
 CONF_DECAY_HALF_LIFE: Final = "decay_half_life"
@@ -91,6 +133,9 @@ CONF_EXCLUDE_FROM_ALL_AREAS: Final = "exclude_from_all_areas"
 CONF_SLEEP_START: Final = "sleep_start"
 CONF_SLEEP_END: Final = "sleep_end"
 CONF_HEALTH_ENABLED: Final = "health_enabled"
+# Optional boolean entity that is on while the household is away (#485). Set,
+# it replaces person tracking and ``zone.home`` as the source for away mode.
+CONF_AWAY_MODE_ENTITY: Final = "away_mode_entity"
 
 # People configuration constants
 CONF_PEOPLE: Final = "people"
@@ -114,6 +159,8 @@ CONF_WEIGHT_COVER: Final = "weight_cover"
 CONF_WEIGHT_ENVIRONMENTAL: Final = "weight_environmental"
 CONF_WEIGHT_POWER: Final = "weight_power"
 CONF_WEIGHT_WIFI_CLIENTS: Final = "weight_wifi_clients"
+CONF_WEIGHT_CUSTOM_BINARY: Final = "weight_custom_binary"
+CONF_WEIGHT_CUSTOM_NUMERIC: Final = "weight_custom_numeric"
 CONF_WEIGHT_WASP: Final = "weight_wasp"
 
 # Default values
@@ -127,6 +174,9 @@ DEFAULT_WINDOW_ACTIVE_STATE: Final = STATE_OPEN
 DEFAULT_MEDIA_ACTIVE_STATES: Final[list[str]] = [STATE_PLAYING, STATE_PAUSED]
 DEFAULT_APPLIANCE_ACTIVE_STATES: Final[list[str]] = [STATE_ON, STATE_STANDBY]
 DEFAULT_COVER_ACTIVE_STATES: Final[list[str]] = [STATE_OPENING, STATE_CLOSING]
+DEFAULT_CUSTOM_BINARY_ACTIVE_STATES: Final[list[str]] = [STATE_ON]
+DEFAULT_CUSTOM_NUMERIC_ACTIVE_MIN: Final = 1.0
+DEFAULT_CUSTOM_NUMERIC_ACTIVE_MAX: Final = 1000000.0
 DEFAULT_NAME: Final = "Area Occupancy"
 DEFAULT_MOTION_TIMEOUT: Final = 300  # 5 minutes in seconds
 DEFAULT_MOTION_PROB_GIVEN_TRUE: Final = 0.95  # Matches DEFAULT_TYPES[InputType.MOTION]
@@ -168,6 +218,12 @@ DEFAULT_WEIGHT_POWER: Final = 0.3
 DEFAULT_WEIGHT_WIFI_CLIENTS: Final = (
     0.35  # Matches DEFAULT_TYPES[InputType.WIFI_CLIENTS]
 )
+DEFAULT_WEIGHT_CUSTOM_BINARY: Final = (
+    0.4  # Matches DEFAULT_TYPES[InputType.CUSTOM_BINARY]
+)
+DEFAULT_WEIGHT_CUSTOM_NUMERIC: Final = (
+    0.3  # Matches DEFAULT_TYPES[InputType.CUSTOM_NUMERIC]
+)
 
 # Activity occupancy boost constants (logit-space magnitudes)
 ACTIVITY_BOOST_HIGH: Final[float] = 1.5  # Showering, bathing, sleeping
@@ -178,6 +234,43 @@ ACTIVITY_BOOST_MILD: Final[float] = 0.8  # Listening to music, eating
 # Safety bounds
 MIN_PROBABILITY: Final = 0.01
 MAX_PROBABILITY: Final = 0.99
+
+# Lowest probability a single fully active ground-truth sensor (motion, sleep)
+# at full weight implies, whatever the area's prior. The fixed logit
+# contribution (prob_given_true x strength_multiplier = 2.85 for default
+# motion) cannot overcome a prior below ~5.5%, so realistic learned priors
+# (a kitchen occupied 2% of the day) left motion unable to reach the
+# threshold at all. The floor is applied in logit space, so decay still
+# fades it smoothly; areas whose prior already clears it are unchanged.
+GROUND_TRUTH_ACTIVE_FLOOR: Final[float] = 0.75
+
+# How long, in half-lives of the sensor's decay, one ground-truth sensor at
+# full weight holds its area above the occupancy threshold after it goes
+# quiet, whatever the prior. The 75% floor alone crossed a 50% threshold after
+# a third of a half-life in a 2.5%-prior bathroom (~170 s of a 450 s half-life),
+# so the purpose half-life said nothing about how long a shower stays lit.
+# One half-life makes it the hold time: rooms that already hold longer, as a
+# 30%-prior room does (~1.75 half-lives), are unchanged.
+GROUND_TRUTH_HOLD_HALF_LIVES: Final[float] = 1.0
+
+# Wasp in Box is deprecated in favour of the built-in presence-continuity
+# model (#558), which takes over wasp_enabled automatically; it is removed one
+# release after that ships. Until then a repair lists the areas using it.
+WASP_IN_BOX_DEPRECATION_ISSUE: Final = "wasp_in_box_deprecated"
+# Home Assistant's Home zone: its state counts the person entities at home
+# (#485, inactivity alerts pause while it is 0).
+HOME_ZONE_ENTITY_ID: Final = "zone.home"
+# Domains the away-mode entity can come from: anything with an on/off state
+# that a person flips (a vacation toggle) or a template derives.
+AWAY_MODE_ENTITY_DOMAINS: Final[tuple[str, ...]] = (
+    "input_boolean",
+    "binary_sensor",
+    "switch",
+)
+
+WASP_IN_BOX_DOCS_URL: Final = (
+    "https://hankanman.github.io/Area-Occupancy-Detection/features/wasp-in-box/"
+)
 MIN_PRIOR: Final[float] = 0.01
 MAX_PRIOR: Final[float] = 0.99
 MIN_WEIGHT: Final[float] = 0.01
@@ -191,6 +284,13 @@ PRIOR_FLOOR_THRESHOLD_MARGIN: Final[float] = 0.01
 # Time Prior Bounds
 TIME_PRIOR_MIN_BOUND: Final[float] = 0.03
 TIME_PRIOR_MAX_BOUND: Final[float] = 0.9
+
+# Weeks of the area's global prior mixed into every weekly slot before it is
+# used. A slot with one week of history is one afternoon, and on its own it
+# lands on a bound (0.9 or 0.03) and swings the live prior across the
+# threshold; with two pseudo-weeks it moves a third of the way, and after
+# eight weeks the slot's own data carries 80% of the weight.
+TIME_PRIOR_PSEUDO_WEEKS: Final[float] = 2.0
 
 # Minimum observation span (wall-clock time since the earliest ground-truth
 # data point for an area's *current* motion/sleep/media sensors — occupied
@@ -313,8 +413,40 @@ ACCURACY_WINDOW_HOURS: Final = 24
 # Store version and key prefix for the per-entry online-prior estimator
 # state. Shared between the coordinator (persistence) and __init__.py
 # (removal cleanup) so the two never drift apart.
-ONLINE_PRIOR_STORE_VERSION: Final = 1
+# v1->v2 (2026.9.1): added the 168 weekly slot accumulators and the
+# divergence history. The migration is a passthrough (OnlinePriorState.
+# from_dict tolerates a v1 payload, preserving the scalar accumulators) —
+# see OnlinePriorStore in coordinator.py.
+ONLINE_PRIOR_STORE_VERSION: Final = 2
 ONLINE_PRIOR_STORE_KEY_PREFIX: Final = f"{DOMAIN}.online_prior"
+# The scalar shadow diff a day must stay within to count toward the #500
+# promotion gate's "30 days within tolerance". First-pass value: wider
+# than the issue's ~1e-3 aspiration because the online estimator's known,
+# documented approximations (no motion-timeout extension, tick sampling)
+# bound the expected diff well above that on real homes. Tune from the
+# collected history before the gate is ever evaluated.
+ONLINE_PRIOR_DIFF_TOLERANCE: Final = 0.02
+# How many daily divergence summaries the store retains per area.
+ONLINE_PRIOR_DIFF_HISTORY_DAYS: Final = 90
+
+# --- Learned sensor fusion (#501, shadow mode) ---
+# Store version and key prefix for the per-entry learned-weight state,
+# shared between the coordinator (persistence) and __init__.py (removal
+# cleanup), mirroring the online-prior pair above.
+FUSION_STORE_VERSION: Final = 1
+FUSION_STORE_KEY_PREFIX: Final = f"{DOMAIN}.fusion"
+# First-pass tunables (shadow-only: they shape what the diagnostics
+# report, not any live behavior). Tune from real diagnostics exports
+# before the #499-gated promotion is ever considered.
+# One gradient pass per hourly analysis cycle over a ~24h tick window;
+# the small rate + L2 anchor keep a day's batch from swinging a weight
+# far from its live default without sustained evidence.
+FUSION_LEARNING_RATE: Final = 0.05
+FUSION_L2: Final = 0.01
+# Ticks observed for an area before learned weights are even reported
+# (~3h at the 10s cadence — enough to stop reporting pure noise, small
+# enough that diagnostics become informative on day one).
+FUSION_MIN_SAMPLES: Final = 1000
 
 MIN_CORRELATION_SAMPLES: Final = 50
 # Minimum confidence for correlation to be considered significant
@@ -467,6 +599,17 @@ APPLIANCE_STATES: Final[PlatformStates] = {
     "default": STATE_ON,
 }
 
+# Custom binary sensor states configuration. Starting suggestions only —
+# the selector allows custom_value, since a custom entity's actual states
+# (e.g. an MQTT/HASS.Agent sensor) are unknown ahead of time (#531).
+CUSTOM_STATES: Final[PlatformStates] = {
+    "options": [
+        StateOption(STATE_ON, "On", "mdi:power"),
+        StateOption(STATE_OFF, "Off", "mdi:power-off"),
+    ],
+    "default": STATE_ON,
+}
+
 # Cover states configuration (blinds, shades, garage doors, shutters)
 # All states from homeassistant.components.cover.CoverState
 COVER_STATES: Final[PlatformStates] = {
@@ -499,6 +642,7 @@ def get_state_options(platform_type: str) -> PlatformStates:
         "media": MEDIA_STATES,
         "appliance": APPLIANCE_STATES,
         "motion": MOTION_STATES,
+        "custom": CUSTOM_STATES,
     }
     return platform_map.get(platform_type, MOTION_STATES)
 
@@ -544,6 +688,8 @@ def get_sensor_type_mapping() -> dict[str, Any]:
             "co": InputType.CO,
             "co2": InputType.CO2,
             "cover": InputType.COVER,
+            "custom_binary": InputType.CUSTOM_BINARY,
+            "custom_numeric": InputType.CUSTOM_NUMERIC,
             "door": InputType.DOOR,
             "humidity": InputType.HUMIDITY,
             "illuminance": InputType.ILLUMINANCE,

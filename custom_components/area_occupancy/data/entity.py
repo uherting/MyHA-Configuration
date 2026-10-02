@@ -75,6 +75,10 @@ class Entity:
     learned_gaussian_params: GaussianParams | None = None
     analysis_error: str | None = None
     correlation_type: str | None = None
+    # Set by the health check when this sensor is flagged stuck active and
+    # the user hasn't ignored the repair: the start of the stuck stretch.
+    # While set, the sensor contributes no evidence (see ``is_stuck``).
+    stuck_since: datetime | None = None
 
     def __post_init__(self) -> None:
         """Validate that either hass or state_provider is provided.
@@ -108,6 +112,20 @@ class Entity:
         # These are used as fallbacks when Gaussian calculation is not available
         self._prob_given_true = self.prob_given_true
         self._prob_given_false = self.prob_given_false
+
+    @property
+    def is_stuck(self) -> bool:
+        """Whether this sensor is flagged stuck and still in that same state.
+
+        Only the stretch the health check flagged counts: the moment the
+        sensor changes state ``last_updated`` moves past ``stuck_since`` and
+        it counts again, without waiting for the next hourly check.
+        """
+        return (
+            self.stuck_since is not None
+            and self.last_updated is not None
+            and self.last_updated <= self.stuck_since
+        )
 
     def _calculate_gaussian_density(
         self, value: float, mean: float, std: float
@@ -266,6 +284,40 @@ class Entity:
         if ha_state is None:
             return None
         return ha_state.attributes.get("device_class")
+
+    @property
+    def media_is_tv_source(self) -> bool:
+        """Detect a speaker media_player that is relaying TV audio.
+
+        Some media_players (e.g. a Sonos soundbar/playbar on ARC or optical
+        passthrough) always report ``device_class: speaker``, even while
+        their sole purpose in the moment is relaying audio from a TV rather
+        than playing music. HA has no separate device_class for this, so we
+        infer it from the entity's own ``source`` / ``media_content_id``
+        attributes: selecting the TV input is a deliberate, distinguishing
+        signal that does not overlap with any other source (a playlist,
+        radio preset, etc.), so it can be trusted on its own without
+        needing to cross-check a separate TV entity's state.
+        """
+        if self.state_provider:
+            state_obj = self.state_provider(self.entity_id)
+            attrs = getattr(state_obj, "attributes", None) if state_obj else None
+        elif self.hass is not None:
+            ha_state = self.hass.states.get(self.entity_id)
+            attrs = ha_state.attributes if ha_state is not None else None
+        else:
+            attrs = None
+
+        if not attrs:
+            return False
+
+        source = str(attrs.get("source") or "").strip().lower()
+        content_id = str(attrs.get("media_content_id") or "").lower()
+
+        if source == "tv":
+            return True
+        # Sonos ARC/optical TV passthrough content-id scheme.
+        return "htastream" in content_id
 
     @property
     def available(self) -> bool:
@@ -573,8 +625,11 @@ class Entity:
         if current_evidence is None:
             if previous_evidence is True:
                 # Entity had evidence and became unavailable - treat as evidence lost
-                # Start decay since we lost positive evidence
-                self.decay.start_decay()
+                # Start decay since we lost positive evidence, unless that
+                # evidence was a stuck stretch that never counted.
+                if not self.is_stuck:
+                    self.decay.start_decay()
+                self.stuck_since = None
                 self.last_updated = dt_util.utcnow()
             # Update previous evidence to track the unavailable state
             self.previous_evidence = current_evidence
@@ -602,10 +657,14 @@ class Entity:
 
         # Handle evidence transitions
         if transition_occurred:
+            # A stuck stretch contributed nothing, so its end must not start
+            # a decay that would count it after all.
+            was_stuck = self.is_stuck
+            self.stuck_since = None
             self.last_updated = dt_util.utcnow()
             if current_evidence:  # FALSE→TRUE transition
                 self.decay.stop_decay()
-            else:  # TRUE→FALSE transition
+            elif not was_stuck:  # TRUE→FALSE transition
                 # Evidence lost - start decay
                 self.decay.start_decay()
 
@@ -1026,7 +1085,8 @@ class EntityManager:
         return [
             entity
             for entity in self._entities.values()
-            if entity.evidence or entity.decay.is_decaying
+            if (entity.evidence or entity.decay.is_decaying)
+            and getattr(entity, "is_stuck", False) is not True
         ]
 
     @property
@@ -1064,6 +1124,47 @@ class EntityManager:
     def deregister_entity(self, entity_id: str) -> None:
         """Remove an entity from the manager if it exists."""
         self._entities.pop(entity_id, None)
+
+    def refresh_from_config(self) -> None:
+        """Rebuild the entities from config, keeping what is still true.
+
+        A settings edit (a threshold, a weight, one sensor added or removed)
+        must not make the area forget. Rebuilding bare entities reset every
+        sensor's learned likelihoods to type defaults until the next hourly
+        analysis, and its decay and evidence state to "fresh", so an occupied
+        area could blink empty on an unrelated edit.
+
+        A sensor keeps its learned likelihoods and live state when it is the
+        same kind of sensor with the same meaning: same input type, active
+        states and active range. Anything else starts fresh, as it must: a
+        media player whose active states changed has learned what the old
+        states meant. Motion and sleep likelihoods come from config and are
+        never carried. Weights always come from config.
+        """
+        previous = self._entities
+        self._entities = self._factory.create_all_from_config()
+        for entity_id, new in self._entities.items():
+            old = previous.get(entity_id)
+            if (
+                old is None
+                or old.type.input_type != new.type.input_type
+                or old.type.active_states != new.type.active_states
+                or old.type.active_range != new.type.active_range
+            ):
+                continue
+            if new.type.input_type not in (InputType.MOTION, InputType.SLEEP):
+                new.prob_given_true = old.prob_given_true
+                new.prob_given_false = old.prob_given_false
+                new.analysis_error = old.analysis_error
+                new.correlation_type = old.correlation_type
+                new.learned_gaussian_params = old.learned_gaussian_params
+                new.learned_active_range = old.learned_active_range
+            new.update_decay(old.decay.decay_start, old.decay.is_decaying)
+            new.previous_evidence = old.previous_evidence
+            new.last_updated = old.last_updated
+            new.stuck_since = old.stuck_since
+        previous.clear()
+        _LOGGER.debug("Refreshed entities from config for area: %s", self.area_name)
 
     async def cleanup(self) -> None:
         """Clean up resources and recreate from config.

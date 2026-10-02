@@ -23,12 +23,18 @@ from ..const import (
 from ..data.entity_type import NUMERIC_INPUT_TYPES
 from ..time_utils import to_db_utc, to_utc
 from . import queries
-from .utils import chunked, is_valid_state
+from .utils import chunked, entity_active_states, is_active_state, is_valid_state
 
 if TYPE_CHECKING:
     from .core import AreaOccupancyDB
 
 _LOGGER = logging.getLogger(__name__)
+# Active states for an entity the coordinator doesn't know about (it was
+# de-configured mid-sync, or a test passes a bare entity_id). Sync only ever
+# requests configured entities, so this is a safety net rather than a live
+# path; "on" preserves the behaviour this code had before active states were
+# resolved per entity.
+_FALLBACK_ACTIVE_STATES = frozenset({"on"})
 _INTERVAL_LOOKUP_BATCH = 250
 _NUMERIC_SAMPLE_LOOKUP_BATCH = 250
 _NUMERIC_INPUT_TYPES = NUMERIC_INPUT_TYPES
@@ -46,24 +52,27 @@ def _normalize_db_key_datetime(value: datetime) -> datetime:
 def _get_existing_interval_keys(
     session: sa.orm.Session,
     db: AreaOccupancyDB,
-    interval_keys: set[tuple[str, datetime, datetime]],
-) -> set[tuple[str, datetime, datetime]]:
+    interval_keys: set[tuple[str, str, datetime, datetime]],
+) -> set[tuple[str, str, datetime, datetime]]:
     """Return keys already stored in the database using batched tuple lookups."""
     if not interval_keys:
         return set()
 
     keys_list = list(interval_keys)
     interval_tuple = sa.tuple_(
-        db.Intervals.entity_id, db.Intervals.start_time, db.Intervals.end_time
+        db.Intervals.entry_id,
+        db.Intervals.entity_id,
+        db.Intervals.start_time,
+        db.Intervals.end_time,
     )
-    existing_keys: set[tuple[str, datetime, datetime]] = set()
+    existing_keys: set[tuple[str, str, datetime, datetime]] = set()
 
     for chunk in chunked(keys_list, _INTERVAL_LOOKUP_BATCH):
         matches = session.query(db.Intervals).filter(interval_tuple.in_(chunk)).all()
         for interval in matches:
             start = _normalize_db_key_datetime(interval.start_time)
             end = _normalize_db_key_datetime(interval.end_time)
-            existing_keys.add((interval.entity_id, start, end))
+            existing_keys.add((interval.entry_id, interval.entity_id, start, end))
 
     return existing_keys
 
@@ -71,21 +80,25 @@ def _get_existing_interval_keys(
 def _get_existing_numeric_sample_keys(
     session: sa.orm.Session,
     db: AreaOccupancyDB,
-    sample_keys: set[tuple[str, datetime]],
-) -> set[tuple[str, datetime]]:
+    sample_keys: set[tuple[str, str, datetime]],
+) -> set[tuple[str, str, datetime]]:
     """Return numeric samples already stored using batched tuple lookups."""
     if not sample_keys:
         return set()
 
     keys_list = list(sample_keys)
-    sample_tuple = sa.tuple_(db.NumericSamples.entity_id, db.NumericSamples.timestamp)
-    existing_keys: set[tuple[str, datetime]] = set()
+    sample_tuple = sa.tuple_(
+        db.NumericSamples.entry_id,
+        db.NumericSamples.entity_id,
+        db.NumericSamples.timestamp,
+    )
+    existing_keys: set[tuple[str, str, datetime]] = set()
 
     for chunk in chunked(keys_list, _NUMERIC_SAMPLE_LOOKUP_BATCH):
         matches = session.query(db.NumericSamples).filter(sample_tuple.in_(chunk)).all()
         for sample in matches:
             timestamp = _normalize_db_key_datetime(sample.timestamp)
-            existing_keys.add((sample.entity_id, timestamp))
+            existing_keys.add((sample.entry_id, sample.entity_id, timestamp))
 
     return existing_keys
 
@@ -156,6 +169,9 @@ def _states_to_intervals(
     retention_time_utc = to_utc(dt_util.utcnow() - timedelta(days=RETENTION_DAYS))
     created_at_db = to_db_utc(dt_util.utcnow())
     end_time_utc = to_utc(end_time)
+    # Resolved from the live Entity objects, so "active" here means exactly
+    # what Entity.evidence means (issue #520).
+    active_states = entity_active_states(db.coordinator)
 
     for entity_id, state_list in states.items():
         if not state_list:
@@ -183,19 +199,47 @@ def _states_to_intervals(
             end_utc = to_utc(interval_end)
             duration_seconds = (end_utc - start_utc).total_seconds()
 
-            # Apply filtering based on state and duration
-            if state.state == "on":
-                if duration_seconds <= MAX_INTERVAL_SECONDS:
-                    intervals.append(
-                        {
-                            "entity_id": entity_id,
-                            "state": state.state,
-                            "start_time": to_db_utc(start_utc),
-                            "end_time": to_db_utc(end_utc),
-                            "duration_seconds": duration_seconds,
-                            "created_at": created_at_db,
-                        }
-                    )
+            # Apply filtering based on state and duration.
+            #
+            # MAX_INTERVAL_SECONDS bounds how much occupancy a single *active*
+            # stretch may contribute. It used to be keyed on the literal string
+            # "on", which covers motion and sleep sensors but not media players
+            # — whose active states are "playing"/"paused" — so a media
+            # interval of any length went in uncapped and could dominate the
+            # prior's numerator on its own (issue #520). Key it on whether the
+            # state is active *for this entity* instead, so every presence type
+            # is bounded by the same rule.
+            #
+            # Over-cap stretches are truncated to the cap rather than dropped.
+            # Dropping them discarded the evidence entirely: an mmWave sensor
+            # that legitimately stays on overnight contributed nothing at all,
+            # biasing the prior down and — where it was an area's only ground
+            # truth — leaving the interval set empty, which is what stalled the
+            # prior recalculation in the first place (#520 Bug A). Keeping the
+            # leading MAX_INTERVAL_SECONDS credits the plausible part of the
+            # stretch (someone was there when it started) while refusing to
+            # trust the unbounded tail. The truncated end is deterministic, so
+            # repeated syncs of a still-active sensor produce the same row
+            # rather than a growing one.
+            #
+            # Inactive states keep the MIN_INTERVAL_SECONDS floor and no cap:
+            # they are the denominator's evidence that the area was observed,
+            # and shortening a long "off" stretch would bias the prior upward.
+            entity_active = active_states.get(entity_id) or _FALLBACK_ACTIVE_STATES
+            if is_active_state(state.state, entity_active):
+                if duration_seconds > MAX_INTERVAL_SECONDS:
+                    end_utc = start_utc + timedelta(seconds=MAX_INTERVAL_SECONDS)
+                    duration_seconds = float(MAX_INTERVAL_SECONDS)
+                intervals.append(
+                    {
+                        "entity_id": entity_id,
+                        "state": state.state,
+                        "start_time": to_db_utc(start_utc),
+                        "end_time": to_db_utc(end_utc),
+                        "duration_seconds": duration_seconds,
+                        "created_at": created_at_db,
+                    }
+                )
             elif (
                 is_valid_state(state.state) and duration_seconds >= MIN_INTERVAL_SECONDS
             ):
@@ -213,16 +257,89 @@ def _states_to_intervals(
     return intervals
 
 
-def _commit_intervals(db: AreaOccupancyDB, intervals: list[dict[str, Any]]) -> None:
-    """Commit interval data to the database (runs in executor)."""
+# Rows of one state closer than this are one stretch: the sync can split a
+# state at a boundary by a fraction of a second.
+_COALESCE_TOLERANCE = timedelta(seconds=1)
+# Metadata key recording that the one-time heal of pre-#576 rows has run.
+_COALESCED_METADATA_KEY = "intervals_coalesced_v1"
+
+Row = tuple[str, datetime, datetime]
+
+
+def coalesce_state_rows(
+    rows: list[Row],
+    active_states: frozenset[str] | set[str],
+    *,
+    cap_seconds: float = MAX_INTERVAL_SECONDS,
+) -> list[Row]:
+    """Merge one entity's overlapping or touching same-state rows.
+
+    Every hourly sync re-read the state still running at its watermark and
+    stored it again as a new row overlapping the last one by an hour (#576),
+    so a long stretch became a chain of rows. Summing them counted it once
+    per sync; per-row caps never saw it as long. Merging restores one row per
+    stretch, and an active stretch is then capped at ``cap_seconds`` from its
+    real start, as ``_states_to_intervals`` intends.
+
+    Args:
+        rows: ``(state, start, end)`` for one entity, in any order.
+        active_states: States that count as active for the entity.
+        cap_seconds: Longest active stretch kept.
+
+    Returns:
+        The merged rows, in start order.
+    """
+    merged: list[list[Any]] = []
+    for state, start, end in sorted(rows, key=lambda r: (r[1], r[2])):
+        if (
+            merged
+            and merged[-1][0] == state
+            and start <= merged[-1][2] + _COALESCE_TOLERANCE
+        ):
+            merged[-1][2] = max(merged[-1][2], end)
+        else:
+            merged.append([state, start, end])
+    cap = timedelta(seconds=cap_seconds)
+    result: list[Row] = []
+    for state, start, end in merged:
+        if is_active_state(state, active_states) and end - start > cap:
+            end = start + cap
+        result.append((state, start, end))
+    return result
+
+
+def _group_key(interval: dict[str, Any]) -> tuple[str, str, str]:
+    return (interval["entry_id"], interval["entity_id"], interval["area_name"])
+
+
+def _commit_intervals(
+    db: AreaOccupancyDB,
+    intervals: list[dict[str, Any]],
+    watermark: datetime | None = None,
+) -> None:
+    """Commit interval data to the database (runs in executor).
+
+    Each entity's new rows are merged with its stored rows from the sync
+    window (see :func:`coalesce_state_rows`) rather than appended beside
+    them. A row starting exactly at ``watermark`` is the state that was
+    already running when the window opened, so it continues the entity's
+    latest stored row of the same state even across a gap, which is what a
+    capped active stretch leaves: without that its untrusted tail would come
+    back as a fresh row every hour.
+    """
     # Filter to only intervals that have an area_name (pre-computed by caller)
     mapped_intervals = [i for i in intervals if "area_name" in i]
     if not mapped_intervals:
         return
 
+    if watermark is not None:
+        _merge_intervals(db, mapped_intervals, _normalize_db_key_datetime(watermark))
+        return
+
     with db.get_session() as session:
         interval_keys = {
             (
+                interval_data["entry_id"],
                 interval_data["entity_id"],
                 interval_data["start_time"],
                 interval_data["end_time"],
@@ -237,11 +354,11 @@ def _commit_intervals(db: AreaOccupancyDB, intervals: list[dict[str, Any]]) -> N
         )
 
         new_intervals = []
-        seen_keys: set[tuple[str, datetime, datetime]] = set()
+        seen_keys: set[tuple[str, str, datetime, datetime]] = set()
         for interval_data in mapped_intervals:
             start = _normalize_db_key_datetime(interval_data["start_time"])
             end = _normalize_db_key_datetime(interval_data["end_time"])
-            key = (interval_data["entity_id"], start, end)
+            key = (interval_data["entry_id"], interval_data["entity_id"], start, end)
             if key in existing_keys or key in seen_keys:
                 continue
             seen_keys.add(key)
@@ -260,6 +377,7 @@ def _commit_numeric_samples(
     with db.get_session() as session:
         sample_keys = {
             (
+                sample_data["entry_id"],
                 sample_data["entity_id"],
                 sample_data["timestamp"],
             )
@@ -273,10 +391,10 @@ def _commit_numeric_samples(
         )
 
         new_samples = []
-        seen_sample_keys: set[tuple[str, datetime]] = set()
+        seen_sample_keys: set[tuple[str, str, datetime]] = set()
         for sample_data in numeric_samples:
             timestamp = _normalize_db_key_datetime(sample_data["timestamp"])
-            key = (sample_data["entity_id"], timestamp)
+            key = (sample_data["entry_id"], sample_data["entity_id"], timestamp)
             if key in existing_samples or key in seen_sample_keys:
                 continue
             seen_sample_keys.add(key)
@@ -287,6 +405,155 @@ def _commit_numeric_samples(
             session.bulk_insert_mappings(db.NumericSamples, new_samples)
             session.commit()
             _LOGGER.debug("Synced %d numeric samples from recorder", len(new_samples))
+
+
+def _merge_intervals(
+    db: AreaOccupancyDB, intervals: list[dict[str, Any]], watermark: datetime
+) -> None:
+    """Merge new rows into each entity's stored rows (see ``_commit_intervals``)."""
+    active_states = entity_active_states(db.coordinator)
+    created_at = to_db_utc(dt_util.utcnow())
+    groups: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for interval in intervals:
+        groups.setdefault(_group_key(interval), []).append(interval)
+
+    with db.get_session() as session:
+        for (entry_id, entity_id, area_name), new_rows in groups.items():
+            base = session.query(db.Intervals).filter(
+                db.Intervals.entry_id == entry_id,
+                db.Intervals.entity_id == entity_id,
+                db.Intervals.area_name == area_name,
+                db.Intervals.aggregation_level == "raw",
+            )
+            latest = base.order_by(db.Intervals.start_time.desc()).first()
+            stored = base.filter(
+                db.Intervals.end_time >= watermark - _COALESCE_TOLERANCE
+            ).all()
+            if latest is not None and latest not in stored:
+                stored.append(latest)
+
+            rows: list[Row] = [
+                (
+                    r.state,
+                    _normalize_db_key_datetime(r.start_time),
+                    _normalize_db_key_datetime(r.end_time),
+                )
+                for r in stored
+            ]
+            for new in new_rows:
+                start = _normalize_db_key_datetime(new["start_time"])
+                end = _normalize_db_key_datetime(new["end_time"])
+                if (
+                    latest is not None
+                    and start == watermark
+                    and new["state"] == latest.state
+                ):
+                    # Still the state that was running: continue that row.
+                    start = _normalize_db_key_datetime(latest.start_time)
+                rows.append((new["state"], start, end))
+
+            merged = coalesce_state_rows(
+                rows, active_states.get(entity_id) or _FALLBACK_ACTIVE_STATES
+            )
+            for row in stored:
+                session.delete(row)
+            session.flush()
+            session.bulk_insert_mappings(
+                db.Intervals,
+                [
+                    {
+                        "entry_id": entry_id,
+                        "entity_id": entity_id,
+                        "area_name": area_name,
+                        "state": state,
+                        "start_time": start,
+                        "end_time": end,
+                        "duration_seconds": (end - start).total_seconds(),
+                        "aggregation_level": "raw",
+                        "created_at": created_at,
+                    }
+                    for state, start, end in merged
+                ],
+            )
+        session.commit()
+
+
+def coalesce_stored_intervals(db: AreaOccupancyDB) -> int:
+    """Heal rows stored before #576: merge each entity's overlapping rows once.
+
+    Idempotent, and skipped once it has completed (recorded in Metadata), so
+    it runs a single time per database.
+
+    Returns:
+        The number of rows removed by merging.
+    """
+    active_states = entity_active_states(db.coordinator)
+    removed = 0
+    with db.get_session() as session:
+        if (
+            session.query(db.Metadata).filter_by(key=_COALESCED_METADATA_KEY).first()
+            is not None
+        ):
+            return 0
+        keys = (
+            session.query(
+                db.Intervals.entry_id, db.Intervals.entity_id, db.Intervals.area_name
+            )
+            .filter(db.Intervals.aggregation_level == "raw")
+            .distinct()
+            .all()
+        )
+        created_at = to_db_utc(dt_util.utcnow())
+        for entry_id, entity_id, area_name in keys:
+            stored = (
+                session.query(db.Intervals)
+                .filter(
+                    db.Intervals.entry_id == entry_id,
+                    db.Intervals.entity_id == entity_id,
+                    db.Intervals.area_name == area_name,
+                    db.Intervals.aggregation_level == "raw",
+                )
+                .all()
+            )
+            rows: list[Row] = [
+                (
+                    r.state,
+                    _normalize_db_key_datetime(r.start_time),
+                    _normalize_db_key_datetime(r.end_time),
+                )
+                for r in stored
+            ]
+            merged = coalesce_state_rows(
+                rows, active_states.get(entity_id) or _FALLBACK_ACTIVE_STATES
+            )
+            if merged == sorted(rows, key=lambda r: (r[1], r[2])):
+                continue
+            removed += len(stored) - len(merged)
+            for row in stored:
+                session.delete(row)
+            session.flush()
+            session.bulk_insert_mappings(
+                db.Intervals,
+                [
+                    {
+                        "entry_id": entry_id,
+                        "entity_id": entity_id,
+                        "area_name": area_name,
+                        "state": state,
+                        "start_time": start,
+                        "end_time": end,
+                        "duration_seconds": (end - start).total_seconds(),
+                        "aggregation_level": "raw",
+                        "created_at": created_at,
+                    }
+                    for state, start, end in merged
+                ],
+            )
+        session.add(db.Metadata(key=_COALESCED_METADATA_KEY, value="1"))
+        session.commit()
+    if removed:
+        _LOGGER.info("Merged %d overlapping interval rows (#576)", removed)
+    return removed
 
 
 async def sync_states(db: AreaOccupancyDB) -> None:
@@ -386,7 +653,9 @@ async def sync_states(db: AreaOccupancyDB) -> None:
                     interval_data["entry_id"] = entry_id
                     interval_data["area_name"] = area_name
 
-            await hass.async_add_executor_job(_commit_intervals, db, intervals)
+            await hass.async_add_executor_job(
+                _commit_intervals, db, intervals, to_utc(start_time)
+            )
 
         numeric_samples = _states_to_numeric_samples(db, states)
         if numeric_samples:

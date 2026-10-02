@@ -11,7 +11,14 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 
-from .const import DOMAIN, MAX_PROBABILITY, MIN_PROBABILITY, ROUNDING_PRECISION
+from .const import (
+    DOMAIN,
+    GROUND_TRUTH_ACTIVE_FLOOR,
+    GROUND_TRUTH_HOLD_HALF_LIVES,
+    MAX_PROBABILITY,
+    MIN_PROBABILITY,
+    ROUNDING_PRECISION,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,19 +29,28 @@ if TYPE_CHECKING:
 
 
 def assign_device_to_ha_area(
-    hass: HomeAssistant, device_info: DeviceInfo | None, area_id: str | None
+    hass: HomeAssistant,
+    device_info: DeviceInfo | None,
+    area_id: str | None,
+    config_entry_id: str,
 ) -> None:
     """Assign an entity's device to its configured Home Assistant area.
 
     Shared by the sensor, binary_sensor, and number platforms in
     ``async_added_to_hass``. No-op when the area has no ``area_id``
     configured or the device isn't registered yet.
+
+    The lookup is scoped to ``config_entry_id`` because device identifiers
+    are only unique per config entry since HA 2026.9 (the unscoped
+    ``async_get_device`` is deprecated).
     """
     if not area_id or not device_info:
         return
+    identifier = next(iter(device_info.get("identifiers", set())), None)
+    if identifier is None:
+        return
     device_registry = dr.async_get(hass)
-    identifiers = device_info.get("identifiers", set())
-    device = device_registry.async_get_device(identifiers=identifiers)
+    device = device_registry.async_get_device_by_identifier(identifier, config_entry_id)
     if device and device.area_id != area_id:
         device_registry.async_update_device(device.id, area_id=area_id)
 
@@ -152,10 +168,29 @@ def logit(p: float) -> float:
     return math.log(p / (1 - p))
 
 
+def evidence_value(entity: Entity) -> float:
+    """Return one entity's 0..1 evidence factor (active / decaying / off).
+
+    Extracted from ``sigmoid_probability``'s loop so the shadow fusion
+    learner (#501, ``data/fusion.py``) builds its training features from
+    the exact factor the live pipeline uses — a copy of this branch in
+    two places is how the two would silently drift. Pure refactor: the
+    live pipeline's behavior is unchanged.
+    """
+    if getattr(entity, "is_stuck", False) is True:
+        return 0.0  # Flagged stuck active: a repair, not evidence
+    if entity.evidence is True:
+        return 1.0
+    if entity.decay.is_decaying:
+        return entity.decay_factor  # Gradual fade (0.0 to 1.0)
+    return 0.0  # Inactive = no contribution (not negative!)
+
+
 def sigmoid_probability(
     entities: dict[str, Entity],
     prior: float = 0.5,
     correlations: dict[str, float] | None = None,
+    threshold: float | None = None,
 ) -> float:
     """Calculate occupancy probability using weighted sigmoid model.
 
@@ -163,21 +198,46 @@ def sigmoid_probability(
     z = bias + Σ(weight_i × evidence_i × correlation_i × strength_factor)
     P = sigmoid(z)
 
+    For the ground-truth types (motion, sleep) ``strength_factor`` is at least
+    ``logit(GROUND_TRUTH_ACTIVE_FLOOR) - bias``, so one such sensor, fully
+    active at full weight, lifts any prior to at least that probability.
+    Given the area's ``threshold``, it is also at least
+    ``(logit(threshold) - bias) * 2 ** GROUND_TRUTH_HOLD_HALF_LIVES``, so the
+    same sensor keeps the area at or above the threshold for that many
+    half-lives of its decay after it goes quiet.
+
     Args:
         entities: Dict of Entity objects
         prior: Learned prior probability for this area (0.0-1.0)
         correlations: Optional dict of entity_id -> correlation strength (0-1)
                      If None or missing entries, defaults to 1.0
+        threshold: The area's occupancy threshold, for the hold floor.
+                   ``None`` applies only the probability floor.
 
     Returns:
         Probability in range MIN_PROBABILITY to MAX_PROBABILITY
     """
+    from .data.entity_type import InputType  # noqa: PLC0415
+
     if not entities:
         return clamp_probability(prior)
 
     # Start with bias from prior (logit transforms prior to log-odds space)
     # logit(0.5) = 0, logit(0.7) = 0.85, logit(0.3) = -0.85
     bias = logit(prior)
+
+    # A ground-truth sensor's strength is floored at what it takes to lift
+    # this prior to GROUND_TRUTH_ACTIVE_FLOOR on its own. Without it, motion's
+    # fixed 2.85 cannot overcome a learned prior below ~5.5%.
+    ground_truth_floor = logit(GROUND_TRUTH_ACTIVE_FLOOR) - bias
+    if threshold is not None:
+        # Decay scales the contribution by 2^-t/half_life, so a signal of
+        # (logit(threshold) - bias) * 2^H is still at the threshold after H
+        # half-lives: the purpose half-life becomes the minimum hold time.
+        hold = (logit(clamp_probability(threshold)) - bias) * (
+            2**GROUND_TRUTH_HOLD_HALF_LIVES
+        )
+        ground_truth_floor = max(ground_truth_floor, hold)
 
     # Sum weighted contributions from all entities
     z = bias
@@ -193,12 +253,7 @@ def sigmoid_probability(
 
         # Determine evidence contribution
         # Active = full contribution, Decaying = partial, Inactive = zero
-        if entity.evidence is True:
-            evidence = 1.0
-        elif entity.decay.is_decaying:
-            evidence = entity.decay_factor  # Gradual fade (0.0 to 1.0)
-        else:
-            evidence = 0.0  # Inactive = no contribution (not negative!)
+        evidence = evidence_value(entity)
 
         # Scale by sensor type strength (prob_given_true indicates signal strength)
         # Motion (0.95) contributes more than door (0.2)
@@ -212,7 +267,16 @@ def sigmoid_probability(
         # strength_multiplier is per-type (e.g., 3.0 for motion, 2.0 for others)
         # to give ground-truth sensors a stronger logit-space contribution.
         strength_multiplier = getattr(entity.type, "strength_multiplier", 2.0)
-        contribution = ew * evidence * correlation * (strength * strength_multiplier)
+        signal = strength * strength_multiplier
+        if entity.type.input_type in (InputType.MOTION, InputType.SLEEP):
+            # The floor and hold promise their effect at full *configured*
+            # weight. effective_weight also carries information_gain (below
+            # 1 for any p_given_false > 0: 0.79 for a 0.95/0.2 motion
+            # sensor), which would cut a 450 s hold to ~300 s, so divide it
+            # back out; a lower configured weight still scales it down.
+            gain = ew / entity.weight if ew > 0 else 1.0
+            signal = max(signal, ground_truth_floor / gain)
+        contribution = ew * evidence * correlation * signal
         z += contribution
 
     return clamp_probability(sigmoid(z))
@@ -222,6 +286,7 @@ def presence_probability(
     entities: dict[str, Entity],
     prior: float = 0.5,
     correlations: dict[str, float] | None = None,
+    threshold: float | None = None,
 ) -> float:
     """Calculate presence probability from strong binary indicators.
 
@@ -233,6 +298,8 @@ def presence_probability(
         entities: Dict of Entity objects
         prior: Learned prior probability for this area
         correlations: Optional dict of entity_id -> correlation strength
+        threshold: The area's occupancy threshold, for the ground-truth hold
+            floor (see :func:`sigmoid_probability`)
 
     Returns:
         Probability in range MIN_PROBABILITY to MAX_PROBABILITY
@@ -249,7 +316,7 @@ def presence_probability(
         # No presence sensors - return reduced prior (uncertain state)
         return clamp_probability(prior * 0.5)
 
-    return sigmoid_probability(presence_entities, prior, correlations)
+    return sigmoid_probability(presence_entities, prior, correlations, threshold)
 
 
 def environmental_confidence(

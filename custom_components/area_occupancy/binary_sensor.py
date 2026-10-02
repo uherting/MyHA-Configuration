@@ -115,7 +115,12 @@ class Occupancy(CoordinatorEntity, BinarySensorEntity):
         # Let the coordinator know our entity_id. Only for per-area entities, not aggregates.
         if self._handle is not None and (area := self._get_area()) is not None:
             area.occupancy_entity_id = self.entity_id
-            assign_device_to_ha_area(self.hass, self.device_info, area.config.area_id)
+            assign_device_to_ha_area(
+                self.hass,
+                self.device_info,
+                area.config.area_id,
+                self.coordinator.entry_id,
+            )
 
     async def async_will_remove_from_hass(self) -> None:
         """Handle entity which will be removed."""
@@ -229,9 +234,7 @@ class WaspInBoxSensor(RestoreEntity, BinarySensorEntity):
 
         # Check if we have required entities configured
         if not self._door_entities or not self._motion_entities:
-            _LOGGER.warning(
-                "No door or motion entities configured for Wasp in Box sensor. Sensor will not function properly"
-            )
+            self._warn_missing_entities()
 
         _LOGGER.debug(
             "WaspInBoxSensor initialized with unique_id: %s", self._attr_unique_id
@@ -345,12 +348,31 @@ class WaspInBoxSensor(RestoreEntity, BinarySensorEntity):
             ATTR_VERIFICATION_PENDING: self._verification_pending,
         }
 
+    def _warn_missing_entities(self) -> None:
+        """Say which area's Wasp in Box is missing which sensors (#484).
+
+        Without the area name, finding the culprit meant opening every area
+        with wasp-in-box enabled.
+        """
+        missing = [
+            kind
+            for kind, entities in (
+                ("door", self._door_entities),
+                ("motion", self._motion_entities),
+            )
+            if not entities
+        ]
+        _LOGGER.warning(
+            "Wasp in Box for area '%s' has no %s sensors configured and will not "
+            "work until the area has at least one door and one motion sensor",
+            self._area_name,
+            " or ".join(missing),
+        )
+
     def _setup_entity_tracking(self) -> None:
         """Set up state tracking for door and motion entities."""
         if not self._door_entities and not self._motion_entities:
-            _LOGGER.warning(
-                "No door or motion entities configured for Wasp in Box sensor. Sensor will not function properly"
-            )
+            self._warn_missing_entities()
             return
 
         # Clean up existing listener
@@ -992,6 +1014,19 @@ class SleepPresenceSensor(RestoreEntity, BinarySensorEntity):
         return self._handle.resolve()
 
 
+def _area_subentry_id(
+    coordinator: AreaOccupancyCoordinator, area_name: str
+) -> str | None:
+    """Config subentry an area's entities belong to, if it has one.
+
+    Registering entities under the area's subentry is what makes the
+    integration page group each area's device and entities beneath it.
+    Aggregate entities ("All Areas", floors) span areas and stay on the entry.
+    """
+    area = coordinator.get_area(area_name)
+    return area.config.subentry_id if area else None
+
+
 async def async_setup_entry(
     hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: Any
 ) -> None:
@@ -1038,6 +1073,7 @@ async def async_setup_entry(
         async_add_entities(
             area_entities,
             update_before_add=False,
+            config_subentry_id=_area_subentry_id(coordinator, area_name),
         )
 
     # Create "All Areas" aggregation occupancy sensor.

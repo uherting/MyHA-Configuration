@@ -20,12 +20,14 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import StrEnum
 import logging
+import math
 from typing import TYPE_CHECKING
 
+from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.util import dt as dt_util
 
-from ..const import DOMAIN
+from ..const import DOMAIN, HOME_ZONE_ENTITY_ID, MAX_PROBABILITY
 from .entity_type import BINARY_INPUT_TYPES, InputType
 from .purpose import AreaPurpose
 
@@ -36,12 +38,19 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-# Input types eligible for stuck-sensor detection (binary + power + motion)
+# Input types eligible for stuck-sensor and never-triggered detection
+# (binary + power + motion). A type only gets a stuck check when it also has
+# an entry in STUCK_ACTIVE_THRESHOLDS / STUCK_INACTIVE_THRESHOLDS. The custom
+# types (#531) deliberately have none: they exist for sensors whose meaning
+# AOD cannot infer, so any "normal" active or idle duration would be a guess,
+# and guessed thresholds are how #465/#466/#468's false repairs happened.
+# They still get the never-triggered check through this set.
 _STUCK_CHECK_TYPES: set[InputType] = BINARY_INPUT_TYPES | {
     InputType.MOTION,
     InputType.POWER,
     InputType.COVER,
     InputType.WIFI_CLIENTS,
+    InputType.CUSTOM_NUMERIC,
 }
 
 # Input types excluded from all health checks
@@ -133,6 +142,10 @@ SLOW_ANALYSIS_THRESHOLD_MS: float = 180_000.0
 # — single source of truth alongside the code that emits them.
 CORRELATION_FAILURE_RATIO: float = 0.5
 
+# Headroom between an area's peak learned prior and the threshold the
+# prior_above_threshold repair suggests.
+PRIOR_THRESHOLD_HEADROOM: float = 0.05
+
 
 class HealthIssueType(StrEnum):
     """Types of health issues — sensor-scope and pipeline-scope."""
@@ -148,6 +161,7 @@ class HealthIssueType(StrEnum):
     STALE_INTERVALS_CACHE = "stale_intervals_cache"
     SLOW_ANALYSIS = "slow_analysis"
     CORRELATION_FAILURES = "correlation_failures"
+    PRIOR_ABOVE_THRESHOLD = "prior_above_threshold"
 
 
 _PIPELINE_ISSUE_TYPES: frozenset[HealthIssueType] = frozenset(
@@ -156,6 +170,7 @@ _PIPELINE_ISSUE_TYPES: frozenset[HealthIssueType] = frozenset(
         HealthIssueType.STALE_INTERVALS_CACHE,
         HealthIssueType.SLOW_ANALYSIS,
         HealthIssueType.CORRELATION_FAILURES,
+        HealthIssueType.PRIOR_ABOVE_THRESHOLD,
     }
 )
 
@@ -196,7 +211,21 @@ def _format_duration_human(hours: float) -> str:
     return f"{total_seconds // 86400}d"
 
 
-def _stuck_active_threshold(
+def suggested_threshold(peak_prior: float) -> float | None:
+    """A threshold safely above an area's highest learned prior.
+
+    Five points of headroom, rounded up to a whole percent. ``None`` when
+    that would exceed ``MAX_PROBABILITY``: occupancy probability never goes
+    above it, so there is no threshold with that headroom to suggest.
+    """
+    # Round away float noise before the ceiling: 0.56 + 0.05 is
+    # 0.6100000000000001, which would otherwise round up to 62%.
+    percent = round((peak_prior + PRIOR_THRESHOLD_HEADROOM) * 100, 6)
+    suggested = math.ceil(percent) / 100
+    return suggested if suggested <= MAX_PROBABILITY else None
+
+
+def stuck_active_threshold(
     input_type: InputType, purpose: AreaPurpose | None
 ) -> timedelta | None:
     """Return the stuck-active threshold for ``input_type`` in this area.
@@ -262,6 +291,12 @@ class HealthMonitor:
         self._issues: list[HealthIssue] = []
         self._checked_count: int = 0
         self._last_check: datetime | None = None
+        # Whether the household was away at the last sample, and when it last
+        # went from away to home (#485). Sampled on each check run, so the
+        # return time is accurate to the check interval (hourly), which is
+        # plenty against thresholds measured in days.
+        self._home_was_empty: bool | None = None
+        self._home_returned_at: datetime | None = None
         # In-memory record of when each entity *first* appeared unavailable
         # in the current HA session. Used instead of ``entity.last_updated``
         # (which is persisted and reflects the last evidence transition,
@@ -373,18 +408,23 @@ class HealthMonitor:
         self,
         entities: dict[str, Entity],
         excluded_entity_ids: set[str] | None = None,
+        away_entity: str | None = None,
     ) -> list[HealthIssue]:
         """Run all health checks on entities and update repair issues.
 
         Args:
             entities: All entities in the area
             excluded_entity_ids: Entity IDs to skip (e.g., wasp/sleep virtual sensors)
+            away_entity: Boolean entity that is on while the household is away.
+                When set it replaces person tracking and ``zone.home`` as the
+                source for away mode (#485).
 
         Returns:
             List of detected health issues
         """
         now = dt_util.utcnow()
         self._last_check = now
+        nobody_home = self._sample_home_presence(now, away_entity)
         excluded = excluded_entity_ids or set()
         issues: list[HealthIssue] = []
         checked = 0
@@ -419,20 +459,47 @@ class HealthMonitor:
                 issues.append(issue)
                 continue  # Skip other checks if unavailable
 
-            issue = self._check_stuck_sensor(entity, now)
+            issue = self._check_stuck_sensor(
+                entity, now, check_inactive=not nobody_home
+            )
             if issue:
                 issues.append(issue)
                 continue
 
-            # Never-triggered uses persisted last_updated, so it survives restarts
-            issue = self._check_never_triggered(entity, now)
-            if issue:
-                issues.append(issue)
+            # Never-triggered uses persisted last_updated, so it survives
+            # restarts. Nobody home means nobody to trigger it (#485).
+            if not nobody_home:
+                issue = self._check_never_triggered(entity, now)
+                if issue:
+                    issues.append(issue)
 
         self._checked_count = checked
         self._issues = issues
         self._update_repair_issues()
+        self._flag_stuck_entities(entities, issues)
         return issues
+
+    def _flag_stuck_entities(
+        self, entities: dict[str, Entity], issues: list[HealthIssue]
+    ) -> None:
+        """Mark sensors flagged stuck active so they stop counting as evidence.
+
+        A sensor stuck on (a TV left paused for a day, a PIR that stopped
+        reporting while "on") would otherwise hold the area occupied. It
+        stays a repair for the user; ignoring that repair says the long
+        activity is real, so an ignored issue leaves the sensor counting.
+        """
+        stuck = {
+            issue.entity_id: issue.since
+            for issue in issues
+            if issue.issue_type == HealthIssueType.STUCK_ACTIVE
+            and issue.entity_id is not None
+            and not self._is_ignored(
+                _issue_id(self._area_id, issue.entity_id, issue.issue_type)
+            )
+        }
+        for entity in entities.values():
+            entity.stuck_since = stuck.get(entity.entity_id)
 
     def cleanup(self) -> None:
         """Remove all repair issues for this area.
@@ -487,6 +554,8 @@ class HealthMonitor:
         correlation_failure_count: int,
         correlatable_entity_count: int,
         last_prior_calculation_hours_ago: float | None = None,
+        peak_prior: tuple[float, str] | None = None,
+        threshold: float | None = None,
     ) -> list[HealthIssue]:
         """Run pipeline-scope checks and merge results with sensor issues.
 
@@ -537,12 +606,126 @@ class HealthMonitor:
         if issue:
             new_issues.append(issue)
 
+        issue = self._check_prior_above_threshold(peak_prior, threshold, now)
+        if issue:
+            new_issues.append(issue)
+
         self._issues = new_issues
         self._update_repair_issues()
         return new_issues
 
-    def _check_stuck_sensor(self, entity: Entity, now: datetime) -> HealthIssue | None:
-        """Check if a binary sensor is stuck in one state too long."""
+    def _sample_home_presence(
+        self, now: datetime, away_entity: str | None = None
+    ) -> bool:
+        """Sample whether the household is away and report if nobody is home (#485).
+
+        A sensor that is idle while everyone is away is not stuck or
+        misconfigured, so the inactivity checks pause while nobody is home,
+        and afterwards measure idleness from the return rather than from
+        before the trip; otherwise a ten-day holiday would raise every "not
+        triggered" alert the moment you walked back in. ``zone.home``'s own
+        ``last_changed`` can't stand in for the return: it moves whenever
+        anyone arrives or leaves, which would keep resetting the clock and
+        hide real alerts.
+
+        ``away_entity`` and person tracking are alternative sources, never
+        combined. With ``away_entity`` set it decides alone: ``on`` is away,
+        ``off`` is home. That serves a household with no person entities, and
+        one whose phones say something other than the truth (a house-sitter in
+        while the owners are away). Without it, ``zone.home`` counting nobody
+        home decides.
+
+        Whichever source is in use, an unusable reading returns ``False`` and
+        the checks behave exactly as before, without falling back to the other
+        source. For the entity that is any state but ``on``/``off``, or the
+        entity being gone. For ``zone.home`` it is no person with a known
+        location: it still reads ``0`` on an install with no person entities,
+        or when every person is ``unknown``/``unavailable``, and that is not
+        "nobody home".
+
+        Args:
+            now: The current check time.
+            away_entity: Boolean entity that is on while the household is
+                away, or None to use ``zone.home``.
+
+        Returns:
+            True if the household is away.
+        """
+        empty = (
+            self._away_entity_says_away(away_entity)
+            if away_entity
+            else self._zone_home_says_empty()
+        )
+        if empty is None:
+            return False
+        if not empty and self._home_was_empty:
+            self._home_returned_at = now
+        self._home_was_empty = empty
+        return empty
+
+    def _away_entity_says_away(self, entity_id: str) -> bool | None:
+        """Read the away-mode entity.
+
+        Args:
+            entity_id: The boolean entity that is on while the household is away.
+
+        Returns:
+            True while it is on, False while it is off, None in any other
+            state or when it does not exist.
+        """
+        state = self._hass.states.get(entity_id)
+        if state is None or state.state not in (STATE_ON, STATE_OFF):
+            return None
+        return state.state == STATE_ON
+
+    def _zone_home_says_empty(self) -> bool | None:
+        """Read ``zone.home``, provided some person has a known location.
+
+        Returns:
+            True if it counts nobody home, False if it counts someone, None
+            when person tracking gives no usable reading.
+        """
+        tracked = any(
+            person.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE)
+            for person in self._hass.states.async_all("person")
+        )
+        if not tracked:
+            return None
+        state = self._hass.states.get(HOME_ZONE_ENTITY_ID)
+        try:
+            count = int(state.state) if state is not None else None
+        except (TypeError, ValueError):
+            count = None
+        if count is None:
+            return None
+        return count == 0
+
+    def _inactive_since(self, entity: Entity) -> datetime | None:
+        """When an inactive entity's idleness counts from.
+
+        Its last change, or the last return home if that is later.
+        """
+        since = entity.last_updated
+        if since is not None and self._home_returned_at is not None:
+            since = max(since, self._home_returned_at)
+        return since
+
+    def _check_stuck_sensor(
+        self, entity: Entity, now: datetime, *, check_inactive: bool = True
+    ) -> HealthIssue | None:
+        """Check if a binary sensor is stuck in one state too long.
+
+        Args:
+            entity: The entity to check.
+            now: The current check time.
+            check_inactive: False while nobody is home, so an idle sensor
+                is not reported as stuck inactive (#485). Stuck-active is
+                still checked: a sensor on while the house is empty is more
+                suspicious, not less.
+
+        Returns:
+            The issue, or None.
+        """
         if entity.type.input_type not in _STUCK_CHECK_TYPES:
             return None
 
@@ -554,7 +737,7 @@ class HealthMonitor:
 
         # Check stuck active
         if evidence is True:
-            threshold = _stuck_active_threshold(entity.type.input_type, self._purpose)
+            threshold = stuck_active_threshold(entity.type.input_type, self._purpose)
             if threshold and duration >= threshold:
                 hours = duration.total_seconds() / 3600
                 return HealthIssue(
@@ -571,15 +754,17 @@ class HealthMonitor:
                 )
 
         # Check stuck inactive
-        if evidence is False:
+        if evidence is False and check_inactive:
             threshold = STUCK_INACTIVE_THRESHOLDS.get(entity.type.input_type)
+            since = self._inactive_since(entity)
+            duration = now - since if since is not None else duration
             if threshold and duration >= threshold:
                 hours = duration.total_seconds() / 3600
                 return HealthIssue(
                     entity_id=entity.entity_id,
                     issue_type=HealthIssueType.STUCK_INACTIVE,
                     input_type=entity.type.input_type,
-                    since=entity.last_updated,
+                    since=since or entity.last_updated,
                     duration_hours=round(hours, 1),
                     details=(
                         f"{entity.type.input_type.value} sensor hasn't changed "
@@ -676,7 +861,8 @@ class HealthMonitor:
         # Entity.last_updated is persisted in the DB and only advances on
         # evidence transitions, so a sensor that has never triggered will
         # have last_updated close to its creation time.
-        time_since_update = now - entity.last_updated
+        since = self._inactive_since(entity) or entity.last_updated
+        time_since_update = now - since
         if time_since_update < NEVER_TRIGGERED_THRESHOLD:
             return None
 
@@ -685,7 +871,7 @@ class HealthMonitor:
             entity_id=entity.entity_id,
             issue_type=HealthIssueType.NEVER_TRIGGERED,
             input_type=entity.type.input_type,
-            since=entity.last_updated,
+            since=since,
             duration_hours=round(days * 24, 1),
             details=(
                 f"{entity.type.input_type.value} sensor has never been "
@@ -831,6 +1017,55 @@ class HealthMonitor:
             ),
         )
 
+    def _check_prior_above_threshold(
+        self,
+        peak_prior: tuple[float, str] | None,
+        threshold: float | None,
+        now: datetime,
+    ) -> HealthIssue | None:
+        """Flag an area whose learned prior reaches its occupancy threshold.
+
+        A learned prior is measured occupancy, so it stands: an area that is
+        really occupied most Sunday evenings may read occupied then with no
+        sensor active. But the user may not expect that, and a threshold
+        just above the peak keeps the sensors in charge, so suggest it.
+
+        Args:
+            peak_prior: The highest learned prior over the week and the slot
+                it occurs in (e.g. ``"Sunday 18:00"``).
+            threshold: The area's occupancy threshold.
+            now: The current check time.
+
+        Returns:
+            The issue, or None.
+        """
+        if peak_prior is None or threshold is None:
+            return None
+        peak, slot = peak_prior
+        if peak < threshold:
+            return None
+        suggested = suggested_threshold(peak)
+        advice = (
+            f"A threshold of {suggested * 100:.0f}% keeps it below."
+            if suggested is not None
+            else (
+                "No threshold leaves five points of headroom within the "
+                f"{MAX_PROBABILITY * 100:.0f}% limit on occupancy "
+                "probability: the area is almost always occupied then."
+            )
+        )
+        return HealthIssue(
+            entity_id=None,
+            issue_type=HealthIssueType.PRIOR_ABOVE_THRESHOLD,
+            input_type=None,
+            since=now,
+            duration_hours=0.0,
+            details=(
+                f"At {slot} the learned prior is {peak * 100:.0f}%, at or "
+                f"above the {threshold * 100:.0f}% threshold. {advice}"
+            ),
+        )
+
     def _check_correlation_failures(
         self,
         failure_count: int,
@@ -882,6 +1117,7 @@ class HealthMonitor:
             HealthIssueType.STALE_INTERVALS_CACHE: ir.IssueSeverity.ERROR,
             HealthIssueType.SLOW_ANALYSIS: ir.IssueSeverity.WARNING,
             HealthIssueType.CORRELATION_FAILURES: ir.IssueSeverity.WARNING,
+            HealthIssueType.PRIOR_ABOVE_THRESHOLD: ir.IssueSeverity.WARNING,
         }
 
         for issue in self._issues:
