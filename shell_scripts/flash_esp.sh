@@ -35,6 +35,7 @@ fi
 FLASH_FILE_1="${FIRMWARE_HOME_UH}/${1}-firmware.factory.bin"
 FLASH_FILE_2="${FIRMWARE_HOME_UH}/${1}-firmware.bin"
 
+# does the file to be flashed exist? yes == great
 if [ -e ${FLASH_FILE_1} ]; then
   FLASH_FILE=${FLASH_FILE_1}
 elif [ -e ${FLASH_FILE_2} ]; then
@@ -42,12 +43,6 @@ elif [ -e ${FLASH_FILE_2} ]; then
 else
   echo "ERROR: neither ${FLASH_FILE_1} nor ${FLASH_FILE_2} exist. No flashing will take place."
   exit 81
-fi
-
-# does the file to be flashed exist? yes == great
-if [ ! -e ${FLASH_FILE} ]; then
-  echo "${FLASH_FILE} does not exist. No flashing will take place."
-  exit 82
 fi
 
 for USB in ${USB_TO_TEST}; do
@@ -64,3 +59,6 @@ fi
 
 ${DNAME}/esptool/esptool --chip auto -p "${ADDITIONAL_USB}" write-flash 0x0 "${FLASH_FILE}"
 # rm ${FLASH_FILE}
+####################################################################
+# EOF
+####################################################################
