@@ -16,6 +16,12 @@
   triggers:
     - trigger: time
       at: "06:01:00"
+    - trigger: time
+      at: "11:01:00"
+    - trigger: time
+      at: "17:01:00"
+    - trigger: time
+      at: "22:01:00"
 
   # -------------------- CONDITIONS -------------------
   condition: []
