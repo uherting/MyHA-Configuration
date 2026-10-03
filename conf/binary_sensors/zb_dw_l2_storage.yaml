@@ -1,0 +1,34 @@
+# ############################################################
+#
+#  Binary sensors
+#
+# ############################################################
+
+#binary_sensor:
+
+###########################################################################
+# group the DW sensors in L2 storage
+###########################################################################
+- platform: group
+  name: ZB_DW_L2_storage_contacts
+  entities:
+    - binary_sensor.zb_dw_l2_storage_01_contact
+    - binary_sensor.zb_dw_l2_storage_02_contact
+    - binary_sensor.zb_dw_l2_storage_03_contact
+
+- platform: group
+  name: ZB_DW_L2_storage_tamper
+  entities:
+    - binary_sensor.zb_dw_l2_storage_01_tamper
+    - binary_sensor.zb_dw_l2_storage_02_tamper
+    - binary_sensor.zb_dw_l2_storage_03_tamper
+
+- platform: group
+  name: ZB_DW_L2_storage_battery_low
+  entities:
+    - binary_sensor.zb_dw_l2_storage_01_battery_low
+    - binary_sensor.zb_dw_l2_storage_02_battery_low
+    - binary_sensor.zb_dw_l2_storage_03_battery_low
+# ############################################################
+#  END OF FILE
+# ############################################################

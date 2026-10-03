@@ -16,10 +16,10 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   triggers:
-    # if the group zb_dw_l2_bedroom_contact goes to "on"
+    # if the group ZB_DW_L2_bedroom_contacts goes to "on"
     - trigger: state
-      id: "zb_dw_l2_bedroom_contact"
-      entity_id: binary_sensor.zb_dw_l2_bedroom_contact
+      id: "ZB_DW_L2_bedroom_contacts"
+      entity_id: binary_sensor.ZB_DW_L2_bedroom_contacts
       to: "on"
   # -------------------- CONDITIONS -------------------
   condition:
