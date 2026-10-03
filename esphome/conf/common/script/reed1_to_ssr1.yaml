@@ -2,7 +2,7 @@
 # SCRIPTS
 
 #script:
-  # on_press action of reed relay #01
+  # when the reed contact is closed ("released") switch off SSR01
   - id: ssr_script_reed_01
     mode: restart
     then:

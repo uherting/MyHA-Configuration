@@ -92,13 +92,12 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/common/script/pir1_to_ssr1_twilight.yaml
   - <<: !include conf/common/script/reed1_to_ssr1.yaml
+  - <<: !include conf/script/l2storage01/pir1_to_ssr1_twilight.yaml
   - <<: !include conf/script/l2storage01/touch_button_A404_on_press.yaml
   - <<: !include conf/script/l2storage01/touch_button_A505_double.yaml
   - <<: !include conf/script/l2storage01/touch_button_A505_long.yaml
   - <<: !include conf/script/l2storage01/touch_button_A505_short.yaml
-  # - <<: !include conf/script/l2storage01/touch_button_A5_on_press.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -109,6 +108,8 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A505_on_multi_click.yaml
   - <<: !include conf/common/binary_sensor/sun_related.yaml
+  - <<: !include conf/binary_sensor/l2storage01/binary_sensor_windows_group_kitchen.yaml
+  - <<: !include conf/binary_sensor/l2storage01/binary_sensor_windows_group_storage.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -119,8 +120,6 @@ sensor:
   # device related
   - <<: !include conf/sensor/l2storage01/l2storage01_case.yaml
   # - <<: !include conf/sensor/l2storage01/l2storage01_env01.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
-  # - <<: !include conf/common/sensor/bh1750_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
