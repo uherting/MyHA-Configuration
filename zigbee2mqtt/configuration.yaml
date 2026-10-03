@@ -122,6 +122,14 @@ devices:
     friendly_name: ZB_DW_L2_Bedroom_02
   '0x1c34f1fffe095fc2':
     friendly_name: ZB_TRV_Lounge_L2
+  '0xa4c1387b8500ba93':
+    friendly_name: ZB_DW_L2_Kitchen_01
+  '0xa4c138ae19d3cb87':
+    friendly_name: ZB_DW_L2_Storage_01
+  '0xa4c138f6cf2b1fd0':
+    friendly_name: ZB_DW_L2_Storage_02
+  '0xa4c138365671a357':
+    friendly_name: ZB_DW_L2_Storage_03
 groups:
   '1':
     friendly_name: level2-TRVs
