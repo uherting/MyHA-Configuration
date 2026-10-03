@@ -5,9 +5,9 @@
 # ############################################################
 
 # ############################################################
-# Notebook charging on
+# Notebook charging from 6am for 1 hour
 # ############################################################
-- alias: Notebook charging on
+- alias: Notebook charging
   id: "019fc410-93d3-77f6-bbee-f8a1d1ca8732"
   mode: single
   initial_state: true
@@ -25,30 +25,7 @@
     # ------------------- SEND NOTIFICATION -------------------
     - action: switch.turn_on
       entity_id: switch.zb_plug_l2_misc_02
-
-# ############################################################
-# Notebook charging off
-# ############################################################
-- alias: Notebook charging off
-  id: "019fc415-145d-702d-8e30-b3081baf87a0"
-  mode: single
-  initial_state: true
-
-  # --------------------- TRIGGER ---------------------
-  triggers:
-    - trigger: time
-      at: "07:01:00"
-
-  # -------------------- CONDITIONS -------------------
-  condition:
-    - alias: "Checking if charging is allowed to take place at night"
-      condition: state
-      entity_id: input_boolean.notebook_can_be_charged_at_night
-      state: "on"
-
-  # --------------------- ACTIONS ---------------------
-  action:
-    # ------------------- SEND NOTIFICATION -------------------
+    - delay: "1:00"
     - action: switch.turn_off
       entity_id: switch.zb_plug_l2_misc_02
 # ############################################################
