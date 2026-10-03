@@ -1,0 +1,17 @@
+####################################################################
+# BINARY SENSORS
+
+#binary_sensor:
+
+####################################################################
+# Binary Sensors from home assistant
+# see https://esphome.io/components/binary_sensor/homeassistant/
+
+# DW sensor groups from home assistant for kitchen
+- platform: homeassistant
+  name: $homeassistant_binary_sensor_windows_group_kitchen_name
+  id: $homeassistant_binary_sensor_windows_group_kitchen_id
+  entity_id: $homeassistant_binary_sensor_windows_group_kitchen_entity_id
+# ############################################################
+#  END OF FILE
+# ############################################################

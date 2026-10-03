@@ -62,7 +62,6 @@ substitutions:
 
 ###################### PACKAGES CONFIGURATION ######################
 # merge information to setup the base
-# log_level can be overwritten in overwrites/<device_name>.yaml
 
 packages:
   substitutions_common: !include conf/common/packages/substitutions/common.yaml
@@ -76,7 +75,7 @@ ota: !include conf/common/networking/ota.yaml
 
 # change the log level temporary for this very device
 
-# this has to be done in conf/substitutions/overwrites/<devive>.yaml
+# this has to be done in conf/substitutions/overwrites/<device>.yaml
 # by (re)defining the variable log_level
 
 ############### BASIC CONFIGURATION FOR THIS DEVICE ###############
@@ -96,7 +95,7 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 ####################################################################
 
 #-------------------------------------------------------------------
-# MISC STUFF NEEDED FOR EXECUTION OF OFFLINE FUNCTIONALITY
+# MISC STUFF NEEDED
 
 globals:
   - <<: !include conf/common/globals/connectivity.yaml
@@ -120,9 +119,7 @@ script:
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # - <<: !include conf/common/binary_sensor/pir_A0.yaml
-  # reed relay from bathroom window (replaced by ZB sensor)
-  # - <<: !include conf/common/binary_sensor/reed_window_noexecute_A710.yaml
-  # the touch buttons
+  # the touch button(s)
   - <<: !include conf/common/binary_sensor/touch_button_A303_on_multi_click.yaml
   # kitchen 
   - <<: !include conf/binary_sensor/l2kitchen01_mainlight.yaml

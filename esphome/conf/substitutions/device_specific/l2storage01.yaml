@@ -22,6 +22,18 @@ dallas_01c01_address: !secret DALLAS_01_L2STORAGE01_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
 dallas_01e01_address: !secret DALLAS_01_L2STORAGE01_ENVSENSOR_01_ADDRESS
 
+# templates
+template_switch_spy_mode_name: $friendly_name Spy Mode
+template_switch_spy_mode_id: ${friendly_id}_spy_mode
+
+# imported from home assistant
+homeassistant_binary_sensor_windows_group_kitchen_name: $friendly_name Windows Group Kitchen
+homeassistant_binary_sensor_windows_group_kitchen_id: ${friendly_id}_windows_group_kitchen
+homeassistant_binary_sensor_windows_group_kitchen_entity_id: binary_sensor.zb_dw_l2_kitchen_contacts
+homeassistant_binary_sensor_windows_group_storage_name: $friendly_name Windows Group Storage
+homeassistant_binary_sensor_windows_group_storage_id: ${friendly_id}_windows_group_storage
+homeassistant_binary_sensor_windows_group_storage_entity_id: binary_sensor.zb_dw_l2_storage_contacts
+
 # touch buttons
 touchbutton02_name: $friendly2_name TB 02
 touchbutton02_id: ${friendly2_id}_TB_02

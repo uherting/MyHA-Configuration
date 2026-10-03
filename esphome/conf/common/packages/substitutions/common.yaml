@@ -81,10 +81,6 @@ substitutions:
   # binary_template_sensor_zb_plug_coffeemachine_id: ${friendly_id}_BIN_TEMPL_ZBPLUGCOFFEEMACHINE
   # binary_template_sensor_zb_plug_coffeemachine_name: $friendly_name BIN_TEMPL ZBPLUGCOFFEEMACHINE
 
-  # main light kitchen trigger
-  binary_template_sensor_main_light_id: ${friendly_id}_BIN_TEMPL_MAINLIGHT
-  binary_template_sensor_main_light_name: friendly_name BIN_TEMPL MAINLIGHT
-
   # bmp280 sensor for temperature and pressure
   bmp280_01_temp_name: $friendly_name BMP280 temp 01
   bmp280_01_temp_id: ${friendly_id}_BMP280_Temp_01

@@ -1,0 +1,32 @@
+####################################################################
+# SCRIPTS
+
+#script:
+  # on_press action of PIR #01 (no matter whether the device is online or offline)
+  - id: ssr_script_pir_01
+    mode: restart
+    then:
+      - if:
+          condition:
+            and:
+              - switch.is_off: ${template_switch_spy_mode_id}
+              - binary_sensor.is_on: ${sun_dwn_twilight_id}
+          then:
+            # - logger.log: "Spy mode is off and twilight is detected."
+            # are the windows and the door open? (if yes, don't turn on the SSR01)
+            - if:
+                condition:
+                  and:
+                    - binary_sensor.is_on: ${homeassistant_binary_sensor_windows_group_kitchen_id}
+                    - binary_sensor.is_on: ${homeassistant_binary_sensor_windows_group_storage_id}
+                    - binary_sensor.is_on: ${reed_contact01_id}
+                then:
+                  # - logger.log: "Windows and door are open, assuming draft is desired. Not turning on SSR01."
+                  delay: !secret DELAY_01SEC
+                else:
+                  # - logger.log: "Turning SSR01 on b/c of twilight automation."
+                  - switch.turn_on: ${ssr01_id}
+
+####################################################################
+# EOF
+####################################################################

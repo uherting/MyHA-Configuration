@@ -20,7 +20,7 @@
     filters:
       - delayed_on: 100ms
       - delayed_off: 100ms
-    # when the reed contact is closed (released) switch off the SSR01
+    # when the reed contact is closed ("released") switch off SSR01
     on_release:
       then:
         - script.execute: ssr_script_reed_01
