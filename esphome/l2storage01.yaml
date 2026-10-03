@@ -109,7 +109,6 @@ binary_sensor:
   - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
   - <<: !include conf/common/binary_sensor/touch_button_A505_on_multi_click.yaml
   - <<: !include conf/common/binary_sensor/sun_related.yaml
-  # - <<: !include conf/binary_sensor/l2storage01.yaml # template sensors for spy mode
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -128,8 +127,7 @@ sensor:
 switch:
   - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
   - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
-  # not used:
-  # - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/switch/l2storage01.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

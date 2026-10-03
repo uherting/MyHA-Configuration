@@ -2,35 +2,26 @@
 # SWITCHES
 
 #############################
-# SSR
-- platform: gpio
-  name: ${ssr01_name}
-  id: ${ssr01_id}
-  pin:
-    mcp23xxx: ${mcp23017_hub01_id}
-    number: !secret MCP23017_PIN_B0
-    # mode can be INPUT, INPUT_PULLUP or OUTPUT
-    mode: OUTPUT
-    # high triggered SSR
-    # inverted: false
-    # ---
-    # low triggered SSR
-    inverted: true
+# spy mode switch
+- platform: template
+  name: ${template_switch_spy_mode_name}
+  id: ${template_switch_spy_mode_id}
+  optimistic: true
   restore_mode: ALWAYS_OFF
-  # for AppDaemon
-  icon: mdi:ceiling-light
-#############################
-# opto coupler
-#  - platform: gpio
-#    name: ${opto_cpl01_name}
-#    id: ${opto_cpl01_id}
-#    pin:
-#      mcp23xxx: ${mcp23017_hub01_id}
-#      number: !secret MCP23017_PIN_B7
-#      # mode can be INPUT, INPUT_PULLUP or OUTPUT
-#      mode: OUTPUT
-#      inverted: false
-#    restore_mode: ALWAYS_OFF
+  on_turn_on:
+    then:
+      - delay: !secret DELAY_30MIN
+      - switch.turn_off: ${template_switch_spy_mode_id}
+  #     - logger.log: "switch ${template_switch_spy_mode_name} switched on."
+  #     # - binary_sensor.template.publish:
+  #     #     id: ${template_binary_sensor_spy_mode_id}
+  #     #     state: true
+  # on_turn_off:
+  #   then:
+  #     - logger.log: "switch ${template_switch_spy_mode_name} switched off."
+  #     # - binary_sensor.template.publish:
+  #     #     id: ${template_binary_sensor_spy_mode_id}
+  #     #     state: false
 
 # ############################################################
 #  END OF FILE
