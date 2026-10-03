@@ -202,8 +202,8 @@ cards:
             show_state: false
             color: yellow
           - type: "custom:button-card"
-            # entity:
-            name: " "
+            entity: switch.l2storage01_spy_mode
+            name: "SpyMode"
             show_state: false
             color: yellow
 
