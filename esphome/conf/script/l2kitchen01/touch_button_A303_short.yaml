@@ -20,7 +20,12 @@
         then:
           # - logger.log: "ESPHome: within script tb_03_click_short action."
 
-          - switch.toggle: _SSR01
+          # SSR_09 (kitchen main light) is connected to l2storage01
+          - homeassistant.action:
+              action: script.switch_toggle_by_esphome
+              data:
+                switch_id: "switch.l2kitchen01_ssr_09"
+
           # - logger.log: "ESPHome: within script tb_03_click_short action, the kitchen light was toggled."
 
           # the light is directly connected to the device, so local toggling is possible
