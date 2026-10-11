@@ -24,7 +24,7 @@
           - homeassistant.action:
               action: script.switch_toggle_by_esphome
               data:
-                switch_id: "switch.l2kitchen01_ssr_09"
+                switch_id: "switch.l2storage01_l2_kitchen01_ssr_09"
 
           # - logger.log: "ESPHome: within script tb_03_click_short action, the kitchen light was toggled."
 
