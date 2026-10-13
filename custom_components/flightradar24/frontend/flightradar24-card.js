@@ -1,10 +1,42 @@
 /**
  * Flightradar24 Lovelace card.
- * OpenStreetMap viewport from sensor `bounds`, with aircraft
- * markers from the `flights` attribute (latitude / longitude).
+ * Map viewport from sensor `bounds`, with aircraft markers from
+ * the `flights` attribute (latitude / longitude).
  */
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+
+/** Basemap presets — all free, no API key required. */
+const MAP_STYLES = {
+  osm: {
+    label: "OpenStreetMap",
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution:
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19,
+  },
+  satellite: {
+    label: "Satellite (Esri)",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution:
+      "Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+    maxZoom: 19,
+  },
+  topo: {
+    label: "Topographic",
+    url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    attribution:
+      'Map data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+    maxZoom: 17,
+    subdomains: "abc",
+  },
+};
+const DEFAULT_MAP_STYLE = "osm";
+
+function resolveMapStyle(value) {
+  const key = typeof value === "string" ? value.trim().toLowerCase() : "";
+  return MAP_STYLES[key] ? key : DEFAULT_MAP_STYLE;
+}
 
 let leafletLoader = null;
 
@@ -63,6 +95,8 @@ class Flightradar24Card extends HTMLElement {
       show_flights: true,
       show_tracks: true,
       show_area_center: true,
+      interactive_map: false,
+      map_style: DEFAULT_MAP_STYLE,
     };
   }
 
@@ -74,6 +108,7 @@ class Flightradar24Card extends HTMLElement {
     super();
     this._map = null;
     this._mapInitPromise = null;
+    this._tileLayer = null;
     this._markers = null;
     this._tracks = null;
     this._areaRect = null;
@@ -104,8 +139,11 @@ class Flightradar24Card extends HTMLElement {
       show_flights: true,
       show_tracks: true,
       show_area_center: true,
+      interactive_map: false,
+      map_style: DEFAULT_MAP_STYLE,
       ...config,
     };
+    next.map_style = resolveMapStyle(next.map_style);
     if (next.zoom != null && next.zoom !== "") {
       const zoom = Number(next.zoom);
       if (Number.isNaN(zoom)) {
@@ -146,15 +184,23 @@ class Flightradar24Card extends HTMLElement {
       this._lastFlightsKey = null;
     }
     this._renderShell();
+    if (prev && prev.interactive_map !== next.interactive_map) {
+      this._configureMapInteraction();
+    }
     if (
       prev &&
-      (prev.show_header !== this._config.show_header ||
+      (prev.interactive_map !== this._config.interactive_map ||
+        prev.show_header !== this._config.show_header ||
         prev.show_flights !== this._config.show_flights ||
         prev.show_area_center !== this._config.show_area_center ||
         prev.show_tracks !== this._config.show_tracks ||
         prev.zoom !== this._config.zoom ||
-        prev.icon_size !== this._config.icon_size)
+        prev.icon_size !== this._config.icon_size ||
+        prev.map_style !== this._config.map_style)
     ) {
+      if (prev.map_style !== this._config.map_style) {
+        this._syncTileLayer();
+      }
       this._update();
     }
   }
@@ -200,6 +246,7 @@ class Flightradar24Card extends HTMLElement {
       this._map = null;
     }
     this._mapInitPromise = null;
+    this._tileLayer = null;
     const mapEl = this.shadowRoot?.getElementById("map");
     if (mapEl) {
       // Leaflet leaves _leaflet_id on the node; clear so re-init works.
@@ -946,6 +993,27 @@ class Flightradar24Card extends HTMLElement {
         background: var(--divider-color);
         z-index: 0;
       }
+      .map-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: calc(100% - 64px);
+      }
+      .map-actions[hidden], .map-actions button[hidden] { display: none; }
+      .map-actions button {
+        min-height: 44px;
+        padding: 8px 12px;
+        border: 1px solid var(--divider-color);
+        border-radius: 4px;
+        background: var(--card-background-color, white);
+        color: var(--primary-text-color, black);
+        cursor: pointer;
+        font: inherit;
+      }
       #map {
         width: 100%;
         height: 100%;
@@ -1199,11 +1267,53 @@ class Flightradar24Card extends HTMLElement {
         </div>
         <div class="map-wrap">
           <div id="map"></div>
+          <div class="map-actions" id="map-actions" hidden>
+            <button id="close-details" type="button" hidden>Close details</button>
+            <button id="reset-view" type="button">Reset view</button>
+          </div>
         </div>
         <div class="warning" id="warning" style="display:none;"></div>
         <div class="flights" id="flights"></div>
       </ha-card>
     `;
+    this.shadowRoot.getElementById("close-details").addEventListener("click", () => {
+      this._map?.closePopup();
+    });
+    this.shadowRoot.getElementById("reset-view").addEventListener("click", () => {
+      this._resetMapView();
+    });
+    this._syncMapControls();
+  }
+
+  _syncMapControls() {
+    const actions = this.shadowRoot?.getElementById("map-actions");
+    const close = this.shadowRoot?.getElementById("close-details");
+    if (actions) actions.hidden = this._config?.interactive_map !== true;
+    if (close) close.hidden = !this._openPopupFlightId;
+  }
+
+  _configureMapInteraction() {
+    const map = this._map;
+    const interactive = this._config?.interactive_map === true;
+    if (map) {
+      for (const handler of [map.dragging, map.touchZoom]) {
+        if (interactive) handler.enable();
+        else handler.disable();
+      }
+      map.setMaxBounds(interactive ? null : this._areaMaxBounds);
+      if (!interactive) this._lockMapToArea(map);
+    }
+    this._syncMapControls();
+  }
+
+  _resetMapView() {
+    const map = this._map;
+    if (!map || !this._areaBounds) return;
+    map.closePopup();
+    map.invalidateSize();
+    const zoom = this._configuredZoom();
+    if (zoom != null) map.setView(this._areaBounds.getCenter(), zoom);
+    else map.fitBounds(this._areaBounds, { padding: [0, 0] });
   }
 
   async _ensureMap() {
@@ -1245,34 +1355,56 @@ class Flightradar24Card extends HTMLElement {
     this._map = L.map(mapEl, {
       zoomControl: true,
       attributionControl: false,
-      dragging: false,
+      dragging: this._config?.interactive_map === true,
       scrollWheelZoom: true,
       doubleClickZoom: false,
       boxZoom: false,
       keyboard: false,
-      touchZoom: false,
+      touchZoom: this._config?.interactive_map === true,
     });
+    this._syncMapControls();
     L.control
       .attribution({
         prefix: false,
         position: "bottomright",
       })
       .addTo(this._map);
-    // OSM tile usage: https://wiki.openstreetmap.org/wiki/Referer
-    // HA often sets Referrer-Policy: no-referrer/same-origin, which OSM rejects.
-    // Leaflet < May 2026 needs an explicit tile referrerPolicy.
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution:
-        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      referrerPolicy: "strict-origin-when-cross-origin",
-    }).addTo(this._map);
+    this._syncTileLayer();
     this._markers = L.layerGroup().addTo(this._map);
     this._tracks = L.layerGroup().addTo(this._map);
     this._markerById = new Map();
     // Leaflet needs a tick after being inserted into shadow DOM.
     requestAnimationFrame(() => this._map?.invalidateSize());
     return this._map;
+  }
+
+  _syncTileLayer() {
+    if (!this._map || !window.L) {
+      return;
+    }
+    const L = window.L;
+    const styleKey = resolveMapStyle(this._config?.map_style);
+    const style = MAP_STYLES[styleKey];
+    if (this._tileLayer) {
+      try {
+        this._map.removeLayer(this._tileLayer);
+      } catch (_error) {
+        // ignore — layer may already be detached
+      }
+      this._tileLayer = null;
+    }
+    // OSM tile usage: https://wiki.openstreetmap.org/wiki/Referer
+    // HA often sets Referrer-Policy: no-referrer/same-origin, which OSM rejects.
+    // Leaflet < May 2026 needs an explicit tile referrerPolicy.
+    const options = {
+      maxZoom: style.maxZoom,
+      attribution: style.attribution,
+      referrerPolicy: "strict-origin-when-cross-origin",
+    };
+    if (style.subdomains) {
+      options.subdomains = style.subdomains;
+    }
+    this._tileLayer = L.tileLayer(style.url, options).addTo(this._map);
   }
 
   _planeIcon(L, heading) {
@@ -1518,7 +1650,9 @@ class Flightradar24Card extends HTMLElement {
   }
 
   _lockMapToArea(map, { animate = false } = {}) {
-    if (!map) {
+    this._syncMapControls();
+    // Interactive navigation survives popup close and flight updates.
+    if (!map || this._config?.interactive_map === true) {
       return;
     }
     this._maxBoundsSuspended = false;
@@ -1539,6 +1673,10 @@ class Flightradar24Card extends HTMLElement {
 
   _keepPopupInView(map, marker, popup) {
     if (!map || !popup || !marker) {
+      return;
+    }
+    // Interactive mode keeps the user's camera; Close details / Reset view recover.
+    if (this._config?.interactive_map === true) {
       return;
     }
     const adjust = () => {
@@ -1645,7 +1783,7 @@ class Flightradar24Card extends HTMLElement {
 
         this._areaBounds = areaBounds;
         this._areaMaxBounds = areaBounds.pad(0.02);
-        if (!this._openPopupFlightId) {
+        if (!this._openPopupFlightId && this._config?.interactive_map !== true) {
           map.setMaxBounds(this._areaMaxBounds);
           map.options.maxBoundsViscosity = 1.0;
         }
@@ -1741,8 +1879,11 @@ class Flightradar24Card extends HTMLElement {
         });
         marker.on("popupopen", (event) => {
           this._openPopupFlightId = flightId;
+          this._syncMapControls();
           this._selectedFlightId = flightId;
-          this._syncFlightListSelection({ scrollToSelected: true });
+          this._syncFlightListSelection({
+            scrollToSelected: this._config?.interactive_map !== true,
+          });
           // Unlock immediately so Leaflet auto-pan is not clamped.
           this._unlockMapForPopup(map);
           this._keepPopupInView(map, marker, event.popup);
@@ -1758,7 +1899,9 @@ class Flightradar24Card extends HTMLElement {
         });
         marker.on("click", (event) => {
           L.DomEvent.stopPropagation(event);
-          this._selectFlight(flightId, { scrollList: true });
+          this._selectFlight(flightId, {
+            scrollList: this._config?.interactive_map !== true,
+          });
         });
         marker._frHeading = String(flight.heading ?? "");
         marker._frPopupHtml = popupHtml;
@@ -1926,6 +2069,15 @@ class Flightradar24CardEditor extends HTMLElement {
           background: var(--card-background-color);
           color: var(--primary-text-color);
         }
+        select {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid var(--divider-color);
+          background: var(--card-background-color);
+          color: var(--primary-text-color);
+        }
         .check { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
         .check input { width: auto; }
         ha-entity-picker { display: block; width: 100%; }
@@ -1953,6 +2105,22 @@ class Flightradar24CardEditor extends HTMLElement {
       <div class="row check">
         <input type="checkbox" id="show_area_center" ${this._config.show_area_center !== false ? "checked" : ""} />
         <span>Show area centre marker</span>
+      </div>
+      <div class="row check">
+        <input type="checkbox" id="interactive_map" ${this._config.interactive_map === true ? "checked" : ""} />
+        <span>Enable map dragging and pinch zoom</span>
+      </div>
+      <div class="row">
+        <label>Map style</label>
+        <select id="map_style">
+          ${Object.entries(MAP_STYLES)
+            .map(([key, style]) => {
+              const selected =
+                resolveMapStyle(this._config.map_style) === key ? "selected" : "";
+              return `<option value="${key}" ${selected}>${style.label}</option>`;
+            })
+            .join("")}
+        </select>
       </div>
       <div class="row">
         <label>Zoom (optional, 1–19)</label>
@@ -2035,6 +2203,17 @@ class Flightradar24CardEditor extends HTMLElement {
       });
     });
 
+    this.shadowRoot.getElementById("interactive_map").addEventListener("change", (event) => {
+      this._fireConfigChanged({ ...this._config, interactive_map: event.target.checked });
+    });
+
+    this.shadowRoot.getElementById("map_style").addEventListener("change", (event) => {
+      this._fireConfigChanged({
+        ...this._config,
+        map_style: resolveMapStyle(event.target.value),
+      });
+    });
+
     this.shadowRoot.getElementById("zoom").addEventListener("change", (event) => {
       const newConfig = { ...this._config };
       const raw = event.target.value.trim();
@@ -2079,7 +2258,7 @@ window.customCards.push({
   type: "flightradar24-card",
   name: "Flightradar24 Card",
   description:
-    "OpenStreetMap of the monitored area with aircraft markers, optional flight tracks, and an optional area centre marker",
+    "Map of the monitored area with aircraft markers, optional flight tracks, and an optional area centre marker",
   preview: true,
   documentationURL:
     "https://github.com/AlexandrErohin/home-assistant-flightradar24",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+import itertools
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -261,7 +262,9 @@ def _states_to_intervals(
 # state at a boundary by a fraction of a second.
 _COALESCE_TOLERANCE = timedelta(seconds=1)
 # Metadata key recording that the one-time heal of pre-#576 rows has run.
-_COALESCED_METADATA_KEY = "intervals_coalesced_v1"
+# v2 reruns it once to drop the inverted rows 2026.9.4 could store (#588);
+# v3 to clip the provisional ends that overlap the next state.
+_COALESCED_METADATA_KEY = "intervals_coalesced_v3"
 
 Row = tuple[str, datetime, datetime]
 
@@ -290,7 +293,10 @@ def coalesce_state_rows(
         The merged rows, in start order.
     """
     merged: list[list[Any]] = []
-    for state, start, end in sorted(rows, key=lambda r: (r[1], r[2])):
+    # An inverted row has no stretch to keep; dropping it here also heals
+    # the ones a 2026.9.4 sync stored (#588).
+    valid = [r for r in rows if r[2] >= r[1]]
+    for state, start, end in sorted(valid, key=lambda r: (r[1], r[2])):
         if (
             merged
             and merged[-1][0] == state
@@ -299,9 +305,16 @@ def coalesce_state_rows(
             merged[-1][2] = max(merged[-1][2], end)
         else:
             merged.append([state, start, end])
+    # A sensor is in one state at a time: a row running past the start of
+    # the next (different) state is a provisional end the sync wrote before
+    # it learned of the change, so the change wins.
+    for current, following in itertools.pairwise(merged):
+        current[2] = min(current[2], following[1])
     cap = timedelta(seconds=cap_seconds)
     result: list[Row] = []
     for state, start, end in merged:
+        if end <= start:
+            continue
         if is_active_state(state, active_states) and end - start > cap:
             end = start + cap
         result.append((state, start, end))
@@ -443,13 +456,23 @@ def _merge_intervals(
             for new in new_rows:
                 start = _normalize_db_key_datetime(new["start_time"])
                 end = _normalize_db_key_datetime(new["end_time"])
+                latest_start = (
+                    _normalize_db_key_datetime(latest.start_time)
+                    if latest is not None
+                    else None
+                )
                 if (
                     latest is not None
                     and start == watermark
                     and new["state"] == latest.state
+                    and latest_start <= watermark
                 ):
                     # Still the state that was running: continue that row.
-                    start = _normalize_db_key_datetime(latest.start_time)
+                    # Only a row that began at or before the watermark can be
+                    # the one still running there; a later one (the state
+                    # changed inside the window) would push this row's start
+                    # past its end (#588).
+                    start = latest_start
                 rows.append((new["state"], start, end))
 
             merged = coalesce_state_rows(

@@ -1,3 +1,6 @@
+const MISSING_FIELDS = "Missing field(s).";
+const INVALID_OFFSET = "Offset must be whole minutes, less than a day.";
+
 class DailyScheduleCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
@@ -11,17 +14,22 @@ class DailyScheduleCard extends HTMLElement {
     } else {
       this._dialog.hass = hass;
     }
+    if (this._content?._missing.some((entity) => hass.states[entity])) {
+      // A missing entity appeared: rebuild the content.
+      this._root.remove();
+      this._content = null;
+    }
     if (!this._content) {
       this._content = this._createContent();
       if (this._config.title || this._config.card) {
-        const card = document.createElement("ha-card");
-        card.header = this._config.title;
+        this._root = document.createElement("ha-card");
+        this._root.header = this._config.title;
         this._content.classList.add("card-content");
-        card.appendChild(this._content);
-        this.appendChild(card);
+        this._root.appendChild(this._content);
       } else {
-        this.appendChild(this._content);
+        this._root = this._content;
       }
+      this.appendChild(this._root);
     } else {
       this._updateContent();
     }
@@ -112,6 +120,7 @@ class DailyScheduleCard extends HTMLElement {
   _createContent() {
     const content = document.createElement("DIV");
     content._rows = [];
+    content._missing = [];
     for (const entry of this._config.entities) {
       const entity = entry.entity || entry;
       const row = document.createElement("DIV");
@@ -131,6 +140,7 @@ class DailyScheduleCard extends HTMLElement {
         content._rows.push(row);
       } else {
         row.innerText = `Entity not found: ${entity}`;
+        content._missing.push(entity);
       }
       content.appendChild(row);
     }
@@ -170,7 +180,9 @@ class DailyScheduleCard extends HTMLElement {
       this._dialog._entity = entity;
       this._dialog.headerTitle = name;
       this._dialog._message.innerText = "";
-      this._dialog._schedule = [...this._getStateSchedule(entity)];
+      this._dialog._schedule = this._getStateSchedule(entity).map((range) => ({
+        ...range,
+      }));
       this._createDialogRows();
       this._dialog.open = true;
     };
@@ -200,17 +212,39 @@ class DailyScheduleCard extends HTMLElement {
   }
 
   _rowTemplateValue(row) {
+    let unsubscribed = false;
     const subscribed = this._hass.connection.subscribeMessage(
       (message) => {
-        row._content._value_element.innerHTML = message.result.length
-          ? `<bdi dir="ltr">${message.result}</bdi>`
-          : "&empty;";
-        subscribed.then((unsub) => unsub());
+        if (message.error !== undefined && message.level !== "ERROR") {
+          return; // A warning: the template still renders, the result follows.
+        }
+        const value_element = row._content._value_element;
+        // The result is a native type (number, list, ...), not always a string.
+        // With report_errors, a failure arrives as an error message instead.
+        const result = message.error ?? message.result ?? "";
+        const text =
+          typeof result === "object" ? JSON.stringify(result) : String(result);
+        if (text.length) {
+          // Text, not HTML: the result may include untrusted strings.
+          const bdi = document.createElement("bdi");
+          bdi.dir = "ltr";
+          bdi.textContent = text;
+          value_element.replaceChildren(bdi);
+        } else {
+          value_element.innerHTML = "&empty;";
+        }
+        // An error can arrive twice (before and after the subscription result).
+        if (!unsubscribed) {
+          unsubscribed = true;
+          subscribed.then((unsub) => unsub());
+        }
       },
       {
         type: "render_template",
         template: row._template_value,
         variables: { entity_id: row._entity },
+        // Otherwise HA sends nothing on errors, and the subscription stays open.
+        report_errors: true,
       },
     );
   }
@@ -429,16 +463,26 @@ class DailyScheduleCard extends HTMLElement {
       if (type_symbol._type === "time") {
         value = this._normalizeTimeInput(time_input.value);
       } else {
+        if (!time_input.validity.valid) {
+          this._saveBackendEntity(); // Shows the message; nothing is saved.
+          return;
+        }
         value = type_symbol._type === "sunrise" ? sunrise : sunset;
-        if (time_input.value) {
-          const value_int = parseInt(time_input.value, 10);
-          if (value_int) {
-            value += `${value_int > 0 ? "+" : ""}${time_input.value}`;
-          }
+        // Valid means a whole number, so send it normalized (e.g. "1e3" => 1000).
+        const offset = Number(time_input.value);
+        if (offset) {
+          value += `${offset > 0 ? "+" : ""}${offset}`;
         }
       }
       if (range[type] !== value) {
         range[type] = value;
+        this._saveBackendEntity();
+      } else if (
+        [MISSING_FIELDS, INVALID_OFFSET].includes(
+          this._dialog._message.innerText,
+        )
+      ) {
+        // Earlier edits may have been held back by an invalid field: retry.
         this._saveBackendEntity();
       }
     };
@@ -451,12 +495,17 @@ class DailyScheduleCard extends HTMLElement {
     symbol._type = type;
     if (type === "sunrise" || type === "sunset") {
       input.type = "number";
+      // Whole minutes, less than a day (like the backend validation).
       input.step = "1";
+      input.min = "-1439";
+      input.max = "1439";
       input.value = parseInt(value || "0", 10);
       symbol.icon =
         type === "sunrise" ? "mdi:weather-sunny" : "mdi:weather-night";
     } else {
       input.type = "time";
+      input.removeAttribute("min");
+      input.removeAttribute("max");
       input.step = this._timeStep();
       if (value) {
         input.value = this._formatTime(value);
@@ -496,16 +545,31 @@ class DailyScheduleCard extends HTMLElement {
     return value.length === 5 ? `${value}:00` : value;
   }
 
+  _validationMessage() {
+    const schedule = this._dialog._schedule || [];
+    if (schedule.some((range) => range.from === null || range.to === null)) {
+      return MISSING_FIELDS;
+    }
+    // An invalid offset isn't in the schedule, so check the inputs themselves.
+    if (
+      [...this._dialog._scroller.querySelectorAll("input")].some(
+        (input) => !input.validity.valid,
+      )
+    ) {
+      return INVALID_OFFSET;
+    }
+    return "";
+  }
+
   _saveBackendEntity() {
     const schedule = this._dialog._schedule || [];
 
-    for (const range of schedule) {
-      if (range.from === null || range.to === null) {
-        if (this._dialog._message.innerText !== "Missing field(s).") {
-          this._dialog._message.innerText = "Missing field(s).";
-        }
-        return;
+    const message = this._validationMessage();
+    if (message) {
+      if (this._dialog._message.innerText !== message) {
+        this._dialog._message.innerText = message;
       }
+      return;
     }
 
     this._hass
@@ -541,6 +605,7 @@ if (!window.customCards.some((card) => card.type === "daily-schedule-card")) {
     type: "daily-schedule-card",
     name: "Daily Schedule",
     description: "Card for displaying and editing Daily Schedule entities.",
-    documentationURL: "https://github.com/amitfin/lovelace-daily-schedule-card",
+    documentationURL:
+      "https://github.com/amitfin/daily_schedule#daily-schedule-card",
   });
 }

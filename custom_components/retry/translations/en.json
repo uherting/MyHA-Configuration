@@ -1,9 +1,6 @@
 {
     "title": "Retry",
     "config": {
-        "abort": {
-            "single_instance_allowed": "Already configured. Only a single configuration possible."
-        },
         "step": {
             "user": {
                 "description": "Do you want to start setup?"
@@ -23,7 +20,13 @@
     "issues": {
         "failure": {
             "title": "Action failure",
-            "description": "`{action}` failed after {retries} retries. Check the log for additional information."
+            "fix_flow": {
+                "step": {
+                    "confirm": {
+                        "description": "`{action}` failed after {retries} attempts. Check the log for additional information.\n\nPress **Submit** to mark this issue as resolved."
+                    }
+                }
+            }
         }
     },
     "services": {
@@ -34,6 +37,10 @@
                 "action": {
                     "name": "Action",
                     "description": "The action to retry on failure."
+                },
+                "inner_data": {
+                    "name": "Inner Data",
+                    "description": "Parameters of the inner action. Needed to prevent a name collision with a retry parameter (like \"action\")."
                 },
                 "retries": {
                     "name": "Retries",
@@ -65,7 +72,7 @@
                 },
                 "ignore_target": {
                     "name": "Ignore Target",
-                    "description": "When set to true, the action does not try to resolve, expand and isolate the entities. The original target parameters are passed to the inner action as provided."
+                    "description": "When set to true, the action does not try to resolve, expand and isolate the entities. The original target parameters are passed to the inner action as provided. Required for actions which do not act on each target entity (e.g. device-level actions)."
                 },
                 "repair": {
                     "name": "Issue Repair Ticket",
@@ -115,7 +122,7 @@
                 },
                 "ignore_target": {
                     "name": "Ignore Target",
-                    "description": "When set to true, the action does not try to resolve, expand and isolate the entities. The original target parameters are passed to the inner action as provided."
+                    "description": "When set to true, the action does not try to resolve, expand and isolate the entities. The original target parameters are passed to the inner action as provided. Required for actions which do not act on each target entity (e.g. device-level actions)."
                 },
                 "repair": {
                     "name": "Issue Repair Ticket",

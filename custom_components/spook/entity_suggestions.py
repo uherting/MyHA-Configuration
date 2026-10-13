@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 _RENAME_SIMILARITY_CUTOFF = 0.8
 
 
-def async_describe_unknown_entities(
+async def async_describe_unknown_entities(
     hass: HomeAssistant,
     entity_ids: Iterable[str],
     *,
@@ -39,6 +39,29 @@ def async_describe_unknown_entities(
 
     A ``note`` is appended to every line, to qualify a group of entity IDs
     that share something worth saying once per entry.
+
+    The rename suggestions are worked out in a thread first. Every repair
+    describing what it found called the inline version, and each of those
+    was its own chance to keep Home Assistant busy for seconds. A repair
+    that already did that for its whole round finds them all in the cache,
+    and this goes nowhere.
+    """
+    entity_ids = list(entity_ids)
+    await async_warm_rename_suggestions(hass, entity_ids)
+    return async_describe_warmed_unknown_entities(hass, entity_ids, note=note)
+
+
+def async_describe_warmed_unknown_entities(
+    hass: HomeAssistant,
+    entity_ids: Iterable[str],
+    *,
+    note: str | None = None,
+) -> str:
+    """Describe unknown entity IDs whose suggestions were worked out already.
+
+    For a caller that warmed the whole round at once with
+    `async_warm_rename_suggestions`. Anything it missed is compared right
+    here on the event loop, which is the stall the warming exists to avoid.
     """
     deleted_by_entity_id = async_get_deleted_entities(hass)
     known_by_domain = async_get_all_entity_ids_by_domain(hass)
@@ -95,10 +118,18 @@ def _closest_known_entity_id(
     known_by_domain: dict[str, list[str]],
 ) -> str | None:
     """Return the known entity ID most like this one, if any is close enough."""
-    domain = entity_id.split(".", 1)[0]
+    lower_cased = entity_id.lower()
+    known = known_by_domain.get(lower_cased.split(".", 1)[0], ())
+
+    # Written with capitals, like `light.KITCHEN`. Entity IDs are all lower
+    # case, so the one it was meant to be is plain to see, however far the
+    # fuzzy comparison below would put it.
+    if lower_cased != entity_id and lower_cased in known:
+        return lower_cased
+
     matches = difflib.get_close_matches(
         entity_id,
-        known_by_domain.get(domain, ()),
+        known,
         n=1,
         cutoff=_RENAME_SIMILARITY_CUTOFF,
     )

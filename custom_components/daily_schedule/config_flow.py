@@ -33,44 +33,33 @@ class DailyScheduleConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Handle a flow initialized by the user."""
-        errors: dict[str, str] = {}
-
         if user_input is not None:
-            # Verify uniqueness of the name (used as the key).
-            duplicated = filter(
-                lambda entry: entry.title == user_input[CONF_NAME],
-                self.hass.config_entries.async_entries(DOMAIN),
+            return self.async_create_entry(
+                title=user_input[CONF_NAME],
+                data={},
+                options={CONF_SCHEDULE: []},
             )
-            if list(duplicated):
-                errors["base"] = "duplicated"
-
-            if not errors:
-                return self.async_create_entry(
-                    title=user_input[CONF_NAME],
-                    data={},
-                    options={CONF_SCHEDULE: []},
-                )
 
         return self.async_show_form(
-            step_id="user", data_schema=CONFIG_SCHEMA, errors=errors
+            step_id="user",
+            data_schema=CONFIG_SCHEMA,  # type: ignore[arg-type, unused-ignore]
         )
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlowHandler:
+    def async_get_options_flow(
+        config_entry: ConfigEntry,  # noqa: ARG004
+    ) -> OptionsFlowHandler:
         """Get the options flow for this handler."""
-        return OptionsFlowHandler(config_entry)
+        return OptionsFlowHandler()
 
 
 class OptionsFlowHandler(OptionsFlow):
     """Handles options flow for the component."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        if "config_entry" not in dir(self):
-            self.config_entry = config_entry  # type: ignore  # noqa: PGH003
-
-    async def async_step_init(self, user_input: dict[str, Any]) -> ConfigFlowResult:
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle an options flow."""
         if user_input is not None:
             return self.async_create_entry(
@@ -84,7 +73,7 @@ class OptionsFlowHandler(OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
+            data_schema=vol.Schema(  # type: ignore[arg-type, unused-ignore]
                 {
                     vol.Required(
                         CONF_UTC, default=self.config_entry.options.get(CONF_UTC, False)

@@ -4,14 +4,13 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 import homeassistant.helpers.config_validation as cv
 import homeassistant.util.dt as dt_util
 import voluptuous as vol
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import entity_platform
 from homeassistant.helpers import event as event_helper
 
 from .const import (
@@ -24,8 +23,8 @@ from .const import (
     CONF_SKIP_REVERSED,
     CONF_TO,
     CONF_UTC,
+    LOGGER,
     NEXT_TOGGLES_COUNT,
-    SERVICE_SET,
     SUNRISE_SYMBOL,
     SUNSET_SYMBOL,
 )
@@ -35,7 +34,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from homeassistant.config_entries import ConfigEntry
-    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+    from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 
 @dataclass
@@ -55,52 +54,49 @@ def remove_micros_and_tz(time: datetime.time) -> str:
     return time.replace(microsecond=0, tzinfo=None).isoformat()
 
 
+MINUTES_PER_DAY: Final = 24 * 60
+INVALID_TIME: Final = (
+    f"should be a time (HH:MM or HH:MM:SS), or {SUNRISE_SYMBOL} (sunrise) / "
+    f"{SUNSET_SYMBOL} (sunset) with an optional offset in minutes (less than a day), "
+    f"e.g. {SUNRISE_SYMBOL}-30"
+)
+
+
 def dynamic_time(value: Any) -> str:
-    """Validate and transform a time string to a time object."""
+    """Validate a sunrise or sunset time with an optional minutes offset."""
     time = cv.string(value)
     if not time.startswith((SUNRISE_SYMBOL, SUNSET_SYMBOL)):
-        error = (
-            f"should begin with sunrise symbol ({SUNRISE_SYMBOL}) "
-            f"or sunset symbol ({{SUNSET_SYMBOL}})"
-        )
-        raise vol.Invalid(error)
-    if len(time) > 1:
-        vol.Coerce(int)(time[1:])
+        raise vol.Invalid(INVALID_TIME)
+    # Only the time of day is used, so an offset of a day or more is meaningless.
+    if len(time) > 1 and abs(vol.Coerce(int)(time[1:])) >= MINUTES_PER_DAY:
+        raise vol.Invalid(INVALID_TIME)
     return time
 
 
+TIME_SCHEMA = vol.Any(
+    vol.All(cv.time, remove_micros_and_tz), dynamic_time, msg=INVALID_TIME
+)
 ENTRY_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_FROM): vol.Any(
-            vol.All(cv.time, remove_micros_and_tz), dynamic_time
-        ),
-        vol.Required(CONF_TO): vol.Any(
-            vol.All(cv.time, remove_micros_and_tz), dynamic_time
-        ),
+        vol.Required(CONF_FROM): TIME_SCHEMA,
+        vol.Required(CONF_TO): TIME_SCHEMA,
         vol.Optional(CONF_DISABLED): cv.boolean,
     },
-    extra=vol.ALLOW_EXTRA,
 )
 SERVICE_SET_SCHEMA = cv.make_entity_service_schema(
     {
         vol.Required(CONF_SCHEDULE): vol.All(cv.ensure_list, [ENTRY_SCHEMA]),
     },
-    extra=vol.ALLOW_EXTRA,
 )
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    config_entry: DailyScheduleConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Initialize config entry."""
-    config_entry.runtime_data = DailyScheduleRuntimeData(
-        DailyScheduleSensor(hass, config_entry)
-    )
-    async_add_entities([config_entry.runtime_data.entity])
-    platform = entity_platform.async_get_current_platform()
-    platform.async_register_entity_service(SERVICE_SET, SERVICE_SET_SCHEMA, "async_set")
+    async_add_entities([DailyScheduleSensor(hass, config_entry)])
 
 
 class DailyScheduleSensor(BinarySensorEntity):
@@ -113,29 +109,34 @@ class DailyScheduleSensor(BinarySensorEntity):
         {ATTR_NEXT_TOGGLE, ATTR_NEXT_TOGGLES, ATTR_EFFECTIVE_SCHEDULE, CONF_SCHEDULE}
     )
 
-    def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    def __init__(
+        self, hass: HomeAssistant, config_entry: DailyScheduleConfigEntry
+    ) -> None:
         """Initialize object with defaults."""
         self._hass = hass
         self._config_entry = config_entry
         self._attr_unique_id = config_entry.entry_id
         self._unsub_update: Callable[[], None] | None = None
+        self._unresolved: list[dict[str, Any]] = []
         self._read_config()
 
     def _read_config(self) -> None:
         """Get relevant data from the config entry."""
         self._attr_name = self._config_entry.title
         self._skip_reversed = self._config_entry.options.get(CONF_SKIP_REVERSED, False)
+        self._utc = self._config_entry.options.get(CONF_UTC, False)
         self._schedule: Schedule = Schedule(
             self._hass,
             self._config_entry.options.get(CONF_SCHEDULE, []),
             self._skip_reversed,
+            self._utc,
+            dt_util.now().date(),
         )
         self._attr_extra_state_attributes = {
             CONF_SCHEDULE: self._schedule.to_list(),
             ATTR_EFFECTIVE_SCHEDULE: self._schedule.to_list_absolute(),
         }
         self._is_dynamic = self._schedule.is_dynamic()
-        self._utc = self._config_entry.options.get(CONF_UTC, False)
 
     def config_update(self) -> None:
         """Handle config entry update."""
@@ -162,8 +163,14 @@ class DailyScheduleSensor(BinarySensorEntity):
     async def async_added_to_hass(self) -> None:
         """Run when entity about to be added to hass."""
         await super().async_added_to_hass()
+        self._config_entry.runtime_data = DailyScheduleRuntimeData(self)
         self.async_on_remove(self._clean_up_listener)
         self._update_state()
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Run when entity will be removed from hass."""
+        self._config_entry.runtime_data = None
+        await super().async_will_remove_from_hass()
 
     async def async_set(self, schedule: list[dict[str, Any]]) -> None:
         """Update the config entry with the new list (non-admin support)."""
@@ -172,7 +179,11 @@ class DailyScheduleSensor(BinarySensorEntity):
             options={
                 **self._config_entry.options,
                 CONF_SCHEDULE: Schedule(
-                    self._hass, schedule, self._skip_reversed
+                    self._hass,
+                    schedule,
+                    self._skip_reversed,
+                    self._utc,
+                    dt_util.now().date(),
                 ).to_list(),
             },
         )
@@ -188,10 +199,23 @@ class DailyScheduleSensor(BinarySensorEntity):
                 self._hass,
                 self._attr_extra_state_attributes[CONF_SCHEDULE],
                 self._skip_reversed,
+                self._utc,
+                dt_util.now().date(),
             )
             self._attr_extra_state_attributes[ATTR_EFFECTIVE_SCHEDULE] = (
                 self._schedule.to_list_absolute()
             )
+
+        if (unresolved := self._schedule.unresolved()) != self._unresolved:
+            if unresolved:
+                LOGGER.warning(
+                    "%s: time ranges without sunrise or sunset today are inactive: %s",
+                    self.entity_id,
+                    unresolved,
+                )
+            else:
+                LOGGER.info("%s: all time ranges are resolved again", self.entity_id)
+            self._unresolved = unresolved
 
         next_toggles = self._schedule.next_updates(self._now(), NEXT_TOGGLES_COUNT)
         next_update = next_toggles[0] if next_toggles else None

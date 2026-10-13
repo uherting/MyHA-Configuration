@@ -1,8 +1,5 @@
 {
     "config": {
-        "error": {
-            "duplicated": "The name should be unique."
-        },
         "step": {
             "user": {
                 "title": "Add Daily Schedule Sensor",
@@ -49,6 +46,18 @@
                 }
             },
             "name": "Daily schedule is on"
+        }
+    },
+    "services": {
+        "set": {
+            "description": "Set the schedule.",
+            "fields": {
+                "schedule": {
+                    "description": "List of the ON time ranges.",
+                    "name": "Schedule"
+                }
+            },
+            "name": "Set"
         }
     },
     "triggers": {
