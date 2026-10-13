@@ -12,19 +12,14 @@
   initial_state: true
   # --------------------- TRIGGER ---------------------
   triggers:
-    - trigger: state
-      entity_id: switch.zb_plug_l2_lounge_scanner
-      to: "on"
-      for:
-        hours: 0
-        minutes: 20
-  # trigger:
-  #   - platform: state
-  #     entity_id: switch.zb_plug_l2_lounge_scanner
-  #     to: "on"
-  #     for:
-  #       hours: 0
-  #       minutes: 20
+    - trigger: time
+      at: "08:00:40"
+  #  - trigger: state
+  #    entity_id: switch.zb_plug_l2_lounge_scanner
+  #    to: "on"
+  #    for:
+  #      hours: 0
+  #      minutes: 20
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------

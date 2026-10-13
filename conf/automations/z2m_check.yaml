@@ -19,12 +19,6 @@
       to: "unavailable"
       for:
         minutes: 10
-  # trigger:
-  #   - platform: state
-  #     entity_id: switch.zb_plug_l2_kitchen_fridge
-  #     to: "unavailable"
-  #     for:
-  #       minutes: 10
   # -------------------- CONDITIONS -------------------
   # none whatsoever
   condition: []
