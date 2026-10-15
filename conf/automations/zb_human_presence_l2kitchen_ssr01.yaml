@@ -31,6 +31,13 @@
     # ------------------- SSR01 on -------------------
     - action: switch.turn_on
       entity_id: switch.l2kitchen01_ssr_01
+    - if:
+        - condition: state
+          entity_id: binary_sensor.sun_dwn_twilight
+          state: "on"
+      then:
+        - action: switch.turn_on
+          entity_id: switch.l2storage01_l2_kitchen01_ssr_09
 
 # ############################################################
 # L2 Kitchen SSR01 off after there is no motion for x minutes
@@ -51,6 +58,13 @@
     # --------------------- SSR OFF ---------------------
     - action: switch.turn_off
       entity_id: switch.l2kitchen01_ssr_01
+    - if:
+        - condition: state
+          entity_id: binary_sensor.sun_dwn_twilight
+          state: "on"
+      then:
+        - action: switch.turn_off
+          entity_id: switch.l2storage01_l2_kitchen01_ssr_09
 # ############################################################
 #  END OF FILE
 # ############################################################
