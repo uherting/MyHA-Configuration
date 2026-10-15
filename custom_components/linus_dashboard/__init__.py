@@ -15,10 +15,18 @@ from homeassistant.components.websocket_api.decorators import (
 )
 from homeassistant.components.websocket_api.messages import result_message
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import floor_registry as fr
+from homeassistant.helpers.icon import async_get_icons
+from homeassistant.helpers.translation import async_get_translations
 
 from custom_components.linus_dashboard import utils
+from custom_components.linus_dashboard.aggregate import DOMAIN_ACTIVE_STATES
 from custom_components.linus_dashboard.const import (
     CONF_ALARM_ENTITY_IDS,
     CONF_EMBEDDED_DASHBOARDS,
@@ -27,14 +35,31 @@ from custom_components.linus_dashboard.const import (
     CONF_EXCLUDED_INTEGRATIONS,
     CONF_EXCLUDED_TARGETS,
     CONF_HIDE_GREETING,
+    CONF_HIDE_GROUPS_FROM_VOICE_ASSISTANTS,
     CONF_WEATHER_ENTITY,
     CONF_WEATHER_ENTITY_ID,
     DOMAIN,
     VERSION,
     is_logger_debug,
 )
+from custom_components.linus_dashboard.entity_group import (
+    _resolve_entity_area_id,
+    is_aggregatable_entry,
+)
 
 _LOGGER = logging.getLogger(__name__)
+
+PLATFORMS: list[Platform] = [
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR,
+    Platform.LIGHT,
+    Platform.SWITCH,
+    Platform.FAN,
+    Platform.COVER,
+    Platform.SIREN,
+    Platform.CLIMATE,
+    Platform.MEDIA_PLAYER,
+]
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -49,6 +74,224 @@ async def async_setup(hass: HomeAssistant, _config: dict) -> bool:
     _LOGGER.info("Registered WebSocket command: linus_dashboard/get_config")
 
     return True
+
+
+# Domains whose generic hidden domain-level (no device_class) counting
+# sensor was dropped in favor of their own dedicated group entity — see
+# sensor.py's GENERIC_DOMAIN_LEVEL_DOMAINS. Any install that already ran an
+# earlier version has these lingering in the registry as permanently
+# "unavailable" (sensor.py stops recreating them, but nothing removes the
+# old registry entry on its own).
+_DEAD_GENERIC_SENSOR_DOMAINS = (
+    "light",
+    "switch",
+    "fan",
+    "cover",
+    "siren",
+    "climate",
+    "media_player",
+)
+
+# Domains whose device_class-specific hidden counting-sensor buckets
+# (motion, door, gate, garage, tv, speaker, ...) were dropped in favor of a
+# real dedicated group entity per device_class — see entity_group.py's
+# build_nested_device_class_groups. Includes binary_sensor: its
+# per-device_class dedicated groups (BinarySensorDeviceClassGroup) already
+# existed before this, but _build_aggregate_sensors kept generating this
+# domain's device_class buckets too until the same change that added
+# cover/media_player's dedicated groups also removed device_class-bucket
+# generation for every domain at once — confirmed live: e.g.
+# sensor.linus_dashboard_binary_sensor_motion_active went from a real
+# value to permanently "unavailable" the moment that shipped.
+_DEAD_DEVICE_CLASS_SENSOR_DOMAINS = (
+    "binary_sensor",
+    "cover",
+    "media_player",
+)
+
+
+def _numeric_aggregate_has_members(
+    unique_id: str,
+    device_class: str,
+    member_areas: set[str],
+    area_reg: ar.AreaRegistry,
+) -> bool | None:
+    """
+    Whether a numeric aggregate (sensor.py's _build_numeric_sensors) still has
+    registry members, or None when unique_id is not one of its shapes for
+    device_class. Area scope: its own area has a member; floor scope: one of
+    the floor's areas has; global scope: any area has.
+    """
+    prefix = f"{DOMAIN}_{device_class}_"
+    if not unique_id.startswith(prefix):
+        return None
+    scope = unique_id[len(prefix) :]
+    if scope == "global":
+        return bool(member_areas)
+    if scope.startswith("area_"):
+        return scope[len("area_") :] in member_areas
+    if scope.startswith("floor_"):
+        floor_id = scope[len("floor_") :]
+        return any(
+            (area := area_reg.async_get_area(area_id)) and area.floor_id == floor_id
+            for area_id in member_areas
+        )
+    return None
+
+
+async def async_cleanup_orphaned_aggregate_sensors(
+    hass: HomeAssistant, entry: ConfigEntry
+) -> None:
+    """
+    Remove now-dead hidden counting sensors: domain-level (no device_class)
+    buckets for _DEAD_GENERIC_SENSOR_DOMAINS (exact unique_id match, at
+    global and every current floor scope), plus device_class buckets for
+    _DEAD_DEVICE_CLASS_SENSOR_DOMAINS (prefix+suffix match, since
+    device_class is dynamically discovered — there's no fixed set of
+    exact unique_ids to build like the domain-level case).
+
+    The device_class-bucket cleanup is a second, later install-upgrade
+    case: binary_sensor/cover/media_player used to each get one of these
+    per device_class (motion, door, gate, tv, speaker, ...) from sensor.py's
+    old generic system, before every device_class got a real dedicated
+    group entity of its own instead (entity_group.py's
+    build_nested_device_class_groups). Anyone who ran an earlier version
+    has these lingering as permanently "unavailable".
+
+    Prefix+suffix match, since device_class is dynamically discovered — no
+    fixed set of exact unique_ids to build like the domain-level case. This
+    needs one explicit guard: binary_sensor (unlike cover/media_player)
+    still has a legitimate, currently-alive domain-level bucket (from
+    GENERIC_DOMAIN_LEVEL_DOMAINS in sensor.py), whose exact unique_id
+    (f"{DOMAIN}_binary_sensor_active", optionally +floor_id) happens to
+    share the same prefix+suffix shape as its now-dead device_class
+    buckets — protected_unique_ids exists so the prefix match below can't
+    delete it by mistake.
+    """
+    entity_reg = er.async_get(hass)
+    floor_reg = fr.async_get(hass)
+
+    dead_unique_ids = {
+        f"{DOMAIN}_{domain}_active" for domain in _DEAD_GENERIC_SENSOR_DOMAINS
+    }
+    for floor in floor_reg.floors.values():
+        dead_unique_ids.update(
+            f"{DOMAIN}_{domain}_{floor.floor_id}_active"
+            for domain in _DEAD_GENERIC_SENSOR_DOMAINS
+        )
+
+    dead_prefixes = tuple(
+        f"{DOMAIN}_{domain}_" for domain in _DEAD_DEVICE_CLASS_SENSOR_DOMAINS
+    )
+    protected_unique_ids = {
+        f"{DOMAIN}_{domain}_active" for domain in _UNHIDE_DOMAIN_LEVEL_SENSOR_DOMAINS
+    }
+    for floor in floor_reg.floors.values():
+        protected_unique_ids.update(
+            f"{DOMAIN}_{domain}_{floor.floor_id}_active"
+            for domain in _UNHIDE_DOMAIN_LEVEL_SENSOR_DOMAINS
+        )
+
+    # Numeric aggregates (sensor.py) that lost every member to the
+    # diagnostic/config exclusion (is_aggregatable_entry) are no longer built
+    # but stay in the registry as permanently "unavailable". Membership is
+    # read from the registry, never from live states, so a sensor that has
+    # not published its state yet at startup cannot get an aggregate removed.
+    device_reg = dr.async_get(hass)
+    area_reg = ar.async_get(hass)
+    areas_by_device_class: dict[str, set[str]] = {}
+    for member in entity_reg.entities.values():
+        if member.domain != "sensor" or member.platform == DOMAIN:
+            continue
+        if not is_aggregatable_entry(member):
+            continue
+        member_class = member.device_class or member.original_device_class
+        member_area = _resolve_entity_area_id(member, device_reg)
+        if member_class and member_area:
+            areas_by_device_class.setdefault(member_class, set()).add(member_area)
+
+    for entity_entry in list(entity_reg.entities.values()):
+        if entity_entry.config_entry_id != entry.entry_id:
+            continue
+        unique_id = entity_entry.unique_id
+        if unique_id in protected_unique_ids:
+            continue
+        stale_numeric = (
+            entity_entry.domain == "sensor"
+            and entity_entry.original_device_class
+            and _numeric_aggregate_has_members(
+                unique_id,
+                entity_entry.original_device_class,
+                areas_by_device_class.get(entity_entry.original_device_class, set()),
+                area_reg,
+            )
+            is False
+        )
+        if (
+            stale_numeric
+            or unique_id in dead_unique_ids
+            or (unique_id.endswith("_active") and unique_id.startswith(dead_prefixes))
+        ):
+            entity_reg.async_remove(entity_entry.entity_id)
+            _LOGGER.info(
+                "Removed orphaned aggregate sensor: %s", entity_entry.entity_id
+            )
+
+
+# Domains whose domain-level (no device_class) generic aggregate sensor used
+# to be hidden/diagnostic and is now meant to be visible (see sensor.py's
+# LinusDashboardAggregateSensor.__init__). climate and media_player used to
+# be here too, back when they had no dedicated group entity of their own and
+# this hidden sensor was their only aggregate — now that climate.py/
+# media_player.py provide a real group, their domain-level bucket is dead
+# weight, cleaned up by _DEAD_GENERIC_SENSOR_DOMAINS above instead of needing
+# to stay un-hidden. binary_sensor remains here since "every binary_sensor
+# regardless of device_class" has no dedicated group and likely never will.
+_UNHIDE_DOMAIN_LEVEL_SENSOR_DOMAINS = ("binary_sensor",)
+
+
+async def async_unhide_domain_level_aggregate_sensors(
+    hass: HomeAssistant, entry: ConfigEntry
+) -> None:
+    """
+    Clear hidden_by="integration" on the binary_sensor domain-level aggregate
+    sensor that an earlier version of this integration created with
+    entity_registry_visible_default=False.
+
+    HA only applies a platform's entity_registry_visible_default at first
+    entity creation — bumping that default in code later doesn't
+    retroactively un-hide an entity already sitting in the registry, so this
+    is a one-time explicit fix rather than something the class attribute
+    change alone could accomplish. Built from the exact expected unique_id
+    set (global + one per current floor), same technique as
+    async_cleanup_orphaned_aggregate_sensors above, so this can't
+    accidentally touch a device_class-specific bucket (a different,
+    still-meant-to-stay-hidden unique_id shape). Only clears hidden_by when
+    it's still exactly "integration" — never touches a user's own manual
+    hide (hidden_by="user").
+    """
+    entity_reg = er.async_get(hass)
+    floor_reg = fr.async_get(hass)
+
+    target_unique_ids = {
+        f"{DOMAIN}_{domain}_active" for domain in _UNHIDE_DOMAIN_LEVEL_SENSOR_DOMAINS
+    }
+    for floor in floor_reg.floors.values():
+        target_unique_ids.update(
+            f"{DOMAIN}_{domain}_{floor.floor_id}_active"
+            for domain in _UNHIDE_DOMAIN_LEVEL_SENSOR_DOMAINS
+        )
+
+    for entity_entry in list(entity_reg.entities.values()):
+        if (
+            entity_entry.config_entry_id == entry.entry_id
+            and entity_entry.unique_id in target_unique_ids
+            and entity_entry.hidden_by == "integration"
+        ):
+            entity_reg.async_update_entity(entity_entry.entity_id, hidden_by=None)
+            _LOGGER.info(
+                "Un-hid domain-level aggregate sensor: %s", entity_entry.entity_id
+            )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -124,14 +367,134 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     _register_panel(hass, DOMAIN, "yaml", dashboard_config, False)  # noqa: FBT003
 
+    # Clean up sensors dropped in favor of a dedicated group entity, before
+    # platforms load (same ordering as the equivalent cleanup in Linus Brain)
+    await async_cleanup_orphaned_aggregate_sensors(hass, entry)
+    await async_unhide_domain_level_aggregate_sensors(hass, entry)
+
+    # Warm the entity_component icon cache (HA core's own icons.json data,
+    # e.g. cover.gate/garage, media_player.tv/speaker/receiver) before
+    # platforms load — aggregate.py's compute_icon reads this synchronously
+    # from hass.data, since it's called from @callback state-change handlers
+    # that can't await. Sourcing icons from HA's own translation data instead
+    # of a hardcoded per-device_class table means this stays correct as HA
+    # adds/changes icons, for every domain this integration aggregates, not
+    # just the handful we'd remember to update by hand.
+    hass.data.setdefault(DOMAIN, {})["icons"] = await async_get_icons(
+        hass, "entity_component", list(DOMAIN_ACTIVE_STATES)
+    )
+
+    # Same reasoning, for names instead of icons: HA only auto-names an
+    # unnamed entity after its device_class for binary_sensor
+    # (BinarySensorEntity._default_to_device_class_name returns True when
+    # device_class is set; CoverEntity/MediaPlayerEntity hardcode False) —
+    # so cover/media_player device_class groups need their translated name
+    # ("Portail", "Récepteur", ...) fetched and set explicitly, or every
+    # device_class group in an area would show the exact same name as the
+    # flat "all covers" group and each other, indistinguishable in the UI.
+    hass.data[DOMAIN]["names"] = await async_get_translations(
+        hass, hass.config.language, "entity_component", list(DOMAIN_ACTIVE_STATES)
+    )
+
+    # Forward platforms (aggregate sensors + area/floor/global group entities)
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    await async_hide_group_entities_from_voice_assistants(hass, entry)
+
+    # Reload on any options-flow change (masked/excluded targets, etc.) so every
+    # aggregate recomputes against the new exclusion set. Previously only
+    # LinusDashboardAggregateSensor registered this listener, and only when a
+    # binary_sensor domain-level aggregate existed — masking an entity while no
+    # such aggregate exists silently invalidated nothing, on any platform.
+    entry.async_on_unload(entry.add_update_listener(_async_options_updated))
+
     # Store the entry
     hass.data[DOMAIN][entry.entry_id] = DOMAIN
     return True
 
 
+async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload the entry when its options change (e.g. excluded targets)."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_hide_group_entities_from_voice_assistants(
+    hass: HomeAssistant, entry: ConfigEntry
+) -> None:
+    """
+    Mark every entity this integration created as not exposed to voice
+    assistants (independent of entity_registry_visible_default, which only
+    controls UI visibility — the two are separate HA settings).
+
+    Not underscore-prefixed and exported (unlike most of this module's
+    helpers) because every platform's dynamic _rebuild() callback also
+    calls this after adding newly-discovered entities (a new area, a moved
+    entity, ...) — this only ran once at config entry setup otherwise,
+    silently leaving anything created later exposed to voice assistants by
+    default even with the option enabled.
+
+    Checks the option itself (rather than requiring every caller to) so
+    call sites can stay a one-liner. Best-effort: the exposed_entities API
+    has moved across HA versions, so this is wrapped defensively rather
+    than treated as a hard dependency — losing voice-assistant exclusion
+    isn't worth failing config entry setup, or a platform reload, over.
+    Verify against the pinned HA version if this starts logging warnings.
+    """
+    if not entry.options.get(CONF_HIDE_GROUPS_FROM_VOICE_ASSISTANTS, True):
+        return
+
+    try:
+        from homeassistant.components.homeassistant.exposed_entities import (
+            async_expose_entity,
+        )
+    except ImportError:
+        _LOGGER.warning(
+            "exposed_entities API not available on this Home Assistant version; "
+            "skipping voice assistant exposure for Linus Dashboard group entities"
+        )
+        return
+
+    # KNOWN_ASSISTANTS replaced an earlier async_listed_assistants(hass)
+    # function this used to import instead — that name no longer exists as
+    # of at least 2026.4.0 (confirmed live: the whole function was silently
+    # a no-op every run, caught by the ImportError above swallowing this
+    # along with async_expose_entity). Importing it separately so a rename
+    # here can't take async_expose_entity down with it again.
+    try:
+        from homeassistant.components.homeassistant.exposed_entities import (
+            KNOWN_ASSISTANTS,
+        )
+
+        assistants = KNOWN_ASSISTANTS
+    except ImportError:
+        assistants = ("conversation", "cloud.alexa", "cloud.google_assistant")
+
+    from homeassistant.helpers import entity_registry as er
+
+    entity_reg = er.async_get(hass)
+    entries = er.async_entries_for_config_entry(entity_reg, entry.entry_id)
+
+    for entity_entry in entries:
+        for assistant in assistants:
+            try:
+                async_expose_entity(hass, assistant, entity_entry.entity_id, False)
+            except Exception as err:  # noqa: BLE001 - defensive, see docstring
+                _LOGGER.debug(
+                    "Could not hide %s from %s: %s",
+                    entity_entry.entity_id,
+                    assistant,
+                    err,
+                )
+
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     _LOGGER.info("Unloading Linus Dashboard entry")
+
+    # Unload sensor platform
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if not unload_ok:
+        return False
 
     # Retrieve and remove the panel name
     panel_url = hass.data[DOMAIN].pop(entry.entry_id, None)
