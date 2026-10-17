@@ -1,0 +1,7 @@
+scan:
+  fields:
+    wait:
+      required: false
+      default: false
+      selector:
+        boolean:

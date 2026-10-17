@@ -1,0 +1,131 @@
+{
+  "title": "HA Housekeeper",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up HA Housekeeper",
+        "description": "Adds the Housekeeper panel for administrators. It analyzes first; changes happen only after your explicit confirmation."
+      }
+    },
+    "abort": {
+      "already_configured": "HA Housekeeper is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HA Housekeeper options",
+        "description": "An outage becomes a finding after the first threshold and rises with its duration: info, low, medium, high. The thresholds must rise. Automations that are switched off or never run for the given number of days are reported as unused. Regular scans keep the history and the repair hints current; outages are followed by extra scans.",
+        "data": {
+          "outage_info_minutes": "Report an outage as info after (minutes)",
+          "outage_low_hours": "Report an outage as low after (hours)",
+          "outage_medium_hours": "Report an outage as medium after (hours)",
+          "outage_high_hours": "Report an outage as high after (hours)",
+          "unused_automation_days": "Report unused automations after (days, 0 = off)",
+          "low_battery_percent": "Report batteries as low at or below (percent)",
+          "scan_interval_hours": "Scan automatically every (hours, 0 = off)",
+          "stale_hours": "Report sensors without new values after (hours, 0 = off)",
+          "history_days": "Keep histories for (days)",
+          "watch_hours": "Watch after updates (hours, 0 = off)"
+        }
+      }
+    },
+    "abort": {
+      "busy": "A plan, an undo or a purge is running. The options can be changed afterwards."
+    },
+    "error": {
+      "thresholds_order": "The thresholds must rise: info, low, medium, high."
+    }
+  },
+  "issues": {
+    "orphaned_entities": {
+      "title": "{count} orphaned entities",
+      "description": "Housekeeper found {count} entities whose device, integration or state no longer exists. [Show in Housekeeper]({link}). Nothing is changed automatically."
+    },
+    "unavailable_entities": {
+      "title": "{count} entities unavailable for a long time",
+      "description": "Housekeeper found {count} entities that have been unavailable longer than the configured threshold. [Show in Housekeeper]({link}). Nothing is changed automatically."
+    },
+    "broken_automations": {
+      "title": "{count} findings with missing references",
+      "description": "Housekeeper found {count} references to entities, devices or areas that no longer exist, in automations, scripts, scenes, dashboards, groups or helpers. [Show in Housekeeper]({link}). Nothing is changed automatically."
+    },
+    "scan_failing": {
+      "title": "Housekeeper scans keep failing",
+      "description": "The last scans failed in phase \"{phase}\" ({kind}). The counts and findings come from the last successful scan ({last}) and may be outdated. [Open Housekeeper]({link}) for the error text. Nothing is changed automatically."
+    },
+    "scan_stale": {
+      "title": "Housekeeper has not scanned for a while",
+      "description": "No scan succeeded since {last}. The counts and findings may be outdated. [Open Housekeeper]({link}). Nothing is changed automatically."
+    },
+    "database_damaged": {
+      "title": "The recorder database is damaged",
+      "description": "A check on {at} found damage in the recorder database: {first} Housekeeper deletes nothing from the recorder until a check comes back clean. Make a backup first, rebuild the affected indexes with REINDEX or restore a backup. [Open Housekeeper]({link})."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "findings": {
+        "name": "Findings"
+      },
+      "orphaned_entities": {
+        "name": "Orphaned entities"
+      },
+      "unavailable_entities": {
+        "name": "Unavailable entities"
+      },
+      "broken_references": {
+        "name": "Broken references"
+      },
+      "possible_duplicates": {
+        "name": "Possible duplicates"
+      },
+      "unused_automations": {
+        "name": "Unused automations"
+      },
+      "low_batteries": {
+        "name": "Low batteries"
+      },
+      "last_scan": {
+        "name": "Last scan"
+      },
+      "scan_health": {
+        "name": "Scan health",
+        "state": {
+          "ok": "OK",
+          "stale": "Outdated",
+          "failed": "Failed",
+          "preliminary": "Preliminary"
+        }
+      }
+    },
+    "button": {
+      "scan": {
+        "name": "Start scan"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Start scan",
+      "description": "Starts a scan of HA Housekeeper. Several calls make one scan; none starts right after a scan.",
+      "fields": {
+        "wait": {
+          "name": "Wait for the end",
+          "description": "Waits until the scan is done and returns the counts. Without it the scan is only started."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "HA Housekeeper is not loaded."
+    },
+    "cleanup_busy": {
+      "message": "A plan is running and scans by itself. Try again later."
+    },
+    "starting": {
+      "message": "Home Assistant is still starting. A scan would be preliminary and is not kept."
+    }
+  }
+}

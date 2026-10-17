@@ -1,0 +1,29 @@
+{
+  "domain": "ha_housekeeper",
+  "name": "HA Housekeeper",
+  "after_dependencies": [
+    "lovelace",
+    "recorder",
+    "energy",
+    "backup",
+    "trace",
+    "automation",
+    "script",
+    "blueprint"
+  ],
+  "codeowners": [
+    "@bertel2020"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/bertel2020/HA-Housekeeper",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/bertel2020/HA-Housekeeper/issues",
+  "single_config_entry": true,
+  "version": "1.8.0"
+}

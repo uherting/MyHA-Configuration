@@ -1,0 +1,131 @@
+{
+  "title": "HA Housekeeper",
+  "config": {
+    "step": {
+      "user": {
+        "title": "HA Housekeeper einrichten",
+        "description": "Fügt das Housekeeper-Panel für Administratoren hinzu. Es analysiert zunächst nur; Änderungen passieren ausschließlich nach deiner ausdrücklichen Bestätigung."
+      }
+    },
+    "abort": {
+      "already_configured": "HA Housekeeper ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HA-Housekeeper-Optionen",
+        "description": "Ein Ausfall wird nach der ersten Schwelle ein Befund und steigt mit der Dauer: Info, niedrig, mittel, hoch. Die Schwellen müssen aufsteigen. Automationen, die ausgeschaltet sind oder die angegebene Zahl an Tagen nie laufen, werden als ungenutzt gemeldet. Regelmäßige Scans halten Verlauf und Reparaturhinweise aktuell; bei Ausfällen folgen zusätzliche Scans.",
+        "data": {
+          "outage_info_minutes": "Ausfall als Info melden nach (Minuten)",
+          "outage_low_hours": "Ausfall als niedrig melden nach (Stunden)",
+          "outage_medium_hours": "Ausfall als mittel melden nach (Stunden)",
+          "outage_high_hours": "Ausfall als hoch melden nach (Stunden)",
+          "unused_automation_days": "Ungenutzte Automationen melden nach (Tage, 0 = aus)",
+          "low_battery_percent": "Batterie als schwach melden ab (Prozent)",
+          "scan_interval_hours": "Automatisch scannen alle (Stunden, 0 = aus)",
+          "stale_hours": "Sensoren ohne neue Werte melden nach (Stunden, 0 = aus)",
+          "history_days": "Verläufe aufbewahren (Tage)",
+          "watch_hours": "Nach Updates beobachten (Stunden, 0 = aus)"
+        }
+      }
+    },
+    "abort": {
+      "busy": "Gerade läuft ein Plan, ein Rückgängigmachen oder eine Löschung. Die Optionen lassen sich danach ändern."
+    },
+    "error": {
+      "thresholds_order": "Die Schwellen müssen aufsteigen: Info, niedrig, mittel, hoch."
+    }
+  },
+  "issues": {
+    "orphaned_entities": {
+      "title": "{count} verwaiste Entitäten",
+      "description": "Housekeeper hat {count} Entitäten gefunden, deren Gerät, Integration oder Zustand nicht mehr existiert. [In Housekeeper anzeigen]({link}). Es wird nichts automatisch geändert."
+    },
+    "unavailable_entities": {
+      "title": "{count} Entitäten lange nicht verfügbar",
+      "description": "Housekeeper hat {count} Entitäten gefunden, die länger als der eingestellte Schwellwert nicht verfügbar sind. [In Housekeeper anzeigen]({link}). Es wird nichts automatisch geändert."
+    },
+    "broken_automations": {
+      "title": "{count} Befunde mit fehlenden Referenzen",
+      "description": "Housekeeper hat {count} Verweise auf Entitäten, Geräte oder Bereiche gefunden, die nicht mehr existieren, in Automationen, Skripten, Szenen, Dashboards, Gruppen oder Helfern. [In Housekeeper anzeigen]({link}). Es wird nichts automatisch geändert."
+    },
+    "scan_failing": {
+      "title": "Housekeeper-Scans schlagen fehl",
+      "description": "Die letzten Scans sind in der Phase „{phase}“ fehlgeschlagen ({kind}). Zahlen und Befunde stammen vom letzten erfolgreichen Scan ({last}) und können veraltet sein. [Housekeeper öffnen]({link}) für den Fehlertext. Es wird nichts automatisch geändert."
+    },
+    "scan_stale": {
+      "title": "Housekeeper hat länger nicht gescannt",
+      "description": "Seit {last} war kein Scan erfolgreich. Zahlen und Befunde können veraltet sein. [Housekeeper öffnen]({link}). Es wird nichts automatisch geändert."
+    },
+    "database_damaged": {
+      "title": "Die Recorder-Datenbank ist beschädigt",
+      "description": "Eine Prüfung am {at} hat einen Schaden in der Recorder-Datenbank gefunden: {first} Housekeeper löscht nichts im Recorder, bis eine Prüfung wieder sauber ist. Lege zuerst ein Backup an, baue die betroffenen Indizes mit REINDEX neu auf oder spiele ein Backup ein. [Housekeeper öffnen]({link})."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "findings": {
+        "name": "Befunde"
+      },
+      "orphaned_entities": {
+        "name": "Verwaiste Entitäten"
+      },
+      "unavailable_entities": {
+        "name": "Nicht verfügbare Entitäten"
+      },
+      "broken_references": {
+        "name": "Defekte Referenzen"
+      },
+      "possible_duplicates": {
+        "name": "Mögliche Duplikate"
+      },
+      "unused_automations": {
+        "name": "Ungenutzte Automationen"
+      },
+      "low_batteries": {
+        "name": "Schwache Batterien"
+      },
+      "last_scan": {
+        "name": "Letzter Scan"
+      },
+      "scan_health": {
+        "name": "Scan-Zustand",
+        "state": {
+          "ok": "In Ordnung",
+          "stale": "Veraltet",
+          "failed": "Fehlgeschlagen",
+          "preliminary": "Vorläufig"
+        }
+      }
+    },
+    "button": {
+      "scan": {
+        "name": "Scan starten"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scan starten",
+      "description": "Startet einen Scan von HA Housekeeper. Mehrere Aufrufe ergeben einen Scan; kurz nach einem Scan wird keiner gestartet.",
+      "fields": {
+        "wait": {
+          "name": "Auf das Ende warten",
+          "description": "Wartet, bis der Scan fertig ist, und gibt die Zahlen zurück. Ohne diese Option wird der Scan nur gestartet."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "HA Housekeeper ist nicht geladen."
+    },
+    "cleanup_busy": {
+      "message": "Ein Plan läuft gerade und scannt selbst. Später erneut versuchen."
+    },
+    "starting": {
+      "message": "Home Assistant startet noch. Ein Scan wäre vorläufig und wird nicht gespeichert."
+    }
+  }
+}
