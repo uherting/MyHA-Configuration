@@ -5,11 +5,11 @@
 # ############################################################
 
 # ############################################################
-# L2 Kitchen SSR01 on when ZB HumanPresence detected
+# L2 Kitchen minor/major light on when ZB HumanPresence detected
 # ############################################################
-- alias: L2 Kitchen SSR01 on when ZB HumanPresence detected
+- alias: L2 Kitchen minor/major light on when ZB HumanPresence detected
   id: "c3e20ae7-8712-4b44-ba5d-7a0d63d460bd"
-  mode: single
+  mode: restart
   initial_state: true
   # --------------------- TRIGGER ---------------------
   triggers:
@@ -58,13 +58,8 @@
     # --------------------- SSR OFF ---------------------
     - action: switch.turn_off
       entity_id: switch.l2kitchen01_ssr_01
-    - if:
-        - condition: state
-          entity_id: binary_sensor.sun_dwn_twilight
-          state: "on"
-      then:
-        - action: switch.turn_off
-          entity_id: switch.l2storage01_l2_kitchen01_ssr_09
+    - action: switch.turn_off
+      entity_id: switch.l2storage01_l2_kitchen01_ssr_09
 # ############################################################
 #  END OF FILE
 # ############################################################
