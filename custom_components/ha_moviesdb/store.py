@@ -58,6 +58,18 @@ class TMDBStore:
             if not movie.get("archived", False)
         ]
 
+    def get_ids_needing_meta_refresh(self, language: str) -> list[str]:
+        """IDs aller Filme, deren Titel/Beschreibung in einer anderen Sprache gespeichert sind.
+
+        Fehlt die Angabe (Daten aus älteren Versionen), wurde auf Deutsch
+        gespeichert - das war bis dahin die fest eingestellte Sprache.
+        """
+        return [
+            movie_id
+            for movie_id, movie in self._data["movies"].items()
+            if (movie.get("meta_language") or "de-DE") != language
+        ]
+
     # -- Filme verwalten -------------------------------------------------
 
     async def async_add_movie(self, movie_id: str, info: dict[str, Any]) -> None:
@@ -70,6 +82,7 @@ class TMDBStore:
             "image": info.get("image", existing.get("image", "")),
             "release_year": info.get("release_year", existing.get("release_year", "")),
             "runtime": info.get("runtime", existing.get("runtime")),
+            "meta_language": info.get("language", existing.get("meta_language")),
             "added_at": existing.get("added_at", _now()),
             "watched_at": existing.get("watched_at"),
             "archived": existing.get("archived", False),

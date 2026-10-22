@@ -22,6 +22,181 @@
 
 const DOMAIN = "ha_moviesdb";
 
+// --- Mehrsprachigkeit -------------------------------------------------------
+// Die Kartensprache folgt der Sprache des angemeldeten Home-Assistant-Benutzers
+// (hass.locale.language). Deutsch und Englisch sind fest eingebaut. Für weitere
+// Sprachen lädt die Karte optional www/translations/<sprache>.json (z.B.
+// fr.json) - fehlt die Datei oder ein Schlüssel, wird Englisch verwendet.
+const TRANSLATIONS = {
+  de: {
+    tab_watchlist: "Watchlist",
+    tab_archive: "Archiv",
+    tab_search: "Film hinzufügen",
+    tab_nowplaying: "Im Kino",
+    nowplaying_hint: "Aktuell im Kino in {region} · Datenquelle: themoviedb.org (kostenlose API)",
+    nowplaying_hint_generic: "Aktuell im Kino · Datenquelle: themoviedb.org (kostenlose API)",
+    loading_nowplaying: "Lade Kinofilme …",
+    empty_nowplaying: "Aktuell wurden keine Kinofilme gefunden.",
+    err_nowplaying: "Kinofilme konnten nicht geladen werden.",
+    mode_nowplaying: "Derzeit",
+    mode_upcoming: "Demnächst",
+    upcoming_hint: "Demnächst im Kino in {region} · Datenquelle: themoviedb.org (kostenlose API)",
+    upcoming_hint_generic: "Demnächst im Kino · Datenquelle: themoviedb.org (kostenlose API)",
+    loading_upcoming: "Lade kommende Kinofilme …",
+    empty_upcoming: "Aktuell wurden keine kommenden Kinofilme gefunden.",
+    err_upcoming: "Kommende Kinofilme konnten nicht geladen werden.",
+    trailer_link: "▶ Trailer auf YouTube ansehen",
+    loading_trailer: "Suche Trailer …",
+    no_overview: "Keine Beschreibung verfügbar.",
+    empty_watchlist: "Noch keine Filme in der Watchlist. Wechsle oben zu „Film hinzufügen“ oder „Im Kino“, um loszulegen.",
+    empty_archive: "Noch keine archivierten Filme. Markiere einen Film in der Detailansicht als gesehen, um ihn ins Archiv zu verschieben.",
+    available: "Verfügbar: {list}",
+    search_placeholder: "Filmtitel eingeben …",
+    data_source: "Datenquelle: themoviedb.org (kostenlose API)",
+    searching: "Suche läuft …",
+    no_results: "Keine Treffer.",
+    added: "Hinzugefügt",
+    add: "Hinzufügen",
+    back: "‹ Zurück zur Übersicht",
+    loading_movie: "Lade Film …",
+    mark_unwatched: "Als ungesehen markieren",
+    mark_watched: "Als gesehen markieren",
+    unarchive: "Aus Archiv zurückholen",
+    archive: "Ins Archiv verschieben",
+    remove: "Aus Watchlist entfernen",
+    available_on_title: "Verfügbar auf",
+    loading_availability: "Lade Verfügbarkeit …",
+    cat_flatrate: "Streaming (Abo)",
+    cat_free: "Kostenlos",
+    cat_ads: "Kostenlos mit Werbung",
+    cat_rent: "Leihen",
+    cat_buy: "Kaufen",
+    no_availability_region: "Aktuell keine bekannte Streaming-Verfügbarkeit in {region}.",
+    no_availability: "Aktuell keine bekannte Streaming-Verfügbarkeit.",
+    hint_providers: "Tipp: Trage deine Streamingdienste unter Einstellungen → Geräte & Dienste → HA MoviesDB → Konfigurieren ein, damit sie hier hervorgehoben werden.",
+    all_options_link: "Alle Optionen auf TMDB ansehen",
+    attribution_suffix: " · Daten von JustWatch, bereitgestellt über TMDB.",
+    attribution_only: "Verfügbarkeitsdaten von JustWatch, bereitgestellt über TMDB.",
+    movie_fallback: "Film",
+    added_toast: "„{title}“ wurde zur Watchlist hinzugefügt.",
+    err_load_list: "Konnte Watchlist nicht laden. Ist die Integration eingerichtet?",
+    err_search: "Suche fehlgeschlagen.",
+    err_add: "Film konnte nicht hinzugefügt werden.",
+    err_remove: "Film konnte nicht entfernt werden.",
+    err_load_movie: "Film konnte nicht geladen werden.",
+    err_watched: "Konnte Sehstatus nicht ändern.",
+    err_archived: "Konnte Archivstatus nicht ändern.",
+    err_not_configured: "Die Integration ist nicht eingerichtet.",
+    err_not_found: "Der Film wird nicht verfolgt.",
+    err_tmdb: "Fehler bei der Kommunikation mit themoviedb.org. Details stehen im Home-Assistant-Log.",
+    editor_text: "Diese Karte hat keine Konfigurationsoptionen. Breite und Höhe lassen sich über den Reiter „Layout“ einstellen. Region und eigene Streamingdienste werden unter Einstellungen → Geräte & Dienste → HA MoviesDB → Konfigurieren eingestellt.",
+    card_description: "Film-Watchlist mit themoviedb.org als Datenquelle – inkl. Streaming-Verfügbarkeit.",
+  },
+  en: {
+    tab_watchlist: "Watchlist",
+    tab_archive: "Archive",
+    tab_search: "Add movie",
+    tab_nowplaying: "In theaters",
+    nowplaying_hint: "Currently in theaters in {region} · Data source: themoviedb.org (free API)",
+    nowplaying_hint_generic: "Currently in theaters · Data source: themoviedb.org (free API)",
+    loading_nowplaying: "Loading movies in theaters …",
+    empty_nowplaying: "No movies in theaters found right now.",
+    err_nowplaying: "Could not load the movies in theaters.",
+    mode_nowplaying: "Now playing",
+    mode_upcoming: "Coming soon",
+    upcoming_hint: "Coming soon to theaters in {region} · Data source: themoviedb.org (free API)",
+    upcoming_hint_generic: "Coming soon to theaters · Data source: themoviedb.org (free API)",
+    loading_upcoming: "Loading upcoming movies …",
+    empty_upcoming: "No upcoming movies found right now.",
+    err_upcoming: "Could not load the upcoming movies.",
+    trailer_link: "▶ Watch trailer on YouTube",
+    loading_trailer: "Looking for a trailer …",
+    no_overview: "No description available.",
+    empty_watchlist: "No movies on your watchlist yet. Switch to “Add movie” or “In theaters” above to get started.",
+    empty_archive: "No archived movies yet. Mark a movie as watched in its detail view to move it to the archive.",
+    available: "Available: {list}",
+    search_placeholder: "Enter movie title …",
+    data_source: "Data source: themoviedb.org (free API)",
+    searching: "Searching …",
+    no_results: "No results.",
+    added: "Added",
+    add: "Add",
+    back: "‹ Back to overview",
+    loading_movie: "Loading movie …",
+    mark_unwatched: "Mark as unwatched",
+    mark_watched: "Mark as watched",
+    unarchive: "Restore from archive",
+    archive: "Move to archive",
+    remove: "Remove from watchlist",
+    available_on_title: "Available on",
+    loading_availability: "Loading availability …",
+    cat_flatrate: "Streaming (subscription)",
+    cat_free: "Free",
+    cat_ads: "Free with ads",
+    cat_rent: "Rent",
+    cat_buy: "Buy",
+    no_availability_region: "No known streaming availability in {region} right now.",
+    no_availability: "No known streaming availability right now.",
+    hint_providers: "Tip: Enter your streaming services under Settings → Devices & Services → HA MoviesDB → Configure to have them highlighted here.",
+    all_options_link: "See all options on TMDB",
+    attribution_suffix: " · Data from JustWatch, provided via TMDB.",
+    attribution_only: "Availability data from JustWatch, provided via TMDB.",
+    movie_fallback: "Movie",
+    added_toast: "“{title}” was added to the watchlist.",
+    err_load_list: "Could not load the watchlist. Is the integration set up?",
+    err_search: "Search failed.",
+    err_add: "Could not add the movie.",
+    err_remove: "Could not remove the movie.",
+    err_load_movie: "Could not load the movie.",
+    err_watched: "Could not change the watched status.",
+    err_archived: "Could not change the archive status.",
+    err_not_configured: "The integration is not set up.",
+    err_not_found: "This movie is not on your watchlist.",
+    err_tmdb: "Error communicating with themoviedb.org. See the Home Assistant log for details.",
+    editor_text: "This card has no configuration options. Width and height can be set on the “Layout” tab. Region and your own streaming services are set under Settings → Devices & Services → HA MoviesDB → Configure.",
+    card_description: "Movie watchlist using themoviedb.org as data source – including streaming availability.",
+  },
+};
+
+const EXTRA_TABLES = {};
+
+function detectLang(hass) {
+  const raw =
+    (hass && ((hass.locale && hass.locale.language) || hass.language)) ||
+    (typeof navigator !== "undefined" ? navigator.language : "") ||
+    "en";
+  const lang = String(raw).toLowerCase().split(/[-_]/)[0];
+  return /^[a-z]{2,3}$/.test(lang) ? lang : "en";
+}
+
+function loadExtraTable(lang, onLoaded) {
+  if (TRANSLATIONS[lang] || lang in EXTRA_TABLES) return;
+  EXTRA_TABLES[lang] = null;
+  fetch(`/${DOMAIN}/translations/${lang}.json`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((table) => {
+      if (table && typeof table === "object") {
+        EXTRA_TABLES[lang] = table;
+        onLoaded();
+      }
+    })
+    .catch(() => {
+      // Keine Übersetzungsdatei für diese Sprache - Englisch bleibt aktiv.
+    });
+}
+
+function translate(lang, key, vars) {
+  const table = TRANSLATIONS[lang] || EXTRA_TABLES[lang] || {};
+  let text = table[key] !== undefined ? table[key] : TRANSLATIONS.en[key];
+  if (text === undefined) return key;
+  if (vars) {
+    for (const [name, value] of Object.entries(vars)) {
+      text = text.split(`{${name}}`).join(String(value));
+    }
+  }
+  return text;
+}
+
 // Hinweis: Es wird bewusst KEIN Google-Fonts-Import genutzt (das würde bei
 // jedem Kartenaufruf die IP-Adresse an Google übertragen, was in
 // Deutschland ohne Einwilligung als DSGVO-Verstoß gilt, vgl. LG München I,
@@ -33,13 +208,6 @@ const HEADLINE_FONT =
 const BODY_FONT =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif";
 
-const PROVIDER_CATEGORY_LABELS = {
-  flatrate: "Streaming (Abo)",
-  free: "Kostenlos",
-  ads: "Kostenlos mit Werbung",
-  rent: "Leihen",
-  buy: "Kaufen",
-};
 const PROVIDER_CATEGORY_ORDER = ["flatrate", "free", "ads", "rent", "buy"];
 
 const STYLES = `
@@ -119,9 +287,13 @@ const STYLES = `
     gap: 4px;
     padding: 0 20px;
     background: var(--tmdb-surface);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
   .tab {
+    flex: none;
+    white-space: nowrap;
     padding: 10px 4px;
     margin-right: 20px;
     font-size: 14px;
@@ -222,7 +394,9 @@ const STYLES = `
     border: 1px solid var(--tmdb-border);
     border-radius: 10px;
     padding: 8px 10px;
+    cursor: pointer;
   }
+  .result-row:hover { border-color: var(--tmdb-accent); }
 
   .poster {
     width: 42px;
@@ -237,7 +411,8 @@ const STYLES = `
   .result-title { font-weight: 600; font-size: 14px; }
   .result-meta { color: var(--tmdb-text-muted); font-size: 12px; margin-top: 2px; }
 
-  button.pill {
+  button.pill,
+  a.pill {
     background: var(--tmdb-accent-soft);
     color: var(--tmdb-accent);
     border: 1px solid transparent;
@@ -247,8 +422,13 @@ const STYLES = `
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    text-decoration: none;
   }
-  button.pill:hover { border-color: var(--tmdb-accent); }
+  button.pill:hover,
+  a.pill:hover { border-color: var(--tmdb-accent); }
+  .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .mode-switch { display: flex; gap: 8px; margin-bottom: 10px; }
+  button.pill.active { background: var(--tmdb-accent); color: var(--tmdb-bg); }
   button.pill:disabled { opacity: 0.5; cursor: default; }
   button.pill.danger { background: transparent; color: var(--tmdb-text-muted); }
   button.pill.danger:hover { color: #e88b8b; border-color: #e88b8b; }
@@ -389,6 +569,16 @@ class HaMoviesDbCard extends HTMLElement {
     this._searchQuery = "";
     this._searchResults = null;
     this._searching = false;
+    this._cinemaMode = "nowplaying";
+    this._cinema = {
+      nowplaying: { items: null, region: "", loading: false, loadedAt: 0 },
+      upcoming: { items: null, region: "", loading: false, loadedAt: 0 },
+    };
+    this._preview = null;
+    this._trailers = {};
+    this._trailerLoading = new Set();
+    this._listScroll = 0;
+    this._scrollOverride = null;
     this._selectedMovieId = null;
     this._detail = null;
     this._settings = { region: "", providers: [] };
@@ -406,6 +596,7 @@ class HaMoviesDbCard extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
+    loadExtraTable(detectLang(hass), () => this._render());
     if (!this._initialized) {
       this._initialized = true;
       this._render();
@@ -451,7 +642,7 @@ class HaMoviesDbCard extends HTMLElement {
       this._tracked = res.movies || [];
       this._error = null;
     } catch (err) {
-      this._error = "Konnte Watchlist nicht laden. Ist die Integration eingerichtet?";
+      this._error = this._t("err_load_list");
     }
     this._render();
   }
@@ -475,23 +666,46 @@ class HaMoviesDbCard extends HTMLElement {
       this._searchResults = res.results || [];
       this._error = null;
     } catch (err) {
-      this._error = err.message || "Suche fehlgeschlagen.";
+      this._error = this._errText(err, "err_search");
       this._searchResults = [];
     }
     this._searching = false;
     this._render();
   }
 
-  async _addMovie(movieId) {
+  async _loadCinema(source, force = false) {
+    // Die Kinolisten ändern sich höchstens täglich - nicht bei jedem Wechsel
+    // neu laden (das Backend cached zusätzlich).
+    const state = this._cinema[source];
+    const fresh = Date.now() - state.loadedAt < 30 * 60 * 1000;
+    if (state.loading || (!force && state.items !== null && fresh)) return;
+    state.loading = true;
+    this._render();
+    try {
+      const type = source === "upcoming" ? "upcoming" : "now_playing";
+      const res = await this._hass.callWS({ type: `${DOMAIN}/${type}` });
+      state.items = res.results || [];
+      state.region = res.region || "";
+      state.loadedAt = Date.now();
+      this._error = null;
+    } catch (err) {
+      this._error = this._errText(err, `err_${source}`);
+      state.items = state.items || [];
+    }
+    state.loading = false;
+    this._render();
+  }
+
+  async _addMovie(movieId, source = "search") {
     this._error = null;
     try {
-      const item = this._searchResults
-        ? this._searchResults.find((r) => r.movie_id === movieId)
-        : null;
+      const list = source === "search" ? this._searchResults : this._cinema[source].items;
+      const item = list ? list.find((r) => r.movie_id === movieId) : null;
       await this._hass.callWS({ type: `${DOMAIN}/add_movie`, movie_id: movieId });
       await this._loadTracked();
-      this._successMessage = `„${item ? item.title : "Film"}" wurde zur Watchlist hinzugefügt.`;
-      if (item) item.tracked = true;
+      this._successMessage = this._t("added_toast", {
+        title: item ? item.title : this._t("movie_fallback"),
+      });
       this._render();
       clearTimeout(this._successTimeout);
       clearTimeout(this._successFadeTimeout);
@@ -501,13 +715,15 @@ class HaMoviesDbCard extends HTMLElement {
       }, 700);
       this._successTimeout = setTimeout(() => {
         this._successMessage = null;
-        clearTimeout(this._searchDebounce);
-        this._searchQuery = "";
-        this._searchResults = null;
+        if (source === "search") {
+          clearTimeout(this._searchDebounce);
+          this._searchQuery = "";
+          this._searchResults = null;
+        }
         this._render();
       }, 1000);
     } catch (err) {
-      this._error = err.message || "Film konnte nicht hinzugefügt werden.";
+      this._error = this._errText(err, "err_add");
       this._render();
     }
   }
@@ -516,7 +732,7 @@ class HaMoviesDbCard extends HTMLElement {
     try {
       await this._hass.callWS({ type: `${DOMAIN}/remove_movie`, movie_id: movieId });
     } catch (err) {
-      this._error = err.message || "Film konnte nicht entfernt werden.";
+      this._error = this._errText(err, "err_remove");
     }
     if (this._selectedMovieId === movieId) {
       this._selectedMovieId = null;
@@ -533,7 +749,7 @@ class HaMoviesDbCard extends HTMLElement {
       this._detail = await this._hass.callWS({ type: `${DOMAIN}/get_movie`, movie_id: movieId });
       this._error = null;
     } catch (err) {
-      this._error = err.message || "Film konnte nicht geladen werden.";
+      this._error = this._errText(err, "err_load_movie");
       this._render();
       return;
     }
@@ -572,7 +788,7 @@ class HaMoviesDbCard extends HTMLElement {
         await this._setArchived(movieId, true, /* skipRender */ true);
       }
     } catch (err) {
-      this._error = err.message || "Konnte Sehstatus nicht ändern.";
+      this._error = this._errText(err, "err_watched");
     }
     await this._loadTracked();
     this._render();
@@ -586,11 +802,23 @@ class HaMoviesDbCard extends HTMLElement {
         this._detail.archived = archived;
       }
     } catch (err) {
-      this._error = err.message || "Konnte Archivstatus nicht ändern.";
+      this._error = this._errText(err, "err_archived");
     }
     if (skipRender) return;
     await this._loadTracked();
     this._render();
+  }
+
+  _t(key, vars) {
+    return translate(detectLang(this._hass), key, vars);
+  }
+
+  _errText(err, fallbackKey) {
+    const code = err && err.code;
+    if (code === "not_configured") return this._t("err_not_configured");
+    if (code === "not_found") return this._t("err_not_found");
+    if (code === "tmdb_error") return this._t("err_tmdb");
+    return this._t(fallbackKey);
   }
 
   _fmtRuntime(minutes) {
@@ -624,7 +852,9 @@ class HaMoviesDbCard extends HTMLElement {
     // Scroll-Position merken: .body wird unten komplett neu aufgebaut, ein
     // frisches Element startet sonst immer bei scrollTop 0.
     const oldBody = root.querySelector(".body");
-    const savedScrollTop = oldBody ? oldBody.scrollTop : 0;
+    const savedScrollTop =
+      this._scrollOverride !== null ? this._scrollOverride : oldBody ? oldBody.scrollTop : 0;
+    this._scrollOverride = null;
 
     // Den neuen Kartenzustand komplett losgelöst vom Dokument aufbauen (kein
     // einziges Element hängt währenddessen im Shadow-DOM), damit am Ende nur
@@ -643,10 +873,14 @@ class HaMoviesDbCard extends HTMLElement {
 
     if (this._selectedMovieId) {
       body.appendChild(this._renderDetail());
+    } else if (this._preview) {
+      body.appendChild(this._renderPreview());
     } else if (this._activeTab === "watchlist") {
       body.appendChild(this._renderWatchlist());
     } else if (this._activeTab === "archive") {
       body.appendChild(this._renderArchive());
+    } else if (this._activeTab === "nowplaying") {
+      body.appendChild(this._renderCinema());
     } else {
       body.appendChild(this._renderSearch());
     }
@@ -700,7 +934,7 @@ class HaMoviesDbCard extends HTMLElement {
     header.appendChild(titleRow);
     wrap.appendChild(header);
 
-    if (!this._selectedMovieId) {
+    if (!this._selectedMovieId && !this._preview) {
       const activeCount = this._tracked.filter((m) => !m.archived).length;
       const archivedCount = this._tracked.filter((m) => m.archived).length;
 
@@ -709,25 +943,36 @@ class HaMoviesDbCard extends HTMLElement {
         "div",
         "tab" + (this._activeTab === "watchlist" ? " active" : "")
       );
-      tabWatchlist.textContent = `Watchlist${activeCount ? " (" + activeCount + ")" : ""}`;
+      tabWatchlist.textContent = `${this._t("tab_watchlist")}${activeCount ? " (" + activeCount + ")" : ""}`;
       tabWatchlist.addEventListener("click", () => {
         this._activeTab = "watchlist";
         this._render();
       });
       const tabArchive = this._el("div", "tab" + (this._activeTab === "archive" ? " active" : ""));
-      tabArchive.textContent = `Archiv${archivedCount ? " (" + archivedCount + ")" : ""}`;
+      tabArchive.textContent = `${this._t("tab_archive")}${archivedCount ? " (" + archivedCount + ")" : ""}`;
       tabArchive.addEventListener("click", () => {
         this._activeTab = "archive";
         this._render();
       });
+      const tabNowPlaying = this._el(
+        "div",
+        "tab" + (this._activeTab === "nowplaying" ? " active" : "")
+      );
+      tabNowPlaying.textContent = this._t("tab_nowplaying");
+      tabNowPlaying.addEventListener("click", () => {
+        this._activeTab = "nowplaying";
+        this._render();
+        this._loadCinema(this._cinemaMode);
+      });
       const tabSearch = this._el("div", "tab" + (this._activeTab === "search" ? " active" : ""));
-      tabSearch.textContent = "Film hinzufügen";
+      tabSearch.textContent = this._t("tab_search");
       tabSearch.addEventListener("click", () => {
         this._activeTab = "search";
         this._render();
       });
       tabs.appendChild(tabWatchlist);
       tabs.appendChild(tabArchive);
+      tabs.appendChild(tabNowPlaying);
       tabs.appendChild(tabSearch);
       wrap.appendChild(tabs);
     }
@@ -737,14 +982,14 @@ class HaMoviesDbCard extends HTMLElement {
   _renderWatchlist() {
     return this._renderMovieGrid(
       this._tracked.filter((m) => !m.archived),
-      "Noch keine Filme in der Watchlist. Wechsle oben zu „Film hinzufügen“, um loszulegen."
+      this._t("empty_watchlist")
     );
   }
 
   _renderArchive() {
     return this._renderMovieGrid(
       this._tracked.filter((m) => m.archived),
-      "Noch keine archivierten Filme. Markiere einen Film in der Detailansicht als gesehen, um ihn ins Archiv zu verschieben."
+      this._t("empty_archive")
     );
   }
 
@@ -779,7 +1024,7 @@ class HaMoviesDbCard extends HTMLElement {
 
       if (m.available_on && m.available_on.length) {
         const avail = this._el("div", "available-badge");
-        avail.textContent = "Verfügbar: " + m.available_on.join(", ");
+        avail.textContent = this._t("available", { list: m.available_on.join(", ") });
         cardEl.appendChild(avail);
       }
 
@@ -794,7 +1039,7 @@ class HaMoviesDbCard extends HTMLElement {
     const row = this._el("div", "search-row");
     const input = document.createElement("input");
     input.type = "text";
-    input.placeholder = "Filmtitel eingeben …";
+    input.placeholder = this._t("search_placeholder");
     input.value = this._searchQuery;
     input.dataset.focusId = "search-input";
     input.addEventListener("input", (e) => {
@@ -814,12 +1059,12 @@ class HaMoviesDbCard extends HTMLElement {
     wrap.appendChild(row);
 
     const hint = this._el("div", "hint");
-    hint.textContent = "Datenquelle: themoviedb.org (kostenlose API)";
+    hint.textContent = this._t("data_source");
     wrap.appendChild(hint);
 
     if (this._searching) {
       const loading = this._el("div", "loading");
-      loading.textContent = "Suche läuft …";
+      loading.textContent = this._t("searching");
       wrap.appendChild(loading);
       return wrap;
     }
@@ -830,14 +1075,84 @@ class HaMoviesDbCard extends HTMLElement {
 
     if (!this._searchResults.length) {
       const empty = this._el("div", "empty");
-      empty.textContent = "Keine Treffer.";
+      empty.textContent = this._t("no_results");
       wrap.appendChild(empty);
       return wrap;
     }
 
+    wrap.appendChild(this._renderResultList(this._searchResults, "search"));
+    return wrap;
+  }
+
+  _renderCinema() {
+    const wrap = this._el("div");
+    const source = this._cinemaMode;
+    const state = this._cinema[source];
+
+    // Umschalter "Derzeit" / "Demnächst" (Standard: Derzeit)
+    const modes = this._el("div", "mode-switch");
+    for (const mode of ["nowplaying", "upcoming"]) {
+      const btn = document.createElement("button");
+      btn.className = "pill" + (mode === source ? " active" : "");
+      btn.textContent = this._t(`mode_${mode}`);
+      btn.addEventListener("click", () => {
+        if (this._cinemaMode === mode) return;
+        this._cinemaMode = mode;
+        this._render();
+        this._loadCinema(mode);
+      });
+      modes.appendChild(btn);
+    }
+    wrap.appendChild(modes);
+
+    const hint = this._el("div", "hint");
+    const region = state.region || this._settings.region;
+    hint.textContent = region
+      ? this._t(`${source === "upcoming" ? "upcoming" : "nowplaying"}_hint`, { region })
+      : this._t(`${source === "upcoming" ? "upcoming" : "nowplaying"}_hint_generic`);
+    wrap.appendChild(hint);
+
+    if (state.loading && !(state.items && state.items.length)) {
+      const loading = this._el("div", "loading");
+      loading.textContent = this._t(`loading_${source}`);
+      wrap.appendChild(loading);
+      return wrap;
+    }
+
+    if (state.items === null) {
+      return wrap;
+    }
+
+    if (!state.items.length) {
+      const empty = this._el("div", "empty");
+      empty.textContent = this._t(`empty_${source}`);
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    wrap.appendChild(this._renderResultList(state.items, source));
+    return wrap;
+  }
+
+  _fmtDate(iso) {
+    if (!iso) return "";
+    const date = new Date(`${iso}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return iso;
+    return date.toLocaleDateString(detectLang(this._hass), {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  _renderResultList(items, source) {
+    // "Hinzugefügt" folgt immer dem aktuellen Stand der Watchlist, nicht dem
+    // Zeitpunkt, an dem die (ggf. zwischengespeicherte) Liste geladen wurde.
+    const trackedIds = new Set(this._tracked.map((m) => m.movie_id));
     const list = this._el("div", "result-list");
-    for (const r of this._searchResults) {
+    for (const r of items) {
       const row2 = this._el("div", "result-row");
+      row2.addEventListener("click", () => this._openPreview(r, source));
       const img = document.createElement("img");
       img.className = "poster";
       img.loading = "lazy";
@@ -848,32 +1163,128 @@ class HaMoviesDbCard extends HTMLElement {
       const t = this._el("div", "result-title");
       t.textContent = r.title;
       const m = this._el("div", "result-meta");
-      m.textContent = [r.release_year].filter(Boolean).join(" · ");
+      m.textContent = this._resultMeta(r, source);
       info.appendChild(t);
       info.appendChild(m);
       row2.appendChild(info);
 
-      const btn = document.createElement("button");
-      btn.className = "pill";
-      if (r.tracked) {
-        btn.textContent = "Hinzugefügt";
-        btn.disabled = true;
-      } else {
-        btn.textContent = "Hinzufügen";
-        btn.addEventListener("click", () => this._addMovie(r.movie_id));
-      }
-      row2.appendChild(btn);
+      row2.appendChild(this._renderAddButton(r, source, trackedIds.has(r.movie_id)));
 
       list.appendChild(row2);
     }
-    wrap.appendChild(list);
+    return list;
+  }
+
+  _resultMeta(r, source) {
+    return (source === "nowplaying" || source === "upcoming") && r.release_date
+      ? this._fmtDate(r.release_date)
+      : [r.release_year].filter(Boolean).join(" · ");
+  }
+
+  _renderAddButton(r, source, isTracked) {
+    const btn = document.createElement("button");
+    btn.className = "pill";
+    if (isTracked) {
+      btn.textContent = this._t("added");
+      btn.disabled = true;
+    } else {
+      btn.textContent = this._t("add");
+      btn.addEventListener("click", (e) => {
+        // Der Klick gehört dem Button, nicht der Zeile (sonst öffnet sich die Vorschau).
+        e.stopPropagation();
+        this._addMovie(r.movie_id, source);
+      });
+    }
+    return btn;
+  }
+
+  _openPreview(item, source) {
+    const body = this.shadowRoot.querySelector(".body");
+    this._listScroll = body ? body.scrollTop : 0;
+    this._scrollOverride = 0;
+    this._preview = { item, source };
+    this._render();
+    this._loadTrailer(item.movie_id);
+  }
+
+  _closePreview() {
+    this._preview = null;
+    this._scrollOverride = this._listScroll;
+    this._render();
+  }
+
+  async _loadTrailer(movieId) {
+    if (movieId in this._trailers || this._trailerLoading.has(movieId)) return;
+    this._trailerLoading.add(movieId);
+    this._render();
+    try {
+      const res = await this._hass.callWS({ type: `${DOMAIN}/get_trailer`, movie_id: movieId });
+      this._trailers[movieId] = res.trailer || null;
+    } catch (err) {
+      // Der Trailer ist eine Zusatzinfo: bei einem Fehler wird einfach kein
+      // Link gezeigt (und beim nächsten Öffnen erneut versucht).
+    }
+    this._trailerLoading.delete(movieId);
+    this._render();
+  }
+
+  _renderPreview() {
+    const { item, source } = this._preview;
+    const wrap = this._el("div");
+    const back = this._el("div", "back-link");
+    back.textContent = this._t("back");
+    back.addEventListener("click", () => this._closePreview());
+    wrap.appendChild(back);
+
+    const header = this._el("div", "detail-header");
+    const img = document.createElement("img");
+    img.className = "poster";
+    if (item.image) img.src = item.image;
+    header.appendChild(img);
+
+    const meta = this._el("div", "meta");
+    const h2 = this._el("h2");
+    h2.textContent = item.title;
+    meta.appendChild(h2);
+    const metaLine = this._el("div", "result-meta");
+    metaLine.textContent = this._resultMeta(item, source);
+    meta.appendChild(metaLine);
+
+    const btnRow = this._el("div", "button-row");
+    const isTracked = this._tracked.some((m) => m.movie_id === item.movie_id);
+    btnRow.appendChild(this._renderAddButton(item, source, isTracked));
+
+    const trailer = this._trailers[item.movie_id];
+    if (trailer) {
+      const link = document.createElement("a");
+      link.className = "pill";
+      link.href = trailer.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = this._t("trailer_link");
+      btnRow.appendChild(link);
+    }
+    meta.appendChild(btnRow);
+
+    if (this._trailerLoading.has(item.movie_id)) {
+      const loading = this._el("div", "result-meta");
+      loading.textContent = this._t("loading_trailer");
+      meta.appendChild(loading);
+    }
+
+    const overview = this._el("div", "overview");
+    overview.textContent = item.overview || this._t("no_overview");
+    meta.appendChild(overview);
+
+    header.appendChild(meta);
+    wrap.appendChild(header);
     return wrap;
   }
 
   _renderDetail() {
     const wrap = this._el("div");
     const back = this._el("div", "back-link");
-    back.textContent = "‹ Zurück zur Übersicht";
+    back.textContent = this._t("back");
     back.addEventListener("click", () => {
       this._selectedMovieId = null;
       this._detail = null;
@@ -883,7 +1294,7 @@ class HaMoviesDbCard extends HTMLElement {
 
     if (!this._detail) {
       const loading = this._el("div", "loading");
-      loading.textContent = "Lade Film …";
+      loading.textContent = this._t("loading_movie");
       wrap.appendChild(loading);
       return wrap;
     }
@@ -913,19 +1324,19 @@ class HaMoviesDbCard extends HTMLElement {
 
     const watchedBtn = document.createElement("button");
     watchedBtn.className = "pill";
-    watchedBtn.textContent = d.watched_at ? "Als ungesehen markieren" : "Als gesehen markieren";
+    watchedBtn.textContent = d.watched_at ? this._t("mark_unwatched") : this._t("mark_watched");
     watchedBtn.addEventListener("click", () => this._setWatched(d.movie_id, !d.watched_at));
     btnRow.appendChild(watchedBtn);
 
     const archiveBtn = document.createElement("button");
     archiveBtn.className = "pill";
-    archiveBtn.textContent = d.archived ? "Aus Archiv zurückholen" : "Ins Archiv verschieben";
+    archiveBtn.textContent = d.archived ? this._t("unarchive") : this._t("archive");
     archiveBtn.addEventListener("click", () => this._setArchived(d.movie_id, !d.archived));
     btnRow.appendChild(archiveBtn);
 
     const removeBtn = document.createElement("button");
     removeBtn.className = "pill danger";
-    removeBtn.textContent = "Aus Watchlist entfernen";
+    removeBtn.textContent = this._t("remove");
     removeBtn.addEventListener("click", () => this._removeMovie(d.movie_id));
     btnRow.appendChild(removeBtn);
 
@@ -944,7 +1355,7 @@ class HaMoviesDbCard extends HTMLElement {
 
     const backBottom = this._el("div", "back-link");
     backBottom.style.marginTop = "16px";
-    backBottom.textContent = "‹ Zurück zur Übersicht";
+    backBottom.textContent = this._t("back");
     backBottom.addEventListener("click", () => {
       this._selectedMovieId = null;
       this._detail = null;
@@ -958,12 +1369,12 @@ class HaMoviesDbCard extends HTMLElement {
   _renderWatchProviders(providers) {
     const wrap = this._el("div");
     const title = this._el("div", "section-title");
-    title.textContent = "Verfügbar auf";
+    title.textContent = this._t("available_on_title");
     wrap.appendChild(title);
 
     if (!providers) {
       const loading = this._el("div", "loading");
-      loading.textContent = "Lade Verfügbarkeit …";
+      loading.textContent = this._t("loading_availability");
       wrap.appendChild(loading);
       return wrap;
     }
@@ -977,7 +1388,7 @@ class HaMoviesDbCard extends HTMLElement {
 
       const group = this._el("div", "provider-group");
       const label = this._el("div", "label");
-      label.textContent = PROVIDER_CATEGORY_LABELS[category] || category;
+      label.textContent = this._t("cat_" + category);
       group.appendChild(label);
 
       const row = this._el("div", "provider-row");
@@ -996,15 +1407,14 @@ class HaMoviesDbCard extends HTMLElement {
     if (!hasAny) {
       const empty = this._el("div", "empty");
       empty.textContent = this._settings.region
-        ? `Aktuell keine bekannte Streaming-Verfügbarkeit in ${this._settings.region}.`
-        : "Aktuell keine bekannte Streaming-Verfügbarkeit.";
+        ? this._t("no_availability_region", { region: this._settings.region })
+        : this._t("no_availability");
       wrap.appendChild(empty);
     }
 
     if (myIds.size === 0) {
       const hint = this._el("div", "hint");
-      hint.textContent =
-        "Tipp: Trage deine Streamingdienste unter Einstellungen → Geräte & Dienste → HA MoviesDB → Konfigurieren ein, damit sie hier hervorgehoben werden.";
+      hint.textContent = this._t("hint_providers");
       wrap.appendChild(hint);
     }
 
@@ -1019,11 +1429,11 @@ class HaMoviesDbCard extends HTMLElement {
       link.href = providers.link;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = "Alle Optionen auf TMDB ansehen";
+      link.textContent = this._t("all_options_link");
       attribution.appendChild(link);
-      attribution.append(" · Daten von JustWatch, bereitgestellt über TMDB.");
+      attribution.append(this._t("attribution_suffix"));
     } else {
-      attribution.textContent = "Verfügbarkeitsdaten von JustWatch, bereitgestellt über TMDB.";
+      attribution.textContent = this._t("attribution_only");
     }
     wrap.appendChild(attribution);
 
@@ -1036,11 +1446,24 @@ class HaMoviesDbCard extends HTMLElement {
     // prominent als das eigene App-Logo im Header.
     const wrap = this._el("div", "tmdb-attribution");
     const logo = document.createElement("img");
-    logo.src = `/${DOMAIN}/tmdb-logo.svg`;
+    // /local/ = <config>/www/ liegt außerhalb von custom_components und
+    // übersteht HACS-Updates; der alte Ablageort bleibt als Fallback.
+    const sources = [
+      `/local/${DOMAIN}/tmdb-logo.svg`,
+      `/local/${DOMAIN}/tmdb-logo.png`,
+      `/${DOMAIN}/tmdb-logo.svg`,
+    ];
+    let sourceIndex = 0;
     logo.alt = "TMDB";
     logo.addEventListener("error", () => {
-      logo.style.display = "none";
+      sourceIndex += 1;
+      if (sourceIndex < sources.length) {
+        logo.src = sources[sourceIndex];
+      } else {
+        logo.style.display = "none";
+      }
     });
+    logo.src = sources[0];
     wrap.appendChild(logo);
 
     const text = document.createElement("span");
@@ -1077,10 +1500,20 @@ class HaMoviesDbCardEditor extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
+    loadExtraTable(detectLang(hass), () => this._updateText());
+    this._updateText();
+  }
+
+  _updateText() {
+    const p = this.shadowRoot && this.shadowRoot.querySelector("p");
+    if (p) p.textContent = translate(detectLang(this._hass), "editor_text");
   }
 
   _render() {
-    if (this.shadowRoot) return;
+    if (this.shadowRoot) {
+      this._updateText();
+      return;
+    }
     const root = this.attachShadow({ mode: "open" });
     root.innerHTML = `
       <style>
@@ -1092,8 +1525,9 @@ class HaMoviesDbCardEditor extends HTMLElement {
           margin: 0;
         }
       </style>
-      <p>Diese Karte hat keine Konfigurationsoptionen. Breite und Höhe lassen sich über den Reiter „Layout" einstellen. Region und eigene Streamingdienste werden unter Einstellungen → Geräte & Dienste → HA MoviesDB → Konfigurieren eingestellt.</p>
+      <p></p>
     `;
+    this._updateText();
   }
 }
 if (!customElements.get("ha-moviesdb-card-editor")) {
@@ -1114,7 +1548,7 @@ if (!window.customCards.some((c) => c.type === "ha-moviesdb-card")) {
   window.customCards.push({
     type: "ha-moviesdb-card",
     name: "HA MoviesDB",
-    description: "Film-Watchlist mit themoviedb.org als Datenquelle – inkl. Streaming-Verfügbarkeit.",
+    description: translate(detectLang(null), "card_description"),
     preview: false,
   });
 }

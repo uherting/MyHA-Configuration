@@ -168,6 +168,7 @@ CONF_LOCK_AUTOMATIONS = "lock_automations"
 CONF_AUTO_RELOCK_SEC = "auto_relock_sec"
 
 CONF_REPAIR_INCORRECT_STATE = "repair_incorrect_state"
+CONF_MANUAL_OVERRIDE_DURATION_MIN = "manual_override_duration_min"
 
 CONF_VSWITCH_ON_CMD_LIST = "vswitch_on_command"
 CONF_VSWITCH_OFF_CMD_LIST = "vswitch_off_command"
@@ -280,8 +281,10 @@ HVAC_OFF_REASON_WINDOW_DETECTION = "hvac_off_window_detection"
 HVAC_OFF_REASON_SLEEP_MODE = "hvac_off_sleep_mode"
 HVAC_OFF_REASON_SAFETY = "hvac_off_safety_detection"
 HVAC_OFF_REASON_CENTRAL_MODE = "hvac_off_central_mode"
+# Issue #2087 - the control is withdrawn by an inhibition plugin
+HVAC_OFF_REASON_INHIBITION = "hvac_off_inhibition"
 HVAC_OFF_REASONS = Literal[  # pylint: disable=invalid-name
-    HVAC_OFF_REASON_MANUAL, HVAC_OFF_REASON_AUTO_START_STOP, HVAC_OFF_REASON_WINDOW_DETECTION, HVAC_OFF_REASON_SLEEP_MODE, HVAC_OFF_REASON_SAFETY
+    HVAC_OFF_REASON_MANUAL, HVAC_OFF_REASON_AUTO_START_STOP, HVAC_OFF_REASON_WINDOW_DETECTION, HVAC_OFF_REASON_SLEEP_MODE, HVAC_OFF_REASON_SAFETY, HVAC_OFF_REASON_INHIBITION
 ]
 
 # The hvac_mode_reason set when the auto-start/stop feature applies a non-off stop mode
@@ -449,6 +452,7 @@ ALL_CONF = (
         CONF_TEMPERATURE_CHANGE_TOLERANCE,
         CONF_FAILURE_DETECTION_ENABLE_TEMPLATE,
         CONF_REPAIR_INCORRECT_STATE,
+        CONF_MANUAL_OVERRIDE_DURATION_MIN,
     ]
     + CONF_PRESETS_VALUES
     + CONF_PRESETS_AWAY_VALUES
@@ -573,6 +577,7 @@ MSG_TARGET_TEMP_ACTIVITY_NOT_DETECTED = "target_temp_activity_not_detected"
 MSG_TARGET_TEMP_ABSENCE_DETECTED = "target_temp_absence_detected"
 MSG_TARGET_TEMP_TIMED_PRESET = "target_temp_timed_preset"
 MSG_NOT_INITIALIZED = "not_initialized"
+MSG_UNDERLYING_UNAVAILABLE = "underlying_unavailable"
 
 #  A special regulation parameter suggested by @Maia here: https://github.com/jmcollin78/versatile_thermostat/discussions/154
 class RegulationParamSlow:
