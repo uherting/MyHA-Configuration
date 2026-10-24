@@ -1,0 +1,33 @@
+# ############################################################
+#
+#  L2Kitchen
+#
+# ############################################################
+
+# ############################################################
+# L2 Kitchen ZB Plugs on as human is next to them
+# ############################################################
+- alias: L2 Kitchen ZB Plugs on as human is next to them
+  id: "01a16e67-2536-747f-bf40-c58a53b3c146"
+  mode: restart
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: template
+      value_template: "{{ ((states('sensor.l2kitchen01_distance') | float(9.99)) < 2.00) }}"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- ZB Plugs ON ---------------------
+    - action: switch.turn_on
+      entity_id: switch.zb_plug_l2_kitchen_coffeemachine
+    - action: switch.turn_on
+      entity_id: switch.zb_plug_l2_kitchen_dishwasher
+    - action: switch.turn_on
+      entity_id: switch.zb_plug_l2_kitchen_kettle
+    - action: switch.turn_off
+      entity_id: switch.zb_plug_l2_kitchen_microwave
+# ############################################################
+#  END OF FILE
+# ############################################################
