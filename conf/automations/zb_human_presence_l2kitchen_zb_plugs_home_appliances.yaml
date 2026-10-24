@@ -20,13 +20,14 @@
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- ZB Plugs ON ---------------------
+    # switch all ZB plugs on as interaction with the home appliances is expected
     - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_coffeemachine
     - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_dishwasher
     - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_kettle
-    - action: switch.turn_off
+    - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_microwave
 # ############################################################
 #  END OF FILE
