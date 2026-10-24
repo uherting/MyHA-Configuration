@@ -1,0 +1,68 @@
+# ############################################################
+#
+#  L2Kitchen
+#
+# ############################################################
+
+# ############################################################
+# L2 Kitchen minor/major light on when ZB HumanPresence detected
+# ############################################################
+- alias: L2 Kitchen minor/major light on when ZB HumanPresence detected
+  id: "c3e20ae7-8712-4b44-ba5d-7a0d63d460bd"
+  mode: restart
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
+      to: "on"
+    - trigger: state
+      entity_id: sensor.zb_humanpresence_l2_kitchen_01_motion_state
+      to: "large"
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - condition: template
+      value_template: "{{ is_state('switch.l2storage01_spy_mode', 'off') }}"
+  # condition: []
+  # condition:
+  #   - condition: template
+  #     # only when civil twilight applies
+  #     # for details see https://www.worldatlas.com/articles/what-is-the-difference-between-dusk-and-twilight.html
+  #     value_template: "{{ is_state('binary_sensor.sun_dwn_twilight', 'on') }}"
+  # --------------------- ACTIONS ---------------------
+  action:
+    # ------------------- SSR01 on -------------------
+    - action: switch.turn_on
+      entity_id: switch.l2kitchen01_ssr_01
+    - if:
+        - condition: state
+          entity_id: binary_sensor.sun_dwn_twilight
+          state: "on"
+      then:
+        - action: switch.turn_on
+          entity_id: switch.l2storage01_l2_kitchen01_ssr_09
+
+# ############################################################
+# L2 Kitchen minor/major off after there is no motion for x minutes
+# ############################################################
+- alias: L2 Kitchen minor/major off when ZB HumanPresence not detected for a while
+  id: "b741c8ff-bea9-4648-a7f6-c0edb59cf0df"
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  # no motion is detected for x minutes or door is closed
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.zb_humanpresence_l2_kitchen_01_presence
+      to: "off"
+      for:
+        minutes: 1
+  # --------------------- ACTIONS ---------------------
+  action:
+    # --------------------- SSR OFF ---------------------
+    - action: switch.turn_off
+      entity_id: switch.l2kitchen01_ssr_01
+    - action: switch.turn_off
+      entity_id: switch.l2storage01_l2_kitchen01_ssr_09
+# ############################################################
+#  END OF FILE
+# ############################################################
