@@ -118,10 +118,10 @@ binary_sensor:
   # - <<: !include conf/common/binary_sensor/pir_A0.yaml
   # - <<: !include conf/common/binary_sensor/pir_A1.yaml
   # the touch buttons
-  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A404_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A404_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A505_on_multi_click.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A505_on_press.yaml
 
 #-------------------------------------------------------------------
 # SENSORS
@@ -137,8 +137,8 @@ sensor:
 # SWITCHES
 switch:
   - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
-  - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
-  - <<: !include conf/switch/l2storage01.yaml
+  # - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/switch/l2corridor01.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
