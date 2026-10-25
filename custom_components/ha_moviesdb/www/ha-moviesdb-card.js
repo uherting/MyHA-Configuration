@@ -52,6 +52,8 @@ const TRANSLATIONS = {
     empty_archive: "Noch keine archivierten Filme. Markiere einen Film in der Detailansicht als gesehen, um ihn ins Archiv zu verschieben.",
     available: "Verfügbar: {list}",
     search_placeholder: "Filmtitel eingeben …",
+    filter_placeholder: "Liste durchsuchen …",
+    no_filter_results: "Keine Filme in dieser Liste gefunden.",
     data_source: "Datenquelle: themoviedb.org (kostenlose API)",
     searching: "Suche läuft …",
     no_results: "Keine Treffer.",
@@ -116,6 +118,8 @@ const TRANSLATIONS = {
     empty_archive: "No archived movies yet. Mark a movie as watched in its detail view to move it to the archive.",
     available: "Available: {list}",
     search_placeholder: "Enter movie title …",
+    filter_placeholder: "Search this list …",
+    no_filter_results: "No movies found in this list.",
     data_source: "Data source: themoviedb.org (free API)",
     searching: "Searching …",
     no_results: "No results.",
@@ -569,6 +573,7 @@ class HaMoviesDbCard extends HTMLElement {
     this._searchQuery = "";
     this._searchResults = null;
     this._searching = false;
+    this._listFilter = "";
     this._cinemaMode = "nowplaying";
     this._cinema = {
       nowplaying: { items: null, region: "", loading: false, loadedAt: 0 },
@@ -998,6 +1003,31 @@ class HaMoviesDbCard extends HTMLElement {
     if (!list.length) {
       const empty = this._el("div", "empty");
       empty.textContent = emptyText;
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    // Filter über Watchlist und Archiv hinweg geteilt (Titel, ohne Groß-/Kleinschreibung)
+    const row = this._el("div", "search-row");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = this._t("filter_placeholder");
+    input.value = this._listFilter;
+    input.dataset.focusId = "list-filter";
+    input.addEventListener("input", (e) => {
+      this._listFilter = e.target.value;
+      this._render();
+    });
+    row.appendChild(input);
+    wrap.appendChild(row);
+
+    const needle = this._listFilter.trim().toLowerCase();
+    if (needle) {
+      list = list.filter((m) => (m.title || "").toLowerCase().includes(needle));
+    }
+    if (!list.length) {
+      const empty = this._el("div", "empty");
+      empty.textContent = this._t("no_filter_results");
       wrap.appendChild(empty);
       return wrap;
     }
