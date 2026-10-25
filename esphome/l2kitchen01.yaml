@@ -29,6 +29,7 @@
 #   - 1 PIR
 #   - 1 TP223 touch button
 #   - 1 VEML7700 light sensor
+#   - 1 VL53L0X distance sensor
 #   - steel housing for external Dallas 18B20 sensors
 #   - heat shrink tube, misc diameter
 #   - case for the hardware

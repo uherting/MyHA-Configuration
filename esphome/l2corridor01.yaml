@@ -6,10 +6,6 @@
 ####################################################################
 ####################################################################
 
-#
-# !!! big problem here as power_supply: and light: are incompatible !!!!
-#
-# error msg: ID 'L2Corridor01_PSU_1' of type power_supply::PowerSupply doesn't inherit from output::BinaryOutput.
 
 ####################################################################
 # DESCRIPTION
@@ -17,9 +13,7 @@
 #
 # Purpose:
 #   - General Function:
-#     - LED strip WS2812B will be switched on,
-#       brightness: depending on day / night
-#       location: middle of the corridor
+#     - PSU for WS2812B LED strip will be switched on,
 #     - two PIR trigger scripts
 #     - scripts switch on the light component
 #     - the power supply component is set up as part of the light and
@@ -72,10 +66,6 @@ packages:
   wifi_common: !include conf/common/networking/wifi_multiple_networks_dhcp_ip.yaml
   # captive_portal: conf/common/networking/captive_portal.yaml
 
-  # Contained an error which got validated nevertheless. 
-  # After removal of the error (2x ota: entries) it threw an error, so ota: moved to root level
-  # ota: !include conf/common/networking/ota.yaml
-
 ota: !include conf/common/networking/ota.yaml
 
 ################# CUSTOMISED LOGGING (if necessary) ################
@@ -109,26 +99,28 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 globals: !include conf/common/globals/connectivity.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
-  - <<: !include conf/script/l2corridor01/pir2_noaction_01.yaml
-  - <<: !include conf/script/l2corridor01/pir2_noaction_02.yaml
-  - <<: !include conf/script/l2corridor01/touch_button_A4_double.yaml
-  - <<: !include conf/script/l2corridor01/touch_button_A4_short.yaml
-  - <<: !include conf/script/l2corridor01/touch_button_A4_long.yaml
-  - <<: !include conf/script/l2corridor01/touch_button_A5_double.yaml
-  - <<: !include conf/script/l2corridor01/touch_button_A5_short.yaml
-  - <<: !include conf/script/l2corridor01/touch_button_A5_long.yaml
+  # - <<: !include conf/script/l2corridor01/pir2_noaction_01.yaml
+  # - <<: !include conf/script/l2corridor01/pir2_noaction_02.yaml
+  - <<: !include conf/script/l2corridor01/touch_button_A4_on_press.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A4_double.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A4_short.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A4_long.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A5_on_press.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A5_double.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A5_short.yaml
+  # - <<: !include conf/script/l2corridor01/touch_button_A5_long.yaml
 
 #-------------------------------------------------------------------
 # BINARY SENSORS
 binary_sensor:
   - <<: !include conf/common/binary_sensor/wifi_status.yaml
   # PIR / RCWL
-  - <<: !include conf/common/binary_sensor/pir_A0.yaml
-  - <<: !include conf/common/binary_sensor/pir_A1.yaml
+  # - <<: !include conf/common/binary_sensor/pir_A0.yaml
+  # - <<: !include conf/common/binary_sensor/pir_A1.yaml
   # the touch buttons
-  - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
-  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
-  - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A4_on_multi_click.yaml
+  - <<: !include conf/common/binary_sensor/touch_button_A4_on_press.yaml
+  # - <<: !include conf/common/binary_sensor/touch_button_A5_on_multi_click.yaml
   # - <<: !include conf/common/binary_sensor/touch_button_A5_on_press.yaml
 
 #-------------------------------------------------------------------
@@ -140,18 +132,13 @@ sensor:
   # device related
   - <<: !include conf/sensor/l2corridor01/l2corridor01_case.yaml
   # - <<: !include conf/sensor/l2corridor01/l2corridor01_env01.yaml
-  # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 
 #-------------------------------------------------------------------
 # SWITCHES
-# switch:
-  # - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
-  # - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
-
-#-------------------------------------------------------------------
-# POWER SUPPLY
-# power_supply:
-#   - <<: !include conf/common/power_supply.yaml
+switch:
+  - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
+  - <<: !include conf/switch/l2storage01.yaml
 
 #-------------------------------------------------------------------
 # TEXT SENSORS
@@ -162,11 +149,6 @@ text_sensor:
   - <<: !include conf/common/text_sensor/uptime.yaml
   # device related
   # none so far
-
-#-------------------------------------------------------------------
-# BINARY LIGHT (virtual switch acting as a trigger for device l2wled01)
-#
-# light: !include conf/light/l2corridor01.yaml
 
 ####################################################################
 # EOF
