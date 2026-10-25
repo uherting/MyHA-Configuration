@@ -11,6 +11,19 @@ path: l2_esp_details
 badges: []
 cards:
   - type: entities
+    title: L2 Corridor 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2corridor01_tempcase_01
+      # - sensor.l2corridor01_tempenv_01
+      - switch.l2corridor01_ssr_01
+      # - switch.l2corridor01_ssr_02
+      - switch.l2corridor01_ssr_07_wled_01
+      - binary_sensor.l2corridor01_tb_04
+      # - binary_sensor.l2corridor01_tb_05
+      # - switch.l2corridor01_ssr_02
+
+  - type: entities
     title: L2 Kitchen 01
     show_header_toggle: false
     entities:
@@ -64,7 +77,7 @@ cards:
     title: Temperatures Storage
     entities:
       - sensor.l2storage01_tempcase_01
-      - sensor.temperature_humidity_sensor_d59f_temperature
+      # - sensor.temperature_humidity_sensor_d59f_temperature
     hours_to_show: 72
     hour24: true
     show_legend: true

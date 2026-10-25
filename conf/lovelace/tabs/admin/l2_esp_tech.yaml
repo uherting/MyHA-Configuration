@@ -11,6 +11,21 @@ path: l2_esp_tech
 badges: []
 cards:
   - type: entities
+    title: L2 Corridor 01
+    show_header_toggle: false
+    entities:
+      - sensor.l2corridor01_conn_ip_addr
+      - sensor.l2corridor01_wifi_signal
+      - sensor.l2corridor01_conn_ssid
+      - sensor.l2corridor01_conn_bssid
+      - sensor.l2corridor01_uptime
+      - sensor.l2corridor01_uptime_human_readable
+      - binary_sensor.l2corridor01_status
+      # - update.l2corridor01_firmware
+      - sensor.l2corridor01_esphome_version
+      - switch.l2corridor01_restart_device
+
+  - type: entities
     title: L2 Kitchen 01
     show_header_toggle: false
     entities:
