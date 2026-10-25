@@ -19,9 +19,6 @@ dallas_01c01_name: $friendly_name TempCase 01
 dallas_01c01_address: !secret DALLAS_01_L2CORRIDOR01_CASESENSOR_01_ADDRESS
 dallas_01e01_name: $friendly_name TempEnv 01
 dallas_01e01_address: !secret DALLAS_01_L2CORRIDOR01_ENVSENSOR_01_ADDRESS
-# # ------------------------------------------------------------------
-# # standard substitutions follow
-# # ------------------------------------------------------------------
 ####################################################################
 # EOF
 ####################################################################
