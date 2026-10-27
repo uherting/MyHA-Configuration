@@ -45,6 +45,8 @@ const TRANSLATIONS = {
     available: "Verfügbar: {list}",
     episodes_progress: "{watched} / {total} Episoden",
     search_placeholder: "Serientitel eingeben …",
+    filter_placeholder: "Liste durchsuchen …",
+    no_filter_results: "Keine Serien in dieser Liste gefunden.",
     data_source: "Datenquelle: themoviedb.org (kostenlose API)",
     searching: "Suche läuft …",
     no_results: "Keine Treffer.",
@@ -107,6 +109,8 @@ const TRANSLATIONS = {
     available: "Available: {list}",
     episodes_progress: "{watched} / {total} episodes",
     search_placeholder: "Enter show title …",
+    filter_placeholder: "Search this list …",
+    no_filter_results: "No shows found in this list.",
     data_source: "Data source: themoviedb.org (free API)",
     searching: "Searching …",
     no_results: "No results.",
@@ -194,6 +198,8 @@ function translate(lang, key, vars) {
 }
 
 const TAB_IDS = ["mine", "open", "archive", "search"];
+// Filterfeld erst ab dieser Listengröße anzeigen
+const LIST_FILTER_MIN_ITEMS = 20;
 const ACTIVE_TAB_STORAGE_KEY = `${DOMAIN}_active_tab`;
 
 const PROVIDER_CATEGORY_ORDER = ["flatrate", "free", "ads", "rent", "buy"];
@@ -649,6 +655,7 @@ class HaSeriesDbCard extends HTMLElement {
     this._searchQuery = "";
     this._searchResults = null;
     this._searching = false;
+    this._listFilter = "";
     this._selectedSeriesId = null;
     this._detail = null;
     this._settings = { region: "", providers: [] };
@@ -1180,6 +1187,34 @@ class HaSeriesDbCard extends HTMLElement {
     if (!list.length) {
       const empty = this._el("div", "empty");
       empty.textContent = emptyText;
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    // Filter über alle Listen hinweg geteilt (Titel, ohne Groß-/Kleinschreibung)
+    // Nur bei langen Listen (oder aktivem Filter, damit er sichtbar bleibt)
+    if (list.length > LIST_FILTER_MIN_ITEMS || this._listFilter) {
+      const row = this._el("div", "search-row");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = this._t("filter_placeholder");
+      input.value = this._listFilter;
+      input.dataset.focusId = "list-filter";
+      input.addEventListener("input", (e) => {
+        this._listFilter = e.target.value;
+        this._render();
+      });
+      row.appendChild(input);
+      wrap.appendChild(row);
+    }
+
+    const needle = this._listFilter.trim().toLowerCase();
+    if (needle) {
+      list = list.filter((s) => (s.name || "").toLowerCase().includes(needle));
+    }
+    if (!list.length) {
+      const empty = this._el("div", "empty");
+      empty.textContent = this._t("no_filter_results");
       wrap.appendChild(empty);
       return wrap;
     }
