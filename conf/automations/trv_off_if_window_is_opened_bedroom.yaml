@@ -1,13 +1,13 @@
 # ############################################################
 #
-#  Window contact detected open window
+#  Open window detected
 #
 # ############################################################
 
 # ############################################################
-#  Window contact detected open window in the bedroom
+#  Open window detected in the bedroom
 # ############################################################
-- alias: Window contact detected open window in the bedroom
+- alias: Open window detected in the bedroom
   id: "48ba3366-08e4-4885-bd8a-94b090585307"
   description: "This automation handles L2 TRV open window conditions"
   mode: single

@@ -1,13 +1,13 @@
 # ############################################################
 #
-#  Window contact detected open window
+#  Open window detected
 #
 # ############################################################
 
 # ############################################################
-#  Window contact detected open window in the kitchen
+#  Open window detected in the kitchen
 # ############################################################
-- alias: Window contact detected open window in the kitchen
+- alias: Open window detected in the kitchen
   id: "01a17ee3-dd07-70cd-8ebd-1bda0b0f7f27"
   description: "This automation handles L2 TRV open window conditions"
   mode: single
