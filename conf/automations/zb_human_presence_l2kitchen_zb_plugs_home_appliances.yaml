@@ -27,8 +27,8 @@
       #   entity_id: switch.zb_plug_l2_kitchen_dishwasher
       # - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_kettle
-    - action: switch.turn_on
-      entity_id: switch.zb_plug_l2_kitchen_microwave
+    # - action: switch.turn_on
+    #   entity_id: switch.zb_plug_l2_kitchen_microwave
 # ############################################################
 #  END OF FILE
 # ############################################################
