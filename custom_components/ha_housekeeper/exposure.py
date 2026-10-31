@@ -2,7 +2,11 @@
 
 Only reads, nothing is stored and nothing is changed. Only metadata leaves this module: entity ids,
 names, the assistant and counts. Config entries are read through a whitelist (the entity filter of
-a bridge and nothing else), webhooks are only counted per integration. A webhook id or url never
+a bridge and nothing else), of Nabu Casa only whether Alexa and Google are switched on, per assistant only whether new entities
+are exposed by themselves, per entity only whether Google may open it without a PIN, of a
+conversation agent or the MCP server only whether it may control Home Assistant (never prompt,
+model or key), webhooks are
+only counted per integration. A webhook id or url never
 appears in a result, not even shortened: whoever knows it can call the webhook.
 """
 
@@ -19,6 +23,8 @@ from .payloads import ExposureResult
 
 ASSISTANTS = ("conversation", "cloud.alexa", "cloud.google_assistant")
 CLOUD_ASSISTANTS = ("cloud.alexa", "cloud.google_assistant")
+# The Nabu Casa switch of a cloud assistant: off means it reaches nothing, whatever is exposed.
+CLOUD_SWITCHES = {"cloud.alexa": "alexa_enabled", "cloud.google_assistant": "google_enabled"}
 BRIDGE_DOMAINS = ("homekit",)
 # The only keys read from the options of a bridge: the entity filter, never ports, codes or pairing data.
 FILTER_KEYS = (
@@ -29,8 +35,24 @@ FILTER_KEYS = (
     "exclude_entities",
     "exclude_entity_globs",
 )
-SENSITIVE_DOMAINS = ("alarm_control_panel", "lock", "person", "device_tracker")
-SENSITIVE_COVERS = ("garage", "gate")
+SENSITIVE_DOMAINS = (
+    "alarm_control_panel",
+    "lock",
+    "person",
+    "device_tracker",
+    "camera",
+    "siren",
+    "valve",
+)
+SENSITIVE_COVERS = ("garage", "gate", "door")
+# What Google Assistant only opens or disarms after a PIN, unless the entity is set to skip it.
+GOOGLE = "cloud.google_assistant"
+GOOGLE_SECURE_DOMAINS = ("lock", "alarm_control_panel", "cover")
+# The option of an LLM integration that hands it the Assist API: the Assist exposures go to the model.
+LLM_OPTION = "llm_hass_api"
+LLM_ASSIST = "assist"
+LLM_LOCAL_DOMAINS = ("ollama", "llama_cpp")  # models that run in the house
+LLM_EXTERNAL_DOMAINS = ("mcp_server",)  # programs that connect from outside
 DIAGNOSTIC_CATEGORIES = ("diagnostic", "config")
 STALE_STATUSES = ("disabled", "orphaned")
 ITEM_LIMIT = 200
@@ -58,6 +80,20 @@ def normalize_alias(alias: str) -> str:
     return "".join(ch for ch in text if ch.isalnum())
 
 
+def _cloud_prefs(hass: HomeAssistant) -> Any:
+    """The Nabu Casa preferences, or None when the cloud is not loaded or they cannot be read."""
+    cloud = hass.data.get("cloud")
+    return getattr(getattr(cloud, "client", None), "prefs", None)
+
+
+def _cloud_switch_off(prefs: Any, name: str) -> bool:
+    """True only when the switch reads as a plain False; anything unreadable keeps the check."""
+    try:
+        return getattr(prefs, CLOUD_SWITCHES[name]) is False
+    except Exception:  # noqa: BLE001 - another cloud version: check as before, never assume off
+        return False
+
+
 def _assistant_exposure(hass: HomeAssistant, entity_ids: list[str]) -> dict[str, dict[str, Any]]:
     """Per assistant: its status and the entities it may use. A source that fails is "unavailable"."""
     result: dict[str, dict[str, Any]] = {}
@@ -65,9 +101,13 @@ def _assistant_exposure(hass: HomeAssistant, entity_ids: list[str]) -> dict[str,
         from homeassistant.components.homeassistant.exposed_entities import async_should_expose
     except Exception:  # noqa: BLE001 - another Home Assistant version without this module
         return {name: {"status": "unavailable", "exposed": []} for name in ASSISTANTS}
+    prefs = _cloud_prefs(hass)
     for name in ASSISTANTS:
         if name in CLOUD_ASSISTANTS and "cloud" not in hass.config.components:
             result[name] = {"status": "inactive", "exposed": []}
+            continue
+        if name in CLOUD_ASSISTANTS and prefs is not None and _cloud_switch_off(prefs, name):
+            result[name] = {"status": "off", "exposed": []}
             continue
         try:
             exposed = [eid for eid in entity_ids if async_should_expose(hass, name, eid)]
@@ -76,6 +116,76 @@ def _assistant_exposure(hass: HomeAssistant, entity_ids: list[str]) -> dict[str,
             continue
         result[name] = {"status": "ok", "exposed": exposed}
     return result
+
+
+def _expose_new(hass: HomeAssistant, assistants: dict[str, dict[str, Any]]) -> dict[str, bool]:
+    """Per working cloud assistant: whether new entities are exposed by themselves. Unreadable is
+    left out. Assist is not asked: Home Assistant exposes new entities to it by default."""
+    result: dict[str, bool] = {}
+    try:
+        from homeassistant.components.homeassistant.const import DATA_EXPOSED_ENTITIES
+
+        store = hass.data[DATA_EXPOSED_ENTITIES]
+    except Exception:  # noqa: BLE001 - another Home Assistant version or not set up
+        return result
+    for name in CLOUD_ASSISTANTS:
+        if assistants.get(name, {}).get("status") != "ok":
+            continue
+        try:
+            result[name] = store.async_get_expose_new_entities(name) is True
+        except Exception:  # noqa: BLE001
+            continue
+    return result
+
+
+def _google_without_pin(hass: HomeAssistant, assistants: dict[str, dict[str, Any]]) -> list[str]:
+    """Entities Google may open or disarm without asking for the PIN. Only the switch is read."""
+    if assistants.get(GOOGLE, {}).get("status") != "ok":
+        return []
+    try:
+        from homeassistant.components.homeassistant.exposed_entities import (
+            async_get_entity_settings,
+        )
+    except Exception:  # noqa: BLE001
+        return []
+    found = []
+    for eid in assistants[GOOGLE]["exposed"]:
+        if eid.split(".", 1)[0] not in GOOGLE_SECURE_DOMAINS:
+            continue
+        try:
+            options = async_get_entity_settings(hass, eid).get(GOOGLE) or {}
+        except Exception:  # noqa: BLE001 - never report a failed read as "without PIN"
+            continue
+        if options.get("disable_2fa") is True:
+            found.append(eid)
+    return found
+
+
+def _uses_assist(value: Any) -> bool:
+    if isinstance(value, str):
+        return value == LLM_ASSIST
+    return isinstance(value, list | tuple) and LLM_ASSIST in value
+
+
+def _llm_agents(hass: HomeAssistant) -> list[dict[str, str]]:
+    """Enabled integrations whose agent may control Home Assistant through Assist. Only that one
+    option is read, of the entry and of its subentries; local models are left out."""
+    agents = []
+    for entry in hass.config_entries.async_entries():
+        if entry.disabled_by is not None or entry.domain in LLM_LOCAL_DOMAINS:
+            continue
+        options = [entry.options] + [sub.data for sub in getattr(entry, "subentries", {}).values()]
+        if any(isinstance(o, Mapping) and _uses_assist(o.get(LLM_OPTION)) for o in options):
+            target = "external" if entry.domain in LLM_EXTERNAL_DOMAINS else "cloud"
+            agents.append(
+                {
+                    "entry_id": entry.entry_id,
+                    "domain": entry.domain,
+                    "title": entry.title,
+                    "target": target,
+                }
+            )
+    return agents
 
 
 def _bridges(hass: HomeAssistant) -> list[dict[str, Any]]:
@@ -112,8 +222,12 @@ def collect(hass: HomeAssistant, entity_ids: list[str]) -> dict[str, Any]:
     live = {entry.domain for entry in hass.config_entries.async_entries()} | set(
         hass.config.components
     )
+    assistants = _assistant_exposure(hass, entity_ids)
     return {
-        "assistants": _assistant_exposure(hass, entity_ids),
+        "assistants": assistants,
+        "expose_new": _expose_new(hass, assistants),
+        "google_without_pin": _google_without_pin(hass, assistants),
+        "llm_agents": _llm_agents(hass),
         "bridges": _bridges(hass),
         "webhooks": _webhook_counts(hass),
         "live_domains": sorted(live),
@@ -135,6 +249,13 @@ def _sensitive(info: dict[str, Any]) -> bool:
     if domain in SENSITIVE_DOMAINS:
         return True
     return domain == "cover" and info.get("device_class") in SENSITIVE_COVERS
+
+
+def _google_secure(info: dict[str, Any]) -> bool:
+    """Locks, alarm panels and doors, garage doors and gates: Google asks for a PIN before opening."""
+    if info["domain"] in ("lock", "alarm_control_panel"):
+        return True
+    return info["domain"] == "cover" and info.get("device_class") in SENSITIVE_COVERS
 
 
 def evaluate(
@@ -183,6 +304,49 @@ def evaluate(
         found, total = items(rule)
         if total:
             findings.append({"kind": kind, "level": level, "count": total, "items": found})
+
+    no_pin = sorted(
+        eid
+        for eid in raw.get("google_without_pin", [])
+        if eid in entities and eid not in ignored and _google_secure(entities[eid])
+    )
+    if no_pin:
+        findings.append(
+            {
+                "kind": "google_without_pin",
+                "level": "warn",
+                "count": len(no_pin),
+                "items": [
+                    {"entity_id": eid, "name": names[eid], "assistants": sorted(by_entity[eid])}
+                    for eid in no_pin[:ITEM_LIMIT]
+                ],
+            }
+        )
+    auto = [
+        name
+        for name in CLOUD_ASSISTANTS
+        if raw.get("expose_new", {}).get(name)
+        and raw["assistants"].get(name, {}).get("status") == "ok"
+    ]
+    if auto:
+        findings.append(
+            {"kind": "auto_expose", "level": "hint", "count": len(auto), "assistants": auto}
+        )
+
+    assist = next(a for a in assistants if a["id"] == "conversation")
+    agents = raw.get("llm_agents", [])
+    if agents and assist["status"] == "ok" and assist["exposed"]:
+        findings.append(
+            {
+                "kind": "llm_exposed",
+                "level": "hint",
+                "count": len(agents),
+                "reach": assist["exposed"],
+                "integrations": sorted(
+                    agents, key=lambda a: (a["title"].casefold(), a["entry_id"])
+                ),
+            }
+        )
 
     for name in ASSISTANTS:
         if raw["assistants"].get(name, {}).get("status") != "ok":
@@ -250,6 +414,7 @@ def exposure(hass: HomeAssistant, snapshot: dict[str, Any]) -> ExposureResult:
     ignored = {f["object_id"] for f in snapshot.get("findings", []) if f.get("ignored")} | {
         item["object_id"]
         for item in snapshot["objects"]
-        if item["object_type"] == "entity" and IGNORE_LABEL in (item.get("labels") or [])
+        if item["object_type"] == "entity"
+        and (IGNORE_LABEL in (item.get("labels") or []) or item.get("excepted"))
     }
     return {"available": True, **evaluate(collect(hass, list(entities)), entities, ignored)}  # type: ignore[typeddict-item]

@@ -5,8 +5,10 @@ Entities:
 * ``disable_entity`` quarantines an entity by disabling it. Nothing is deleted, history and
   statistics are never touched, and the step can be undone while the entity is unchanged.
 * ``remove_entity`` removes the registry entry of an entity that has been in quarantine for at
-  least ``QUARANTINE_DAYS``. A Home Assistant backup is created first and must complete, and the
-  entry is stored in the journal so that it can be restored.
+  least ``QUARANTINE_DAYS``, or right away when its loaded integration no longer provides it
+  (disabling such an entity would change nothing; within the first day the person confirms it
+  is gone). A Home Assistant backup is created first
+  and must complete, and the entry is stored in the journal so that it can be restored.
 
 Devices (same quarantine and backup rules; removing a device also removes its entities):
 
@@ -56,6 +58,7 @@ from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import label_registry as lr
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.util.file import write_utf8_file_atomic
 from homeassistant.util.yaml import dump, parse_yaml
 
@@ -95,7 +98,7 @@ from .cleanup import (
     registry_fingerprint,
     trim_is_plain,
 )
-from .const import DOMAIN, MAX_FILE_BACKUP, MAX_PLAN_SNAPSHOTS
+from .const import DOMAIN, MAX_FILE_BACKUP, MAX_PLAN_SNAPSHOTS, SIGNAL_PLAN_ACTIVITY
 from .db_health import (
     BACKUP_SPACE_SHARE,
     DISK_STOP_BYTES,
@@ -506,6 +509,7 @@ class CleanupRunner:
             "done": 0,
             "total": len(saved[2]),
         }
+        async_dispatcher_send(self.hass, SIGNAL_PLAN_ACTIVITY)
         self._task = self.hass.async_create_background_task(
             self._run(plan, saved[2], user_id), "HA Housekeeper cleanup run"
         )
@@ -587,6 +591,7 @@ class CleanupRunner:
                 "done": 0,
                 "total": 0,
             }
+            async_dispatcher_send(self.hass, SIGNAL_PLAN_ACTIVITY)
             journal.save()
 
     async def _others_idle(self, plan: dict[str, Any], writes_recorder: bool) -> bool:
@@ -633,7 +638,7 @@ class CleanupRunner:
         if not recorder_ready(self.hass):
             return True
         try:
-            files = await self.hass.async_add_executor_job(database_files, self.hass)
+            files = await self.hass.async_add_executor_job(database_files, self.hass, False)
         except Exception:
             return True
         free = files.get("disk_free")

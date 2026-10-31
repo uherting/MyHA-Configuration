@@ -11,7 +11,9 @@ from datetime import date
 from typing import Any
 
 from .cleanup import USAGE_RELATIONS
+from .const import IGNORE_LABEL
 from .criteria import MISSED_MIN, MISSED_RATE, CriteriaStore
+from .inventory import marked_keys
 
 DIMENSIONS = (
     "integrity",
@@ -140,13 +142,23 @@ def build(
         if finding["classification"] == "broken_reference" and not finding.get("ignored"):
             broken[finding["object_id"]] = broken.get(finding["object_id"], 0) + 1
     stale: dict[str, set[str]] = {}
+    marked = marked_keys(snapshot["objects"])
     for edge in snapshot["edges"]:
         if edge["relation"] in USAGE_RELATIONS and edge["target"].startswith("entity:"):
             target = objects.get(edge["target"][7:])
-            if target and target["status"] in STALE:
+            if (
+                target
+                and target["status"] in STALE
+                and target.get("reason") != "integration_disabled"  # switched off on purpose
+                and f"entity:{target['object_id']}" not in marked
+                and IGNORE_LABEL not in (target.get("labels") or [])
+                and not target.get("excepted")
+            ):
                 stale.setdefault(edge["source"], set()).add(target["object_id"])
     clashes: dict[str, list[dict[str, Any]]] = {}
     for item in conflict_items:
+        if item.get("ignored"):
+            continue
         for automation in item["automations"]:
             clashes.setdefault(automation["entity_id"], []).append(item)
     callers = _script_callers(snapshot, actions_of, script_actions_of)
@@ -161,7 +173,8 @@ def build(
         findings = {f["kind"]: f for f in (row or {}).get("findings", [])}
         dims: dict[str, dict[str, Any]] = {}
 
-        count, gone = broken.get(entity_id, 0), stale.get(f"{kind}:{entity_id}", set())
+        count = broken.get(entity_id, 0)
+        gone = stale.get(f"{kind}:{entity_id}", set()) if obj["status"] != "disabled" else set()
         if count:
             dims["integrity"] = _dimension("red", {"key": "broken", "count": count})
         elif gone:

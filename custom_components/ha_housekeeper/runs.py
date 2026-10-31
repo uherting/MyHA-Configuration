@@ -108,8 +108,10 @@ def aggregate(
                 counters[DUR_MAX] = max(counters[DUR_MAX], millis)
                 counters[DUR_N] += 1
         step = head.get("last_step")
-        if head.get("script_execution") in ("error", "failed_conditions") and isinstance(step, str):
-            steps = day.setdefault("s", {})
+        execution = head.get("script_execution")
+        if execution in ("error", "failed_conditions", "aborted") and isinstance(step, str):
+            # An aborted run keeps its step apart: a condition inside the actions ends this way.
+            steps = day.setdefault("a" if execution == "aborted" else "s", {})
             if step in steps or len(steps) < MAX_STEPS_PER_DAY:
                 steps[step] = steps.get(step, 0) + 1
         seen.append(head["run_id"])
@@ -235,11 +237,12 @@ def _clean_item(item: Any) -> dict[str, Any] | None:
             and all(isinstance(n, int) and n >= 0 for n in counters)
         ):
             clean: dict[str, Any] = {"c": counters}
-            steps = entry.get("s")
-            if isinstance(steps, dict):
-                clean["s"] = {
-                    k: v for k, v in steps.items() if isinstance(k, str) and isinstance(v, int)
-                }
+            for field in ("s", "a"):
+                steps = entry.get(field)
+                if isinstance(steps, dict):
+                    clean[field] = {
+                        k: v for k, v in steps.items() if isinstance(k, str) and isinstance(v, int)
+                    }
             if entry.get("lo"):
                 clean["lo"] = 1
             days[day] = clean

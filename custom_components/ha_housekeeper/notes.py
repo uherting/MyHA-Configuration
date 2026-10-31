@@ -24,7 +24,7 @@ TITLE_MAX = 80
 NOTE_MAX = 500
 TARGET_MAX = 300
 REF_MAX = 64
-SOURCES = ("me", "housekeeper")
+SOURCES = ("me", "housekeeper", "agent")
 FUTURE_SLACK = timedelta(days=1)
 
 
@@ -116,6 +116,13 @@ class NoteStore:
             item.setdefault("ref", "")
         self._save()
         return item_id
+
+    def restore(self, item_id: str, prev: dict[str, Any] | None) -> None:
+        """Put an entry back as it was, or remove it when it did not exist before."""
+        self.items = [i for i in self.items if i["id"] != item_id]
+        if prev is not None:
+            self.items.append(prev)  # type: ignore[arg-type]
+        self._save()
 
     def delete(self, item_id: str) -> None:
         before = len(self.items)

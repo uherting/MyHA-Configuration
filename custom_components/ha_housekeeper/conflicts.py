@@ -22,6 +22,7 @@ from .policy_rules import _entity_ids
 from .runs import RUNS
 
 WINDOW_DAYS = 7
+KEY_PREFIX = "conflict."  # keys of decisions about a conflict, next to those about findings
 CONFIRM_DAYS = 3  # days of shared activity from which a finding counts as confirmed
 LOOP_MIN_RUNS = 20  # runs per day by every automation of a loop that look like a loop
 MAX_DEPTH = 6  # automations a loop may pass through
@@ -52,7 +53,29 @@ VALUE_KEY = {
     "set_percentage": "percentage",
     "set_preset_mode": "preset_mode",
 }
-RESULT = {"turn_on": "on", "turn_off": "off"}
+RESULT = {
+    "turn_on": "on",
+    "turn_off": "off",
+    "media_play": "playing",
+    "media_pause": "paused",
+    "media_stop": "idle",
+}
+# Services that leave the state of the entity as it is.
+UNCHANGING = {
+    "snapshot",
+    "press",
+    "record",
+    "volume_up",
+    "volume_down",
+    "volume_mute",
+    "volume_set",
+    "media_next_track",
+    "media_previous_track",
+    "media_seek",
+    "send_command",
+    "locate",
+}
+TURNS_OFF = {"media_player", "light", "switch", "fan", "climate"}  # turn_off always ends in "off"
 QUIET_DOMAINS = {"notify", "persistent_notification", "tts", "logbook", "system_log", "script"}
 TRIGGER_KINDS = {"state", "numeric_state"}
 CLOCK = re.compile(r"^(\d{1,2}):(\d{2})(?::\d{2})?$")
@@ -63,15 +86,29 @@ def _kind(trigger: dict[str, Any]) -> str:
     return str(trigger.get("platform") or trigger.get("trigger") or "")
 
 
+def _range(trigger: dict[str, Any]) -> tuple[float, float] | None:
+    """The open range (above, below) of a numeric trigger; ``None`` unless it is plain numbers."""
+    if trigger.get("attribute") or trigger.get("value_template"):
+        return None
+    bounds = (trigger.get("above", float("-inf")), trigger.get("below", float("inf")))
+    if all(isinstance(b, (int, float)) and not isinstance(b, bool) for b in bounds):
+        return bounds
+    return None
+
+
 def triggers_of(item: dict[str, Any]) -> dict[str, list[Any]]:
-    """Entity id -> the ``to`` values of the state triggers on it (``None`` when unfiltered)."""
+    """Entity id -> the ``to`` values (a list unpacked; numeric triggers: their range) of the triggers on it, ``None`` when unfiltered."""
     found: dict[str, list[Any]] = {}
     for trigger in item.get("triggers") or []:
         if not isinstance(trigger, dict) or _kind(trigger) not in TRIGGER_KINDS:
             continue
-        to = trigger.get("to") if _kind(trigger) == "state" else None
+        to = trigger.get("to") if _kind(trigger) == "state" else _range(trigger)
+        if isinstance(to, list) and to and all(isinstance(v, str) for v in to):
+            values = to
+        else:
+            values = [to if isinstance(to, (str, tuple)) else None]
         for entity_id in _entity_ids(trigger):
-            found.setdefault(entity_id, []).append(to if isinstance(to, str) else None)
+            found.setdefault(entity_id, []).extend(values)
     return found
 
 
@@ -162,6 +199,20 @@ def _stage(days: int) -> str:
     return "confirmed" if days >= CONFIRM_DAYS else "observed" if days else "static"
 
 
+def _can_fire_together(first: list[Any], second: list[Any]) -> bool:
+    """Whether two state triggers on one entity can fire at the same moment."""
+    if None in first or None in second:  # unfiltered, list or open numeric_state: may overlap
+        return True
+    return any(_meet(one, other) for one in first for other in second)
+
+
+def _meet(one: Any, other: Any) -> bool:
+    """Whether two ``to`` values or numeric ranges can hold at once."""
+    if isinstance(one, tuple) and isinstance(other, tuple):
+        return one[1] > other[0] and other[1] > one[0]
+    return one == other or isinstance(one, tuple) != isinstance(other, tuple)
+
+
 def opposing(autos: list[dict[str, Any]], days: dict[str, dict[str, Any]], today: date):
     """Pairs that command one entity in opposite ways while they can fire together."""
     by_entity: dict[str, list[tuple[dict[str, Any], tuple]]] = {}
@@ -178,7 +229,12 @@ def opposing(autos: list[dict[str, Any]], days: dict[str, dict[str, Any]], today
                 if (*pair, entity_id) in seen:
                     continue
                 reason = None
-                shared = sorted(set(triggers_of(first)) & set(triggers_of(second)))
+                first_tos, second_tos = triggers_of(first), triggers_of(second)
+                shared = sorted(
+                    entity
+                    for entity in set(first_tos) & set(second_tos)
+                    if _can_fire_together(first_tos[entity], second_tos[entity])
+                )
                 if shared:
                     reason = {"reason": "trigger", "detail": shared[0]}
                 else:
@@ -205,14 +261,30 @@ def opposing(autos: list[dict[str, Any]], days: dict[str, dict[str, Any]], today
                 }
 
 
+def key_of(item: dict[str, Any]) -> str:
+    """What a decision about a conflict is stored under: kind, entity and the automations, not the stage."""
+    autos = sorted(a["entity_id"] for a in item["automations"])
+    return f"{KEY_PREFIX}{item['kind']}|{item.get('entity_id', '')}|{'|'.join(autos)}"
+
+
 def _brief(item: dict[str, Any]) -> dict[str, str]:
     return {"entity_id": item["entity_id"], "name": item.get("name") or item["entity_id"]}
 
 
-def _fires(to: Any, service: str, own: bool) -> bool:
-    """Whether a command can make a state trigger with this ``to`` fire."""
+def _fires(to: Any, service: str, own: bool, entity: str = "") -> bool | None:
+    """Whether a command can make a state trigger with this ``to`` fire; ``None`` if unknown."""
+    if service in UNCHANGING:
+        return False
+    if service in VALUE_KEY or service == "toggle":
+        return True
     result = RESULT.get(service)
-    if to in ("on", "off") and result is not None:
+    if result is None:
+        return None if service else True  # "" is a group or helper following its source
+    if service == "turn_off" and isinstance(to, str) and entity.split(".")[0] in TURNS_OFF:
+        return to == "off" and not own
+    if service in ("turn_on", "turn_off") and to not in ("on", "off"):
+        return True
+    if isinstance(to, str):
         return result == to and not own
     return True
 
@@ -252,19 +324,21 @@ def loops(
     commands = {item["entity_id"]: commands_of(item) for item in autos}
     seen: set[frozenset[str]] = set()
     for start in autos:
-        queue: deque[tuple[str, str, list[str], list[dict[str, Any]]]] = deque(
-            (entity_id, service, [entity_id], [start])
+        queue: deque[tuple[str, str, list[str], list[dict[str, Any]], bool]] = deque(
+            (entity_id, service, [entity_id], [start], True)
             for entity_id, _, service, _ in commands[start["entity_id"]]
         )
         visited: set[tuple[str, str]] = set()
         while queue:
-            entity, service, path, chain = queue.popleft()
+            entity, service, path, chain, sure = queue.popleft()
             if (entity, service) in visited:
                 continue
             visited.add((entity, service))
             for other, to in triggered.get(entity, []):
-                if not _fires(to, service, other is chain[-1]):
+                fires = _fires(to, service, other is chain[-1], entity)
+                if fires is False:
                     continue
+                known = sure and fires is True
                 if other is start:
                     key = frozenset(i["entity_id"] for i in chain)
                     if key not in seen:
@@ -274,17 +348,17 @@ def loops(
                         )
                         yield {
                             "kind": "loop",
-                            "stage": _stage(active),
+                            "stage": _stage(active) if known else "static",
                             "days": active,
                             "entities": path,
                             "automations": [_brief(i) for i in chain],
                         }
                 elif len(chain) < MAX_DEPTH and other not in chain:
                     for nxt, _, nservice, _ in commands[other["entity_id"]]:
-                        queue.append((nxt, nservice, [*path, nxt], [*chain, other]))
+                        queue.append((nxt, nservice, [*path, nxt], [*chain, other], known))
             for nxt in follow.get(entity, ()):
                 if nxt not in path:
-                    queue.append((nxt, "", [*path, nxt], chain))
+                    queue.append((nxt, "", [*path, nxt], chain, sure))
 
 
 def find(
@@ -298,5 +372,7 @@ def find(
     days = {key: (value.get("days") or {}) for key, value in runs.items()}
     items = [*opposing(live, days, today), *loops(live, edges, days, today)]
     rank = {"confirmed": 0, "observed": 1, "static": 2}
+    for item in items:
+        item["key"] = key_of(item)
     items.sort(key=lambda i: (rank[i["stage"]], i["kind"], i["automations"][0]["name"]))
     return {"checked": len(live), "total": len(items), "items": items[:LIMIT]}

@@ -22,11 +22,11 @@ NOTIFICATION_ID = f"{DOMAIN}_broken"
 TEXTS = {
     "de": (
         "HA Housekeeper: neue defekte Referenzen",
-        "{count} neue defekte Referenz(en): {names}. [Befunde öffnen](/{url}?view=findingsNav&filter=broken_reference)",
+        "{count} neue defekte Referenz(en): {names}. [Alle defekten Referenzen öffnen](/{url}?view=findingsNav&filter=broken_reference)",
     ),
     "en": (
         "HA Housekeeper: new broken references",
-        "{count} new broken reference(s): {names}. [Open findings](/{url}?view=findingsNav&filter=broken_reference)",
+        "{count} new broken reference(s): {names}. [Open all broken references](/{url}?view=findingsNav&filter=broken_reference)",
     ),
 }
 

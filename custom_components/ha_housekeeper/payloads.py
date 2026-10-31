@@ -22,7 +22,8 @@ class Reply(TypedDict, total=False):
 
 class ExposureAssistant(TypedDict):
     id: str
-    status: str  # ok, inactive or unavailable (never "not exposed")
+    # ok, inactive, off (switched off in Nabu Casa) or unavailable (never "not exposed")
+    status: str
     exposed: int
 
 
@@ -38,12 +39,22 @@ class ExposureItem(TypedDict):
     assistants: NotRequired[list[str]]
 
 
+class ExposureIntegration(TypedDict):
+    entry_id: str
+    domain: str
+    title: str
+    target: str  # cloud or external
+
+
 class ExposureFinding(TypedDict):
     kind: str
     level: str
     count: int
     items: NotRequired[list[ExposureItem]]
     assistant: NotRequired[str]
+    assistants: NotRequired[list[str]]
+    integrations: NotRequired[list[ExposureIntegration]]
+    reach: NotRequired[int]
     alias: NotRequired[str]
     domain: NotRequired[str]
 
@@ -73,6 +84,7 @@ class ReliabilityRow(TypedDict):
     reauth: bool
     entities: int
     permanent: int
+    dead: bool
     availability: float | None
     shared_outages: int
     longest_outage: int
@@ -80,6 +92,9 @@ class ReliabilityRow(TypedDict):
     last_disruption: dict[str, Any] | None
     affected_total: int
     affected: list[dict[str, Any]]
+    period_total: int
+    periods: list[dict[str, Any]]
+    days: list[dict[str, Any]]
     previous_availability: NotRequired[float | None]
     delta: NotRequired[float | None]
 
@@ -91,6 +106,7 @@ class ReliabilityResult(Reply):
     window_days: int
     coverage: ReliabilityCoverage
     comparison: dict[str, bool]
+    keep_days: int | None
     stale: bool
     age_seconds: int
     computed_at: float
@@ -115,7 +131,7 @@ class RunsRow(TypedDict, total=False):
 
 class RunsResult(TypedDict, total=False):
     items: list[RunsRow]
-    conflicts: dict[str, Any]  # checked, total, items: opposing commands and possible loops
+    conflicts: dict[str, Any]  # checked, total (open), known, items with a key
     since: str | None
     window_days: int
     total: int
@@ -124,6 +140,7 @@ class RunsResult(TypedDict, total=False):
 
 
 class StormsResult(Reply, total=False):
+    keep_days: int | None
     stale: bool
     age_seconds: int
     computed_at: float
@@ -147,11 +164,15 @@ class DbHealthResult(Reply, total=False):
     computed_at: float
     supported: bool
     dialect: str
+    estimated: bool  # MariaDB/MySQL: the server estimates the size
     db_bytes: int | None
     wal_bytes: int | None
     growth: dict[str, Any]
     restart_gaps: int
     integrity: dict[str, Any]
+    tables: list[dict[str, Any]]  # the largest tables: name, bytes (data and indexes)
+    tables_total: int
+    tables_at: float | None  # when the table sizes were measured (epoch seconds)
 
 
 class StatisticsLastResult(TypedDict):
@@ -168,7 +189,7 @@ class PolicyItem(TypedDict):
     name: str
     key: str  # the key for the ignore list
     ignored: bool
-    by: str | None  # "label", "user" or None
+    by: str | None  # "label", "rule", "user" or None
     also: NotRequired[list[str]]  # duplicate_name: the other entities with the same name
     expected: NotRequired[str]  # naming_scheme: the prefix the id should start with
     rate: NotRequired[int]  # state_rate: state changes per day
@@ -271,3 +292,47 @@ class EntityRecorderResult(TypedDict):
     short: NotRequired[RecorderSpan]
     long: NotRequired[RecorderSpan]
     keep_days: NotRequired[int | None]
+
+
+class EntitySpaceRanking(TypedDict, total=False):
+    """Space per entity: the measured lengths spread over the size each table reports."""
+
+    entities: list[
+        dict[str, Any]
+    ]  # entity_id, rows, states_bytes, variants, shared, attrs_bytes, bytes
+    entities_total: int
+    loose_states_bytes: int  # states without an entity
+    loose_attrs_bytes: int  # attribute rows no state uses
+    loose_attrs_rows: int
+    states_table: int | None
+    attrs_table: int | None
+    scaled: bool  # False: the tables report no size, the numbers are the lengths alone
+    estimated: bool
+    computed_at: float  # the finished result only
+    took_ms: int
+    state: str  # done, stopped or failed
+    read_share: float
+
+
+class EntitySpaceResult(TypedDict):
+    """What ``entity_space`` sends: the last finished measurement and one that is running."""
+
+    available: bool
+    running: bool
+    result: EntitySpaceRanking | None
+    progress: NotRequired[dict[str, Any]]  # share, phase, stopping, elapsed, left
+    interim: NotRequired[EntitySpaceRanking]
+
+
+class EntityAttributesResult(TypedDict):
+    """What ``entity_attributes`` sends: the attribute keys of one entity by their length."""
+
+    available: bool
+    busy: bool
+    entity_id: NotRequired[str]
+    found: NotRequired[bool]
+    total: NotRequired[int]  # attribute rows of the entity
+    read: NotRequired[int]  # of them read, the newest first
+    chars: NotRequired[int]
+    keys: NotRequired[list[dict[str, Any]]]  # key, chars, share, rows, changes, alone, driver
+    rest: NotRequired[dict[str, int]]

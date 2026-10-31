@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import hashlib
 import logging
 import time
@@ -12,12 +11,13 @@ from typing import Any
 
 from homeassistant.components import frontend, panel_custom
 from homeassistant.components.http import StaticPathConfig
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP, Platform
+from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import CoreState, HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import (
     async_call_later,
+    async_track_point_in_utc_time,
     async_track_state_change_event,
     async_track_time_interval,
 )
@@ -58,10 +58,13 @@ from .inventory import InventoryScanner
 from .issues import async_clear_issues
 from .maintenance import recorder_costs
 from .outage_levels import thresholds_from_options
+from .queries import REFRESH_AGE, REFRESH_TICK, next_reply
 from .runs import run_key
+from .runtime import HousekeeperConfigEntry
 from .scan_coverage import RETRY_LIMIT, RETRY_MINUTES, retryable_gaps
 from .scan_trigger import ScanRefused
 from .services import async_register_services
+from .start_times import integration_rows, process_started
 from .system_usage import system_light
 from .watch import UPDATE_ENTITIES
 from .websocket_api import async_register as async_register_websocket
@@ -70,8 +73,7 @@ _LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-PLATFORMS = [Platform.SENSOR, Platform.EVENT, Platform.BUTTON]
-REPLY_PAUSE = 20  # seconds between two prepared views
+PLATFORMS = [Platform.SENSOR, Platform.EVENT, Platform.BUTTON, Platform.SWITCH, Platform.NUMBER]
 
 
 async def _async_initial_scan(scanner: InventoryScanner) -> None:
@@ -90,7 +92,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) -> bool:
     """Set up HA Housekeeper from a config entry."""
     scanner = InventoryScanner(hass)
     # Home Assistant reports "started" while slow integrations are still adding entities, so scans
@@ -98,6 +100,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     booting = hass.state is not CoreState.running
     if booting:
         scanner.begin_boot()
+    # What the start took is recorded once Home Assistant runs and the warm-up is over; where the process
+    # start cannot be read, the set-up of this entry is the best beginning there is.
+    boot: dict[str, Any] = {
+        "process": await hass.async_add_executor_job(process_started) if booting else None,
+        "began": time.time(),
+        "record": False,
+        "mono": 0.0,
+        "epoch": 0.0,
+    }
+    if booting:
+        scanner.boot_anchor = boot["process"] or boot["began"]
     levels = thresholds_from_options(entry.options)
     scanner.outage_info_minutes = levels[CONF_OUTAGE_INFO_MINUTES]
     scanner.outage_low_hours = levels[CONF_OUTAGE_LOW_HOURS]
@@ -117,7 +130,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     scanner.watch_hours = entry.options.get(CONF_WATCH_HOURS, DEFAULT_WATCH_HOURS)
     scanner.monitor.retention_days = scanner.history.retention_days
     await scanner.async_initialize()
-    hass.data[DOMAIN]["scanner"] = scanner
+    entry.runtime_data = scanner
 
     frontend_dir = Path(__file__).parent / "frontend"
     bundle = frontend_dir / "ha-housekeeper-panel.js"
@@ -177,9 +190,47 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Scanning while Home Assistant is still starting would classify entities of
     # integrations that have not finished loading as orphaned and persist that.
     # A final scan follows once the warm-up after "started" is over.
+    final = {"done": False}
+
     @callback
     def _final_scan(_: Any) -> None:
+        if final["done"]:
+            return
+        final["done"] = True
+        if boot["record"]:
+            boot["record"] = False
+            _record_start()
         entry.async_create_background_task(hass, _scan(), "HA Housekeeper final startup scan")
+
+    def _record_start() -> None:
+        anchor = boot["process"] or boot["began"]
+        boot_s = max(0.0, boot["epoch"] - anchor)
+        settled = scanner.settled_at
+        loaded_s = None if settled is None else boot_s + max(0.0, settled - boot["mono"])
+        began = next((e for e in reversed(scanner.events.events) if e.get("kind") == "start"), {})
+        try:
+            scanner.starts.record(
+                datetime.now(UTC),
+                HA_VERSION,
+                boot_s,
+                loaded_s,
+                "process" if boot["process"] else "housekeeper",
+                integration_rows(hass),
+                scanner.history.retention_days,
+                began.get("down_seconds"),
+                bool(began.get("unclean")),
+            )
+        except Exception:
+            _LOGGER.exception("The time of this start could not be recorded")
+
+    # The warm-up ends early once no integration is loading any more (plus a buffer): look every few seconds.
+    @callback
+    def _watch_warmup(_: Any) -> None:
+        if final["done"]:
+            return
+        scanner.check_warmup()
+        if not scanner.warming_up:
+            _final_scan(None)
 
     @callback
     def _start_initial_scan(_: HomeAssistant) -> None:
@@ -187,9 +238,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if not hass.data[DOMAIN].get("start_logged"):
             hass.data[DOMAIN]["start_logged"] = True
             scanner.events.record_start(datetime.now(UTC))
+            if booting:
+                boot.update(record=True, mono=time.monotonic(), epoch=time.time())
         if booting:
             scanner.begin_warmup(WARMUP_SECONDS)
             entry.async_on_unload(async_call_later(hass, WARMUP_SECONDS + 5, _final_scan))
+            entry.async_on_unload(
+                async_track_time_interval(hass, _watch_warmup, timedelta(seconds=5))
+            )
         entry.async_create_background_task(hass, _scan(), "HA Housekeeper initial inventory scan")
 
     # Changed thresholds only affect the findings, so a reload with a fresh scan suffices.
@@ -206,6 +262,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     @callback
     def _heartbeat(_: Any) -> None:
         scanner.events.beat(datetime.now(UTC))
+        if scanner.mcp.expire() and scanner.snapshot:
+            scanner.snapshot["meta"]["mcp"] = scanner.mcp.meta()
 
     entry.async_on_unload(async_track_time_interval(hass, _heartbeat, timedelta(minutes=5)))
 
@@ -213,6 +271,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await scanner.async_watch_tick()
 
     entry.async_on_unload(async_track_time_interval(hass, _watch_tick, timedelta(minutes=5)))
+
+    async def _check_reauth(_: Any) -> None:
+        await scanner.async_check_reauth()
+
+    # A request for a new login is a finding as soon as it opens, not at the next scheduled scan.
+    entry.async_on_unload(async_track_time_interval(hass, _check_reauth, timedelta(minutes=1)))
 
     async def _mark_windows(_: Any) -> None:
         if scanner.refresh_marks_on_window_change():
@@ -251,6 +315,67 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(async_track_time_interval(hass, _sample_load, timedelta(minutes=5)))
     entry.async_on_unload(scanner.outage_scans.start())
+    entry.async_on_unload(scanner.auto_pause.start())
+
+    # The vacation switch: look at the findings again when it moves, and once more when the grace
+    # period after its end has passed. The switch can be chosen later in the panel, so the hook follows it.
+    vacation: dict[str, Any] = {"entity": None, "unsub": None, "timer": None}
+
+    @callback
+    def _vacation_timer() -> None:
+        if vacation["timer"] is not None:
+            vacation["timer"]()
+            vacation["timer"] = None
+        store = scanner.exceptions
+        if store.active() or store.ended_at is None or not store.grace_hours:
+            return
+        due = store.ended_at + timedelta(hours=store.grace_hours)
+        if due > datetime.now(UTC):
+            vacation["timer"] = async_track_point_in_utc_time(hass, _vacation_due, due)
+
+    @callback
+    def _vacation_due(_: Any) -> None:
+        vacation["timer"] = None
+        scanner.vacation_changed()
+
+    async def _vacation_look() -> None:
+        # A calendar with a keyword has to be asked for the events of this moment first.
+        try:
+            await scanner.exceptions.async_refresh_calendar(datetime.now(UTC))
+        finally:
+            scanner.vacation_changed()
+            _vacation_timer()
+
+    @callback
+    def _vacation_moved(_: Any = None) -> None:
+        _vacation_follow()
+        if scanner.exceptions.needs_calendar():
+            entry.async_create_background_task(hass, _vacation_look(), "ha_housekeeper_vacation")
+            return
+        scanner.vacation_changed()
+        _vacation_timer()
+
+    @callback
+    def _vacation_follow() -> None:
+        entity = scanner.exceptions.entity
+        if vacation["entity"] != entity:
+            if vacation["unsub"] is not None:
+                vacation["unsub"]()
+            vacation["entity"] = entity
+            vacation["unsub"] = (
+                async_track_state_change_event(hass, [entity], _vacation_moved) if entity else None
+            )
+        _vacation_timer()
+
+    @callback
+    def _vacation_hook() -> None:
+        _vacation_moved()
+
+    scanner.vacation_hook = _vacation_hook
+    _vacation_follow()
+    _vacation_moved()
+    entry.async_on_unload(lambda: vacation["unsub"]() if vacation["unsub"] else None)
+    entry.async_on_unload(lambda: vacation["timer"]() if vacation["timer"] else None)
     entry.async_on_unload(criteria_module.async_listen(hass, scanner.criteria))
     entry.async_on_unload(scanner.criteria.cancel_all)
 
@@ -277,43 +402,59 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(async_track_time_interval(hass, _collect_runs, timedelta(minutes=15)))
 
+    failed: dict[str, float] = {}
+
     async def _prepare_replies() -> None:
         # The slow recorder views open with the last numbers; this keeps them from getting old, but
-        # only for views and windows that were opened once. One after the other with a pause, so
-        # the shared query lock is never held for long at a stretch. A busy recorder makes a run
-        # a no-op (the shared query lock), a failure only costs a log line.
+        # only for views and windows that were opened once. One view per tick, the most overdue,
+        # so the load is spread and the shared query lock is never held for long at a stretch. A
+        # busy recorder leaves the view due for the next tick; a failing one waits for its age.
         if scanner.paused or not scanner.replies.replies:
             return
+        now = time.time()
+        key = next_reply(
+            {
+                k: r
+                for k, r in scanner.replies.replies.items()
+                if now - failed.get(k, 0) >= REFRESH_AGE.get(k.split(":")[0], 0)
+            },
+            now,
+        )
+        if key is None:
+            return
+        began = time.monotonic()
         try:
             snapshot = await scanner.async_get_snapshot()
-            for key in sorted(scanner.replies.replies):
-                kind, *rest = key.split(":")
-                if kind == "reliability":
-                    await reliability_module.reliability(
-                        hass,
-                        snapshot,
-                        window_days=int(rest[0]),
-                        refresh=True,
-                        compare=rest[1] == "1",
-                        store=scanner.replies,
-                    )
-                elif kind == "storms":
-                    await storms_module.storms(
-                        hass,
-                        snapshot,
-                        window_days=int(rest[0]),
-                        refresh=True,
-                        store=scanner.replies,
-                    )
-                elif kind == "costs":
-                    await recorder_costs(hass, snapshot, refresh=True, store=scanner.replies)
-                elif kind == "db_health":
-                    await db_health_module.db_health(
-                        hass, snapshot, scanner.events, refresh=True, store=scanner.replies
-                    )
-                await asyncio.sleep(REPLY_PAUSE)
+            kind, *rest = key.split(":")
+            if kind == "reliability":
+                await reliability_module.reliability(
+                    hass,
+                    snapshot,
+                    window_days=int(rest[0]),
+                    refresh=True,
+                    compare=rest[1] == "1",
+                    store=scanner.replies,
+                )
+            elif kind == "storms":
+                await storms_module.storms(
+                    hass,
+                    snapshot,
+                    window_days=int(rest[0]),
+                    refresh=True,
+                    store=scanner.replies,
+                )
+            elif kind == "costs":
+                await recorder_costs(hass, snapshot, refresh=True, store=scanner.replies)
+            elif kind == "db_health":
+                await db_health_module.db_health(
+                    hass, snapshot, scanner.events, refresh=True, store=scanner.replies
+                )
         except Exception:
-            _LOGGER.exception("Preparing the recorder views failed")
+            failed[key] = now
+            _LOGGER.exception("Preparing the recorder view %s failed", key)
+            return
+        failed.pop(key, None)
+        _LOGGER.debug("Prepared recorder view %s in %.2f s", key, time.monotonic() - began)
 
     @callback
     def _schedule_replies(_: Any) -> None:
@@ -322,7 +463,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             hass, _prepare_replies(), "HA Housekeeper recorder views"
         )
 
-    entry.async_on_unload(async_track_time_interval(hass, _schedule_replies, timedelta(minutes=30)))
+    entry.async_on_unload(
+        async_track_time_interval(hass, _schedule_replies, timedelta(seconds=REFRESH_TICK))
+    )
     entry.async_on_unload(async_call_later(hass, WARMUP_SECONDS + 120, _schedule_replies))
 
     # A scan that never comes cannot report itself: look at the age of the last success every hour.
@@ -350,16 +493,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def _async_options_updated(hass: HomeAssistant, entry: HousekeeperConfigEntry) -> None:
     """Reload so the new thresholds apply."""
     hass.data[DOMAIN]["keep_panel"] = True
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) -> bool:
     """Unload the integration."""
-    scanner = hass.data[DOMAIN].get("scanner")
-    if scanner is not None and scanner.cleanup.running:
+    scanner = entry.runtime_data
+    if scanner.cleanup.running:
         # The run is not tied to the entry: stop it after the current step and let it finish,
         # so the next setup does not load a journal that is still being written.
         scanner.cleanup.cancel()
@@ -368,8 +511,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unloaded:
         if not hass.data[DOMAIN].pop("keep_panel", False):
             frontend.async_remove_panel(hass, PANEL_URL)
-        hass.data[DOMAIN].pop("scanner", None)
-        if scanner is not None:
-            await scanner.cleanup.flush_journal()
+        await scanner.cleanup.flush_journal()
         async_clear_issues(hass)
     return unloaded

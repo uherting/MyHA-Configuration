@@ -11,7 +11,9 @@ from homeassistant.core import HomeAssistant, callback
 
 from .access import access_report
 from .const import DOMAIN
+from .hacs import hacs_repositories
 from .inventory import InventoryScanner
+from .open_flows import open_flows
 from .sensitive_fields import sensitive_fields
 from .system_usage import system_light, system_usage
 from .ws_common import _versioned, with_scanner
@@ -36,7 +38,11 @@ def _used_card_types(scanner: InventoryScanner) -> set[str] | None:
 
 @websocket_api.require_admin
 @websocket_api.websocket_command(
-    {vol.Required("type"): f"{DOMAIN}/system_usage", vol.Optional("fresh", default=False): bool}
+    {
+        vol.Required("type"): f"{DOMAIN}/system_usage",
+        vol.Optional("fresh", default=False): bool,
+        vol.Optional("quick", default=False): bool,
+    }
 )
 @websocket_api.async_response
 @with_scanner
@@ -49,7 +55,7 @@ async def websocket_system_usage(
     """Disk, memory, CPU and the largest consumers of space. Read-only."""
     try:
         async with asyncio.timeout(SYSTEM_TIMEOUT):
-            result = await system_usage(hass, _used_card_types(scanner), msg["fresh"])
+            result = await system_usage(hass, _used_card_types(scanner), msg["fresh"], msg["quick"])
         result["history"] = scanner.load.series()
     except Exception as err:
         connection.send_error(msg["id"], "system_failed", f"{type(err).__name__}: {err}")
@@ -75,6 +81,20 @@ async def websocket_system_light(
         connection.send_error(msg["id"], "system_failed", f"{type(err).__name__}: {err}")
         return
     connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/starts"})
+@websocket_api.async_response
+@with_scanner
+async def websocket_starts(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """How long the last starts of Home Assistant took, and each integration's set-up time. Read-only."""
+    connection.send_result(msg["id"], _versioned(scanner.starts.report()))
 
 
 @websocket_api.require_admin
@@ -106,16 +126,40 @@ async def websocket_access(
 
 @websocket_api.require_admin
 @websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/sensitive_fields"})
-@callback
+@websocket_api.async_response
 @with_scanner
-def websocket_sensitive_fields(
+async def websocket_sensitive_fields(
     hass: HomeAssistant,
     connection: websocket_api.ActiveConnection,
     msg: dict[str, Any],
     scanner: InventoryScanner,
 ) -> None:
-    """Which config entries hold credentials, of what kind and whether set. Never a value."""
-    connection.send_result(msg["id"], _versioned(sensitive_fields(hass)))
+    """Which config entries hold credentials, of what kind and whether set, and the accounts.
+    Never a value."""
+    connection.send_result(msg["id"], _versioned(await sensitive_fields(hass)))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/open_flows"})
+@callback
+def websocket_open_flows(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """The discoveries and set-up requests that wait in Home Assistant. Read-only."""
+    connection.send_result(msg["id"], _versioned({"flows": open_flows(hass)}))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/hacs_repositories"})
+@callback
+def websocket_hacs_repositories(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Every installed HACS repository with its versions and whether HACS removed it. Read-only."""
+    rows = hacs_repositories(hass)
+    connection.send_result(
+        msg["id"], _versioned({"available": rows is not None, "repositories": rows or []})
+    )
 
 
 @callback
@@ -123,5 +167,8 @@ def async_register(hass: HomeAssistant) -> None:
     """Register the storage, access and credential-overview commands."""
     websocket_api.async_register_command(hass, websocket_system_usage)
     websocket_api.async_register_command(hass, websocket_system_light)
+    websocket_api.async_register_command(hass, websocket_starts)
     websocket_api.async_register_command(hass, websocket_access)
     websocket_api.async_register_command(hass, websocket_sensitive_fields)
+    websocket_api.async_register_command(hass, websocket_open_flows)
+    websocket_api.async_register_command(hass, websocket_hacs_repositories)

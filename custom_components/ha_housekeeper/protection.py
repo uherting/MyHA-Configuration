@@ -35,6 +35,15 @@ def allows(mode: str, action: dict[str, Any]) -> bool:
     return rank >= 2
 
 
+def protection_rules() -> dict[str, Any]:
+    """The kinds each rank needs, so the panel can warn before a run that the mode would refuse."""
+    return {
+        "modes": list(MODES),
+        "quarantine": sorted(QUARANTINE_KINDS),
+        "full_only": sorted(IRREVERSIBLE_KINDS | RECORDER_WRITE_KINDS),
+    }
+
+
 def allows_undo(mode: str, actions: list[dict[str, Any]]) -> bool:
     """Undo puts things back, so it is allowed wherever the action itself could run, or the mode
     lets at least quarantine steps through and the steps are only that."""

@@ -23,19 +23,41 @@ def mark_duplicates(entities: list[dict[str, Any]]) -> None:
     Re-adding a device often creates ``sensor.x_2`` while the old ``sensor.x`` stays.
     Only an entity that is not working, from the same integration as a working
     entity with the unsuffixed name, is marked; two active entities are never.
+    The other way round (``sensor.x`` left over, ``sensor.x_2`` working) needs exactly one
+    working twin on the same device or with the same original name, since a name like ``pm2_5``
+    also ends in a number and a Hue room ``light.x_2`` is no copy of the lamp ``light.x``.
     """
     by_id = {item["object_id"]: item for item in entities}
+    suffixed: dict[str, list[dict[str, Any]]] = {}
+    for item in entities:
+        domain, _, name = item["object_id"].partition(".")
+        if item["status"] == "active" and (match := SUFFIXED_NAME.match(name)):
+            suffixed.setdefault(f"{domain}.{match['base']}", []).append(item)
     for item in entities:
         item["duplicate_of"] = None
         if item["status"] not in LEFTOVER_STATUSES:
             continue
         domain, _, name = item["object_id"].partition(".")
         match = SUFFIXED_NAME.match(name)
-        if not match:
-            continue
-        twin = by_id.get(f"{domain}.{match['base']}")
+        twin = by_id.get(f"{domain}.{match['base']}") if match else None
         if twin and twin["status"] == "active" and twin["platform"] == item["platform"]:
             item["duplicate_of"] = twin["object_id"]
+            continue
+        newer = [
+            other
+            for other in suffixed.get(item["object_id"], [])
+            if other["platform"] == item["platform"] and _same_thing(other, item)
+        ]
+        if len(newer) == 1:
+            item["duplicate_of"] = newer[0]["object_id"]
+
+
+def _same_thing(one: dict[str, Any], other: dict[str, Any]) -> bool:
+    """Whether two entities name the same thing: one device, or one original name that is set."""
+    if one.get("device_id") and one.get("device_id") == other.get("device_id"):
+        return True
+    name = one.get("original_name")
+    return bool(name) and name == other.get("original_name")
 
 
 def duplicate_findings(entities: list[dict[str, Any]], keep: Any) -> list[dict[str, Any]]:

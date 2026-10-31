@@ -93,6 +93,8 @@ REMOVAL_KINDS = frozenset({"remove_entity", "remove_device", "forget_device"})
 QUARANTINE_KINDS = {"disable_entity": "entity", "disable_device": "device"}
 REMOVABLE_STATUSES = frozenset({"orphaned", "unavailable", "unknown", "disabled"})
 DISABLEABLE_STATUSES = frozenset({"orphaned", "unavailable", "unknown"})
+# The reason of an entity whose loaded integration no longer provides it (see inventory).
+NOT_PROVIDED = "not_provided"
 PLAN_MAX_AGE_HOURS = 24
 MAX_ACTIONS = 200
 # Only previews that were never started are limited by number; they cannot be confirmed after
@@ -460,8 +462,12 @@ def judge_device_action(
         reasons.append("used_probable")
     if action["has_statistics"]:
         reasons.append("has_statistics")
-    if IGNORE_LABEL in (device.get("labels") or []) or any(
-        IGNORE_LABEL in (item.get("labels") or []) for item in members
+    if (
+        IGNORE_LABEL in (device.get("labels") or [])
+        or device.get("excepted")
+        or any(
+            IGNORE_LABEL in (item.get("labels") or []) or item.get("excepted") for item in members
+        )
     ):
         reasons.append("ignored_by_label")
     if kind != "disable_device":
@@ -1067,8 +1073,9 @@ def judge_entity_action(
     """Judge one entity candidate. Verdicts: ``ok`` (no known use), ``review``, ``blocked``.
 
     ``quarantine`` maps entity IDs to when Housekeeper disabled them; removal is only
-    allowed after ``QUARANTINE_DAYS``. ``restorable`` tells whether a removed entity could be
-    brought back (its config entry still exists).
+    allowed after ``QUARANTINE_DAYS``, except for an entity its integration no longer provides.
+    ``restorable`` tells whether a removed entity could be brought back (its config entry still
+    exists).
     """
     action: dict[str, Any] = {
         "kind": kind,
@@ -1107,14 +1114,23 @@ def judge_entity_action(
         reasons.append("used_probable")
     if action["has_statistics"]:
         reasons.append("has_statistics")
-    if item.get("labels") and IGNORE_LABEL in item["labels"]:
+    if (item.get("labels") and IGNORE_LABEL in item["labels"]) or item.get("excepted"):
         reasons.append("ignored_by_label")
     if item.get("marked_keep"):
         reasons.append("marked_keep")
     if item.get("critical"):
         reasons.append("critical_object")
     if kind == "remove_entity":
-        _quarantine_reasons(action, reasons, (quarantine or {}).get(object_id), now)
+        # Disabling an entity its integration no longer provides changes nothing, so the
+        # quarantine would prove nothing; backup, confirmation and restore still apply. Before
+        # a day of scans without it (``not_provided_settled``) the person confirms it is gone:
+        # some integrations add their entities only after they count as loaded.
+        if item.get("reason") == NOT_PROVIDED:
+            action["skips_quarantine"] = True
+            if not item.get("not_provided_settled"):
+                reasons.append("not_provided_recent")
+        else:
+            _quarantine_reasons(action, reasons, (quarantine or {}).get(object_id), now)
         action["restorable"] = restorable
         if restorable is False:
             reasons.append("not_restorable")
@@ -1525,8 +1541,28 @@ class JournalStore:
         now = datetime.now(UTC).isoformat()
         for plan in stopped:
             end_interrupted(plan, now)
-        if stopped:
+        if stopped or self.drop_stale_previews():
             self._save()
+
+    def drop_stale_previews(self) -> int:
+        """Remove previews that were never started and are older than ``PLAN_MAX_AGE_HOURS``.
+
+        They cannot be confirmed any more. Plans that ran are never touched here.
+        """
+        cutoff = (datetime.now(UTC) - timedelta(hours=PLAN_MAX_AGE_HOURS)).isoformat()
+        kept = [
+            plan
+            for plan in self._plans
+            if not (
+                isinstance(plan, dict)
+                and self._is_open_preview(plan)
+                and str(plan.get("created_at") or cutoff) < cutoff
+            )
+        ]
+        removed = len(self._plans) - len(kept)
+        if removed:
+            self._plans[:] = kept
+        return removed
 
     @property
     def store(self) -> Store[dict[str, Any]]:
@@ -1551,6 +1587,7 @@ class JournalStore:
     def add(self, plan: dict[str, Any]) -> None:
         """Record a plan and trim the journal."""
         self._plans.insert(0, plan)
+        self.drop_stale_previews()
         self._trim()
         self._save()
 

@@ -31,8 +31,23 @@ def is_concrete_id(reference: Any) -> bool:
     )
 
 
-def json_safe(value: Any) -> Any:
-    """Convert runtime configuration values to JSON-safe diagnostic data."""
+INT_MIN, INT_MAX = -(2**63), 2**64 - 1  # what orjson writes; a larger number fails the whole reply
+BAD_PATHS_LIMIT = 10  # enough to find the source; more only lengthens the log line
+
+
+def _note(bad: list[str] | None, path: str) -> None:
+    if bad is not None and len(bad) < BAD_PATHS_LIMIT:
+        bad.append(path)
+
+
+def json_safe(value: Any, path: str = "", bad: list[str] | None = None) -> Any:
+    """Convert runtime values to JSON-safe data; ``bad`` collects the paths turned into text.
+
+    The paths are only built while ``bad`` is given.
+    """
+    if isinstance(value, int) and not isinstance(value, bool) and not INT_MIN <= value <= INT_MAX:
+        _note(bad, path)
+        return str(value)
     if value is None or isinstance(value, (bool, int, float, str)):
         return value
     if isinstance(value, (datetime, date)):
@@ -40,9 +55,22 @@ def json_safe(value: Any) -> Any:
     if isinstance(value, Enum):
         return value.value
     if isinstance(value, Mapping):
-        return {str(key): json_safe(child) for key, child in value.items()}
+        if bad is None:
+            return {str(key): json_safe(child) for key, child in value.items()}
+        out = {}
+        for key, child in value.items():
+            name = key if isinstance(key, (str, int)) else repr(key)
+            if name is not key:
+                _note(bad, f"{path}/{name}")
+            out[str(key)] = json_safe(child, f"{path}/{name}", bad)
+        return out
+    if isinstance(value, (set, frozenset)):
+        value = sorted(value, key=str)
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return [json_safe(child) for child in value]
+        if bad is None:
+            return [json_safe(child) for child in value]
+        return [json_safe(child, f"{path}[{i}]", bad) for i, child in enumerate(value)]
+    _note(bad, path)
     return str(value)
 
 

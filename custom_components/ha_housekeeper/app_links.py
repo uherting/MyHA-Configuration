@@ -57,7 +57,11 @@ def app_edges(entries: Iterable[Any], apps: Iterable[dict[str, Any]]) -> list[di
     for entry in entries:
         if entry.source == "ignore":
             continue
-        texts = [entry.title or "", *_strings(dict(entry.data)), *_strings(dict(entry.options))]
+        texts = [
+            str(entry.title or ""),
+            *_strings(dict(entry.data)),
+            *_strings(dict(entry.options)),
+        ]
         for slug, host in hosts.items():
             by_host = any(_mentions(text, host) for text in texts)
             by_source = entry.source == "hassio" and dns_name(

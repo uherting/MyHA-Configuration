@@ -16,6 +16,7 @@ from .const import GOALS_STORAGE_KEY, STORAGE_VERSION
 
 SAVE_DELAY = 5
 NEVER = "never"  # measured: the thing was never done
+EXTERNAL = "external"  # measured: the backups are made outside Home Assistant, out of sight
 # id -> (unit, default limit, smallest, largest)
 CATALOG: dict[str, tuple[str, int, int, int]] = {
     "broken_references": ("count", 0, 0, 100000),
@@ -99,7 +100,9 @@ def measure(
         "blocked_automations": sum(f.get("rule_id") == "automation.blocked" for f in findings),
     }
     newest = _check(backup, "newest")
-    if newest and newest["level"] != "unknown":
+    if _check(backup, "external"):
+        measured["backup_age"] = EXTERNAL
+    elif newest and newest["level"] != "unknown":
         age = newest["values"].get("age_hours")
         measured["backup_age"] = NEVER if age is None else age
     restore = _check(backup, "restore_test")
@@ -125,7 +128,7 @@ def evaluate(measured: dict[str, Any], settings: dict[str, dict[str, Any]]) -> d
         value = measured.get(goal_id)
         if not enabled:
             state = "off"
-        elif value is None:
+        elif value is None or value == EXTERNAL:
             state = "unknown"
         else:
             state = "met" if value != NEVER and value <= limit else "missed"
@@ -136,8 +139,9 @@ def evaluate(measured: dict[str, Any], settings: dict[str, dict[str, Any]]) -> d
                 "enabled": enabled,
                 "limit": limit,
                 "default": default,
-                "value": None if value in (None, NEVER) else value,
+                "value": None if value in (None, NEVER, EXTERNAL) else value,
                 "never": value == NEVER,
+                "external": value == EXTERNAL,
                 "state": state,
             }
         )

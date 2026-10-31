@@ -53,7 +53,7 @@ def suggest(hass: HomeAssistant, object_id: str) -> str | None:
         return None
     siblings = Counter(
         d.area_id
-        for d in devices.devices.values()
+        for d in devices.devices
         if d.id != device.id
         and d.area_id
         and domains & {e.platform for e in er.async_entries_for_device(entities, d.id)}

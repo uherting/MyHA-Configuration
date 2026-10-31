@@ -1,7 +1,8 @@
 """Recorder database health: size, growth, duplicate and missing statistics, gaps in the states.
 
-Only reads. Nothing is repaired and nothing is deleted. Only SQLite is measured (the size of the
-files); the statistics and gap checks work on every database the recorder supports. The queries
+Only reads. Nothing is repaired and nothing is deleted. SQLite is measured by the size of its
+files, MariaDB/MySQL and PostgreSQL by asking the server; the statistics and gap checks work on
+every database the recorder supports. The queries
 share the lock of the reliability query and the result is kept for a few minutes.
 """
 
@@ -64,10 +65,63 @@ THRESHOLDS = {
     "state_gap_window_days": STATE_GAP_WINDOW_DAYS,
 }
 IGNORED_ISSUES = {"no_state", "entity_no_longer_recorded", "entity_not_recorded"}
+# The size a database server reports for the current database; MariaDB/MySQL estimate it (InnoDB).
+SERVER_SIZE = {
+    "mysql": "SELECT SUM(data_length + index_length) FROM information_schema.tables"
+    " WHERE table_schema = DATABASE()",
+    "postgresql": "SELECT pg_database_size(current_database())",
+}
+# Data and indexes per table. SQLite reads every page for it (and needs dbstat compiled in), so
+# its answer is kept for a day; a server answers from its catalog.
+TABLE_SIZES = {
+    "sqlite": "SELECT COALESCE(m.tbl_name, d.name), SUM(d.pgsize) FROM dbstat AS d"
+    " LEFT JOIN sqlite_master AS m ON m.name = d.name WHERE d.aggregate = TRUE GROUP BY 1",
+    "mysql": "SELECT table_name, data_length + index_length FROM information_schema.tables"
+    " WHERE table_schema = DATABASE()",
+    "postgresql": "SELECT relname, pg_total_relation_size(relid) FROM pg_catalog.pg_statio_user_tables",
+}
+TABLES_SECONDS = {"sqlite": DAY}
+TABLES_SECONDS_SERVER = 3600
+TABLES_LIMIT = 8
 
 
-def database_files(hass: HomeAssistant) -> dict[str, Any]:
-    """Blocking: the size of the database and WAL file, for SQLite only."""
+def server_size(hass: HomeAssistant, dialect: str) -> int | None:
+    """Blocking (recorder executor): the size the server reports, ``None`` when it does not answer."""
+    from homeassistant.components.recorder.util import session_scope
+    from sqlalchemy import text
+
+    try:
+        with session_scope(hass=hass, read_only=True) as session:
+            size = session.execute(text(SERVER_SIZE[dialect])).scalar()
+    except Exception:  # noqa: BLE001 - missing rights or an old server: the size stays unknown
+        _LOGGER.debug("The database server did not report its size", exc_info=True)
+        return None
+    return int(size) if size else None
+
+
+def table_sizes(hass: HomeAssistant, dialect: str) -> list[dict[str, Any]]:
+    """Blocking (recorder executor): bytes per table, largest first; empty when it cannot be asked."""
+    from homeassistant.components.recorder.util import session_scope
+    from sqlalchemy import text
+
+    if dialect not in TABLE_SIZES:
+        return []
+    try:
+        with session_scope(hass=hass, read_only=True) as session:
+            rows = session.execute(text(TABLE_SIZES[dialect])).all()
+    except Exception:  # noqa: BLE001 - no dbstat, missing rights: the list stays empty
+        _LOGGER.debug("The database did not report its table sizes", exc_info=True)
+        return []
+    found = [{"name": str(name), "bytes": int(size)} for name, size in rows if name and size]
+    return sorted(found, key=lambda t: t["bytes"], reverse=True)
+
+
+def database_files(hass: HomeAssistant, server: bool = True) -> dict[str, Any]:
+    """Blocking: the size of the database and WAL file (SQLite) or the size the server reports.
+
+    ``server`` False skips the query to a database server; a caller outside the recorder
+    executor that only needs the free disk space passes it.
+    """
     from homeassistant.components.recorder import get_instance
 
     instance = get_instance(hass)
@@ -82,6 +136,10 @@ def database_files(hass: HomeAssistant) -> dict[str, Any]:
         "wal_bytes": None,
         "corrupt": [],
     }
+    if dialect in SERVER_SIZE:
+        result["db_bytes"] = server_size(hass, dialect) if server else None
+        result["estimated"] = dialect == "mysql"
+        return result
     if dialect != "sqlite":
         return result
     try:
@@ -232,6 +290,21 @@ def with_integrity(hass: HomeAssistant, reply: Any, events: Any) -> Any:
     return out
 
 
+def duplicates_possible(session: Any) -> bool:
+    """Blocking: whether the statistics table lacks its unique index on series and hour."""
+    from homeassistant.components.recorder.db_schema import Statistics
+    from sqlalchemy import inspect
+
+    try:
+        indexes = inspect(session.connection()).get_indexes(Statistics.__tablename__)
+    except Exception:  # noqa: BLE001 - when in doubt, look for duplicates
+        return True
+    return not any(
+        index.get("unique") and list(index.get("column_names") or []) == ["metadata_id", "start_ts"]
+        for index in indexes
+    )
+
+
 def query_db(hass: HomeAssistant, now: float) -> dict[str, Any]:
     """Blocking: statistics duplicates and gaps, validation issues and gaps in the states."""
     from homeassistant.components.recorder.db_schema import (
@@ -252,12 +325,17 @@ def query_db(hass: HomeAssistant, now: float) -> dict[str, Any]:
                 select(StatisticsMeta.id, StatisticsMeta.statistic_id, StatisticsMeta.source)
             ).all()
         }
-        duplicates = session.execute(
-            select(Statistics.metadata_id, Statistics.start_ts, func.count().label("n"))
-            .group_by(Statistics.metadata_id, Statistics.start_ts)
-            .having(func.count() > 1)
-            .limit(DUPLICATE_LIMIT)
-        ).all()
+        # A unique index rules duplicates out; only a database without it is read in full.
+        duplicates = (
+            session.execute(
+                select(Statistics.metadata_id, Statistics.start_ts, func.count().label("n"))
+                .group_by(Statistics.metadata_id, Statistics.start_ts)
+                .having(func.count() > 1)
+                .limit(DUPLICATE_LIMIT)
+            ).all()
+            if duplicates_possible(session)
+            else []
+        )
         result["duplicates"] = [
             {"statistic_id": names.get(mid, ("?", ""))[0], "start": float(ts), "count": int(n)}
             for mid, ts, n in duplicates
@@ -540,8 +618,9 @@ def evaluate(
     order = {"problem": 0, "hint": 1}
     findings.sort(key=lambda f: order[f["level"]])
     return {
-        "supported": raw.get("dialect") == "sqlite",
+        "supported": raw.get("dialect") == "sqlite" or raw.get("dialect") in SERVER_SIZE,
         "dialect": raw.get("dialect"),
+        "estimated": bool(raw.get("estimated")),
         "db_bytes": db,
         "wal_bytes": wal,
         "growth": grown,
@@ -617,6 +696,7 @@ async def database_summary(hass: HomeAssistant, events: Any) -> dict[str, Any] |
     grown = growth(events.sizes, datetime.now(UTC).date())
     return {
         "dialect": files.get("dialect") or None,
+        "estimated": bool(files.get("estimated")),
         "db_bytes": files.get("db_bytes"),
         "wal_bytes": files.get("wal_bytes"),
         "per_day": grown.get("per_day") if grown.get("known") else None,
@@ -660,6 +740,14 @@ async def _db_health(
             int(raw["db_bytes"]) + int(raw.get("wal_bytes") or 0),
         )
     result = evaluate(raw, names, events.sizes, events.events, datetime.now(UTC).date())
+    dialect = str(raw.get("dialect") or "")
+    tables = await cached_query(
+        hass,
+        "db_tables",
+        TABLES_SECONDS.get(dialect, TABLES_SECONDS_SERVER),
+        lambda: {"at": time.time(), "tables": table_sizes(hass, dialect)},
+    )
+    found_tables = (tables.raw or {}).get("tables") or []
     reply = {
         "available": True,
         "busy": False,
@@ -670,6 +758,9 @@ async def _db_health(
         "thresholds": THRESHOLDS,
         **recorder_retention(hass),
         **result,
+        "tables": found_tables[:TABLES_LIMIT],
+        "tables_total": len(found_tables),
+        "tables_at": (tables.raw or {}).get("at"),
     }
     if store is not None:
         store.keep("db_health", reply)

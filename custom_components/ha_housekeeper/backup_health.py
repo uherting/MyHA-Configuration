@@ -1,8 +1,8 @@
 """Backup protection: is the backup strategy sound, not only does a backup exist.
 
 Everything here only reads Home Assistant's backup manager. The one thing Housekeeper writes is a
-small record of two facts only the person can know: the emergency kit is stored safely, and a
-restore was tried. Housekeeper never restores, creates or deletes a backup here.
+small record of facts only the person can know: the emergency kit is stored safely, a restore
+was tried, and the backups are made outside Home Assistant (e.g. of a Docker volume or the host). Housekeeper never restores, creates or deletes a backup here.
 
 ``collect`` reads the manager; ``evaluate`` judges the result and needs no manager, so every
 threshold can be tested with plain data. Levels are ``ok``, ``note``, ``problem`` and ``unknown``;
@@ -19,6 +19,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
 from .const import ATTEST_STORAGE_KEY, STORAGE_VERSION
+from .system_usage import disk_usage
 
 # The newest backup may be this old before it is a problem, by the configured schedule.
 SCHEDULE_LIMIT_HOURS = {"daily": 36, "custom_days": 8 * 24}
@@ -30,10 +31,11 @@ RESTORE_TEST_DAYS = 180
 LOCAL_SUFFIX = ".local"  # agent ids such as backup.local or hassio.local; anything else is remote
 MAX_PLANS_CHECKED = 5
 BACKUP_LIST_MAX = 20  # the newest backups the report lists in detail
+SPACE_FACTOR = 1.5  # a guess: the next backup needs about this much room, measured on the last one
 OWN_BACKUPS_NOTE = 10  # Housekeeper's own backups: this many ...
 OWN_BACKUPS_BYTES = 5 * 1024**3  # ... or this much space in total is a hint to clean up
 PLAN_BACKUP_WINDOW_SECONDS = 2 * 3600  # the backup started up to this long before it was recorded
-ATTEST_KINDS = ("targets", "emergency_kit", "restore_test")
+ATTEST_KINDS = ("targets", "emergency_kit", "restore_test", "encryption", "external")
 _SEVERITY = {"ok": 0, "unknown": 1, "note": 2, "problem": 3}
 
 
@@ -84,6 +86,16 @@ async def collect(hass: HomeAssistant) -> dict[str, Any]:
         return {"available": False}
     state: dict[str, Any] = {"available": True, "backups": [], "agent_errors": []}
     try:
+        # A backup in progress has its start recorded but not yet its end; that is no failure.
+        manager_state = getattr(manager, "state", None)
+        state["running"] = (
+            None
+            if manager_state is None
+            else str(getattr(manager_state, "value", manager_state)) != "idle"
+        )
+    except Exception:  # noqa: BLE001 - without the figure an unfinished attempt counts as before
+        state["running"] = None
+    try:
         data = manager.config.data
         create = data.create_backup
         retention = data.retention
@@ -96,6 +108,7 @@ async def collect(hass: HomeAssistant) -> dict[str, Any]:
             "recurrence": str(
                 getattr(getattr(schedule, "recurrence", None), "value", None) or "never"
             ),
+            "include_database": getattr(create, "include_database", None),
             "last_attempted": _iso(getattr(data, "last_attempted_automatic_backup", None)),
             "last_completed": _iso(getattr(data, "last_completed_automatic_backup", None)),
         }
@@ -143,6 +156,11 @@ async def collect(hass: HomeAssistant) -> dict[str, Any]:
             )
     except Exception:
         state["backups"] = None
+    try:
+        usage = await hass.async_add_executor_job(disk_usage, hass.config.config_dir)
+        state["disk_free"] = usage.get("free")
+    except Exception:  # noqa: BLE001 - without the figure the check about room says "unknown"
+        state["disk_free"] = None
     return state
 
 
@@ -191,14 +209,19 @@ def _newest_check(
 
 
 def _last_run_check(
-    config: dict[str, Any] | None, newest: dict[str, Any] | None, agent_errors: list[str]
+    config: dict[str, Any] | None,
+    newest: dict[str, Any] | None,
+    agent_errors: list[str],
+    running: bool | None = None,
 ) -> dict[str, Any]:
     if config is None:
         return _check("last_run", "unknown")
     attempted, completed = _parse(config["last_attempted"]), _parse(config["last_completed"])
     failed_agents = sorted(set(newest["failed_agents"] if newest else []) | set(agent_errors))
-    failed_attempt = attempted is not None and (
-        completed is None or (attempted - completed).total_seconds() > ATTEMPT_GRACE_SECONDS
+    failed_attempt = (
+        not running
+        and attempted is not None
+        and (completed is None or (attempted - completed).total_seconds() > ATTEMPT_GRACE_SECONDS)
     )
     values = {
         "attempted": config["last_attempted"],
@@ -266,13 +289,82 @@ def _retention_check(
 
 
 def _encryption_check(
-    config: dict[str, Any] | None, newest: dict[str, Any] | None
+    config: dict[str, Any] | None, newest: dict[str, Any] | None, recorded: str | None
 ) -> dict[str, Any]:
     if config is None:
         return _check("encryption", "unknown")
     protected = None if newest is None else newest["protected"]
-    level = "ok" if config["encrypted"] and protected is not False else "note"
-    return _check("encryption", level, configured=config["encrypted"], newest_protected=protected)
+    sound = config["encrypted"] and protected is not False
+    # Someone who keeps backups unencrypted on purpose can say so; the line then stays quiet.
+    at = None if sound else _iso(recorded)
+    return _check(
+        "encryption",
+        "ok" if sound or at else "note",
+        configured=config["encrypted"],
+        newest_protected=protected,
+        at=at,
+    )
+
+
+def _content_check(config: dict[str, Any] | None, newest: dict[str, Any] | None) -> dict[str, Any]:
+    """What the newest backup holds: failed apps or folders are a problem, a missing database a hint."""
+    if newest is None:
+        return _check("content", "unknown")
+    failed = sorted(set(newest.get("failed_apps") or []) | set(newest.get("failed_folders") or []))
+    database = newest.get("database")
+    if failed:
+        return _check("content", "problem", failed=failed, database=database)
+    if database is False:
+        return _check(
+            "content", "note", database=False, scheduled=(config or {}).get("include_database")
+        )
+    if database is None:
+        return _check("content", "unknown")
+    return _check(
+        "content",
+        "ok",
+        database=True,
+        apps=len(newest.get("apps") or []),
+        folders=len(newest.get("folders") or []),
+    )
+
+
+def _remote_age_check(
+    config: dict[str, Any] | None, backups: list[dict[str, Any]], now: datetime
+) -> dict[str, Any] | None:
+    """The newest copy on each external target against the same limit as the newest backup."""
+    newest_on: dict[str, datetime] = {}
+    for item in backups:
+        when = _parse(item["date"])
+        if when is None:
+            continue
+        for agent in item.get("agents") or []:
+            if not _is_local(agent):
+                newest_on[agent] = max(newest_on.get(agent, when), when)
+    if not newest_on:
+        return None
+    limit = SCHEDULE_LIMIT_HOURS.get(config["recurrence"] if config else "never")
+    limit = limit or NO_SCHEDULE_NOTE_HOURS
+    rows = [
+        {"agent": agent, "age_hours": _age_hours(when, now)}
+        for agent, when in sorted(newest_on.items())
+    ]
+    stale = [row["agent"] for row in rows if row["age_hours"] > limit]
+    return _check(
+        "remote_age", "note" if stale else "ok", agents=rows, stale=stale, limit_hours=limit
+    )
+
+
+def _space_check(newest: dict[str, Any] | None, free: int | None) -> dict[str, Any] | None:
+    """Whether the next backup fits on the local target; only asked when the newest one is kept there."""
+    if newest is None or not any(_is_local(agent) for agent in newest.get("agents") or []):
+        return None
+    size = newest.get("size")
+    if not size or free is None:
+        return _check("space", "unknown")
+    need = int(size * SPACE_FACTOR)
+    level = "problem" if free < size else "note" if free < need else "ok"
+    return _check("space", level, free=free, size=size, need=need)
 
 
 def _attest_check(
@@ -322,33 +414,53 @@ def evaluate(
         return {"available": False, "checks": [], "backups": [], "overall": "unknown"}
     config, backups = state.get("config"), state.get("backups")
     selected = (
-        [
-            item
-            for item in backups
-            if item.get("automatic") is not None and item.get("ha_included") is not False
-        ]
+        [item for item in backups if item.get("ha_included") is not False]
         if backups is not None
         else None
     )
-    checks = [_setup_check(config, selected)]
+    # Housekeeper's own safety copies before a plan say nothing about the backup strategy, whatever
+    # they hold: they count for space, the plans and the clean-up only.
+    strategy = [item for item in selected if not item.get("own")] if selected is not None else None
+    # Backups made outside Home Assistant are out of sight: everything about Home Assistant's own
+    # backups is left out, only what concerns Housekeeper's safety copies and the restore stays.
+    external = _iso(attest.get("external"))
+    checks = [_check("external", "ok", at=external) if external else _setup_check(config, strategy)]
     if selected is None:
-        checks.append(_check("newest", "unknown"))
+        if not external:
+            checks.append(_check("newest", "unknown"))
         listing: list[dict[str, Any]] = []
         everything: list[dict[str, Any]] = []
-    else:
-        # HA marks its scheduled backups True and its manual backups False. The Supervisor's
-        # app-update backups are False too, but hold no Home Assistant (``ha_included`` False).
+    elif external:
         everything = sorted(selected, key=lambda item: item["date"] or "", reverse=True)
-        # The safety copies before a plan say nothing about the backup strategy.
-        listing = [item for item in everything if not item.get("partial")]
+        listing = [item for item in everything if not item.get("own")]
+        if (
+            space_check := _space_check(
+                everything[0] if everything else None, state.get("disk_free")
+            )
+        ) is not None:
+            checks.append(space_check)
+    else:
+        # HA marks its scheduled backups True and its manual backups False; backups made by other
+        # tools (e.g. Google Drive Backup) have None and count too. The Supervisor's app-update
+        # backups hold no Home Assistant (``ha_included`` False) and are left out.
+        everything = sorted(selected, key=lambda item: item["date"] or "", reverse=True)
+        listing = [item for item in everything if not item.get("own")]
         newest = listing[0] if listing and listing[0]["date"] else None
         checks.append(_newest_check(config, listing, now))
-        checks.append(_last_run_check(config, newest, state.get("agent_errors") or []))
+        checks.append(
+            _last_run_check(config, newest, state.get("agent_errors") or [], state.get("running"))
+        )
         checks.append(_targets_check(newest, attest.get("targets")))
         checks.append(_size_check(listing))
         checks.append(_retention_check(config, listing, now))
-        checks.append(_encryption_check(config, newest))
-    checks.append(_attest_check("emergency_kit", attest.get("emergency_kit"), now, None))
+        checks.append(_encryption_check(config, newest, attest.get("encryption")))
+        checks.append(_content_check(config, newest))
+        if (remote_check := _remote_age_check(config, listing, now)) is not None:
+            checks.append(remote_check)
+        if (space_check := _space_check(newest, state.get("disk_free"))) is not None:
+            checks.append(space_check)
+    if not external:
+        checks.append(_attest_check("emergency_kit", attest.get("emergency_kit"), now, None))
     checks.append(_attest_check("restore_test", attest.get("restore_test"), now, RESTORE_TEST_DAYS))
     if selected is not None and (plan_check := _plans_check(plans, everything)):
         checks.append(plan_check)
@@ -385,6 +497,7 @@ def evaluate(
             for item in everything[:BACKUP_LIST_MAX]
         ],
         "backup_count": len(listing),
+        "own_count": sum(1 for item in everything if item.get("own")),
         "attest": {kind: attest.get(kind) for kind in ATTEST_KINDS},
     }
 

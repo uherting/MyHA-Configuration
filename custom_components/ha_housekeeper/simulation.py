@@ -12,6 +12,15 @@ from typing import Any
 SHOWN = 20
 REMOVING = {"remove_entity", "remove_device", "forget_device"}
 DISABLING = {"disable_entity", "disable_device"}
+# Actions that change nothing the other counters show; each gets a count of its own.
+OTHER_KINDS = {
+    "reload_integration": "reloaded",
+    "add_label": "labeled",
+    "set_area": "area_set",
+    "refactor_automation": "refactored",
+}
+STATE_KEYS = {"enable": "enabled", "hide": "hidden", "unhide": "unhidden"}
+OTHER_KEYS = (*OTHER_KINDS.values(), *STATE_KEYS.values())
 
 
 def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
@@ -32,7 +41,9 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
     uncertain: set[tuple[str, str]] = set()
     statistics: set[str] = set()
     manual = 0
-    purge_rows = kept_rows = 0
+    other = dict.fromkeys(OTHER_KEYS, 0)
+    purge_rows = kept_rows = purge_stat_rows = purge_states_rows = 0
+    kept_states = kept_stats = 0
     counted = False
     for action in runnable:
         kind, object_id = action["kind"], action["object_id"]
@@ -45,6 +56,10 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
         ):
             disabled.update(entities)
             devices["disabled"] += kind == "disable_device"
+        if kind in OTHER_KINDS:
+            other[OTHER_KINDS[kind]] += 1
+        elif kind == "set_entity_state" and action.get("target") in STATE_KEYS:
+            other[STATE_KEYS[action["target"]]] += 1
         if kind in REMOVING and action.get("has_statistics") and not action.get("recorder"):
             statistics.add(object_id)
         history = action.get("history")
@@ -52,9 +67,10 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
         if kind == "purge_statistics":
             purged.add(object_id)
             if history:
-                purge_rows += history["statistics"] + (
-                    history["states"] if action.get("states") else 0
-                )
+                states_rows = history["states"] if action.get("states") else 0
+                purge_rows += history["statistics"] + states_rows
+                purge_stat_rows += history["statistics"]
+                purge_states_rows += states_rows
         elif kind == "delete_backup":
             backups_deleted += 1
             backup_bytes += (action.get("backup") or {}).get("size") or 0
@@ -74,8 +90,11 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
                     history["states"] if choice == "states" else 0
                 )
                 kept_rows += 0 if choice == "states" else history["states"]
+                kept_states += 0 if choice == "states" else history["states"]
             else:
                 kept_rows += history["statistics"] + history["states"]
+                kept_states += history["states"]
+                kept_stats += history["statistics"]
         if kind == "migrate_meter":
             meters += 1
         if kind in ("repair_counter", "repair_range"):
@@ -115,8 +134,14 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
         "remaining_sources": sorted({source for source, _ in certain})[:SHOWN],
         "statistics_orphaned": sorted(statistics)[:SHOWN],
         "statistics_orphaned_count": len(statistics),
+        **other,
         "blocked": len(actions) - len(runnable),
         "rows_counted": counted,
         "purge_rows": purge_rows,
+        "purge_stat_rows": purge_stat_rows,
+        "purge_states_rows": purge_states_rows,
         "history_rows_kept": kept_rows,
+        # The recorder purges kept states after its retention; long-term statistics it keeps.
+        "history_states_kept": kept_states,
+        "history_stats_kept": kept_stats,
     }

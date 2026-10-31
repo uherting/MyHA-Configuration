@@ -120,7 +120,23 @@ def _merge_incidents(
                 "_all": keys,
             }
         )
-    for group in alone:
-        keys = members[group["id"]]
-        out.append({**group, "total": len(keys), "keys": keys[:KEYS_PER_GROUP], "_all": keys})
+    # Events of one kind that follow each other closely (a purge writes one per series) are one entry.
+    clustered: list[list[dict[str, Any]]] = []
+    for group in sorted(alone, key=lambda g: (g["kind"], when[g["id"]])):
+        last = clustered[-1][-1] if clustered else None
+        if (
+            last is not None
+            and last["kind"] == group["kind"]
+            and when[group["id"]] - when[last["id"]] <= MERGE_WINDOW
+        ):
+            clustered[-1].append(group)
+        else:
+            clustered.append([group])
+    for cluster in clustered:
+        newest = cluster[-1]
+        keys = list(dict.fromkeys(k for g in cluster for k in members[g["id"]]))
+        merged_group = {**newest, "total": len(keys), "keys": keys[:KEYS_PER_GROUP], "_all": keys}
+        if len(cluster) > 1:
+            merged_group["events"] = len(cluster)
+        out.append(merged_group)
     return out

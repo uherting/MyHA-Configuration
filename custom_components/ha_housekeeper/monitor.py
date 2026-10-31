@@ -170,12 +170,19 @@ def availability(
         (end - begin).total_seconds() for begin, end, state in clipped if state == "problem"
     ]
     worst: dict[str, str] = {}
+    impaired: dict[str, float] = {}
     for begin, end, state in clipped:
         day = dt_util.as_local(begin).date()
         last = dt_util.as_local(end - timedelta(microseconds=1)).date()
         while day <= last:
             if _DAY_RANK[state] > _DAY_RANK.get(worst.get(day.isoformat(), ""), 0):
                 worst[day.isoformat()] = state
+            if state == "problem":
+                # The share of this stretch that falls on this local day, so a night-time outage counts on both.
+                day_start = dt_util.start_of_local_day(day)
+                day_end = dt_util.start_of_local_day(day + timedelta(days=1))
+                share = (min(end, day_end) - max(begin, day_start)).total_seconds()
+                impaired[day.isoformat()] = impaired.get(day.isoformat(), 0.0) + max(0.0, share)
             day += timedelta(days=1)
     first = dt_util.as_local(start).date()
     return {
@@ -189,7 +196,11 @@ def availability(
         "incidents": len(problems),
         "longest_seconds": round(max(problems, default=0)),
         "days": [
-            {"date": (day := (first + timedelta(days=i)).isoformat()), "state": worst.get(day)}
+            {
+                "date": (day := (first + timedelta(days=i)).isoformat()),
+                "state": worst.get(day),
+                "problem_seconds": round(impaired.get(day, 0)),
+            }
             for i in range((dt_util.as_local(now).date() - first).days + 1)
         ],
     }

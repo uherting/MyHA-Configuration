@@ -4,7 +4,8 @@ An entity that goes ``unavailable`` or ``unknown``, or a config entry that stops
 scan for when the outage reaches the first level. A scan that still sees outages plans the next one
 for the moment the next level is reached. Such a scan updates findings, levels and panel but is not
 a point of the history: the "last scan" that changes are compared with stays where it was. Between
-two of these scans lies at least the first threshold and twenty times the length of the last scan.
+two of these scans lies at least the first threshold and twenty times the length of the last scan;
+where a scan is slow (from two seconds on), the pause grows up to an hour.
 Only ids, statuses and times are looked at, never names or texts.
 """
 
@@ -36,6 +37,8 @@ BAD_STATUSES = frozenset({"unavailable", "unknown", "problem", "stopped"})
 RECOVERY_DELAY = timedelta(seconds=60)  # a scan after a recovery lets the finding go
 RETRY_DELAY = timedelta(seconds=60)  # a plan or the start was in the way
 SCAN_LENGTH_FACTOR = 20  # a scan is not followed by another within this many scan lengths
+SLOW_SCAN = (2.0, 8.0)  # seconds of scan: the pause grows from the first threshold ...
+SLOW_SCAN_GAP = timedelta(hours=1)  # ... to this
 
 
 @callback
@@ -81,6 +84,18 @@ def next_due(
             if moment > now and (soonest is None or moment < soonest):
                 soonest = moment
     return soonest
+
+
+def scan_gap(seconds: float, info: timedelta) -> timedelta:
+    """The least pause between two outage scans: longer where a scan takes long."""
+    low, high = SLOW_SCAN
+    share = min(max((seconds - low) / (high - low), 0.0), 1.0)
+    stretched = info + max(SLOW_SCAN_GAP - info, timedelta(0)) * share
+    return max(
+        stretched,
+        timedelta(seconds=seconds * SCAN_LENGTH_FACTOR),
+        timedelta(seconds=SCAN_MIN_GAP),
+    )
 
 
 def plan_time(
@@ -165,8 +180,7 @@ class OutageScans:
         return timedelta(hours=self._scanner.outage_low_hours)
 
     def _gap(self) -> timedelta:
-        scan = timedelta(seconds=self._scanner.last_scan_seconds * SCAN_LENGTH_FACTOR)
-        return max(self._info(), scan, timedelta(seconds=SCAN_MIN_GAP))
+        return scan_gap(self._scanner.last_scan_seconds, self._info())
 
     def _plan(self, wanted: datetime) -> None:
         if not self._started:

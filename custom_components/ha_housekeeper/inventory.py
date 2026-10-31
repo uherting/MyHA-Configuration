@@ -6,10 +6,12 @@ import asyncio
 import logging
 import time
 from collections import Counter
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from homeassistant.config_entries import SOURCE_IGNORE, ConfigEntryState
 from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import UnsupportedStorageVersionError
@@ -25,6 +27,7 @@ from homeassistant.util import dt as dt_util
 
 from . import followup
 from .app_links import app_edges, stopped_app_findings
+from .auto_pause import AutoPause
 from .automation_analysis import (
     is_concrete_id,
     missing_references,
@@ -40,6 +43,7 @@ from .causes import apply_causes, device_down_findings
 from .cleanup import JournalStore, is_child_device, quarantine_entries, recurring_devices
 from .cleanup_exec import CleanupRunner
 from .config_changes import ChangeStore, fingerprint
+from .conflicts import KEY_PREFIX as CONFLICT_KEY_PREFIX
 from .const import (
     DEFAULT_LOW_BATTERY_PERCENT,
     DEFAULT_OUTAGE_HIGH_HOURS,
@@ -57,7 +61,10 @@ from .const import (
     SIGNAL_SCAN_COMPLETE,
     SIGNAL_SCAN_STARTED,
     STORAGE_VERSION,
+    WARMUP_BLIP_SECONDS,
+    WARMUP_NAMES,
     WARMUP_SECONDS,
+    WARMUP_SETTLE_SECONDS,
     WINDOW_STORAGE_KEY,
 )
 from .coverage import CoverageStore
@@ -75,8 +82,11 @@ from .dashboard_analysis import (
 from .db_health import database_summary
 from .entry_states import EntryStateHistory
 from .events import EventLog
+from .exceptions import ExceptionStore, entry_traits, traits, verdict
+from .exceptions import matches as _hits
 from .goals import GoalStore
-from .hacs import hacs_by_domain
+from .hacs import hacs_by_domain, removed_issues, store_kind
+from .hints import HintStore
 from .history import ScanHistory
 from .hygiene import (
     automation_hygiene_findings,
@@ -89,7 +99,13 @@ from .hygiene import (
 )
 from .ignored import IgnoreStore
 from .impact import apply_impact
-from .issues import async_sync_database_issue, async_sync_issues, async_sync_scan_issue
+from .issues import (
+    async_sync_backup_issue,
+    async_sync_database_issue,
+    async_sync_issues,
+    async_sync_scan_issue,
+    async_sync_statistics_issue,
+)
 from .load_history import LoadStore
 from .log_facts import log_facts
 from .maintenance import repair_keys
@@ -105,6 +121,7 @@ from .marks import (
     mark_key,
     window_active,
 )
+from .mcp_access import McpStore
 from .monitor import MonitorStore
 from .notes import NoteStore
 from .notify import NotifyStore, async_announce
@@ -113,7 +130,7 @@ from .outage_levels import DIRECT_ENTRY_STATES, Levels, outage_level
 from .outage_scan import OutageScans, outage_start
 from .policies import KEY_PREFIX as POLICY_KEY_PREFIX
 from .policies import PolicyStore
-from .protection import ProtectionStore
+from .protection import ProtectionStore, protection_rules
 from .queries import ReplyStore
 from .refactor import RefactorStore
 from .reminders import ReminderStore
@@ -121,15 +138,22 @@ from .runs import RunStore
 from .scan_coverage import RETRY_LIMIT, RETRY_MINUTES, ScanCoverage, retryable_gaps
 from .scan_health import ScanHealth
 from .scan_trigger import ScanRefused, scan_request
+from .sensitive_fields import reauth_entry_ids
 from .service_check import missing_service_findings
 from .signals import SignalStore, situations
 from .signals import fire as signal_fire
 from .stale import StaleStore
+from .start_times import StartStore
 from .system_usage import supervisor_get, supervisor_token
+from .view_counts import view_counts
 from .watch import WATCH_KINDS, WatchStore, evaluate, make_before, next_due
 
 _LOGGER = logging.getLogger(__name__)
 SUGGEST_LIMIT = 200
+# An entity not provided for this long may be removed without quarantine: one that stays so for a
+# day of scans, restarts included, is no integration still waiting for its first data.
+NOT_PROVIDED_SETTLED = timedelta(hours=24)
+NOT_PROVIDED_KEY = "not_provided:"  # observation key of that period, next to "entity:<id>"
 
 # Keys of the Energy dashboard preferences that name statistics, which are entity IDs.
 ENERGY_KEYS = frozenset(
@@ -164,6 +188,43 @@ def _enum(value: Any) -> str | None:
     return str(getattr(value, "value", value))
 
 
+def marked_keys(objects: list[dict[str, Any]]) -> frozenset[str]:
+    """Keys of the objects a hiding mark covers, with the entities of a marked device."""
+
+    def hides(item: dict[str, Any]) -> bool:
+        mark = item.get("mark")
+        return bool(mark and mark.get("kind") in HIDING_KINDS and not item.get("mark_due"))
+
+    devices = {i["object_id"] for i in objects if i["object_type"] == "device" and hides(i)}
+    return frozenset(
+        f"{i['object_type']}:{i['object_id']}"
+        for i in objects
+        if hides(i) or (i["object_type"] == "entity" and i.get("device_id") in devices)
+    )
+
+
+def listed_objects(objects: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The objects the inventory lists: an automation, script or scene, not also its entity."""
+    own = {i["object_id"] for i in objects if i["object_type"] in ("automation", "script", "scene")}
+    return [i for i in objects if not (i["object_type"] == "entity" and i["object_id"] in own)]
+
+
+def marked_status_counts(objects: list[dict[str, Any]]) -> dict[str, int]:
+    """How many marked objects there are per status, for the inventory status card.
+
+    Only listed objects count; a mark on the entity of an automation counts for the automation.
+    """
+    marked = marked_keys(objects)
+    return dict(
+        Counter(
+            i["status"]
+            for i in listed_objects(objects)
+            if f"{i['object_type']}:{i['object_id']}" in marked
+            or f"entity:{i['object_id']}" in marked
+        )
+    )
+
+
 class _DeviceIds(set):
     """The IDs of all devices; an ID Home Assistant still resolves (composite) counts as well."""
 
@@ -196,8 +257,14 @@ def _entity_status(
     state: Any,
     config_entries: dict[str, Any],
     devices: dict[str, Any],
+    components: set[str] | frozenset[str] = frozenset(),
 ) -> tuple[str, str]:
-    """Classify an entity conservatively and explain why."""
+    """Classify an entity conservatively and explain why.
+
+    ``components`` is ``hass.config.components``; it names each platform set up successfully as
+    ``<platform>.<domain>``, which tells for an entity without a config entry (YAML) that its
+    platform runs.
+    """
     if entry.disabled_by is not None:
         return "disabled", "entity_disabled"
     if entry.device_id and entry.device_id not in devices:
@@ -210,6 +277,19 @@ def _entity_status(
         return "disabled", "integration_disabled"
     if state is None:
         return "orphaned", "state_missing"
+    # Home Assistant keeps a "restored" placeholder for a registry entry its integration did not
+    # add. Only while that integration (or YAML platform) runs does it mean "no longer provided";
+    # during start-up or a failed setup all its entities carry the placeholder.
+    if state.state == "unavailable" and getattr(state, "attributes", {}).get("restored"):
+        if entry.config_entry_id:
+            running = (
+                getattr(config_entries[entry.config_entry_id], "state", None)
+                is ConfigEntryState.LOADED
+            )
+        else:
+            running = f"{entry.platform}.{entry.entity_id.partition('.')[0]}" in components
+        if running:
+            return "orphaned", "not_provided"
     if state.state == "unavailable":
         return "unavailable", "state_unavailable"
     if state.state == "unknown":
@@ -230,10 +310,14 @@ def alias_texts(aliases: Any, computed_name: str | None = None) -> list[str]:
 
 
 def _entity_item(
-    entry: Any, state: Any, config_entries: dict[str, Any], devices: dict[str, Any]
+    entry: Any,
+    state: Any,
+    config_entries: dict[str, Any],
+    devices: dict[str, Any],
+    components: set[str] | frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """Normalize one entity registry entry together with its live state."""
-    status, reason = _entity_status(entry, state, config_entries, devices)
+    status, reason = _entity_status(entry, state, config_entries, devices, components)
     return {
         "object_type": "entity",
         "object_id": entry.entity_id,
@@ -373,15 +457,21 @@ def _config_entry_item(
     integration: Any = None,
     entity_count: int = 0,
     device_count: int = 0,
+    reauth: bool = False,
 ) -> dict[str, Any]:
-    """Normalize one config entry; ``integration`` is the loader's description of its domain."""
+    """Normalize one config entry; ``integration`` is the loader's description of its domain.
+
+    ``reauth`` says that a reauth flow of the entry is open: it asks for a new login. Such an entry
+    is a problem even while it is loaded, because its data stops coming.
+    """
     state = _enum(entry.state)
     if entry.disabled_by:
         status = "disabled"
     elif entry.source == "ignore":
         status = "ignored"  # a discovery the user dismissed: never set up, so not a problem
     else:
-        status = "active" if state == "loaded" else "problem"
+        status = "active" if state == "loaded" and not reauth else "problem"
+    reauth = reauth and status == "problem"
     custom = integration is not None and not getattr(integration, "is_built_in", True)
     return {
         "object_type": "config_entry",
@@ -398,6 +488,7 @@ def _config_entry_item(
         "source": entry.source,
         "state": state,
         "error": getattr(entry, "reason", None),
+        "reauth": reauth,
         "unique_id": entry.unique_id,
         "disabled_by": _enum(entry.disabled_by),
         "entity_count": entity_count,
@@ -476,8 +567,43 @@ def _fallback_automation_item(state: Any) -> dict[str, Any]:
     }
 
 
+def _runtime_references(entity: Any, attr: str) -> Any:
+    """What Home Assistant extracts from an automation or script, or nothing where it fails on it."""
+    try:
+        return getattr(entity, attr, set())
+    except Exception as err:
+        # HA's extraction raises on a config it did not expect (a dict in an entity_id list).
+        _LOGGER.warning(
+            "Home Assistant could not read %s of %s (%s); only its configuration is used",
+            attr,
+            getattr(entity, "entity_id", "?"),
+            type(err).__name__,
+        )
+        return set()
+
+
 def _age(item: dict[str, Any], now: datetime) -> timedelta | None:
     since = item.get("status_since")
+    return max(now - datetime.fromisoformat(since), timedelta(0)) if since else None
+
+
+def _observed_as(item: dict[str, Any]) -> str:
+    """The classification the observation period follows.
+
+    An entity not provided is usually one that was unavailable before a restart: the period goes
+    on, so "observed since" does not start again with the new classification.
+    """
+    return "unavailable" if item.get("reason") == "not_provided" else item["status"]
+
+
+def _not_provided_settled(since: str | None, now: datetime) -> bool:
+    """Whether an entity has not been provided for a whole day of observation."""
+    return since is not None and now - datetime.fromisoformat(since) >= NOT_PROVIDED_SETTLED
+
+
+def _placeholder_age(item: dict[str, Any], now: datetime) -> timedelta | None:
+    """How long Home Assistant has held the "restored" placeholder of an entity not provided."""
+    since = item.get("last_changed")
     return max(now - datetime.fromisoformat(since), timedelta(0)) if since else None
 
 
@@ -485,8 +611,13 @@ def _reaches_info(item: dict[str, Any], now: datetime, levels: Levels | None) ->
     """Whether an unavailable entity has been so long enough to be a finding.
 
     Orphaned entities always qualify; only an outage that is still younger than the first
-    threshold is left out. Without ``levels`` nothing is left out.
+    threshold is left out. An entity not provided waits as long: some integrations add their
+    entities only when the first data arrives, after they count as loaded. Without ``levels``
+    nothing is left out.
     """
+    if levels is not None and item.get("reason") == "not_provided":
+        age = _placeholder_age(item, now)
+        return age is not None and outage_level(age, levels) is not None
     if levels is None or item["status"] not in ("unavailable", "unknown"):
         return True
     age = _age(item, now)
@@ -513,7 +644,9 @@ def _entity_findings(
             "rule_id": f"entity.{item['reason']}",
             "object_id": item["object_id"],
             "classification": item["status"],
-            "confidence": 0.98 if item["reason"] == "config_entry_missing" else 0.75,
+            "confidence": 0.98
+            if item["reason"] in ("config_entry_missing", "not_provided")
+            else 0.75,
             "first_detected_at": item["status_since"],
             "evidence": [{"kind": item["reason"], "source": "entity_registry"}],
         }
@@ -561,20 +694,56 @@ def _graded_outage(
     return started.isoformat(), outage_level(age, levels, direct)
 
 
+REAUTH_RULE = "config_entry.reauth"
+REAUTH_SCAN_GAP = 60  # seconds between two scans that a changed login request asks for
+
+
 def _config_entry_findings(
     integrations: list[dict[str, Any]],
     now: datetime,
     levels: Levels,
     counted_from: dict[str, datetime] | None = None,
+    auto_paused: dict[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """Findings for active config entries that are not loaded, graded by how long that has lasted.
 
     ``counted_from`` holds, per entry with a mark window, when the window ended: what happened
-    before is expected, the outage counts from then on.
+    before is expected, the outage counts from then on. ``auto_paused`` holds, per entry that
+    auto-pause disabled, where its outage began: the pause handles it, but it stays a finding.
     """
     findings = []
     for item in integrations:
         since = item.get("status_since")
+        paused_since = (auto_paused or {}).get(item["object_id"])
+        if paused_since and item["status"] == "disabled":
+            counted, level = _graded_outage(
+                paused_since, now, levels, (counted_from or {}).get(item["object_id"])
+            )
+            if level is not None:
+                findings.append(
+                    {
+                        "rule_id": "config_entry.not_loaded",
+                        "object_id": item["object_id"],
+                        "classification": "problem",
+                        "confidence": 0.75,
+                        "first_detected_at": counted,
+                        "outage_level": level,
+                        "evidence": [{"kind": "paused", "source": "auto_pause"}],
+                    }
+                )
+            continue
+        if item.get("reauth"):
+            findings.append(
+                {
+                    "rule_id": REAUTH_RULE,
+                    "object_id": item["object_id"],
+                    "classification": "problem",
+                    "confidence": 0.95,
+                    "first_detected_at": since or now.isoformat(),
+                    "evidence": [{"kind": "reauth", "source": "config_entries"}],
+                }
+            )
+            continue  # the new login is the news, not that the entry is not loaded
         if item["status"] != "problem" or item["state"] not in FAILED_ENTRY_STATES or not since:
             continue
         counted, level = _graded_outage(
@@ -731,6 +900,7 @@ STORE_NAMES = (
     "observations",
     "history",
     "ignored",
+    "exceptions",
     "policies",
     "replies",
     "journal",
@@ -740,6 +910,7 @@ STORE_NAMES = (
     "marks",
     "stale",
     "load",
+    "starts",
     "goals",
     "criteria",
     "coverage",
@@ -752,9 +923,12 @@ STORE_NAMES = (
     "notes",
     "batteries",
     "notify",
+    "hints",
+    "mcp",
     "monitor",
     "runs",
     "config_changes",
+    "auto_pause",
 )
 
 
@@ -766,6 +940,10 @@ class InventoryScanner:
         self.observations = ObservationStore(hass)
         self.history = ScanHistory(hass)
         self.ignored = IgnoreStore(hass)
+        self.exceptions = ExceptionStore(hass)
+        self.vacation_hook: Callable[[], None] | None = (
+            None  # set by __init__.py: follow the switch
+        )
         self.policies = PolicyStore(hass)
         self.replies = ReplyStore(hass)
         self.journal = JournalStore(hass)
@@ -776,7 +954,12 @@ class InventoryScanner:
         self._window_seen: dict[str, bool] = {}  # which mark windows were open at the last apply
         self.stale = StaleStore(hass)
         self.load = LoadStore(hass)
+        self.starts = StartStore(hass)
         self._started = datetime.now(UTC)
+        self._reauth_seen: set[str] | None = (
+            None  # the entries that asked for a login at the last scan
+        )
+        self._reauth_asked = float("-inf")
         self.goals = GoalStore(hass)
         self.criteria = CriteriaStore(hass)
         self.coverage = CoverageStore(hass)
@@ -789,14 +972,32 @@ class InventoryScanner:
         self.notes = NoteStore(hass)
         self.batteries = BatteryStore(hass)
         self.notify = NotifyStore(hass)
+        self.hints = HintStore(hass)
+        hass.data.setdefault(DOMAIN, {})["hints"] = self.hints
+        self.backup_report: dict[str, Any] | None = None  # the last one that could be read
+        self.mcp = McpStore(hass)
         self.monitor = MonitorStore(hass)
         self.runs = RunStore(hass)
         self.config_changes = ChangeStore(hass)
+        self.auto_pause = AutoPause(hass, self)
         self.cleanup = CleanupRunner(hass, self)
         self.paused = False
         self.retry_runs = 0  # Rescans after a gap in a row; set by the scheduler in __init__.py
         self._booting = False
+        self.boot_anchor: float | None = (
+            None  # epoch seconds the start counts from; set in __init__.py
+        )
         self._warmup_until: float | None = None
+        self._settled_at: float | None = None  # since when no integration has been loading
+        self._pending_since: float | None = None  # since when an integration has been loading again
+        self.integrations_pending = 0
+        self.integrations_loading: list[
+            str
+        ] = []  # titles of the ones being set up, for the start notice
+        self.integrations_done = (
+            0  # of the enabled ones: not waiting to be set up and not being set up
+        )
+        self.integrations_total = 0
         self._recorder_available = False
         # What the scan in progress could not read: "dashboard", "dashboard:<id>" or "app".
         self._unchecked: set[str] = set()
@@ -866,6 +1067,69 @@ class InventoryScanner:
         """Home Assistant just started: scans stay preliminary for the next ``seconds``."""
         self._booting = False
         self._warmup_until = time.monotonic() + seconds
+        self._settled_at = None
+        self._pending_since = None
+        self.check_warmup()
+
+    def check_warmup(self) -> None:
+        """Look at the integrations: the warm-up ends a minute after none of them is loading any more."""
+        if self._booting or self._warmup_until is None:
+            return
+        entries = list(self.hass.config_entries.async_entries())
+        # An entry that auto-pause switches on for a try is no part of the start.
+        trying = {i for i, rec in self.auto_pause.paused.items() if rec.get("trying")}
+        loading = [
+            e
+            for e in entries
+            if e.state is ConfigEntryState.SETUP_IN_PROGRESS
+            and getattr(e, "entry_id", None) not in trying
+        ]
+        # Ignored and disabled entries are never set up, so they are no part of the progress.
+        enabled = [
+            e
+            for e in entries
+            if getattr(e, "disabled_by", None) is None
+            and getattr(e, "source", None) != SOURCE_IGNORE
+            and getattr(e, "entry_id", None) not in trying
+        ]
+        self.integrations_pending = len(loading)
+        self.integrations_loading = [str(getattr(e, "title", "") or e.domain) for e in loading][
+            :WARMUP_NAMES
+        ]
+        self.integrations_total = len(enabled)
+        self.integrations_done = sum(
+            1
+            for e in enabled
+            if e.state not in (ConfigEntryState.SETUP_IN_PROGRESS, ConfigEntryState.NOT_LOADED)
+        )
+        now = time.monotonic()
+        if self.integrations_pending:
+            if self._pending_since is None:
+                self._pending_since = now
+            # A short blip after the integrations had settled does not start the buffer over.
+            if self._settled_at is None or now - self._pending_since >= WARMUP_BLIP_SECONDS:
+                self._settled_at = None
+        else:
+            self._pending_since = None
+            if self._settled_at is None:
+                self._settled_at = now
+
+    @property
+    def settled_at(self) -> float | None:
+        """``time.monotonic()`` of the moment no integration was loading any more; None while some are."""
+        return self._settled_at
+
+    @property
+    def boot_seconds(self) -> int | None:
+        """How long Home Assistant has been loading, while it still is; None once it runs."""
+        if not self._booting or self.boot_anchor is None:
+            return None
+        return max(0, round(time.time() - self.boot_anchor))
+
+    @property
+    def warmup_settling(self) -> bool:
+        """Whether every integration has loaded and only the safety buffer is left."""
+        return self._settled_at is not None and self.warmup_seconds_left > 0
 
     @property
     def booting(self) -> bool:
@@ -879,7 +1143,11 @@ class InventoryScanner:
             return WARMUP_SECONDS
         if self._warmup_until is None:
             return 0
-        return max(0, round(self._warmup_until - time.monotonic()))
+        now = time.monotonic()
+        left = self._warmup_until - now
+        if self._settled_at is not None:
+            left = min(left, self._settled_at + WARMUP_SETTLE_SECONDS - now)
+        return max(0, round(left))
 
     @property
     def warming_up(self) -> bool:
@@ -904,7 +1172,7 @@ class InventoryScanner:
                 self._details = _split_details(snapshot["objects"])
                 self._snapshot = snapshot
                 if not preliminary:
-                    async_sync_issues(self.hass, snapshot["findings"])
+                    self._sync_issues(snapshot)
                     async_announce(self.hass, self.notify.new(snapshot["findings"]))
                     if record:
                         self.history.record(snapshot)
@@ -914,9 +1182,18 @@ class InventoryScanner:
                             for e in self.hass.config_entries.async_entries()
                         },
                         datetime.now(UTC),
+                        {
+                            e.entry_id: getattr(e, "_tries", None)
+                            for e in self.hass.config_entries.async_entries()
+                        },
                     )
+                    try:
+                        await self.auto_pause.check(datetime.now(UTC))
+                    except Exception:  # a failing pause must not fail the scan
+                        _LOGGER.warning("Auto-pause check failed", exc_info=True)
                     await self._observe_versions(snapshot)
                     self._observe_watch(snapshot)
+                    snapshot["meta"]["view_counts"] = await view_counts(self, self.hass, snapshot)
                     if followup.check(
                         self.journal.plans, snapshot, datetime.now(UTC), self.runs.errors_since
                     ):
@@ -933,11 +1210,16 @@ class InventoryScanner:
                 if not preliminary:
                     self.outage_scans.after_scan(snapshot)
                 self.monitor.refresh(snapshot, self.health_report(), new_scan=not preliminary)
-                self.async_check_health()
+                # Not running any more before the signal goes out: the button reads it then.
                 self.status.update(running=False, phase="complete", progress=100)
+                self.async_check_health()
                 self._last_scan_end = time.monotonic()
                 return snapshot
             except Exception as err:
+                # The traceback only at debug level: it names the line, which the error text lacks.
+                _LOGGER.debug(
+                    "The scan failed in phase %s", self.status.get("phase"), exc_info=True
+                )
                 self.health.failed(datetime.now(UTC), str(self.status.get("phase")), err)
                 self.status.update(
                     running=False,
@@ -999,6 +1281,19 @@ class InventoryScanner:
         """The scan health as the panel and the sensor read it."""
         return self.health.report(datetime.now(UTC), self.scan_interval_hours)
 
+    def _sync_issues(self, snapshot: dict[str, Any]) -> None:
+        async_sync_issues(self.hass, snapshot["findings"])
+        async_sync_statistics_issue(self.hass, len(snapshot.get("orphaned_statistics", [])))
+
+    @callback
+    def sync_hints(self) -> None:
+        """Bring every repair hint in line with the switches, without waiting for the next scan."""
+        if self._snapshot is not None and not self.warming_up:
+            self._sync_issues(self._snapshot)
+        async_sync_scan_issue(self.hass, self.health_report())
+        async_sync_database_issue(self.hass, self.events.integrity)
+        async_sync_backup_issue(self.hass, self.backup_report)
+
     def async_check_health(self) -> None:
         """Raise or clear the repair hint for a scan that keeps failing, and tell the sensor."""
         async_sync_scan_issue(self.hass, self.health_report())
@@ -1014,6 +1309,9 @@ class InventoryScanner:
                 backup = await backup_health(self.hass, self.attest, self.journal.plans)
         except Exception:  # noqa: BLE001 - without the backup report only that event is skipped
             backup = None
+        if backup is not None:
+            self.backup_report = backup
+        async_sync_backup_issue(self.hass, self.backup_report)
         try:
             found = situations(
                 snapshot,
@@ -1065,18 +1363,7 @@ class InventoryScanner:
     def watch_marked(self, snapshot: dict[str, Any] | None = None) -> frozenset[str]:
         """Objects marked as expected (offline on purpose and the like); they do not count as new outages."""
         snapshot = snapshot or self._snapshot or {}
-        objects = snapshot.get("objects") or []
-
-        def hides(item: dict[str, Any]) -> bool:
-            mark = item.get("mark")
-            return bool(mark and mark.get("kind") in HIDING_KINDS and not item.get("mark_due"))
-
-        devices = {i["object_id"] for i in objects if i["object_type"] == "device" and hides(i)}
-        return frozenset(
-            f"{i['object_type']}:{i['object_id']}"
-            for i in objects
-            if hides(i) or (i["object_type"] == "entity" and i.get("device_id") in devices)
-        )
+        return marked_keys(snapshot.get("objects") or [])
 
     def watch_summary(self) -> dict[str, Any] | None:
         """The open watch in short, for the band in the panel header; None when none is open."""
@@ -1116,6 +1403,22 @@ class InventoryScanner:
         try:
             await self.async_request_scan()
         except ScanRefused:
+            return
+
+    async def async_check_reauth(self) -> None:
+        """Ask for a scan when the entries that wait for a new login are not those of the last scan.
+
+        Home Assistant has no hook for a flow that starts or ends, so this is a cheap look at its open
+        flows. At most one scan a minute comes of it, and only when the set has changed.
+        """
+        if self._reauth_seen is None or reauth_entry_ids(self.hass) == self._reauth_seen:
+            return
+        if time.monotonic() - self._reauth_asked < REAUTH_SCAN_GAP:
+            return
+        self._reauth_asked = time.monotonic()
+        try:
+            await self.async_request_scan()
+        except ScanRefused:  # a plan or the start is in the way: the next look asks again
             return
 
     async def async_watch_tick(self) -> None:
@@ -1193,7 +1496,11 @@ class InventoryScanner:
 
         entities = [
             _entity_item(
-                entry, self.hass.states.get(entry.entity_id), config_entries_by_id, devices_by_id
+                entry,
+                self.hass.states.get(entry.entity_id),
+                config_entries_by_id,
+                devices_by_id,
+                self.hass.config.components,
             )
             for entry in _registry_entries(entity_registry.entities)
         ]
@@ -1213,6 +1520,8 @@ class InventoryScanner:
         described = await async_get_integrations(
             self.hass, {entry.domain for entry in config_entries}
         )
+        reauth = reauth_entry_ids(self.hass)
+        self._reauth_seen = reauth
         integrations = [
             _config_entry_item(
                 entry,
@@ -1221,6 +1530,7 @@ class InventoryScanner:
                 else None,
                 entities_per_entry[entry.entry_id],
                 devices_per_entry[entry.entry_id],
+                entry.entry_id in reauth,
             )
             for entry in config_entries
         ]
@@ -1285,19 +1595,37 @@ class InventoryScanner:
             + [("config_entry", item) for item in integrations]
         )
         if not preliminary:
+            # An extra period per entity not provided: it survives restarts, which renew the
+            # placeholder, and ends as soon as the integration provides the entity again.
             await self.observations.async_update(
-                {f"{kind}:{item['object_id']}": item["status"] for kind, item in tracked},
+                {f"{kind}:{item['object_id']}": _observed_as(item) for kind, item in tracked}
+                | {
+                    f"{NOT_PROVIDED_KEY}{item['object_id']}": "not_provided"
+                    for item in entities
+                    if item["reason"] == "not_provided"
+                },
                 observed_at,
             )
         for kind, item in tracked:
             item["status_since"] = self.observations.since(
-                f"{kind}:{item['object_id']}", item["status"]
+                f"{kind}:{item['object_id']}", _observed_as(item)
             )
+            if kind == "config_entry":
+                item["status_since"] = self.auto_pause.outage_start(
+                    item["object_id"], item["status"], item["status_since"]
+                )
             if kind == "entity" and item["status"] in ("unavailable", "unknown"):
                 item["status_since"], item["status_since_source"] = outage_start(
                     item["status_since"], item.get("last_changed")
                 )
                 item["had_value"] = self.observations.had_value(f"{kind}:{item['object_id']}")
+            if kind == "entity" and item["reason"] == "not_provided":
+                item["not_provided_settled"] = _not_provided_settled(
+                    self.observations.since(
+                        f"{NOT_PROVIDED_KEY}{item['object_id']}", "not_provided"
+                    ),
+                    observed_at,
+                )
         if not preliminary:
             self.stale.observe(
                 entities,
@@ -1342,6 +1670,14 @@ class InventoryScanner:
             if item["object_type"] in ("automation", "script", "scene") and "labels" not in item:
                 entry = registry.async_get(item["object_id"])
                 item["labels"] = sorted(entry.labels) if entry is not None else []
+        entity_by_id = {e["object_id"]: e for e in entities}
+        for item in automations:  # what the registry knows of the entity behind it, to show as one
+            twin = entity_by_id.get(item["object_id"])
+            if twin is not None and item["object_type"] in ("automation", "script", "scene"):
+                item["unique_id"] = twin["unique_id"]
+                item["platform"] = twin["platform"]
+                item["entity_status"] = twin["status"]
+                item["entity_reason"] = twin["reason"]
         findings = (
             _entity_findings(entities, observed_at, self.outage_levels)
             + duplicate_findings(
@@ -1379,7 +1715,11 @@ class InventoryScanner:
                 )
             )
             + _config_entry_findings(
-                integrations, observed_at, self.outage_levels, self._counts_from()
+                integrations,
+                observed_at,
+                self.outage_levels,
+                self._counts_from(),
+                self.auto_pause.outage_starts(),
             )
         )
         findings += device_down_findings(
@@ -1415,6 +1755,9 @@ class InventoryScanner:
             finding["key"] = finding_key(finding)
             self._mark_ignored(finding, entity_registry_entries)
         findings.extend(blocked)
+        # A preliminary scan misses findings: it says nothing about what is away.
+        if not preliminary:
+            self.ignored.note_seen({f["key"] for f in findings}, datetime.now(UTC))
         # A blocked automation may be switched off by a plan, though its entity is "working".
         stuck = {
             f["object_id"]
@@ -1479,6 +1822,11 @@ class InventoryScanner:
                 "preliminary": preliminary,
                 "warmup_seconds_left": self.warmup_seconds_left,
                 "warmup_booting": self.booting,
+                "warmup_pending": self.integrations_pending,
+                "warmup_names": self.integrations_loading,
+                "warmup_done": self.integrations_done,
+                "warmup_total": self.integrations_total,
+                "warmup_settling": self.warmup_settling,
                 "outage_info_minutes": self.outage_info_minutes,
                 "outage_low_hours": self.outage_low_hours,
                 "outage_medium_hours": self.outage_medium_hours,
@@ -1487,7 +1835,9 @@ class InventoryScanner:
                 "ignore_label": IGNORE_LABEL,
                 "version": self.version,
                 "notify": self.notify.enabled,
+                "mcp": self.mcp.meta(),
                 "protection": self.protection.mode,
+                "protection_rules": protection_rules(),
                 "recorder_available": self._recorder_available,
                 "orphaned_statistics": len(orphaned_statistics),
                 "quarantined": len(quarantine),
@@ -1495,7 +1845,13 @@ class InventoryScanner:
                 "quarantine_days": QUARANTINE_DAYS,
                 "ha_version": HA_VERSION,
                 "hacs_available": hacs is not None,
+                "hacs_store": store_kind(self.hass),
                 "hacs_housekeeper": hacs.get(DOMAIN) if hacs is not None else None,
+                "hacs_removed": [
+                    {"id": key, **value}
+                    for key, value in sorted(removed_issues(self.hass).items())
+                    if not value["ignored"]
+                ],
                 "scan_interval_hours": self.scan_interval_hours,
                 "low_battery_percent": self.low_battery_percent,
                 "stale_hours": self.stale_hours,
@@ -1503,9 +1859,14 @@ class InventoryScanner:
                 "watch_hours": self.watch_hours,
                 "watch": self.watch_summary(),
                 "low_batteries": len(low_battery_ids(entities, self.low_battery_percent)),
-                "object_count": len(objects),
-                "status_counts": dict(Counter(item["status"] for item in objects)),
-                "type_counts": dict(Counter(item["object_type"] for item in objects)),
+                "object_count": len(listed_objects(objects)),
+                "status_counts": dict(Counter(item["status"] for item in listed_objects(objects))),
+                "marked_status_counts": marked_status_counts(objects),
+                "type_counts": dict(
+                    Counter(item["object_type"] for item in listed_objects(objects))
+                ),
+                "vacation": self.vacation_meta(findings),
+                "exception_rules": len(self.exceptions.rules),
             },
             "objects": objects,
             "edges": edges,
@@ -1528,15 +1889,114 @@ class InventoryScanner:
         entry = registry.async_get(finding["object_id"])
         if entry is not None and IGNORE_LABEL in entry.labels:
             return "label"
+        # The label on a device also hides the device's own findings and those of its entities.
+        device_id = entry.device_id if entry is not None else finding["object_id"]
+        device = dr.async_get(self.hass).async_get(device_id) if device_id else None
+        if device is not None and IGNORE_LABEL in device.labels:
+            return "label"
         return None
 
     def _mark_ignored(self, finding: dict[str, Any], registry: Any) -> None:
         """Set what hides a finding, the decision behind it and whether one ran out."""
         finding["ignored_by"] = self._ignored_by(finding, registry)
+        finding["ignore_rule"] = None
+        finding["rule_due"] = False
+        if finding["ignored_by"] is None:
+            self._apply_exception(finding)
         finding["ignored"] = finding["ignored_by"] is not None
         info = self.ignored.info(finding["key"])
         finding["ignore_info"] = info if finding["ignored_by"] == "user" else None
         finding["resurfaced"] = not finding["ignored"] and self.ignored.is_due(finding["key"])
+
+    def _apply_exception(self, finding: dict[str, Any]) -> None:
+        """Let the exception rules hide or hold back a finding, or mark it as due after a delay."""
+        if not self.exceptions.rules:
+            return
+        if finding["rule_id"] == "config_entry.not_loaded":
+            found = entry_traits(self.hass, finding["object_id"])
+        else:
+            kind = "entity" if "." in finding["object_id"] else "device"
+            found = traits(self.hass, kind, finding["object_id"])
+        if found is None:
+            return
+        result = verdict(
+            self.exceptions.rules, found, finding, datetime.now(UTC), self.exceptions.vacation()
+        )
+        if result is None:
+            return
+        finding["ignore_rule"] = {
+            **result["rule"],
+            "until": result["until"],
+            "phase": result["phase"],
+        }
+        if result["state"] == "due":
+            finding["rule_due"] = True
+        else:
+            finding["ignored_by"] = "rule"
+
+    def _mark_excepted(self, objects: list[dict[str, Any]]) -> None:
+        """Flag the objects a hiding rule covers, so lists and cleanup plans leave them out."""
+        vacation = self.exceptions.active()
+        hiding = [
+            r
+            for r in self.exceptions.rules
+            if r["action"] == "hide" and (r["scope"] == "always" or vacation)
+        ]
+        for item in objects:
+            found = traits(self.hass, item["object_type"], item["object_id"]) if hiding else None
+            item["excepted"] = bool(found) and any(r["enabled"] and _hits(r, found) for r in hiding)
+
+    def vacation_meta(self, findings: list[dict[str, Any]]) -> dict[str, Any] | None:
+        """What the panel shows about the vacation mode; None while no switch is chosen."""
+        store = self.exceptions
+        if not store.entity:
+            return None
+        held = [
+            f
+            for f in findings
+            if f.get("ignored_by") == "rule"
+            and (f.get("ignore_rule") or {}).get("phase") in ("vacation", "after")
+        ]
+        state = store.switch_state()
+        after = [f for f in held if f["ignore_rule"]["phase"] == "after"]
+        return {
+            "entity": store.entity,
+            "keyword": store.keyword,
+            "active": store.active(),
+            "missing": state in (None, "unavailable", "unknown"),
+            "ended_at": store.ended_at.isoformat() if store.ended_at else None,
+            "grace_hours": store.grace_hours,
+            "held": len(held),
+            # Whether anything can be held back at all: the rules that apply only in the vacation mode.
+            "rules": sum(
+                1 for r in store.rules if r.get("scope") == "vacation" and r.get("enabled", True)
+            ),
+            "after_until": max((f["ignore_rule"]["until"] for f in after), default=None),
+        }
+
+    def set_vacation(self, entity: str | None, grace_hours: int, keyword: str = "") -> str | None:
+        """Choose the vacation switch, its keyword and the grace period; the failure, or None."""
+        if (
+            error := self.exceptions.set_vacation(entity, grace_hours, datetime.now(UTC), keyword)
+        ) is not None:
+            return error
+        self._refresh_marks()
+        if self.vacation_hook is not None:
+            self.vacation_hook()
+        return None
+
+    @callback
+    def vacation_changed(self) -> None:
+        """The vacation switch moved: look at every finding again, without a scan."""
+        if self.exceptions.sync(datetime.now(UTC)) or self.exceptions.entity:
+            self._refresh_marks()
+
+    def set_exceptions(self, rules: list[Any]) -> str | None:
+        """Replace the exception rules and bring the cached snapshot up to date; the failure, or None."""
+        if (error := self.exceptions.set_rules(rules)) is not None:
+            return error
+        self._refresh_marks()
+        return None
 
     def set_finding_ignored(
         self,
@@ -1547,11 +2007,12 @@ class InventoryScanner:
         reason: str = "",
         days: int | None = None,
         by: str | None = None,
+        via: str | None = None,
     ) -> bool:
         """Hide or show one finding in the stored state and the cached snapshot.
 
         ``kind`` and ``reason`` say what was decided and why; ``days`` how long it holds.
-        A policy violation (key ``policy.<rule>|...``) is no finding: only the ignore list changes.
+        A policy violation (key ``policy.<rule>|...``) or a conflict (``conflict.<kind>|...``) is no finding: only the ignore list changes.
         """
         now = datetime.now(UTC)
 
@@ -1560,9 +2021,13 @@ class InventoryScanner:
                 self.ignored.set_ignored(key, False, now)
                 return True
             until = now + timedelta(days=days) if days else None
-            return self.ignored.decide(key, kind, now, reason=reason, until=until, by=by)
+            return self.ignored.decide(key, kind, now, reason=reason, until=until, by=by, via=via)
 
-        if key.startswith(POLICY_KEY_PREFIX):
+        # A decision whose finding is away right now (it rests) can be changed or taken away as well.
+        if key.startswith((POLICY_KEY_PREFIX, CONFLICT_KEY_PREFIX)) or (
+            self.ignored.entry(key) is not None
+            and not any(f["key"] == key for f in (self._snapshot or {}).get("findings", []))
+        ):
             return store()
         finding = next(
             (f for f in (self._snapshot or {}).get("findings", []) if f["key"] == key), None
@@ -1571,13 +2036,26 @@ class InventoryScanner:
             return False
         if not store():
             return False
+        self._refresh_finding(finding)
+        return True
+
+    def restore_decision(self, key: str, entry: dict[str, Any] | None) -> None:
+        """Put the decision about a finding back as it was (``None``: there was none)."""
+        self.ignored.restore(key, entry)
+        finding = next(
+            (f for f in (self._snapshot or {}).get("findings", []) if f["key"] == key), None
+        )
+        if finding is not None:
+            self._refresh_finding(finding)
+
+    def _refresh_finding(self, finding: dict[str, Any]) -> None:
+        assert self._snapshot is not None
         self._mark_ignored(finding, er.async_get(self.hass))
         self._snapshot["causes"] = apply_causes(
             self._snapshot["objects"], self._snapshot["edges"], self._snapshot["findings"]
         )
-        async_sync_issues(self.hass, self._snapshot["findings"])
+        self._sync_issues(self._snapshot)
         async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
-        return True
 
     def set_mark(
         self,
@@ -1591,6 +2069,7 @@ class InventoryScanner:
         by: str | None = None,
         window: dict[str, str] | None = None,
         grace: int = GRACE_DEFAULT,
+        via: str | None = None,
     ) -> str | None:
         """Mark an entity, device, integration or app; the reason it failed, or None."""
         if kind not in KINDS_OF.get(object_type, KINDS):
@@ -1615,10 +2094,16 @@ class InventoryScanner:
             by=by,
             window=window,
             grace=grace,
+            via=via,
         ):
             return "too_many"
         self._refresh_marks()
         return None
+
+    def restore_mark(self, object_type: str, object_id: str, entry: dict[str, Any] | None) -> None:
+        """Put the mark of an object back as it was (``None``: there was none)."""
+        self.marks.restore(mark_key(object_type, object_id), entry)
+        self._refresh_marks()
 
     async def set_stale_limit(self, entity_id: str, hours: int | None) -> str | None:
         """Set the "no new report" limit of one sensor (0 = off, ``None`` = default); the failure, or None."""
@@ -1683,6 +2168,7 @@ class InventoryScanner:
     def _apply_marks(self, objects: list[dict[str, Any]], findings: list[dict[str, Any]]) -> None:
         sun = self._sun()
         apply_marks(objects, findings, self.marks.items, sun=sun)
+        self._mark_excepted(objects)
         self._window_seen = self._window_states(sun)
 
     @callback
@@ -1713,10 +2199,12 @@ class InventoryScanner:
         for finding in snapshot["findings"]:
             self._mark_ignored(finding, registry)
         self._apply_marks(snapshot["objects"], snapshot["findings"])
+        snapshot["meta"]["vacation"] = self.vacation_meta(snapshot["findings"])
+        snapshot["meta"]["marked_status_counts"] = marked_status_counts(snapshot["objects"])
         snapshot["causes"] = apply_causes(
             snapshot["objects"], snapshot["edges"], snapshot["findings"]
         )
-        async_sync_issues(self.hass, snapshot["findings"])
+        self._sync_issues(snapshot)
         async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
 
     def _existing_objects(self) -> dict[str, set[str]]:
@@ -1791,11 +2279,14 @@ class InventoryScanner:
             # HA's runtime extraction also detects references inside templates.
             explicit_markers = {(ref["kind"], ref["object_id"]) for ref in references}
             runtime_sets = {
-                "entity": getattr(entity, "referenced_entities", set()),
-                "device": getattr(entity, "referenced_devices", set()),
-                "area": getattr(entity, "referenced_areas", set()),
-                "floor": getattr(entity, "referenced_floors", set()),
-                "label": getattr(entity, "referenced_labels", set()),
+                kind: _runtime_references(entity, attr)
+                for kind, attr in (
+                    ("entity", "referenced_entities"),
+                    ("device", "referenced_devices"),
+                    ("area", "referenced_areas"),
+                    ("floor", "referenced_floors"),
+                    ("label", "referenced_labels"),
+                )
             }
             for kind, object_ids in runtime_sets.items():
                 for object_id in object_ids:
@@ -2128,8 +2619,16 @@ class InventoryScanner:
         scenes: list[dict[str, Any]] = []
         edges: list[dict[str, str]] = []
         findings: list[dict[str, Any]] = []
+        registry = er.async_get(self.hass)
         for state in self.hass.states.async_all("scene"):
-            entity_ids = [value for value in state.attributes.get("entity_id", ()) if value]
+            registry_entry = registry.async_get(state.entity_id)
+            listed = state.attributes.get("entity_id", ())
+            # A scene from a custom integration may list anything; only names can be linked.
+            entity_ids = [
+                value
+                for value in (listed if isinstance(listed, (list, tuple)) else ())
+                if value and isinstance(value, str)
+            ]
             references = [
                 {
                     "kind": "entity",
@@ -2162,6 +2661,7 @@ class InventoryScanner:
                     "status": "unavailable" if state.state == "unavailable" else "active",
                     "state": state.state,
                     "scene_id": state.attributes.get("id"),
+                    "device_id": registry_entry.device_id if registry_entry else None,
                     "entities": entity_ids,
                     "entity_count": len(entity_ids),
                     "missing_reference_count": len(missing),

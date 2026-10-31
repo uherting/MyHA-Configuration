@@ -10,9 +10,9 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant
 
-from . import counter_repair
+from . import counter_repair, entity_space
 from .const import DOMAIN
-from .db_health import database_first, db_health, start_check
+from .db_health import database_first, db_health, recorder_retention, start_check
 from .entity_recorder import entity_recorder
 from .inventory import InventoryScanner
 from .maintenance import recorder_costs
@@ -90,6 +90,7 @@ async def websocket_reliability(
     now = datetime.now(UTC)
     for row in result.get("entries", []):
         row["setup"] = scanner.entry_states.summary(row["entry_id"], now)
+    result["keep_days"] = keep_days(hass)
     connection.send_result(msg["id"], _versioned(result))
 
 
@@ -184,6 +185,56 @@ async def websocket_entity_recorder(
             result = await entity_recorder(hass, msg["entity_id"])
     except Exception as err:
         connection.send_error(msg["id"], "entity_recorder_failed", f"{type(err).__name__}: {err}")
+        return
+    connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/entity_space",
+        vol.Optional("start", default=False): bool,
+        vol.Optional("stop", default=False): bool,
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_entity_space(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The space per entity in states and attributes, measured on request in the background. Read-only."""
+    try:
+        if msg["stop"]:
+            entity_space.stop(hass)
+        elif msg["start"]:
+            await entity_space.start(hass, scanner.replies)
+        result = entity_space.status(hass, scanner.replies)
+    except Exception as err:
+        connection.send_error(msg["id"], "entity_space_failed", f"{type(err).__name__}: {err}")
+        return
+    connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/entity_attributes",
+        vol.Required("entity_id"): vol.All(str, vol.Length(max=255)),
+    }
+)
+@websocket_api.async_response
+async def websocket_entity_attributes(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """The attributes of one entity by the space they take. Read-only; kept for five minutes."""
+    try:
+        async with asyncio.timeout(RELIABILITY_TIMEOUT):
+            result = await entity_space.entity_attributes(hass, msg["entity_id"])
+    except Exception as err:
+        connection.send_error(msg["id"], "entity_attributes_failed", f"{type(err).__name__}: {err}")
         return
     connection.send_result(msg["id"], _versioned(result))
 
@@ -307,7 +358,26 @@ async def websocket_storms(
     except Exception as err:
         connection.send_error(msg["id"], "storms_failed", f"{type(err).__name__}: {err}")
         return
-    connection.send_result(msg["id"], _versioned(mark_excluded(hass, dict(result))))
+    reply = mark_excluded(hass, dict(result))
+    reply["keep_days"] = keep_days(hass)
+    connection.send_result(msg["id"], _versioned(reply))
+
+
+def keep_days(hass: HomeAssistant) -> int | None:
+    """How many days the recorder keeps states; None without a recorder or with its purge off."""
+    try:
+        retention = recorder_retention(hass)
+    except Exception:  # no recorder instance: the window stands as asked
+        return None
+    return retention["keep_days"] if retention["auto_purge"] is not False else None
+
+
+def auto_purge(hass: HomeAssistant) -> bool | None:
+    """Whether the recorder purges old data by itself; None when that is unknown."""
+    try:
+        return recorder_retention(hass)["auto_purge"]
+    except Exception:  # no recorder instance
+        return None
 
 
 def async_register(hass: HomeAssistant) -> None:
@@ -319,5 +389,7 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_statistics_last)
     websocket_api.async_register_command(hass, websocket_database_first)
     websocket_api.async_register_command(hass, websocket_entity_recorder)
+    websocket_api.async_register_command(hass, websocket_entity_space)
+    websocket_api.async_register_command(hass, websocket_entity_attributes)
     websocket_api.async_register_command(hass, websocket_counter_scan)
     websocket_api.async_register_command(hass, websocket_range_series)

@@ -29,6 +29,9 @@ SYSTEM_ACCESS: dict[str, tuple[str, str | None]] = {
     "zwave": ("radio", "Z-Wave"),
     "zha": ("radio", "Zigbee"),
     "deconz": ("radio", "ConBee"),
+    "bluetooth": ("radio", "Bluetooth"),
+    "otbr": ("radio", "Thread"),
+    "thread": ("radio", "Thread"),
     "usb": ("hardware", "USB"),
     "serial": ("hardware", "Serial"),
     "gpio": ("hardware", "GPIO"),
@@ -43,6 +46,9 @@ SYSTEM_ACCESS: dict[str, tuple[str, str | None]] = {
     "ring": ("camera", "Ring"),
     "reolink": ("camera", "Reolink"),
     "onvif": ("camera", "ONVIF"),
+    "go2rtc": ("camera", "go2rtc"),
+    "frigate": ("camera", "Frigate"),
+    "unifiprotect": ("camera", "UniFi Protect"),
     "geo_location": ("location", None),
     "device_tracker": ("location", None),
     "mobile_app": ("location", "Companion App"),
@@ -71,6 +77,10 @@ SYSTEM_ACCESS: dict[str, tuple[str, str | None]] = {
     "spotify": ("cloud", "Spotify"),
     "sonos": ("network", "Sonos"),
     "cast": ("network", "Cast"),
+    "matter": ("network", "Matter"),
+    "esphome": ("network", "ESPHome"),
+    "homekit": ("network", "HomeKit"),
+    "emulated_hue": ("network", "Emulated Hue"),
 }
 
 # Tokens that are common words in other domains: they only match a domain of that exact name.
@@ -107,9 +117,15 @@ DATAFLOW: dict[str, frozenset[str]] = {
     "life360": frozenset({"external", "gps", "cloud"}),
     "owntracks": frozenset({"local", "gps"}),
     "nominatim": frozenset({"external", "gps"}),
+    "ollama": frozenset({"local"}),  # the model runs in the house
+    "llama_cpp": frozenset({"local"}),
 }
 
 RISK_ORDER = {"high": 0, "medium": 1, "low": 2}
+
+# Where a device tracker gets its position from (its ``source_type``). Only "gps" is a location;
+# a router or Bluetooth tracker only tells whether a device is at home.
+PRESENCE_SOURCES = frozenset({"router", "bluetooth", "bluetooth_le"})
 
 
 def matches(domain: str, token: str) -> bool:
@@ -124,18 +140,36 @@ def matches(domain: str, token: str) -> bool:
     return f"_{token}_" in f"_{domain}_"
 
 
-def classify(domain: str, iot_class: str | None, entity_domains: set[str]) -> dict[str, Any]:
-    """System access, data flow, external reach and a risk level for one integration."""
+def classify(
+    domain: str,
+    iot_class: str | None,
+    entity_domains: set[str],
+    trackers: set[str] | None = None,
+    custom: bool = False,
+) -> dict[str, Any]:
+    """System access, data flow, external reach and a risk level for one integration.
+
+    ``trackers`` are the sources of its device trackers ("gps", "router", ... or "unknown" for one
+    without a readable state). Without them every tracker counts as a location, as does one whose
+    source is unknown: a doubt never lowers the level. ``custom`` is an integration that is not
+    part of Home Assistant (HACS or custom_components): its code runs with all the rights of Home
+    Assistant itself, so it is at least "medium".
+    """
     access: list[dict[str, Any]] = []
     for token, (kind, detail) in SYSTEM_ACCESS.items():
         item = {"kind": kind, "detail": detail}
         if matches(domain, token) and item not in access:
             access.append(item)
+    if custom:
+        access.append({"kind": "custom_code", "detail": None})
     flows: set[str] = set()
     for token, tags in DATAFLOW.items():
         if matches(domain, token):
             flows |= tags
-    gps = bool(entity_domains & {"device_tracker", "geo_location"}) or "gps" in flows
+    if trackers is None:
+        trackers = {"unknown"} if "device_tracker" in entity_domains else set()
+    gps = bool(trackers - PRESENCE_SOURCES) or "gps" in flows
+    presence = not gps and bool(trackers & PRESENCE_SOURCES)
     camera = "camera" in entity_domains
     cloud_class = "cloud" in (iot_class or "")
     external = cloud_class or bool(flows & {"external", "cloud"})
@@ -157,6 +191,7 @@ def classify(domain: str, iot_class: str | None, entity_domains: set[str]) -> di
         "risk_reasons": reasons,
         "flows": sorted(flows),
         "gps": gps,
+        "presence": presence,
         "camera": camera,
         "external": external,
         "cloud_class": cloud_class,
@@ -164,24 +199,40 @@ def classify(domain: str, iot_class: str | None, entity_domains: set[str]) -> di
     }
 
 
-async def _iot_classes(hass: HomeAssistant, domains: set[str]) -> dict[str, str | None]:
+async def _integration_facts(
+    hass: HomeAssistant, domains: set[str]
+) -> dict[str, tuple[str | None, bool]]:
+    """Per domain: its IoT class and whether it is custom code. One that fails to load is neither."""
     from homeassistant.loader import async_get_integrations
 
     found = await async_get_integrations(hass, domains)
-    return {
-        domain: getattr(integration, "iot_class", None)
-        if not isinstance(integration, Exception)
-        else None
-        for domain, integration in found.items()
-    }
+    facts: dict[str, tuple[str | None, bool]] = {}
+    for domain, integration in found.items():
+        if isinstance(integration, Exception):
+            facts[domain] = (None, False)
+        else:
+            facts[domain] = (
+                getattr(integration, "iot_class", None),
+                getattr(integration, "is_built_in", True) is False,
+            )
+    return facts
 
 
-def _entity_domains(hass: HomeAssistant) -> dict[str, set[str]]:
+def _entity_domains(hass: HomeAssistant) -> tuple[dict[str, set[str]], dict[str, set[str]]]:
+    """Per config entry: the domains of its entities and the sources of its device trackers."""
     by_entry: dict[str, set[str]] = {}
+    trackers: dict[str, set[str]] = {}
     for entity in er.async_get(hass).entities.values():
-        if entity.config_entry_id:
-            by_entry.setdefault(entity.config_entry_id, set()).add(entity.domain)
-    return by_entry
+        if not entity.config_entry_id:
+            continue
+        by_entry.setdefault(entity.config_entry_id, set()).add(entity.domain)
+        if entity.domain == "device_tracker":
+            state = hass.states.get(entity.entity_id)
+            source = state.attributes.get("source_type") if state else None
+            trackers.setdefault(entity.config_entry_id, set()).add(
+                source if isinstance(source, str) else "unknown"
+            )
+    return by_entry, trackers
 
 
 APP_INFO_TIMEOUT = 15  # seconds per app
@@ -191,8 +242,9 @@ def classify_app(info: dict[str, Any]) -> dict[str, Any]:
     """The rights of one app (add-on) from the Supervisor's ``/addons/<slug>/info`` and a risk level.
 
     Each right has a level: "high" for what equals root on the host (full hardware access,
-    privileges, Docker, the host's process namespace, Supervisor admin), "medium" for access to
-    the host network, Home Assistant, logins or without AppArmor, "low" for the rest.
+    privileges, Docker, the host's process namespace, Supervisor admin, protection mode off),
+    "medium" for access to the host network, open ports on the host, Home Assistant, logins or
+    without AppArmor, "low" for the rest. A field the Supervisor does not send adds nothing.
     """
     access: list[dict[str, Any]] = []
 
@@ -212,8 +264,21 @@ def classify_app(info: dict[str, Any]) -> dict[str, Any]:
         add("host_ipc", "low")
     if info.get("host_dbus"):
         add("host_dbus", "low")
+    if info.get("protected") is False:
+        add("protection_off", "high")
     if info.get("host_network"):
         add("host_network", "medium")
+    else:
+        network = info.get("network")
+        ports = sorted(
+            {
+                p
+                for p in (network.values() if isinstance(network, dict) else [])
+                if isinstance(p, int)
+            }
+        )
+        if ports:
+            add("ports", "medium", ", ".join(str(p) for p in ports))
     role = info.get("hassio_role")
     if info.get("hassio_api"):
         add(
@@ -239,6 +304,17 @@ def classify_app(info: dict[str, Any]) -> dict[str, Any]:
     return {"access": access, "risk": risk}
 
 
+def app_origin(info: dict[str, Any]) -> dict[str, str | None]:
+    """Where an app comes from: "core" (official), "local" (built here) or "community", and its
+    stage when it is not stable. Unknown when the Supervisor names no repository."""
+    repository = info.get("repository")
+    origin = None
+    if isinstance(repository, str) and repository:
+        origin = repository if repository in ("core", "local") else "community"
+    stage = info.get("stage")
+    return {"origin": origin, "stage": stage if stage in ("experimental", "deprecated") else None}
+
+
 async def apps_report(hass: HomeAssistant) -> dict[str, Any]:
     """The rights of every installed app; ``available`` is False without a Supervisor."""
     if not supervisor_token():
@@ -259,6 +335,7 @@ async def apps_report(hass: HomeAssistant) -> dict[str, Any]:
             "state": (info or app).get("state"),
             "version": (info or app).get("version"),
             "checked": info is not None,
+            **app_origin(info or app),
             **result,
         }
 
@@ -302,36 +379,128 @@ def webhook_triggers(automations: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return found
 
 
+# Apps that open a way in from outside, by a part of their slug: a public tunnel, a reverse proxy,
+# a dynamic DNS name, or a private VPN (only members of the network reach it).
+INBOUND_APPS: dict[str, str] = {
+    "cloudflared": "tunnel",
+    "ngrok": "tunnel",
+    "nginx_proxy": "proxy",
+    "nginxproxymanager": "proxy",
+    "duckdns": "dyndns",
+    "tailscale": "vpn",
+    "zerotier": "vpn",
+    "wireguard": "vpn",
+}
+
+
+def _nabu_casa(hass: HomeAssistant) -> dict[str, Any] | None:
+    """Whether the remote UI of Nabu Casa is on. None without the cloud; "unknown" if unreadable."""
+    if "cloud" not in hass.config.components:
+        return None
+    cloud = hass.data.get("cloud")
+    try:
+        remote = cloud.client.prefs.remote_enabled  # type: ignore[union-attr]
+        logged_in = cloud.is_logged_in  # type: ignore[union-attr]
+    except Exception:  # noqa: BLE001 - another cloud version: say so, never guess "off"
+        return {"kind": "nabu_casa", "name": "Nabu Casa", "state": "unknown", "level": "mute"}
+    state = "logged_out" if not logged_in else "on" if remote is True else "off"
+    return {
+        "kind": "nabu_casa",
+        "name": "Nabu Casa",
+        "state": state,
+        "level": "warn" if state == "on" else "ok",
+    }
+
+
+def inbound_paths(
+    hass: HomeAssistant,
+    entries: list[dict[str, Any]],
+    apps: list[dict[str, Any]],
+    webhooks: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Ways in from outside that Housekeeper can see: the remote UI of Nabu Casa, tunnel, proxy,
+    dynamic DNS and VPN apps (by name), the MCP server and webhooks open beyond the local network.
+    A port forwarding on the router is not visible from here."""
+    found: list[dict[str, Any]] = []
+    nabu = _nabu_casa(hass)
+    if nabu:
+        found.append(nabu)
+    for app in apps:
+        kind = next((k for token, k in INBOUND_APPS.items() if matches(app["slug"], token)), None)
+        if kind is None:
+            continue
+        running = app.get("state") == "started"
+        level = "ok" if kind == "vpn" or not running else "warn"
+        found.append(
+            {
+                "kind": kind,
+                "name": app["name"],
+                "slug": app["slug"],
+                "state": "running" if running else "stopped",
+                "level": level,
+            }
+        )
+    for entry in entries:
+        if entry["domain"] == "mcp_server" and not entry["disabled"]:
+            found.append(
+                {
+                    "kind": "mcp_server",
+                    "name": entry["title"],
+                    "domain": entry["domain"],
+                    "state": "set_up",
+                    "level": "warn",
+                }
+            )
+    if webhooks:
+        opened = sum(1 for w in webhooks if not w["local_only"] and w["enabled"])
+        found.append(
+            {
+                "kind": "webhooks",
+                "name": "Webhooks",
+                "state": "open" if opened else "local",
+                "count": opened,
+                "level": "warn" if opened else "ok",
+            }
+        )
+    return found
+
+
 async def access_report(
     hass: HomeAssistant, automations: list[dict[str, Any]] | None = None
 ) -> dict[str, Any]:
     """System access and data flow of every config entry (ignored discoveries left out) and the
     rights of the installed apps (only with a Supervisor)."""
     entries = [e for e in hass.config_entries.async_entries() if e.source != "ignore"]
-    classes = await _iot_classes(hass, {e.domain for e in entries})
-    entity_domains = _entity_domains(hass)
+    facts = await _integration_facts(hass, {e.domain for e in entries})
+    entity_domains, trackers = _entity_domains(hass)
     items = []
     for entry in entries:
         result = classify(
-            entry.domain, classes.get(entry.domain), entity_domains.get(entry.entry_id, set())
+            entry.domain,
+            facts.get(entry.domain, (None, False))[0],
+            entity_domains.get(entry.entry_id, set()),
+            trackers.get(entry.entry_id, set()),
+            custom=facts.get(entry.domain, (None, False))[1],
         )
         items.append(
             {
                 "entry_id": entry.entry_id,
                 "domain": entry.domain,
                 "title": entry.title,
-                "iot_class": classes.get(entry.domain),
+                "iot_class": facts.get(entry.domain, (None, False))[0],
                 "disabled": entry.disabled_by is not None,
                 **result,
             }
         )
     items.sort(key=lambda i: (RISK_ORDER[i["risk"]], i["domain"], str(i["title"]).lower()))
     apps = await apps_report(hass)
+    webhooks = webhook_triggers(automations or [])
     return {
         "entries": items,
         "apps": apps["apps"],
         "apps_available": apps["available"],
-        "webhooks": webhook_triggers(automations or []),
+        "webhooks": webhooks,
+        "inbound": inbound_paths(hass, items, apps["apps"], webhooks),
         "with_access": sum(1 for i in items if i["access"]),
         "external": sum(1 for i in items if i["external"]),
         "high": sum(1 for i in items if i["risk"] == "high"),

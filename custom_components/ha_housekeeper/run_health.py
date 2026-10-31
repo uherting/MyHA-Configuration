@@ -27,6 +27,7 @@ from .runs import (
     MAXED,
     OK,
     RUNS,
+    STOPPED,
     run_key,
 )
 
@@ -246,6 +247,24 @@ def _after_update(
     return None
 
 
+def _guard_stops(window: list[dict[str, Any]], actions: Any) -> int:
+    """Aborted runs that stopped at a ``condition`` or ``stop`` of the actions: they ended on purpose."""
+    count = 0
+    for entry in window:
+        for step, runs in (entry.get("a") or {}).items():
+            node, found = actions, False
+            for part in step.split("/")[1:]:
+                try:
+                    node = node[int(part)] if isinstance(node, list) else node[part]
+                except (KeyError, IndexError, ValueError, TypeError):
+                    node = None
+                    break
+                found = found or (isinstance(node, dict) and "condition" in node)
+            if found or (isinstance(node, dict) and "stop" in node):
+                count += runs
+    return count
+
+
 def _iso_days(first: date, last: date) -> list[str]:
     return [(first + timedelta(days=n)).isoformat() for n in range((last - first).days + 1)]
 
@@ -279,6 +298,9 @@ def evaluate(
         window = _span(days, today, 0, WINDOW_DAYS - 1)
         baseline = _span(days, today, WINDOW_DAYS, WINDOW_DAYS + BASELINE_DAYS - 1)
         total = _sum(window)
+        guards = min(_guard_stops(window, actions.get(entity_id)), total[STOPPED])
+        total[STOPPED] -= guards
+        total[CONDITION] += guards
         steps: dict[str, int] = {}
         for entry in window:
             for step, count in (entry.get("s") or {}).items():
@@ -373,10 +395,15 @@ def evaluate(
     }
 
 
-async def report(scanner: Any) -> RunsResult:
-    """Collect the newest runs, then rate everything; reads traces and the snapshot only."""
-    await scanner.runs.async_collect()
-    snapshot = await scanner.async_get_snapshot()
+async def report(scanner: Any, snapshot: dict[str, Any] | None = None) -> RunsResult:
+    """Collect the newest runs, then rate everything; reads traces and the snapshot only.
+
+    With a ``snapshot`` (the scan that has just built it) nothing is collected or awaited: the
+    runs are those the daily collection kept.
+    """
+    if snapshot is None:
+        await scanner.runs.async_collect()
+        snapshot = await scanner.async_get_snapshot()
     ignored = {f["object_id"] for f in snapshot.get("findings", []) if f.get("ignored")} | {
         item["object_id"]
         for item in snapshot["objects"]
@@ -416,4 +443,11 @@ async def report(scanner: Any) -> RunsResult:
         scanner.runs.items,
         datetime.now(UTC).date(),
     )
+    now = datetime.now(UTC)
+    for item in found["items"]:
+        if info := scanner.ignored.info(item["key"], now):
+            item["ignored"] = True
+            item["decision"] = {k: info[k] for k in ("kind", "reason", "until")}
+    found["known"] = sum(1 for item in found["items"] if item.get("ignored"))
+    found["total"] -= found["known"]
     return {**result, "conflicts": found, "thresholds": THRESHOLDS}

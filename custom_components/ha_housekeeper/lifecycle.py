@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Any
 
 REMOVED_LIMIT = 200
-REMOVAL_KINDS = ("remove_device", "forget_device")
 DEVICE_STEPS = {
     "disable_device": "disabled",
     "remove_device": "removed",
@@ -26,18 +25,34 @@ def _done_steps(plans: list[dict[str, Any]]):
                 yield plan.get("plan_id"), action, result
 
 
-def removed_devices(plans: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Devices that a plan removed or forgot, newest first."""
+# What a plan can take away, by the kind of its step. Deleting recorder rows or a backup cannot be undone.
+GONE_KINDS = {
+    "remove_device": "device",
+    "forget_device": "device",
+    "remove_entity": "entity",
+    "delete_automation": "automation",
+    "purge_statistics": "statistics",
+    "trim_history": "statistics",
+    "delete_backup": "backup",
+}
+IRREVERSIBLE = frozenset({"purge_statistics", "trim_history", "delete_backup"})
+
+
+def removed_objects(plans: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Everything a plan removed, forgot or deleted, newest first."""
     found = [
         {
             "object_id": action.get("object_id"),
             "name": action.get("name") or action.get("object_id"),
             "kind": action.get("kind"),
+            "group": GONE_KINDS[action["kind"]],
+            "object_type": action.get("object_type"),
             "at": result.get("at"),
             "plan_id": plan_id,
+            "irreversible": action["kind"] in IRREVERSIBLE,
         }
         for plan_id, action, result in _done_steps(plans)
-        if action.get("object_type") == "device" and action.get("kind") in REMOVAL_KINDS
+        if action.get("kind") in GONE_KINDS
     ]
     found.sort(key=lambda d: str(d["at"]), reverse=True)
     return found[:REMOVED_LIMIT]

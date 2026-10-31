@@ -30,6 +30,7 @@ from .const import (
     OPTION_LIMITS,
 )
 from .outage_levels import thresholds_from_options, thresholds_rise
+from .runtime import loaded_scanner
 from .writelock import write_holder
 
 
@@ -39,7 +40,7 @@ class HAHousekeeperOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Edit thresholds."""
         # Saving reloads the entry, which must not happen while a plan or purge writes.
-        scanner = self.hass.data.get(DOMAIN, {}).get("scanner")
+        scanner = loaded_scanner(self.hass)
         if write_holder(self.hass) or (scanner is not None and scanner.cleanup.running):
             return self.async_abort(reason="busy")
         errors: dict[str, str] = {}

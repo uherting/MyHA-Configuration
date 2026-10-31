@@ -1,0 +1,75 @@
+{
+  "entity": {
+    "sensor": {
+      "findings": {
+        "default": "mdi:alert-outline"
+      },
+      "orphaned_entities": {
+        "default": "mdi:ghost-outline"
+      },
+      "unavailable_entities": {
+        "default": "mdi:lan-disconnect"
+      },
+      "broken_references": {
+        "default": "mdi:link-off"
+      },
+      "possible_duplicates": {
+        "default": "mdi:content-duplicate"
+      },
+      "unused_automations": {
+        "default": "mdi:robot-off-outline"
+      },
+      "low_batteries": {
+        "default": "mdi:battery-alert-variant-outline"
+      },
+      "scan_health": {
+        "default": "mdi:heart-pulse"
+      },
+      "activity": {
+        "default": "mdi:progress-clock"
+      }
+    },
+    "button": {
+      "scan": {
+        "default": "mdi:magnify-scan"
+      }
+    },
+    "switch": {
+      "hint_orphaned_entities": {
+        "default": "mdi:wrench-outline"
+      },
+      "hint_unavailable_entities": {
+        "default": "mdi:wrench-outline"
+      },
+      "hint_broken_automations": {
+        "default": "mdi:wrench-outline"
+      },
+      "hint_scan_health": {
+        "default": "mdi:wrench-outline"
+      },
+      "hint_database_damaged": {
+        "default": "mdi:wrench-outline"
+      },
+      "hint_backup_problem": {
+        "default": "mdi:wrench-outline"
+      },
+      "hint_orphaned_statistics": {
+        "default": "mdi:wrench-outline"
+      }
+    },
+    "number": {
+      "hint_min_orphaned_entities": {
+        "default": "mdi:counter"
+      },
+      "hint_min_unavailable_entities": {
+        "default": "mdi:counter"
+      },
+      "hint_min_broken_automations": {
+        "default": "mdi:counter"
+      },
+      "hint_min_orphaned_statistics": {
+        "default": "mdi:counter"
+      }
+    }
+  }
+}

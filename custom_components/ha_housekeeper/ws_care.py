@@ -12,19 +12,28 @@ from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
 from . import battery_trend, battery_voltage
+from .auto_pause import AutoPauseError
 from .backup_health import ATTEST_KINDS, backup_health
 from .battery_care import BatteryError, noted_types
 from .battery_kind import excluded
 from .const import DOMAIN
 from .db_health import growth
+from .exceptions import ACTIONS as EXCEPTION_ACTIONS
+from .exceptions import DAYS_MAX as EXCEPTION_DAYS_MAX
+from .exceptions import GRACE_MAX as VACATION_GRACE_MAX
+from .exceptions import KEYWORD_MAX as VACATION_KEYWORD_MAX
+from .exceptions import KINDS as EXCEPTION_KINDS
+from .exceptions import NOTE_MAX as EXCEPTION_NOTE_MAX
+from .exceptions import SCOPES as EXCEPTION_SCOPES
+from .exceptions import clean_rule, preview
 from .exposure import exposure
 from .goals import CATALOG as GOAL_CATALOG
 from .goals import evaluate as evaluate_goals
 from .goals import measure as measure_goals
 from .ignored import REASON_LIMIT as IGNORE_REASON_LIMIT
 from .inventory import InventoryScanner
-from .lifecycle import removed_devices, timeline
-from .maintenance import preflight_report
+from .lifecycle import timeline
+from .maintenance import check_configuration, preflight_report
 from .marks import GRACE_DEFAULT, GRACE_MAX
 from .marks import KINDS as MARK_KINDS
 from .marks import OBJECT_TYPES as MARK_TYPES
@@ -53,14 +62,34 @@ async def websocket_preflight(
     msg: dict[str, Any],
     scanner: InventoryScanner,
 ) -> None:
-    """Check backup, repairs, failing integrations and broken references before an update."""
+    """The updates that are open and what to check before them: backup, space, repairs, integrations."""
     try:
         snapshot = await scanner.async_get_snapshot()
-        result = await preflight_report(hass, snapshot)
+        try:
+            async with asyncio.timeout(BACKUP_HEALTH_TIMEOUT):
+                backup = await backup_health(hass, scanner.attest, scanner.journal.plans)
+        except Exception:  # noqa: BLE001 - without the report the backup line only says "unknown"
+            backup = None
+        result = await preflight_report(hass, snapshot, backup)
         # What follows an update: whether the watch is on, and the one that runs now.
         result["watch"] = {"hours": scanner.watch_hours, "active": scanner.watch_summary()}
     except Exception as err:
         connection.send_error(msg["id"], "scan_failed", f"{type(err).__name__}: {err}")
+        return
+    connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/check_config"})
+@websocket_api.async_response
+async def websocket_check_config(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Run Home Assistant's configuration check on request; it changes nothing."""
+    try:
+        result = await check_configuration(hass)
+    except Exception as err:  # noqa: BLE001 - the panel shows the reason
+        connection.send_error(msg["id"], "check_config_failed", f"{type(err).__name__}: {err}")
         return
     connection.send_result(msg["id"], result)
 
@@ -549,7 +578,7 @@ def websocket_protection_set(
 
 @websocket_api.require_admin
 @websocket_api.websocket_command(
-    {vol.Required("type"): f"{DOMAIN}/lifecycle", vol.Optional("device_id"): str}
+    {vol.Required("type"): f"{DOMAIN}/lifecycle", vol.Required("device_id"): str}
 )
 @websocket_api.async_response
 @with_scanner
@@ -559,11 +588,8 @@ async def websocket_lifecycle(
     msg: dict[str, Any],
     scanner: InventoryScanner,
 ) -> None:
-    """The life of one device (steps, state), or without a device the removed devices."""
+    """The life of one device: its steps and its state."""
     plans = scanner.journal.plans
-    if "device_id" not in msg:
-        connection.send_result(msg["id"], _versioned({"removed": removed_devices(plans)}))
-        return
     snapshot = await scanner.async_get_snapshot()
     device = next(
         (
@@ -726,6 +752,155 @@ def websocket_goal_set(
 
 
 @websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/exceptions"})
+@websocket_api.async_response
+@with_scanner
+async def websocket_exceptions(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The exception rules with what each does, and the areas and labels to choose from."""
+    snapshot = await scanner.async_get_snapshot()
+    now = datetime.now(UTC)
+    pick = lambda kind: sorted(  # noqa: E731
+        (
+            {"id": i["object_id"], "name": i["name"]}
+            for i in snapshot.get("objects", [])
+            if i["object_type"] == kind
+        ),
+        key=lambda i: str(i["name"]).casefold(),
+    )
+    entities = [i for i in snapshot.get("objects", []) if i["object_type"] == "entity"]
+
+    def distinct(field: str) -> list[dict[str, str]]:
+        values = {
+            (i["object_id"].partition(".")[0] if field == "domain" else i.get(field))
+            for i in entities
+        }
+        return [{"id": v, "name": v} for v in sorted(v for v in values if v)]
+
+    store = scanner.exceptions
+    connection.send_result(
+        msg["id"],
+        {
+            "rules": [
+                {
+                    **rule,
+                    "effect": preview(hass, rule, snapshot, now, store.vacation(), store.rules),
+                }
+                for rule in store.rules
+            ],
+            "vacation": {
+                "entity": store.entity,
+                "suggestion": store.suggestion(),
+                "keyword": store.keyword,
+                "grace_hours": store.grace_hours,
+                "grace_max": VACATION_GRACE_MAX,
+                "active": store.active(),
+                "state": store.switch_state(),
+                "ended_at": store.ended_at.isoformat() if store.ended_at else None,
+            },
+            "devices": pick("device"),
+            "entities": [
+                {"id": i["object_id"], "name": f"{i['name']} ({i['object_id']})"} for i in entities
+            ],
+            "areas": pick("area"),
+            "labels": pick("label"),
+            "integrations": distinct("platform"),
+            "domains": distinct("domain"),
+            "days_max": EXCEPTION_DAYS_MAX,
+        },
+    )
+
+
+_RULE_SCHEMA = {
+    vol.Optional("id"): str,
+    vol.Required("kind"): vol.In(EXCEPTION_KINDS),
+    vol.Optional("targets", default=list): [str],
+    vol.Optional("action", default="hide"): vol.In(EXCEPTION_ACTIONS),
+    vol.Optional("days"): vol.Any(None, vol.All(int, vol.Range(min=1, max=EXCEPTION_DAYS_MAX))),
+    vol.Optional("scope", default="always"): vol.In(EXCEPTION_SCOPES),
+    vol.Optional("enabled", default=True): bool,
+    vol.Optional("note", default=""): vol.All(str, vol.Length(max=EXCEPTION_NOTE_MAX)),
+}
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/exceptions_preview",
+        vol.Required("rules"): vol.All([_RULE_SCHEMA], vol.Length(min=1, max=20)),
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_exceptions_preview(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """What a rule that is not saved yet would do to the findings of the last scan."""
+    rules = [clean_rule(raw) for raw in msg["rules"]]
+    if any(rule is None for rule in rules):
+        connection.send_error(msg["id"], "invalid", "The rule is not valid")
+        return
+    snapshot = await scanner.async_get_snapshot()
+    store = scanner.exceptions
+    connection.send_result(
+        msg["id"],
+        preview(hass, rules, snapshot, datetime.now(UTC), store.vacation(), store.rules),
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/vacation_set",
+        vol.Required("entity"): vol.Any(None, "", vol.All(str, vol.Length(max=255))),
+        vol.Required("grace_hours"): vol.All(int, vol.Range(min=0, max=VACATION_GRACE_MAX)),
+        vol.Optional("keyword", default=""): vol.All(str, vol.Length(max=VACATION_KEYWORD_MAX)),
+    }
+)
+@callback
+@with_scanner
+def websocket_vacation_set(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Choose the entity that switches the vacation mode on, and the grace period after it."""
+    error = scanner.set_vacation(msg["entity"] or None, msg["grace_hours"], msg["keyword"])
+    if error:
+        connection.send_error(msg["id"], error, f"Vacation not saved: {error}")
+        return
+    connection.send_result(msg["id"], {"saved": True})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): f"{DOMAIN}/exceptions_set", vol.Required("rules"): [_RULE_SCHEMA]}
+)
+@callback
+@with_scanner
+def websocket_exceptions_set(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Replace the exception rules. Only Housekeeper's own list changes."""
+    error = scanner.set_exceptions(msg["rules"])
+    if error:
+        connection.send_error(msg["id"], error, f"Rules not saved: {error}")
+        return
+    connection.send_result(msg["id"], {"saved": True})
+
+
+@websocket_api.require_admin
 @websocket_api.websocket_command(
     {
         vol.Required("type"): f"{DOMAIN}/mark_clear",
@@ -810,9 +985,65 @@ async def websocket_backup_attest(
     connection.send_result(msg["id"], _versioned(result))
 
 
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/auto_pause"})
+@websocket_api.async_response
+@with_scanner
+async def websocket_auto_pause(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The settings, the paused integrations and the candidates of auto-pause. Read-only."""
+    connection.send_result(msg["id"], _versioned(await scanner.auto_pause.report()))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/auto_pause_set",
+        vol.Required("action"): vol.In(["settings", "never", "pause", "resume", "try"]),
+        vol.Optional("entry_id"): str,
+        vol.Optional("on"): bool,
+        vol.Optional("confirm", default=False): bool,
+        vol.Optional("values"): dict,
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_auto_pause_set(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Change the settings, exclude an integration, pause, resume or try one now."""
+    pause = scanner.auto_pause
+    action, entry_id = msg["action"], msg.get("entry_id", "")
+    try:
+        if action == "settings":
+            pause.set_settings(msg.get("values") or {})
+        elif action == "never":
+            pause.never(entry_id, msg.get("on", True))
+        elif action == "pause":
+            await pause.pause(entry_id, reason="manual", confirm=msg["confirm"])
+        elif action == "resume":
+            await pause.resume(entry_id)
+        else:
+            pause.try_now(entry_id)
+    except AutoPauseError as err:
+        connection.send_error(msg["id"], f"auto_pause_{err}", f"Not accepted: {err}")
+        return
+    connection.send_result(msg["id"], _versioned(await pause.report()))
+
+
 def async_register(hass: HomeAssistant) -> None:
     """Register the commands of this part."""
     websocket_api.async_register_command(hass, websocket_preflight)
+    websocket_api.async_register_command(hass, websocket_auto_pause)
+    websocket_api.async_register_command(hass, websocket_auto_pause_set)
+    websocket_api.async_register_command(hass, websocket_check_config)
     websocket_api.async_register_command(hass, websocket_backup_health)
     websocket_api.async_register_command(hass, websocket_policies)
     websocket_api.async_register_command(hass, websocket_set_policy)
@@ -828,6 +1059,10 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_lifecycle)
     websocket_api.async_register_command(hass, websocket_mark_set)
     websocket_api.async_register_command(hass, websocket_mark_clear)
+    websocket_api.async_register_command(hass, websocket_exceptions)
+    websocket_api.async_register_command(hass, websocket_exceptions_preview)
+    websocket_api.async_register_command(hass, websocket_exceptions_set)
+    websocket_api.async_register_command(hass, websocket_vacation_set)
     websocket_api.async_register_command(hass, websocket_set_stale_limit)
     websocket_api.async_register_command(hass, websocket_goals)
     websocket_api.async_register_command(hass, websocket_goal_set)

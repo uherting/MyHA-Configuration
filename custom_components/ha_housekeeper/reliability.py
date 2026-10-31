@@ -9,7 +9,8 @@ new calculation runs. A regular background run keeps that reply from getting old
 from __future__ import annotations
 
 import time
-from datetime import UTC, datetime, tzinfo
+from datetime import UTC, datetime, timedelta, tzinfo
+from datetime import time as clock
 from typing import Any
 
 from homeassistant.core import HomeAssistant
@@ -18,10 +19,10 @@ from homeassistant.util import dt as dt_util
 from .const import IGNORE_LABEL
 from .meter import recorder_ready
 from .payloads import ReliabilityResult
-from .queries import ReplyStore, cached_query, kept_reply
+from .queries import DayCache, ReplyStore, cached_query, kept_reply, pieces
 
 DAY = 86400
-WINDOWS = (1, 7)  # days
+WINDOWS = (1, 7, 30)  # days; the finished days of a long window come from the day cache
 CACHE_SECONDS = 300
 MEMBER_LIMIT = 15  # entities with downtime listed per config entry
 CHUNK = 500  # entities per second-pass query
@@ -38,6 +39,7 @@ PATTERN_SHARE = 0.6
 PATTERN_MIN_DAYS = 3
 PATTERN_MIN_WINDOW_DAYS = 6
 UNSTABLE_LIMIT = 30
+PERIOD_LIMIT = 15  # outage periods listed per config entry, the latest first
 STABILITY_LIMIT = 500  # entities whose stability the detail pages can name
 THRESHOLDS = {
     "shared_share_percent": SHARED_SHARE,
@@ -50,70 +52,139 @@ THRESHOLDS = {
 }
 
 
-def query_runs(hass: HomeAssistant, start: float, end: float) -> dict[str, Any]:
-    """Blocking: the unavailable intervals per entity in [start, end].
+def query_runs(
+    hass: HomeAssistant, start: float, end: float, days: DayCache | None = None
+) -> dict[str, Any]:
+    """Blocking: the unavailable intervals per entity in [start, end], and those without a value.
+
+    ``blank`` holds the intervals in state ``unknown`` (a device in standby). They only feed the
+    pattern of an unstable entity, never the availability figures.
+
+    With ``days`` the finished days are taken from it (or read once and put there) and only the
+    rest is read; the pieces are joined so that an outage running over midnight stays one.
+    """
+    from homeassistant.components.recorder.util import session_scope
+
+    started = time.monotonic()
+    parts: list[tuple[float, float, dict[str, Any]]] = []
+    with session_scope(hass=hass, read_only=True) as session:
+        for begin, finish, keep in (
+            pieces(start, end, days.oldest) if days else [(start, end, False)]
+        ):
+            part = days.get(begin) if keep and days else None
+            if part is None or "blank" not in part:  # a day kept before ``blank`` existed
+                part = _query_piece(session, begin, finish, last=finish >= end)
+                if keep and days:
+                    days.put(begin, part)
+            parts.append((begin, finish, part))
+    seen, intervals = join_pieces(parts)
+    _, blank = join_pieces(parts, "blank")
+    return {
+        "start": start,
+        "end": end,
+        "seen": seen,
+        "intervals": intervals,
+        "blank": blank,
+        "took_ms": round((time.monotonic() - started) * 1000),
+    }
+
+
+def _query_piece(session: Any, start: float, end: float, *, last: bool) -> dict[str, Any]:
+    """Blocking: first row, unavailable intervals and an outage still open at the end of a piece.
+
+    A piece is [start, end) so a row at midnight belongs to one day only; the last piece of a
+    window also takes a row at ``end``.
 
     Two passes: first find the entities that had any unavailable row at all, then read the rows
     of only those entities with a window function. That is several times faster than running
     the window function over every row of the window.
     """
     from homeassistant.components.recorder.db_schema import States, StatesMeta
-    from homeassistant.components.recorder.util import session_scope
     from sqlalchemy import case, func, select
 
-    started = time.monotonic()
+    seen: dict[str, float] = {}
+    found: dict[str, dict[str, list[tuple[float, float]]]] = {"unavailable": {}, "unknown": {}}
+    still: dict[str, set[str]] = {"unavailable": set(), "unknown": set()}
+    down = func.sum(case((States.state.in_(("unavailable", "unknown")), 1), else_=0))
+    upto = States.last_updated_ts <= end if last else States.last_updated_ts < end
+    rows = session.execute(
+        select(
+            States.metadata_id,
+            StatesMeta.entity_id,
+            func.min(States.last_updated_ts),
+            down,
+        )
+        .join(StatesMeta, States.metadata_id == StatesMeta.metadata_id)
+        .where(States.last_updated_ts >= start, upto)
+        .group_by(States.metadata_id, StatesMeta.entity_id)
+    ).all()
+    affected: dict[int, str] = {}
+    for metadata_id, entity_id, first, count in rows:
+        seen[entity_id] = float(first)
+        if count:
+            affected[metadata_id] = entity_id
+    ids = list(affected)
+    for offset in range(0, len(ids), CHUNK):
+        part = ids[offset : offset + CHUNK]
+        nxt = (
+            func.lead(States.last_updated_ts)
+            .over(partition_by=States.metadata_id, order_by=States.last_updated_ts)
+            .label("nxt")
+        )
+        inner = (
+            select(States.metadata_id, States.last_updated_ts.label("ts"), States.state, nxt)
+            .where(
+                States.metadata_id.in_(part),
+                States.last_updated_ts >= start,
+                upto,
+            )
+            .subquery()
+        )
+        # Rows in a row with the same state give intervals that touch; ``_merge`` joins them.
+        for metadata_id, ts, state, nxt_ts in session.execute(
+            select(inner.c.metadata_id, inner.c.ts, inner.c.state, inner.c.nxt).where(
+                inner.c.state.in_(("unavailable", "unknown"))
+            )
+        ).all():
+            entity_id = affected[metadata_id]
+            if nxt_ts is None:
+                still[state].add(entity_id)
+            found[state].setdefault(entity_id, []).append(
+                (float(ts), float(nxt_ts if nxt_ts is not None else end))
+            )
+    return {
+        "seen": seen,
+        "intervals": found["unavailable"],
+        "open": still["unavailable"],
+        "blank": found["unknown"],
+        "blank_open": still["unknown"],
+    }
+
+
+def join_pieces(
+    parts: list[tuple[float, float, dict[str, Any]]],
+    kind: str = "intervals",
+) -> tuple[dict[str, float], dict[str, list[tuple[float, float]]]]:
+    """Join consecutive pieces: an outage open at the end of one runs on to the next row of the entity.
+
+    ``kind`` is ``intervals`` (unavailable) or ``blank`` (unknown).
+    """
+    still = "open" if kind == "intervals" else "blank_open"
     seen: dict[str, float] = {}
     intervals: dict[str, list[tuple[float, float]]] = {}
-    with session_scope(hass=hass, read_only=True) as session:
-        down = func.sum(case((States.state == "unavailable", 1), else_=0))
-        rows = session.execute(
-            select(
-                States.metadata_id,
-                StatesMeta.entity_id,
-                func.min(States.last_updated_ts),
-                down,
-            )
-            .join(StatesMeta, States.metadata_id == StatesMeta.metadata_id)
-            .where(States.last_updated_ts >= start, States.last_updated_ts <= end)
-            .group_by(States.metadata_id, StatesMeta.entity_id)
-        ).all()
-        affected: dict[int, str] = {}
-        for metadata_id, entity_id, first, count in rows:
-            seen[entity_id] = float(first)
-            if count:
-                affected[metadata_id] = entity_id
-        ids = list(affected)
-        for offset in range(0, len(ids), CHUNK):
-            part = ids[offset : offset + CHUNK]
-            nxt = (
-                func.lead(States.last_updated_ts)
-                .over(partition_by=States.metadata_id, order_by=States.last_updated_ts)
-                .label("nxt")
-            )
-            inner = (
-                select(States.metadata_id, States.last_updated_ts.label("ts"), States.state, nxt)
-                .where(
-                    States.metadata_id.in_(part),
-                    States.last_updated_ts >= start,
-                    States.last_updated_ts <= end,
-                )
-                .subquery()
-            )
-            for metadata_id, ts, nxt_ts in session.execute(
-                select(inner.c.metadata_id, inner.c.ts, inner.c.nxt).where(
-                    inner.c.state == "unavailable"
-                )
-            ).all():
-                intervals.setdefault(affected[metadata_id], []).append(
-                    (float(ts), float(nxt_ts if nxt_ts is not None else end))
-                )
-    return {
-        "start": start,
-        "end": end,
-        "seen": seen,
-        "intervals": intervals,
-        "took_ms": round((time.monotonic() - started) * 1000),
-    }
+    running: set[str] = set()
+    for begin, finish, part in parts:
+        for entity_id in list(running):
+            first = part["seen"].get(entity_id)
+            intervals[entity_id].append((begin, finish if first is None else first))
+            if first is not None:
+                running.discard(entity_id)
+        for entity_id, first in part["seen"].items():
+            seen.setdefault(entity_id, first)
+        for entity_id, found in part.get(kind, {}).items():
+            intervals.setdefault(entity_id, []).extend(found)
+        running |= part.get(still, set())
+    return seen, intervals
 
 
 def _merge(intervals: list[tuple[float, float]]) -> list[tuple[float, float]]:
@@ -124,6 +195,27 @@ def _merge(intervals: list[tuple[float, float]]) -> list[tuple[float, float]]:
         else:
             merged.append([begin, finish])
     return [(a, b) for a, b in merged]
+
+
+def _overlaps(members: list[list[tuple[float, float]]], begin: float, finish: float) -> int:
+    """How many members were down at some time in the period."""
+    return sum(any(a < finish and b > begin for a, b in intervals) for intervals in members)
+
+
+def _day_seconds(
+    spans: list[tuple[float, float, str]], start: float, end: float, zone: tzinfo
+) -> list[dict[str, Any]]:
+    """The seconds of outage on each local day of the window; the spans do not overlap."""
+    day = datetime.fromtimestamp(start, zone).date()
+    last = datetime.fromtimestamp(end, zone).date()
+    result = []
+    while day <= last:
+        begin = datetime.combine(day, clock.min, zone).timestamp()
+        finish = datetime.combine(day + timedelta(days=1), clock.min, zone).timestamp()
+        seconds = sum(max(0.0, min(b, finish) - max(a, begin)) for a, b, _ in spans)
+        result.append({"date": day.isoformat(), "seconds": round(seconds)})
+        day += timedelta(days=1)
+    return result
 
 
 def shared_outages(
@@ -163,6 +255,7 @@ def compute(
     runs: dict[str, Any],
     entities: list[dict[str, Any]],
     entries: dict[str, dict[str, Any]],
+    zone: tzinfo | None = None,
 ) -> dict[str, Any]:
     """Join the recorder intervals with the registries into one row per config entry.
 
@@ -171,6 +264,7 @@ def compute(
     """
     start, end = runs["start"], runs["end"]
     window = max(end - start, 1.0)
+    zone = zone or dt_util.get_default_time_zone()
     per_entry: dict[str, list[dict[str, Any]]] = {}
     for item in entities:
         if item.get("config_entry_id") in entries:
@@ -232,6 +326,18 @@ def compute(
         if outages:
             layer = "cloud" if info.get("iot_class") in CLOUD_CLASSES else "local"
         last = outages[-1] if outages else last_single
+        if len(counted) >= SHARED_MIN_ENTITIES:
+            spans = [(a, b, "shared") for a, b in outages]
+        elif (
+            counted
+        ):  # too few entities for a shared outage: any entity down for long enough counts
+            spans = [
+                (a, b, "single")
+                for a, b in _merge([i for member in counted for i in member])
+                if b - a >= SHARED_MIN_SECONDS
+            ]
+        else:  # down the whole window
+            spans = [(start, end, "down")]
         rows.append(
             {
                 "entry_id": entry_id,
@@ -241,12 +347,26 @@ def compute(
                 "reauth": bool(info.get("reauth")),
                 "entities": len(counted),
                 "permanent": permanent,
+                "dead": not counted
+                and permanent > 0,  # down the whole window: no figure, but the worst there is
                 "availability": (
                     round(100 * (1 - down_total / observed_total), 2) if observed_total else None
                 ),
                 "shared_outages": len(outages),
                 "longest_outage": round(max((b - a for a, b in outages), default=0)),
                 "layer": layer,
+                "period_total": len(spans),
+                "periods": [
+                    {
+                        "start": a,
+                        "end": b,
+                        "seconds": round(b - a),
+                        "kind": kind,
+                        "affected": permanent if kind == "down" else _overlaps(counted, a, b),
+                    }
+                    for a, b, kind in spans[::-1][:PERIOD_LIMIT]
+                ],
+                "days": _day_seconds(spans, start, end, zone),
                 "affected_total": len(affected),
                 "affected": sorted(affected, key=lambda m: (m["availability"], m["entity_id"]))[
                     :MEMBER_LIMIT
@@ -258,7 +378,7 @@ def compute(
                 ),
             }
         )
-    rows.sort(key=lambda r: (r["availability"] is None, r["availability"] or 0, r["title"]))
+    rows.sort(key=lambda r: (not r["dead"], r["availability"] or 0, r["title"]))
     return {
         "entries": rows,
         "outage_periods": periods,
@@ -320,10 +440,12 @@ def flapping(
         if item.get("status") == "disabled":
             excluded["disabled"] += 1
             continue
+        # Without a value counts as well here: a device in standby fails in a pattern too.
+        blank = runs.get("blank", {}).get(entity_id, [])
         merged = _merge(
             [
                 (max(a, start), min(b, end))
-                for a, b in runs["intervals"].get(entity_id, [])
+                for a, b in [*runs["intervals"].get(entity_id, []), *blank]
                 if min(b, end) > max(a, start)
             ]
         )
@@ -377,13 +499,11 @@ def flapping(
 async def entry_info(hass: HomeAssistant) -> dict[str, dict[str, Any]]:
     from homeassistant.loader import async_get_integrations
 
+    from .sensitive_fields import reauth_entry_ids
+
     entries = hass.config_entries.async_entries()
     integrations = await async_get_integrations(hass, {entry.domain for entry in entries})
-    reauth = {
-        flow["context"].get("entry_id")
-        for flow in hass.config_entries.flow.async_progress()
-        if flow["context"].get("source") == "reauth"
-    }
+    reauth = reauth_entry_ids(hass)
     info = {}
     for entry in entries:
         integration = integrations.get(entry.domain)
@@ -438,11 +558,12 @@ async def reliability(
     if kept is not None:
         # An old reply is handed out at once; the caller asks again with ``refresh`` for new numbers.
         return kept
+    days = DayCache(hass, "reliability")
     found = await cached_query(
         hass,
         f"reliability:{window_days}",
         CACHE_SECONDS,
-        lambda: query_runs(hass, now - window_days * DAY, now),
+        lambda: query_runs(hass, now - window_days * DAY, now, days),
         refresh=refresh,
     )
     if found.busy:
@@ -471,7 +592,8 @@ async def reliability(
     ignored = {f["object_id"] for f in snapshot.get("findings", []) if f.get("ignored")} | {
         item["object_id"]
         for item in snapshot["objects"]
-        if item["object_type"] == "entity" and IGNORE_LABEL in (item.get("labels") or [])
+        if item["object_type"] == "entity"
+        and (IGNORE_LABEL in (item.get("labels") or []) or item.get("excepted"))
     }
     unstable = flapping(
         found.raw, entities, periods, used, ignored, dt_util.get_default_time_zone()
@@ -480,12 +602,12 @@ async def reliability(
         item["entry_title"] = (entries.get(item["entry_id"]) or {}).get("title")
     comparison = {"requested": compare, "available": False}
     if compare:
+        # The period before has ended: a day-old answer for it is good enough.
         before = await cached_query(
             hass,
             f"reliability:{window_days}:before",
-            CACHE_SECONDS,
-            lambda: query_runs(hass, now - 2 * window_days * DAY, now - window_days * DAY),
-            refresh=refresh,
+            DAY,
+            lambda: query_runs(hass, now - 2 * window_days * DAY, now - window_days * DAY, days),
         )
         if not before.busy:
             earlier = {

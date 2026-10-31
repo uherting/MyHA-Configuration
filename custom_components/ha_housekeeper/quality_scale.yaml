@@ -1,0 +1,100 @@
+rules:
+  # Bronze
+  action-setup: done
+  appropriate-polling:
+    status: done
+    comment: No entity polls; scans run on a schedule and the entities follow them through signals.
+  brands: done
+  common-modules: done
+  config-flow-test-coverage: done
+  config-flow: done
+  dependency-transparency:
+    status: done
+    comment: No requirements; Housekeeper only uses Home Assistant itself.
+  docs-actions: done
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  entity-event-setup: done
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure:
+    status: exempt
+    comment: There is nothing to connect to; the flow only confirms the single local entry.
+  test-before-setup:
+    status: exempt
+    comment: Set-up reads only Housekeeper's own storage; a file that cannot be read starts empty and is named in the diagnostics.
+  unique-config-entry: done
+
+  # Silver
+  action-exceptions: done
+  config-entry-unloading: done
+  docs-configuration-parameters: done
+  docs-installation-parameters:
+    status: exempt
+    comment: The set-up asks for nothing.
+  entity-unavailable:
+    status: exempt
+    comment: The entities show data computed inside Home Assistant; there is no device or service that can be unreachable. Before the first complete scan the counts are unknown.
+  integration-owner: done
+  log-when-unavailable:
+    status: exempt
+    comment: There is no device or service that can be unreachable.
+  parallel-updates: done
+  reauthentication-flow:
+    status: exempt
+    comment: No credentials.
+  test-coverage:
+    status: todo
+    comment: The platforms, the config flow, the services and the diagnostics are above 95 percent, and the paths that write (purge, plans, counter repair) and the timers of the entry have tests of their own; the integration as a whole is at 88 percent, most of the rest in the WebSocket commands.
+
+  # Gold
+  devices:
+    status: done
+    comment: One service device carries all entities.
+  diagnostics: done
+  discovery-update-info:
+    status: exempt
+    comment: Nothing to discover.
+  discovery:
+    status: exempt
+    comment: Nothing to discover.
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations: done
+  docs-supported-devices:
+    status: exempt
+    comment: Housekeeper supports no devices; it examines the installation.
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices:
+    status: exempt
+    comment: One service device; the sensors of home functions come and go with their definitions.
+  entity-category: done
+  entity-device-class: done
+  entity-disabled-by-default:
+    status: exempt
+    comment: Every entity is a count, a state or a home function the user set up; none is noisy.
+  entity-translations: done
+  exception-translations: done
+  icon-translations: done
+  reconfiguration-flow:
+    status: exempt
+    comment: The entry stores no settings; the thresholds are in the options flow.
+  repair-issues: done
+  stale-devices:
+    status: exempt
+    comment: One service device that lives as long as the entry.
+
+  # Platinum
+  async-dependency:
+    status: exempt
+    comment: No library.
+  inject-websession:
+    status: exempt
+    comment: No HTTP client.
+  strict-typing:
+    status: todo
+    comment: mypy checks a few modules and does not block the CI.

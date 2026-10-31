@@ -18,6 +18,7 @@ from . import (
     rename,
     ws_automations,
     ws_care,
+    ws_mcp,
     ws_recorder,
     ws_system,
 )
@@ -62,6 +63,7 @@ from .history import PinError
 from .ignored import KINDS as IGNORE_KINDS
 from .ignored import REASON_LIMIT as IGNORE_REASON_LIMIT
 from .inventory import InventoryScanner
+from .lifecycle import removed_objects
 from .meter import prepare_meter
 from .monitor import MonitorError, MonitorStore, evaluate
 from .outage_levels import OUTAGE_KEYS, thresholds_from_options, thresholds_rise
@@ -71,7 +73,9 @@ from .writelock import write_holder
 from .ws_common import (
     _scanner,
     _versioned,
+    panel_session_only,
     scanner_plans,
+    send_sendable,
     with_scanner,
 )
 
@@ -103,8 +107,12 @@ async def _send_inventory_result(
         **result,
         "meta": {**result["meta"], "scan_health": scanner.health_report()},
         "monitor": scanner.monitor.report(),
+        # Decisions whose finding is away right now: they rest and hold again when it comes back.
+        "resting_decisions": scanner.ignored.resting(
+            {f["key"] for f in result.get("findings", [])}
+        ),
     }
-    connection.send_result(msg["id"], _versioned(result))
+    send_sendable(connection, msg["id"], _versioned(result))
 
 
 @websocket_api.require_admin
@@ -142,7 +150,18 @@ def websocket_status(
     scanner: InventoryScanner,
 ) -> None:
     """Return scan progress without triggering work."""
-    warmup = {"booting": scanner.booting, "seconds_left": scanner.warmup_seconds_left}
+    scanner.check_warmup()
+    warmup = {
+        "booting": scanner.booting,
+        "boot_seconds": scanner.boot_seconds,
+        "seconds_left": scanner.warmup_seconds_left,
+        "pending": scanner.integrations_pending,
+        "names": scanner.integrations_loading,
+        "done": scanner.integrations_done,
+        "total": scanner.integrations_total,
+        "preliminary": bool(((scanner.snapshot or {}).get("meta") or {}).get("preliminary")),
+        "settling": scanner.warmup_settling,
+    }
     connection.send_result(
         msg["id"],
         _versioned(
@@ -178,7 +197,8 @@ def websocket_detail(
     if details is None:
         connection.send_error(msg["id"], "not_found", "Object not found in the latest scan")
         return
-    connection.send_result(msg["id"], details)
+    # The attributes come straight from the entity, as any integration wrote them.
+    send_sendable(connection, msg["id"], details)
 
 
 @websocket_api.require_admin
@@ -712,12 +732,16 @@ def websocket_plan_list(
     scanner: InventoryScanner,
 ) -> None:
     """Return the journal of plans as short entries, newest first; details come per plan."""
+    if scanner.journal.drop_stale_previews():
+        scanner.journal.save()
     connection.send_result(
         msg["id"],
         _versioned(
             {
                 "plans": [plan_summary(p) for p in scanner.journal.plans],
                 "purges": scanner.journal.purges,
+                # What a plan removed, forgot or deleted: the journal is the only place that knows it.
+                "removed": removed_objects(scanner.journal.plans),
             }
         ),
     )
@@ -847,6 +871,8 @@ def websocket_plan_confirm(
     scanner: InventoryScanner,
 ) -> None:
     """Pick the actions that may run and return a short-lived confirmation token."""
+    if panel_session_only(hass, connection, msg):
+        return
     try:
         result = scanner.cleanup.confirm(msg["plan_id"], msg["acknowledged"], connection.user.id)
     except CleanupError as err:
@@ -872,6 +898,8 @@ def websocket_plan_execute(
     scanner: InventoryScanner,
 ) -> None:
     """Start a confirmed plan. It runs in the background; poll ``plan_status``."""
+    if panel_session_only(hass, connection, msg):
+        return
     try:
         scanner.cleanup.start(msg["plan_id"], msg["token"], connection.user.id)
     except CleanupError as err:
@@ -934,6 +962,8 @@ async def websocket_plan_undo(
     scanner: InventoryScanner,
 ) -> None:
     """Re-enable quarantined entities that are still as Housekeeper left them."""
+    if panel_session_only(hass, connection, msg):
+        return
     try:
         result = await scanner.cleanup.undo(msg["plan_id"], msg.get("object_ids"))
     except CleanupError as err:
@@ -949,6 +979,9 @@ async def _add_history(hass: HomeAssistant, snapshot: dict[str, Any], plan: dict
         rows = await count_history(hass, ids)
         if rows is not None:
             attach_history(plan, rows)
+            # The end state says when the recorder drops the states left behind.
+            plan["recorder_keep_days"] = ws_recorder.keep_days(hass)
+            plan["recorder_auto_purge"] = ws_recorder.auto_purge(hass)
 
 
 @websocket_api.require_admin
@@ -1161,6 +1194,7 @@ def async_register(hass: HomeAssistant) -> None:
     """Register Housekeeper WebSocket commands."""
     ws_automations.async_register(hass)
     ws_care.async_register(hass)
+    ws_mcp.async_register(hass)
     ws_recorder.async_register(hass)
     ws_system.async_register(hass)
     websocket_api.async_register_command(hass, websocket_inventory)

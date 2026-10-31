@@ -8,7 +8,8 @@ list; hidden or marked findings do not count.
 Causes can be chained, from the top down: an app that is stopped, the integration that hangs on
 it, a device of that integration, the entities of that device. A cause carries ``parent_id`` (the
 cause above it) and ``child_ids`` (the causes right below it); ``follower_count`` counts the
-findings right below it and ``total_followers`` all findings below it.
+findings right below it and ``total_followers`` all findings below it, the own finding of a cause
+below included: a device that is down because its integration is, is one problem, not two.
 
 A cause with its own finding (an app, an integration that is not loaded, a device that is down)
 is always listed, even without follow-up findings, so the outage never goes unnoticed. A missing
@@ -24,7 +25,7 @@ from typing import Any
 from .impact import RANK, USAGE
 from .outage_levels import Levels, outage_level
 
-DEVICE_MIN_ENTITIES = 3  # a device with fewer entities is not a pattern
+OUTAGE_STATES = frozenset({"unavailable", "unknown"})  # an entity without a value
 KEY_LIMIT = 500
 TARGET_MIN = 2  # automations, scripts and dashboards that point to the same missing target
 SERVICE_MIN = TARGET_MIN
@@ -39,8 +40,20 @@ MISSING_TARGETS = {
     "blueprint": "blueprint_missing",
 }
 OUTAGE_RULE = "config_entry.not_loaded"
+REAUTH_RULE = "config_entry.reauth"
 DEVICE_RULE = "device.down"
 APP_RULE = "app.stopped_in_use"
+
+
+def _counts(entity: dict[str, Any]) -> bool:
+    """Whether an entity says something about its device: it works, or it lost a value it had.
+
+    Disabled and orphaned entities (a placeholder the integration no longer provides) say nothing,
+    nor does one that is unknown and never had a value.
+    """
+    if entity["status"] in ("active", "unavailable"):
+        return True
+    return entity["status"] == "unknown" and bool(entity.get("had_value"))
 
 
 def device_down_findings(
@@ -50,20 +63,22 @@ def device_down_findings(
     now: datetime | None = None,
     levels: Levels | None = None,
 ) -> list[dict[str, Any]]:
-    """One finding for each device whose entities are all unavailable (at least three).
+    """One finding for each device whose entities are all without a value: down means down completely.
 
+    Without a value is unavailable, or unknown after the entity had a value (a device in standby).
+    Entities that do not count (see ``_counts``) neither make the device down nor keep it up.
     It waits as long as the entity findings do: at least one entity of the device must already
     have a finding, so a device that has just gone offline is no finding yet.
     """
-    flagged = {f["object_id"] for f in findings if f["classification"] == "unavailable"}
+    flagged = {f["object_id"] for f in findings if f["classification"] in OUTAGE_STATES}
     members: dict[str, list[dict[str, Any]]] = {}
     for item in entities:
         if item.get("device_id"):
             members.setdefault(item["device_id"], []).append(item)
     result = []
     for device in devices:
-        group = members.get(device["object_id"], [])
-        if len(group) < DEVICE_MIN_ENTITIES or any(e["status"] != "unavailable" for e in group):
+        group = [e for e in members.get(device["object_id"], []) if _counts(e)]
+        if not group or any(e["status"] not in OUTAGE_STATES for e in group):
             continue
         if not any(e["object_id"] in flagged for e in group):
             continue
@@ -83,7 +98,14 @@ def device_down_findings(
             "classification": "problem",
             "confidence": 0.9,
             "first_detected_at": max(since) if since else None,
-            "evidence": [{"kind": "all_entities_unavailable", "source": "entity_registry"}],
+            "evidence": [
+                {
+                    "kind": "all_entities_unavailable"
+                    if all(e["status"] == "unavailable" for e in group)
+                    else "all_entities_without_value",
+                    "source": "entity_registry",
+                }
+            ],
         }
         if level is not None:
             found["outage_level"] = level
@@ -92,7 +114,7 @@ def device_down_findings(
 
 
 def _visible(finding: dict[str, Any]) -> bool:
-    return finding["classification"] == "unavailable" and not finding.get("ignored")
+    return finding["classification"] in OUTAGE_STATES and not finding.get("ignored")
 
 
 def _consumers(entity_ids: list[str], users: dict[str, set[str]]) -> dict[str, int]:
@@ -185,7 +207,7 @@ def apply_causes(
         causes[cause["id"]] = device_cause[item["object_id"]] = cause
 
     # 2. Integrations that are not loaded: the entities no device took, and the devices below.
-    outage = {f["object_id"]: f for f in findings if f["rule_id"] == OUTAGE_RULE}
+    outage = {f["object_id"]: f for f in findings if f["rule_id"] in (OUTAGE_RULE, REAUTH_RULE)}
     integration_cause: dict[str, dict[str, Any]] = {}
     for item in objects:
         if item["object_type"] != "config_entry" or item["status"] != "problem":
@@ -254,7 +276,7 @@ def apply_causes(
         for child_id in cause["child_ids"]:
             child = causes[child_id]
             settle(child)
-            cause["total_followers"] += child["total_followers"]
+            cause["total_followers"] += child["total_followers"] + bool(child.get("finding_key"))
             cause["impact"] = _top([cause["impact"], child["impact"]])
 
     for cause in causes.values():

@@ -270,6 +270,7 @@ def evaluate(
     assistants that reach it), ``battery_percent`` and ``db`` (the kept database numbers or ``None``).
     """
     extra = extra or {}
+    excepted = extra.get("excepted") or frozenset()
     by_type: dict[str, list[dict[str, Any]]] = {}
     for item in snapshot["objects"]:
         by_type.setdefault(item["object_type"], []).append(item)
@@ -361,7 +362,11 @@ def evaluate(
         items, ignored = [], 0
         for item in found[rule]():
             key = policy_key(rule, item["object_id"])
-            hidden = item["object_id"] in labelled or key in ignored_keys
+            hidden = (
+                item["object_id"] in labelled
+                or item["object_id"] in excepted
+                or key in ignored_keys
+            )
             ignored += hidden
             items.append(
                 {
@@ -370,7 +375,13 @@ def evaluate(
                     "name": item.get("name") or item["object_id"],
                     "key": key,
                     "ignored": bool(hidden),
-                    "by": "label" if item["object_id"] in labelled else "user" if hidden else None,
+                    "by": "label"
+                    if item["object_id"] in labelled
+                    else "rule"
+                    if item["object_id"] in excepted
+                    else "user"
+                    if hidden
+                    else None,
                     "ignore_info": (extra.get("decisions") or {}).get(key),
                     "resurfaced": key in (extra.get("due") or ()),
                     **{
@@ -427,6 +438,11 @@ def policies(
         if item["object_type"] in ("entity", "device")
         and IGNORE_LABEL in (item.get("labels") or [])
     }
+    excepted = {
+        item["object_id"]
+        for item in snapshot["objects"]
+        if item["object_type"] in ("entity", "device") and item.get("excepted")
+    }
     for item in snapshot["objects"]:
         if item["object_type"] in ("automation", "script"):
             entry = registry.async_get(item["object_id"])
@@ -470,6 +486,7 @@ def policies(
             "auth": auth,
             "decisions": decisions,
             "due": due,
+            "excepted": excepted,
         },
     )
 
@@ -491,7 +508,7 @@ def _extra(
     extra: dict[str, Any] = {"battery_percent": battery_percent}
     if "label_unused" in store.enabled:
         used = {label for entry in registry.entities.values() for label in entry.labels}
-        used |= {label for dev in dr.async_get(hass).devices.values() for label in dev.labels}
+        used |= {label for dev in dr.async_get(hass).devices for label in dev.labels}
         used |= {label for area in ar.async_get(hass).async_list_areas() for label in area.labels}
         extra["used_labels"] = used
     if store.enabled & {"exposure_unused", "exposure_sensitive"}:
@@ -535,33 +552,14 @@ async def auth_facts(hass: HomeAssistant, enabled: Any) -> dict[str, Any] | None
     Only names, dates and the kind of a token are kept: never a token value, never an address.
     Accounts the system made for itself (Supervisor, add-ons) are left out.
     """
+    from .sensitive_fields import account_facts
+
     if not USER_RULES & set(enabled):
         return None
     try:
-        users = await hass.auth.async_get_users()
+        return {"users": await account_facts(hass)}
     except Exception:  # noqa: BLE001 - no readable accounts, no hints
         return None
-    facts = []
-    for user in users:
-        if user.system_generated:
-            continue
-        tokens = list(user.refresh_tokens.values())
-        logins = [t for t in tokens if t.token_type == "normal"]
-        facts.append(
-            {
-                "id": user.id,
-                "name": user.name or "?",
-                "active": user.is_active,
-                "tokens": [
-                    {"name": t.client_name or "?", "created": t.created_at}
-                    for t in tokens
-                    if t.token_type == "long_lived_access_token"
-                ],
-                "logins": bool(logins),
-                "last_login": max((t.last_used_at or t.created_at for t in logins), default=None),
-            }
-        )
-    return {"users": facts}
 
 
 def stored_rates(replies: Any) -> dict[str, int] | None:

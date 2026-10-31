@@ -59,11 +59,12 @@ SETTING_RULES = {
 }
 
 
-# The state of the house, as the panel reads it: the number of rated objects, minus the weight of each object
-# that has a finding. An object counts once, with its worst level; a chain of outages stands for its cause and
-# its followers do not count. "info" (an outage under an hour) weighs nothing, so a restart leaves no dent.
+# The state of the house in points, as the panel reads it: the number of rated objects, minus the weight of each
+# object that has a finding (high 2, medium 1, low a half), scaled to 100. An object counts once, with its worst
+# level; the followers of a cause are objects too. "info" (an outage under an hour) weighs nothing, so a restart
+# leaves no dent.
 HEALTH_TYPES = frozenset({"entity", "automation", "script", "scene", "config_entry", "device"})
-HEALTH_WEIGHTS = {"high": 1.0, "medium": 0.5, "low": 0.2}
+HEALTH_WEIGHTS = {"high": 2.0, "medium": 1.0, "low": 0.5}
 
 
 def _health(snapshot: dict[str, Any]) -> tuple[int, float]:
@@ -72,6 +73,12 @@ def _health(snapshot: dict[str, Any]) -> tuple[int, float]:
         f"{o['object_type']}:{o['object_id']}"
         for o in snapshot["objects"]
         if o["object_type"] in HEALTH_TYPES
+    }
+    # An automation, script or scene is one object: its registry entity is not rated a second time.
+    known -= {
+        f"entity:{key.split(':', 1)[1]}"
+        for key in list(known)
+        if key.split(":", 1)[0] in ("automation", "script", "scene")
     }
     worst: dict[str, float] = {}
 
@@ -83,22 +90,27 @@ def _health(snapshot: dict[str, Any]) -> tuple[int, float]:
         if not cause.get("parent_id"):
             note(f"{cause['object_type']}:{cause['object_id']}", cause.get("impact", "none"))
     for finding in snapshot["findings"]:
-        if not finding.get("ignored") and not finding.get("cause_id"):
+        if not finding.get("ignored"):
             key = f"{finding['rule_id'].split('.')[0]}:{finding['object_id']}"
             note(key, finding.get("impact", "none"))
     return len(known), round(sum(worst.values()), 1)
 
 
 def health_percent(base: int | None, load: float | None) -> float | None:
-    """The share of the rated objects that is in order, with one decimal."""
+    """The state of the house in points out of 100, with one decimal; never below 0."""
     if not base or load is None:
         return None
     # Rounded down, so that a house with a finding never reads 100.
-    return math.floor(round(1000 * (1 - load / base), 6)) / 10
+    return max(0.0, math.floor(round(1000 * (1 - load / base), 6)) / 10)
 
 
 # The rules whose finding is a cause itself; any other finding with a cause_id is a follow-up.
-CAUSE_OWN_RULES = {"config_entry.not_loaded", "device.down", "app.stopped_in_use"}
+CAUSE_OWN_RULES = {
+    "config_entry.not_loaded",
+    "config_entry.reauth",
+    "device.down",
+    "app.stopped_in_use",
+}
 
 
 def _is_follower(finding: dict[str, Any]) -> bool:
@@ -115,7 +127,17 @@ def make_checkpoint(snapshot: dict[str, Any]) -> dict[str, Any]:
     for finding in open_findings:
         name = str(finding.get("classification") or "")
         classes[name] = classes.get(name, 0) + 1
-    # The tiles count without the follow-ups that hang on a cause, so their curves do too.
+    # The tiles of the findings page count every open finding by its reason: what starts an outage chain is one
+    # reason ("outage") whatever its class, so its curve does not split over several classes.
+    reasons: dict[str, int] = {}
+    for finding in open_findings:
+        name = (
+            "outage"
+            if finding.get("rule_id") in CAUSE_OWN_RULES
+            else str(finding.get("classification") or "")
+        )
+        reasons[name] = reasons.get(name, 0) + 1
+    # Without the follow-ups that hang on a cause: kept for the points stored before the reasons.
     lead_classes: dict[str, int] = {}
     for finding in open_findings:
         if not _is_follower(finding):
@@ -132,6 +154,7 @@ def make_checkpoint(snapshot: dict[str, Any]) -> dict[str, Any]:
         "classes": classes,
         "lead": sum(lead_classes.values()),
         "lead_classes": lead_classes,
+        "reasons": reasons,
         "health_base": health_base,
         "health_load": health_load,
         # The settings that decide whether some findings exist at all.
@@ -398,7 +421,9 @@ class ScanHistory:
                     "classes": cp.get("classes"),
                     "lead": cp.get("lead"),
                     "lead_classes": cp.get("lead_classes"),
+                    "reasons": cp.get("reasons"),
                     "health": health_percent(cp.get("health_base"), cp.get("health_load")),
+                    "rated": cp.get("health_base"),
                     "unavailable": sum(
                         1
                         for objs in cp["objects"].values()

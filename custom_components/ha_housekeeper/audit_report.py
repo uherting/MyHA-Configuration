@@ -40,7 +40,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "orphaned": "Voraussichtlich verwaiste Statistiken",
         "blocked": "Nicht ausführbare Aktionen",
         "purge_rows": "Zeilen im Recorder, die der Purge entfernt",
-        "history_rows_kept": "Zeilen Verlauf, die im Recorder bleiben, bis er sie bereinigt",
+        "history_rows_kept": "Zeilen Verlauf, die in der Datenbank bleiben (Zustände bis zur"
+        " Bereinigung durch den Recorder, Langzeitstatistik dauerhaft)",
         "limits": "Grenzen: Verweise in Vorlagen und außerhalb von Home Assistant sind nicht"
         " sicher prüfbar; eine Speicherersparnis wird nicht geschätzt.",
         "state": "Zustand",
@@ -77,7 +78,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "orphaned": "Statistics likely to be orphaned",
         "blocked": "Actions that cannot run",
         "purge_rows": "Recorder rows the purge removes",
-        "history_rows_kept": "History rows that stay in the recorder until it cleans them up",
+        "history_rows_kept": "History rows that stay in the database (states until the recorder"
+        " purges them, long-term statistics for good)",
         "limits": "Limits: references inside templates and outside Home Assistant cannot be"
         " checked for certain; saved storage is not estimated.",
         "state": "State",
