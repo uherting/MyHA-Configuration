@@ -265,20 +265,9 @@ cards:
               action: call-service
               service: script.lovelace_l2_bathroom01a_ssr_01_02
           - type: "custom:button-card"
-            entity: switch.zb_plug_l2_kitchen_fridge
-            name: "Fridge"
-            color: yellow
-            show_state: false
-            tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_fridge
-            double_tap_action:
-              action: call-service
-              service: script.lovelace_zb_plug_l2_kitchen_fridge
-          # - type: "custom:button-card"
-          #   # entity:
-          #   name: " "
-          #   show_state: true
+            # entity:
+            name: " "
+            show_state: true
 
       # ZB Plugs L2
       - type: grid

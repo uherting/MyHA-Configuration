@@ -35,24 +35,52 @@ cards:
     cards:
       - type: vertical-stack
         cards:
-          # Kitchen L2
-          - type: grid
-            square: false
-            # title: Kitchen
-            columns: 5
+          - type: horizontal-stack
             cards:
+              # Kitchen L2
+              - type: grid
+                square: false
+                # title: Kitchen
+                columns: 5
+                cards:
+                  - type: "custom:button-card"
+                    name: "Restart HA"
+                    color: yellow
+                    show_state: false
+                    styles:
+                      card:
+                        - width: 400%
+                    tap_action:
+                      action: call-service
+                      service: homeassistant.restart
+                      data: {}
+                    double_tap_action:
+                      action: call-service
+                      service: homeassistant.restart
+                      data: {}
               - type: "custom:button-card"
-                name: "Restart HA"
+                entity: switch.zb_plug_l2_kitchen_dishwasher
+                name: "Dishwasher"
+                color: yellow
+                show_state: false
+                # admin can control the state w/o any limitations
+                # tap_action:
+                #   action: call-service
+                #   service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+                # double_tap_action:
+                #   action: call-service
+                #   service: script.lovelace_zb_plug_l2_kitchen_dishwasher
+              - type: "custom:button-card"
+                entity: switch.zb_plug_l2_kitchen_fridge
+                name: "Fridge"
                 color: yellow
                 show_state: false
                 tap_action:
                   action: call-service
-                  service: homeassistant.restart
-                  data: {}
+                  service: script.lovelace_zb_plug_l2_kitchen_fridge
                 double_tap_action:
                   action: call-service
-                  service: homeassistant.restart
-                  data: {}
+                  service: script.lovelace_zb_plug_l2_kitchen_fridge
 
       # HA Google Drive Backup - stale snapshot
       - type: conditional
