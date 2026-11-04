@@ -1,0 +1,69 @@
+###########################################################################
+#
+###########################################################################
+
+# =========================================================================
+# Group for tracing people
+# =========================================================================
+family:
+  name: Family members
+  entities:
+    - person.uwe
+    - person.gillian
+
+# =========================================================================
+# group the DW sensors in L2 kitchen
+# =========================================================================
+ZB_DW_L2_kitchen_contacts:
+  entities:
+    - binary_sensor.zb_dw_l2_kitchen_01_contact
+
+ZB_DW_L2_kitchen_tamper:
+  entities:
+    - binary_sensor.zb_dw_l2_kitchen_01_tamper
+
+ZB_DW_L2_kitchen_battery_low:
+  entities:
+    - binary_sensor.zb_dw_l2_kitchen_01_battery_low
+
+# =========================================================================
+# group the DW sensors in L2 bedroom
+# =========================================================================
+ZB_DW_L2_bedroom_contacts:
+  entities:
+    - binary_sensor.zb_dw_l2_bedroom_01_contact
+    - binary_sensor.zb_dw_l2_bedroom_02_contact
+
+ZB_DW_L2_bedroom_tamper:
+  entities:
+    - binary_sensor.zb_dw_l2_bedroom_01_tamper
+    - binary_sensor.zb_dw_l2_bedroom_02_tamper
+
+ZB_DW_L2_bedroom_battery_low:
+  entities:
+    - binary_sensor.zb_dw_l2_bedroom_01_battery_low
+    - binary_sensor.zb_dw_l2_bedroom_02_battery_low
+
+# =========================================================================
+# group the DW sensors in L2 storage
+# =========================================================================
+ZB_DW_L2_storage_contacts:
+  entities:
+    - binary_sensor.zb_dw_l2_storage_01_contact
+    - binary_sensor.zb_dw_l2_storage_02_contact
+    - binary_sensor.zb_dw_l2_storage_03_contact
+
+ZB_DW_L2_storage_tamper:
+  entities:
+    - binary_sensor.zb_dw_l2_storage_01_tamper
+    - binary_sensor.zb_dw_l2_storage_02_tamper
+    - binary_sensor.zb_dw_l2_storage_03_tamper
+
+ZB_DW_L2_storage_battery_low:
+  entities:
+    - binary_sensor.zb_dw_l2_storage_01_battery_low
+    - binary_sensor.zb_dw_l2_storage_02_battery_low
+    - binary_sensor.zb_dw_l2_storage_03_battery_low
+# ############################################################
+#  END OF FILE
+# ############################################################
