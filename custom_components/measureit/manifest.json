@@ -1,10 +1,12 @@
 {
   "domain": "measureit",
   "name": "MeasureIt",
-  "codeowners": ["@danieldotnl"],
+  "codeowners": [
+    "@danieldotnl"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/danieldotnl/ha-measureit",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/danieldotnl/ha-measureit/issues",
-  "version": "0.8.4"
+  "version": "0.9.1"
 }
