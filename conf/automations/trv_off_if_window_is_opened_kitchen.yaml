@@ -19,7 +19,7 @@
     # if the group ZB_DW_L2_kitchen_contacts goes to "on"
     - trigger: state
       id: "ZB_DW_L2_kitchen_contacts"
-      entity_id: binary_sensor.ZB_DW_L2_kitchen_contacts
+      entity_id: group.zb_dw_l2_kitchen_contacts
       to: "on"
   # -------------------- CONDITIONS -------------------
   condition:
