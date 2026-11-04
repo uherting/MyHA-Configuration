@@ -1548,7 +1548,7 @@ class StylesMixin {
       .mobsort,.msince{display:none}
       .rowwrap .row.politem{padding-left:12px}.row.politem{padding-left:44px;background:color-mix(in srgb,var(--hk-soft) 45%,transparent)}.row.politem .tile{width:28px;height:28px}.tablewrap.lt td:not(:first-child){white-space:nowrap}.tablewrap.lt tr.static{cursor:default}.searchpanel{margin-bottom:14px;overflow:visible}.link-label.flat{margin:0;border:0;padding:0 0 4px}.emptyrel{padding:6px 16px;color:var(--hk-muted)}.emptyrel.sm{font-size:calc(12px*var(--hk-fs,1))}.chips.bare{padding:0;border:0}.propicon{--mdc-icon-size:18px;vertical-align:-3px;margin-right:6px;color:var(--hk-muted)}.w460{max-width:460px}.dim7{display:block;opacity:.7}.refactext{width:100%;max-width:520px}.errpad{padding:6px 16px;display:block}.bar.mt4{margin-top:4px}.evtable{width:100%;border-collapse:collapse}.evtable td{padding:9px 16px;border-top:1px solid var(--hk-border)}.evtable code{white-space:nowrap}.evtable .evcopy{width:1%;text-align:right}.evtable th:first-child,.evtable td:first-child{width:1%;white-space:nowrap}.tablewrap.lt tr[data-plan-open],.tablewrap.lt tr[data-rem-row],.tablewrap.lt tr[data-note-edit]{cursor:pointer}.tablewrap.lt .jsum{display:block;white-space:normal;min-width:180px;max-width:300px}.selhead{padding:6px 16px}.selall{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--hk-muted);cursor:pointer}.tablewrap.lt th.selcol,.tablewrap.lt td.selcol,.tablewrap.lt td.selcol:first-child{box-sizing:border-box;width:44px;min-width:44px;max-width:44px;padding-left:12px;padding-right:0;text-align:center}.lt th.selcol ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}.tablewrap.lt tr.static:hover{background:transparent}.tablewrap.lt td .id{display:block;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));font-family:var(--hk-mono,monospace);margin-top:2px}.tablewrap.lt td small{display:block;margin-top:2px;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.tablewrap.lt td:first-child{min-width:220px}.tip{position:fixed;z-index:50;display:grid;width:max-content;gap:2px;max-width:min(520px,calc(100vw - 16px));padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18);font-size:calc(12px*var(--hk-fs,1));pointer-events:none;overflow-wrap:anywhere}.tip[hidden]{display:none}.tip strong{font-weight:700}.tip span{font-family:ui-monospace,SFMono-Regular,monospace;color:var(--hk-muted)}.tip em{font-style:normal;line-height:1.4}.infotip{display:inline-flex;align-items:center;justify-content:center;line-height:0;width:24px;height:24px;margin:-4px 0 -4px 6px;padding:0;border:0;border-radius:50%;background:none;color:var(--hk-muted);vertical-align:middle;cursor:help}.infotip.warn{color:color-mix(in srgb,var(--hk-amber) 75%,var(--hk-text))}.infotip:hover,.infotip:focus-visible{background:var(--hk-soft);color:inherit}.infotip ha-icon{--mdc-icon-size:18px;display:flex}.fflow{padding:6px 14px 12px}.fstep{margin:6px 0;padding:8px 10px;border:1px solid var(--hk-border);border-left:3px solid var(--hk-blue);border-radius:8px;background:var(--hk-surface)}.fstep.broken{border-left-color:var(--hk-red,#b3261e);background:color-mix(in srgb,var(--hk-red,#b3261e) 6%,var(--hk-surface))}.fstep>summary{cursor:pointer;list-style-position:inside}.fhead{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 8px;max-width:calc(100% - 20px);vertical-align:middle}.fhead ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}.ffacts{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.fpath{margin-left:auto;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.fkids{margin:8px 0 2px 14px;padding-left:10px;border-left:1px dashed var(--hk-border)}.fgroup>small{display:block;margin:6px 0 2px;color:var(--hk-muted);text-transform:uppercase;letter-spacing:.05em;font-size:calc(10px*var(--hk-fs,1))}.fbranch{margin:6px 0}.chip.flowref{cursor:pointer;padding:2px 8px;font-size:calc(12px*var(--hk-fs,1))}.chip.flowref.missing{border-color:var(--hk-red,#b3261e);color:var(--hk-red,#b3261e);cursor:default}.listtools{display:flex;gap:8px;justify-content:flex-end;align-items:stretch;padding:10px 14px}.listtools .btn,.listtools .dirbtn{height:40px;min-height:40px;box-sizing:border-box;border:1px solid var(--hk-border);border-radius:8px;box-shadow:none}.listtools .btn:hover{border-color:var(--hk-blue)}.listtools .colwrap{display:flex}.colwrap{position:relative;display:inline-flex}.colpop{position:absolute;right:0;top:calc(100% + 4px);z-index:20;display:grid;justify-items:stretch;gap:2px;min-width:180px;max-width:calc(100vw - 32px);width:max-content;box-sizing:border-box;padding:6px;text-align:left;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18)}.colpop label{display:flex;gap:16px;align-items:center;justify-content:space-between;text-align:left;min-height:36px;padding:0 10px;border-radius:6px;white-space:nowrap;font-size:calc(13px*var(--hk-fs,1));cursor:pointer}.colpop label:hover,.colpop label:focus-within{background:var(--hk-soft)}.colpop label input{flex:0 0 auto;width:16px;min-width:0;max-width:none;margin:0}.dirbtn.on{border-color:var(--hk-blue);color:var(--hk-blue)}.namecell{display:block;min-width:0;max-width:280px}.namecell .cut{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:860px){.namecell{max-width:none}.namecell .cut{white-space:normal;overflow:visible}}@media(min-width:861px){}.tablewrap.dense-list td{padding-top:4px;padding-bottom:4px}.tablewrap.dense-list .namecell .id,.dense-list .statsucc,.dense-list .agestamp{display:none}.tablewrap.lt .muted{color:var(--hk-muted)}.polform{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.polform input{flex:1 1 140px;min-width:0;padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:inherit;font:inherit}.policyswitch{appearance:none;-webkit-appearance:none;position:relative;width:38px;height:22px;margin:0;border:1px solid var(--hk-border);border-radius:11px;background:var(--hk-soft);flex:none;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}.policyswitch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--hk-muted);transition:transform .15s ease,background-color .15s ease}.policyswitch:checked{border-color:var(--hk-blue);background:var(--hk-blue)}.policyswitch:checked::after{background:#fff;transform:translateX(16px)}.policyswitch:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
       .exppop{min-width:280px;max-width:calc(100vw - 32px)}.expitem{display:grid;gap:2px;justify-items:start;width:100%;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}.expitem small{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.expitem:hover,.expitem:focus-visible{background:var(--hk-soft)}.listbar-actions .expbtn{height:40px;min-height:40px;gap:6px;white-space:nowrap}.expbtn.on{border-color:var(--hk-blue)}
-      .markform{display:grid;gap:12px}.markform .mrow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}.markform .mfield{display:grid;gap:4px;min-width:150px;flex:0 1 190px;font-size:calc(12px*var(--hk-fs,1));font-weight:600;color:var(--hk-muted)}.markform .mfield.grow{flex:1 1 260px}.markform .mfield select,.markform .mfield input{width:100%;min-height:40px;font-weight:400;color:var(--hk-text)}.markform .mfield:focus-within>span{color:var(--hk-blue-text)}.markform .mbtns{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--hk-border)}.markform .factnote{display:block}
+      .markform{display:grid;gap:12px}.markform .mrow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}.markform .mfield{display:grid;gap:4px;min-width:150px;flex:0 1 190px;font-size:calc(12px*var(--hk-fs,1));font-weight:600;color:var(--hk-muted)}.markform .mfield.grow{flex:1 1 260px}.markform .mfield select,.markform .mfield input:not([type=radio],[type=checkbox]){width:100%;min-height:40px;font-weight:400;color:var(--hk-text)}.markform .mfield:focus-within>span{color:var(--hk-blue-text)}.markform .mbtns{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--hk-border)}.markform .factnote{display:block}
       @media(max-width:600px){.markform .mfield,.markform .mfield.grow{flex:1 1 100%}.markform .mbtns .btn{flex:1}}
       button:focus-visible,[data-object]:focus-visible,tr[data-object]:focus-visible,th[data-sort]:focus-visible,.nav:focus-visible,.chip:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}
       .filters{display:grid;grid-template-columns:minmax(240px,1fr) 190px 190px;gap:10px;padding:14px;border-bottom:1px solid var(--hk-border)}
@@ -8614,6 +8614,7 @@ class FlowMixin {
 
   flowRefButton([type, id]) {
     const key = `${type}:${id}`, obj = this.findObject(key);
+    if (!obj && type === "entity" && (this.data?.meta?.state_only_entities || []).includes(id)) return `<span class="chip flowref" title="${this.esc(id)}">${this.esc(id)}</span>`; // only a state (zone.home, sun.sun), no registry entry
     return obj
       ? `<button class="chip flowref" data-object="${this.esc(key)}">${this.esc(obj.name || id)}</button>`
       : `<span class="chip flowref missing" title="${this.esc(id)}">${this.esc(id)} · ${this.t("missing")}</span>`;
@@ -9120,6 +9121,7 @@ Object.assign(TEXT.de, {
   markWindowKind: "Wann gilt der Vermerk", markWindowAlways: "Immer", markWindowTime: "Zu festen Zeiten", markWindowSun: "Bei Dunkelheit (Sonnenstand)", markFrom: "Von", markTo: "Bis", markGrace: "Anlaufzeit nach dem Ende", markGraceMin: "{n} Min.", markWindowTimeLine: "{from}–{to} Uhr", markWindowSunLine: "bei Dunkelheit", markGraceLine: "danach {n} Min. Anlaufzeit", markWindowSame: "Von und Bis dürfen nicht gleich sein.",
   markNoSun: "In Home Assistant gibt es keine Entität sun.sun: ohne sie gilt „Bei Dunkelheit“ nie, der Befund bleibt sichtbar.",
   markOutside: "Vermerk gilt gerade nicht: wird überwacht", markWindowHint: "Außerhalb des Zeitfensters meldet Housekeeper den Befund wieder, und ein Ausfall zählt erst ab dem Ende des Fensters plus Anlaufzeit.",
+  markAutoClear: "Automatisch aufheben, sobald sich das Objekt wieder meldet", markGraceBack: "Wartezeit", markAutoClearHint: "Der Vermerk verschwindet von selbst, wenn das Objekt nach einem Ausfall wieder meldet und die Wartezeit lang durchgehend in Ordnung bleibt. Ein Vermerk, der vorab bei einem laufenden Objekt gesetzt wird, bleibt bis zum ersten Ausfall.", markAutoClearLine: "wird bei Rückmeldung aufgehoben",
   markHiddenHint: "Ausgeblendet durch einen Vermerk am Objekt.", reason_marked_keep: "Trägt den Vermerk „Nicht entfernen“ oder das Label housekeeper_keep.",
 });
 Object.assign(TEXT.en, {
@@ -9129,6 +9131,7 @@ Object.assign(TEXT.en, {
   markWindowKind: "When the mark applies", markWindowAlways: "Always", markWindowTime: "At fixed times", markWindowSun: "In the dark (position of the sun)", markFrom: "From", markTo: "To", markGrace: "Grace period after the end", markGraceMin: "{n} min", markWindowTimeLine: "{from}–{to}", markWindowSunLine: "in the dark", markGraceLine: "then {n} min grace", markWindowSame: "From and to must not be the same.",
   markNoSun: "Home Assistant has no entity sun.sun: without it “In the dark” never applies and the finding stays visible.",
   markOutside: "Mark does not apply right now: watched", markWindowHint: "Outside the window Housekeeper reports the finding again, and an outage counts only from the end of the window plus the grace period.",
+  markAutoClear: "Remove automatically once the object reports again", markGraceBack: "Wait", markAutoClearHint: "The mark disappears by itself when the object reports again after an outage and stays fine for the whole wait. A mark set in advance on an object that works stays until its first outage.", markAutoClearLine: "ends when it reports again",
   markHiddenHint: "Hidden by a mark on the object.", reason_marked_keep: "Carries the mark “Do not remove” or the label housekeeper_keep.",
 });
 
@@ -9144,7 +9147,8 @@ class MarksMixin {
   markLine(mark) {
     const until = mark.until ? ` · ${this.t("markReviewOn", { date: this.formatDate(mark.until) })}` : "";
     const window = mark.window ? ` · ${this.windowLine(mark)}` : "";
-    return `${this.t(`mark_${mark.kind}`)}${window}${until}${mark.reason ? ` · ${mark.reason}` : ""}${mark.target ? ` → ${mark.target}` : ""}${mark.via === "mcp" ? ` · ${this.t("viaMcp")}` : ""}`;
+    const auto = mark.auto_clear ? ` · ${this.t("markAutoClearLine")}` : "";
+    return `${this.t(`mark_${mark.kind}`)}${window}${auto}${until}${mark.reason ? ` · ${mark.reason}` : ""}${mark.target ? ` → ${mark.target}` : ""}${mark.via === "mcp" ? ` · ${this.t("viaMcp")}` : ""}`;
   }
 
   // The form to set or change a mark: labelled fields in two rows (what and why, then when it applies and when to review).
@@ -9156,7 +9160,7 @@ class MarksMixin {
     const days = [0, 30, 90, 180, 365].map(n => `<option value="${n}" ${Number(f.days) === n ? "selected" : ""}>${n ? this.t("decideDays", { n }) : this.t("markNever")}</option>`).join("");
     const modes = ["", "time", "sun"].map(m => `<option value="${m}" ${f.wmode === m ? "selected" : ""}>${this.t(m === "time" ? "markWindowTime" : m === "sun" ? "markWindowSun" : "markWindowAlways")}</option>`).join("");
     const graces = [0, 15, 30, 60, 120].map(n => `<option value="${n}" ${Number(f.grace) === n ? "selected" : ""}>${this.t("markGraceMin", { n })}</option>`).join("");
-    const windowed = f.kind !== "keep" && f.wmode;
+    const windowed = f.kind !== "keep" && f.wmode, auto = f.kind !== "keep" && f.autoClear;
     const noSun = f.wmode === "sun" && this._hass?.states && !this._hass.states["sun.sun"];
     const row1 = field("markKind", `<select data-mark-kind>${kinds}</select>`)
       + (f.kind === "replaced" ? field("markTarget", `<input data-mark-target maxlength="255" autocomplete="off" value="${this.esc(f.target)}">`) : "")
@@ -9165,7 +9169,10 @@ class MarksMixin {
       + (windowed && f.wmode === "time" ? field("markFrom", `<input type="time" data-mark-from value="${this.esc(f.from)}">`) + field("markTo", `<input type="time" data-mark-to value="${this.esc(f.to)}">`) : "")
       + (windowed ? field("markGrace", `<select data-mark-grace>${graces}</select>`) : "")
       + field("markReview", `<select data-mark-days>${days}</select>`);
-    return `<form class="pad markform" data-mark-form="${this.esc(key)}"><div class="mrow">${row1}</div><div class="mrow">${row2}</div>
+    const row3 = f.kind === "keep" || f.wmode ? "" : `<label class="nw"><input type="checkbox" data-mark-auto ${f.autoClear ? "checked" : ""}> ${this.t("markAutoClear")}</label>`;
+    const row4 = auto ? field("markGraceBack", `<select data-mark-grace>${graces}</select>`) : "";
+    return `<form class="pad markform" data-mark-form="${this.esc(key)}"><div class="mrow">${row1}</div><div class="mrow">${row2}</div>${row3 ? `<div class="mrow">${row3}</div>` : ""}${row4 ? `<div class="mrow">${row4}</div>` : ""}
+        ${auto ? `<small class="factnote">${this.t("markAutoClearHint")}</small>` : ""}
         ${windowed ? `<small class="factnote">${this.t("markWindowHint")}</small>` : ""}${noSun ? `${this.notice("err", this.t("markNoSun"))}` : ""}
         ${f.error ? `${this.notice("err", f.error)}` : ""}
         <div class="mbtns"><button type="button" class="btn quiet" data-mark-cancel>${this.t("cancelRun")}</button><button type="submit" class="btn primary">${this.t("saveOptions")}</button></div></form>`;
@@ -9193,7 +9200,7 @@ class MarksMixin {
 
   openMark(key) {
     const item = this.findObject(key), mark = item?.mark;
-    this.markForm = { key, kind: mark?.kind || "expected_offline", reason: mark?.reason || "", days: 0, target: mark?.target || "", error: "", wmode: mark?.window?.mode || "", from: mark?.window?.from || "21:00", to: mark?.window?.to || "06:00", grace: mark?.grace ?? 30 };
+    this.markForm = { key, kind: mark?.kind || "expected_offline", reason: mark?.reason || "", days: 0, target: mark?.target || "", error: "", wmode: mark?.window?.mode || "", from: mark?.window?.from || "21:00", to: mark?.window?.to || "06:00", grace: mark?.grace ?? 30, autoClear: mark ? Boolean(mark.auto_clear) : true };
     this.render();
     this.shadowRoot?.querySelector?.("[data-mark-kind]")?.focus?.();
   }
@@ -9235,6 +9242,10 @@ class MarksMixin {
       msg.window = f.wmode === "sun" ? { mode: "sun" } : { mode: "time", from: f.from, to: f.to };
       msg.grace_minutes = Number(f.grace);
     }
+    if (f.kind !== "keep" && !f.wmode && f.autoClear) {
+      msg.auto_clear = true;
+      msg.grace_minutes = Number(f.grace);
+    }
     try {
       await this._hass.callWS(msg);
       this.markForm = null;
@@ -9262,8 +9273,10 @@ class MarksMixin {
       form.querySelector("[data-mark-reason]").oninput = ev => { this.markForm.reason = ev.target.value; };
       form.querySelector("[data-mark-days]").onchange = ev => { this.markForm.days = Number(ev.target.value); };
       const wmode = form.querySelector("[data-mark-wmode]");
-      if (wmode) wmode.onchange = ev => { this.markForm.wmode = ev.target.value; this.render(); };
+      if (wmode) wmode.onchange = ev => { this.markForm.wmode = ev.target.value; if (ev.target.value) this.markForm.autoClear = false; this.render(); };
       [["from", "from"], ["to", "to"]].forEach(([name, field]) => { const el = form.querySelector(`[data-mark-${name}]`); if (el) el.oninput = ev => { this.markForm[field] = ev.target.value; }; });
+      const auto = form.querySelector("[data-mark-auto]");
+      if (auto) auto.onchange = ev => { this.markForm.autoClear = ev.target.checked; this.render(); };
       const grace = form.querySelector("[data-mark-grace]");
       if (grace) grace.onchange = ev => { this.markForm.grace = Number(ev.target.value); };
       const target = form.querySelector("[data-mark-target]");
@@ -11780,6 +11793,7 @@ class FindingStatusMixin {
       const [object_type, ...rest] = objectKey.split(":");
       const msg = { type: "ha_housekeeper/mark_set", object_type, object_id: rest.join(":"), kind: b.markKind || this.markKindsFor(targets)[0], reason: b.reason.trim() };
       if (Number(b.days)) msg.days = Number(b.days);
+      if (b.autoClear && msg.kind !== "keep") msg.auto_clear = true;
       await this._hass.callWS(msg);
       targets.forEach((k, key) => { if (k === objectKey) this.findSel.delete(key); });
     });
@@ -11801,6 +11815,7 @@ class FindingStatusMixin {
         <select data-bulk-markkind aria-label="${this.esc(this.t("markKind"))}">${kinds.map(k => `<option value="${k}" ${(b.markKind || kinds[0]) === k ? "selected" : ""}>${this.t(`mark_${k}`)}</option>`).join("")}</select>
         <input data-bulk-reason maxlength="200" autocomplete="off" value="${this.esc(b.reason)}" aria-label="${this.esc(this.t("markReason"))}" placeholder="${this.esc(this.t("markReason"))}">
         <select data-bulk-days aria-label="${this.esc(this.t("markReview"))}">${days}</select>
+        ${(b.markKind || kinds[0]) === "keep" ? "" : `<label class="nw"><input type="checkbox" data-bulk-auto ${b.autoClear ? "checked" : ""}> ${this.esc(this.t("markAutoClear"))}</label>`}
         <button type="submit" class="btn primary">${this.t("saveOptions")}</button><button type="button" class="btn quiet" data-bulk-cancel>${this.t("cancelRun")}</button></form>`;
     }
     if (b.kind === "area") return this.areaForm();
@@ -11907,7 +11922,7 @@ class FindingStatusMixin {
     // A label from the menu of a row: that finding alone, in the same form as the selection bar.
     root.querySelectorAll("[data-row-label]").forEach(el => el.onclick = ev => { ev.stopPropagation(); this.findSel = new Set([el.dataset.rowLabel]); this.bulk = { kind: "label", reason: "", days: 30, markKind: "", error: "" }; this.render(); });
     root.querySelectorAll("[data-fstatus]").forEach(el => el.onclick = () => { const s = el.dataset.fstatus === "open" ? "" : el.dataset.fstatus; this.findingStatus = this.findingStatus === s ? "" : s; this.pages = {}; this.render(); });
-    root.querySelectorAll("[data-fsel-state]").forEach(el => el.onclick = () => { const kind = el.dataset.fselState; this.bulk = { kind, state: "keep", reason: "", days: ["mark", "status"].includes(kind) ? 0 : 30, markKind: "", error: "" }; this.render(); this.shadowRoot?.querySelector?.("[data-bulk-reason]")?.focus?.(); });
+    root.querySelectorAll("[data-fsel-state]").forEach(el => el.onclick = () => { const kind = el.dataset.fselState; this.bulk = { kind, state: "keep", autoClear: kind === "mark", reason: "", days: ["mark", "status"].includes(kind) ? 0 : 30, markKind: "", error: "" }; this.render(); this.shadowRoot?.querySelector?.("[data-bulk-reason]")?.focus?.(); });
     root.querySelectorAll("[data-notdup]").forEach(el => el.onclick = () => this.markNotDuplicate(el.dataset.notdup));
     const form = root.querySelector("[data-bulk-form]");
     if (form) {
@@ -11921,7 +11936,9 @@ class FindingStatusMixin {
       const onDevice = form.querySelector("[data-bulk-ondevice]");
       if (onDevice) onDevice.onchange = ev => { this.bulk.onDevice = ev.target.checked; this.render(); };
       const markKind = form.querySelector("[data-bulk-markkind]");
-      if (markKind) markKind.onchange = ev => { this.bulk.markKind = ev.target.value; };
+      if (markKind) markKind.onchange = ev => { this.bulk.markKind = ev.target.value; this.render(); };
+      const autoClear = form.querySelector("[data-bulk-auto]");
+      if (autoClear) autoClear.onchange = ev => { this.bulk.autoClear = ev.target.checked; };
       form.querySelectorAll("[data-bulk-kind]").forEach(el => el.onchange = () => { const b = this.bulk; b.state = el.value; b.error = ""; b.days = b.state === "snooze" ? 30 : 0; this.render(); });
       const days = form.querySelector("[data-bulk-days]");
       if (days) days.onchange = ev => { this.bulk.days = Number(ev.target.value); };

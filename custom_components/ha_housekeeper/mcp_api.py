@@ -498,6 +498,7 @@ def mark(scanner: InventoryScanner, data: dict[str, Any], user: str | None) -> d
             days=data.get("days"),
             target=data.get("target"),
             by=user,
+            auto_clear=bool(previous and previous.get("auto_clear")) and data["kind"] != "keep",
             via=VIA,
         )
         if error:

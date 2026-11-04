@@ -8,6 +8,8 @@ entities), never a broken reference.
 longer hides anything; the finding comes back as due.
 A mark can carry a time window (fixed hours, or while the sun is below the horizon): it hides only
 inside that window, plus a grace period after it, so a device that is on by day is watched by day.
+A mark can end by itself (``auto_clear``): once it has covered an outage and the object has reported
+again for the grace period without a gap, it is taken away.
 """
 
 from __future__ import annotations
@@ -141,7 +143,17 @@ def _clean(value: Any) -> dict[str, Any] | None:
         "via": value["via"] if value.get("via") in VIAS else None,
         "window": clean_window(value.get("window")),
         "grace": clean_grace(value.get("grace")),
+        "auto_clear": value.get("auto_clear") is True,
+        "armed": value.get("armed") is True,
+        "back_since": _text(value, "back_since"),
     }
+
+
+def _moment(value: str | None) -> datetime | None:
+    try:
+        return datetime.fromisoformat(value) if value else None
+    except ValueError:
+        return None
 
 
 class MarkStore:
@@ -175,6 +187,7 @@ class MarkStore:
         by: str | None = None,
         window: dict[str, Any] | None = None,
         grace: int = GRACE_DEFAULT,
+        auto_clear: bool = False,
         via: str | None = None,
     ) -> bool:
         """Record a mark; False when the kind is unknown, the window is invalid or the store is full."""
@@ -182,6 +195,8 @@ class MarkStore:
             return False
         if kind not in KINDS or (key not in self.items and len(self.items) >= ITEM_LIMIT):
             return False
+        old = self.items.get(key) or {}
+        keep_wait = auto_clear and old.get("auto_clear")  # an edit does not undo "armed"
         self.items[key] = {
             "kind": kind,
             "at": now.isoformat(),
@@ -192,6 +207,9 @@ class MarkStore:
             "via": via,
             "window": clean_window(window),
             "grace": clean_grace(grace),
+            "auto_clear": auto_clear,
+            "armed": bool(keep_wait and old.get("armed")),
+            "back_since": old.get("back_since") if keep_wait else None,
         }
         self._save()
         return True
@@ -210,6 +228,34 @@ class MarkStore:
         self._save()
         return True
 
+    def settle(self, covered: set[str], now: datetime) -> list[str]:
+        """Follow the marks that end by themselves; the keys of the ones that just ended.
+
+        ``covered`` holds the keys of the marks that have an outage under them. A mark is armed by
+        its first outage and ends once none has been left for its grace period; an outage in
+        between starts the wait anew.
+        """
+        ended: list[str] = []
+        changed = False
+        for key, mark in self.items.items():
+            if not mark["auto_clear"] or mark["kind"] not in HIDING_KINDS:
+                continue
+            if key in covered:
+                if not mark["armed"] or mark["back_since"]:
+                    mark["armed"], mark["back_since"], changed = True, None, True
+            elif mark["armed"]:
+                since = _moment(mark["back_since"])
+                if since is None:
+                    since = now
+                    mark["back_since"], changed = now.isoformat(), True
+                if now >= since + timedelta(minutes=clean_grace(mark["grace"])):
+                    ended.append(key)
+        for key in ended:
+            del self.items[key]
+        if changed or ended:
+            self._save()
+        return ended
+
     def _save(self) -> None:
         self._store.async_delay_save(lambda: {"items": self.items}, SAVE_DELAY)
 
@@ -220,8 +266,12 @@ def apply_marks(
     marks: dict[str, dict[str, Any]],
     now: datetime | None = None,
     sun: tuple[bool, datetime] | None = None,
-) -> None:
+) -> set[str]:
     """Put the marks on the objects and let them hide or revive "not available" findings.
+
+    Returns the keys of the marks that have an outage under them, hidden or not (see ``MarkStore.settle``):
+    a finding under them, or an object under them whose status is still down (a finding appears only
+    after its outage is old enough, so the lack of one does not mean the object is back).
 
     Call it after the ignore flags of the findings are set: a finding that is hidden already stays so.
     A mark with a window hides only inside it (``sun``: see ``window_active``); outside, the finding
@@ -229,6 +279,7 @@ def apply_marks(
     """
     now = now or datetime.now(UTC)
     local_now = dt_util.as_local(now)
+    covered: set[str] = set()
     device_of: dict[str, str | None] = {}
     entry_of: dict[str, list[str]] = {}
     devices: dict[str, dict[str, Any]] = {}
@@ -246,6 +297,16 @@ def apply_marks(
             item.get("labels") or []
         ):  # the label is a "keep" mark made in Home Assistant
             item["marked_keep"] = True
+        if item.get("status") not in (None, "active", "disabled"):
+            covered.update(
+                k
+                for k in (
+                    mark_key(item["object_type"], item["object_id"]),
+                    mark_key("device", item.get("device_id") or ""),
+                    mark_key("config_entry", item.get("config_entry_id") or ""),
+                )
+                if (m := marks.get(k)) and m["kind"] in HIDING_KINDS
+            )
         mark = marks.get(mark_key(item["object_type"], item["object_id"]))
         if mark is None:
             continue
@@ -299,6 +360,7 @@ def apply_marks(
             )
         else:
             continue
+        covered.update(k for k in keys if (m := marks.get(k)) and m["kind"] in HIDING_KINDS)
         for key in keys:
             mark = marks.get(key)
             if mark is None or mark["kind"] not in HIDING_KINDS:
@@ -310,3 +372,4 @@ def apply_marks(
             elif not finding["ignored"]:
                 finding["ignored_by"], finding["ignored"], finding["mark"] = "mark", True, mark
                 break
+    return covered

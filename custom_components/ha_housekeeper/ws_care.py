@@ -630,6 +630,7 @@ async def websocket_lifecycle(
         vol.Optional("grace_minutes", default=GRACE_DEFAULT): vol.All(
             int, vol.Range(min=0, max=GRACE_MAX)
         ),
+        vol.Optional("auto_clear", default=False): bool,
     }
 )
 @callback
@@ -651,6 +652,7 @@ def websocket_mark_set(
         by=connection.user.id if connection.user else None,
         window=msg.get("window"),
         grace=msg["grace_minutes"],
+        auto_clear=msg["auto_clear"],
     )
     if error:
         connection.send_error(msg["id"], error, f"Mark not set: {error}")
