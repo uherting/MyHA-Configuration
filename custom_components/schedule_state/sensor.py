@@ -1,13 +1,18 @@
 """
 A sensor that returns a string based on a defined schedule.
+Modified to add enriched attributes for schedule-state-card compatibility.
 """
+
 import asyncio
+from collections import OrderedDict
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
 import hashlib
 import locale
 import logging
 from pprint import pformat
+import re
 from typing import Any, NamedTuple, Optional
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
@@ -19,11 +24,13 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_STATE,
     EVENT_HOMEASSISTANT_START,
+    MATCH_ALL,
     SERVICE_TOGGLE,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
     STATE_OFF,
     STATE_ON,
+    WEEKDAYS,
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import (
@@ -39,20 +46,21 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.restore_state import ExtraStoredData, RestoreEntity
-from homeassistant.helpers.template import Template
+from homeassistant.helpers.template import Template, is_template_string
 from homeassistant.helpers.trace import trace_path
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import dt
 import portion as P
 import voluptuous as vol
+import yaml
 
 from .const import (
+    CONF_ALLOW_WRAP,
     CONF_COMMENT,
     CONF_DEFAULT_STATE,
     CONF_DURATION,
     CONF_END,
     CONF_END_OFFSET,
-    CONF_END_TEMPLATE,
     CONF_ERROR_ICON,
     CONF_EVENTS,
     CONF_EXTRA_ATTRIBUTES,
@@ -60,7 +68,6 @@ from .const import (
     CONF_REFRESH,
     CONF_START,
     CONF_START_OFFSET,
-    CONF_START_TEMPLATE,
     DEFAULT_ERROR_ICON,
     DEFAULT_ICON,
     DEFAULT_NAME,
@@ -72,6 +79,8 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 _CONDITION_SCHEMA = vol.All(cv.ensure_list, [cv.CONDITION_SCHEMA])
+
+FORCE_NEW_LAYER = (0, "~~~force-new-layer~~~")
 
 
 # FIXME not sure how to accept templates for icons
@@ -100,15 +109,14 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
             vol.All(
                 {
                     vol.Optional(CONF_START): TimeSchema,
-                    cv.deprecated(CONF_START_TEMPLATE, CONF_START): TimeSchema,
-                    vol.Optional(CONF_START_OFFSET): int,
+                    vol.Optional(CONF_START_OFFSET): vol.Any(cv.template, float),
                     vol.Optional(CONF_END): TimeSchema,
-                    cv.deprecated(CONF_END_TEMPLATE, CONF_END): TimeSchema,
-                    vol.Optional(CONF_END_OFFSET): int,
+                    vol.Optional(CONF_END_OFFSET): vol.Any(cv.template, float),
                     vol.Optional(CONF_STATE): vol.Any(cv.template, cv.string),
                     vol.Optional(CONF_COMMENT): cv.string,
                     vol.Optional(CONF_CONDITION): _CONDITION_SCHEMA,
                     vol.Optional(CONF_ICON): IconSchema,
+                    vol.Optional(CONF_ALLOW_WRAP): cv.boolean,
                     # allow extra keys - for extra attributes
                     vol.Optional(str): vol.Any(cv.template, AnyData),
                 },
@@ -120,6 +128,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_ICON): IconSchema,
         vol.Optional(CONF_ERROR_ICON, default=DEFAULT_ERROR_ICON): IconSchema,
         vol.Optional(CONF_MINUTES_TO_REFRESH_ON_ERROR, default=5): cv.positive_int,
+        vol.Optional(CONF_ALLOW_WRAP, default=False): cv.boolean,
         vol.Optional(CONF_EXTRA_ATTRIBUTES): {cv.string: vol.Any(cv.template, AnyData)},
     },
 )
@@ -188,15 +197,17 @@ class Override(dict):
             x = Override(
                 d.get("id"),
                 d.get("state"),
-                dt.parse_time(d.get("start")),
-                dt.parse_time(d.get("end")),
+                # start/end are datetime.time's - no need to parse - see #166
+                d.get("start"),
+                d.get("end"),
+                # this is quite confusing, because this gets converted to a string and needs to be parsed - see #188
                 dt.parse_datetime(d.get("expires")),
                 d.get("icon"),
                 extra,
             )
             return x
 
-        except (ValueError, KeyError):
+        except (ValueError, KeyError, TypeError):
             _LOGGER.error(f"could not reconstruct saved override: {d}")
             return None
 
@@ -232,10 +243,10 @@ async def async_setup_platform(
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
     await async_setup_services(hass)
 
-    name = config.get(CONF_NAME)
-    data = ScheduleSensorData(name, hass, config)
+    data = ScheduleSensorData(hass, config)
     await data.process_events()
 
+    name = config.get(CONF_NAME)
     entity = ScheduleSensor(hass, name, data, config)
     async_add_entities([entity], True)
 
@@ -260,8 +271,7 @@ async def async_setup_services(hass: HomeAssistant):
             await target_device.async_recalculate()
             update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     async def async_set_override_service_handler(service):
         target_devices = get_target_devices(service)
@@ -278,8 +288,7 @@ async def async_setup_services(hass: HomeAssistant):
             )
             update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     async def async_remove_override_service_handler(service):
         target_devices = get_target_devices(service)
@@ -290,8 +299,7 @@ async def async_setup_services(hass: HomeAssistant):
             )
             update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     async def async_clear_overrides_service_handler(service):
         target_devices = get_target_devices(service)
@@ -300,8 +308,7 @@ async def async_setup_services(hass: HomeAssistant):
             await target_device.async_clear_overrides()
             update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     async def async_turn_on_handler(service):
         target_devices = get_target_devices(service)
@@ -319,8 +326,7 @@ async def async_setup_services(hass: HomeAssistant):
                 )
                 update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     async def async_turn_off_handler(service):
         target_devices = get_target_devices(service)
@@ -338,8 +344,7 @@ async def async_setup_services(hass: HomeAssistant):
                 )
                 update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     async def async_toggle_handler(service):
         target_devices = get_target_devices(service)
@@ -367,8 +372,7 @@ async def async_setup_services(hass: HomeAssistant):
                     )
                     update_tasks.append(target_device.async_update_ha_state(True))
 
-        if update_tasks:
-            await asyncio.wait(update_tasks)
+        _ = [await asyncio.create_task(coro) for coro in update_tasks]
 
     hass.services.async_register(
         DOMAIN,
@@ -416,6 +420,8 @@ async def async_setup_services(hass: HomeAssistant):
 
 class ScheduleSensor(SensorEntity, RestoreEntity):
     """Representation of a sensor that returns a state name based on a predefined schedule."""
+
+    _unrecorded_attributes = frozenset({MATCH_ALL})
 
     def __init__(self, hass, name, data, config):
         """Initialize the sensor."""
@@ -501,6 +507,14 @@ class ScheduleSensor(SensorEntity, RestoreEntity):
             self.data.attributes.get("end", None)
         )
         self._attributes["errors"] = self.data.error_states
+
+        # NEW ATTRIBUTES - Added for schedule-state-card compatibility
+        self._attributes["layers"] = self.data.layers_by_day
+        self._attributes["events"] = self.data.events_list
+        self._attributes["total_events"] = self.data.total_events_count
+        self._attributes["last_update"] = self.data.last_update_time
+        self._attributes["default_state"] = self.data.default_state
+
         if len(self.data.error_states):
             self._attr_icon = self.data.error_icon
         else:
@@ -559,6 +573,8 @@ class ScheduleSensor(SensorEntity, RestoreEntity):
         # overrides are only saved every 15 minutes
         # see STATE_DUMP_INTERVAL in restore_state.py -- is there any way to force this when an override is added/removed?
         _LOGGER.debug(f"{self.name}: extra_restore_state_data = {self.data.overrides}")
+        # note: self.data.overrides is saved in native format, without any explicit conversions, but HA is still converting it to text somewhere
+        # this is not what the pytest-homeassistant-custom-component does...
         return ScheduleStateExtraStoredData(self.data.overrides)
 
     async def async_update_config(self, override_list: list[Override]) -> None:
@@ -581,7 +597,7 @@ class ScheduleSensor(SensorEntity, RestoreEntity):
 class ScheduleSensorData:
     """The class for handling the state computation."""
 
-    def __init__(self, name, hass, config):
+    def __init__(self, hass, config):
         """Initialize the data object."""
         self.name = config.get(CONF_NAME)
         self.value = None
@@ -594,6 +610,7 @@ class ScheduleSensorData:
         self.error_icon = None
         self.config = config
         self._states = {}
+        self._icons = {}
         self._refresh_time = None
         self.overrides = []
         self.known_states = set()
@@ -604,6 +621,13 @@ class ScheduleSensorData:
         self.icon_map = {}
         self.extra_attributes = config.get(CONF_EXTRA_ATTRIBUTES, {})
         self._custom_attributes = {}
+
+        # NEW ATTRIBUTES - For enriched data export
+        self.layers_by_day = {}  # Layer structure by day
+        self.events_list = []  # Raw list of events
+        self.total_events_count = 0  # Total event counter
+        self.last_update_time = None  # Update timestamp
+        self.room_name = config.get(CONF_NAME)  # Room/zone name
 
     async def process_events(self):
         """Process the list of events and derive the schedule for the day."""
@@ -635,15 +659,28 @@ class ScheduleSensorData:
         ).result
         self.known_states.add(self.default_state)
 
-        # TODO we should handle 'icon' the same as other extra attributes
+        allow_wrap_global = self.config.get(CONF_ALLOW_WRAP, False)
+
+        # use an IntervalDict to keep track of time intervals vs state values
+        states = P.IntervalDict()
+
+        # create an IntervalDict for each extra attribute
         self._attr_keys = [k for k in self.extra_attributes.keys()]
-        states = {}
-        attrs = {k: dict() for k in self._attr_keys}
+        attrs = {k: P.IntervalDict() for k in self._attr_keys}
+
+        # icons are handled differently from other extra attributes, mostly just because their config is handled differently
+        icons = P.IntervalDict()
 
         # add an interval for the default state and attributes
         interval = P.closedopen(time.min, time.max)
         self._add_interval(
-            states, attrs, self.extra_attributes, self.default_state, interval
+            interval,
+            self.default_state,
+            self.default_icon,
+            self.extra_attributes,
+            states,
+            icons,
+            attrs,
         )
 
         # now process all defined events and overrides
@@ -674,30 +711,22 @@ class ScheduleSensorData:
             else:
                 force_refresh = new_refresh_time
 
-            variables = {}
-            if cond is not None:
-                _LOGGER.debug(f"{self.name}: condition {cond}")
-                cond_func = await _async_process_if(self.hass, self.name, cond)
-                for conf in cond_func.config:
-                    referenced = condition.async_extract_entities(conf)
-                    if len(referenced):
-                        _LOGGER.debug(f"{self.name}: ... entities used: {referenced}")
-                    self.entities.update(referenced)
-
-                cond_result = cond_func(variables)
-                if cond_result is False:
-                    _LOGGER.debug(
-                        f"{self.name}: {state}: condition was not satisfied - skipping"
-                    )
-                    continue
-                elif cond_result is None:
-                    # There was a problem evaluating the condition - force a refresh
-                    self.force_refresh = force_refresh
-                    self.error_states.add(state)
-                    _LOGGER.error(
-                        f"{self.name}: {state}: error evaluating condition - skipping, will try again in {self.minutes_to_refresh_on_error} minutes"
-                    )
-                    continue
+            cond_result = await _async_process_cond(
+                self.hass, self.name, cond, self.entities
+            )
+            if cond_result is False:
+                _LOGGER.debug(
+                    f"{self.name}: {state}: condition was not satisfied - skipping"
+                )
+                continue
+            elif cond_result is None:
+                # There was a problem evaluating the condition - force a refresh
+                self.force_refresh = force_refresh
+                self.error_states.add(state)
+                _LOGGER.error(
+                    f"{self.name}: {state}: error evaluating condition - skipping, will try again in {self.minutes_to_refresh_on_error} minutes"
+                )
+                continue
 
             start = await self.get_start(event)
             end = None if start is None else await self.get_end(event)
@@ -706,45 +735,774 @@ class ScheduleSensorData:
                 self.force_refresh = force_refresh
                 self.error_states.add(state)
                 _LOGGER.error(
-                    f"{self.name}: {state}: error with event definition - skipping, will try again in {self.minutes_to_refresh_on_error} minutes"
+                    f"{self.name}: {state}: error with start/end definition - skipping, will try again in {self.minutes_to_refresh_on_error} minutes"
                 )
                 continue
 
-            # apply start/end offsets, if any
-            start = self.apply_offset(start, event.get(CONF_START_OFFSET, 0))
-            end = self.apply_offset(end, event.get(CONF_END_OFFSET, 0))
+            # apply start/end offsets, if any - these can be templates
+            start_offset = None
+            end_offset = None
+            offset_eval = self.evaluate_template(event, CONF_START_OFFSET, default=0)
+            if offset_eval.success:
+                with suppress(ValueError):
+                    start_offset = float(offset_eval.result)
 
-            if start > end:
+            offset_eval = self.evaluate_template(event, CONF_END_OFFSET, default=0)
+            if offset_eval.success:
+                with suppress(ValueError):
+                    end_offset = float(offset_eval.result)
+
+            if None in (start_offset, end_offset):
+                # There was a problem evaluating the template - force a refresh
+                self.force_refresh = force_refresh
                 self.error_states.add(state)
                 _LOGGER.error(
-                    f"{self.name}: {state}: error with event definition - start:{start} > end:{end} - skipping"
+                    f"{self.name}: {state}: error with offset definition - skipping, will try again in {self.minutes_to_refresh_on_error} minutes"
                 )
                 continue
 
-            elif start == end:
-                _LOGGER.warning(
-                    f"{self.name}: {state}: no duration - start and end:{start} - skipping"
-                )
+            start = self.apply_offset(start, start_offset)
+            end = self.apply_offset(end, end_offset)
+
+            # is wrapping allowed for this event? (default it the global setting)
+            allow_wrap = event.get(CONF_ALLOW_WRAP, allow_wrap_global)
+
+            # get the interval(s) for this event
+            intervals, error = self._get_intervals(start, end, allow_wrap)
+
+            if error is not None:
+                self.error_states.add(state)
+                _LOGGER.error(f"{self.name}: {state}: {error} - skipping")
                 continue
 
+            state_icon = self.icon_map.get(state, self.default_icon)
             icon = self.evaluate_template(
                 event,
                 CONF_ICON,
+                state_icon,
             )
             if icon.success:
-                self.icon_map[state] = icon.result
+                state_icon = icon.result
+                if state not in self.icon_map:
+                    # set default icon for this state; this will override the default icon for the schedule_state
+                    self.icon_map[state] = icon.result
 
-            # Layer on the new interval to the schedule
-            interval = P.closedopen(start, end)
-            self._add_interval(states, attrs, event, state, interval)
+            # Layer on the new intervals to the schedule
+            self._add_interval(
+                intervals, state, state_icon, event, states, icons, attrs
+            )
 
-        _LOGGER.info(f"{self.name}:\n{pformat(states)}\n{pformat(attrs)}")
         self._states = states
+        self._icons = icons
         self._custom_attributes = attrs
         self._refresh_time = dt.as_local(dt_now())
 
-    def _add_interval(self, states, attrs, event, state, interval) -> None:
-        self._handle_layers(states, state, interval)
+        # NEW: Build enriched attributes
+        self.layers_by_day = await self._build_layers_structure()
+        self.events_list = await self._serialize_events_list()
+        self.total_events_count = sum(
+            len(layers) for layers in self.layers_by_day.values()
+        )
+        self.last_update_time = dt.as_local(dt_now()).isoformat()
+        _LOGGER.info(
+            f"\n{pformat(dict(name=self.name, states=states, icons=icons, attrs=attrs))}"
+        )
+        # _LOGGER.debug(
+        #     f"\n{pformat(dict(layers=self.layers_by_day, events=self.events_list))}"
+        # )
+
+    # NEW METHOD: Serialize events list
+    async def _serialize_events_list(self):
+        """Serialize events list to JSON-compatible format."""
+        serialized_events = []
+        for event in self.events + self.overrides:
+            serialized_event = self._serialize_dict(event)
+            if serialized_event:  # Only add if event has serializable content
+                serialized_events.append(serialized_event)
+
+        return serialized_events
+
+    def _serialize_list(self, lst):
+        """Recursively serialize a list to JSON-compatible format."""
+        ret = []
+        for item in lst:
+            serialized, value = self._serialize_item(item)
+            if serialized:  # Only add if serialization succeeded
+                ret.append(value)
+        return ret
+
+    def _serialize_dict(self, dct):
+        """Recursively serialize a dict to JSON-compatible format."""
+        ret = {}
+        for key, item in dct.items():
+            serialized, value = self._serialize_item(item)
+            if serialized:  # Only add if serialization succeeded
+                ret[key] = value
+        return ret
+
+    def _serialize_item(self, item):
+        """Serialize an item to JSON-compatible format."""
+        serialized = True
+        value = None
+        try:
+            if isinstance(item, Template):
+                value = self._serialize_template(item)
+            elif isinstance(item, (time, datetime)):
+                value = item.isoformat()
+            elif isinstance(item, list):
+                value = self._serialize_list(item)
+            elif isinstance(item, dict):
+                value = self._serialize_dict(item)
+            elif isinstance(item, (str, int, float, bool, type(None))):
+                value = item
+            else:
+                value = str(item)
+        except Exception:
+            # Skip items that cannot be serialized to maintain valid JSON
+            _LOGGER.error(f"{self.name}: could not serialize {item}")
+            serialized = False
+        return serialized, value
+
+    # NEW METHOD: Serialize template to string
+    def _serialize_template(self, template_obj):
+        """Convert Template object to serializable string."""
+        if template_obj is None:
+            return ""
+
+        try:
+            if isinstance(template_obj, Template):
+                # Try to extract the template string
+                if hasattr(template_obj, "template"):
+                    return str(template_obj.template)
+                else:
+                    # Fallback: convert to string
+                    return str(template_obj)
+            return str(template_obj)
+        except Exception:
+            # Return empty string if serialization fails
+            return ""
+
+    # NEW METHOD: Build layers structure
+    async def _build_layers_structure(self):
+        """Build layers structure organized by day."""
+        days = WEEKDAYS
+        layers_by_day = {}
+        for day in days:
+            layers_by_day[day] = await self._build_layers_for_day(day)
+        return layers_by_day
+
+    # NEW METHOD: Build layers for a specific day
+    async def _build_layers_for_day(self, day):
+        """Build event layers for a given day, grouped by identical conditions."""
+        groups = OrderedDict()
+
+        prev_layer = FORCE_NEW_LAYER
+        for event_idx, event in enumerate(self.events + self.overrides):
+            prev_layer = await self._build_layers_for_event(
+                groups, event_idx, event, day, prev_layer
+            )
+
+        # Convert groups to layers
+        layers = []
+        for condition_key, blocks in groups.items():
+            blocks.sort(key=lambda b: b["start"])
+            layers.append(
+                {
+                    "condition_key": condition_key,
+                    "condition_text": blocks[0]["condition_text"] if blocks else "",
+                    "blocks": blocks,
+                    "is_default_layer": False,
+                }
+            )
+
+        # Add default layer
+        layers.append(self._create_default_layer())
+
+        return layers
+
+    async def _build_layers_for_event(self, groups, event_idx, event, day, prev_layer):
+        try:
+            return await self._build_layers_for_event_unsafe(
+                groups, event_idx, event, day, prev_layer
+            )
+
+        except Exception as e:
+            # Skip events that cannot be processed
+            _LOGGER.error(f"{self.name}: could not process event {event} - {e}")
+            import traceback
+
+            error_msg = traceback.format_exc()
+            _LOGGER.error(error_msg)
+            return FORCE_NEW_LAYER
+
+    async def _build_layers_for_event_unsafe(
+        self, groups, event_idx, event, day, prev_layer
+    ):
+        conditions = event.get(CONF_CONDITION, []) or []
+        if not isinstance(conditions, list):
+            conditions = [conditions] if conditions else []
+
+        # Extract months from event and add to conditions
+        months = event.get("months", None) or event.get("month", None)
+        if months is not None:
+            month_condition = {"condition": "time", "month": months}
+            # Only add if not already present
+            if month_condition not in conditions:
+                conditions.append(month_condition)
+
+        # Filter by weekday
+        weekdays = self._get_weekdays_from_condition(conditions)
+        if day not in weekdays:
+            return FORCE_NEW_LAYER
+
+        # It would be nice to refactor with process_events() - lots of duplication
+        # Evaluate state
+        state_eval = self.evaluate_template(
+            event, CONF_STATE, default=self.default_state
+        )
+        if not state_eval.success:
+            return FORCE_NEW_LAYER
+
+        state = state_eval.result
+
+        # Get start/end times - EVALUATE TEMPLATES
+        start = await self.get_start(event)
+        if start is None:
+            return FORCE_NEW_LAYER
+
+        end = await self.get_end(event)
+        if end is None:
+            return FORCE_NEW_LAYER
+
+        # Apply offsets - EVALUATE TEMPLATES FOR OFFSETS
+        start_offset = 0
+        end_offset = 0
+
+        offset_eval = self.evaluate_template(event, CONF_START_OFFSET, default=0)
+        if offset_eval.success:
+            with suppress(ValueError):
+                start_offset = float(offset_eval.result)
+
+        offset_eval = self.evaluate_template(event, CONF_END_OFFSET, default=0)
+        if offset_eval.success:
+            with suppress(ValueError):
+                end_offset = float(offset_eval.result)
+
+        # Apply the offsets to start and end times
+        start = self.apply_offset(start, start_offset)
+        end = self.apply_offset(end, end_offset)
+
+        # Check if wrapping is allowed
+        allow_wrap_global = self.config.get(CONF_ALLOW_WRAP, False)
+        allow_wrap = event.get(CONF_ALLOW_WRAP, allow_wrap_global)
+
+        # Detect wrapping
+        wraps = start > end
+
+        # Create condition key for grouping ("default" if no conditions, or "unknown" if an error occurs)
+        new_layer = self._serialize_conditions(conditions)
+        if new_layer == prev_layer[1]:
+            condition_key = prev_layer[0]
+        else:
+            condition_key = str(event_idx)
+        if condition_key not in groups:
+            groups[condition_key] = []
+
+        # Store original times for display (AFTER offset application)
+        # This is used to show original times for wrapped events
+        original_start = start.strftime("%H:%M")
+        original_end = end.strftime("%H:%M")
+
+        # Format condition text with error handling
+        condition_text = self._format_conditions(conditions)
+
+        # Serialize raw state template
+        raw_state_template = self._serialize_template(event.get(CONF_STATE))
+
+        # Serialize raw conditions
+        raw_conditions = self._serialize_list(conditions)
+
+        # If wrapping, create TWO blocks: one for each day
+        if wraps and allow_wrap:
+            # Block 1: start -> 00:00 (current day ends)
+            block1 = {
+                "event_idx": event_idx,
+                "start": start.strftime("%H:%M"),
+                "end": "00:00",
+                "original_start": original_start,
+                "original_end": original_end,
+                "wraps_start": False,
+                "wraps_end": True,
+                "state_value": state,
+                "raw_state_template": raw_state_template,
+                "raw_conditions": raw_conditions,
+                "condition_text": condition_text,
+                "icon": event.get(CONF_ICON, DEFAULT_ICON),
+                "is_default_bg": False,
+                "z_index": 2,
+                "is_dynamic_color": self._is_dynamic_value(state),
+            }
+            groups[condition_key].append(block1)
+
+            # Block 2: 00:00 -> end (next day starts)
+            block2 = {
+                "event_idx": event_idx,
+                "start": "00:00",
+                "end": end.strftime("%H:%M"),
+                "original_start": original_start,
+                "original_end": original_end,
+                "wraps_start": True,
+                "wraps_end": False,
+                "state_value": state,
+                "raw_state_template": raw_state_template,
+                "raw_conditions": raw_conditions,
+                "condition_text": condition_text,
+                "icon": event.get(CONF_ICON, DEFAULT_ICON),
+                "is_default_bg": False,
+                "z_index": 2,
+                "is_dynamic_color": self._is_dynamic_value(state),
+            }
+            groups[condition_key].append(block2)
+        elif not wraps:
+            # Normal block (no wrapping)
+            block = {
+                "event_idx": event_idx,
+                "start": start.strftime("%H:%M"),
+                "end": end.strftime("%H:%M"),
+                "original_start": original_start,
+                "original_end": original_end,
+                "wraps_start": False,
+                "wraps_end": False,
+                "state_value": state,
+                "raw_state_template": raw_state_template,
+                "raw_conditions": raw_conditions,
+                "condition_text": condition_text,
+                "icon": event.get(CONF_ICON, DEFAULT_ICON),
+                "is_default_bg": False,
+                "z_index": 2,
+                "is_dynamic_color": self._is_dynamic_value(state),
+            }
+            groups[condition_key].append(block)
+
+        return (condition_key, new_layer)
+
+    # NEW METHOD: Create default layer
+    def _create_default_layer(self):
+        """Create the default layer (background)."""
+        return {
+            "condition_key": "default",
+            "condition_text": "default",
+            "blocks": [
+                {
+                    "start": "00:00",
+                    "end": "23:59",
+                    "original_start": "00:00",
+                    "original_end": "23:59",
+                    "wraps_start": False,
+                    "wraps_end": False,
+                    "state_value": self.default_state,
+                    "raw_state_template": self._serialize_template(
+                        self.config.get(CONF_DEFAULT_STATE)
+                    ),
+                    "raw_conditions": [],
+                    "condition_text": "default",
+                    "is_default_bg": True,
+                    "z_index": 1,
+                    "is_dynamic_color": self._is_dynamic_value(self.default_state),
+                }
+            ],
+            "is_default_layer": True,
+        }
+
+    # NEW METHOD: Extract weekdays from conditions
+    def _get_weekdays_from_condition(self, conditions):
+        """Extract weekdays from time conditions."""
+        all_days = WEEKDAYS
+        if not conditions:
+            return all_days
+
+        weekdays = []
+        for cond in conditions:
+            if (
+                isinstance(cond, dict)
+                and cond.get("condition") == "time"
+                and "weekday" in cond
+            ):
+                wd = cond["weekday"]
+                if isinstance(wd, list):
+                    weekdays.extend(wd)
+                elif isinstance(wd, str):
+                    weekdays.append(wd)
+
+        return weekdays or all_days
+
+    # NEW METHOD: Serialize conditions
+    def _serialize_conditions(self, conditions):
+        """Serialize conditions to create a unique group key."""
+        if not conditions:
+            return "default"
+
+        clean_conditions = []
+        for cond in conditions:
+            # Create a serializable copy of the condition
+            if isinstance(cond, dict):
+                serializable_cond = self._serialize_dict(cond)
+
+                # Filter time conditions with months
+                if serializable_cond.get("condition") == "time" and (
+                    "month" in serializable_cond or "weekday" in serializable_cond
+                ):
+                    clean_conditions.append(serializable_cond)
+                # elif (
+                #     serializable_cond.get("condition") == "time"
+                #     and "weekday" in serializable_cond
+                # ):
+                #     clean_conditions.append(serializable_cond)
+                elif serializable_cond.get("condition") != "time":
+                    clean_conditions.append(serializable_cond)
+                else:
+                    # _LOGGER.debug(f"{self.name}: can't serialize condition: {cond}")
+                    pass
+            else:
+                serialized, value = self._serialize_item(cond)
+                if serialized:
+                    clean_conditions.append(value)
+
+        if not clean_conditions:
+            return "default"
+
+        try:
+            # Use yaml.safe_dump to avoid Python objects
+            return yaml.safe_dump(
+                clean_conditions, default_flow_style=False, sort_keys=True
+            )
+        except Exception:
+            _LOGGER.error(
+                f"{self.name}: error serializing condition: {clean_conditions}"
+            )
+            return "unknown"
+
+    def _format_conditions(self, conditions):
+        """Format conditions into readable text with support for nested AND/OR/NOT.
+        Multiple conditions in a list are treated as implicit AND operations."""
+        if not conditions:
+            return ""
+
+        # Process all conditions - multiple conditions in a list are treated as implicit AND
+        parts = []
+        for cond in conditions:
+            try:
+                formatted = self._format_single_condition(cond)
+                _LOGGER.debug(f"Formatted result: '{formatted}'")
+                if formatted:
+                    parts.append(formatted)
+            except Exception as e:
+                # Log the error for debugging but continue
+                _LOGGER.error(f"Error formatting condition {cond}: {e}")
+                continue
+
+        # Return formatted conditions
+        _LOGGER.debug(f"Final parts: {parts}")
+        if len(parts) == 0:
+            return ""
+        elif len(parts) == 1:
+            return parts[0]
+        else:
+            # Multiple conditions at the top level are implicitly ANDed together
+            return " AND ".join(parts)
+
+    def _format_single_condition(self, cond):
+        """Format a single condition."""
+        if not isinstance(cond, dict):
+            return ""
+
+        # FIXME will not work with shorthand forms of AND/OR/NOT
+        # See https://www.home-assistant.io/docs/scripts/conditions/#logical-conditions
+        cond_type = cond.get("condition")
+
+        # conditions can be disabled by setting enabled: False
+        enabled = cond.get("enabled", True)
+        if isinstance(enabled, Template):
+            try:
+                enabled = enabled.async_render(limited=True)
+            except TemplateError:
+                _LOGGER.error(
+                    f"{self.name}: unable to evaluate template for 'enabled' in condition {cond} - assuming enabled"
+                )
+                enabled = True
+        if not enabled:
+            return ""
+
+        # DEBUG - log each condition being formatted
+        _LOGGER.debug(f"Formatting condition type: {cond_type}, full cond: {cond}")
+
+        if cond_type == "state":
+            entity_id = cond.get("entity_id", "")
+            any = ""
+
+            # Handle case where entity_id is a list
+            if isinstance(entity_id, list):
+                if len(entity_id) == 1:
+                    entity_id = entity_id[0]
+                else:
+                    # Multiple entities: format as "[entity1, entity2, ...]"
+                    entity_id = f"[{', '.join(entity_id)}]"
+                    if cond.get("match") == "any":
+                        any = "Any of "
+
+            _for = ""  # TODO
+
+            attr = ""
+            if (attribute := cond.get("attribute")) is not None:
+                attr = f" (attribute {attribute})"
+
+            state_value = cond.get("state", "")
+            op = "=="
+            if isinstance(state_value, list):
+                state_value = f"[{', '.join(state_value)}]"
+                op = "in"
+            return f"{any}{entity_id} {op} {state_value}{attr}{_for}"
+
+        elif cond_type == "numeric_state":
+            entity_id = cond.get("entity_id", "")
+            # Handle case where entity_id is a list
+            if isinstance(entity_id, list):
+                if len(entity_id) == 1:
+                    entity_id = entity_id[0]
+                else:
+                    entity_id = f"[{', '.join(entity_id)}]"
+
+            attr = ""
+            if (attribute := cond.get("attribute")) is not None:
+                attr = f" (attribute {attribute})"
+
+            conds = []
+            if "above" in cond:
+                conds.append(f"> {cond['above']}")
+            if "below" in cond:
+                conds.append(f"< {cond['below']}")
+            return f"{entity_id} {' AND '.join(conds)}{attr}"
+
+        elif cond_type == "time":
+            time_parts = []
+            if "weekday" in cond:
+                weekdays = cond["weekday"]
+                if isinstance(weekdays, list):
+                    abbrs = [wd.capitalize()[:3] for wd in weekdays]
+                    time_parts.append(f"Days: {', '.join(abbrs)}")
+                else:
+                    time_parts.append(f"Days: {weekdays.capitalize()[:3]}")
+            if "month" in cond:
+                months = cond["month"]
+                if isinstance(months, list):
+                    time_parts.append(f"Month: {', '.join(map(str, months))}")
+                else:
+                    time_parts.append(f"Month: {months}")
+
+            return " ".join(time_parts) if time_parts else ""
+
+        elif cond_type == "template":
+            # For templates, extract meaningful information
+            value_template = cond.get("value_template", "")
+            if isinstance(value_template, Template):
+                template_str = self._serialize_template(value_template)
+            elif isinstance(value_template, str):
+                template_str = value_template
+            else:
+                return "Custom condition"
+
+            # Clean up the template string
+            template_str = template_str.strip()
+            # Remove extra whitespace and newlines
+            template_str = " ".join(template_str.split())
+
+            # Try to extract entities mentioned in the template
+            entities = []
+
+            # Find all states('entity_id') or state_attr('entity_id', 'attr')
+            entity_matches = re.findall(r"states?\(['\"]([^'\"]+)['\"]\)", template_str)
+            entities.extend(entity_matches)
+
+            # Find entity references like sensor.xxx
+            entity_refs = re.findall(
+                r"\b(sensor\.\w+|binary_sensor\.\w+|input_\w+\.\w+|switch\.\w+|light\.\w+)",
+                template_str,
+            )
+            entities.extend(entity_refs)
+
+            # Remove duplicates while preserving order
+            seen = set()
+            unique_entities = []
+            for e in entities:
+                if e not in seen:
+                    seen.add(e)
+                    unique_entities.append(e)
+
+            # Determine the type of comparison
+            comparison = ""
+            if ">" in template_str:
+                comparison = ">"
+            elif "<" in template_str:
+                comparison = "<"
+            elif "==" in template_str:
+                comparison = "=="
+            elif "!=" in template_str:
+                comparison = "!="
+            elif " in " in template_str:
+                comparison = "in"
+
+            # Build a readable summary
+            if unique_entities:
+                if len(unique_entities) == 1:
+                    entity_name = unique_entities[0].replace("_", " ").title()
+                    if comparison:
+                        return f"{entity_name} {comparison} condition"
+                    else:
+                        return f"{entity_name} condition"
+                else:
+                    # Multiple entities
+                    entity_names = [
+                        e.split(".")[-1].replace("_", " ").title()
+                        for e in unique_entities[:2]
+                    ]
+                    if len(unique_entities) > 2:
+                        return f"Condition on {', '.join(entity_names)}... ({len(unique_entities)} entities)"
+                    else:
+                        return f"Condition on {' & '.join(entity_names)}"
+
+            if "sun_next_rising" in template_str:
+                if "today_at" in template_str:
+                    time_match = re.search(
+                        r"today_at\(['\"](\d+:\d+)['\"]\)", template_str
+                    )
+                    if time_match:
+                        if ">" in template_str:
+                            return f"Sunrise after {time_match.group(1)}"
+                        elif "<" in template_str:
+                            return f"Sunrise before {time_match.group(1)}"
+                return "Sunrise condition"
+
+            if "sun_next_setting" in template_str:
+                if "today_at" in template_str:
+                    time_match = re.search(
+                        r"today_at\(['\"](\d+:\d+)['\"]\)", template_str
+                    )
+                    if time_match:
+                        if ">" in template_str:
+                            return f"Sunset after {time_match.group(1)}"
+                        elif "<" in template_str:
+                            return f"Sunset before {time_match.group(1)}"
+                return "Sunset condition"
+
+            # Fallback: show abbreviated template
+            if len(template_str) > 50:
+                return f"Custom: {template_str[:47]}..."
+            return f"Custom: {template_str}"
+
+        elif cond_type == "and":
+            sub_conds = cond.get("conditions", [])
+            if not sub_conds:
+                return ""
+            formatted = [self._format_single_condition(c) for c in sub_conds]
+            formatted = [f for f in formatted if f]
+            if len(formatted) == 0:
+                return ""
+            elif len(formatted) == 1:
+                return formatted[0]
+            else:
+                return f"({' AND '.join(formatted)})"
+
+        elif cond_type == "or":
+            sub_conds = cond.get("conditions", [])
+            if not sub_conds:
+                return ""
+            formatted = [self._format_single_condition(c) for c in sub_conds]
+            formatted = [f for f in formatted if f]
+            if len(formatted) == 0:
+                return ""
+            elif len(formatted) == 1:
+                return formatted[0]
+            else:
+                return f"({' OR '.join(formatted)})"
+
+        elif cond_type == "not":
+            # Handle both single condition and list of conditions
+            # Note: the dict always has 'condition': 'not', but we need to check for sub-conditions
+
+            # Check if there's a list of conditions
+            sub_conds = cond.get("conditions", None)
+            _LOGGER.debug(
+                f"NOT condition - has 'conditions' list: {sub_conds is not None}"
+            )
+
+            if sub_conds is not None:
+                # Multiple conditions in a list
+                _LOGGER.debug(f"NOT condition - sub_conds: {sub_conds}")
+                formatted = [self._format_single_condition(c) for c in sub_conds]
+                _LOGGER.debug(
+                    f"NOT condition - formatted list before filter: {formatted}"
+                )
+                formatted = [f for f in formatted if f]
+                _LOGGER.debug(
+                    f"NOT condition - formatted list after filter: {formatted}"
+                )
+
+                if len(formatted) == 0:
+                    return ""
+                elif len(formatted) == 1:
+                    result = f"NOT ({formatted[0]})"
+                    _LOGGER.debug(f"NOT condition - final result: '{result}'")
+                    return result
+                else:
+                    # Multiple conditions in NOT - treat as implicit AND
+                    result = f"NOT ({' AND '.join(formatted)})"
+                    _LOGGER.debug(
+                        f"NOT condition - final result (multiple): '{result}'"
+                    )
+                    return result
+
+            # If no 'conditions' list, might be an error or old format
+            _LOGGER.warning(f"NOT condition without 'conditions' list: {cond}")
+            return ""
+
+        else:
+            _LOGGER.warning(f"{self.name}: unhandled condition type: {cond_type}")
+
+        return ""
+
+    # NEW METHOD: Detect dynamic values
+    def _is_dynamic_value(self, value):
+        """Detect if value is dynamic (template or entity reference)."""
+        if not value or not isinstance(value, str):
+            return False
+
+        value_str = str(value).strip()
+        return (
+            "states(" in value_str
+            or "state_attr(" in value_str
+            or is_template_string(value_str)
+        )
+
+    def _get_intervals(self, start, end, allow_wrap):
+        ret = P.Interval()
+        error = None
+
+        if start < end:
+            ret = ret.union(P.closedopen(start, end))
+        elif start == end:
+            pass
+        elif allow_wrap:
+            ret = ret.union(P.closedopen(start, time.max))
+            ret = ret.union(P.closedopen(time.min, end))
+        else:
+            error = f"error with event definition - start:{start} > end:{end}"
+
+        return ret, error
+
+    def _add_interval(self, interval, state, icon, event, states, icons, attrs) -> None:
+        _LOGGER.debug(f"adding {interval} state={state} icon={icon}")
+        states[interval] = state
+        icons[interval] = icon
 
         # process custom attributes
         for xattr in self._attr_keys:
@@ -772,38 +1530,12 @@ class ScheduleSensorData:
                 ).result
 
             if val is not None:
-                self._handle_layers(
-                    attrs[xattr],
-                    val,
-                    interval,
-                )
-
-    def _handle_layers(self, states, this_attr, interval) -> None:
-        for attr in states:
-            self._handle_layer(states, attr, this_attr, interval)
-
-        if this_attr not in states:
-            states[this_attr] = interval
-        else:
-            states[this_attr] = states[this_attr] | interval
-
-    def _handle_layer(self, states, attr, this_attr, interval) -> None:
-        if attr == this_attr:
-            return
-
-        overlap = interval & states[attr]
-        if interval.overlaps(states[attr]):
-            _LOGGER.debug(
-                f"{self.name}: {this_attr} overlaps with existing {attr}: {overlap}"
-            )
-            states[attr] -= overlap
-            _LOGGER.debug(f"{self.name}: ... reducing {attr} to {states[attr]}")
+                attrs[xattr][interval] = val
 
     async def get_start(self, event) -> time:
         template_eval = self.evaluate_template(
             event,
             CONF_START,
-            CONF_START_TEMPLATE,
             time.min,
         )
         if not template_eval.success:
@@ -820,7 +1552,6 @@ class ScheduleSensorData:
         template_eval = self.evaluate_template(
             event,
             CONF_END,
-            CONF_END_TEMPLATE,
             time.max,
         )
         if not template_eval.success:
@@ -843,18 +1574,10 @@ class ScheduleSensorData:
         self,
         obj,
         prefix: str,
-        prefixt: str = None,
         default=None,
         track_entities: bool = True,
     ) -> TemplateResult:
         value = obj.get(prefix, None)
-        value_template = obj.get(prefixt, None)
-
-        # 'thing' and 'thing'_template are now aliases, and it is only allowed to provide one or the other,
-        # so we can safely combine them knowing that at least one of them will be 'None'
-        value = value or value_template
-        del value_template
-        del prefixt
 
         debugmsg = ""
 
@@ -901,38 +1624,30 @@ class ScheduleSensorData:
         if not isinstance(value, str):
             return value
 
-        try:
+        with suppress((ValueError, TypeError)):
             date = dt.parse_datetime(value)
             if date is not None:
                 _LOGGER.debug(f"{self.name}: ...... found datetime: {date}")
                 tme = dt.as_local(date).time()
                 return tme
-        except (ValueError, TypeError):
-            pass
 
-        try:
+        with suppress((ValueError, TypeError)):
             date = datetime.fromisoformat(value)
             _LOGGER.debug(f"{self.name}: ...... found isoformat date: {date}")
             tme = dt.as_local(date).time()
             return tme
-        except (ValueError, TypeError):
-            pass
 
-        try:
+        with suppress((ValueError, TypeError)):
             tme = dt.parse_time(value)
             if tme is not None:
                 _LOGGER.debug(f"{self.name}: ...... found time: {tme}")
                 return localtime_from_time(tme)
-        except (ValueError, TypeError):
-            pass
 
-        try:
+        with suppress((ValueError, TypeError)):
             tme = time.fromisoformat(value)
             if tme is not None:
                 _LOGGER.debug(f"{self.name}: ...... found isoformat time: {tme}")
                 return localtime_from_time(tme)
-        except (ValueError, TypeError):
-            pass
 
         try:
             date = dt.utc_from_timestamp(int(float(value)))
@@ -972,7 +1687,9 @@ class ScheduleSensorData:
         self.value = state
         self.attributes["start"] = interval.lower
         self.attributes["end"] = interval.upper
-        self.attributes["icon"] = self.icon_map.get(state, None)
+        icon, _ = self.find_interval(self._icons, nu)
+        # it should never have to look at icon_map anymore
+        self.attributes["icon"] = icon or self.icon_map.get(state, None)
 
         look_for_next_state = True
         next_nu = (datetime.combine(now, interval.upper) + timedelta(seconds=1)).time()
@@ -1002,21 +1719,25 @@ class ScheduleSensorData:
             self.attributes[attr] = val
 
     def find_interval(self, states, nu):
-        for state in states:
-            if nu in states[state]:
-                for interval in states[state]._intervals:
-                    if nu >= interval.lower and nu < interval.upper:
-                        return (
-                            state,
-                            interval,
-                        )
+        for k, v in states.items():
+            for interval in k._intervals:
+                if nu >= interval.lower and nu < interval.upper:
+                    return v, interval
 
-        assert False
+        _LOGGER.error(f"{nu} not in {states}")
         return None, None
 
     def set_override(self, id, state, start, end, duration, icon, extra_attributes):
         now = dt.as_local(dt_now())
-        allow_split = True
+
+        # Unlike standard events, overrides do not have an "allow_wrap" attribute.
+        # Wrapping is generally permitted by default for overrides, unless both
+        # start and end are provided, in which case the global "allow_wrap" setting
+        # for the sensor is used.
+        allow_wrap = True
+
+        # You could end up with weird/unexpected results if the duration wrapped more than
+        # one day, which is why the maximum is set to 1439 minutes (24 hours minus 1 minute).
 
         # FIXME weed out invalid cases using Voluptuous schema
         if start is None and end is None and duration is None:
@@ -1048,7 +1769,7 @@ class ScheduleSensorData:
             # don't try to fix wraparounds in this case, where both start and end times were provided
             start = next_time(now, start)
             end = next_time(now, end)
-            allow_split = False
+            allow_wrap = self.config.get(CONF_ALLOW_WRAP, False)
         else:
             # 100 --> start to ???
             _LOGGER.error("override failed: no duration provided")
@@ -1065,42 +1786,27 @@ class ScheduleSensorData:
                 v = extra_attributes.get(attr, None)
                 if v is not None:
                     ex_attrs[attr] = v
+                else:
+                    _LOGGER.debug(f"skipping {attr} because value = {v}")
 
-                for attr in extra_attributes.keys():
-                    if attr not in self._attr_keys:
-                        _LOGGER.error(
-                            f"{self.name}: ignoring unknown attribute '{attr}' in service call"
-                        )
-                extra_attributes = ex_attrs
+            for attr in extra_attributes.keys():
+                if attr not in self._attr_keys:
+                    _LOGGER.error(
+                        f"{self.name}: ignoring unknown attribute '{attr}' in service call"
+                    )
+
+            extra_attributes = ex_attrs
+
         else:
             extra_attributes = {}
 
-        if not (start > end):
+        if end > start or (allow_wrap and start > end):
             ev = Override(id, state, start, end, expires, icon, extra_attributes)
             self._add_or_edit_override(id, ev)
-
-        elif start > end and allow_split:
-            # split into two overrides if there is a wraparound (eg: 23:55 to 00:10)
-            # note: this will create 2 overrides with the same id; this is the only way
-            # it can happen
-            ev = Override(
-                id,
-                state,
-                start,
-                time.max,
-                start_of_next_day(now),
-                icon,
-                extra_attributes,
-            )
-            _LOGGER.info(f"adding override: {ev} (split)")
-            self._add_or_edit_override(id, ev)
-            start = time.min
-            if end > start:
-                # weed out degenerate case where start==end, which happens if original end=00:00:00
-                ev = Override(id, state, start, end, expires, icon, extra_attributes)
-                self._add_or_edit_override(id, ev, expect_duplicate_id=True)
+            if allow_wrap:
+                ev[CONF_ALLOW_WRAP] = True
         else:
-            _LOGGER.error(f"override failed: start ({start}) > end ({end})")
+            _LOGGER.error(f"override failed: start ({start}) & end ({end})")
             return False
 
         return True
@@ -1179,16 +1885,7 @@ def localtime_from_time(tme: time) -> time:
 
 def datetime_from_time(tme: time) -> datetime:
     date = dt_now()
-    date = datetime(
-        date.year,
-        date.month,
-        date.day,
-        tme.hour,
-        tme.minute,
-        tme.second,
-        tme.microsecond,
-        date.tzinfo,
-    )
+    date = datetime.combine(date, tme, date.tzinfo)
     return dt.as_local(date)
 
 
@@ -1202,6 +1899,24 @@ def friendly_time(t):
     elif t == time.max:
         return "midnight"
     return t.strftime(locale.nl_langinfo(locale.T_FMT))
+
+
+async def _async_process_cond(hass, name, cond, entities):
+    if cond is None:
+        # no condition provided - always evaluates to True
+        return True
+
+    _LOGGER.debug(f"{name}: condition {cond}")
+    variables = {}
+    cond_func = await _async_process_if(hass, name, cond)
+    for conf in cond_func.config:
+        referenced = condition.async_extract_entities(conf)
+        if len(referenced):
+            _LOGGER.debug(f"{name}: ... entities used: {referenced}")
+        entities.update(referenced)
+
+    cond_result = cond_func(variables)
+    return cond_result
 
 
 async def _async_process_if(hass, name, if_configs):

@@ -15,6 +15,9 @@ from homeassistant.core import HomeAssistant
 from .backup_health import collect
 from .runtime import HousekeeperConfigEntry, loaded_scanner
 
+# Lists in the snapshot meta that name dashboards, entities or config entries of the installation: exported as counts.
+_META_LISTS = ("unchecked", "warmup_names", "state_only_entities")
+
 
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: HousekeeperConfigEntry
@@ -40,8 +43,9 @@ async def async_get_config_entry_diagnostics(
         # The ids of unread dashboards are left out, only how many there were.
         "meta": (
             {
-                **{k: v for k, v in snapshot["meta"].items() if k != "unchecked"},
-                "unchecked": len(snapshot["meta"].get("unchecked") or []),
+                **{k: v for k, v in snapshot["meta"].items() if k not in _META_LISTS},
+                # Counts only: the lists hold dashboard ids, entity ids and config entry titles.
+                **{k: len(snapshot["meta"].get(k) or []) for k in _META_LISTS},
             }
             if snapshot
             else None
