@@ -10,11 +10,11 @@ title: L9 ESP Cams Details
 path: l9_esp_cams_details
 badges: []
 cards:
-  - type: entities
-    title: L9 Cam32 01
-    show_header_toggle: false
-    entities:
-      - switch.level_9_l9cam3201_camlight
+  # - type: entities
+  #   title: L9 Cam32 01
+  #   show_header_toggle: false
+  #   entities:
+  #     - switch.level_9_l9cam3201_camlight
 
   - type: entities
     title: L9 Cam32 02
@@ -28,17 +28,17 @@ cards:
     entities:
       - switch.level_9_l9cam3203_camlight
 
-  - type: entities
-    title: L9 Cam32 04
-    show_header_toggle: false
-    entities:
-      - switch.level_9_l9cam3204_camlight
+  # - type: entities
+  #   title: L9 Cam32 04
+  #   show_header_toggle: false
+  #   entities:
+  #     - switch.level_9_l9cam3204_camlight
 
-  - type: entities
-    title: L9 Cam32 05
-    show_header_toggle: false
-    entities:
-      - switch.level_9_l9cam3205_camlight
+  # - type: entities
+  #   title: L9 Cam32 05
+  #   show_header_toggle: false
+  #   entities:
+  #     - switch.level_9_l9cam3205_camlight
 ####################################################################
 # EOF
 ####################################################################

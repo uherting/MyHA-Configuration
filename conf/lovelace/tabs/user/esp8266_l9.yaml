@@ -10,113 +10,89 @@ title: ESP8266 l9
 path: esp8266_l9
 badges: []
 cards:
-  - type: entities
-    title: L9 Cam32 01
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3201_tempcase_01
-      # - sensor.l9cam3201_tempenv_01
-      - binary_sensor.l9cam3201_pir_01
-      - binary_sensor.l9cam3201_pir_02
-      - binary_sensor.l9cam3201_door
-      - switch.l9cam3201_ssr_01
-      - switch.l9cam3201_ssr_02
+  # - type: entities
+  #   title: L9 Cam32 01
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9cam3201_tempcase_01
+  #     # - sensor.l9cam3201_tempenv_01
+  #     - binary_sensor.l9cam3201_pir_01
+  #     - binary_sensor.l9cam3201_pir_02
+  #     - binary_sensor.l9cam3201_door
+  #     - switch.l9cam3201_ssr_01
+  #     - switch.l9cam3201_ssr_02
 
-  - type: entities
-    title: L9 Cam32 02
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3202_tempcase_01
-      # - sensor.l9cam3202_tempenv_01
-      - binary_sensor.l9cam3202_pir_01
-      - binary_sensor.l9cam3202_pir_02
-      - binary_sensor.l9cam3202_door
-      - switch.l9cam3202_ssr_01
-      - switch.l9cam3202_ssr_02
+  # - type: entities
+  #   title: L9 Cam32 02
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9cam3202_tempcase_01
+  #     # - sensor.l9cam3202_tempenv_01
+  #     - binary_sensor.l9cam3202_pir_01
+  #     - binary_sensor.l9cam3202_pir_02
+  #     - binary_sensor.l9cam3202_door
+  #     - switch.l9cam3202_ssr_01
+  #     - switch.l9cam3202_ssr_02
 
-  - type: entities
-    title: L9 Cam32 03
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3203_tempcase_01
-      # - sensor.l9cam3203_tempenv_01
-      - binary_sensor.l9cam3203_pir_01
-      - binary_sensor.l9cam3203_pir_02
-      - binary_sensor.l9cam3203_door
-      - switch.l9cam3203_ssr_01
-      - switch.l9cam3203_ssr_02
+  # - type: entities
+  #   title: L9 Cam32 03
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9cam3203_tempcase_01
+  #     # - sensor.l9cam3203_tempenv_01
+  #     - binary_sensor.l9cam3203_pir_01
+  #     - binary_sensor.l9cam3203_pir_02
+  #     - binary_sensor.l9cam3203_door
+  #     - switch.l9cam3203_ssr_01
+  #     - switch.l9cam3203_ssr_02
 
-  - type: entities
-    title: L9 Cam32 04
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3204_tempcase_01
-      # - sensor.l9cam3204_tempenv_01
-      - binary_sensor.l9cam3204_pir_01
-      - binary_sensor.l9cam3204_pir_02
-      - binary_sensor.l9cam3204_door
-      - switch.l9cam3204_ssr_01
-      - switch.l9cam3204_ssr_02
+  # - type: entities
+  #   title: L9 Cam32 04
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9cam3204_tempcase_01
+  #     # - sensor.l9cam3204_tempenv_01
+  #     - binary_sensor.l9cam3204_pir_01
+  #     - binary_sensor.l9cam3204_pir_02
+  #     - binary_sensor.l9cam3204_door
+  #     - switch.l9cam3204_ssr_01
+  #     - switch.l9cam3204_ssr_02
 
-  - type: entities
-    title: L9 Cam32 05
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3205_tempcase_01
-      # - sensor.l9cam3205_tempenv_01
-      - binary_sensor.l9cam3205_pir_01
-      - binary_sensor.l9cam3205_pir_02
-      - binary_sensor.l9cam3205_door
-      - switch.l9cam3205_ssr_01
-      - switch.l9cam3205_ssr_02
+  # - type: entities
+  #   title: L9 Cam32 05
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9cam3205_tempcase_01
+  #     # - sensor.l9cam3205_tempenv_01
+  #     - binary_sensor.l9cam3205_pir_01
+  #     - binary_sensor.l9cam3205_pir_02
+  #     - binary_sensor.l9cam3205_door
+  #     - switch.l9cam3205_ssr_01
+  #     - switch.l9cam3205_ssr_02
 
-  - type: entities
-    title: L9 Cam32 06
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3206_tempcase_01
-      # - sensor.l9cam3206_tempenv_01
-      - binary_sensor.l9cam3206_pir_01
-      - binary_sensor.l9cam3206_pir_02
-      - binary_sensor.l9cam3206_door
-      - switch.l9cam3206_ssr_01
-      - switch.l9cam3206_ssr_02
+  # - type: entities
+  #   title: L9 Cam Ttgo 01
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9_camttgo_01_tempcase_01
+  #     # - sensor.l9_camttgo_01_tempenv_01
+  #     - binary_sensor.l9_camttgo_01_pir_01
+  #     - binary_sensor.l9_camttgo_01_pir_02
+  #     - binary_sensor.l9_camttgo_01_door
+  #     - switch.l9_camttgo_01_ssr_01
+  #     - switch.l9_camttgo_01_ssr_02
 
-  - type: entities
-    title: L9 Cam32 07
-    show_header_toggle: false
-    entities:
-      # - sensor.l9cam3207_tempcase_01
-      # - sensor.l9cam3207_tempenv_01
-      - binary_sensor.l9cam3207_pir_01
-      - binary_sensor.l9cam3207_pir_02
-      - binary_sensor.l9cam3207_door
-      - switch.l9cam3207_ssr_01
-      - switch.l9cam3207_ssr_02
-
-  - type: entities
-    title: L9 Cam Ttgo 01
-    show_header_toggle: false
-    entities:
-      # - sensor.l9_camttgo_01_tempcase_01
-      # - sensor.l9_camttgo_01_tempenv_01
-      - binary_sensor.l9_camttgo_01_pir_01
-      - binary_sensor.l9_camttgo_01_pir_02
-      - binary_sensor.l9_camttgo_01_door
-      - switch.l9_camttgo_01_ssr_01
-      - switch.l9_camttgo_01_ssr_02
-
-  - type: entities
-    title: L9 Cam Ttgo 02
-    show_header_toggle: false
-    entities:
-      # - sensor.l9_camttgo_02_tempcase_01
-      # - sensor.l9_camttgo_02_tempenv_01
-      - binary_sensor.l9_camttgo_02_pir_01
-      - binary_sensor.l9_camttgo_02_pir_02
-      - binary_sensor.l9_camttgo_02_door
-      - switch.l9_camttgo_02_ssr_01
-      - switch.l9_camttgo_02_ssr_02
+  # - type: entities
+  #   title: L9 Cam Ttgo 02
+  #   show_header_toggle: false
+  #   entities:
+  #     # - sensor.l9_camttgo_02_tempcase_01
+  #     # - sensor.l9_camttgo_02_tempenv_01
+  #     - binary_sensor.l9_camttgo_02_pir_01
+  #     - binary_sensor.l9_camttgo_02_pir_02
+  #     - binary_sensor.l9_camttgo_02_door
+  #     - switch.l9_camttgo_02_ssr_01
+  #     - switch.l9_camttgo_02_ssr_02
 ####################################################################
 # EOF
 ####################################################################
