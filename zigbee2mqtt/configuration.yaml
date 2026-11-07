@@ -31,6 +31,7 @@ devices:
   '0x1c34f1fffe095fa9':
     friendly_name: ZB_TRV_Kitchen_L2
     icon: device_icons/19dcc5d3226aeff036720630326723a4.png
+    time_start: '1970'
   '0xa4c1382e5e523972':
     friendly_name: ZB_Plug_L2_Lounge_Light_Corner
     icon: device_icons/0fb3d33a89ca406e2aa22e1cf9f04d91.png
