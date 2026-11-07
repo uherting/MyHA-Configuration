@@ -9,67 +9,67 @@ resource_mode: yaml
 
 # external resources
 resources:
-  - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+  - url: /local/community/lovelace-auto-entities/auto-entities.js
     type: module
 
-  - url: /hacsfiles/button-card/button-card.js
+  - url: /local/community/button-card/button-card.js
     type: module
 
   # !!! card-tools and card-mod are the base for search-card !!!
   # card-tools is likely a prerequisite for card-mod
-  - url: /hacsfiles/lovelace-card-tools/card-tools.js
+  - url: /local/community/lovelace-card-tools/card-tools.js
     type: module
 
     # card-mod is a prerequisite for search card (probably !?!?)
-  - url: /hacsfiles/lovelace-card-mod/card-mod.js
+  - url: /local/community/lovelace-card-mod/card-mod.js
     type: module
-  - url: /hacsfiles/search-card/search-card.js
+  - url: /local/community/search-card/search-card.js
     type: module
 
   # nice litte graphics displaying history of values
-  - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+  - url: /local/community/mini-graph-card/mini-graph-card-bundle.js
     type: module
 
-  - url: /hacsfiles/surveillance-card/surveillance-card.js
+  - url: /local/community/surveillance-card/surveillance-card.js
     type: module
 
   # scheduler card
-  - url: /hacsfiles/scheduler-card/scheduler-card.js
+  - url: /local/community/scheduler-card/scheduler-card.js
     type: module
 
   # Time Picker card
-  - url: /hacsfiles/lovelace-time-picker-card/time-picker-card.js
+  - url: /local/community/lovelace-time-picker-card/time-picker-card.js
     type: module
 
   # huge clickable title --- ugly and too huge for most cases!!! - used at .../uilovelace-adm-ovw-all/system_monitor
-  - url: /hacsfiles/banner-card/banner-card.js
+  - url: /local/community/banner-card/banner-card.js
     type: module
 
   # unknown lovelace card
-  # - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
+  # - url: /local/community/entity-attributes-card/entity-attributes-card.js
   #   type: module
 
   # Thermal Comfort Icons (for the HACS integration Thermal Comfort)
   # for details see
   #   - https://github.com/dolezsa/thermal_comfort?tab=readme-ov-file
   #   - https://github.com/rautesamtr/thermal_comfort_icons
-  - url: /hacsfiles/thermal_comfort_icons/thermal_comfort_icons.js
+  - url: /local/community/thermal_comfort_icons/thermal_comfort_icons.js
     type: module
 
   # Battery State Card
-  - url: /hacsfiles/battery-state-card/battery-state-card.js
+  - url: /local/community/battery-state-card/battery-state-card.js
     type: module
 
   # Advanced Camera Card, FKA Frigate Card
-  - url: /hacsfiles/advanced-camera-card/advanced-camera-card.js
+  - url: /local/community/advanced-camera-card/advanced-camera-card.js
     type: module
 
   # flex-table-card
-  - url: /hacsfiles/flex-table-card/flex-table-card.js
+  - url: /local/community/flex-table-card/flex-table-card.js
     type: module
 
   # Calendar Card Pro
-  - url: /hacsfiles/calendar-card-pro/calendar-card-pro.js
+  - url: /local/community/calendar-card-pro/calendar-card-pro.js
     type: module
 
   # HA SeriesDB – Home Assistant Custom Integration
@@ -81,53 +81,53 @@ resources:
     type: module
 
   # Zigbee map card
-  # - url: /hacsfiles/homed-zigbee-networkmap/homed-zigbee-networkmap.js
+  # - url: /local/community/homed-zigbee-networkmap/homed-zigbee-networkmap.js
   #   type: module
 
   # Aliexpress Tracking Card
-  # - url: /hacsfiles/../lovelace-aliexpress-package-card/aliexpress_package_card.js
+  # - url: /local/community/../lovelace-aliexpress-package-card/aliexpress_package_card.js
   #   type: module
 
   # Tankerkoenig
-  # - url: /hacsfiles/lovelace-tankerkoenig-card/tankerkoenig-card.js
+  # - url: /local/community/lovelace-tankerkoenig-card/tankerkoenig-card.js
   #   type: module
 
   # # Week planner card
-  # - url: /hacsfiles/week-planner-card/week-planner-card.js
+  # - url: /local/community/week-planner-card/week-planner-card.js
   #   type: module
 
   # -------------------------------------------------------------------------
   # !!! the next ones are for items probably installed but not used at all !!!
   # -------------------------------------------------------------------------
   # # Enhanced Shutter Card
-  # - url: /hacsfiles/enhanced-shutter-card/enhanced-shutter-card.js
+  # - url: /local/community/enhanced-shutter-card/enhanced-shutter-card.js
   #   type: module
   # # Better Thermostat
-  # - url: /hacsfiles/better-thermostat-ui-card/better-thermostat-ui-card.js
+  # - url: /local/community/better-thermostat-ui-card/better-thermostat-ui-card.js
   #   type: module
   # # mushroom card
-  # - url: /hacsfiles/lovelace-mushroom/mushroom.js
+  # - url: /local/community/lovelace-mushroom/mushroom.js
   #   type: module
   # # header cards (not used so far)
-  # - url: /hacsfiles/lovelace-header-cards/lovelace-header-cards.js
+  # - url: /local/community/lovelace-header-cards/lovelace-header-cards.js
   #   type: module
-  # - url: /hacsfiles/simple-thermostat/simple-thermostat.js
+  # - url: /local/community/simple-thermostat/simple-thermostat.js
   #   type: module
-  # - url: /hacsfiles/lovelace-tab-redirect-card/tab-redirect-card.js
+  # - url: /local/community/lovelace-tab-redirect-card/tab-redirect-card.js
   #   type: module
-  # - url: /hacsfiles/binary-control-button-row/binary-control-button-row.js
+  # - url: /local/community/binary-control-button-row/binary-control-button-row.js
   #   type: module
-  # - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+  # - url: /local/community/vertical-stack-in-card/vertical-stack-in-card.js
   #   type: module
-  # - url: /hacsfiles/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
+  # - url: /local/community/lovelace-vertical-slider-cover-card/vertical-slider-cover-card.js
   #   type: module
-  # - url: /hacsfiles/select-list-card/select-list-card.js
+  # - url: /local/community/select-list-card/select-list-card.js
   #   type: module
-  # - url: /hacsfiles/lovelace-badge-card/badge-card.js
+  # - url: /local/community/lovelace-badge-card/badge-card.js
   #   type: module
-  # - url: /hacsfiles/lovelace-lightning-detector-card/lightning-detector-card.js
+  # - url: /local/community/lovelace-lightning-detector-card/lightning-detector-card.js
   #   type: module
-  # - url: /hacsfiles/lovelace-rpi-monitor-card/rpi-monitor-card.js
+  # - url: /local/community/lovelace-rpi-monitor-card/rpi-monitor-card.js
   #   type: module
 
 # Add more dashboards
