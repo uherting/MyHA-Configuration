@@ -93,7 +93,7 @@ cards:
           content: >-
             Backups are stale. Please visit the <a href='/app/cebe7a76_hassio_google_drive_backup'>HA Google Drive Backup</a> add-on status page for details.
 
-      # HACS updates
+      # HA insights
       - type: entities
         title: HA - overall system info
         show_header_toggle: false

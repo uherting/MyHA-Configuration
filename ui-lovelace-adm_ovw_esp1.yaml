@@ -13,7 +13,7 @@ title: Home 431
 
 views:
   # - !include /config/conf/lovelace/tabs/admin/test_devices.yaml
-  - !include /config/conf/lovelace/tabs/admin/general.yaml
+  - !include /config/conf/lovelace/tabs/admin/devices_esp.yaml
   - !include /config/conf/lovelace/tabs/admin/l2_btproxies_tech.yaml
   - !include /config/conf/lovelace/tabs/admin/l9_esp_cams_tech.yaml
   - !include /config/conf/lovelace/tabs/admin/l9_esp_cams_details.yaml
