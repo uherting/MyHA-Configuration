@@ -100,9 +100,9 @@ mcp23017: !include conf/common/device/mcp23017.yaml
 
 globals:
   - <<: !include conf/common/globals/connectivity.yaml
-  - <<: !include conf/common/globals/opto_coupler_01.yaml
-  - <<: !include conf/common/globals/opto_coupler_02.yaml
-  - <<: !include conf/common/globals/opto_coupler_03.yaml
+  # - <<: !include conf/common/globals/opto_coupler_01.yaml
+  # - <<: !include conf/common/globals/opto_coupler_02.yaml
+  # - <<: !include conf/common/globals/opto_coupler_03.yaml
 interval: !include conf/common/interval/connectivity.yaml
 script:
   # - <<: !include conf/script/l2kitchen01/pir1_to_ssr1_online.yaml
@@ -111,9 +111,9 @@ script:
   - <<: !include conf/script/l2kitchen01/touch_button_A303_short.yaml
   - <<: !include conf/script/l2kitchen01/touch_button_A303_long.yaml
   - <<: !include conf/script/l2kitchen01/touch_button_A303_double.yaml
-  - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_on_off.yaml
-  - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_next_level.yaml
-  - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_on_max.yaml
+  # - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_on_off.yaml
+  # - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_next_level.yaml
+  # - <<: !include conf/script/l2kitchen01/lightbar_script_oc_trigger_on_max.yaml
   
 #-------------------------------------------------------------------
 # BINARY SENSORS
@@ -139,6 +139,7 @@ sensor:
   - <<: !include conf/sensor/l2kitchen01/l2kitchen01_env10.yaml
   - <<: !include conf/common/sensor/veml7700_standard_long.yaml
   - <<: !include conf/common/sensor/vl53L0x_single.yaml
+  # - <<: !include conf/common/sensor/vl53L0x_single_long_distance.yaml
   # - <<: !include conf/common/sensor/bh1750_01.yaml
   # - <<: !include conf/common/sensor/dht_esp8266_01.yaml
 
@@ -158,7 +159,7 @@ switch:
   # the future setup with optocoupler / BJT in place will be:
   # - <<: !include conf/common/switch/ssr01_B0_via_bjt_or_optocoupler.yaml
   # - <<: !include conf/common/switch/ssr02_B1_via_bjt_or_optocoupler.yaml
-  - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml # this is the optocoupler for the lightbar
+  # - <<: !include conf/common/switch/ssr03_B2_via_bjt_or_optocoupler.yaml # this is the optocoupler for the lightbar
 
 #-------------------------------------------------------------------
 # TEXT SENSORS

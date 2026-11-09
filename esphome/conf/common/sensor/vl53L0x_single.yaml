@@ -17,6 +17,11 @@
     timeout: $vl53l0x_01_timeout
     update_interval: $vl53l0x_01_updateinterval
     unit_of_measurement: $vl53l0x_01_unitofmeasurement
+    filters:
+      - clamp:
+          min_value: 0.0
+          max_value: 2.0
+          ignore_out_of_range: false
 
 ####################################################################
 # EOF
