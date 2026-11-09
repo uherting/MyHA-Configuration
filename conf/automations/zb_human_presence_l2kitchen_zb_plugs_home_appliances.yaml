@@ -14,7 +14,10 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: template
-      value_template: "{{ ((states('sensor.l2kitchen01_distance') | float(9.99)) < 2.00) & ((states('sensor.l2kitchen01_distance') | float(0.00)) > 0.00) }}"
+      value_template: "{{
+        ((states('sensor.l2kitchen01_distance') | float(9.99)) < 2.00) and
+        ((states('sensor.l2kitchen01_distance') | float(0.00)) > 0.00)
+        }}"
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------
