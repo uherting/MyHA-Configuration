@@ -14,21 +14,21 @@
   # --------------------- TRIGGER ---------------------
   triggers:
     - trigger: template
-      value_template: "{{ ((states('sensor.l2kitchen01_distance') | float(9.99)) < 2.00) }}"
+      value_template: "{{ ((states('sensor.l2kitchen01_distance') | float(9.99)) < 2.00) & ((states('sensor.l2kitchen01_distance') | float(0.00)) > 0.00) }}"
   # -------------------- CONDITIONS -------------------
   condition: []
   # --------------------- ACTIONS ---------------------
   action:
     # --------------------- ZB Plugs ON ---------------------
-    # switch all ZB plugs on as interaction with the home appliances is expected
+    # switch all important ZB plugs on as interaction with the home appliances is expected
     - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_coffeemachine
     - action: switch.turn_on
-      #   entity_id: switch.zb_plug_l2_kitchen_dishwasher
-      # - action: switch.turn_on
       entity_id: switch.zb_plug_l2_kitchen_kettle
     # - action: switch.turn_on
     #   entity_id: switch.zb_plug_l2_kitchen_microwave
+    # - action: switch.turn_on
+    #   #   entity_id: switch.zb_plug_l2_kitchen_dishwasher
 # ############################################################
 #  END OF FILE
 # ############################################################
