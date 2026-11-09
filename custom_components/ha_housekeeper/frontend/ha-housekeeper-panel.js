@@ -109,7 +109,7 @@ const TEXT = {
     stepRunPartial: "Nur teilweise ausgeführt", stepVerifyFailed: "Die Prüfung hat Auffälligkeiten ergeben",
     backupRestoreHint: "Ein Backup stellt nur Home Assistant selbst wieder her (Einstellungen → System → Backups); Housekeeper spielt keine Backups ein.",
     undoHousekeeper: "Rückgängig per Housekeeper", undoBackupOnly: "Nur per Backup rückgängig", planDetails: "Details",
-    planResult: "Ergebnis der Vorschau", planClose: "Schließen", planCreating: "Erstelle Vorschau …", planError: "Vorschau fehlgeschlagen",
+    planResult: "Ergebnis der Vorschau", planBack: "Zurück zur Auswahl", planBackHint: "Verwirft diese Vorschau und geht zur Auswahl zurück. Nichts wurde geändert.", planClose: "Schließen", planCreating: "Erstelle Vorschau …", planError: "Vorschau fehlgeschlagen",
     confirmError: "Bestätigen nicht möglich", checkError: "Aktualitätsprüfung fehlgeschlagen", renewError: "Erneuern fehlgeschlagen", renewPlan: "Erneuern", toastRenewed: "Vorschau erneuert", planStale: "Veraltet",
     planStaleHint: "Diese Vorschau ist älter als 24 Stunden und kann nicht mehr bestätigt werden. Erneuern prüft dieselben Einträge noch einmal und ersetzt sie.",
     planChangedTitle: "Seit der Vorschau hat sich etwas geändert", planChangedHint: "Für diese Einträge ergibt die Prüfung jetzt ein anderes Bild. Erneuere die Vorschau und sieh sie dir noch einmal an.", planChangedMore: "… und {count} weitere",
@@ -294,7 +294,7 @@ const TEXT = {
     stepRunPartial: "Only partly executed", stepVerifyFailed: "The check found irregularities",
     backupRestoreHint: "Only Home Assistant itself restores a backup (Settings → System → Backups); Housekeeper does not restore backups.",
     undoHousekeeper: "Undo by Housekeeper", undoBackupOnly: "Backup only", planDetails: "Details",
-    planResult: "Preview result", planClose: "Close", planCreating: "Creating preview …", planError: "Preview failed",
+    planResult: "Preview result", planBack: "Back to the choice", planBackHint: "Discards this preview and returns to the choice. Nothing was changed.", planClose: "Close", planCreating: "Creating preview …", planError: "Preview failed",
     confirmError: "Cannot confirm", checkError: "Freshness check failed", renewError: "Renewing failed", renewPlan: "Renew", toastRenewed: "Preview renewed", planStale: "Outdated",
     planStaleHint: "This preview is older than 24 hours and can no longer be confirmed. Renewing checks the same entries again and replaces it.",
     planChangedTitle: "Something changed since the preview", planChangedHint: "The check now gives a different result for these entries. Renew the preview and look at it again.", planChangedMore: "… and {count} more",
@@ -2347,6 +2347,14 @@ class OverviewMixin {
     return `<div class="panel u-mb14" data-levels-hint><div class="row levelsrow"><span class="tile mute"><ha-icon icon="mdi:stairs-up"></ha-icon></span><span class="row-text"><strong>${this.t("levelsHintTitle")}</strong><small>${this.t("levelsHintText")}</small></span><button class="btn" data-levels-go>${this.t("levelsHintSettings")}</button><button class="btn quiet" data-levels-ok>${this.t("levelsHintOk")}</button></div></div>`;
   }
 
+  // Said once per browser: 2.0 is out as a beta. The links row on the info tab stays for good.
+  betaBanner() {
+    let seen = false;
+    try { seen = globalThis.localStorage?.getItem("ha_housekeeper.v2_beta_hint") === "1"; } catch (_) { seen = false; }
+    if (seen || this.data?.meta?.preliminary) return "";
+    return `<div class="panel u-mb14" data-beta-hint><div class="row levelsrow"><span class="tile mute"><ha-icon icon="mdi:flask-outline"></ha-icon></span><span class="row-text"><strong>${this.t("betaHintTitle")}</strong><small>${this.t("betaHintText")}</small></span><a class="btn" href="${REPO_URL}/releases" target="_blank" rel="noopener noreferrer" data-beta-open>${this.t("betaHintOpen")}</a><button class="btn quiet" data-beta-ok>${this.t("betaHintOk")}</button></div></div>`;
+  }
+
   // A scan that failed, or none that succeeded for a long time: the counts shown then come from an older scan.
   healthBanner() {
     const h = this.data?.meta?.scan_health;
@@ -2687,7 +2695,7 @@ class OverviewMixin {
     const kpi = ([label, value, tone, view, status, key, rising, extra, filter]) => `<button class="kpi ${tone}" data-jump="${view}" data-status="${status || ""}"${filter ? ` data-${view === "inventory" ? "type" : "filter"}="${filter}"` : ""}><small class="kpilabel">${this.t(label)}</small><strong>${this.formatNumber(value)}</strong>${extra ? `<small class="kpisub">${this.esc(extra)}</small>` : ""}${this.series ? `<span class="spark-row">${this.sparkline(key, rising)}</span>` : ""}</button>`;
     const groups = this.todoGroups(), headline = this.statusHeadline(groups, true);
     const why = this.healthWhy ? this.healthWhyCard(health) : "";
-    return `${this.levelsBanner()}<section class="statushead" title="${this.esc(this.t("healthTip", { affected: health.affected, base: health.base }))}"><div class="ringcol"><button type="button" class="ring ${health.tone}" style="--p:${health.percent}" data-health-why aria-expanded="${Boolean(this.healthWhy)}" aria-label="${this.esc(`${this.t(health.label)} · ${this.t("pointsOf100", { n: this.formatNumber(health.percent) })} · ${this.t("healthWhy")}`)}"><b>${Math.floor(health.percent)}</b></button><button type="button" class="link" data-health-why aria-expanded="${Boolean(this.healthWhy)}" title="${this.esc(this.t("healthWhy"))}">${this.t("healthInfo")}</button></div>
+    return `${this.betaBanner()}${this.levelsBanner()}<section class="statushead" title="${this.esc(this.t("healthTip", { affected: health.affected, base: health.base }))}"><div class="ringcol"><button type="button" class="ring ${health.tone}" style="--p:${health.percent}" data-health-why aria-expanded="${Boolean(this.healthWhy)}" aria-label="${this.esc(`${this.t(health.label)} · ${this.t("pointsOf100", { n: this.formatNumber(health.percent) })} · ${this.t("healthWhy")}`)}"><b>${Math.floor(health.percent)}</b></button><button type="button" class="link" data-health-why aria-expanded="${Boolean(this.healthWhy)}" title="${this.esc(this.t("healthWhy"))}">${this.t("healthInfo")}</button></div>
       <div class="statustext"><h2>${headline}</h2><p>${this.statusSubline(health, groups)}</p>${this.series ? `<span class="spark-row">${this.sparkline("health", "good")}</span>` : ""}</div>
       <div class="kpis">${[["ratedObjects", health.base, "", "inventory", "", "rated", undefined, "", RATED_TYPE], ["openFindings", total, "", "findingsNav", "", "open", "bad", quiet ? this.t("openFindingsQuiet", { n: this.formatNumber(quiet) }) : ""], ["sumGroupUrgent", faults.length, faults.length ? "red" : "", "findingsNav", "", "group:red", "bad", faultFollows ? this.t("findingsOfFollow", { n: this.formatNumber(faultFollows) }) : "", "group:red"], ["sumGroupTidy", tidy, tidy ? "warn" : "", "findingsNav", "", "group:tidy", "bad", "", "group:tidy"]].map(kpi).join("")}</div></section>${why}${this.watchBand()}
       ${this.scanCoverageLine()}${this.todoCard()}<div class="ovzone">${this.cleanupCard()}${this.trendCard()}${this.inventoryStatusCard()}</div>
@@ -3861,7 +3869,7 @@ class SettingsMixin {
     return `<div class="stack"><section class="panel"><div class="panelhead"><h2>${this.t("about")}</h2></div><div class="aboutintro"><p>${this.t("aboutIntro")}</p><p><strong>${this.t("aboutIntroSafe")}</strong> ${this.t("aboutIntroPlan")}</p></div><div class="facts">${facts}</div></section>${this.housekeeperUpdateCard()}
       ${this.scanCoverageCard()}${this.scanTimingCard()}
       <section class="panel"><div class="panelhead"><div><h2>${this.t("setKeptTitle")}</h2><p>${this.t("setKeptHint")} ${this.t("storeHintBytes")}</p></div></div>${kept}<p class="factnote">${this.t("setPrivacy")}</p></section>
-      <section class="panel"><div class="panelhead"><h2>${this.t("setLinks")}</h2></div>${link("mdi:github", REPO_URL, this.t("repository"), "")}${link("mdi:bug-outline", `${REPO_URL}/issues`, this.t("reportIssue"), "")}${link("mdi:history", `${REPO_URL}/blob/main/CHANGELOG.md`, this.t("changelog"), "")}
+      <section class="panel"><div class="panelhead"><h2>${this.t("setLinks")}</h2></div>${link("mdi:github", REPO_URL, this.t("repository"), "")}${link("mdi:bug-outline", `${REPO_URL}/issues`, this.t("reportIssue"), "")}${link("mdi:history", `${REPO_URL}/blob/main/CHANGELOG.md`, this.t("changelog"), "")}${link("mdi:flask-outline", `${REPO_URL}/releases`, this.t("betaLink"), this.t("betaLinkHint"))}
         <button class="row" data-diagnostics><span class="tile mute"><ha-icon icon="mdi:stethoscope"></ha-icon></span><span class="row-text"><strong>${this.t("diagDownload")}</strong><small>${this.t("diagHint")}</small></span><ha-icon icon="mdi:download"></ha-icon></button>
         <button class="row" data-diag-copy><span class="tile mute"><ha-icon icon="mdi:content-copy"></ha-icon></span><span class="row-text"><strong>${this.t("diagCopy")}</strong><small>${this.t("diagCopyHint")}</small></span></button></section></div>`;
   }
@@ -4482,7 +4490,7 @@ class CleanupMixin {
       const run = this.runActions(plan);
       const blocked = this.modeBlocked(plan);
       const risky = run.some(a => REMOVAL_KINDS.includes(a.kind) || PURGE_KINDS.includes(a.kind));
-      control = `<div class="setrow planfoot planfootcol"><div>${run.length ? `<strong class="plansum">${this.confirmSummary(plan, run.length)}</strong>` : ""}${this.largeRemovalNote(plan)}<small>${this.t("cleanupDryRun")}</small>${this.purgeStatesSwitch(plan)}${blocked.length ? this.modeHint(blocked) : ""}${run.length ? "" : `<small class="dim7">${this.t("nothingToRun")}</small>`}</div><span class="planfootbtns"><button class="btn" data-plan-close>${this.t("planClose")}</button><button class="btn" data-plan-discard>${this.t("confirmCancel")}</button><button class="btn ${risky ? "danger" : "primary"}" data-plan-confirm data-risky="${risky}" data-count="${run.length}" ${blocked.length || !run.length ? `disabled title="${this.esc(blocked.length ? this.t("modeBlockTitle", { mode: this.modeName() }) : this.t("nothingToRun"))}"` : ""}>${this.t("confirmPlan")}</button></span></div>`;
+      control = `<div class="setrow planfoot planfootcol"><div>${run.length ? `<strong class="plansum">${this.confirmSummary(plan, run.length)}</strong>` : ""}${this.largeRemovalNote(plan)}<small>${this.t("cleanupDryRun")}</small>${this.purgeStatesSwitch(plan)}${blocked.length ? this.modeHint(blocked) : ""}${run.length ? "" : `<small class="dim7">${this.t("nothingToRun")}</small>`}</div><span class="planfootbtns">${this.viewTrail.length ? `<button class="btn" data-plan-discard title="${this.esc(this.t("planBackHint"))}"><ha-icon icon="mdi:arrow-left"></ha-icon>${this.t("planBack")}</button>` : ""}<button class="btn" data-plan-close>${this.t("planClose")}</button>${this.viewTrail.length ? "" : `<button class="btn" data-plan-discard>${this.t("confirmCancel")}</button>`}<button class="btn ${risky ? "danger" : "primary"}" data-plan-confirm data-risky="${risky}" data-count="${run.length}" ${blocked.length || !run.length ? `disabled title="${this.esc(blocked.length ? this.t("modeBlockTitle", { mode: this.modeName() }) : this.t("nothingToRun"))}"` : ""}>${this.t("confirmPlan")}</button></span></div>`;
     }
     else if (plan.status === "aborted") {
       const small = plan.actions.some(a => a.result?.reason === "backup_small_failed");
@@ -9534,6 +9542,8 @@ class OftenMixin {
 
 // Texts for the impact of a finding (see impact.py); merged into TEXT.
 Object.assign(TEXT.de, {
+  betaHintTitle: "Housekeeper 2.0 gibt es als Beta zum Ausprobieren", betaHintText: "Befunde nach Themen mit eigener Seite, „Beheben“, ein geführter Rundgang beim Aufräumen und die Ansicht „Einfach“ oder „Vollständig“. In HACS erscheint sie unter „Neu herunterladen“ mit eingeschalteten Beta-Versionen; ein normales Update bleibt auf 1.x. Mach vorher ein Backup.", betaHintOpen: "Was ist neu", betaHintOk: "Nicht mehr anzeigen",
+  betaLink: "Housekeeper 2.0 (Beta)", betaLinkHint: "Vorabversionen und was neu ist",
   levelsHintTitle: "Ausfälle werden nach Dauer gestuft", levelsHintText: "Ein Ausfall wird nach der Info-Schwelle ein Befund und steigt über niedrig und mittel auf hoch. Die Übersicht zählt ab mittel, dringend ist ein Ausfall ab hoch; Info und niedrig stehen auf der Befundseite. Die Schwellen stellst du in den Einstellungen ein.", levelsHintSettings: "Schwellen ansehen", levelsHintOk: "Verstanden", changesNewRating: "Neue Bewertung: Seit dieser Version werden Ausfälle nach Dauer gestuft. Befunde, die dadurch anders gelten, stehen unter „Ohne Reparatur beendet“, nicht als erledigt.",
   openFindingsQuiet: "davon {n} Info/niedrig", whyOpenLevel: "Befunde dieser Stufe anzeigen",
   sortImpact: "Schweregrad", allSeverities: "Alle Schweregrade", chip_none: "Keine", viewsClear: "Keine Ansicht", impact_high: "Hohe Auswirkung", impact_medium: "Mittlere Auswirkung", impact_low: "Geringe Auswirkung", impact_info: "Info", outageFor: "seit {span}", outageNext: "{level} in {span}", unitMin: "Min.", unitHour: "Std.", unitDay: "Tagen", chip_outage: "Ausfall", reasonProblem: "Automation gestört", allObjectTypes: "Alle Objektarten", followersFilter: "Folgen von Ausfällen", filterRemove: "Filter {name} entfernen", filterResetAll: "Alle Filter zurücksetzen", findingsOnObjects: "an {m} Objekten", findingsOnObjects1: "an 1 Objekt", hintsLabel: "Hinweise", hintOften: "{n} Vorschläge für Vermerke", hintCorr: "{n} Vorfälle nach Updates", allReasons: "Alle Gründe", chip_high: "Hoch", chip_medium: "Mittel", chip_low: "Niedrig", chip_info: "Info", rowMenu: "Aktionen für diese Zeile", impact_none: "Keine Auswirkung",
@@ -9542,6 +9552,8 @@ Object.assign(TEXT.de, {
   impactWhy_label: "Label", impactWhy_device_label: "Label am Gerät", impactWhy_area_label: "Label am Bereich", impactWhy_kind: "Art des Objekts",
 });
 Object.assign(TEXT.en, {
+  betaHintTitle: "Housekeeper 2.0 is out as a beta to try", betaHintText: "Findings by topic with a page of their own, \"Fix\", a guided tour for cleaning up and the view \"Simple\" or \"Full\". In HACS it shows under \"Redownload\" with beta versions switched on; a normal update stays on 1.x. Make a backup first.", betaHintOpen: "What's new", betaHintOk: "Don't show again",
+  betaLink: "Housekeeper 2.0 (beta)", betaLinkHint: "Pre-releases and what's new",
   levelsHintTitle: "Outages are graded by how long they last", levelsHintText: "An outage becomes a finding after the info threshold and rises through low and medium to high. The overview counts from medium on and calls an outage urgent from high on; info and low are on the findings page. You set the thresholds in the settings.", levelsHintSettings: "See thresholds", levelsHintOk: "Got it", changesNewRating: "New rating: since this version outages are graded by duration. Findings that read differently now are listed under “Ended without a repair”, not as resolved.",
   openFindingsQuiet: "{n} of them info/low", whyOpenLevel: "Show the findings of this level",
   sortImpact: "Severity", allSeverities: "All severities", chip_none: "None", viewsClear: "No view", impact_high: "High impact", impact_medium: "Medium impact", impact_low: "Low impact", impact_info: "Info", outageFor: "for {span}", outageNext: "{level} in {span}", unitMin: "min", unitHour: "h", unitDay: "days", chip_outage: "Outage", reasonProblem: "Automation impaired", allObjectTypes: "All object types", followersFilter: "Follow-ups of outages", filterRemove: "Remove filter {name}", filterResetAll: "Reset all filters", findingsOnObjects: "on {m} objects", findingsOnObjects1: "on 1 object", hintsLabel: "Hints", hintOften: "{n} suggestions for marks", hintCorr: "{n} incidents after updates", allReasons: "All reasons", chip_high: "High", chip_medium: "Medium", chip_low: "Low", chip_info: "Info", rowMenu: "Actions for this row", impact_none: "No impact",
@@ -19577,6 +19589,9 @@ class HAHousekeeperPanel extends HTMLElement {
       const kind = el.dataset.bhSave, date = root.querySelector(`[data-bh-date="${kind}"]`)?.value;
       this.loadBackup({ type: "ha_housekeeper/backup_attest", kind, ...(date ? { date } : {}) });
     });
+    const betaSeen = () => { try { globalThis.localStorage?.setItem("ha_housekeeper.v2_beta_hint", "1"); } catch (_) { /* no storage */ } };
+    root.querySelector("[data-beta-ok]")?.addEventListener("click", () => { betaSeen(); this.render(); });
+    root.querySelector("[data-beta-open]")?.addEventListener("click", betaSeen);
     root.querySelector("[data-levels-ok]")?.addEventListener("click", () => { try { globalThis.localStorage?.setItem("ha_housekeeper.levels_hint", "1"); } catch (_) { /* no storage */ } this.render(); });
     root.querySelector("[data-levels-go]")?.addEventListener("click", () => { try { globalThis.localStorage?.setItem("ha_housekeeper.levels_hint", "1"); } catch (_) { /* no storage */ } this.noteJump("settings"); this.settingsTab = "scan"; this.view = "settings"; this.selected = null; this.pages = {}; this.render(); });
     this.bindOften(root);

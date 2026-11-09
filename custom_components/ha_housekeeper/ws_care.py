@@ -48,6 +48,7 @@ from .ws_common import (
     EXPOSURE_TIMEOUT,
     RELIABILITY_TIMEOUT,
     _versioned,
+    panel_session_only,
     with_scanner,
 )
 
@@ -570,6 +571,8 @@ def websocket_protection_set(
     scanner: InventoryScanner,
 ) -> None:
     """Set the protection mode: what plans may change, checked on the server."""
+    if panel_session_only(hass, connection, msg):
+        return
     scanner.protection.set_mode(msg["mode"])
     if scanner._snapshot is not None:
         scanner._snapshot["meta"]["protection"] = scanner.protection.mode

@@ -1,6 +1,9 @@
 # pylint: disable=line-too-long, too-many-lines, abstract-method
 """A climate over climate classe"""
 
+import inspect
+import math
+
 from vtherm_api.log_collector import get_vtherm_logger
 from typing import Any, Optional
 
@@ -167,6 +170,50 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
         else:
             self._attr_hvac_action = HVACAction.OFF
 
+    @property
+    def _setpoint_modifiers(self) -> list:
+        """The configured external feature managers which adjust the regulated temperature, in the order they were registered"""
+        modifiers = []
+        for manager in self._external_managers:
+            if not hasattr(manager, "adjust_regulated_temperature"):
+                continue
+            try:
+                if manager.is_configured:
+                    modifiers.append(manager)
+            except Exception as exc:  # pylint: disable=broad-except
+                _LOGGER.error("%s - Error while reading is_configured of external feature manager '%s': %s", self, manager.name, exc)
+        return modifiers
+
+    def _adjust_regulated_temperature(self, regulated_temp: float, regulation_step: float, command_cause: str | None) -> float:
+        """Let the external feature managers adjust the regulated temperature before it is sent. Each one receives the value returned by the
+        previous one. A faulty plugin must not break the regulation: when it fails, returns None or returns something which is not a finite
+        number, the value it received is kept."""
+        for manager in self._setpoint_modifiers:
+            try:
+                adjusted_temp = manager.adjust_regulated_temperature(regulated_temp, regulation_step, command_cause)
+            except Exception as exc:  # pylint: disable=broad-except
+                _LOGGER.error("%s - Error while adjusting the regulated temperature with external feature manager '%s': %s", self, manager.name, exc)
+                continue
+            if adjusted_temp is None:
+                continue
+            if inspect.iscoroutine(adjusted_temp):
+                # The method must not be a coroutine: close it to avoid a "never awaited" warning
+                adjusted_temp.close()
+            if isinstance(adjusted_temp, bool) or not isinstance(adjusted_temp, (int, float)) or not math.isfinite(adjusted_temp):
+                _LOGGER.warning("%s - External feature manager '%s' returned an invalid regulated temperature (%s). It is ignored", self, manager.name, adjusted_temp)
+                continue
+            regulated_temp = adjusted_temp
+        return regulated_temp
+
+    @overrides
+    async def _before_underlying_hvac_mode_change(self, _command_cause: str | None = None):
+        """Send the regulated temperature first when a plugin adjusts it and a device is off, so that the device does not start at its own
+        stored setpoint. A device which already runs, or which changed its mode by itself, does not need it."""
+        if _command_cause == COMMAND_CAUSE_UNDERLYING_TRACKING or not self._setpoint_modifiers:
+            return
+        if self.vtherm_hvac_mode in (VThermHvacMode_HEAT, VThermHvacMode_COOL) and any(VThermHvacMode_OFF == under.hvac_mode for under in self._underlyings):
+            await self._send_regulated_temperature(force=True, _command_cause=_command_cause)
+
     async def _send_regulated_temperature(self, force=False, _command_cause: str | None = None):
         """Sends the regulated temperature to all underlying"""
 
@@ -250,6 +297,9 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
             )
         else:
             new_regulated_temp = self.target_temperature
+
+        if self._setpoint_modifiers:
+            new_regulated_temp = self._adjust_regulated_temperature(new_regulated_temp, regulation_step, _command_cause)
 
         _LOGGER.info(
             "%s - Regulated temp have changed to %.1f. Resend it to underlyings",
@@ -879,7 +929,12 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
         else:
             await end_climate_changed(changes, preserve_temperature_candidates=True)
         if candidate_temperature is not None:
-            self._consider_underlying_temperature_candidate(under, candidate_temperature)
+            if under.sent_off_recently():
+                # Issue #2185 - the device moved its own setpoint after VTherm turned it OFF: not a user gesture
+                self._cancel_underlying_temperature_candidate(under.entity_id)
+                self._underlying_temperature_status[under.entity_id] = "device_settling"
+            else:
+                self._consider_underlying_temperature_candidate(under, candidate_temperature)
 
     def _adopt_underlying_value(self, entity_id: str, kind: str, value: Any):
         """Count a retained mutation once, even if its setter assigns then raises."""
@@ -916,6 +971,17 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
             raise primary_error
         return adopted
 
+    def _underlying_temperature_step(self, under) -> float | None:
+        """Return the setpoint step used to detect an ambiguous underlying setpoint.
+
+        Issue #2175 - some integrations (e.g. Matter) do not publish target_temp_step:
+        fall back to the step of this thermostat.
+        """
+        step = under.target_temperature_step
+        if step is None:
+            step = self.target_temperature_step
+        return step
+
     def _consider_underlying_temperature_candidate(self, under, temperature: float):
         """Debounce a distinct underlying setpoint before applying it to this thermostat."""
         if isinstance(temperature, bool) or not isinstance(temperature, (int, float)) or not (-float("inf") < temperature < float("inf")):
@@ -936,7 +1002,7 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
                 self._underlying_temperature_status[under.entity_id] = "echo_possible"
                 return
 
-            underlying_step = under.target_temperature_step
+            underlying_step = self._underlying_temperature_step(under)
             if underlying_step is not None and difference <= underlying_step:
                 self._cancel_underlying_temperature_candidate(under.entity_id)
                 self._underlying_temperature_status[under.entity_id] = "ambiguous"
@@ -964,7 +1030,7 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
                 return
 
             latest_sent = under.last_sent_temperature
-            latest_step = under.target_temperature_step
+            latest_step = self._underlying_temperature_step(under)
             if latest_sent is not None and (temperature == latest_sent or (latest_step is not None and abs(temperature - latest_sent) <= latest_step)):
                 self._cancel_underlying_temperature_candidate(under.entity_id)
                 self._underlying_temperature_status[under.entity_id] = "echo_possible" if temperature == latest_sent else "ambiguous"
@@ -986,7 +1052,7 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
                 """Recheck live state after calls that may execute reentrantly."""
                 latest_state = self._hass.states.get(under.entity_id)
                 latest_sent = under.last_sent_temperature
-                latest_step = under.target_temperature_step
+                latest_step = self._underlying_temperature_step(under)
                 return (
                     self._underlying_temperature_candidate_version == version
                     and not self._underlying_temperature_candidates
@@ -1685,13 +1751,18 @@ class ThermostatOverClimate(BaseThermostat[UnderlyingClimate]):
     @overrides
     async def async_turn_off(self) -> None:
         """Turn off the climate entity."""
-        self._last_hvac_mode = self.requested_state.hvac_mode
+        if (
+            self.requested_state
+            and self.requested_state.hvac_mode
+            and self.requested_state.hvac_mode != VThermHvacMode_OFF
+        ):
+            self._last_hvac_mode = self.requested_state.hvac_mode
         await self.async_set_hvac_mode(VThermHvacMode_OFF)
 
     @overrides
     async def async_turn_on(self) -> None:
         """Turn on the climate entity. If multiple modes are available, choose the most appropriate one."""
-        if self._last_hvac_mode:
+        if self._last_hvac_mode and self._last_hvac_mode != VThermHvacMode_OFF:
             await self.async_set_hvac_mode(self._last_hvac_mode)
         elif self._ac_mode:
             await self.async_set_hvac_mode(VThermHvacMode_COOL)

@@ -2081,7 +2081,7 @@ class CleanupRunner:
         for action in plan["actions"]:
             result = action.get("result") or {}
             if result.get("state") != "done" or (
-                object_ids and action["object_id"] not in object_ids
+                object_ids is not None and action["object_id"] not in object_ids
             ):
                 continue
             kind = action["kind"]

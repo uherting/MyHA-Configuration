@@ -689,6 +689,7 @@ async def _folder_walk(
             "storage": _empty_storage(),
             "sizes": {},
             "bp_sizes": [None] * len(blueprints),
+            "bp_keys": [(b["domain"], b["path"]) for b in blueprints],
             "read_at": None,
             "read_seconds": None,
             "truncated": False,
@@ -720,6 +721,7 @@ async def _folder_walk(
             "storage": storage,
             "sizes": sizes,
             "bp_sizes": bp_sizes,
+            "bp_keys": [(b["domain"], b["path"]) for b in blueprints],
             "read_at": datetime.now(UTC).isoformat(),
             "read_seconds": round(time.monotonic() - began, 2),
             "truncated": budget.cut,
@@ -775,8 +777,10 @@ async def system_usage(
                 "elements": size.get("elements", []),
             }
         )
-    for blueprint, size in zip(blueprints, bp_sizes, strict=True):
-        blueprint["bytes"] = size
+    # A kept count can predate a blueprint that came or went, so sizes are matched by name.
+    kept = dict(zip(walked.get("bp_keys") or [], bp_sizes, strict=False))
+    for blueprint in blueprints:
+        blueprint["bytes"] = kept.get((blueprint["domain"], blueprint["path"]))
 
     storage = walked["storage"]
     cards_total = merge_cards(storage["breakdown"], cards, config_dir)
