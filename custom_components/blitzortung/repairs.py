@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 
+import probatio
 from homeassistant.components.repairs import (
     ConfirmRepairFlow,
     RepairsFlow,
@@ -9,6 +10,7 @@ from homeassistant.components.repairs import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
+from homeassistant.util.unit_system import IMPERIAL_SYSTEM
 
 from .const import (
     CONF_MAX_TRACKED_LIGHTNINGS,
@@ -16,8 +18,8 @@ from .const import (
     CONF_TIME_WINDOW,
     DOMAIN,
     MAX_TRACKED_LIGHTNINGS_WARNING,
-    RADIUS_MAX,
     TIME_WINDOW_MAX,
+    radius_max,
 )
 
 
@@ -29,22 +31,10 @@ class BlitzortungRepairFlow(RepairsFlow):
         """Return the option key-value pairs to update on confirm."""
         raise NotImplementedError
 
-    async def async_step_init(
-        self,
-        user_input: dict[str, str] | None = None,  # noqa: ARG002
-    ) -> RepairsFlowResult:
-        """Handle the first step of a fix flow."""
-        issue_registry = ir.async_get(self.hass)
-        description_placeholders = None
-
-        if issue := issue_registry.async_get_issue(DOMAIN, self.issue_id):
-            description_placeholders = issue.translation_placeholders
-
-        return self.async_show_menu(
-            step_id="init",
-            menu_options=["confirm", "ignore"],
-            description_placeholders=description_placeholders,
-        )
+    def _description_placeholders(self) -> dict[str, str] | None:
+        """Return the translation placeholders of the issue being fixed."""
+        issue = ir.async_get(self.hass).async_get_issue(DOMAIN, self.issue_id)
+        return issue.translation_placeholders if issue else None
 
     async def async_step_confirm(
         self,
@@ -72,6 +62,21 @@ class BlitzortungRepairFlow(RepairsFlow):
 
         return self.async_create_entry(title="", data={})
 
+
+class IgnorableRepairFlow(BlitzortungRepairFlow):
+    """Base handler for fix flows offering to either apply the fix or ignore."""
+
+    async def async_step_init(
+        self,
+        user_input: dict[str, str] | None = None,  # noqa: ARG002
+    ) -> RepairsFlowResult:
+        """Handle the first step of a fix flow."""
+        return self.async_show_menu(
+            step_id="init",
+            menu_options=["confirm", "ignore"],
+            description_placeholders=self._description_placeholders(),
+        )
+
     async def async_step_ignore(
         self,
         user_input: dict[str, str] | None = None,  # noqa: ARG002
@@ -81,7 +86,7 @@ class BlitzortungRepairFlow(RepairsFlow):
         return self.async_abort(reason="issue_ignored")
 
 
-class MaxTrackedLightningsRepairFlow(BlitzortungRepairFlow):
+class MaxTrackedLightningsRepairFlow(IgnorableRepairFlow):
     """Handler for the max tracked lightnings issue fix flow."""
 
     @property
@@ -94,10 +99,32 @@ class RadiusMaxRepairFlow(BlitzortungRepairFlow):
 
     @property
     def _option_update(self) -> dict[str, int]:
-        return {CONF_RADIUS: RADIUS_MAX}
+        return {CONF_RADIUS: radius_max(self.hass.config.units == IMPERIAL_SYSTEM)}
+
+    async def async_step_init(
+        self,
+        user_input: dict[str, str] | None = None,  # noqa: ARG002
+    ) -> RepairsFlowResult:
+        """Handle the first step of a fix flow."""
+        return await self.async_step_confirm()
+
+    async def async_step_confirm(
+        self, user_input: dict[str, str] | None = None
+    ) -> RepairsFlowResult:
+        """Show a confirm-only form, then apply the fix on submit."""
+        if user_input is None:
+            # No ignore option: a large radius raises the server costs, so the
+            # limit must not be dismissable.
+            return self.async_show_form(
+                step_id="confirm",
+                data_schema=probatio.Schema({}),
+                description_placeholders=self._description_placeholders(),
+            )
+
+        return await super().async_step_confirm(user_input)
 
 
-class TimeWindowMaxRepairFlow(BlitzortungRepairFlow):
+class TimeWindowMaxRepairFlow(IgnorableRepairFlow):
     """Handler for the time window max issue fix flow."""
 
     @property

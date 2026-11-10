@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import math
+import struct
 import time
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
@@ -37,6 +38,9 @@ from homeassistant.util.unit_system import IMPERIAL_SYSTEM
 from .const import (
     ATTR_LIGHTNING_AZIMUTH,
     ATTR_LIGHTNING_DISTANCE,
+    BINARY_COORD_DECIMALS,
+    BINARY_STRIKE,
+    BINARY_TOPIC_PREFIX,
     BLITZORTUNG_CONFIG,
     CONF_CONFIG_TYPE,
     CONF_IDLE_RESET_TIMEOUT,
@@ -51,15 +55,16 @@ from .const import (
     DEFAULT_TIME_WINDOW,
     DEFAULT_UPDATE_INTERVAL,
     DOMAIN,
+    DONATE_URL,
     MAX_TRACKED_LIGHTNINGS_WARNING,
     MIN_LOCATION_CHANGE_MULTIPLIER,
     PLATFORMS,
-    RADIUS_MAX,
     SERVER_STATS,
     TIME_WINDOW_MAX,
+    radius_max,
 )
 from .entity import BlitzortungEntity
-from .geohash_utils import geohash_overlap
+from .geohash_utils import fit_radius, geohash_overlap
 from .mqtt import MQTT, MQTT_CONNECTED, MQTT_DISCONNECTED, Message
 from .utils import get_coordinates_from_entity
 from .version import __version__
@@ -115,6 +120,7 @@ async def async_setup_entry(  # noqa: PLR0912
         location_entity = config_entry.data[CONF_LOCATION_ENTITY]
 
     radius = config_entry.options[CONF_RADIUS]
+    max_radius = radius_max(hass.config.units == IMPERIAL_SYSTEM)
     max_tracked_lightnings = config_entry.options[CONF_MAX_TRACKED_LIGHTNINGS]
     time_window_seconds = config_entry.options[CONF_TIME_WINDOW] * 60
 
@@ -142,23 +148,34 @@ async def async_setup_entry(  # noqa: PLR0912
     else:
         _async_delete_max_tracked_issue(hass, config_entry.entry_id)
 
-    if radius > RADIUS_MAX:
+    if radius > max_radius:
+        radius_issue_id = f"radius_max_warning_{config_entry.entry_id}"
         ir.async_create_issue(
             hass,
             DOMAIN,
-            f"radius_max_warning_{config_entry.entry_id}",
+            radius_issue_id,
             is_fixable=True,
             severity=ir.IssueSeverity.WARNING,
             translation_key="radius_max_warning",
             translation_placeholders={
                 "radius": str(radius),
-                "radius_max": str(RADIUS_MAX),
+                "radius_max": str(max_radius),
                 "name": config_entry.data[CONF_NAME],
+                "donate_url": DONATE_URL,
             },
             data={"entry_id": config_entry.entry_id},
         )
+        ir.async_ignore_issue(hass, DOMAIN, radius_issue_id, False)
     else:
         _async_delete_radius_max_issue(hass, config_entry.entry_id)
+
+    # The stored value can predate the current cap and stays until the user
+    # confirms the repair issue; the subscriptions must stay bounded meanwhile.
+    if radius > max_radius:
+        _LOGGER.warning(
+            "Radius %s is above %s, using %s", radius, max_radius, max_radius
+        )
+        radius = max_radius
 
     if time_window_seconds // 60 > TIME_WINDOW_MAX:
         ir.async_create_issue(
@@ -349,6 +366,9 @@ class BlitzortungCoordinator:
         self.location_entity = location_entity
         self.latitude = latitude
         self.longitude = longitude
+        # requested_radius is what the user configured; radius is what the
+        # subscriptions cover at the current location (smaller near the poles).
+        self.requested_radius = radius
         self.radius = radius
         self.min_location_change = radius * MIN_LOCATION_CHANGE_MULTIPLIER * 1000
         self.max_tracked_lightnings = max_tracked_lightnings
@@ -364,6 +384,7 @@ class BlitzortungCoordinator:
         self.unloading = False
 
         self._geohash_unsubscribers: list[Callable[[], None]] = []
+        self._geohash_lock = asyncio.Lock()
         self._location_unsubscribe: Callable[[], None] | None = None
         self._pending_refresh_task: asyncio.Task[None] | None = None
 
@@ -372,9 +393,7 @@ class BlitzortungCoordinator:
                 assert self.latitude is not None
                 assert self.longitude is not None
 
-            self.geohash_overlap = geohash_overlap(
-                self.latitude, self.longitude, self.radius
-            )
+            self.geohash_overlap = self._compute_geohash_overlap()
         # If configured, initialize reference coordinates from entity.
         # If the entity has no state yet, lat/lon remain None and geohash_overlap
         # stays empty — subscriptions will be set up once the entity reports.
@@ -383,9 +402,7 @@ class BlitzortungCoordinator:
                 self.hass.states.get(self.location_entity)
             )
             if self.latitude is not None and self.longitude is not None:
-                self.geohash_overlap = geohash_overlap(
-                    self.latitude, self.longitude, self.radius
-                )
+                self.geohash_overlap = self._compute_geohash_overlap()
             else:
                 # No valid coordinates from entity yet; defer geohash setup.
                 self.geohash_overlap = set()
@@ -482,13 +499,27 @@ class BlitzortungCoordinator:
 
         return True
 
+    def _compute_geohash_overlap(self) -> set[str]:
+        """Fit the radius to the tile cap at the current location, return its tiles."""
+        if TYPE_CHECKING:
+            assert self.latitude is not None
+            assert self.longitude is not None
+        self.radius = fit_radius(self.latitude, self.longitude, self.requested_radius)
+        if self.radius < self.requested_radius:
+            _LOGGER.info(
+                "Radius reduced from %skm to %.0fkm at lat %s to stay within the "
+                "subscription limit",
+                self.requested_radius,
+                self.radius,
+                self.latitude,
+            )
+        return geohash_overlap(self.latitude, self.longitude, self.radius)
+
     async def _async_refresh_geohash_subscriptions(self) -> None:
         """Recalculate geohash overlap and refresh MQTT subscriptions if needed."""
         if self.latitude is None or self.longitude is None:
             return
-        new_geohash_overlap = geohash_overlap(
-            self.latitude, self.longitude, self.radius
-        )
+        new_geohash_overlap = self._compute_geohash_overlap()
 
         if new_geohash_overlap == self.geohash_overlap:
             return
@@ -502,23 +533,32 @@ class BlitzortungCoordinator:
             self.geohash_overlap,
         )
 
-        # If connected, re-subscribe to the new geohash topics.
-        if not self.is_connected:
-            return
+        # Also needed when offline: the MQTT wrapper restores its subscription
+        # list on reconnect, so stale topics must be removed from it now.
+        await self._async_subscribe_geohash_topics()
 
-        for unsub in list(self._geohash_unsubscribers):
-            try:
-                unsub()
-            except Exception:
-                _LOGGER.debug("Failed to remove geohash subscription", exc_info=True)
-        self._geohash_unsubscribers.clear()
+    async def _async_subscribe_geohash_topics(self) -> None:
+        """Replace geohash subscriptions with ones matching the current overlap."""
+        # Serialized because subscribing yields while connected, so connect() and a
+        # location refresh could otherwise interleave and leave stale tiles behind.
+        async with self._geohash_lock:
+            for unsub in list(self._geohash_unsubscribers):
+                try:
+                    unsub()
+                except Exception:
+                    _LOGGER.debug(
+                        "Failed to remove geohash subscription", exc_info=True
+                    )
+            self._geohash_unsubscribers.clear()
 
-        for geohash_code in self.geohash_overlap:
-            geohash_part = "/".join(geohash_code)
-            unsub = await self.mqtt_client.async_subscribe(
-                f"blitzortung/1.1/{geohash_part}/#", self.on_mqtt_message, qos=0
-            )
-            self._geohash_unsubscribers.append(unsub)
+            for geohash_code in self.geohash_overlap:
+                geohash_part = "/".join(geohash_code)
+                unsub = await self.mqtt_client.async_subscribe(
+                    f"{BINARY_TOPIC_PREFIX}/{geohash_part}/#",
+                    self.on_mqtt_message,
+                    qos=0,
+                )
+                self._geohash_unsubscribers.append(unsub)
 
     def compute_polar_coords(self, lightning: dict[str, Any]) -> None:
         """Compute polar coordinates for the lightning strike."""
@@ -539,12 +579,9 @@ class BlitzortungCoordinator:
         """Connect to MQTT broker."""
         await self.mqtt_client.async_connect()
         _LOGGER.info("Connected to Blitzortung proxy mqtt server")
-        for geohash_code in self.geohash_overlap:
-            geohash_part = "/".join(geohash_code)
-            unsub = await self.mqtt_client.async_subscribe(
-                f"blitzortung/1.1/{geohash_part}/#", self.on_mqtt_message, qos=0
-            )
-            self._geohash_unsubscribers.append(unsub)
+        # A refresh may have subscribed while async_connect() was awaited; replacing
+        # instead of appending avoids duplicate subscriptions and double counting.
+        await self._async_subscribe_geohash_topics()
         if self.server_stats:
             await self.mqtt_client.async_subscribe(
                 "$SYS/broker/#", self.on_mqtt_message, qos=0
@@ -608,8 +645,19 @@ class BlitzortungCoordinator:
         """Handle incoming MQTT messages."""
         for cb in self.callbacks:
             cb(message)
-        if message.topic.startswith("blitzortung/1.1"):
-            lightning = json_loads_object(message.payload)
+        if message.topic.startswith(f"{BINARY_TOPIC_PREFIX}/"):
+            try:
+                lat, lon, strike_time = BINARY_STRIKE.unpack(message.payload)
+            except (struct.error, TypeError):
+                _LOGGER.debug(
+                    "Invalid strike payload on %s: %r", message.topic, message.payload
+                )
+                return
+            lightning = {
+                "lat": round(lat, BINARY_COORD_DECIMALS),
+                "lon": round(lon, BINARY_COORD_DECIMALS),
+                "time": strike_time,
+            }
             self.compute_polar_coords(lightning)
             if lightning[ATTR_LIGHTNING_DISTANCE] < self.radius:
                 _LOGGER.debug("Lightning data: %s", lightning)

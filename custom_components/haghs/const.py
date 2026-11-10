@@ -13,11 +13,23 @@ CONF_DB_SENSOR = "db_sensor"
 # step that converts the legacy single label into CONF_IGNORE_LABELS.
 CONF_IGNORE_LABEL = "ignore_label"
 CONF_IGNORE_LABELS = "ignore_labels"
+# Extra ignore labels that apply only while a helper entity is "on" (vacation mode).
+CONF_CONDITIONAL_IGNORE_LABELS = "conditional_ignore_labels"
+CONF_CONDITIONAL_IGNORE_ENTITY = "conditional_ignore_entity"
+CONDITIONAL_IGNORE_DOMAINS: tuple[str, ...] = ("input_boolean", "switch", "binary_sensor")
 CONF_IGNORE_PATTERNS = "ignore_patterns"
+CONF_IGNORED_INTEGRATION_ENTRIES = "ignored_integration_entries"
 CONF_STORAGE_TYPE = "storage_type"
 CONF_UPDATE_INTERVAL = "update_interval"
 CONF_ZOMBIE_GRACE_MINUTES = "zombie_grace_minutes"
 CONF_BATTERY_GRACE_MINUTES = "battery_grace_minutes"
+CONF_STALE_THRESHOLD_HOURS = "stale_threshold_hours"
+CONF_STALE_WATCH_LABELS = "stale_watch_labels"
+DEFAULT_STALE_THRESHOLD_HOURS = 24
+STALE_THRESHOLD_MAX_HOURS = 8760
+STALE_LIST_CAP = 100
+STALE_PENALTY_PER_ENTITY = 5
+STALE_PENALTY_CAP = 10
 
 # Defaults
 DEFAULT_NAME = "System: HA - Global Health Score"
@@ -43,22 +55,60 @@ DEFAULT_BATTERY_GRACE_MINUTES = 60
 
 # Maximum number of entity ids carried in the `zombie_entities` state
 # attribute. The Home Assistant state machine caps the entire attribute
-# payload at 16 KB; 100 entity ids (with the `[unregistered] ` prefix
-# accounted for) stay well below that. `zombie_count` and the per-domain
-# breakdown always reflect the full count, only the listing is capped.
+# payload at 16 KB; 100 entity ids stay well below that. `zombie_count`
+# and the per-domain breakdown always reflect the full count, only the
+# listing is capped.
 ZOMBIE_LIST_CAP = 100
+
+# Why a zombie is reported (#154), from Home Assistant facts only, in fixed
+# ranking order: the first that applies wins. Only "config_entry_missing" is a
+# strong hint of an orphaned entity; the others are no reason to delete.
+ZOMBIE_REASONS = (
+    "config_entry_missing",  # the entity's config entry no longer exists
+    "integration_not_loaded",  # the entry exists but is not loaded
+    "not_provided",  # HA only restored the state; no running integration provides it
+    "unavailable",  # the integration runs and reports unavailable/unknown
+)
+
+# Maximum number of entity ids carried in the `unregistered_entities`
+# state attribute (same 16 KB rationale as ZOMBIE_LIST_CAP). The count
+# and the per-domain breakdown always reflect the full number.
+UNREGISTERED_LIST_CAP = 100
+
+# Maximum number of device names carried in the `dead_devices` state
+# attribute (same 16 KB rationale as ZOMBIE_LIST_CAP). The count always
+# reflects the full number.
+DEAD_DEVICE_LIST_CAP = 100
+
+# Maximum number of device names carried in the `empty_devices` state
+# attribute (same 16 KB rationale as ZOMBIE_LIST_CAP). The count always
+# reflects the full number.
+EMPTY_DEVICE_LIST_CAP = 100
 
 # Internal hass.data key holding the per-entity first-seen timestamps for
 # pending updates (#26). Only updates that have been available longer than
 # UPDATE_GRACE_DAYS contribute to the update_count penalty; this avoids
 # punishing normal user behaviour (most updates land within a few days).
 DATA_UPDATE_FIRST_SEEN = "_update_first_seen"
+# The same timestamps in .storage, so the grace window survives Home Assistant
+# restarts (doc audit v2.4.0b4): restarting at least weekly used to restart it.
+UPDATE_FIRST_SEEN_STORE_KEY = "haghs.update_first_seen"
+UPDATE_FIRST_SEEN_STORE_VERSION = 1
+DATA_UPDATE_FIRST_SEEN_STORE = "_update_first_seen_store"
+DATA_UPDATE_FIRST_SEEN_LOADED = "_update_first_seen_loaded"
+# The latest_version each first-seen time belongs to: a newer offered version
+# is a new update and starts its own grace window.
+DATA_UPDATE_SEEN_VERSION = "_update_seen_version"
 UPDATE_GRACE_DAYS = 7
 
 # ---------------------------------------------------------------------------
-# Recommendation templates (i18n-ready — mirrored in strings.json)
+# Recommendation templates. The English defaults live here; at runtime the
+# coordinator resolves them via HA translations (category "common") and falls
+# back to these values when a key or language is missing.
 #
 # Templates use str.format() placeholders so translations can reorder them.
+# Keys must stay in sync with REC_TEMPLATES and the "common" section of
+# strings.json / translations/en.json.
 # ---------------------------------------------------------------------------
 REC_CPU_LOAD_PSI = "\u26a1 Optimization: PSI CPU stall time is impacting score ({cpu_pct:.1f}%)."
 REC_CPU_LOAD_CLASSIC = "\u26a1 Optimization: CPU utilization is impacting score ({cpu_pct:.1f}%)."
@@ -76,18 +126,92 @@ REC_DB_OVER_LIMIT = (
 )
 REC_BACKUP_STALE = "\U0001f6a8 Security: Stale backup detected!"
 REC_UPDATES_PENDING = "\U0001f4e6 Maintenance: {count} update(s) pending."
-REC_ZOMBIES = "\U0001f9df Hygiene: {count} zombie(s) detected."
-REC_CORE_LAG = "\U0001f474 Legacy: Core version is >3 months old."
-REC_POWER_UNSTABLE = "\u26a0\ufe0f Power: Under-voltage detected — unstable power supply!"
+REC_ZOMBIES = (
+    "\U0001f9df Hygiene: {count} zombie(s) detected. "
+    "Check before deleting: unavailable is not the same as unused."
+)
+REC_CORE_LAG = "\U0001f474 Legacy: Core version is ≥3 months old."
+REC_POWER_UNSTABLE = "\u26a0\ufe0f Power: Under-voltage detected: unstable power supply!"
 REC_ALL_CLEAR = "\u2705 System optimized"
+REC_INTEGRATION_HEALTH = "\U0001f9e9 Integrations: {count} integration entry(ies) failed to set up."
+# Config-Audit purge bonus (doc audit v2.4.0b4): a recorder retention of at most Home Assistant's default.
+# HA always sets purge_keep_days (default 10), so "configured" alone was true on every installation.
+RECORDER_GOOD_KEEP_DAYS = 10
+REC_CONFIG_AUDIT = (
+    "\U0001f527 Config-Audit: {missing} bonus point(s) not earned "
+    "(recorder keeps more than 10 days / no entity filter)."
+)
+REC_REPAIRS = "\U0001f6e0\ufe0f Repairs: {count} open repair issue(s) detected."
+REC_DEAD_DEVICES = (
+    "\U0001f50c Devices: {count} device(s) with all monitored entities "
+    "unavailable past the grace period."
+)
+REC_EMPTY_DEVICES = "\U0001f5c2\ufe0f Devices: {count} device(s) without any entity."
+REC_CPU_RAM_UNMEASURED = (
+    "\U0001f4ca Hardware: CPU and/or RAM are not measured (no PSI, no sensor selected); "
+    "the hardware score uses the other components."
+)
 
-# Fallback text for empty lists in state attributes
-ATTR_NONE = "None"
+# Where the hardware pillar's CPU and RAM values come from (attribute cpu_ram_source, #123).
+CPU_RAM_SOURCE_PSI = "psi"
+CPU_RAM_SOURCE_SENSORS = "sensors"
+CPU_RAM_SOURCE_PARTIAL = "partial"
+CPU_RAM_SOURCE_NONE = "none"
+# System Monitor's unique ids for processor and memory use (slugify(f"{key}_{argument}"), no argument).
+SYSTEM_MONITOR_UNIQUE_IDS = {"cpu_sensor": "processor_use", "ram_sensor": "memory_use_percent"}
 
-# Marker prefix for zombie entities that exist in the state machine but
-# have no entity registry entry. Surfaces these "ghost" entities in the
-# zombie_entities attribute so users can locate them in HA logs.
-ATTR_UNREGISTERED_PREFIX = "[unregistered] "
+# Translation keys for the recommendation templates. Maps the slug used in the
+# "common" category of strings.json / translations/en.json to the English
+# default. The coordinator uses this as the final fallback when no translation
+# is available for the configured language.
+REC_TEMPLATES: dict[str, str] = {
+    "pillar_hardware": "Hardware",
+    "pillar_application": "Application",
+    "rec_pillar_fallback": "⚠️ Calculation: {pillars} failed or timed out; neutral fallback values are not measurements.",
+    "rec_update_failed": "⚠️ Calculation: The update cycle failed; previous results or neutral initial values are shown.",
+    "rec_all_clear": REC_ALL_CLEAR,
+    "rec_backup_stale": REC_BACKUP_STALE,
+    "rec_config_audit": REC_CONFIG_AUDIT,
+    "rec_core_lag": REC_CORE_LAG,
+    "rec_cpu_load_classic": REC_CPU_LOAD_CLASSIC,
+    "rec_cpu_load_psi": REC_CPU_LOAD_PSI,
+    "rec_cpu_ram_unmeasured": REC_CPU_RAM_UNMEASURED,
+    "rec_db_over_limit": REC_DB_OVER_LIMIT,
+    "rec_dead_devices": REC_DEAD_DEVICES,
+    "rec_empty_devices": REC_EMPTY_DEVICES,
+    "rec_stale": (
+        "Stale reporting: {count} watched entity/entities have not reported for more than "
+        "{hours} hour(s); application penalty {penalty} point(s) before the configuration bonus."
+    ),
+    "rec_disk_sd_low": REC_DISK_SD_LOW,
+    "rec_disk_ssd_low": REC_DISK_SSD_LOW,
+    "rec_integration_health": REC_INTEGRATION_HEALTH,
+    "rec_io_pressure": REC_IO_PRESSURE,
+    "rec_power_unstable": REC_POWER_UNSTABLE,
+    "rec_ram_pressure_classic": REC_RAM_PRESSURE_CLASSIC,
+    "rec_ram_pressure_psi": REC_RAM_PRESSURE_PSI,
+    "rec_repairs": REC_REPAIRS,
+    "rec_updates_pending": REC_UPDATES_PENDING,
+    "rec_zombies": REC_ZOMBIES,
+}
+
+# Maximum config-audit bonus. Kept next to the templates so the "missing
+# points" message and the bonus calculation can never drift apart.
+CONFIG_AUDIT_MAX_BONUS = 10
+
+# Repairs pillar (#97). Open repair issues raised by any integration except
+# HAGHS itself. 5 points per issue, capped below the integration-health cap
+# because one broken backend often produces both signals.
+REPAIR_PENALTY_PER_ISSUE = 5
+REPAIR_PENALTY_CAP = 10
+# Maximum number of "domain/issue_id" entries carried in the `repairs` state
+# attribute (same 16 KB rationale as ZOMBIE_LIST_CAP). The count always
+# reflects the full number.
+REPAIR_LIST_CAP = 50
+# Maximum number of "domain: title" entries carried in the
+# `integration_unhealthy_entries` state attribute (same 16 KB rationale as
+# ZOMBIE_LIST_CAP). `integration_unhealthy_count` always reflects the full number.
+INTEGRATION_UNHEALTHY_LIST_CAP = 50
 
 # Boolean recommendation flags exposed as state attributes alongside the
 # existing 'recommendations' string. Dashboards and external integrations
@@ -105,6 +229,15 @@ REC_FLAG_KEYS: tuple[str, ...] = (
     "rec_updates_pending",
     "rec_zombie",
     "rec_core_lag",
+    "rec_integration_health",
+    "rec_config_audit",
+    "rec_repairs",
+    "rec_dead_devices",
+    "rec_empty_devices",
+    "rec_stale",
+    "rec_pillar_fallback",
+    "rec_update_failed",
+    "rec_cpu_ram_unmeasured",
 )
 
 

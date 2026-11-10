@@ -1,6 +1,7 @@
 """Constants for the Blitzortung integration."""
 
 import datetime as dt
+import struct
 from dataclasses import dataclass
 from typing import Any
 
@@ -17,6 +18,15 @@ class BlitzortungConfig:
 
 
 SW_VERSION = __version__
+
+# Must match ws_client/ws_client/binary.py, which publishes these messages.
+BINARY_TOPIC_PREFIX = "b/1"
+# Geohash levels in the topic; a deeper subscription would never match.
+BINARY_TOPIC_GEOHASH_LEN = 6
+# lat, lon (float32), strike time in ns since epoch
+BINARY_STRIKE = struct.Struct("<ffq")
+# float32 noise starts below ~1 m; rounding keeps the lat/lon attributes readable.
+BINARY_COORD_DECIMALS = 5
 
 PLATFORMS = ["sensor", "geo_location"]
 
@@ -48,11 +58,18 @@ DEFAULT_UPDATE_INTERVAL = dt.timedelta(seconds=60)
 # enter values that would explode memory, evict every strike on the next tick,
 # or otherwise put the integration in a degenerate state.
 RADIUS_MIN = 1
-# 4000 in either unit: 4000 km, or 4000 mi = 6437 km. A large radius can need
-# more than 9 precision-1 tiles (4000 km at 70°N, 5000 km at 38°N), and
-# geohash_overlap() then subscribes to all of them (10-16), so this bounds the
-# proxy traffic of one entry.
-RADIUS_MAX = 4000
+# 1000 km, or 620 mi (the slider steps by 10). geohash_overlap() keeps every
+# precision-2 tile of a large radius, so this bounds the subscriptions and proxy
+# traffic of one entry: about 30 tiles below 70° latitude.
+RADIUS_MAX = 1000
+RADIUS_MAX_MI = 620
+
+
+def radius_max(imperial: bool) -> int:
+    """Largest radius in the unit the options are stored in."""
+    return RADIUS_MAX_MI if imperial else RADIUS_MAX
+
+
 TIME_WINDOW_MIN = 1  # minutes
 TIME_WINDOW_MAX = 1440  # 24 hours; longer than this churns the recorder hard.
 MAX_TRACKED_LIGHTNINGS_MIN = 0  # 0 = sensors only, no geo_location entities
@@ -67,5 +84,7 @@ ATTR_EXTERNAL_ID = "external_id"
 ATTR_PUBLICATION_DATE = "publication_date"
 
 BLIZORTUNG_URL = "https://map.blitzortung.org/#10/{lat}/{lon}"
+# Passed as a translation placeholder: hassfest rejects URLs inside strings.
+DONATE_URL = "https://buymeacoffee.com/emrk"
 
 ZONE_HOME = "zone.home"
