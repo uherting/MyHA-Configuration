@@ -80,9 +80,20 @@ resources:
   - url: /ha_moviesdb/ha-moviesdb-card.js?v=1
     type: module
 
+  # Versatile Thermostat
+  - url: /local/community/versatile-thermostat-ui-card/versatile-thermostat-ui-card.js?v=3.5.1
+    type: module
+
+  # Advanced Area Card
+  - url: /local/community/advanced-area-card/advanced-area-card.js?v=v1.0.2
+    type: module
   # Zigbee map card
   # - url: /local/community/homed-zigbee-networkmap/homed-zigbee-networkmap.js
   #   type: module
+
+  # HA Appliance Card
+  - url: /local/community/ha-appliance-card/ha-appliance-card.js?v=v4.22.0
+    type: module
 
   # Aliexpress Tracking Card
   # - url: /local/community/../lovelace-aliexpress-package-card/aliexpress_package_card.js
