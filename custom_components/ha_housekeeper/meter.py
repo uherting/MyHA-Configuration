@@ -13,7 +13,7 @@ copied, so no existing value is ever overwritten.
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 
@@ -52,9 +52,9 @@ def read_series(hass: HomeAssistant, statistic_id: str) -> tuple[dict[str, Any] 
         {statistic_id},
         "hour",
         None,
-        set(ROW_TYPES),
+        cast(Any, set(ROW_TYPES)),
     ).get(statistic_id, [])
-    return meta, sorted(rows, key=lambda row: row["start"])
+    return meta, sorted(cast(list[dict[Any, Any]], rows), key=lambda row: row["start"])
 
 
 def _flag(meta: dict[str, Any], key: str) -> Any:
@@ -182,7 +182,7 @@ def analyse(
             result["preview"] = {
                 "before": [_brief(row) for row in importable[-PREVIEW_ROWS:]],
                 "after": [
-                    {**_brief(row), "sum_after": (row.get("sum") or 0) + last["sum"]}
+                    {**(_brief(row) or {}), "sum_after": (row.get("sum") or 0) + last["sum"]}
                     for row in new_rows[:PREVIEW_ROWS]
                 ],
             }
@@ -246,16 +246,17 @@ async def prepare_meter(hass: HomeAssistant, old_id: str, new_id: str, mode: str
     """Everything the judge and the runner need to know about one meter migration.
 
     The fingerprint covers both registry entries and the statistics of both series, so a plan
-    whose entities or history changed after the preview is refused at execution.
+    whose entities or history changed after the preview is refused at execution. The references
+    a ``replace_statistics`` migration rewrites have their own fingerprint (``preview_replacement``).
     """
     from homeassistant.helpers import entity_registry as er
 
-    from .cleanup import registry_fingerprint
+    from .cleanup import METER_STATISTICS_MODES, registry_fingerprint
 
     registry = er.async_get(hass)
     old_entry, new_entry = registry.async_get(old_id), registry.async_get(new_id)
     analysis: dict[str, Any] = {}
-    if mode in {"both", "statistics"}:
+    if mode in METER_STATISTICS_MODES:
         analysis = await analyse_pair(hass, old_id, new_id)
     alt_id, alt_taken = free_alt_id(hass, old_id)
     parts = [

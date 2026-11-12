@@ -24,8 +24,8 @@ from __future__ import annotations
 import hashlib
 import json
 from bisect import bisect_right
-from collections.abc import Callable
-from typing import Any
+from collections.abc import Callable, Sequence
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 
@@ -48,6 +48,8 @@ SPIKE_FENCE = (
     3.0  # spreads beyond the 1 % / 99 % readings; a spike must lie outside everything normal
 )
 SPIKE_MIN_POINTS = 30
+CYCLE_MIN_RUNS = 3  # this many "glitches" that all start near zero are a counter that resets
+CYCLE_LEVEL = 0.05  # near zero: below this share of the highest reading in the glitches
 EPS = 1e-9
 
 
@@ -173,18 +175,40 @@ def merge_runs(by_table: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]
     return findings
 
 
+def is_cycle(runs: list[dict[str, Any]]) -> bool:
+    """A counter that falls back to about zero again and again (a daily meter) has no glitches.
+
+    Every cycle looks like a run: good low reading, readings that rise above it, the next
+    cycle's low reading. A real glitch sits on a high level, so it never passes this.
+    """
+    if len(runs) < CYCLE_MIN_RUNS:
+        return False
+    top = max(run["high"] for run in runs)
+    return top > 0 and all(max(run["gb"], run["ga"]) <= CYCLE_LEVEL * top for run in runs)
+
+
+def analyse_cycle(
+    short_rows: list[dict[str, Any]],
+    long_rows: list[dict[str, Any]],
+    max_span: float = MAX_SPAN,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Findings of one counter and whether it is a resetting one (then it has no findings)."""
+    runs = {
+        "short_term": find_runs(ref_points(short_rows, "short_term"), max_span),
+        "long_term": find_runs(ref_points(long_rows, "long_term"), max_span),
+    }
+    if any(is_cycle(found) for found in runs.values()):
+        return [], True
+    return merge_runs(runs), False
+
+
 def analyse(
     short_rows: list[dict[str, Any]],
     long_rows: list[dict[str, Any]],
     max_span: float = MAX_SPAN,
 ) -> list[dict[str, Any]]:
     """Findings of one counter from its 5-minute and hourly rows (``ts``, ``state``, ``sum``)."""
-    return merge_runs(
-        {
-            "short_term": find_runs(ref_points(short_rows, "short_term"), max_span),
-            "long_term": find_runs(ref_points(long_rows, "long_term"), max_span),
-        }
-    )
+    return analyse_cycle(short_rows, long_rows, max_span)[0]
 
 
 def find_spikes(
@@ -297,6 +321,8 @@ def stats_changes(
         if reason:
             skipped.append({"finding": index, "reason": reason})
             continue
+        if b is None or e is None:  # told apart by ``reason`` above
+            continue
         for row in ordered:
             ts = row["ts"] + ref
             if not (b["ts"] + ref < ts < e["ts"] + ref) or row.get("state") is None:
@@ -357,7 +383,7 @@ def build_changes(
     state_rows: list[dict[str, Any]],
     mode: str,
 ) -> dict[str, Any]:
-    changes = {
+    changes: dict[str, Any] = {
         "states": state_changes(state_rows, findings, mode),
         "short_term": stats_changes(short_rows, "short_term", findings, mode),
         "long_term": stats_changes(long_rows, "long_term", findings, mode),
@@ -462,7 +488,7 @@ def range_bracket(
     return None
 
 
-def _same_all(old: list[float | None], new: list[float | None]) -> bool:
+def _same_all(old: Sequence[float | None], new: Sequence[float | None]) -> bool:
     return all(
         (a is None and b is None)
         or (a is not None and b is not None and abs(a - b) <= max(1e-9, 1e-9 * max(abs(a), abs(b))))
@@ -511,9 +537,9 @@ def measurement_changes(
             and current[r["id"]][0] is not None
         ]
         if len(inside) >= SLOT["long_term"] // SLOT["short_term"] - 2:
-            means = [v[0] for v in inside]
-            lows = [v[1] for v in inside if v[1] is not None]
-            highs = [v[2] for v in inside if v[2] is not None]
+            means = cast(list[float], [v[0] for v in inside])
+            lows = cast(list[float], [v[1] for v in inside if v[1] is not None])
+            highs = cast(list[float], [v[2] for v in inside if v[2] is not None])
             new = [sum(means) / len(means), min(lows or means), max(highs or means)]
         else:
             value = fixed_value(finding, row["ts"] + SLOT["long_term"] / 2, mode)
@@ -843,11 +869,15 @@ def _prepare_range(
     }
     if bracket is None and (counter or mode != "fixed"):
         return {**base, "error": "no_bracket"}, None
-    if counter and bracket[1] > bracket[3] + tolerance(bracket[1], bracket[3]):
+    if (
+        counter
+        and bracket is not None
+        and bracket[1] > bracket[3] + tolerance(bracket[1], bracket[3])
+    ):
         return {**base, "error": "bracket_not_good"}, None
-    if counter and mode == "fixed":
+    if counter and bracket is not None and mode == "fixed":
         tol = tolerance(bracket[1], bracket[3])
-        if not bracket[1] - tol <= fixed <= bracket[3] + tol:
+        if not bracket[1] - tol <= cast(float, fixed) <= bracket[3] + tol:
             return {**base, "error": "fixed_outside"}, None
     if counter:
         changes = build_changes([finding], short_rows, long_rows, state_rows, mode)
@@ -906,12 +936,14 @@ def _gather(
     meta_id, unit = meta
     short_rows = _load_stats(session, "short_term", meta_id, since)
     long_rows = _load_stats(session, "long_term", meta_id, since)
+    findings, cycle = analyse_cycle(short_rows, long_rows, max_span)
     return {
         "meta_id": meta_id,
         "unit": unit,
         "short": short_rows,
         "long": long_rows,
-        "findings": analyse(short_rows, long_rows, max_span),
+        "findings": findings,
+        "cycle": cycle,
     }
 
 
@@ -945,6 +977,7 @@ def scan_blocking(
     meta = _models()["meta"]
     since = (datetime.now(UTC) - timedelta(days=days)).timestamp() if days else None
     items: list[dict[str, Any]] = []
+    cycles: list[str] = []
     checked = 0
     with session_scope(hass=hass, read_only=True) as session:
         if statistic_ids is None:
@@ -965,6 +998,8 @@ def scan_blocking(
             if data is None:
                 continue
             checked += 1
+            if data.get("cycle"):
+                cycles.append(statistic_id)
             if data["findings"]:
                 items.append(
                     {
@@ -977,7 +1012,7 @@ def scan_blocking(
                         ],
                     }
                 )
-    return {"items": items, "checked": checked}
+    return {"items": items, "checked": checked, "cycles": cycles}
 
 
 def series_blocking(
@@ -1192,7 +1227,8 @@ def undo_blocking(instance: Any, written: dict[str, Any]) -> str:
                 and all(_same(a, b) for a, b in zip(now, row["new"], strict=True))
             ]
             kept = [row for row in rows if row not in fine]
-            tails_fine, tails_kept = [], []
+            tails_fine: list[dict[str, Any]] = []
+            tails_kept: list[dict[str, Any]] = []
             for tail in block.get("tails", []):
                 probe = session.execute(select(model.sum).where(model.id == tail["probe"])).scalar()
                 (
@@ -1217,7 +1253,8 @@ def undo_blocking(instance: Any, written: dict[str, Any]) -> str:
             skipped += len(kept) + len(tails_kept)
             remaining["tables"][table] = {"cols": cols, "rows": kept, "tails": tails_kept}
         states = written.get("states") or []
-        fine_states, kept_states = [], []
+        fine_states: list[dict[str, Any]] = []
+        kept_states: list[dict[str, Any]] = []
         if states:
             model = models["states"]
             current_states = {

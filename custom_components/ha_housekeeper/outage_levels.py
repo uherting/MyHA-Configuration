@@ -46,7 +46,7 @@ def thresholds_from_options(options: Mapping[str, Any]) -> dict[str, int]:
     }
     saved = [key for key in OUTAGE_KEYS if _whole(options.get(key))]
     legacy = options.get(CONF_MIN_UNAVAILABLE_DAYS)
-    if not saved and _whole(legacy):
+    if not saved and isinstance(legacy, int) and _whole(legacy):
         if legacy > DEFAULT_MIN_UNAVAILABLE_DAYS:
             values[CONF_OUTAGE_MEDIUM_HOURS] = legacy * 24
             values[CONF_OUTAGE_HIGH_HOURS] = legacy * 24 + 24

@@ -75,6 +75,56 @@ def _score(
     return score, reasons
 
 
+def _use_counts(snapshot: dict[str, Any]) -> dict[str, int]:
+    uses: dict[str, int] = {}
+    for edge in snapshot["edges"]:
+        if edge["relation"] in USAGE_RELATIONS and edge["target"].startswith("entity:"):
+            key = edge["target"][7:]
+            uses[key] = uses.get(key, 0) + 1
+    return uses
+
+
+def _candidates(
+    old: dict[str, Any],
+    new_items: list[dict[str, Any]],
+    old_name: str | None,
+    new_names: dict[str | None, str | None],
+) -> list[dict[str, Any]]:
+    """The entities of ``new_items`` of the same domain, best first."""
+    found = []
+    for new in new_items:
+        if new["object_id"] == old["object_id"] or _domain(new["object_id"]) != _domain(
+            old["object_id"]
+        ):
+            continue
+        score, reasons = _score(old, new, old_name, new_names.get(new.get("device_id")))
+        found.append(
+            {
+                "object_id": new["object_id"],
+                "name": new["name"],
+                "status": new["status"],
+                "unit": new.get("unit"),
+                "score": score,
+                "reasons": reasons,
+            }
+        )
+    found.sort(key=lambda c: (-c["score"], c["object_id"]))
+    return found[:CANDIDATE_LIMIT]
+
+
+def _pair_row(old: dict[str, Any], uses: dict[str, int], candidates: list[dict[str, Any]]) -> dict:
+    return {
+        "object_id": old["object_id"],
+        "name": old["name"],
+        "status": old["status"],
+        "unit": old.get("unit"),
+        "used": uses.get(old["object_id"], 0),
+        "meter": _is_meter(old),
+        "has_statistics": bool(old.get("has_statistics")),
+        "candidates": candidates,
+    }
+
+
 def pair_devices(snapshot: dict[str, Any], old_id: str, new_id: str) -> dict[str, Any] | None:
     """One row per entity of the old device with the entities of the new one that may replace it.
 
@@ -87,43 +137,14 @@ def pair_devices(snapshot: dict[str, Any], old_id: str, new_id: str) -> dict[str
         return None
     entities = [o for o in snapshot["objects"] if o["object_type"] == "entity"]
     old_name, new_name = devices[old_id].get("name"), devices[new_id].get("name")
-    uses: dict[str, int] = {}
-    for edge in snapshot["edges"]:
-        if edge["relation"] in USAGE_RELATIONS and edge["target"].startswith("entity:"):
-            key = edge["target"][7:]
-            uses[key] = uses.get(key, 0) + 1
+    uses = _use_counts(snapshot)
     new_items = [o for o in entities if o.get("device_id") == new_id and o["status"] != "disabled"]
-    pairs = []
-    for old in sorted(
-        (o for o in entities if o.get("device_id") == old_id), key=lambda o: o["object_id"]
-    ):
-        candidates = []
-        for new in new_items:
-            if _domain(new["object_id"]) != _domain(old["object_id"]):
-                continue
-            score, reasons = _score(old, new, old_name, new_name)
-            candidates.append(
-                {
-                    "object_id": new["object_id"],
-                    "name": new["name"],
-                    "status": new["status"],
-                    "unit": new.get("unit"),
-                    "score": score,
-                    "reasons": reasons,
-                }
-            )
-        candidates.sort(key=lambda c: (-c["score"], c["object_id"]))
-        pairs.append(
-            {
-                "object_id": old["object_id"],
-                "name": old["name"],
-                "status": old["status"],
-                "unit": old.get("unit"),
-                "used": uses.get(old["object_id"], 0),
-                "meter": _is_meter(old),
-                "candidates": candidates[:CANDIDATE_LIMIT],
-            }
+    pairs = [
+        _pair_row(old, uses, _candidates(old, new_items, old_name, {new_id: new_name}))
+        for old in sorted(
+            (o for o in entities if o.get("device_id") == old_id), key=lambda o: o["object_id"]
         )
+    ]
     pairs.sort(key=lambda p: (-p["used"], p["object_id"]))
     taken = {c["object_id"] for p in pairs for c in p["candidates"]}
     return {
@@ -132,3 +153,36 @@ def pair_devices(snapshot: dict[str, Any], old_id: str, new_id: str) -> dict[str
         "pairs": pairs,
         "unmatched_new": sorted(o["object_id"] for o in new_items if o["object_id"] not in taken),
     }
+
+
+def suggest_entities(
+    snapshot: dict[str, Any],
+    old_ids: list[str],
+    scope_devices: list[str] | None = None,
+    scope_domain: str | None = None,
+) -> dict[str, Any]:
+    """One row per old entity with the entities that may replace it, whatever device they belong to.
+
+    ``scope_devices`` or ``scope_domain`` (an integration domain) narrow the candidates, e.g. to
+    the devices of the new integration. Only reads; nothing is chosen. Unknown IDs are left out
+    and listed in ``unknown``. Candidates are never the old entities themselves.
+    """
+    entities = {o["object_id"]: o for o in snapshot["objects"] if o["object_type"] == "entity"}
+    devices = {o["object_id"]: o for o in snapshot["objects"] if o["object_type"] == "device"}
+    names = {key: dev.get("name") for key, dev in devices.items()}
+    uses = _use_counts(snapshot)
+    chosen = list(dict.fromkeys(old_ids))
+    olds = [entities[i] for i in chosen if i in entities]
+    pool = [
+        o for o in entities.values() if o["status"] != "disabled" and o["object_id"] not in chosen
+    ]
+    if scope_devices:
+        pool = [o for o in pool if o.get("device_id") in set(scope_devices)]
+    if scope_domain:
+        pool = [o for o in pool if o.get("platform") == scope_domain]
+    pairs = [
+        _pair_row(old, uses, _candidates(old, pool, names.get(old.get("device_id")), names))
+        for old in olds
+    ]
+    pairs.sort(key=lambda p: (-p["used"], p["object_id"]))
+    return {"pairs": pairs, "unknown": [i for i in chosen if i not in entities]}

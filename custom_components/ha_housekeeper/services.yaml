@@ -26,6 +26,11 @@ findings:
       required: false
       selector:
         text:
+    topic:
+      required: false
+      selector:
+        select:
+          options: [down, broken_references, failing_automations, unneeded]
     object_type:
       required: false
       selector:
@@ -86,6 +91,29 @@ audit:
           min: 1
           max: 50
           mode: box
+
+finding_fix_options:
+  fields:
+    key:
+      required: true
+      selector:
+        text:
+
+finding_fix_plan:
+  fields:
+    key:
+      required: true
+      selector:
+        text:
+    way:
+      required: true
+      selector:
+        select:
+          options: [replace_target, remove_reference, catch_error, cleanup_round]
+    target:
+      required: false
+      selector:
+        text:
 
 finding_decide:
   fields:

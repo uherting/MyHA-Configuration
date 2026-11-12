@@ -82,6 +82,7 @@ def apply_impact(
             controls.setdefault(edge["source"], []).append(edge["target"])
     for finding in findings:
         level, facts = _judge(finding, by_key, users, controls, critical)
+        steady = level  # what it is without the age of an outage: only age made it grow, no change of the finding
         if finding["rule_id"] == OUTAGE_RULE or "outage_level" in finding:
             # the longer something stays down, the more it matters
             aged = finding.pop("outage_level", None) or "info"
@@ -89,7 +90,17 @@ def apply_impact(
             level = max(level, aged, key=RANK.__getitem__)
         if finding["rule_id"] == REAUTH_RULE:  # nothing heals it by itself: it never starts quiet
             level = max(level, "medium", key=RANK.__getitem__)
+            steady = max(steady, "medium", key=RANK.__getitem__)
+        if (
+            "run_level" in finding
+        ):  # red runs are high, yellow ones at least medium, as use adds to it
+            facts.append({"fact": "runs_failing", "level": finding["run_level"]})
+            floor = "high" if finding["run_level"] == "red" else "medium"
+            level = max(level, floor, key=RANK.__getitem__)
+            steady = max(steady, floor, key=RANK.__getitem__)
         finding["impact"], finding["impact_facts"] = level, facts[:FACT_LIMIT]
+        # A "later" is lifted when a finding gets worse, not when an outage merely lasts longer.
+        finding["impact_steady"] = steady
 
 
 def _judge(

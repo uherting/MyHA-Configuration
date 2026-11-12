@@ -4,7 +4,8 @@ Stored by Housekeeper only; Home Assistant stays untouched. A mark of an object 
 "not available" findings of that object (of a device: of its entities; of an integration or app: its
 "not loaded" and "app stopped" findings, and while it is down also the outages of its devices and
 entities), never a broken reference.
-"Keep" also blocks every cleanup step on the object; the label ``housekeeper_keep`` does the same. A mark with a review date that has passed no
+"Keep", "offline on purpose", "seasonal" and "spare" also block every cleanup step on the object; the label ``housekeeper_keep`` does the same.
+(Only "keep" lets an outage be reported; the others hide it.) A mark with a review date that has passed no
 longer hides anything; the finding comes back as due.
 A mark can carry a time window (fixed hours, or while the sun is below the horizon): it hides only
 inside that window, plus a grace period after it, so a device that is on by day is watched by day.
@@ -14,6 +15,7 @@ again for the grace period without a gap, it is taken away.
 
 from __future__ import annotations
 
+import builtins
 from datetime import UTC, datetime, time, timedelta
 from typing import Any
 
@@ -27,6 +29,12 @@ from .ignored import REASON_LIMIT, VIAS, due
 SAVE_DELAY = 10
 KINDS = ("expected_offline", "seasonal", "spare", "keep", "replaced")
 HIDING_KINDS = ("expected_offline", "seasonal", "spare", "replaced")  # "keep" hides nothing
+PROTECTING_KINDS = (
+    "keep",
+    "expected_offline",
+    "seasonal",
+    "spare",
+)  # "replaced" may be cleaned up later
 OBJECT_TYPES = ("entity", "device", "config_entry", "app")
 KINDS_OF = {  # what an integration or an app can be marked as; "keep" and "replaced" need an entity or device
     "config_entry": ("expected_offline", "seasonal", "spare"),
@@ -228,7 +236,7 @@ class MarkStore:
         self._save()
         return True
 
-    def settle(self, covered: set[str], now: datetime) -> list[str]:
+    def settle(self, covered: builtins.set[str], now: datetime) -> list[str]:
         """Follow the marks that end by themselves; the keys of the ones that just ended.
 
         ``covered`` holds the keys of the marks that have an outage under them. A mark is armed by
@@ -313,7 +321,7 @@ def apply_marks(
         item["mark"] = mark
         if due(mark, now):
             item["mark_due"] = True
-        elif mark["kind"] == "keep":
+        elif mark["kind"] in PROTECTING_KINDS:
             item["marked_keep"] = True
     for item in objects:  # an entity of a device that is to be kept is kept as well
         device = devices.get(item.get("device_id") or "")
@@ -341,6 +349,8 @@ def apply_marks(
     for finding in findings:
         finding.pop("mark", None)
         finding.pop("mark_outside_window", None)
+        finding["also"] = [x for x in finding.get("also", []) if x["by"] != "mark"]
+        keys: tuple[str, ...]
         if finding.get("rule_id") in ("config_entry.not_loaded", "config_entry.reauth"):
             keys = (mark_key("config_entry", finding["object_id"]),)
         elif finding.get("rule_id") == "device.down":
@@ -371,5 +381,8 @@ def apply_marks(
                 finding["mark_outside_window"] = True
             elif not finding["ignored"]:
                 finding["ignored_by"], finding["ignored"], finding["mark"] = "mark", True, mark
+                break
+            elif finding.get("ignored_by") != "mark":
+                finding["also"].append({"by": "mark", "kind": mark["kind"]})
                 break
     return covered

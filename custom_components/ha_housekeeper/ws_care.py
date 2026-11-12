@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import time
 from datetime import UTC, date, datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 import voluptuous as vol
 from homeassistant.components import websocket_api
@@ -18,12 +18,14 @@ from .battery_care import BatteryError, noted_types
 from .battery_kind import excluded
 from .const import DOMAIN
 from .db_health import growth
+from .events import DISMISS_REASONS
 from .exceptions import ACTIONS as EXCEPTION_ACTIONS
 from .exceptions import DAYS_MAX as EXCEPTION_DAYS_MAX
 from .exceptions import GRACE_MAX as VACATION_GRACE_MAX
 from .exceptions import KEYWORD_MAX as VACATION_KEYWORD_MAX
 from .exceptions import KINDS as EXCEPTION_KINDS
 from .exceptions import NOTE_MAX as EXCEPTION_NOTE_MAX
+from .exceptions import REVIEW_CHOICES as EXCEPTION_REVIEW_CHOICES
 from .exceptions import SCOPES as EXCEPTION_SCOPES
 from .exceptions import clean_rule, preview
 from .exposure import exposure
@@ -32,6 +34,7 @@ from .goals import evaluate as evaluate_goals
 from .goals import measure as measure_goals
 from .ignored import REASON_LIMIT as IGNORE_REASON_LIMIT
 from .inventory import InventoryScanner
+from .issues import async_sync_flapping_issue
 from .lifecycle import timeline
 from .maintenance import check_configuration, preflight_report
 from .marks import GRACE_DEFAULT, GRACE_MAX
@@ -68,7 +71,9 @@ async def websocket_preflight(
         snapshot = await scanner.async_get_snapshot()
         try:
             async with asyncio.timeout(BACKUP_HEALTH_TIMEOUT):
-                backup = await backup_health(hass, scanner.attest, scanner.journal.plans)
+                backup = await backup_health(
+                    hass, scanner.attest, scanner.journal.plans, scanner.events
+                )
         except Exception:  # noqa: BLE001 - without the report the backup line only says "unknown"
             backup = None
         result = await preflight_report(hass, snapshot, backup)
@@ -212,6 +217,53 @@ async def websocket_exposure(
 
 
 @websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/check_log",
+        vol.Optional("days", default=7): vol.In((7, 30, 90)),
+        vol.Optional("limit", default=200): vol.All(int, vol.Range(min=1, max=5000)),
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_check_log(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The changes of the checks over time; reads Housekeeper's own record only."""
+    result = scanner.events.check_log(
+        datetime.now(UTC), msg["days"], msg["limit"], scanner.config_changes.items
+    )
+    connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/check_log_mark",
+        vol.Required("change"): vol.All(str, vol.Length(max=200)),
+        vol.Required("reason"): vol.Any(None, vol.In(DISMISS_REASONS)),
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_check_log_mark(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Mark a change in the log as a false alarm, or take the mark away."""
+    if not scanner.events.mark(msg["change"], msg["reason"]):
+        connection.send_error(msg["id"], "check_log_unknown", "That change is no longer in the log")
+        return
+    async_sync_flapping_issue(hass, scanner.events.flapping(datetime.now(UTC)))
+    connection.send_result(msg["id"], _versioned({"ok": True}))
+
+
+@websocket_api.require_admin
 @websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/backup_health"})
 @websocket_api.async_response
 @with_scanner
@@ -224,7 +276,9 @@ async def websocket_backup_health(
     """Judge the backup strategy; reads the backup manager only."""
     try:
         async with asyncio.timeout(BACKUP_HEALTH_TIMEOUT):
-            result = await backup_health(hass, scanner.attest, scanner.journal.plans)
+            result = await backup_health(
+                hass, scanner.attest, scanner.journal.plans, scanner.events
+            )
     except Exception as err:
         connection.send_error(msg["id"], "backup_health_failed", f"{type(err).__name__}: {err}")
         return
@@ -438,6 +492,14 @@ def websocket_battery_replaced(
                 msg["note"],
                 now,
             )
+            scanner.activity.record(
+                "note",
+                "save",
+                now,
+                key=f"entity:{msg['entity_id']}",
+                name=f"Battery replaced: {name}"[:80],
+                by=connection.user.id if connection.user else None,
+            )
             updated = scanner.reminders.done_matching(
                 [name, msg["entity_id"].split(".", 1)[1].replace("_", " ")],
                 msg["day"],
@@ -446,9 +508,7 @@ def websocket_battery_replaced(
     except (BatteryError, NoteError) as err:
         connection.send_error(msg["id"], "invalid_format", f"Not accepted: {err}")
         return
-    if scanner._snapshot is not None:
-        scanner._snapshot["notes"] = scanner.notes.view()
-        scanner._snapshot["reminders"] = scanner.reminders.view(now.date())
+    scanner.patch_snapshot(notes=scanner.notes.view(), reminders=scanner.reminders.view(now.date()))
     connection.send_result(
         msg["id"],
         _versioned(
@@ -486,6 +546,7 @@ def websocket_note_set(
 ) -> None:
     """Save or delete an entry of the logbook. Only Housekeeper's own list changes."""
     try:
+        user = connection.user.id if connection.user else None
         if msg["action"] == "save":
             scanner.notes.upsert(
                 msg.get("note_id"),
@@ -497,14 +558,22 @@ def websocket_note_set(
                 msg.get("source"),
                 msg["ref"],
             )
+            scanner.activity.record(
+                "note",
+                "save",
+                datetime.now(UTC),
+                key=msg["target"] or None,
+                name=msg.get("title"),
+                by=user,
+            )
         else:
             scanner.notes.delete(msg.get("note_id", ""))
+            scanner.activity.record("note", "delete", datetime.now(UTC), by=user)
     except NoteError as err:
         connection.send_error(msg["id"], "invalid_format", f"Not accepted: {err}")
         return
     view = scanner.notes.view()
-    if scanner._snapshot is not None:
-        scanner._snapshot["notes"] = view
+    scanner.patch_snapshot(notes=view)
     connection.send_result(msg["id"], _versioned({"notes": view}))
 
 
@@ -550,8 +619,7 @@ def websocket_reminder_set(
         connection.send_error(msg["id"], "invalid_format", f"Not accepted: {err}")
         return
     view = scanner.reminders.view(today)
-    if scanner._snapshot is not None:
-        scanner._snapshot["reminders"] = view
+    scanner.patch_snapshot(reminders=view)
     connection.send_result(msg["id"], _versioned({"reminders": view}))
 
 
@@ -574,8 +642,7 @@ def websocket_protection_set(
     if panel_session_only(hass, connection, msg):
         return
     scanner.protection.set_mode(msg["mode"])
-    if scanner._snapshot is not None:
-        scanner._snapshot["meta"]["protection"] = scanner.protection.mode
+    scanner.patch_meta(protection=scanner.protection.mode, protection_migrated=None)
     connection.send_result(msg["id"], {"mode": scanner.protection.mode})
 
 
@@ -613,6 +680,7 @@ async def websocket_lifecycle(
 @websocket_api.websocket_command(
     {
         vol.Required("type"): f"{DOMAIN}/mark_set",
+        vol.Optional("source"): vol.In(("cleanup", "list")),
         vol.Required("object_type"): vol.In(MARK_TYPES),
         vol.Required("object_id"): str,
         vol.Required("kind"): vol.In(MARK_KINDS),
@@ -655,6 +723,7 @@ def websocket_mark_set(
         by=connection.user.id if connection.user else None,
         window=msg.get("window"),
         grace=msg["grace_minutes"],
+        source=msg.get("source"),
         auto_clear=msg["auto_clear"],
     )
     if error:
@@ -702,7 +771,9 @@ async def websocket_goals(
         snapshot = await scanner.async_get_snapshot()
         try:  # a missing source makes its goals unknown, it never fails the answer
             async with asyncio.timeout(BACKUP_HEALTH_TIMEOUT):
-                backup = await backup_health(hass, scanner.attest, scanner.journal.plans)
+                backup = await backup_health(
+                    hass, scanner.attest, scanner.journal.plans, scanner.events
+                )
         except Exception:  # noqa: BLE001
             backup = None
         rules = policies(
@@ -724,7 +795,7 @@ async def websocket_goals(
             if scanner.runs.since
             else None
         )
-        measured = measure_goals(snapshot, backup, grown, rules, errors)
+        measured = measure_goals(snapshot, backup, grown, cast(list[dict[str, Any]], rules), errors)
         result = evaluate_goals(measured, scanner.goals.items)
     except Exception as err:
         connection.send_error(msg["id"], "goals_failed", f"{type(err).__name__}: {err}")
@@ -829,6 +900,8 @@ _RULE_SCHEMA = {
     vol.Optional("scope", default="always"): vol.In(EXCEPTION_SCOPES),
     vol.Optional("enabled", default=True): bool,
     vol.Optional("note", default=""): vol.All(str, vol.Length(max=EXCEPTION_NOTE_MAX)),
+    vol.Optional("review_days", default=0): vol.In((0, *EXCEPTION_REVIEW_CHOICES)),
+    vol.Optional("review_at"): vol.Any(None, str),
 }
 
 
@@ -856,7 +929,14 @@ async def websocket_exceptions_preview(
     store = scanner.exceptions
     connection.send_result(
         msg["id"],
-        preview(hass, rules, snapshot, datetime.now(UTC), store.vacation(), store.rules),
+        preview(
+            hass,
+            cast(list[dict[str, Any]], rules),
+            snapshot,
+            datetime.now(UTC),
+            store.vacation(),
+            store.rules,
+        ),
     )
 
 
@@ -909,6 +989,7 @@ def websocket_exceptions_set(
 @websocket_api.websocket_command(
     {
         vol.Required("type"): f"{DOMAIN}/mark_clear",
+        vol.Optional("source"): vol.In(("cleanup", "list")),
         vol.Required("object_type"): vol.In(MARK_TYPES),
         vol.Required("object_id"): str,
     }
@@ -922,7 +1003,12 @@ def websocket_mark_clear(
     scanner: InventoryScanner,
 ) -> None:
     """Take a mark away again."""
-    scanner.clear_mark(msg["object_type"], msg["object_id"])
+    scanner.clear_mark(
+        msg["object_type"],
+        msg["object_id"],
+        by=connection.user.id if connection.user else None,
+        source=msg.get("source"),
+    )
     connection.send_result(msg["id"], {"marked": False})
 
 
@@ -983,7 +1069,9 @@ async def websocket_backup_attest(
         scanner.attest.set(msg["kind"], day)
     try:
         async with asyncio.timeout(BACKUP_HEALTH_TIMEOUT):
-            result = await backup_health(hass, scanner.attest, scanner.journal.plans)
+            result = await backup_health(
+                hass, scanner.attest, scanner.journal.plans, scanner.events
+            )
     except Exception as err:
         connection.send_error(msg["id"], "backup_health_failed", f"{type(err).__name__}: {err}")
         return
@@ -1050,6 +1138,8 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_auto_pause_set)
     websocket_api.async_register_command(hass, websocket_check_config)
     websocket_api.async_register_command(hass, websocket_backup_health)
+    websocket_api.async_register_command(hass, websocket_check_log)
+    websocket_api.async_register_command(hass, websocket_check_log_mark)
     websocket_api.async_register_command(hass, websocket_policies)
     websocket_api.async_register_command(hass, websocket_set_policy)
     websocket_api.async_register_command(hass, websocket_set_policy_prefix)

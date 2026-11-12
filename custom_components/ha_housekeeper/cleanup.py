@@ -18,6 +18,8 @@ from homeassistant.helpers.storage import Store
 
 from . import followup
 from .const import IGNORE_LABEL, JOURNAL_STORAGE_KEY, QUARANTINE_DAYS, STORAGE_VERSION
+from .dashboard_analysis import HELPER_DOMAINS
+from .helper_backup import check_note
 from .simulation import simulate
 
 USAGE_RELATIONS = frozenset(
@@ -28,7 +30,10 @@ DEVICE_KINDS = frozenset({"disable_device", "remove_device", "forget_device"})
 REFERENCE_KINDS = frozenset({"replace_references"})
 RENAME_KINDS = frozenset({"rename_entity"})  # a new entity ID, with every reference carried along
 METER_KINDS = frozenset({"migrate_meter"})
-METER_MODES = ("both", "statistics", "id")
+METER_MODES = ("both", "statistics", "id", "replace_statistics")
+# Modes that join the statistics, and the mode that also rewrites the references to the old entity.
+METER_STATISTICS_MODES = frozenset({"both", "statistics", "replace_statistics"})
+METER_REFERENCE_MODE = "replace_statistics"
 PURGE_KINDS = frozenset({"purge_statistics"})
 DELETE_CANDIDATE_RULES = frozenset(
     {"automation.never_triggered", "automation.stale", "automation.disabled_long"}
@@ -45,9 +50,21 @@ AREA_KINDS = frozenset({"set_area"})  # gives an entity or device without an are
 # Switches one entity between enabled and disabled or visible and hidden; the target says which way.
 STATE_KINDS = frozenset({"set_entity_state"})
 STATE_TARGETS = ("disable", "enable", "hide", "unhide")
+# Takes an entity out of the assistants it reaches ("remove"), or makes Google ask for the PIN again ("pin").
+EXPOSURE_KINDS = frozenset({"set_exposure"})
+EXPOSURE_TARGETS = ("remove", "pin")
+# Stops a cloud assistant from exposing new entities by itself; what is exposed already stays.
+EXPOSE_NEW_KINDS = frozenset({"set_expose_new"})
+CLOUD_NAMES = {"cloud.alexa": "Alexa", "cloud.google_assistant": "Google Assistant"}
 # What happens to the recorder rows of a removed entity: nothing, its statistics, or also its states.
 RECORDER_CHOICES = ("keep", "statistics", "states")
 REFACTOR_KINDS = frozenset({"refactor_automation"})
+# Loads one integration entry anew; nothing is written, so there is no backup and no way back.
+RELOAD_KINDS = frozenset({"reload_integration"})
+# Deletes the config entry of a helper (template, derivative, ...) with its entities; undo creates it anew from the journal.
+HELPER_KINDS = frozenset({"remove_helper"})
+# Creates a helper from an export file; undo deletes it again.
+HELPER_IMPORT_KINDS = frozenset({"import_helper"})
 ACTION_KINDS = (
     ENTITY_KINDS
     | DEVICE_KINDS
@@ -63,6 +80,11 @@ ACTION_KINDS = (
     | LABEL_KINDS
     | AREA_KINDS
     | STATE_KINDS
+    | EXPOSURE_KINDS
+    | EXPOSE_NEW_KINDS
+    | RELOAD_KINDS
+    | HELPER_KINDS
+    | HELPER_IMPORT_KINDS
 )
 # Disabling is the quarantine; removing is only allowed after a full quarantine period.
 EXECUTABLE_KINDS = ACTION_KINDS
@@ -81,6 +103,7 @@ BACKUP_KINDS = frozenset(
         "refactor_automation",
         "repair_counter",
         "repair_range",
+        "remove_helper",
     }
 )
 # Kinds that always write into the recorder database. Removal actions additionally require it
@@ -96,12 +119,15 @@ DISABLEABLE_STATUSES = frozenset({"orphaned", "unavailable", "unknown"})
 # The reason of an entity whose loaded integration no longer provides it (see inventory).
 NOT_PROVIDED = "not_provided"
 PLAN_MAX_AGE_HOURS = 24
-MAX_ACTIONS = 200
+MAX_ACTIONS = 250
 # Only previews that were never started are limited by number; they cannot be confirmed after
 # PLAN_MAX_AGE_HOURS anyway. Plans that ran are never dropped by position (their data is needed for
 # undo, restore and the start of the quarantine); when the journal grows too large the oldest ones
 # lose their whole-file copies instead.
 MAX_OPEN_PREVIEWS = 20
+MAX_OPEN_AI_PREVIEWS = (
+    10  # previews made through the service count apart, so they cannot push out a person's
+)
 MAX_PURGES = 100  # recorder purges kept in the journal
 JOURNAL_MAX_BYTES = 8 * 1024 * 1024
 JOURNAL_KEEP_DAYS = 365  # plans that ran and ended longer ago than this are dropped ...
@@ -195,6 +221,8 @@ def quarantine_entries(
 ) -> list[dict[str, Any]]:
     """Entities and devices Housekeeper quarantined that are still disabled by the user.
 
+    Devices the person disabled by hand count too (``adopted``, no plan).
+
     The journal says when something was disabled; the live inventory says whether it still
     is. Items that were re-enabled, undone or removed since are no longer in quarantine.
     """
@@ -215,11 +243,28 @@ def quarantine_entries(
                     "plan_id": plan["plan_id"],
                     "since": result["at"],
                 }
+    # A device the person disabled by hand has no plan, but is just as quarantined: Home Assistant
+    # keeps when its entry last changed, which is never earlier than the disabling (so the wait
+    # is never shorter than it was).
+    for key, item in live.items():
+        if (
+            key[0] == "device"
+            and key not in latest
+            and item.get("disabled_by") == "user"
+            and item.get("modified_at")
+        ):
+            latest[key] = {
+                "object_type": "device",
+                "object_id": key[1],
+                "plan_id": None,
+                "since": item["modified_at"],
+                "adopted": True,
+            }
     return sorted(
         (
             entry
             for key, entry in latest.items()
-            if (item := live.get(key)) and item.get("disabled_by") == "user"
+            if (now := live.get(key)) and now.get("disabled_by") == "user"
         ),
         key=lambda entry: entry["since"],
     )
@@ -266,6 +311,11 @@ def _used_by(edges: list[dict[str, Any]], key: str) -> list[dict[str, Any]]:
         for edge in edges
         if edge["target"] == key and edge["relation"] in USAGE_RELATIONS
     ]
+
+
+def _feeds_helper(used_by: list[dict[str, Any]]) -> bool:
+    """Whether a helper (a config entry) reads the entity: it would lose its source."""
+    return any(str(use["source"]).startswith("config_entry:") for use in used_by)
 
 
 def judge_action(
@@ -318,6 +368,13 @@ BLOCKING_REASONS = frozenset(
         "already_disabled",
         "already_in_state",
         "bad_state",
+        "entry_missing",
+        "entry_disabled",
+        "entry_own",
+        "entry_no_reload",
+        "not_helper",
+        "invalid_helper",
+        "delete_old_provided",
         "not_user_disabled",
         "marked_keep",
         "not_quarantined",
@@ -330,6 +387,8 @@ BLOCKING_REASONS = frozenset(
         "unsupported_action",
         "not_found",
         "target_missing",
+        "target_duplicate",
+        "target_replaced",
         "same_entity",
         "different_domain",
         "target_not_working",
@@ -377,6 +436,7 @@ BLOCKING_REASONS = frozenset(
         "in_energy",
         "entity_exists",
         "nothing_to_do",
+        "filtered_by_yaml",
         "refactor_disabled",
         "not_editable",
         "invalid_fix",
@@ -389,6 +449,8 @@ def _verdict(action: dict[str, Any]) -> None:
     reasons = set(action["reasons"])
     if BLOCKING_REASONS & reasons:
         action["verdict"] = "blocked"
+        # The panel shows these first and apart from the notes that only ask for a look.
+        action["blocking"] = [reason for reason in action["reasons"] if reason in BLOCKING_REASONS]
     elif reasons:
         action["verdict"] = "review"
     else:
@@ -528,15 +590,57 @@ def judge_reference_action(
             reasons.append("unit_differs")
         if new.get("device_class") != old.get("device_class"):
             reasons.append("class_differs")
-    writable = [source for source in action["sources"] if source["writable"] and source["changes"]]
+    _source_reasons(action["sources"], reasons)
+    if action["has_statistics"]:
+        reasons.append("has_statistics")
+    reasons.append("config_rewrite")
+    _verdict(action)
+    return action
+
+
+def _source_reasons(sources: list[dict[str, Any]], reasons: list[str]) -> None:
+    """What the sources of a reference replacement need: something to write, a look, Energy."""
+    writable = [source for source in sources if source["writable"] and source["changes"]]
     if not writable:
         reasons.append("nothing_to_replace")
-    elif any(not source["writable"] or source["manual"] for source in action["sources"]):
+    elif any(not source["writable"] or source["manual"] for source in sources):
         reasons.append("source_manual")
     if any(source["type"] == "energy" for source in writable):
         reasons.append("energy_changes")
-    if action["has_statistics"]:
-        reasons.append("has_statistics")
+
+
+def judge_id_replace_action(
+    object_id: str,
+    target: str | None,
+    target_kind: str,
+    target_exists: bool,
+    sources: list[dict[str, Any]] | None,
+) -> dict[str, Any]:
+    """Judge replacing a missing area, floor or label by an existing one in every place that names it.
+
+    These are plain identifiers, replaced only under the key that names them (see ``references.rewrite_id``),
+    so there is nothing to compare but that the new one exists. The edit rewrites configuration: ``review``.
+    """
+    action: dict[str, Any] = {
+        "kind": "replace_references",
+        "object_id": object_id,
+        "object_type": target_kind,
+        "target_kind": target_kind,
+        "target": target,
+        "name": object_id,
+        "verdict": "blocked",
+        "reasons": [],
+        "used_by": [],
+        "has_statistics": False,
+        "sources": sources or [],
+    }
+    reasons = action["reasons"]
+    if not target or not target_exists:
+        reasons.append("target_missing")
+    elif target == object_id:
+        reasons.append("same_entity")
+    if not [s for s in action["sources"] if s["writable"] and s["changes"]]:
+        reasons.append("nothing_to_replace")
     reasons.append("config_rewrite")
     _verdict(action)
     return action
@@ -742,6 +846,8 @@ def judge_trim_action(
         reasons.append("bad_tables")
     elif rng and (chosen != list(TRIM_STATES) or not rng["from"] < rng["to"]):
         reasons.append("bad_range" if chosen == list(TRIM_STATES) else "range_states_only")
+    elif rng and rng["to"] > datetime.now(UTC).timestamp():
+        reasons.append("bad_range")  # rows written after the preview would be caught by the run
     elif not rng and not TRIM_DAYS[0] <= keep_days <= TRIM_DAYS[1]:
         reasons.append("bad_keep_days")
     elif counted is None:
@@ -820,8 +926,12 @@ def judge_automation_deletion(
         reasons.append("not_a_candidate")
     elif source is None or source.get("error"):
         reasons.append((source or {}).get("error") or "not_in_yaml")
+    elif item.get("marked_keep"):
+        reasons.append("marked_keep")
     else:
         reasons.append("deletes_config")
+        if (item.get("labels") and IGNORE_LABEL in item["labels"]) or item.get("excepted"):
+            reasons.append("ignored_by_label")
         if action["used_by"]:
             reasons.append("used_by_mentions")
     _verdict(action)
@@ -978,6 +1088,8 @@ def judge_state_action(
             reasons.append("used_certain")
         elif used_by:
             reasons.append("used_probable")
+        if _feeds_helper(used_by):
+            reasons.append("feeds_helper")
         if info.get("marked_keep"):
             reasons.append("marked_keep")
         if info.get("critical"):
@@ -996,6 +1108,178 @@ def judge_state_action(
     return action
 
 
+def judge_exposure_action(
+    object_id: str, target: str, name: str, info: dict[str, Any]
+) -> dict[str, Any]:
+    """Judge taking one entity out of its assistants, or giving Google its PIN back.
+
+    ``info`` is what ``exposure_edit.prepare`` found. Only what is set now is touched: an entity
+    that reaches no assistant (or whose lock Google already asks the PIN for) has nothing to do,
+    and an assistant a YAML filter of the cloud decides for cannot be changed from here.
+    """
+    action: dict[str, Any] = {
+        "kind": "set_exposure",
+        "object_id": object_id,
+        "object_type": "entity",
+        "name": name,
+        "target": target,
+        "assistants": list(info.get("assistants") or []),
+        "only": list(info.get("only") or []),
+        "verdict": "blocked",
+        "reasons": [],
+        "used_by": [],
+        "has_statistics": False,
+    }
+    reasons = action["reasons"]
+    if not info.get("exists"):
+        reasons.append("not_found")
+    elif target not in EXPOSURE_TARGETS:
+        reasons.append("bad_state")
+    elif not action["assistants"]:
+        reasons.append("nothing_to_do")
+    elif info.get("filtered"):
+        reasons.append("filtered_by_yaml")
+    elif info.get("filter_unknown"):
+        reasons.append("filter_unknown")  # not blocking: the person is asked to look
+    _verdict(action)
+    return action
+
+
+def judge_expose_new_action(assistant: str, info: dict[str, Any]) -> dict[str, Any]:
+    """Judge switching off the automatic exposure of new entities of one cloud assistant."""
+    action: dict[str, Any] = {
+        "kind": "set_expose_new",
+        "object_id": assistant,
+        "object_type": "assistant",
+        "name": CLOUD_NAMES.get(assistant, assistant),
+        "target": "off",
+        "verdict": "blocked",
+        "reasons": [],
+        "used_by": [],
+        "has_statistics": False,
+    }
+    if not info.get("exists"):
+        action["reasons"].append("not_found")
+    elif not info.get("on"):
+        action["reasons"].append("already_in_state")
+    _verdict(action)
+    return action
+
+
+def judge_reload_action(entry_id: str, info: dict[str, Any]) -> dict[str, Any]:
+    """Judge loading one integration entry anew; ``info`` is what the config entries hold now.
+
+    Reloading deletes nothing and is harmless, so a plan that may run is ``ok``; it only cuts the
+    integration off for a few seconds. The entry of Housekeeper itself is never reloaded here.
+    """
+    action: dict[str, Any] = {
+        "kind": "reload_integration",
+        "object_id": entry_id,
+        "object_type": "integration",
+        "name": info.get("title") or info.get("domain") or entry_id,
+        "domain": info.get("domain"),
+        "entry_state": info.get("state"),
+        "entities": info.get("entities", 0),
+        "verdict": "blocked",
+        "reasons": [],
+        "used_by": [],
+        "has_statistics": False,
+    }
+    reasons = action["reasons"]
+    if not info.get("exists"):
+        reasons.append("entry_missing")
+    elif info.get("own"):
+        reasons.append("entry_own")
+    elif info.get("disabled"):
+        reasons.append("entry_disabled")
+    elif not info.get("can_reload"):
+        reasons.append("entry_no_reload")
+    _verdict(action)
+    return action
+
+
+def judge_helper_action(
+    entry_id: str,
+    info: dict[str, Any],
+    edges: list[dict[str, Any]],
+    objects: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Judge deleting the config entry of a helper; ``info`` is what the config entries hold now.
+
+    The entry and all its entities go. What certainly uses one of them blocks the plan, what
+    probably does needs a look; the statistics of its entities stay in the recorder. Only the
+    backup brings the helper back.
+    """
+    entities = list(info.get("entity_ids") or [])
+    used_by: list[dict[str, Any]] = []
+    for entity_id in entities:
+        used_by.extend(
+            use
+            for use in _used_by(edges, f"entity:{entity_id}")
+            if not str(use["source"]).startswith(f"config_entry:{entry_id}")
+        )
+    action: dict[str, Any] = {
+        "kind": "remove_helper",
+        "object_id": entry_id,
+        "object_type": "integration",
+        "name": info.get("title") or info.get("domain") or entry_id,
+        "domain": info.get("domain"),
+        "entity_count": len(entities),
+        "entity_ids": entities[:20],
+        "verdict": "blocked",
+        "reasons": [],
+        "used_by": used_by,
+        "has_statistics": any((objects.get(e) or {}).get("has_statistics") for e in entities),
+    }
+    reasons = action["reasons"]
+    if not info.get("exists"):
+        reasons.append("entry_missing")
+    elif not info.get("helper") or info.get("own"):
+        reasons.append("not_helper")
+    else:
+        if any(use["confidence"] == "certain" for use in used_by):
+            reasons.append("used_certain")
+        elif used_by:
+            reasons.append("used_probable")
+        if action["has_statistics"]:
+            reasons.append("has_statistics")
+    _verdict(action)
+    return action
+
+
+def judge_import_helper(object_id: str, note: dict[str, Any], taken: list[str]) -> dict[str, Any]:
+    """Judge creating a helper from an export: its shape, its domain and free entity IDs.
+
+    Nothing is deleted or overwritten, so there is no backup; undo deletes the new helper.
+    """
+    note = note if isinstance(note, dict) else {}
+    entities = [e.get("entity_id") for e in note.get("entities") or [] if isinstance(e, dict)]
+    action: dict[str, Any] = {
+        "kind": "import_helper",
+        "object_id": object_id,
+        "object_type": "integration",
+        "name": str(note.get("title") or object_id),
+        "domain": note.get("domain"),
+        "entity_count": len(entities),
+        "entity_ids": [str(e) for e in entities[:20]],
+        "helper": note,
+        "verdict": "blocked",
+        "reasons": [],
+        "used_by": [],
+        "has_statistics": False,
+    }
+    problem = check_note(note)
+    if problem == "not_helper":
+        action["reasons"].append("not_helper")
+    elif problem:
+        action["reasons"].append("invalid_helper")
+    elif taken:
+        action["reasons"].append("entity_exists")
+        action["taken"] = taken[:20]
+    _verdict(action)
+    return action
+
+
 def judge_meter_action(
     object_id: str,
     target: str | None,
@@ -1005,8 +1289,10 @@ def judge_meter_action(
 ) -> dict[str, Any]:
     """Judge joining a replaced meter's history onto its successor and/or its entity ID.
 
-    ``meter`` carries ``mode`` (``statistics``, ``id`` or ``both``), the statistics ``analysis``,
-    the free ``alt_id`` the old entity moves to, and whether both entities are in the registry.
+    ``meter`` carries ``mode`` (``statistics``, ``id``, ``both`` or ``replace_statistics``), the
+    statistics ``analysis``, the free ``alt_id`` the old entity moves to, and whether both entities
+    are in the registry. ``replace_statistics`` joins the statistics and rewrites the references to
+    the old entity (its ``sources``, as for ``replace_references``); the new entity keeps its ID.
     Writing statistics is always at least ``review``; nothing in it can be undone without the
     backup.
     """
@@ -1026,6 +1312,8 @@ def judge_meter_action(
         "has_statistics": True,
         "statistics": {k: v for k, v in analysis.items() if k != "reasons"},
     }
+    if mode == METER_REFERENCE_MODE:
+        action["sources"] = meter.get("sources") or []
     reasons = action["reasons"]
     new = objects.get(target or "")
     if mode not in METER_MODES:
@@ -1036,6 +1324,9 @@ def judge_meter_action(
         reasons.append("same_entity")
     elif target.split(".", 1)[0] != object_id.split(".", 1)[0]:
         reasons.append("different_domain")
+    elif new["status"] in ("unknown", "unavailable"):
+        # A new meter often has no value yet: nothing to block, the statistics can be moved first.
+        reasons.append("target_no_value")
     elif new["status"] != "active":
         reasons.append("target_not_working")
     old = objects.get(object_id)
@@ -1044,9 +1335,15 @@ def judge_meter_action(
             reasons.append("unit_differs")
         if new.get("device_class") != old.get("device_class"):
             reasons.append("class_differs")
-    if mode in {"both", "statistics"}:
+    if mode in METER_STATISTICS_MODES:
         reasons.extend(analysis.get("reasons", []))
         reasons.append("stats_write")
+    if mode == METER_REFERENCE_MODE:
+        if action["sources"]:
+            _source_reasons(action["sources"], reasons)
+            reasons.append("config_rewrite")
+        else:  # nothing names the old entity: only the statistics are moved
+            reasons.append("no_references")
     if mode in {"both", "id"}:
         if not meter.get("old_in_registry"):
             reasons.append("old_not_in_registry")
@@ -1112,6 +1409,8 @@ def judge_entity_action(
         reasons.append("used_certain")
     elif used_by:
         reasons.append("used_probable")
+    if _feeds_helper(used_by):
+        reasons.append("feeds_helper")
     if action["has_statistics"]:
         reasons.append("has_statistics")
     if (item.get("labels") and IGNORE_LABEL in item["labels"]) or item.get("excepted"):
@@ -1139,6 +1438,61 @@ def judge_entity_action(
     return action
 
 
+def _judge_delete_old(
+    action: dict[str, Any],
+    request: dict[str, Any],
+    objects: dict[str, dict[str, Any]],
+    possible: bool,
+    recorder: bool | None = None,
+) -> None:
+    """Deleting the old entity after a replacement: only where it does not come back.
+
+    An entity its integration still provides is created again at the next reload, so it can
+    only be disabled. What is no longer provided is removed from the registry; the entity of a
+    helper goes with the helper. Either way the person confirms the warning (a ``review``).
+    """
+    if not (request.get("delete_old") and possible):
+        return
+    item = objects.get(action["object_id"]) or {}
+    helper = bool(item.get("config_entry_id")) and item.get("platform") in HELPER_DOMAINS
+    if helper:
+        action["delete_old"] = "helper"
+        action["reasons"].append("delete_old_helper")
+    elif item.get("reason") == NOT_PROVIDED:
+        action["delete_old"] = "entity"
+        action["reasons"].append("delete_old")
+    else:
+        action["reasons"].append("delete_old_provided")
+    action["disable_old"] = False
+    if recorder is not None and action.get("delete_old"):
+        apply_recorder_choice(action, request.get("recorder") or "keep", recorder)
+    _verdict(action)
+
+
+def _mark_target_clashes(actions: list[dict[str, Any]]) -> None:
+    """Block replacements that name the same new entity twice or whose new entity is replaced itself.
+
+    Two old entities cannot both become one new one, and a chain (A to B, B to C) would send
+    the first to an entity that is gone by the end. Both sides of a clash are blocked.
+    """
+    pairs = [a for a in actions if a["kind"] in REFERENCE_KINDS | METER_KINDS | RENAME_KINDS]
+    targets = [a.get("target") for a in pairs if a.get("target")]
+    sources = {a["object_id"] for a in pairs}
+    for action in pairs:
+        target = action.get("target")
+        if not target:
+            continue
+        found = []
+        if targets.count(target) > 1:
+            found.append("target_duplicate")
+        if target in sources or action["object_id"] in targets:
+            found.append("target_replaced")
+        if found:
+            action["reasons"].extend(r for r in found if r not in action["reasons"])
+            _verdict(action)
+            action["executable"] = False
+
+
 def build_plan(
     snapshot: dict[str, Any],
     requested: list[dict[str, Any]],
@@ -1147,7 +1501,8 @@ def build_plan(
     restorable: Callable[[str], bool | None] | None = None,
     *,
     device_info: Callable[[str], tuple[str | None, dict[str, Any]]] | None = None,
-    reference_data: dict[tuple[str, str], tuple[str | None, list[dict[str, Any]]]] | None = None,
+    reference_data: dict[tuple[str, str, str], tuple[str | None, list[dict[str, Any]]]]
+    | None = None,
     meter_data: dict[tuple[str, str, str], dict[str, Any]] | None = None,
     statistic_exists: Callable[[str], bool] | None = None,
     refactor_data: dict[tuple[str, str, str], dict[str, Any]] | None = None,
@@ -1160,16 +1515,22 @@ def build_plan(
     trim_data: dict[tuple[str, int], dict[str, Any] | None] | None = None,
     backup_data: dict[str, dict[str, Any]] | None = None,
     delete_data: dict[str, dict[str, Any]] | None = None,
+    reload_data: dict[str, dict[str, Any]] | None = None,
+    helper_data: dict[str, dict[str, Any]] | None = None,
+    helper_import_data: dict[str, list[str]] | None = None,
+    exposure_data: dict[tuple[str, str], dict[str, Any]] | None = None,
+    expose_new_data: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Create a dry-run plan for ``requested`` actions from the latest snapshot.
 
     ``fingerprint`` returns the registry fingerprint of an entity so that execution can
     detect changes made after the preview; ``restorable`` tells whether a removal could be
     undone. ``device_info`` gives a device's fingerprint and what its integration supports;
-    ``reference_data`` maps ``(old, new)`` entity IDs to the fingerprint and the sources found
+    ``reference_data`` maps ``(old, new, target kind)`` to the fingerprint and the sources found
     for a replacement; ``statistic_exists`` tells whether an entity carries a statistic ID now;
     ``meter_data`` maps ``(old, new, mode)`` to the fingerprint and judging data
-    of a meter migration. A plan holds at most one action per object.
+    of a meter migration; a ``replace_statistics`` migration also takes its sources from
+    ``reference_data``. A plan holds at most one action per object.
     """
     quarantine = {q["object_id"]: q["since"] for q in snapshot.get("quarantine", [])}
     objects = {
@@ -1223,7 +1584,7 @@ def build_plan(
                 {
                     f["object_id"]
                     for f in snapshot.get("findings", [])
-                    if f["rule_id"] in DELETE_CANDIDATE_RULES
+                    if f["rule_id"] in DELETE_CANDIDATE_RULES and not f.get("ignored")
                 },
                 found,
             )
@@ -1245,6 +1606,20 @@ def build_plan(
             entry = objects.get(object_id) or devices.get(object_id) or {}
             action = judge_area_action(object_id, entry.get("name") or object_id, info)
             action["fingerprint"] = info.get("fingerprint")
+        elif kind in HELPER_KINDS:
+            info = (helper_data or {}).get(object_id, {})
+            action = judge_helper_action(object_id, info, snapshot["edges"], objects)
+            action["fingerprint"] = info.get("fingerprint")
+        elif kind in HELPER_IMPORT_KINDS:
+            action = judge_import_helper(
+                object_id,
+                request.get("helper") or {},
+                (helper_import_data or {}).get(object_id, []),
+            )
+            action["fingerprint"] = None
+        elif kind in RELOAD_KINDS:
+            action = judge_reload_action(object_id, (reload_data or {}).get(object_id, {}))
+            action["fingerprint"] = (reload_data or {}).get(object_id, {}).get("fingerprint")
         elif kind in STATE_KINDS:
             info = (state_data or {}).get(object_id, {})
             item = objects.get(object_id) or {}
@@ -1255,6 +1630,16 @@ def build_plan(
                 {**info, "marked_keep": item.get("marked_keep"), "critical": item.get("critical")},
                 _used_by(snapshot["edges"], f"entity:{object_id}"),
             )
+            action["fingerprint"] = info.get("fingerprint")
+        elif kind in EXPOSE_NEW_KINDS:
+            info = (expose_new_data or {}).get(object_id, {})
+            action = judge_expose_new_action(object_id, info)
+            action["fingerprint"] = info.get("fingerprint")
+        elif kind in EXPOSURE_KINDS:
+            target = request.get("target") or ""
+            info = (exposure_data or {}).get((object_id, target), {})
+            name = (objects.get(object_id) or {}).get("name") or object_id
+            action = judge_exposure_action(object_id, target, name, info)
             action["fingerprint"] = info.get("fingerprint")
         elif kind in LABEL_KINDS:
             label_id = request.get("target") or ""
@@ -1292,15 +1677,25 @@ def build_plan(
             target = request.get("target") or ""
             mode = request.get("mode") or "both"
             meter = (meter_data or {}).get((object_id, target, mode), {})
+            reference_print: str | None = None
+            sources: list[dict[str, Any]] = []
+            if mode == METER_REFERENCE_MODE:
+                reference_print, sources = (reference_data or {}).get(
+                    (object_id, target, "entity"), (None, [])
+                )
             action = judge_action(
                 kind,
                 object_id,
                 objects,
                 snapshot["edges"],
                 target=target,
-                meter={**meter, "mode": mode},
+                meter={**meter, "mode": mode, "sources": sources},
             )
             action["fingerprint"] = meter.get("fingerprint")
+            action["disable_old"] = bool(request.get("disable_old")) and mode not in {"both", "id"}
+            _judge_delete_old(action, request, objects, mode not in {"both", "id"})
+            if mode == METER_REFERENCE_MODE:
+                action["reference_fingerprint"] = reference_print
         elif kind in RENAME_KINDS:
             target = request.get("target") or ""
             found = (rename_data or {}).get((object_id, target), {})
@@ -1308,16 +1703,39 @@ def build_plan(
             action["fingerprint"] = found.get("fingerprint")
         elif kind in REFERENCE_KINDS:
             target = request.get("target") or ""
-            reference_print, sources = (reference_data or {}).get((object_id, target), (None, []))
-            action = judge_action(
-                kind,
-                object_id,
-                objects,
-                snapshot["edges"],
-                target=target,
-                sources=sources,
+            target_kind = request.get("target_kind") or "entity"
+            reference_print, sources = (reference_data or {}).get(
+                (object_id, target, target_kind), (None, [])
             )
+            if target_kind == "entity":
+                action = judge_action(
+                    kind,
+                    object_id,
+                    objects,
+                    snapshot["edges"],
+                    target=target,
+                    sources=sources,
+                )
+            else:
+                action = judge_id_replace_action(
+                    object_id,
+                    target,
+                    target_kind,
+                    any(
+                        o["object_type"] == target_kind and o["object_id"] == target
+                        for o in snapshot["objects"]
+                    ),
+                    sources,
+                )
             action["fingerprint"] = reference_print
+            action["disable_old"] = bool(request.get("disable_old")) and target_kind == "entity"
+            _judge_delete_old(
+                action,
+                request,
+                objects,
+                target_kind == "entity",
+                bool(snapshot["meta"].get("recorder_available")),
+            )
         else:
             action = judge_action(
                 kind,
@@ -1337,6 +1755,7 @@ def build_plan(
             )
         action["executable"] = kind in EXECUTABLE_KINDS and action["verdict"] != "blocked"
         actions.append(action)
+    _mark_target_clashes(actions)
     counts = {
         verdict: sum(a["verdict"] == verdict for a in actions)
         for verdict in ("ok", "review", "blocked")
@@ -1392,10 +1811,18 @@ def merge_requests(
                 request["mode"] = action["mode"]
             if action.get("range"):
                 request["range"] = action["range"]
+            if action["kind"] in EXPOSURE_KINDS and action.get("only"):
+                request["assistants"] = action[
+                    "only"
+                ]  # a renewed plan keeps to the assistants asked for
             if action["kind"] in PURGE_KINDS:
                 request["states"] = bool(action.get("states"))
             if action.get("recorder"):
                 request["recorder"] = action["recorder"]
+            if action.get("delete_old"):
+                request["delete_old"] = True
+            elif action.get("disable_old"):
+                request["disable_old"] = True
             if action["kind"] in TRIM_KINDS:
                 request["keep_days"] = action["keep_days"]
                 if action.get("tables"):
@@ -1421,7 +1848,11 @@ def history_ids(plan: dict[str, Any]) -> list[str]:
     """The entity or statistic IDs whose recorder rows a plan is about."""
     ids: list[str] = []
     for action in plan["actions"]:
-        if action["kind"] in PURGE_KINDS or action["kind"] == "remove_entity":
+        if (
+            action["kind"] in PURGE_KINDS
+            or action["kind"] == "remove_entity"
+            or (action["kind"] in REFERENCE_KINDS and action.get("recorder"))
+        ):
             ids.append(action["object_id"])
         elif action["kind"] in {"remove_device", "forget_device"}:
             ids.extend(action.get("entities") or [])
@@ -1618,12 +2049,15 @@ class JournalStore:
         A plan that ran goes after ``JOURNAL_KEEP_DAYS`` days, or earlier when there are more than
         ``JOURNAL_MAX_PLANS`` plans (oldest first), unless it is still needed (see above).
         """
-        previews = 0
+        previews = {"mcp": 0, "panel": 0}
         kept = []
         for plan in self._plans:
             if self._is_open_preview(plan):
-                previews += 1
-                if previews > MAX_OPEN_PREVIEWS:
+                made_by = "mcp" if plan.get("via") == "mcp" else "panel"
+                previews[made_by] += 1
+                if previews[made_by] > (
+                    MAX_OPEN_AI_PREVIEWS if made_by == "mcp" else MAX_OPEN_PREVIEWS
+                ):
                     continue
             kept.append(plan)
         now = datetime.now(UTC)
@@ -1643,20 +2077,34 @@ class JournalStore:
         self._plans[:] = [plan for plan in kept if id(plan) not in dropped]
         self._compact_to(JOURNAL_MAX_BYTES)
 
+    @staticmethod
+    def _snapshot_size(snapshot: Any) -> int:
+        return (
+            len(snapshot) if isinstance(snapshot, str) else len(json.dumps(snapshot, default=str))
+        )
+
     def _compact_to(self, limit: int) -> None:
         """Drop the whole-file copies of the oldest plans until the journal fits the limit.
 
         The entry level data (what each step changed and when) stays, so the quarantine and the
-        undo of single items keep working; only the byte-exact file undo is given up.
+        undo of single items keep working; only the byte-exact file undo is given up. The size is
+        counted from the file copies alone (the rest of a plan is small), so the whole journal is
+        never serialised on the event loop.
         """
-        size = len(json.dumps(self._plans, default=str))
+        size = sum(
+            self._snapshot_size(source["file_before"])
+            for plan in self._plans
+            for action in plan.get("actions", [])
+            for source in (action.get("result") or {}).get("sources") or []
+            if isinstance(source, dict) and source.get("file_before") is not None
+        )
         for plan in reversed(self._plans):
             if size <= limit:
                 break
             for action in plan.get("actions", []):
                 for source in (action.get("result") or {}).get("sources") or []:
                     if isinstance(source, dict) and source.get("file_before") is not None:
-                        size -= len(json.dumps(source.pop("file_before"), default=str))
+                        size -= self._snapshot_size(source.pop("file_before"))
                         source.pop("file_after_hash", None)
                         source["file_snapshot_dropped"] = True
                         plan["file_snapshot_dropped"] = True

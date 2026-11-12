@@ -24,6 +24,7 @@ SCAN_ISSUE_ID = "scan_health"
 DATABASE_ISSUE_ID = "database_damaged"
 BACKUP_ISSUE_ID = "backup_problem"
 STATISTICS_ISSUE_ID = "orphaned_statistics"
+FLAPPING_ISSUE_ID = "check_flapping"
 
 
 CATEGORIES = {
@@ -137,6 +138,24 @@ def async_sync_backup_issue(hass: HomeAssistant, report: dict[str, Any] | None) 
     )
 
 
+def async_sync_flapping_issue(hass: HomeAssistant, flapping: list[str]) -> None:
+    """One hint while a check keeps changing its level; a rule that is too sharp shows itself like this."""
+    if not flapping or FLAPPING_ISSUE_ID not in enabled_hints(hass):
+        ir.async_delete_issue(hass, DOMAIN, FLAPPING_ISSUE_ID)
+        return
+    link = f"/{PANEL_URL}?view=checklog"
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        FLAPPING_ISSUE_ID,
+        is_fixable=False,
+        learn_more_url=link,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=FLAPPING_ISSUE_ID,
+        translation_placeholders={"count": str(len(flapping)), "link": link},
+    )
+
+
 def async_sync_statistics_issue(hass: HomeAssistant, count: int) -> None:
     """One hint while more statistics than the minimum exist whose entity is gone."""
     if count <= hint_minimum(hass, STATISTICS_ISSUE_ID) or STATISTICS_ISSUE_ID not in enabled_hints(
@@ -165,5 +184,6 @@ def async_clear_issues(hass: HomeAssistant) -> None:
         DATABASE_ISSUE_ID,
         BACKUP_ISSUE_ID,
         STATISTICS_ISSUE_ID,
+        FLAPPING_ISSUE_ID,
     ):
         ir.async_delete_issue(hass, DOMAIN, issue_id)

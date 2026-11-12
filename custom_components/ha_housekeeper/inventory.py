@@ -6,10 +6,11 @@ import asyncio
 import logging
 import time
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
+from copy import deepcopy
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.config_entries import SOURCE_IGNORE, ConfigEntryState
 from homeassistant.const import __version__ as HA_VERSION
@@ -26,6 +27,8 @@ from homeassistant.loader import IntegrationNotFound, async_get_integration, asy
 from homeassistant.util import dt as dt_util
 
 from . import followup
+from .access_state import AccessState
+from .activity import ActivityStore
 from .app_links import app_edges, stopped_app_findings
 from .auto_pause import AutoPause
 from .automation_analysis import (
@@ -35,12 +38,20 @@ from .automation_analysis import (
     summarize_script_config,
 )
 from .automation_blocked import blocked_automation_findings, dead_effect_findings
+from .backup_auto import BackupAutoStore
 from .backup_health import AttestStore, backup_health
 from .battery_care import BatteryStore
 from .battery_kind import apply_battery_kinds
 from .blueprints import async_available, blueprint_path, missing_blueprint_findings
 from .causes import apply_causes, device_down_findings
-from .cleanup import JournalStore, is_child_device, quarantine_entries, recurring_devices
+from .certainty import apply_certainty
+from .cleanup import (
+    JournalStore,
+    device_support,
+    is_child_device,
+    quarantine_entries,
+    recurring_devices,
+)
 from .cleanup_exec import CleanupRunner
 from .config_changes import ChangeStore, fingerprint
 from .conflicts import KEY_PREFIX as CONFLICT_KEY_PREFIX
@@ -84,7 +95,11 @@ from .entry_states import EntryStateHistory
 from .events import EventLog
 from .exceptions import ExceptionStore, entry_traits, traits, verdict
 from .exceptions import matches as _hits
+from .finding_topics import apply_topics
+from .first_cleanup import FirstCleanupStore
 from .goals import GoalStore
+from .goals import evaluate as evaluate_goals
+from .goals import measure as measure_goals
 from .hacs import hacs_by_domain, removed_issues, store_kind
 from .hints import HintStore
 from .history import ScanHistory
@@ -126,27 +141,40 @@ from .monitor import MonitorStore
 from .notes import NoteStore
 from .notify import NotifyStore, async_announce
 from .observations import ObservationStore
+from .often import OftenStore
 from .outage_levels import DIRECT_ENTRY_STATES, Levels, outage_level
 from .outage_scan import OutageScans, outage_start
 from .policies import KEY_PREFIX as POLICY_KEY_PREFIX
 from .policies import PolicyStore
 from .protection import ProtectionStore, protection_rules
-from .queries import ReplyStore
+from .queries import ReplyStore, kept_reply
 from .refactor import RefactorStore
+from .reliability import CACHE_SECONDS, reply_key
 from .reminders import ReminderStore
+from .run_health import run_findings
 from .runs import RunStore
-from .scan_coverage import RETRY_LIMIT, RETRY_MINUTES, ScanCoverage, retryable_gaps
+from .scan_coverage import (
+    RETRY_LIMIT,
+    RETRY_MINUTES,
+    ScanCoverage,
+    picture_complete,
+    retryable_gaps,
+)
 from .scan_health import ScanHealth
 from .scan_trigger import ScanRefused, scan_request
+from .seen import FirstSeenStore
 from .sensitive_fields import reauth_entry_ids
 from .service_check import missing_service_findings
 from .signals import SignalStore, situations
 from .signals import fire as signal_fire
 from .stale import StaleStore
 from .start_times import StartStore
+from .system_checks import goal_checks, service_checks
 from .system_usage import supervisor_get, supervisor_token
 from .view_counts import view_counts
+from .visits import VisitStore
 from .watch import WATCH_KINDS, WatchStore, evaluate, make_before, next_due
+from .work import WorkStore
 
 _LOGGER = logging.getLogger(__name__)
 SUGGEST_LIMIT = 200
@@ -805,12 +833,13 @@ def _missing_findings(
     names that do exist. The first ``SUGGEST_LIMIT`` findings get them, so a huge broken config
     cannot make a scan slow.
     """
-    findings = [
+    findings: list[dict[str, Any]] = [
         {
             "rule_id": f"{domain}.missing_{reference['kind']}",
             "object_id": object_id,
             "classification": "broken_reference",
-            "confidence": 0.98,
+            # A name found in the text of a template is less sure than a key of a configuration.
+            "confidence": 0.98 if reference.get("confidence", "certain") == "certain" else 0.6,
             "first_detected_at": None,
             "affected_object": reference["object_id"],
             "evidence": [
@@ -898,6 +927,11 @@ def storage_sizes(hass: HomeAssistant) -> dict[str, dict[str, float]]:
 
 STORE_NAMES = (
     "observations",
+    "first_seen",
+    "access_state",
+    "visits",
+    "work",
+    "first_cleanup",
     "history",
     "ignored",
     "exceptions",
@@ -924,10 +958,13 @@ STORE_NAMES = (
     "batteries",
     "notify",
     "hints",
+    "backup_auto",
     "mcp",
     "monitor",
     "runs",
     "config_changes",
+    "activity",
+    "often",
     "auto_pause",
 )
 
@@ -938,6 +975,11 @@ class InventoryScanner:
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
         self.observations = ObservationStore(hass)
+        self.first_seen = FirstSeenStore(hass)
+        self.access_state = AccessState(hass)
+        self.visits = VisitStore(hass)
+        self.work = WorkStore(hass)
+        self.first_cleanup = FirstCleanupStore(hass)
         self.history = ScanHistory(hass)
         self.ignored = IgnoreStore(hass)
         self.exceptions = ExceptionStore(hass)
@@ -970,9 +1012,12 @@ class InventoryScanner:
         self.health = ScanHealth(hass)
         self.reminders = ReminderStore(hass)
         self.notes = NoteStore(hass)
+        self.activity = ActivityStore(hass)
+        self.often = OftenStore(hass)
         self.batteries = BatteryStore(hass)
         self.notify = NotifyStore(hass)
         self.hints = HintStore(hass)
+        self.backup_auto = BackupAutoStore(hass)
         hass.data.setdefault(DOMAIN, {})["hints"] = self.hints
         self.backup_report: dict[str, Any] | None = None  # the last one that could be read
         self.mcp = McpStore(hass)
@@ -1018,6 +1063,7 @@ class InventoryScanner:
         self.stale_hours = DEFAULT_STALE_HOURS
         self.scan_interval_hours = DEFAULT_SCAN_INTERVAL_HOURS
         self.watch_hours = DEFAULT_WATCH_HOURS
+        self.show_in_sidebar = True
         self.version: str | None = None
         self.load_failures: list[str] = []  # stores whose saved data could not be read
         self.status: dict[str, Any] = {
@@ -1037,6 +1083,19 @@ class InventoryScanner:
             self.outage_high_hours,
         )
 
+    def _mark_work(self, finding: dict[str, Any]) -> None:
+        """``in_work`` for a finding someone has started to fix, ``work_expired`` for one left standing."""
+        entry = self.work.get(finding["key"])
+        if entry is None:
+            return
+        if entry["expired"]:
+            finding["work_expired"] = {"started_at": entry["started_at"]}
+        else:
+            finding["in_work"] = {
+                "started_at": entry["started_at"],
+                "progress_at": entry["progress_at"],
+            }
+
     async def async_initialize(self) -> None:
         """Load persisted observations and read the installed version."""
         try:
@@ -1052,6 +1111,12 @@ class InventoryScanner:
                 # One unreadable file must not take the whole integration down; that part starts empty.
                 _LOGGER.exception("The saved data of %s could not be read, starting it empty", name)
                 self.load_failures.append(name)
+        try:
+            self.activity.backfill(
+                self.ignored.entries(), self.marks.items, self.notes.items, self.journal.plans
+            )
+        except Exception:
+            _LOGGER.exception("The earlier decisions could not be put into the activity")
         # Features that were removed leave a file behind that is of no use any more.
         for key in (WINDOW_STORAGE_KEY, PREFLIGHT_STORAGE_KEY):
             try:
@@ -1182,11 +1247,25 @@ class InventoryScanner:
                             for e in self.hass.config_entries.async_entries()
                         },
                         datetime.now(UTC),
-                        {
-                            e.entry_id: getattr(e, "_tries", None)
-                            for e in self.hass.config_entries.async_entries()
-                        },
+                        cast(
+                            dict[str, int],
+                            {
+                                e.entry_id: getattr(e, "_tries", None)
+                                for e in self.hass.config_entries.async_entries()
+                            },
+                        ),
                     )
+                    self.events.observe_checks(
+                        "services",
+                        service_checks(
+                            {
+                                e.entry_id: getattr(e.state, "value", str(e.state))
+                                for e in self.hass.config_entries.async_entries()
+                            }
+                        ),
+                        datetime.now(UTC),
+                    )
+                    self._observe_goals(snapshot)
                     try:
                         await self.auto_pause.check(datetime.now(UTC))
                     except Exception:  # a failing pause must not fail the scan
@@ -1276,6 +1355,27 @@ class InventoryScanner:
                 preliminary=bool(snapshot["meta"].get("preliminary")),
             )
         return result
+
+    def _observe_goals(self, snapshot: dict[str, Any]) -> None:
+        """Write down when a goal of the person is met or missed; only the goals the snapshot can tell."""
+        try:
+            month = (datetime.now(UTC) - timedelta(days=30)).date().isoformat()
+            errors = (
+                sum(
+                    key.startswith("automation.") and self.runs.errors_since(key, month) > 0
+                    for key in self.runs.items
+                )
+                if self.runs.since
+                else None
+            )
+            evaluated = evaluate_goals(
+                measure_goals(snapshot, None, None, None, errors), self.goals.items
+            )
+            checks = goal_checks(evaluated)
+            self.events.observe_checks("goals", checks, datetime.now(UTC))
+            self.events.forget_checks("goals", checks)
+        except Exception:  # noqa: BLE001 - the log must never fail a scan
+            _LOGGER.debug("The goals could not be written to the central log", exc_info=True)
 
     def health_report(self) -> dict[str, Any]:
         """The scan health as the panel and the sensor read it."""
@@ -1439,6 +1539,16 @@ class InventoryScanner:
         """Return the latest snapshot without triggering a scan."""
         return self._snapshot
 
+    def patch_snapshot(self, **sections: Any) -> None:
+        """Put fresh views (the notes, the reminders) into the cached snapshot, when there is one."""
+        if self._snapshot is not None:
+            self._snapshot.update(sections)
+
+    def patch_meta(self, **fields: Any) -> None:
+        """Put fresh facts (the protection mode) into the meta of the cached snapshot, when there is one."""
+        if self._snapshot is not None:
+            self._snapshot["meta"].update(fields)
+
     async def async_get_snapshot(self) -> dict[str, Any]:
         """Return the latest snapshot, scanning on first access."""
         if self._snapshot is None:
@@ -1510,6 +1620,9 @@ class InventoryScanner:
 
         entity_counts = Counter(item["device_id"] for item in entities if item["device_id"])
         devices = [_device_item(device, entity_counts[device.id]) for device in device_entries]
+        for item, device in zip(devices, device_entries, strict=True):
+            # Tells the panel whether a removal asks the integration or has to be forced.
+            item["removal_supported"] = device_support(self.hass, device)["removal_supported"]
         areas = [_area_item(area) for area in _registry_entries(area_registry.areas)]
         floors = [_floor_item(floor) for floor in _registry_entries(floor_registry.floors)]
         labels = [_label_item(label) for label in _registry_entries(label_registry.labels)]
@@ -1694,6 +1807,7 @@ class InventoryScanner:
                     observed_at.date(), {a["object_id"] for a in automations}
                 )
             )
+            + ([] if preliminary else run_findings(self.runs.items, automations, observed_at))
             + dashboard_findings
             + helper_findings
             + group_findings
@@ -1773,12 +1887,38 @@ class InventoryScanner:
             if item["object_id"] in stuck:
                 item["blocked_automation"] = True
         apply_battery_kinds(objects, self.batteries.kinds)
+        apply_topics(findings)
         apply_impact(objects, edges, findings)
+        # When each finding was first seen; a preliminary scan misses findings and forgets none.
+        # A source that could not be read leaves its findings out: what is missing then is not gone.
+        complete = picture_complete(self._unchecked, self.scan_coverage.report())
+        if not preliminary:
+            self.first_seen.update(
+                {f["key"] for f in findings}, datetime.now(UTC), complete=complete
+            )
+        if not preliminary:
+            self.work.update({f["key"] for f in findings}, datetime.now(UTC), complete=complete)
+        for finding in findings:
+            finding["first_seen_at"] = self.first_seen.get(finding["key"])
+            self._mark_work(finding)
         logged = log_facts(self.hass)
         for item in objects:
             if item["object_type"] == "config_entry" and item.get("domain") in logged:
                 item["log"] = logged[item["domain"]]
         causes = apply_causes(objects, edges, findings)
+        if not preliminary:
+            causes = self._review_decisions(objects, edges, findings, causes)
+        apply_certainty(
+            findings,
+            causes,
+            now=observed_at,
+            waits={
+                "outage_info_minutes": self.outage_info_minutes,
+                "stale_hours": self.stale_hours,
+                "unused_automation_days": self.unused_automation_days,
+            },
+            patterns=self._outage_patterns(),
+        )
 
         lap("analysis")
         self.status.update(phase="finalizing", progress=90)
@@ -1848,12 +1988,14 @@ class InventoryScanner:
                 "notify": self.notify.enabled,
                 "mcp": self.mcp.meta(),
                 "protection": self.protection.mode,
+                "protection_migrated": self.protection.migrated_from,
                 "protection_rules": protection_rules(),
                 "recorder_available": self._recorder_available,
                 "orphaned_statistics": len(orphaned_statistics),
                 "quarantined": len(quarantine),
                 "recurring_devices": len(recurring),
                 "quarantine_days": QUARANTINE_DAYS,
+                "helper_domains": sorted(HELPER_DOMAINS),
                 "ha_version": HA_VERSION,
                 "hacs_available": hacs is not None,
                 "hacs_store": store_kind(self.hass),
@@ -1868,6 +2010,7 @@ class InventoryScanner:
                 "stale_hours": self.stale_hours,
                 "history_days": self.history.retention_days,
                 "watch_hours": self.watch_hours,
+                "show_in_sidebar": self.show_in_sidebar,
                 "watch": self.watch_summary(),
                 "low_batteries": len(low_battery_ids(entities, self.low_battery_percent)),
                 "object_count": len(listed_objects(objects)),
@@ -1878,6 +2021,7 @@ class InventoryScanner:
                 ),
                 "vacation": self.vacation_meta(findings),
                 "exception_rules": len(self.exceptions.rules),
+                "exception_rules_due": self.exceptions.due_rules(datetime.now(UTC)),
             },
             "objects": objects,
             "edges": edges,
@@ -1893,46 +2037,121 @@ class InventoryScanner:
             "recurring_devices": recurring,
         }
 
+    def _label_hides(self, finding: dict[str, Any], registry: Any) -> bool:
+        """Whether the ignore label sits on the object or on its device."""
+        entry = registry.async_get(finding["object_id"])
+        if entry is not None and IGNORE_LABEL in entry.labels:
+            return True
+        # The label on a device also hides the device's own findings and those of its entities.
+        device_id = entry.device_id if entry is not None else finding["object_id"]
+        device = dr.async_get(self.hass).async_get(device_id) if device_id else None
+        return device is not None and IGNORE_LABEL in device.labels
+
     def _ignored_by(self, finding: dict[str, Any], registry: Any) -> str | None:
         """Return why a finding is hidden: by the user, or by the ignore label."""
         if self.ignored.is_ignored(finding["key"]):
             return "user"
-        entry = registry.async_get(finding["object_id"])
-        if entry is not None and IGNORE_LABEL in entry.labels:
-            return "label"
-        # The label on a device also hides the device's own findings and those of its entities.
-        device_id = entry.device_id if entry is not None else finding["object_id"]
-        device = dr.async_get(self.hass).async_get(device_id) if device_id else None
-        if device is not None and IGNORE_LABEL in device.labels:
-            return "label"
-        return None
+        return "label" if self._label_hides(finding, registry) else None
 
     def _mark_ignored(self, finding: dict[str, Any], registry: Any) -> None:
         """Set what hides a finding, the decision behind it and whether one ran out."""
         finding["ignored_by"] = self._ignored_by(finding, registry)
         finding["ignore_rule"] = None
         finding["rule_due"] = False
+        # What would hide it as well, behind the way that wins; the notes add theirs later.
+        finding["also"] = []
+        if finding["ignored_by"] == "user" and self._label_hides(finding, registry):
+            finding["also"].append({"by": "label"})
         if finding["ignored_by"] is None:
             self._apply_exception(finding)
+        elif (result := self._exception_result(finding)) and result["state"] != "due":
+            finding["also"].append({"by": "rule", "rule": result["rule"].get("id")})
         finding["ignored"] = finding["ignored_by"] is not None
         info = self.ignored.info(finding["key"])
         finding["ignore_info"] = info if finding["ignored_by"] == "user" else None
         finding["resurfaced"] = not finding["ignored"] and self.ignored.is_due(finding["key"])
+        due_entry = self.ignored.entry(finding["key"]) if finding["resurfaced"] else None
+        finding["due_info"] = due_entry
 
-    def _apply_exception(self, finding: dict[str, Any]) -> None:
-        """Let the exception rules hide or hold back a finding, or mark it as due after a delay."""
+    def _outage_patterns(self) -> dict[str, int]:
+        """The hour at which the outages of an entity recur, from the reliability analysis if it was calculated.
+
+        Nothing is queried here: only a reply kept from before is read, so without one there is no pattern.
+        """
+        kept = kept_reply(self.replies, reply_key(7, False), time.time(), CACHE_SECONDS)
+        entities = ((kept or {}).get("unstable") or {}).get("entities") or {}
+        return {
+            entity_id: item["pattern_hour"]
+            for entity_id, item in entities.items()
+            if isinstance(item, dict) and item.get("pattern_hour") is not None
+        }
+
+    def _review_decisions(
+        self,
+        objects: list[dict[str, Any]],
+        edges: list[dict[str, Any]],
+        findings: list[dict[str, Any]],
+        causes: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        """Lift a "later" whose finding got worse; the causes, recomputed when one was lifted.
+
+        A hidden cause is no cause, so the follow-ups are counted in a copy in which the held ones are shown.
+        """
+        held = {
+            f["key"]: f
+            for f in findings
+            if f.get("ignored_by") == "user"
+            and (f.get("ignore_info") or {}).get("kind") == "snooze"
+        }
+        if not held:
+            return causes
+        probe = [dict(f, ignored=False) if f["key"] in held else dict(f) for f in findings]
+        followers = {
+            c["finding_key"]: c["total_followers"]
+            for c in apply_causes(objects, edges, probe)
+            if c.get("finding_key")
+        }
+        lifted = self.ignored.review(
+            {
+                key: (f.get("impact_steady", f.get("impact", "none")), followers.get(key, 0))
+                for key, f in held.items()
+            },
+            datetime.now(UTC),
+        )
+        if not lifted:
+            return causes
+        registry = er.async_get(self.hass)
+        now = datetime.now(UTC)
+        for key in lifted:
+            self._mark_ignored(held[key], registry)
+            self.activity.record(
+                "auto",
+                "lifted",
+                now,
+                key=key,
+                name=held[key].get("title") or held[key].get("object_id"),
+                source="system",
+            )
+        return apply_causes(objects, edges, findings)
+
+    def _exception_result(self, finding: dict[str, Any]) -> dict[str, Any] | None:
+        """What the exception rules say about a finding, or None if none applies."""
         if not self.exceptions.rules:
-            return
+            return None
         if finding["rule_id"] == "config_entry.not_loaded":
             found = entry_traits(self.hass, finding["object_id"])
         else:
             kind = "entity" if "." in finding["object_id"] else "device"
             found = traits(self.hass, kind, finding["object_id"])
         if found is None:
-            return
-        result = verdict(
+            return None
+        return verdict(
             self.exceptions.rules, found, finding, datetime.now(UTC), self.exceptions.vacation()
         )
+
+    def _apply_exception(self, finding: dict[str, Any]) -> None:
+        """Let the exception rules hide or hold back a finding, or mark it as due after a delay."""
+        result = self._exception_result(finding)
         if result is None:
             return
         finding["ignore_rule"] = {
@@ -1955,7 +2174,7 @@ class InventoryScanner:
         ]
         for item in objects:
             found = traits(self.hass, item["object_type"], item["object_id"]) if hiding else None
-            item["excepted"] = bool(found) and any(r["enabled"] and _hits(r, found) for r in hiding)
+            item["excepted"] = bool(found and any(r["enabled"] and _hits(r, found) for r in hiding))
 
     def vacation_meta(self, findings: list[dict[str, Any]]) -> dict[str, Any] | None:
         """What the panel shows about the vacation mode; None while no switch is chosen."""
@@ -2004,7 +2223,7 @@ class InventoryScanner:
 
     def set_exceptions(self, rules: list[Any]) -> str | None:
         """Replace the exception rules and bring the cached snapshot up to date; the failure, or None."""
-        if (error := self.exceptions.set_rules(rules)) is not None:
+        if (error := self.exceptions.set_rules(rules, datetime.now(UTC))) is not None:
             return error
         self._refresh_marks()
         return None
@@ -2019,6 +2238,7 @@ class InventoryScanner:
         days: int | None = None,
         by: str | None = None,
         via: str | None = None,
+        source: str | None = None,
     ) -> bool:
         """Hide or show one finding in the stored state and the cached snapshot.
 
@@ -2026,33 +2246,120 @@ class InventoryScanner:
         A policy violation (key ``policy.<rule>|...``) or a conflict (``conflict.<kind>|...``) is no finding: only the ignore list changes.
         """
         now = datetime.now(UTC)
+        finding = next(
+            (f for f in (self._snapshot or {}).get("findings", []) if f["key"] == key), None
+        )
+        previous = self.ignored.entry(key)
 
         def store() -> bool:
             if not ignored:
                 self.ignored.set_ignored(key, False, now)
                 return True
             until = now + timedelta(days=days) if days else None
-            return self.ignored.decide(key, kind, now, reason=reason, until=until, by=by, via=via)
+            return self.ignored.decide(
+                key,
+                kind,
+                now,
+                reason=reason,
+                until=until,
+                by=by,
+                via=via,
+                impact=(finding.get("impact_steady") or finding.get("impact")) if finding else None,
+                followers=self._followers_of(key),
+                critical=self.finding_is_critical(key),
+            )
 
         # A decision whose finding is away right now (it rests) can be changed or taken away as well.
         if key.startswith((POLICY_KEY_PREFIX, CONFLICT_KEY_PREFIX)) or (
             self.ignored.entry(key) is not None
             and not any(f["key"] == key for f in (self._snapshot or {}).get("findings", []))
         ):
-            return store()
-        finding = next(
-            (f for f in (self._snapshot or {}).get("findings", []) if f["key"] == key), None
-        )
+            if not store():
+                return False
+            self._record_decision(
+                key, ignored, kind, reason, days, now, by, via or source, finding, previous
+            )
+            return True
         if finding is None:
             return False
         if not store():
             return False
+        self._record_decision(
+            key, ignored, kind, reason, days, now, by, via or source, finding, previous
+        )
         self._refresh_finding(finding)
         return True
 
-    def restore_decision(self, key: str, entry: dict[str, Any] | None) -> None:
+    def _record_decision(
+        self,
+        key: str,
+        ignored: bool,
+        kind: str,
+        reason: str,
+        days: int | None,
+        now: datetime,
+        by: str | None,
+        source: str | None,
+        finding: dict[str, Any] | None,
+        previous: dict[str, Any] | None,
+    ) -> None:
+        """Write a decision on a finding (or taking it back) into the activity."""
+        self.activity.record(
+            "decision",
+            kind if ignored else "unignore",
+            now,
+            key=key,
+            name=(finding or {}).get("title") or (finding or {}).get("object_id"),
+            reason=reason or None,
+            until=(now + timedelta(days=days)).isoformat() if ignored and days else None,
+            by=by,
+            source=source,
+            undo={"type": "ignore", "key": key, "previous": previous, "after": now.isoformat()}
+            if ignored
+            else None,
+        )
+
+    def _followers_of(self, key: str) -> int:
+        """How many follow-ups hang on the finding right now; 0 for something that is no cause."""
+        causes = (self._snapshot or {}).get("causes", [])
+        return next((c["total_followers"] for c in causes if c.get("finding_key") == key), 0)
+
+    def decision_problem(self, key: str, kind: str, has_days: bool) -> str | None:
+        """Why a decision cannot be taken without a time (the same rule for the panel and the service)."""
+        if has_days:
+            return None
+        if kind == "snooze":
+            return "days_required"
+        if kind == "keep" and self.finding_is_critical(key):
+            return "days_required_critical"
+        return None
+
+    def finding_is_critical(self, key: str) -> bool:
+        """Whether the object of this finding is critical (label, lock, alarm, detector)."""
+        finding = next(
+            (f for f in (self._snapshot or {}).get("findings", []) if f["key"] == key), None
+        )
+        if finding is None:  # away right now: what was known when it was decided
+            return bool((self.ignored.entry(key) or {}).get("critical"))
+        return any(fact.get("fact") == "critical" for fact in finding.get("impact_facts", []))
+
+    def stands_as_left(self, undo: dict[str, Any]) -> bool:
+        """Whether the decision or mark of an undo is still the one its action left (older entries: yes)."""
+        after = undo.get("after")
+        if after is None:
+            return True
+        if undo["type"] == "ignore":
+            current = self.ignored.entry(undo["key"])
+        else:
+            current = self.marks.items.get(undo["key"])
+        return current is not None and current.get("at") == after
+
+    def restore_decision(
+        self, key: str, entry: dict[str, Any] | None, by: str | None = None
+    ) -> None:
         """Put the decision about a finding back as it was (``None``: there was none)."""
         self.ignored.restore(key, entry)
+        self.activity.record("decision", "undo", datetime.now(UTC), key=key, by=by)
         finding = next(
             (f for f in (self._snapshot or {}).get("findings", []) if f["key"] == key), None
         )
@@ -2062,11 +2369,90 @@ class InventoryScanner:
     def _refresh_finding(self, finding: dict[str, Any]) -> None:
         assert self._snapshot is not None
         self._mark_ignored(finding, er.async_get(self.hass))
+        self._after_decisions()
+
+    def _after_decisions(self) -> None:
+        """Count the causes anew and tell the others, once the findings carry their decisions."""
+        assert self._snapshot is not None
         self._snapshot["causes"] = apply_causes(
             self._snapshot["objects"], self._snapshot["edges"], self._snapshot["findings"]
         )
         self._sync_issues(self._snapshot)
         async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
+
+    def snooze_many(
+        self, keys: list[str], days: int, reason: str, by: str | None, source: str | None = None
+    ) -> int:
+        """Put several findings off together, with one recount at the end; how many were put off."""
+        now = datetime.now(UTC)
+        found = {f["key"]: f for f in (self._snapshot or {}).get("findings", [])}
+        registry = er.async_get(self.hass)
+        put_off: list[tuple[str, dict[str, Any], dict[str, Any] | None]] = []
+        done = 0
+        for key in keys:
+            finding = found.get(key)
+            previous = self.ignored.entry(key)
+            if finding is None or not self.ignored.decide(
+                key,
+                "snooze",
+                now,
+                reason=reason,
+                until=now + timedelta(days=days),
+                by=by,
+                impact=finding.get("impact_steady") or finding.get("impact"),
+                followers=self._followers_of(key),
+            ):
+                continue
+            self._mark_ignored(finding, registry)
+            put_off.append((key, finding, previous))
+            done += 1
+        if len(put_off) == 1:
+            key, finding, previous = put_off[0]
+            self._record_decision(
+                key, True, "snooze", reason, days, now, by, source, finding, previous
+            )
+        elif put_off:
+            # One line for the whole action, so a bulk does not push the rest of the history out.
+            self.activity.record(
+                "decision",
+                "snooze",
+                now,
+                reason=reason or None,
+                until=(now + timedelta(days=days)).isoformat(),
+                by=by,
+                source=source,
+                count=len(put_off),
+                undo={
+                    "type": "ignore_many",
+                    "key": "",
+                    "previous": None,
+                    "items": [
+                        {"key": key, "previous": previous, "after": now.isoformat()}
+                        for key, _, previous in put_off
+                    ],
+                },
+            )
+        if done:
+            self._after_decisions()
+        return done
+
+    def restore_decisions(self, items: list[dict[str, Any]], by: str | None = None) -> int:
+        """Take back the decisions of a bulk action that are still as it left them; how many were."""
+        found = {f["key"]: f for f in (self._snapshot or {}).get("findings", [])}
+        registry = er.async_get(self.hass)
+        done = 0
+        for item in items:
+            current = self.ignored.entry(item["key"])
+            if item.get("after") is not None and (current or {}).get("at") != item["after"]:
+                continue
+            self.ignored.restore(item["key"], item["previous"])
+            if (finding := found.get(item["key"])) is not None:
+                self._mark_ignored(finding, registry)
+            done += 1
+        if done:
+            self.activity.record("decision", "undo", datetime.now(UTC), count=done, by=by)
+            self._after_decisions()
+        return done
 
     def set_mark(
         self,
@@ -2082,6 +2468,7 @@ class InventoryScanner:
         grace: int = GRACE_DEFAULT,
         auto_clear: bool = False,
         via: str | None = None,
+        source: str | None = None,
     ) -> str | None:
         """Mark an entity, device, integration or app; the reason it failed, or None."""
         if kind not in KINDS_OF.get(object_type, KINDS):
@@ -2098,6 +2485,7 @@ class InventoryScanner:
             return "target_unknown"
         now = datetime.now(UTC)
         until = now + timedelta(days=days) if days else None
+        previous = deepcopy(self.marks.items.get(mark_key(object_type, object_id)))
         if not self.marks.set(
             mark_key(object_type, object_id),
             kind,
@@ -2112,12 +2500,34 @@ class InventoryScanner:
             via=via,
         ):
             return "too_many"
+        self.activity.record(
+            "mark",
+            kind,
+            now,
+            key=mark_key(object_type, object_id),
+            name=target,
+            reason=reason or None,
+            until=until.isoformat() if until else None,
+            by=by,
+            source=via or source,
+            undo={
+                "type": "mark",
+                "key": mark_key(object_type, object_id),
+                "previous": previous,
+                "after": now.isoformat(),
+            },
+        )
         self._refresh_marks()
         return None
 
-    def restore_mark(self, object_type: str, object_id: str, entry: dict[str, Any] | None) -> None:
+    def restore_mark(
+        self, object_type: str, object_id: str, entry: dict[str, Any] | None, by: str | None = None
+    ) -> None:
         """Put the mark of an object back as it was (``None``: there was none)."""
         self.marks.restore(mark_key(object_type, object_id), entry)
+        self.activity.record(
+            "mark", "undo", datetime.now(UTC), key=mark_key(object_type, object_id), by=by
+        )
         self._refresh_marks()
 
     async def set_stale_limit(self, entity_id: str, hours: int | None) -> str | None:
@@ -2134,10 +2544,25 @@ class InventoryScanner:
         await self.async_scan()
         return None
 
-    def clear_mark(self, object_type: str, object_id: str) -> bool:
+    def clear_mark(
+        self,
+        object_type: str,
+        object_id: str,
+        by: str | None = None,
+        via: str | None = None,
+        source: str | None = None,
+    ) -> bool:
         """Take a mark away again."""
         if not self.marks.clear(mark_key(object_type, object_id)):
             return False
+        self.activity.record(
+            "mark",
+            "clear",
+            datetime.now(UTC),
+            key=mark_key(object_type, object_id),
+            by=by,
+            source=via or source,
+        )
         self._refresh_marks()
         return True
 
@@ -2227,7 +2652,7 @@ class InventoryScanner:
 
     def _existing_objects(self) -> dict[str, set[str]]:
         """Collect the IDs a reference may legitimately point to."""
-        registries = {
+        registries: dict[str, Any] = {
             "devices": dr.async_get(self.hass),
             "areas": ar.async_get(self.hass),
             "floors": fr.async_get(self.hass),
@@ -2249,7 +2674,7 @@ class InventoryScanner:
             existing["tag"] = {str(tag_id) for tag_id in tags}
         return existing
 
-    async def _blueprint_files(self) -> dict[str, set[str]] | None:
+    async def _blueprint_files(self) -> dict[str, Iterable[str]] | None:
         """The paths of every blueprint file, or None where they cannot be read (a gap, not "gone")."""
         if "blueprint" not in self.hass.config.components:
             self.scan_coverage.absent("blueprints", "not_set_up")
@@ -2586,7 +3011,7 @@ class InventoryScanner:
             annotate_findings(broken, config, references)
             findings.extend(broken)
             settings = getattr(dashboard, "config", None) or {}
-            views = config.get("views") if isinstance(config.get("views"), list) else []
+            views = config["views"] if isinstance(config.get("views"), list) else []
             dashboards.append(
                 {
                     "object_type": "dashboard",

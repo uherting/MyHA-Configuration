@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import math
 from collections import Counter
-from datetime import datetime
-from typing import Any
+from datetime import datetime, timedelta
+from typing import Any, cast
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -33,6 +33,8 @@ from .runtime import HousekeeperConfigEntry
 from .scan_coverage import gaps
 from .scan_health import STATES
 
+NEW_HOURS = 24  # how long a finding counts as new for the sensor
+
 COUNT_KEYS = (
     "findings",
     "orphaned_entities",
@@ -41,6 +43,7 @@ COUNT_KEYS = (
     "possible_duplicates",
     "unused_automations",
     "low_batteries",
+    "new_findings",
 )
 
 
@@ -52,8 +55,17 @@ def compute_values(snapshot: dict[str, Any] | None) -> dict[str, Any]:
     # A quiet outage (info, low) is on the findings page only; the sensors count from medium on.
     active = [f for f in snapshot["findings"] if not f.get("ignored") and not is_quiet(f)]
     by_class = Counter(f["classification"] for f in active)
+    scanned = datetime.fromisoformat(snapshot["meta"]["scanned_at"])
+    fresh = [
+        f
+        for f in active
+        if f.get("impact") in ("high", "medium")
+        and f.get("first_seen_at")
+        and scanned - datetime.fromisoformat(f["first_seen_at"]) <= timedelta(hours=NEW_HOURS)
+    ]
     return {
         "findings": len(active),
+        "new_findings": len(fresh),
         "orphaned_entities": by_class["orphaned"],
         "unavailable_entities": by_class["unavailable"],
         "broken_references": by_class["broken_reference"],
@@ -256,7 +268,8 @@ class MonitorSensor(SensorEntity):
             if not self._removed:
                 self._removed = True
                 registry = er.async_get(self.hass)
-                entity_id = registry.async_get_entity_id("sensor", DOMAIN, self.unique_id)
+                unique_id = cast(str, self.unique_id)
+                entity_id = registry.async_get_entity_id("sensor", DOMAIN, unique_id)
                 if entity_id:
                     registry.async_remove(entity_id)
                 self.hass.async_create_task(self.async_remove())

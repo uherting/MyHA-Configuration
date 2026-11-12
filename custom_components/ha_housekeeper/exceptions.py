@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import secrets
 from datetime import datetime, timedelta
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, cast
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
@@ -44,6 +44,7 @@ TARGET_LENGTH = 255
 NOTE_MAX = 200
 DAYS_MAX = 365
 DAYS_DEFAULT = 7
+REVIEW_CHOICES = (30, 90, 180, 365)  # days after which a "do not report" rule asks to be looked at
 GRACE_DEFAULT = (
     24  # hours a finding is held back after the vacation, without a delay rule of its own
 )
@@ -51,6 +52,7 @@ GRACE_MAX = 720
 GERMAN_NAMES = ("urlaubsmodus", "urlaub")  # helpers offered as the vacation switch, in this order
 ENGLISH_NAMES = ("vacation_mode", "vacation", "holiday_mode", "holiday")
 KEYWORD_MAX = 60
+PREVIEW_HITS_MAX = 200  # objects the preview lists by name; the count is always complete
 AVAILABILITY = frozenset({"unavailable", "unknown", "stale"})  # what a delay rule holds back
 
 
@@ -73,8 +75,12 @@ class Vacation(NamedTuple):
     grace_hours: int = GRACE_DEFAULT
 
 
-def clean_rule(raw: Any) -> dict[str, Any] | None:
-    """One rule in its known shape, or None when it cannot be one."""
+def clean_rule(raw: Any, now: datetime | None = None) -> dict[str, Any] | None:
+    """One rule in its known shape, or None when it cannot be one.
+
+    A rule that hides can carry a review date: ``review_days`` is its length, ``review_at`` the day
+    it falls due. With ``now`` a missing date is set from the length; the rule keeps working after it.
+    """
     if not isinstance(raw, dict) or raw.get("kind") not in KINDS:
         return None
     targets = raw.get("targets")
@@ -94,6 +100,17 @@ def clean_rule(raw: Any) -> dict[str, Any] | None:
         if isinstance(days, int) and not isinstance(days, bool)
         else DAYS_DEFAULT
     )
+    review_days = raw.get("review_days")
+    review_days = (
+        review_days
+        if review_days in REVIEW_CHOICES and action == "hide" and scope == "always"
+        else 0
+    )
+    review_at = raw.get("review_at") if review_days else None
+    try:
+        datetime.fromisoformat(cast(str, review_at))
+    except (TypeError, ValueError):
+        review_at = (now + timedelta(days=review_days)).isoformat() if review_days and now else None
     rule_id = raw.get("id")
     return {
         "id": rule_id
@@ -106,7 +123,16 @@ def clean_rule(raw: Any) -> dict[str, Any] | None:
         "scope": scope,
         "enabled": raw.get("enabled") is not False,
         "note": str(raw.get("note") or "").strip()[:NOTE_MAX],
+        "review_days": review_days,
+        "review_at": review_at,
     }
+
+
+def _review_due(rule: dict[str, Any], now: datetime) -> bool:
+    try:
+        return bool(rule.get("review_at")) and datetime.fromisoformat(rule["review_at"]) <= now
+    except (TypeError, ValueError):
+        return False
 
 
 def traits(hass: HomeAssistant, object_type: str, object_id: str) -> Traits | None:
@@ -270,7 +296,7 @@ def preview(
     """
     names = {i["object_id"]: i["name"] for i in snapshot.get("objects", []) if i.get("name")}
     counts = {"hide": 0, "hold": 0, "due": 0}
-    objects: set[str] = set()
+    objects: dict[str, int] = {}
     overlap: set[str] = set()
     important: list[dict[str, str]] = []
     drafts = rule if isinstance(rule, list) else [rule]
@@ -280,20 +306,35 @@ def preview(
         if drafts[0]["scope"] == "vacation"
         else vacation
     )
+    covered = 0
     for finding in snapshot.get("findings", []):
-        if finding.get("ignored_by") not in (None, "rule"):
-            continue
         object_id = finding["object_id"]
         found = traits(hass, "entity" if "." in object_id else "device", object_id)
         result = verdict(drafts, found, finding, now, on) if found is not None else None
-        if result is None:
+        if result is None or found is None:
+            continue
+        if finding.get("ignored_by") not in (None, "rule"):
+            covered += finding["ignored_by"] in ("user", "label")  # hidden ahead of any rule
             continue
         counts[result["state"]] += 1
-        objects.add(object_id)
+        objects[object_id] = objects.get(object_id, 0) + 1
         overlap.update(r["id"] for r in others or [] if r["id"] not in own and matches(r, found))
         if result["state"] != "due" and finding.get("impact") == "high" and len(important) < 5:
             important.append({"object_id": object_id, "name": names.get(object_id, object_id)})
-    return {**counts, "objects": len(objects), "important": important, "overlap": sorted(overlap)}
+    hits = [
+        {"object_id": object_id, "name": names.get(object_id, object_id), "findings": n}
+        for object_id, n in sorted(
+            objects.items(), key=lambda kv: names.get(kv[0], kv[0]).casefold()
+        )
+    ]
+    return {
+        **counts,
+        "objects": len(objects),
+        "hits": hits[:PREVIEW_HITS_MAX],
+        "covered": covered,
+        "important": important,
+        "overlap": sorted(overlap),
+    }
 
 
 class ExceptionStore:
@@ -353,11 +394,15 @@ class ExceptionStore:
             },
         }
 
-    def set_rules(self, raw: list[Any]) -> str | None:
+    def due_rules(self, now: datetime) -> int:
+        """How many rules that are on have passed their review date; they keep working."""
+        return sum(1 for rule in self.rules if rule["enabled"] and _review_due(rule, now))
+
+    def set_rules(self, raw: list[Any], now: datetime | None = None) -> str | None:
         """Replace all rules; the reason it failed, or None."""
         if len(raw) > ITEM_LIMIT:
             return "too_many"
-        cleaned = [clean_rule(item) for item in raw]
+        cleaned = [clean_rule(item, now) for item in raw]
         if any(rule is None for rule in cleaned):
             return "invalid"
         self.rules = [rule for rule in cleaned if rule is not None]
@@ -428,7 +473,7 @@ class ExceptionStore:
                 blocking=True,
                 return_response=True,
             )
-            events = (result or {}).get(entity, {}).get("events", [])
+            events = cast(dict[str, Any], result or {}).get(entity, {}).get("events", [])
             self._keyword_hit = any(
                 word in str(event.get("summary") or "").casefold() for event in events
             )

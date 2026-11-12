@@ -17,6 +17,7 @@
         "title": "HA-Housekeeper-Optionen",
         "description": "Ein Ausfall wird nach der ersten Schwelle ein Befund und steigt mit der Dauer: Info, niedrig, mittel, hoch. Die Schwellen müssen aufsteigen. Automationen, die ausgeschaltet sind oder die angegebene Zahl an Tagen nie laufen, werden als ungenutzt gemeldet. Regelmäßige Scans halten Verlauf und Reparaturhinweise aktuell; bei Ausfällen folgen zusätzliche Scans.",
         "data": {
+          "show_in_sidebar": "Seitenleisten-Eintrag anzeigen",
           "outage_info_minutes": "Ausfall als Info melden nach (Minuten)",
           "outage_low_hours": "Ausfall als niedrig melden nach (Stunden)",
           "outage_medium_hours": "Ausfall als mittel melden nach (Stunden)",
@@ -29,6 +30,7 @@
           "watch_hours": "Nach Updates beobachten (Stunden, 0 = aus)"
         },
         "data_description": {
+          "show_in_sidebar": "Zeigt Housekeeper in der Seitenleiste. Aus: das Panel bleibt über die Integrationsseite und /ha-housekeeper erreichbar.",
           "outage_info_minutes": "Eine Entität oder Integration, die so lange ausgefallen ist, wird ein Befund der Stufe Info.",
           "outage_low_hours": "Ab dieser Dauer ist der Ausfall ein niedriger Befund.",
           "outage_medium_hours": "Ab dieser Dauer ist der Ausfall ein mittlerer Befund und zählt in den Sensoren.",
@@ -85,6 +87,10 @@
     "auto_pause_exhausted": {
       "title": "{title} seit {days} Tagen pausiert",
       "description": "Housekeeper hat {title} nach wiederholten Einrichtungsfehlern pausiert und es {days} Tage lang ohne Erfolg wieder versucht. Die Pause bleibt, bis du sie beendest. [Auto-Pause öffnen]({link})"
+    },
+    "check_flapping": {
+      "title": "Eine Prüfung wechselt ständig ihre Stufe",
+      "description": "{count} Prüfung(en) haben in wenigen Stunden mehrmals die Stufe gewechselt. Oft ist eine Regel zu scharf oder etwas startet dauernd neu. [Verlauf öffnen]({link}). Es wird nichts automatisch geändert."
     }
   },
   "entity": {
@@ -109,6 +115,9 @@
       },
       "low_batteries": {
         "name": "Schwache Batterien"
+      },
+      "new_findings": {
+        "name": "Neue Befunde"
       },
       "last_scan": {
         "name": "Letzter Scan"
@@ -182,6 +191,9 @@
       },
       "hint_orphaned_statistics": {
         "name": "Reparaturhinweis: verwaiste Statistiken"
+      },
+      "hint_check_flapping": {
+        "name": "Reparaturhinweis: Prüfung wechselt ständig"
       }
     },
     "number": {
@@ -235,6 +247,10 @@
         "classification": {
           "name": "Zustand",
           "description": "Nur dieser Zustand, z. B. unavailable, unknown, stale oder broken_reference."
+        },
+        "topic": {
+          "name": "Thema",
+          "description": "Nur dieses Thema: down (ausgefallen), broken_references (kaputte Verweise), failing_automations (fehlerhafte Automationen) oder unneeded (überflüssig)."
         },
         "object_type": {
           "name": "Objektart",
@@ -290,6 +306,16 @@
         }
       }
     },
+    "finding_fix_options": {
+      "name": "KI-Zugriff: Wege zum Beheben eines Befunds",
+      "description": "Nennt die Wege, einen Befund zu beheben, den empfohlenen zuerst (fehlendes Ziel ersetzen, Editor öffnen, abwarten, die Integration ansehen und dergleichen). Nennt sie nur: nichts wird geändert, und ein Weg, der schreibt, läuft im Panel als Plan mit Vorschau und Bestätigung. Braucht den eingeschalteten „KI-Zugriff“. Den Schlüssel liefert „findings“.",
+      "fields": {
+        "key": {
+          "name": "Schlüssel des Befunds",
+          "description": "Der Schlüssel des Befunds, wie ihn „findings“ auflistet."
+        }
+      }
+    },
     "finding_decide": {
       "name": "KI-Zugriff: über einen Befund entscheiden",
       "description": "Blendet einen Befund in Housekeeper aus, behält ihn oder stellt ihn zurück, oder zeigt ihn wieder. Nur Housekeepers eigene Liste ändert sich, nie Home Assistant; die Änderung lässt sich mit „undo“ oder im Panel zurücknehmen. Braucht „KI-Zugriff aktivieren“ und „Merkliste ändern“. Den Schlüssel liefert „findings“.",
@@ -300,11 +326,11 @@
         },
         "action": {
           "name": "Aktion",
-          "description": "decide zum Ausblenden, Behalten oder Zurückstellen, restore zum Wiedereinblenden."
+          "description": "decide für „Fehlalarm“, „Ist so gewollt“ oder „Später“, restore zum Wiedereinblenden."
         },
         "kind": {
           "name": "Entscheidung",
-          "description": "ignore blendet aus, keep sagt, dass es so gewollt ist (braucht einen Grund), snooze stellt zurück (braucht Tage)."
+          "description": "ignore sagt „Fehlalarm“, keep sagt „Ist so gewollt“ (braucht einen Grund), snooze sagt „Später“ (braucht Tage)."
         },
         "reason": {
           "name": "Grund",
@@ -312,13 +338,13 @@
         },
         "days": {
           "name": "Tage",
-          "description": "Wie lange eine Zurückstellung oder andere Entscheidung gilt, 1 bis 3650."
+          "description": "Wie lange „Später“ oder eine andere Entscheidung gilt, 1 bis 3650."
         }
       }
     },
     "mark": {
-      "name": "KI-Zugriff: Objekt markieren",
-      "description": "Sagt Housekeeper, was bei einem Objekt zu erwarten ist (absichtlich offline, saisonal, Reserve, behalten, ersetzt), oder nimmt die Marke weg. Nur Housekeepers eigene Liste ändert sich; die Änderung lässt sich zurücknehmen. Braucht „KI-Zugriff aktivieren“ und „Merkliste ändern“.",
+      "name": "KI-Zugriff: Objekt-Notiz setzen",
+      "description": "Sagt Housekeeper, was bei einem Objekt zu erwarten ist (absichtlich offline, saisonal, Reserve, nicht löschen, ersetzt), oder nimmt die Objekt-Notiz weg. Nur Housekeepers eigene Liste ändert sich; die Änderung lässt sich zurücknehmen. Braucht „KI-Zugriff aktivieren“ und „Merkliste ändern“.",
       "fields": {
         "action": {
           "name": "Aktion",
@@ -333,7 +359,7 @@
           "description": "Die ID des Objekts."
         },
         "kind": {
-          "name": "Marke",
+          "name": "Art der Objekt-Notiz",
           "description": "expected_offline, seasonal, spare, keep oder replaced. Integrationen und Apps kennen nur die ersten drei."
         },
         "reason": {
@@ -342,7 +368,7 @@
         },
         "days": {
           "name": "Tage",
-          "description": "Bis wann die Marke gilt, 1 bis 3650. Ohne Angabe hat sie kein Ende."
+          "description": "Bis wann die Objekt-Notiz gilt, 1 bis 3650. Ohne Angabe hat sie kein Ende."
         },
         "target": {
           "name": "Ersatz",
@@ -383,6 +409,24 @@
         "at": {
           "name": "Zeit des Eintrags",
           "description": "Das „at“ des Protokolleintrags."
+        }
+      }
+    },
+    "finding_fix_plan": {
+      "name": "KI-Zugriff: Plan zum Beheben eines Befunds anlegen",
+      "description": "Legt den Plan für einen Weg an, einen Befund zu beheben (fehlendes Ziel ersetzen, Verweis entfernen, Fehler abfangen, Überflüssiges aufräumen). Der Plan ist nur eine Vorschau: Er läuft nicht. Ein Administrator prüft und bestätigt ihn im Housekeeper-Panel. Braucht den eingeschalteten „KI-Zugriff“ und „Befunde beheben“. Schlüssel und Wege liefert „finding_fix_options“.",
+      "fields": {
+        "key": {
+          "name": "Schlüssel des Befunds",
+          "description": "Der Schlüssel des Befunds."
+        },
+        "way": {
+          "name": "Weg",
+          "description": "Der Weg aus „finding_fix_options“: replace_target, remove_reference, catch_error oder cleanup_round."
+        },
+        "target": {
+          "name": "Neues Ziel",
+          "description": "Für replace_target: die Entität, der Bereich, die Etage oder das Label, das an die Stelle des fehlenden tritt."
         }
       }
     }
@@ -428,19 +472,43 @@
       "message": "Eine Entscheidung braucht einen Grund."
     },
     "days_required": {
-      "message": "Einen Befund zurückzustellen braucht eine Zahl von Tagen."
+      "message": "„Später“ braucht eine Zahl von Tagen."
+    },
+    "days_required_critical": {
+      "message": "Dieses Objekt ist kritisch: „Ist so gewollt“ braucht eine Zahl von Tagen, nach denen es wieder vorgelegt wird."
     },
     "finding_not_found": {
       "message": "Der Befund ist nicht im letzten Scan. Den Schlüssel aus „findings“ nehmen."
     },
     "kind_not_allowed": {
-      "message": "Diese Art von Marke ist für dieses Objekt nicht erlaubt."
+      "message": "Diese Art von Objekt-Notiz ist für dieses Objekt nicht erlaubt."
     },
     "target_unknown": {
       "message": "Der Ersatz ist nicht im letzten Scan."
     },
     "too_many": {
       "message": "Die Liste ist voll."
+    },
+    "fix_disabled": {
+      "message": "Pläne zum Beheben anzulegen ist ausgeschaltet. Schalte „Befunde beheben“ in den Housekeeper-Einstellungen ein."
+    },
+    "way_not_offered": {
+      "message": "Dieser Weg wird für den Befund nicht angeboten. Die Wege nennt finding_fix_options."
+    },
+    "target_required": {
+      "message": "Dieser Weg braucht das neue Ziel in „target“."
+    },
+    "refactor_disabled": {
+      "message": "Dieser Weg braucht das eingeschaltete „Verbessern“ im Housekeeper-Panel."
+    },
+    "no_last_failure": {
+      "message": "Im Ablaufprotokoll von Home Assistant gibt es keinen fehlgeschlagenen Lauf, dem sich der Schritt entnehmen ließe."
+    },
+    "way_not_plannable": {
+      "message": "Dieser Weg lässt sich nicht als Plan anlegen; er ist für das Panel."
+    },
+    "plan_blocked": {
+      "message": "Der Plan ist gesperrt: {detail}."
     }
   }
 }

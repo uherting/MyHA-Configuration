@@ -1,0 +1,96 @@
+{
+ "audit_report.TEXTS": {
+  "title": "Auditná správa k plánu čistenia",
+  "overview": "Prehľad",
+  "plan": "Plán",
+  "created": "Vytvorené",
+  "scan": "Podľa kontroly",
+  "status": "Stav",
+  "confirmed": "Potvrdené",
+  "by": "používateľom",
+  "run": "Vykonané",
+  "backup": "Záloha",
+  "no_backup": "nie je potrebná alebo nebola vytvorená",
+  "backup_skipped": "úmyselne vynechané",
+  "simulation": "Očakávaný konečný stav",
+  "actions": "Akcie",
+  "verification": "Overenie",
+  "undo": "Vrátenie",
+  "manual": "Treba urobiť ručne",
+  "followup": "Nadväzujúce kroky",
+  "events": "Priebeh",
+  "none": "žiadne",
+  "anonymized": "ID a názvy v tejto správe sú nahradené zástupnými znakmi.",
+  "removed": "Odstránené entity",
+  "disabled": "Vypnuté entity",
+  "replaced": "Nahradené odkazy",
+  "remaining_certain": "Zostávajúce isté použitia",
+  "remaining_uncertain": "Zostávajúce neisté použitia",
+  "orphaned": "Štatistiky, ktoré pravdepodobne osirejú",
+  "blocked": "Akcie, ktoré sa nedajú vykonať",
+  "purge_rows": "Riadky Recordera, ktoré vymazanie odstráni",
+  "history_rows_kept": "Riadky histórie, ktoré zostanú v databáze (stavy, kým ich Recorder nevymaže; dlhodobé štatistiky natrvalo)",
+  "limits": "Obmedzenia: odkazy v šablónach a mimo Home Assistanta sa nedajú spoľahlivo skontrolovať; ušetrené miesto sa neodhaduje.",
+  "state": "Stav",
+  "result": "Výsledok",
+  "ok": "v poriadku",
+  "failed": "zlyhalo"
+ },
+ "auto_pause.TEXTS": {
+  "paused": [
+   "HA Housekeeper: {title} pozastavená",
+   "{title} ({domain}) je pozastavená: {why}. Housekeeper to skúsi znova {n}-krát, najviac {days} dní. [Otvoriť Auto-pauzu](/{url}?view=reliability&tab=autopause)"
+  ],
+  "why_auto": "{n} neúspešných pokusov za {hours} h",
+  "why_manual": "pozastavené tebou",
+  "back": [
+   "HA Housekeeper: {title} je späť",
+   "{title} ({domain}) sa po {span} nastavila znova a už nie je pozastavená."
+  ],
+  "ended": [
+   "HA Housekeeper: pozastavenie {title} skončilo",
+   "{title} ({domain}) už nie je pozastavená."
+  ],
+  "exhausted": [
+   "HA Housekeeper: {title} pozastavená na {days} dní",
+   "{title} ({domain}) sa nepodarilo nastaviť za {days} dní. Pozri sa na: log, aktualizáciu integrácie, samotný zdroj. [Otvoriť Auto-pauzu](/{url}?view=reliability&tab=autopause)"
+  ]
+ },
+ "monitor.MONITOR_REASONS": {
+  "missing": "objekt chýba",
+  "disabled": "vypnutá",
+  "orphaned": "osirotená",
+  "unavailable": "nedostupná",
+  "problem": "integrácia nie je načítaná",
+  "source_unread": "zdroj sa nedá prečítať",
+  "scan_unverified": "kontrola nie je spoľahlivá",
+  "automation.blocked": "automatizácia je zablokovaná",
+  "automation.dead_actions": "akcia automatizácie má nefunkčný odkaz",
+  "automation.dead_condition": "podmienka automatizácie má nefunkčný odkaz",
+  "broken_reference": "nefunkčný odkaz",
+  "stopped": "aplikácia je zastavená",
+  "rule_stale": "hodnota sa neaktualizovala včas",
+  "rule_below_min": "pod minimálnou hodnotou",
+  "rule_unavailable_long": "príliš dlho nedostupná",
+  "rule_waiting": "beží odklad",
+  "rule_no_value": "žiadna číselná hodnota",
+  "rule_no_timestamp": "čas aktualizácie je neznámy"
+ },
+ "monitor.MONITOR_TEXTS": {
+  "uncertain_open": "Kontrola je neúplná; posledná potvrdená chyba ({last_reason}) zostáva nevyriešená.",
+  "uncertain": "Kontrola je neúplná.",
+  "impaired": "Dôležitá funkcia je narušená: {reason}",
+  "link": "Otvoriť funkcie domácnosti"
+ },
+ "notify.TEXTS": [
+  "HA Housekeeper: nové nefunkčné odkazy",
+  "Počet nových nefunkčných odkazov: {count}: {names}. [Otvoriť všetky nefunkčné odkazy](/{url}?view=findingsNav&filter=broken_reference)"
+ ],
+ "cleanup_exec.LOGBOOK_DEVICE": [
+  "Zariadenie „{}“ {}",
+  [
+   "zabudnuté",
+   "odstránené"
+  ]
+ ]
+}

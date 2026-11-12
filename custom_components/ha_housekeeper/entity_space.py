@@ -195,10 +195,10 @@ def add_attrs(run: SpaceRun, lengths: dict[int, int], users: dict[int, list[int]
 
 def build(run: SpaceRun, limit: int) -> dict[str, Any]:
     """The ranking from what is counted: lengths spread over the reported table sizes."""
-    states_weight = {
+    states_weight: dict[int, float] = {
         mid: rows * STATES_ROW_BYTES + chars for mid, (rows, chars) in run.states.items()
     }
-    attrs_weight = {
+    attrs_weight: dict[int, float] = {
         mid: rows * ATTRS_ROW_BYTES + chars for mid, (rows, chars, _) in run.attrs.items()
     }
     loose_states = run.loose_states[0] * STATES_ROW_BYTES + run.loose_states[1]
@@ -403,13 +403,14 @@ def query_variants(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
         cut = KeyCut()
         for at in range(0, len(ids), VARIANT_CHUNK):
             chunk = ids[at : at + VARIANT_CHUNK]
-            texts = dict(
-                session.execute(
+            texts: dict[int, str | None] = {
+                attributes_id: text
+                for attributes_id, text in session.execute(
                     select(StateAttributes.attributes_id, StateAttributes.shared_attrs).where(
                         StateAttributes.attributes_id.in_(chunk)
                     )
                 ).all()
-            )
+            }
             for aid in chunk:
                 cut.add(texts.get(aid))
     return {"found": True, "total": total, **cut.result()}

@@ -115,7 +115,7 @@ def evaluate(watch: dict[str, Any], marked: frozenset[str] = frozenset()) -> dic
     that is open now and was not before is listed by its key (``domain:issue_id``) and counts as worse.
     """
     before, samples = watch.get("before"), watch["samples"]
-    empty = {
+    empty: dict[str, Any] = {
         "new": [],
         "silent": [],
         "marked": [],

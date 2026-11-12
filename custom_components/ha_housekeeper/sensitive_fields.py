@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
@@ -91,7 +91,7 @@ def fields_of(entry: Any) -> list[dict[str, Any]]:
 def reauth_entry_ids(hass: HomeAssistant) -> set[str]:
     """The config entries that wait for a new login (a running reauth flow)."""
     return {
-        flow["context"].get("entry_id")
+        cast(str, flow["context"].get("entry_id"))
         for flow in hass.config_entries.flow.async_progress()
         if flow["context"].get("source") == "reauth"
     }

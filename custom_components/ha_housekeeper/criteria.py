@@ -11,10 +11,12 @@ kept, never the states.
 
 from __future__ import annotations
 
+import builtins
 import re
 import secrets
 from collections.abc import Callable
 from datetime import UTC, date, datetime, timedelta
+from functools import partial
 from typing import Any
 
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, callback
@@ -195,10 +197,10 @@ class CriteriaStore:
                     self._watches.setdefault(context_id, []).append(watch)
                 self._later(
                     criterion["within"],
-                    lambda now, c=criterion, w=watch: self._finish(entity_id, c, w),
+                    partial(self._finish, entity_id, criterion, watch),
                 )
                 continue
-            self._later(criterion["within"], lambda now, c=criterion: self._first(entity_id, c))
+            self._later(criterion["within"], partial(self._first, entity_id, criterion))
 
     def saw(self, service: str, *contexts: str | None) -> None:
         """A service was called (or a script started) in one of these contexts."""
@@ -207,7 +209,13 @@ class CriteriaStore:
                 if watch["service"] == service:
                     watch["hit"] = True
 
-    def _finish(self, entity_id: str, criterion: dict[str, Any], watch: dict[str, Any]) -> None:
+    def _finish(
+        self,
+        entity_id: str,
+        criterion: dict[str, Any],
+        watch: dict[str, Any],
+        _now: datetime | None = None,
+    ) -> None:
         context_id = watch["context"]
         if context_id in self._watches:
             self._watches[context_id] = [w for w in self._watches[context_id] if w is not watch]
@@ -227,7 +235,9 @@ class CriteriaStore:
 
         self._pending[key] = async_call_later(self._hass, seconds, fire)
 
-    def _first(self, entity_id: str, criterion: dict[str, Any]) -> None:
+    def _first(
+        self, entity_id: str, criterion: dict[str, Any], _now: datetime | None = None
+    ) -> None:
         if entity_id not in self.items:
             return
         checked = datetime.now(UTC)
@@ -292,7 +302,7 @@ class CriteriaStore:
                 found.append({"entity_id": entity_id, **numbers})
         return sorted(found, key=lambda a: (-a["missed"], a["entity_id"]))
 
-    def findings(self, today: date, known: set[str]) -> list[dict[str, Any]]:
+    def findings(self, today: date, known: builtins.set[str]) -> list[dict[str, Any]]:
         """The alerts as findings of the automations that still exist."""
         return [
             {

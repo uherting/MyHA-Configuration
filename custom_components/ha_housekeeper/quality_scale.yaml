@@ -47,7 +47,7 @@ rules:
     comment: No credentials.
   test-coverage:
     status: todo
-    comment: The platforms, the config flow, the services and the diagnostics are above 95 percent, and the paths that write (purge, plans, counter repair) and the timers of the entry have tests of their own; the integration as a whole is at 88 percent, most of the rest in the WebSocket commands.
+    comment: The platforms, the config flow, the services and the diagnostics are above 95 percent, and the paths that write (purge, plans, counter repair) and the timers of the entry have tests of their own; every WebSocket command is answered in a test; the integration as a whole is at 89 percent, the rest being branches of the WebSocket commands, the cleanup runner and the scanner.
 
   # Gold
   devices:
@@ -96,5 +96,5 @@ rules:
     status: exempt
     comment: No HTTP client.
   strict-typing:
-    status: todo
-    comment: mypy checks a few modules and does not block the CI.
+    status: done
+    comment: mypy checks every module of the integration and blocks the CI.

@@ -1,0 +1,6 @@
+clear:
+  fields:
+    target:
+      example: notify.mobile_app_my_phone
+      selector:
+        text:

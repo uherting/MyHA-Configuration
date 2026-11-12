@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import statistics
 from datetime import UTC, date, datetime
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
@@ -76,6 +76,21 @@ def _names(items: Any) -> list[str]:
     return sorted(names)
 
 
+def backup_running(hass: HomeAssistant) -> bool | None:
+    """Whether a backup runs now, from the manager's state alone (no listing of the targets); ``None`` is unknown."""
+    try:
+        from homeassistant.components.backup import async_get_manager
+
+        manager_state = getattr(async_get_manager(hass), "state", None)
+        return (
+            None
+            if manager_state is None
+            else str(getattr(manager_state, "value", manager_state)) != "idle"
+        )
+    except Exception:  # noqa: BLE001 - without the figure an unfinished attempt counts as before
+        return None
+
+
 async def collect(hass: HomeAssistant) -> dict[str, Any]:
     """Read the backup manager into plain data; any single missing field becomes ``None``."""
     try:
@@ -85,16 +100,8 @@ async def collect(hass: HomeAssistant) -> dict[str, Any]:
     except Exception:
         return {"available": False}
     state: dict[str, Any] = {"available": True, "backups": [], "agent_errors": []}
-    try:
-        # A backup in progress has its start recorded but not yet its end; that is no failure.
-        manager_state = getattr(manager, "state", None)
-        state["running"] = (
-            None
-            if manager_state is None
-            else str(getattr(manager_state, "value", manager_state)) != "idle"
-        )
-    except Exception:  # noqa: BLE001 - without the figure an unfinished attempt counts as before
-        state["running"] = None
+    # A backup in progress has its start recorded but not yet its end; that is no failure.
+    state["running"] = backup_running(hass)
     try:
         data = manager.config.data
         create = data.create_backup
@@ -190,8 +197,8 @@ def _newest_check(
     dated = [item for item in backups if _parse(item["date"])]
     if not dated:
         return _check("newest", "problem", count=len(backups), age_hours=None, limit_hours=None)
-    newest = max(dated, key=lambda item: _parse(item["date"]))
-    age = _age_hours(_parse(newest["date"]), now)
+    newest = max(dated, key=lambda item: cast(datetime, _parse(item["date"])))
+    age = cast(float, _age_hours(_parse(newest["date"]), now))
     recurrence = config["recurrence"] if config else "never"
     limit = SCHEDULE_LIMIT_HOURS.get(recurrence)
     if limit is not None:
@@ -227,7 +234,11 @@ def _last_run_check(
         "attempted": config["last_attempted"],
         "completed": config["last_completed"],
         "failed_agents": failed_agents,
+        "running": bool(running),
+        "limit_minutes": ATTEMPT_GRACE_SECONDS // 60,
     }
+    if attempted is not None and completed is not None:
+        values["gap_minutes"] = round((attempted - completed).total_seconds() / 60)
     if failed_attempt or failed_agents:
         return _check("last_run", "problem", failed_attempt=failed_attempt, **values)
     if attempted is None and completed is None:
@@ -247,7 +258,7 @@ def _targets_check(newest: dict[str, Any] | None, recorded: str | None) -> dict[
 def _size_check(backups: list[dict[str, Any]]) -> dict[str, Any]:
     sized = sorted(
         (item for item in backups if _parse(item["date"]) and item["size"]),
-        key=lambda item: _parse(item["date"]),
+        key=lambda item: cast(datetime, _parse(item["date"])),
         reverse=True,
     )
     if len(sized) < 2:
@@ -345,7 +356,7 @@ def _remote_age_check(
         return None
     limit = SCHEDULE_LIMIT_HOURS.get(config["recurrence"] if config else "never")
     limit = limit or NO_SCHEDULE_NOTE_HOURS
-    rows = [
+    rows: list[dict[str, Any]] = [
         {"agent": agent, "age_hours": _age_hours(when, now)}
         for agent, when in sorted(newest_on.items())
     ]
@@ -540,8 +551,16 @@ class AttestStore:
 
 
 async def backup_health(
-    hass: HomeAssistant, attest: AttestStore, journal_plans: list[dict[str, Any]]
+    hass: HomeAssistant,
+    attest: AttestStore,
+    journal_plans: list[dict[str, Any]],
+    events: Any = None,
 ) -> dict[str, Any]:
-    """The full report for the panel."""
+    """The full report for the panel; with ``events`` a change of a check is written down."""
     state = await collect(hass)
-    return evaluate(state, datetime.now(UTC), attest.record, executed_plan_backups(journal_plans))
+    now = datetime.now(UTC)
+    report = evaluate(state, now, attest.record, executed_plan_backups(journal_plans))
+    if events is not None and report.get("available"):
+        events.observe_backup_run(state.get("running"), now)
+        events.observe_checks("backup", report["checks"], now)
+    return report

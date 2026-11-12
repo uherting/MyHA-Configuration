@@ -28,6 +28,8 @@ from . import criteria as criteria_module
 from . import db_health as db_health_module
 from . import reliability as reliability_module
 from . import storms as storms_module
+from .backup_auto import async_auto_clean
+from .central_log import log_tick
 from .const import (
     CONF_HISTORY_DAYS,
     CONF_LOW_BATTERY_PERCENT,
@@ -36,18 +38,21 @@ from .const import (
     CONF_OUTAGE_LOW_HOURS,
     CONF_OUTAGE_MEDIUM_HOURS,
     CONF_SCAN_INTERVAL_HOURS,
+    CONF_SHOW_IN_SIDEBAR,
     CONF_STALE_HOURS,
     CONF_UNUSED_AUTOMATION_DAYS,
     CONF_WATCH_HOURS,
     DEFAULT_HISTORY_DAYS,
     DEFAULT_LOW_BATTERY_PERCENT,
     DEFAULT_SCAN_INTERVAL_HOURS,
+    DEFAULT_SHOW_IN_SIDEBAR,
     DEFAULT_STALE_HOURS,
     DEFAULT_UNUSED_AUTOMATION_DAYS,
     DEFAULT_WATCH_HOURS,
     DOMAIN,
     FONTS_URL,
     FRONTEND_URL,
+    I18N_URL,
     LOGO_URL,
     PANEL_ELEMENT,
     PANEL_URL,
@@ -128,6 +133,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
     )
     scanner.history.retention_days = entry.options.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS)
     scanner.watch_hours = entry.options.get(CONF_WATCH_HOURS, DEFAULT_WATCH_HOURS)
+    scanner.show_in_sidebar = entry.options.get(CONF_SHOW_IN_SIDEBAR, DEFAULT_SHOW_IN_SIDEBAR)
     scanner.monitor.retention_days = scanner.history.retention_days
     await scanner.async_initialize()
     entry.runtime_data = scanner
@@ -145,18 +151,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
                 StaticPathConfig(FRONTEND_URL, str(bundle), True),
                 StaticPathConfig(LOGO_URL, str(Path(__file__).parent / "brand" / "logo.png"), True),
                 StaticPathConfig(FONTS_URL, str(Path(__file__).parent / "fonts"), True),
+                StaticPathConfig(I18N_URL, str(frontend_dir / "i18n"), True),
             ]
         )
         hass.data[DOMAIN]["static_path_registered"] = True
     # A reload for new options keeps the panel: removing it makes Home Assistant leave the open page.
-    if PANEL_URL not in hass.data.get(frontend.DATA_PANELS, {}):
+    # The sidebar entry follows the option; a changed choice registers the panel anew.
+    show_sidebar = entry.options.get(CONF_SHOW_IN_SIDEBAR, DEFAULT_SHOW_IN_SIDEBAR)
+    known = hass.data.get(frontend.DATA_PANELS, {}).get(PANEL_URL)
+    if known is not None and bool(known.sidebar_title) != show_sidebar:
+        frontend.async_remove_panel(hass, PANEL_URL)
+        known = None
+    if known is None:
         await panel_custom.async_register_panel(
             hass,
             webcomponent_name=PANEL_ELEMENT,
             frontend_url_path=PANEL_URL,
             module_url=f"{FRONTEND_URL}?v={digest}",
-            sidebar_title="Housekeeper",
-            sidebar_icon="mdi:broom",
+            sidebar_title="Housekeeper" if show_sidebar else None,
+            sidebar_icon="mdi:broom" if show_sidebar else None,
             require_admin=True,
             config={"entry_id": entry.entry_id},
             config_panel_domain=DOMAIN,
@@ -207,7 +220,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
         boot_s = max(0.0, boot["epoch"] - anchor)
         settled = scanner.settled_at
         loaded_s = None if settled is None else boot_s + max(0.0, settled - boot["mono"])
-        began = next((e for e in reversed(scanner.events.events) if e.get("kind") == "start"), {})
+        began: dict[str, Any] = next(
+            (e for e in reversed(scanner.events.events) if e.get("kind") == "start"), {}
+        )
         try:
             scanner.starts.record(
                 datetime.now(UTC),
@@ -267,10 +282,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
 
     entry.async_on_unload(async_track_time_interval(hass, _heartbeat, timedelta(minutes=5)))
 
+    log_memo: dict[str, Any] = {}
+
+    async def _log_tick(_: Any) -> None:
+        if hass.is_running:
+            await log_tick(hass, scanner, log_memo, datetime.now(UTC))
+
+    entry.async_on_unload(async_track_time_interval(hass, _log_tick, timedelta(minutes=5)))
+
     async def _watch_tick(_: Any) -> None:
         await scanner.async_watch_tick()
 
     entry.async_on_unload(async_track_time_interval(hass, _watch_tick, timedelta(minutes=5)))
+
+    async def _backup_auto_tick(_: Any) -> None:
+        if hass.is_running and not scanner.warming_up:
+            await async_auto_clean(scanner, datetime.now(UTC))
+
+    entry.async_on_unload(async_track_time_interval(hass, _backup_auto_tick, timedelta(hours=1)))
 
     async def _check_reauth(_: Any) -> None:
         await scanner.async_check_reauth()

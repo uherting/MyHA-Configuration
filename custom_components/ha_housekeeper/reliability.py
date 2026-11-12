@@ -401,7 +401,8 @@ def _pattern_hour(starts: list[float], zone: tzinfo) -> int | None:
     if len(starts) < PATTERN_MIN_EPISODES:
         return None
     local = [datetime.fromtimestamp(ts, UTC).astimezone(zone) for ts in starts]
-    best_hour, best = None, []
+    best_hour: int | None = None
+    best: list[datetime] = []
     for hour in range(24):
         inside = [moment for moment in local if moment.hour in (hour, (hour + 1) % 24)]
         if len(inside) > len(best):
@@ -456,7 +457,7 @@ def flapping(
         if down >= observed * PERMANENT_SHARE and observed >= window * 0.95:
             excluded["permanent"] += 1
             continue
-        shared = outage_periods.get(item.get("config_entry_id"), [])
+        shared = outage_periods.get(item.get("config_entry_id") or "", [])
         episodes = [
             (a, b)
             for a, b in merged

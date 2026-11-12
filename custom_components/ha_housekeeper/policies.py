@@ -16,7 +16,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
 from . import policy_rules as rules_more
-from .const import IGNORE_LABEL, POLICIES_STORAGE_KEY, STORAGE_VERSION
+from .const import DOMAIN, IGNORE_LABEL, POLICIES_STORAGE_KEY, STORAGE_VERSION
+from .dashboard_analysis import HELPER_DOMAINS
 from .hygiene import finding_key
 from .payloads import PoliciesResult
 
@@ -42,6 +43,17 @@ RULES = (
     "automation_error_handling",
     "automation_triggers",
     "automation_literal_ids",
+    "template_unused",
+    "helper_write_only",
+    "helper_area",
+    "input_select_options",
+    "statistic_helper_source",
+    "helper_cycle",
+    "helper_duplicate",
+    "group_members",
+    "input_number_config",
+    "template_guard",
+    "template_no_unique_id",
     "automation_self_trigger",
     "turn_on_only",
     "exposure_unused",
@@ -300,6 +312,27 @@ def evaluate(
         "automation_triggers": lambda: rules_more.automation_triggers(automations),
         "automation_literal_ids": lambda: rules_more.automation_literal_ids(automations),
         "automation_self_trigger": lambda: rules_more.automation_self_trigger(automations),
+        "helper_cycle": lambda: rules_more.helper_cycle(
+            integrations, entities, snapshot.get("edges", [])
+        ),
+        "input_select_options": lambda: rules_more.input_select_options(entities, automations),
+        "statistic_helper_source": lambda: rules_more.statistic_helper_source(
+            extra.get("statistic_helpers") or [], entities
+        ),
+        "helper_area": lambda: rules_more.helper_area(entities, devices),
+        "helper_duplicate": lambda: rules_more.helper_duplicate(extra.get("helper_entries") or []),
+        "group_members": lambda: rules_more.group_members(
+            extra.get("helper_entries") or [], entities
+        ),
+        "input_number_config": lambda: rules_more.input_number_config(entities),
+        "helper_write_only": lambda: rules_more.helper_write_only(
+            entities, snapshot.get("edges", [])
+        ),
+        "template_unused": lambda: rules_more.template_unused(integrations, entities, used),
+        "template_guard": lambda: rules_more.template_guard(extra.get("templates") or []),
+        "template_no_unique_id": lambda: rules_more.template_no_unique_id(
+            extra.get("template_no_unique_id") or []
+        ),
         "turn_on_only": lambda: rules_more.turn_on_only(automations, scripts, entities),
         "exposure_unused": lambda: rules_more.exposure_unused(exposed, entities, used),
         "exposure_sensitive": lambda: rules_more.exposure_sensitive(exposed, entities),
@@ -341,7 +374,7 @@ def evaluate(
         "naming_scheme": lambda: _naming_scheme(entities, prefixes or {}),
         "state_rate": lambda: _state_rate(entities, rates or {}, limit),
     }
-    rules = []
+    rules: list[dict[str, Any]] = []
     for rule in RULES:
         if rule not in enabled:
             rules.append({"id": rule, "enabled": False, "count": 0, "ignored": 0, "items": []})
@@ -459,18 +492,15 @@ def policies(
         + list(rules_more.SYSTEM_OBJECTS)
         + [user["id"] for user in (auth or {}).get("users") or []]
     )
-    keys = {
-        policy_key(rule, object_id)
-        for rule in RULES
-        for object_id in object_ids
-        if ignored.is_ignored(policy_key(rule, object_id))
-    }
-    due = {
-        policy_key(rule, object_id)
-        for rule in RULES
-        for object_id in object_ids
-        if ignored.is_due(policy_key(rule, object_id))
-    }
+    keys: set[str] = set()
+    due: set[str] = set()
+    for rule in RULES:
+        for object_id in object_ids:
+            key = policy_key(rule, object_id)  # built once: two lookups share it
+            if ignored.is_ignored(key):
+                keys.add(key)
+            elif ignored.is_due(key):
+                due.add(key)
     decisions = {key: ignored.info(key) for key in keys}
     return evaluate(
         snapshot,
@@ -504,11 +534,14 @@ def _extra(
     from homeassistant.helpers import device_registry as dr
 
     from .exposure import exposure
+    from .inventory import _registry_entries
 
     extra: dict[str, Any] = {"battery_percent": battery_percent}
     if "label_unused" in store.enabled:
         used = {label for entry in registry.entities.values() for label in entry.labels}
-        used |= {label for dev in dr.async_get(hass).devices.values() for label in dev.labels}
+        used |= {
+            label for dev in _registry_entries(dr.async_get(hass).devices) for label in dev.labels
+        }
         used |= {label for area in ar.async_get(hass).async_list_areas() for label in area.labels}
         extra["used_labels"] = used
     if store.enabled & {"exposure_unused", "exposure_sensitive"}:
@@ -516,12 +549,74 @@ def _extra(
         extra["exposed"] = {
             row["entity_id"]: row["assistants"] for row in result["exposed_entities"]
         }
+    if store.enabled & {"helper_duplicate", "group_members"}:
+        extra["helper_entries"] = [
+            {
+                "object_type": "config_entry",
+                "object_id": entry.entry_id,
+                "name": entry.title,
+                "domain": entry.domain,
+                "options": dict(entry.options or {}),
+            }
+            for domain in HELPER_DOMAINS - {DOMAIN}
+            for entry in hass.config_entries.async_entries(domain)
+        ]
+    if "statistic_helper_source" in store.enabled:
+        extra["statistic_helpers"] = [
+            {
+                "object_type": "config_entry",
+                "object_id": entry.entry_id,
+                "name": entry.title,
+                "domain": entry.domain,
+                "source": entry.options.get("source"),
+            }
+            for domain in ("utility_meter", "integration", "derivative")
+            for entry in hass.config_entries.async_entries(domain)
+        ]
+    if store.enabled & {"template_guard", "template_no_unique_id"}:
+        extra.update(template_facts(hass, store.enabled))
     if store.enabled & {"http_trusted_networks", "http_external_url", "http_proxies"}:
         extra["http"] = http_facts(hass)
     kept = getattr(replies, "replies", {}).get("db_health")
     if isinstance(kept, dict) and "db_bytes" in kept:
         extra["db"] = kept
     return extra
+
+
+def template_facts(hass: HomeAssistant, enabled: Any) -> dict[str, Any]:
+    """The state templates of template helpers and the template entities that have no unique id."""
+    facts: dict[str, Any] = {}
+    if "template_guard" in enabled:
+        facts["templates"] = [
+            {
+                "object_type": "config_entry",
+                "object_id": entry.entry_id,
+                "name": entry.title,
+                "state": entry.options.get("state"),
+            }
+            for entry in hass.config_entries.async_entries("template")
+        ]
+    if "template_no_unique_id" in enabled:
+        from homeassistant.helpers import entity_platform
+
+        found: list[dict[str, Any]] = []
+        try:
+            for platform in entity_platform.async_get_platforms(hass, "template"):
+                for entity in platform.entities.values():
+                    if entity.unique_id is None and entity.entity_id:
+                        state = hass.states.get(entity.entity_id)
+                        name = state.attributes.get("friendly_name") if state else None
+                        found.append(
+                            {
+                                "object_type": "entity",
+                                "object_id": entity.entity_id,
+                                "name": name or entity.entity_id,
+                            }
+                        )
+        except Exception:  # noqa: BLE001 - a platform that cannot be read means no hint, not an error
+            found = []
+        facts["template_no_unique_id"] = found
+    return facts
 
 
 def http_facts(hass: HomeAssistant) -> dict[str, Any]:

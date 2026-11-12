@@ -29,6 +29,9 @@ Meters:
   (experimental: it writes into the recorder database, so a backup is mandatory and statistics
   cannot be undone) and/or lets the new entity take over the old entity ID. The old entity moves
   to a free ``_alt`` ID; Home Assistant moves history and statistics along with every rename.
+  The mode ``replace_statistics`` joins the statistics and then rewrites the references to the
+  old entity like ``replace_references``; the new entity keeps its ID. Only the references can be
+  undone.
 
 Counters:
 
@@ -46,8 +49,10 @@ import contextlib
 import copy
 import hashlib
 import inspect
+import json
 import logging
 import secrets
+import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
@@ -62,7 +67,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.util.file import write_utf8_file_atomic
 from homeassistant.util.yaml import dump, parse_yaml
 
-from . import counter_repair, followup
+from . import counter_repair, exposure_edit, followup
 from . import refactor as refactor_module
 from . import rename as rename_module
 from .automation_delete import preview as preview_automation_delete
@@ -76,25 +81,35 @@ from .cleanup import (
     DELETE_CANDIDATE_RULES,
     DEVICE_KINDS,
     EXECUTABLE_KINDS,
+    EXPOSE_NEW_KINDS,
+    EXPOSURE_KINDS,
+    HELPER_IMPORT_KINDS,
+    HELPER_KINDS,
     INTERNAL_RESULT_KEYS,
     LABEL_KINDS,
     METER_KINDS,
+    METER_REFERENCE_MODE,
+    METER_STATISTICS_MODES,
     PLAN_MAX_AGE_HOURS,
     PURGE_KINDS,
     REFACTOR_KINDS,
     REFERENCE_KINDS,
+    RELOAD_KINDS,
     REMOVAL_KINDS,
     RENAME_KINDS,
     REPAIR_KINDS,
     STATE_KINDS,
     TRIM_KINDS,
+    _used_by,
     device_fingerprint,
     device_support,
     end_interrupted,
     get_main_device,
     judge_action,
+    judge_id_replace_action,
     judge_purge_action,
     judge_rename_action,
+    judge_state_action,
     registry_fingerprint,
     trim_is_plain,
 )
@@ -108,6 +123,7 @@ from .db_health import (
     is_corruption_error,
     start_check,
 )
+from .helper_backup import HelperError, create_helper, export_helper, taken_ids
 from .issues import async_sync_database_issue
 from .meter import analyse, prepare_meter, read_series, recorder_ready
 from .notes import NoteError
@@ -129,9 +145,10 @@ from .references import (
     load_source,
     preview_replacement,
     rewrite,
+    target_exists,
     yaml_hash,
 )
-from .texts import pick
+from .texts import localize, pick
 from .writelock import WriteBusy, acquire_write, release_write, write_holder
 
 TOKEN_TTL = timedelta(minutes=5)
@@ -144,6 +161,7 @@ LOGBOOK_DEVICE = {
     "de": ("Gerät „{}“ {}", ("vergessen", "entfernt")),
     "en": ("Device “{}” {}", ("forgotten", "removed")),
 }
+localize("cleanup_exec.LOGBOOK_DEVICE", LOGBOOK_DEVICE)
 
 LOGBOOK_KINDS = ("remove_device", "forget_device")  # written to the logbook when done
 # Recorder steps do not depend on each other: one that fails must not hold back the others,
@@ -152,6 +170,8 @@ INDEPENDENT_KINDS = PURGE_KINDS | TRIM_KINDS
 GLOBAL_STOPS = {"recorder_busy", "no_recorder"}
 LOCAL_AGENT = "backup.local"
 BACKUP_TIMEOUT = 30 * 60  # seconds; large installations can take a while
+RELOAD_TIMEOUT = 120  # seconds an integration may take to load again
+RELOADABLE_STATES = frozenset({"loaded", "setup_error", "setup_retry", "not_loaded"})
 BUSY_BACKUP_STATES = {"create_backup", "receive_backup", "restore_backup", "blocked"}
 RECORDER_BACKLOG_STOP = 10_000  # queued recorder writes; the recorder normally keeps this near zero
 INTEGRITY_TIMEOUT = (
@@ -205,6 +225,53 @@ def entity_restorable(hass: HomeAssistant, entry: Any) -> bool | None:
     return hass.config_entries.async_get_entry(entry.config_entry_id) is not None
 
 
+def reload_info(hass: HomeAssistant, entry_id: str) -> dict[str, Any]:
+    """What the config entries hold about one entry now, as the reload plan judges it."""
+    entry = hass.config_entries.async_get_entry(entry_id)
+    if entry is None:
+        return {"exists": False}
+    state = entry.state.value
+    return {
+        "exists": True,
+        "title": str(entry.title or ""),
+        "domain": entry.domain,
+        "state": state,
+        "own": entry.domain == DOMAIN,
+        "disabled": entry.disabled_by is not None,
+        "can_reload": state in RELOADABLE_STATES and (state != "loaded" or entry.supports_unload),
+        "entities": len(er.async_entries_for_config_entry(er.async_get(hass), entry_id)),
+    }
+
+
+def helper_info(hass: HomeAssistant, entry_id: str) -> dict[str, Any]:
+    """What the config entries and the registry hold about a helper entry now.
+
+    The fingerprint covers the options and the entities, so a helper changed after the preview
+    is not deleted by a plan that judged something else.
+    """
+    from .dashboard_analysis import HELPER_DOMAINS
+
+    entry = hass.config_entries.async_get_entry(entry_id)
+    if entry is None:
+        return {"exists": False}
+    entities = sorted(
+        e.entity_id for e in er.async_entries_for_config_entry(er.async_get(hass), entry_id)
+    )
+    return {
+        "exists": True,
+        "title": str(entry.title or ""),
+        "domain": entry.domain,
+        "own": entry.domain == DOMAIN,
+        "helper": entry.domain in HELPER_DOMAINS,
+        "entity_ids": entities,
+        "fingerprint": hashlib.sha256(
+            json.dumps(
+                [entry.domain, entry.options, entities], sort_keys=True, default=str
+            ).encode()
+        ).hexdigest()[:16],
+    }
+
+
 def _state_reached(entry: Any, target: str) -> bool:
     """Whether a registry entry shows the state ``target`` asked for."""
     return {
@@ -213,6 +280,22 @@ def _state_reached(entry: Any, target: str) -> bool:
         "hide": entry.hidden_by is not None,
         "unhide": entry.hidden_by is None,
     }[target]
+
+
+def _references_check(action: dict[str, Any], snapshot: dict[str, Any]) -> dict[str, Any]:
+    """No rewritten source still certainly names the old entity in the scan after the run."""
+    object_id = action["object_id"]
+    done = {
+        s["source"] for s in action["result"].get("sources") or [] if s.get("state") != "undone"
+    }
+    still = [
+        e
+        for e in snapshot["edges"]
+        if e["source"] in done
+        and e["target"] == f"entity:{object_id}"
+        and e.get("confidence", "certain") == "certain"
+    ]
+    return {"check": "references_replaced", "object_id": object_id, "ok": not still}
 
 
 def _restore_data(entry: Any) -> dict[str, Any]:
@@ -248,6 +331,44 @@ def _restore_data(entry: Any) -> dict[str, Any]:
         computed_alias=any(not isinstance(alias, str) for alias in entry.aliases),
     )
     return data
+
+
+def _put_helper_entities_back(
+    hass: HomeAssistant, created: list[er.RegistryEntry], note: dict[str, Any]
+) -> list[str]:
+    """Give each new entity the ID and settings of its old twin; returns the IDs that stayed different."""
+    registry = er.async_get(hass)
+    old = sorted(note.get("entities", []), key=lambda e: e["entity_id"])
+    new = sorted(created, key=lambda e: e.entity_id)
+    differ: list[str] = []
+    for twin in old:
+        domain = twin["entity_id"].partition(".")[0]
+        match = next((e for e in new if e.entity_id == twin["entity_id"]), None) or next(
+            (e for e in new if e.entity_id.partition(".")[0] == domain), None
+        )
+        if match is None:
+            continue
+        new.remove(match)
+        entity_id = match.entity_id
+        if entity_id != twin["entity_id"]:
+            if registry.async_get(twin["entity_id"]) is None:
+                registry.async_update_entity(entity_id, new_entity_id=twin["entity_id"])
+                entity_id = twin["entity_id"]
+            else:
+                differ.append(entity_id)
+        changes: dict[str, Any] = {
+            "name": twin.get("name"),
+            "icon": twin.get("icon"),
+            "area_id": twin.get("area_id"),
+            "labels": set(twin.get("labels") or []),
+            "aliases": _restored_aliases(twin),
+        }
+        if twin.get("disabled_by"):
+            changes["disabled_by"] = er.RegistryEntryDisabler(twin["disabled_by"])
+        if twin.get("hidden_by"):
+            changes["hidden_by"] = er.RegistryEntryHider(twin["hidden_by"])
+        registry.async_update_entity(entity_id, **changes)
+    return differ
 
 
 def _restored_aliases(data: dict[str, Any]) -> set[Any]:
@@ -426,8 +547,18 @@ class CleanupRunner:
         for plan_id in [key for key, saved in self._tokens.items() if saved[1] < now]:
             del self._tokens[plan_id]
 
-    def confirm(self, plan_id: str, acknowledged: list[str], user_id: str | None) -> dict[str, Any]:
-        """Select the actions that may run and hand out a short-lived confirmation token."""
+    def confirm(
+        self,
+        plan_id: str,
+        acknowledged: list[str],
+        user_id: str | None,
+        skip_backup: bool = False,
+    ) -> dict[str, Any]:
+        """Select the actions that may run and hand out a short-lived confirmation token.
+
+        ``skip_backup`` is the person's explicit choice to run without the safety backup, also for
+        actions that write into the recorder database (what they change is then not restorable).
+        """
         self._drop_expired_tokens()
         plan = self._plan(plan_id)
         if self.scanner.warming_up:
@@ -451,7 +582,21 @@ class CleanupRunner:
         self._check_mode(plan, selected)
         token = secrets.token_urlsafe(16)
         self._tokens[plan_id] = (token, _now() + TOKEN_TTL, selected, user_id)
-        plan["confirmed"] = {"at": _now().isoformat(), "user_id": user_id, "object_ids": selected}
+        # Only what the person actually acknowledged counts: an action that was "ok" now and turns
+        # to "review" before it runs must be confirmed again.
+        confirmed_ack = [
+            a["object_id"]
+            for a in plan["actions"]
+            if a["object_id"] in selected and a["verdict"] != "ok"
+        ]
+        plan["confirmed"] = {
+            "at": _now().isoformat(),
+            "user_id": user_id,
+            "object_ids": selected,
+            "acknowledged": confirmed_ack,
+        }
+        if skip_backup:
+            plan["confirmed"]["skip_backup"] = True
         _event(plan, "confirmed", user_id=user_id, count=len(selected))
         self.scanner.journal.save()
         return {
@@ -468,7 +613,10 @@ class CleanupRunner:
                 a["object_id"]
                 for a in plan["actions"]
                 if a["object_id"] in selected
-                and a["kind"] in REFERENCE_KINDS | RENAME_KINDS | REFACTOR_KINDS
+                and (
+                    a["kind"] in REFERENCE_KINDS | RENAME_KINDS | REFACTOR_KINDS
+                    or (a["kind"] in METER_KINDS and a.get("mode") == METER_REFERENCE_MODE)
+                )
             ],
             "migrations": [
                 a["object_id"]
@@ -518,6 +666,15 @@ class CleanupRunner:
         try:
             await self._run_plan(plan, object_ids, user_id)
             await self._verify(plan)
+            self.scanner.activity.record(
+                "plan",
+                str(plan.get("status") or "executed"),
+                _now(),
+                key=plan.get("plan_id"),
+                by=user_id,
+                source="plan",
+                undo={"type": "plan", "key": str(plan.get("plan_id"))},
+            )
             if self._deleted_from_recorder(plan):
                 # In the background, like the check on the Recorder page: a damage the run caused
                 # or ran into shows up as a finding and a repair hint, not at the next plan.
@@ -545,7 +702,20 @@ class CleanupRunner:
             by_id = {action["object_id"]: action for action in plan["actions"]}
             selected = [by_id[object_id] for object_id in object_ids]
             kinds = {action["kind"] for action in selected}
-            if kinds & BACKUP_KINDS:
+            if kinds & BACKUP_KINDS and (plan.get("confirmed") or {}).get("skip_backup"):
+                # The person chose to run without the safety backup; the checks before a database write stay.
+                writes_recorder = bool(kinds & DATABASE_KINDS) or any(
+                    action.get("recorder") for action in selected
+                )
+                if not await self._others_idle(plan, writes_recorder):
+                    return
+                if writes_recorder and not (
+                    await self._disk_has_room(plan) and await self._database_intact(plan)
+                ):
+                    return
+                plan["backup_skipped"] = {"at": _now().isoformat(), "user_id": user_id}
+                _event(plan, "backup_skipped", user_id=user_id)
+            elif kinds & BACKUP_KINDS:
                 writes_recorder = bool(kinds & DATABASE_KINDS) or any(
                     action.get("recorder") for action in selected
                 )
@@ -776,7 +946,7 @@ class CleanupRunner:
                 o["object_id"]: o for o in snapshot["objects"] if o["object_type"] == "device"
             },
             "quarantine": {q["object_id"]: q["since"] for q in snapshot.get("quarantine", [])},
-            "acknowledged": set(object_ids),
+            "acknowledged": set((plan.get("confirmed") or {}).get("acknowledged") or []),
         }
         by_id = {action["object_id"]: action for action in plan["actions"]}
         skipped = False  # an independent recorder step that did not run (or did not finish)
@@ -822,7 +992,11 @@ class CleanupRunner:
             _event(plan, event, object_id=object_id)
             if action["kind"] in LOGBOOK_KINDS:
                 self._write_logbook(plan, action)
-            if action.get("recorder"):
+            if action.get("recorder") and (
+                action["kind"] not in METER_KINDS | REFERENCE_KINDS
+                or action["result"].get("deleted_old")
+            ):
+                # After a replacement the history of the old entity goes only once the entity is.
                 action["result"].update(await self._purge_after_removal(plan, action))
             plan["executed"] = True
             self.status["done"] = index + 1
@@ -894,7 +1068,9 @@ class CleanupRunner:
         if kind == "forget_device":
             return await self._forget_device(action), "device_forgotten"
         if kind in METER_KINDS:
-            return await self._migrate_meter(action), "meter_migrated"
+            return await self._old_after(
+                action, await self._migrate_meter(action)
+            ), "meter_migrated"
         if kind in PURGE_KINDS:
             return await self._purge_statistics(action), "statistics_purged"
         if kind in TRIM_KINDS:
@@ -909,6 +1085,16 @@ class CleanupRunner:
             return await self._rename_entity(action), "entity_renamed"
         if kind in STATE_KINDS:
             return self._set_entity_state(action), "entity_state_set"
+        if kind in EXPOSURE_KINDS:
+            return self._set_exposure(action), "exposure_set"
+        if kind in EXPOSE_NEW_KINDS:
+            return exposure_edit.set_expose_new(self.hass, object_id, False), "expose_new_set"
+        if kind in HELPER_KINDS:
+            return await self._remove_helper(action), "helper_removed"
+        if kind in HELPER_IMPORT_KINDS:
+            return await self._import_helper(action), "helper_created"
+        if kind in RELOAD_KINDS:
+            return await self._reload_integration(action), "integration_reloaded"
         if kind in LABEL_KINDS:
             registry = er.async_get(self.hass)
             entry = registry.async_get(object_id)
@@ -926,7 +1112,92 @@ class CleanupRunner:
             return await self._repair_counter(action), "counter_repaired"
         if kind in REFACTOR_KINDS:
             return await self._refactor_automation(action), "automation_refactored"
-        return await self._replace_references(action), "references_replaced"
+        return await self._old_after(
+            action, await self._replace_references(action)
+        ), "references_replaced"
+
+    async def _old_after(self, action: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
+        """What happens to the old entity once its replacement went through: deleted or disabled."""
+        if action.get("delete_old") and not result.get("stopped"):
+            return await self._delete_old(action, result)
+        return self._disable_old(action, result)
+
+    async def _delete_old(self, action: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
+        """Delete the old entity (or its helper); the journal keeps what is needed to restore it."""
+        registry = er.async_get(self.hass)
+        entry = registry.async_get(action["object_id"])
+        if entry is None:
+            return result
+        if action["delete_old"] == "helper":
+            entry_id = entry.config_entry_id
+            note = export_helper(self.hass, entry_id) if entry_id else None
+            if entry_id is None or note is None:
+                return result
+            try:
+                await self.hass.config_entries.async_remove(entry_id)
+            except Exception:
+                return result
+            result["deleted_old"] = {"helper": note}
+            return result
+        result["deleted_old"] = {"restore": _restore_data(entry)}
+        registry.async_remove(action["object_id"])
+        return result
+
+    async def _undo_delete_old(self, object_id: str, result: dict[str, Any]) -> str:
+        """Bring the old entity (or its helper) back; history that was deleted is not restored."""
+        note = result.get("deleted_old")
+        if not note or note.get("state") == "undone":
+            return "undone"
+        if "helper" in note:
+            try:
+                await create_helper(self.hass, note["helper"])
+            except HelperError as err:
+                return err.reason
+        else:
+            outcome = self._restore(er.async_get(self.hass), object_id, note["restore"])
+            if outcome != "undone":
+                return outcome
+        note["state"] = "undone"
+        return "undone"
+
+    def _disable_old(self, action: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
+        """Quarantine the old entity once its replacement went through; the step stays done if not.
+
+        Only when the person asked for it, the step did not stop, and the old entity keeps its ID
+        (the modes that give its ID away already move it aside).
+        """
+        if (
+            not action.get("disable_old")
+            or result.get("stopped")
+            or action.get("mode") in {"both", "id"}
+        ):
+            return result
+        registry = er.async_get(self.hass)
+        entry = registry.async_get(action["object_id"])
+        if entry is None or entry.disabled_by is not None:
+            return result
+        updated = registry.async_update_entity(
+            action["object_id"], disabled_by=er.RegistryEntryDisabler.USER
+        )
+        result["disabled_old"] = {
+            "before": registry_fingerprint(entry),
+            "after": registry_fingerprint(updated),
+        }
+        return result
+
+    def _undo_disable_old(self, object_id: str, result: dict[str, Any]) -> str:
+        """Enable the old entity again; a change made to it since then is left alone."""
+        note = result.get("disabled_old")
+        if not note or note.get("state") == "undone":
+            return "undone"
+        entry = er.async_get(self.hass).async_get(object_id)
+        if entry is None:
+            return "conflict_gone"
+        if registry_fingerprint(entry) != note["after"]:
+            return "conflict_changed"
+        er.async_get(self.hass).async_update_entity(object_id, disabled_by=None)
+        note["state"] = "undone"
+        return "undone"
 
     async def _purge_after_removal(self, plan: dict[str, Any], action: dict[str, Any]) -> dict:
         """Delete the recorder data of a removed entity or device as the person chose.
@@ -1041,11 +1312,12 @@ class CleanupRunner:
         entity_id, keep_days = action["object_id"], action["keep_days"]
         if not trim_is_plain(action):
             return await self._trim_extra(action)
-        left, error = await trim_states(self.hass, entity_id, keep_days)
+        at = time.time()  # the line the days count back from: fixed once for delete and check
+        left, error = await trim_states(self.hass, entity_id, keep_days, at)
         if error:
             raise StepAbort(error)
         # Rows were deleted either way: the step stays done (irreversible) and the plan stops.
-        deleted = {"keep_days": keep_days, "irreversible": True}
+        deleted = {"keep_days": keep_days, "irreversible": True, "cutoff_at": at}
         if left is None:  # whether all of it is gone cannot be told
             raise StepAbort("trim_unverified", deleted)
         if left:
@@ -1055,13 +1327,19 @@ class CleanupRunner:
         self.scanner.events.record(
             "purge", _now(), requested=1, removed=0, skipped=0, states=True, rows=rows
         )
-        return {"keep_days": keep_days, "rows": rows, "irreversible": True}
+        return {"keep_days": keep_days, "rows": rows, "irreversible": True, "cutoff_at": at}
 
     async def _trim_extra(self, action: dict[str, Any]) -> dict[str, Any]:
         """Delete statistics older than ``keep_days`` and/or a stretch of states; noted, never undone."""
         tables = action.get("tables") or ["states"]
+        at = time.time()
         deleted, error = await trim_extra(
-            self.hass, action["object_id"], action.get("keep_days"), action.get("range"), tables
+            self.hass,
+            action["object_id"],
+            action.get("keep_days"),
+            action.get("range"),
+            tables,
+            at,
         )
         if error or deleted is None:
             raise StepAbort(error or "recorder_busy")
@@ -1070,11 +1348,17 @@ class CleanupRunner:
             "tables": tables,
             "deleted": deleted,
             "irreversible": True,
+            "cutoff_at": at,
         }
         if action.get("range"):
             result["range"] = action["range"]
         left = await count_trim(
-            self.hass, action["object_id"], action.get("keep_days"), action.get("range"), tables
+            self.hass,
+            action["object_id"],
+            action.get("keep_days"),
+            action.get("range"),
+            tables,
+            at=at,
         )
         if left is None:  # rows were deleted either way: the step stays done and the plan stops
             raise StepAbort("trim_unverified", result)
@@ -1234,9 +1518,10 @@ class CleanupRunner:
     # -- meters ----------------------------------------------------------------------------
 
     async def _migrate_meter(self, action: dict[str, Any]) -> dict[str, Any]:
-        """Join the statistics, then let the new entity take the old ID, as the mode asks.
+        """Join the statistics, then take the old ID or rewrite the references, as the mode asks.
 
-        What was written stays in the result even if a later part stops, so it is never lost.
+        What was written stays in the result even if a later part stops, so it is never lost. The
+        references are only touched once the joined statistics are verified.
         """
         mode = action["mode"]
         result: dict[str, Any] = {
@@ -1245,11 +1530,23 @@ class CleanupRunner:
             "statistics": None,
             "take_id": None,
         }
-        if mode in {"both", "statistics"}:
+        if mode in METER_STATISTICS_MODES:
             result["statistics"] = await self._join_statistics(action)
             if not result["statistics"]["verified"]:
                 result["stopped"] = "statistics_failed"
                 return result
+        if mode == METER_REFERENCE_MODE:
+            result["sources"] = None
+            try:
+                result["sources"] = (await self._replace_references(action))["sources"]
+            except StepAbort as stop:
+                if stop.result is not None:  # a rewritten source could not be put back
+                    result["sources"] = stop.result["sources"]
+                    result["cause"] = stop.result.get("cause")
+                    result["stopped"] = "rollback_incomplete"
+                else:  # every source is as before; the joined statistics stay
+                    result["stopped"] = stop.reason
+            return result
         if mode in {"both", "id"}:
             try:
                 result["take_id"] = await self._take_id(action)
@@ -1457,7 +1754,9 @@ class CleanupRunner:
                 loaded = await load_source(self.hass, snapshot, planned["source"])
                 if loaded["hash"] != planned["hash"]:
                     raise StepAbort("source_changed")
-                item, changes, _ = rewrite(loaded["item"], old, new)
+                item, changes, _ = rewrite(
+                    loaded["item"], old, new, action.get("target_kind") or "entity"
+                )
                 if not changes:
                     raise StepAbort("source_changed")
                 is_automation = loaded["format"] == "yaml" and planned["type"] == "automation"
@@ -1580,6 +1879,13 @@ class CleanupRunner:
             before = copy.deepcopy(loaded["item"])
             await loaded["dashboard"].async_save(item)
             return before, {}
+        if fmt == "config_entry":
+            entry = self.hass.config_entries.async_get_entry(loaded["id"])
+            if entry is None:
+                raise SourceError("not_editable")
+            before = copy.deepcopy(loaded["item"])
+            self.hass.config_entries.async_update_entry(entry, options=item)
+            return before, {}
         from homeassistant.components.energy.data import async_get_manager
 
         manager = await async_get_manager(self.hass)
@@ -1597,6 +1903,10 @@ class CleanupRunner:
         """Let Home Assistant read a rewritten file. Dashboards and Energy apply at once."""
         if loaded["format"] == "yaml":
             await self.hass.services.async_call(loaded["type"], "reload", blocking=True)
+        elif loaded["format"] == "config_entry":
+            # Most helpers reload themselves when their options change; a failing reload is Home Assistant's to report.
+            with contextlib.suppress(Exception):
+                await self.hass.config_entries.async_reload(loaded["id"])
 
     async def _revert_source(self, source: dict[str, Any]) -> str:
         """Put one rewritten source back while it is exactly as Housekeeper left it."""
@@ -1677,6 +1987,17 @@ class CleanupRunner:
             if ar.async_get(self.hass).async_get_area(action["target"]) is None:
                 return "now_blocked"
             return None
+        if kind in HELPER_IMPORT_KINDS:
+            return "now_blocked" if taken_ids(self.hass, action.get("helper") or {}) else None
+        if kind in HELPER_KINDS:
+            info = helper_info(self.hass, object_id)
+            if not info.get("exists"):
+                return "entity_gone"
+            if not info.get("helper") or info.get("own"):
+                return "now_blocked"
+            return None if info["fingerprint"] == action.get("fingerprint") else "entity_changed"
+        if kind in RELOAD_KINDS:
+            return None if reload_info(self.hass, object_id).get("can_reload") else "now_blocked"
         if kind in STATE_KINDS:
             entry = er.async_get(self.hass).async_get(object_id)
             if entry is None:
@@ -1686,7 +2007,42 @@ class CleanupRunner:
                 or registry_fingerprint(entry) != action["fingerprint"]
             ):
                 return "entity_changed"
+            if action.get("target") == "disable":
+                # A use or a keep mark that came after the preview leaves the registry as it was.
+                item = context["entities"].get(object_id) or {}
+                verdict = judge_state_action(
+                    object_id,
+                    "disable",
+                    action.get("name") or object_id,
+                    {
+                        "exists": True,
+                        "disabled_by": str(entry.disabled_by or ""),
+                        "marked_keep": item.get("marked_keep"),
+                        "critical": item.get("critical"),
+                    },
+                    _used_by(snapshot["edges"], f"entity:{object_id}"),
+                )
+                if verdict["verdict"] == "blocked":
+                    return "now_blocked"
+                if verdict["verdict"] == "review" and object_id not in context["acknowledged"]:
+                    return "needs_acknowledgement"
             return None
+        if kind in EXPOSE_NEW_KINDS:
+            now = exposure_edit.expose_new(self.hass, object_id)
+            if not now["exists"]:
+                return "entity_gone"
+            if action.get("fingerprint") is None or now["fingerprint"] != action["fingerprint"]:
+                return "entity_changed"
+            return None if now["on"] else "now_blocked"
+        if kind in EXPOSURE_KINDS:
+            now = exposure_edit.prepare(
+                self.hass, object_id, action["target"], action.get("only") or ()
+            )
+            if not now["exists"]:
+                return "entity_gone"
+            if action.get("fingerprint") is None or now["fingerprint"] != action["fingerprint"]:
+                return "entity_changed"
+            return "now_blocked" if now["filtered"] or not now["assistants"] else None
         if kind in LABEL_KINDS:
             entry = er.async_get(self.hass).async_get(object_id)
             if entry is None:
@@ -1722,8 +2078,16 @@ class CleanupRunner:
             if found["error"] or found["fingerprint"] != action["sources"][0]["hash"]:
                 return "source_changed"
             if not any(
-                f["object_id"] == object_id and f["rule_id"] in DELETE_CANDIDATE_RULES
+                f["object_id"] == object_id
+                and f["rule_id"] in DELETE_CANDIDATE_RULES
+                and not f.get("ignored")
                 for f in snapshot.get("findings", [])
+            ):
+                return "now_blocked"
+            if any(
+                o["object_id"] == object_id and o.get("marked_keep")
+                for o in snapshot["objects"]
+                if o["object_type"] == "automation"
             ):
                 return "now_blocked"
             return None if object_id in context["acknowledged"] else "needs_acknowledgement"
@@ -1732,14 +2096,14 @@ class CleanupRunner:
                 older = await count_older(self.hass, [object_id], action["keep_days"])
                 rows = None if older is None else older[object_id]["rows"]
             else:
-                found = await count_trim(
+                trimmed = await count_trim(
                     self.hass,
                     object_id,
                     action.get("keep_days"),
                     action.get("range"),
                     action.get("tables") or ["states"],
                 )
-                rows = None if found is None else found["rows"]
+                rows = None if trimmed is None else trimmed["rows"]
             if rows is None or not recorder_ready(self.hass):
                 return "no_recorder"
             if not rows:
@@ -1780,9 +2144,20 @@ class CleanupRunner:
             meter = await prepare_meter(self.hass, object_id, action["target"], action["mode"])
             if action.get("fingerprint") is None or meter["fingerprint"] != action["fingerprint"]:
                 return "meter_changed"
+            sources: list[dict[str, Any]] = []
+            if action["mode"] == METER_REFERENCE_MODE:
+                fingerprint, sources = await preview_replacement(
+                    self.hass, snapshot, object_id, action["target"], self._lineage, "entity"
+                )
+                if (
+                    action.get("reference_fingerprint") is None
+                    or fingerprint != action["reference_fingerprint"]
+                ):
+                    return "source_changed"
+                action["sources"] = sources
             verdict_args = {
                 "target": action["target"],
-                "meter": {**meter, "mode": action["mode"]},
+                "meter": {**meter, "mode": action["mode"], "sources": sources},
             }
         elif kind in RENAME_KINDS:
             found = await rename_module.prepare(
@@ -1800,12 +2175,26 @@ class CleanupRunner:
                 return "needs_acknowledgement"
             return None
         elif kind in REFERENCE_KINDS:
+            target_kind = action.get("target_kind") or "entity"
             fingerprint, sources = await preview_replacement(
-                self.hass, snapshot, object_id, action["target"], self._lineage
+                self.hass, snapshot, object_id, action["target"], self._lineage, target_kind
             )
             if action.get("fingerprint") is None or fingerprint != action["fingerprint"]:
                 return "source_changed"
             action["sources"] = sources
+            if target_kind != "entity":
+                verdict = judge_id_replace_action(
+                    object_id,
+                    action["target"],
+                    target_kind,
+                    target_exists(snapshot, target_kind, action["target"]),
+                    sources,
+                )
+                if verdict["verdict"] == "blocked":
+                    return "now_blocked"
+                if verdict["verdict"] == "review" and object_id not in context["acknowledged"]:
+                    return "needs_acknowledgement"
+                return None
             verdict_args = {"target": action["target"], "sources": sources}
         else:
             entry = er.async_get(self.hass).async_get(object_id)
@@ -1893,11 +2282,11 @@ class CleanupRunner:
                         {
                             "check": "not_recurring",
                             "object_id": object_id,
-                            "ok": not recurring,
+                            "ok": object_id not in recurring,
                         }
                     )
             elif kind in METER_KINDS:
-                checks.extend(await self._verify_meter(action))
+                checks.extend(await self._verify_meter(action, snapshot))
             elif kind in RENAME_KINDS:
                 registry = er.async_get(self.hass)
                 done = {
@@ -1921,10 +2310,36 @@ class CleanupRunner:
                 entry = self._area_entry(object_id)
                 ok = entry is not None and entry.area_id == action["target"]
                 checks.append({"check": "area_set", "object_id": object_id, "ok": ok})
+            elif kind in HELPER_KINDS:
+                gone = self.hass.config_entries.async_get_entry(object_id) is None
+                checks.append({"check": "helper_gone", "object_id": object_id, "ok": gone})
+            elif kind in HELPER_IMPORT_KINDS:
+                created = ((action.get("result") or {}).get("created") or {}).get("entry_id")
+                ok = (
+                    isinstance(created, str)
+                    and self.hass.config_entries.async_get_entry(created) is not None
+                )
+                checks.append({"check": "helper_created", "object_id": object_id, "ok": ok})
+            elif kind in RELOAD_KINDS:
+                checks.extend(self._verify_reload(object_id))
             elif kind in STATE_KINDS:
                 entry = registry.async_get(object_id)
                 ok = entry is not None and _state_reached(entry, action["target"])
                 checks.append({"check": "entity_state", "object_id": object_id, "ok": ok})
+            elif kind in EXPOSE_NEW_KINDS:
+                now = exposure_edit.expose_new(self.hass, object_id)
+                checks.append(
+                    {
+                        "check": "exposure_set",
+                        "object_id": object_id,
+                        "ok": now["exists"] and not now["on"],
+                    }
+                )
+            elif kind in EXPOSURE_KINDS:
+                ok = exposure_edit.reached(
+                    self.hass, object_id, action["target"], action["assistants"]
+                )
+                checks.append({"check": "exposure_set", "object_id": object_id, "ok": ok})
             elif kind in LABEL_KINDS:
                 entry = registry.async_get(object_id)
                 ok = entry is not None and action["target"] in entry.labels
@@ -1953,36 +2368,26 @@ class CleanupRunner:
                     gone = True
                 checks.append({"check": "automation_gone", "object_id": object_id, "ok": gone})
             elif kind in TRIM_KINDS:
+                at = (action.get("result") or {}).get("cutoff_at")
                 if trim_is_plain(action):
-                    older = await count_older(self.hass, [object_id], action["keep_days"])
+                    older = await count_older(self.hass, [object_id], action["keep_days"], at=at)
                     ok = older is not None and not older[object_id]["rows"]
                 else:
-                    found = await count_trim(
+                    trimmed = await count_trim(
                         self.hass,
                         object_id,
                         action.get("keep_days"),
                         action.get("range"),
                         action.get("tables") or ["states"],
+                        at=at,
                     )
-                    ok = found is not None and not found["rows"]
+                    ok = trimmed is not None and not trimmed["rows"]
                 checks.append({"check": "history_trimmed", "object_id": object_id, "ok": ok})
             elif kind in PURGE_KINDS:
                 gone = object_id not in await statistics_left(self.hass, [object_id])
                 checks.append({"check": "statistics_gone", "object_id": object_id, "ok": gone})
             else:
-                done = {
-                    s["source"] for s in action["result"]["sources"] if s.get("state") != "undone"
-                }
-                still = [
-                    e
-                    for e in snapshot["edges"]
-                    if e["source"] in done
-                    and e["target"] == f"entity:{object_id}"
-                    and e.get("confidence", "certain") == "certain"
-                ]
-                checks.append(
-                    {"check": "references_replaced", "object_id": object_id, "ok": not still}
-                )
+                checks.append(_references_check(action, snapshot))
         new_broken = [
             f["key"]
             for f in snapshot["findings"]
@@ -2017,7 +2422,9 @@ class CleanupRunner:
             "ok": ok and loaded_now,
         }
 
-    async def _verify_meter(self, action: dict[str, Any]) -> list[dict[str, Any]]:
+    async def _verify_meter(
+        self, action: dict[str, Any], snapshot: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         result, checks = action["result"], []
         object_id = action["object_id"]
         if (take := result.get("take_id")) and not take.get("partial"):
@@ -2044,6 +2451,11 @@ class CleanupRunner:
                 ok = bool(stats["verified"]) and len(rows) >= stats["imported"]
                 ok = ok and bool(rows) and rows[0]["start"] == stats["first"]
             checks.append({"check": "meter_statistics", "object_id": object_id, "ok": ok})
+        if result.get("mode") == METER_REFERENCE_MODE and action.get("sources"):
+            # References that were not rewritten (a stop after the statistics) fail the check.
+            check = _references_check(action, snapshot)
+            check["ok"] = check["ok"] and bool(result.get("sources")) and not result.get("stopped")
+            checks.append(check)
         return checks
 
     def _check_mode(self, plan: dict[str, Any], object_ids: list[str]) -> None:
@@ -2053,24 +2465,24 @@ class CleanupRunner:
         if not all(allows(mode, a) for a in plan["actions"] if a["object_id"] in wanted):
             raise CleanupError("protection_mode")
 
-    async def undo(self, plan_id: str, object_ids: list[str] | None) -> dict[str, Any]:
+    async def undo(
+        self, plan_id: str, object_ids: list[str] | None, user_id: str | None = None
+    ) -> dict[str, Any]:
         """Revert steps that are still exactly as Housekeeper left them."""
         if self.running:
             raise CleanupError("busy")
-        done = [
-            a
-            for a in self._plan(plan_id)["actions"]
-            if (a.get("result") or {}).get("state") == "done"
-            and (object_ids is None or a["object_id"] in object_ids)
-        ]
-        if not allows_undo(self.scanner.protection.mode, done):
+        if not allows_undo(self.scanner.protection.mode):
             raise CleanupError("protection_mode")
         try:
             acquire_write(self.hass, "undo")
         except WriteBusy as busy:
             raise CleanupError("busy") from busy
         try:
-            return await self._undo(plan_id, object_ids)
+            result = await self._undo(plan_id, object_ids)
+            self.scanner.activity.record(
+                "plan", "undo", _now(), key=plan_id, by=user_id, source="plan"
+            )
+            return result
         finally:
             release_write(self.hass, "undo")
 
@@ -2078,42 +2490,21 @@ class CleanupRunner:
         plan = self._plan(plan_id)
         registry = er.async_get(self.hass)
         results = []
-        for action in plan["actions"]:
+        # Newest step first: a later step may have changed a file this one left, which would look
+        # like a foreign change to the earlier one.
+        for action in reversed(plan["actions"]):
             result = action.get("result") or {}
             if result.get("state") != "done" or (
                 object_ids is not None and action["object_id"] not in object_ids
             ):
                 continue
             kind = action["kind"]
-            if kind == "remove_entity":
-                outcome = self._restore(registry, action["object_id"], result["restore"])
-            elif kind in {"remove_device", "forget_device"}:
-                outcome = self._restore_device(result["restore"])
-            elif kind == "disable_device":
-                outcome = self._reenable_device(action["object_id"], result)
-            elif kind in RENAME_KINDS:
-                outcome = await self._undo_rename(result)
-            elif kind in REFERENCE_KINDS | REFACTOR_KINDS:
-                outcome = await self._undo_references(result)
-            elif kind in METER_KINDS:
-                outcome = await self._undo_meter(result)
-            elif kind in AREA_KINDS:
-                outcome = self._unset_area(action["object_id"], result)
-            elif kind in STATE_KINDS:
-                outcome = self._undo_entity_state(registry, action["object_id"], result)
-            elif kind in LABEL_KINDS:
-                outcome = self._unlabel(registry, action["object_id"], result)
-            elif kind in REPAIR_KINDS:
-                try:
-                    outcome = await self._undo_counter(result)
-                except StepAbort as stop:
-                    outcome = stop.reason
-            elif kind in DELETE_AUTOMATION_KINDS:
-                outcome = await self._undo_automation_delete(result)
-            elif kind in PURGE_KINDS | TRIM_KINDS | DELETE_BACKUP_KINDS:
-                outcome = "irreversible"
-            else:
-                outcome = self._reenable(registry, action["object_id"], result)
+            try:
+                outcome = await self._undo_step(registry, action, result)
+            except Exception:
+                # One step that raises must not stop the rest, nor lose the journal save below.
+                _LOGGER.warning("Undoing %s failed", action["object_id"], exc_info=True)
+                outcome = "unknown_error"
             if outcome == "undone":
                 result["state"] = "undone"
                 result["undone_at"] = _now().isoformat()
@@ -2123,6 +2514,7 @@ class CleanupRunner:
                     object_id=action["object_id"],
                 )
             results.append({"object_id": action["object_id"], "outcome": outcome})
+        results.reverse()  # reported in plan order
         if any(r["outcome"] == "undone" for r in results):
             open_actions = [
                 a for a in plan["actions"] if (a.get("result") or {}).get("state") == "done"
@@ -2136,11 +2528,68 @@ class CleanupRunner:
                 await self.scanner.async_scan()
         return {"results": results, "status": plan["status"]}
 
+    async def _undo_step(
+        self, registry: Any, action: dict[str, Any], result: dict[str, Any]
+    ) -> str:
+        """Put one finished step back; the outcome is ``undone`` or the reason it was not."""
+        kind = action["kind"]
+        if kind == "remove_entity":
+            outcome = self._restore(registry, action["object_id"], result["restore"])
+        elif kind in {"remove_device", "forget_device"}:
+            outcome = self._restore_device(result["restore"])
+        elif kind == "disable_device":
+            outcome = self._reenable_device(action["object_id"], result)
+        elif kind in RENAME_KINDS:
+            outcome = await self._undo_rename(result)
+        elif kind in REFERENCE_KINDS | REFACTOR_KINDS:
+            outcome = await self._undo_references(result)
+            if outcome == "undone":
+                outcome = self._undo_disable_old(action["object_id"], result)
+            if outcome == "undone":
+                outcome = await self._undo_delete_old(action["object_id"], result)
+        elif kind in METER_KINDS:
+            outcome = await self._undo_meter(result)
+            if outcome == "undone":
+                outcome = self._undo_disable_old(action["object_id"], result)
+            if outcome == "undone":
+                outcome = await self._undo_delete_old(action["object_id"], result)
+        elif kind in AREA_KINDS:
+            outcome = self._unset_area(action["object_id"], result)
+        elif kind in STATE_KINDS:
+            outcome = self._undo_entity_state(registry, action["object_id"], result)
+        elif kind in EXPOSE_NEW_KINDS:
+            outcome = exposure_edit.undo_expose_new(self.hass, action["object_id"], result)
+        elif kind in EXPOSURE_KINDS:
+            outcome = exposure_edit.undo(self.hass, action["object_id"], result)
+        elif kind in LABEL_KINDS:
+            outcome = self._unlabel(registry, action["object_id"], result)
+        elif kind in REPAIR_KINDS:
+            try:
+                outcome = await self._undo_counter(result)
+            except StepAbort as stop:
+                outcome = stop.reason
+        elif kind in DELETE_AUTOMATION_KINDS:
+            outcome = await self._undo_automation_delete(result)
+        elif kind in HELPER_KINDS:
+            outcome = await self._undo_helper(result)
+        elif kind in HELPER_IMPORT_KINDS:
+            outcome = await self._undo_import(result)
+        elif kind in PURGE_KINDS | TRIM_KINDS | DELETE_BACKUP_KINDS | RELOAD_KINDS:
+            outcome = "irreversible"
+        else:
+            outcome = self._reenable(registry, action["object_id"], result)
+        return outcome
+
     async def _undo_meter(self, result: dict[str, Any]) -> str:
-        """Only the ID takeover can be undone; joined statistics need the backup."""
-        if not result.get("take_id"):
+        """Only the ID takeover or the references can be undone; statistics need the backup."""
+        if result.get("mode") == METER_REFERENCE_MODE:
+            if not result.get("sources"):
+                return "conflict_statistics"
+            outcome = await self._undo_references(result)
+        elif not result.get("take_id"):
             return "conflict_statistics"
-        outcome = await self._undo_take_id(result["take_id"])
+        else:
+            outcome = await self._undo_take_id(result["take_id"])
         if outcome == "undone" and result.get("statistics"):
             result["statistics_kept"] = True
         return outcome
@@ -2154,7 +2603,12 @@ class CleanupRunner:
         try:
             updated = registry.async_update_entity(old, new_entity_id=new)
         except Exception as err:
-            await self._undo_references(result)
+            if await self._undo_references(result) != "undone":
+                # A file that stays rewritten is journalled with the step, so a later undo can try.
+                raise StepAbort(
+                    "rollback_incomplete",
+                    {"before": before, "sources": result["sources"], "cause": "rename_failed"},
+                ) from err
             raise StepAbort("rename_failed") from err
         return {
             **result,
@@ -2188,7 +2642,7 @@ class CleanupRunner:
     async def _undo_references(self, result: dict[str, Any]) -> str:
         outcomes = [
             await self._revert_source(source)
-            for source in result["sources"]
+            for source in reversed(result["sources"])
             if source.get("state") != "undone"
         ]
         failed = [o for o in outcomes if o != "undone"]
@@ -2260,18 +2714,130 @@ class CleanupRunner:
         self._write_area(object_id, result.get("previous"))
         return "undone"
 
+    async def _remove_helper(self, action: dict[str, Any]) -> dict[str, Any]:
+        """Delete the config entry of a helper. What it held is noted in the journal; only the backup restores it."""
+        info = helper_info(self.hass, action["object_id"])
+        if not info.get("exists") or not info.get("helper") or info.get("own"):
+            raise StepAbort("now_blocked")
+        note = export_helper(self.hass, action["object_id"])
+        if note is None:
+            raise StepAbort("now_blocked")
+        try:
+            await self.hass.config_entries.async_remove(action["object_id"])
+        except Exception as err:
+            raise StepAbort("helper_remove_failed") from err
+        return {"removed": note}
+
+    async def _import_helper(self, action: dict[str, Any]) -> dict[str, Any]:
+        """Create the helper of an export file anew."""
+        try:
+            created = await create_helper(self.hass, action.get("helper") or {})
+        except HelperError as err:
+            raise StepAbort(
+                "helper_create_failed" if err.reason != "conflict_taken" else "now_blocked"
+            ) from err
+        return {"created": created}
+
+    async def _undo_import(self, result: dict[str, Any]) -> str:
+        """Delete the helper the import created."""
+        entry_id = (result.get("created") or {}).get("entry_id")
+        if not entry_id or self.hass.config_entries.async_get_entry(entry_id) is None:
+            return "conflict_gone"
+        try:
+            await self.hass.config_entries.async_remove(entry_id)
+        except Exception:
+            return "conflict_unrestorable"
+        return "undone"
+
+    async def _undo_helper(self, result: dict[str, Any]) -> str:
+        """Create the deleted helper anew from the note in the journal."""
+        try:
+            created = await create_helper(self.hass, result.get("removed") or {})
+        except HelperError as err:
+            return err.reason
+        result["restored"] = created
+        return "undone"
+
+    async def _reload_integration(self, action: dict[str, Any]) -> dict[str, Any]:
+        """Load the entry anew; whatever it does afterwards is what the verification reports.
+
+        A reload that takes too long is waited for no longer but not cancelled: stopping it half way would
+        leave the entry in a state nobody chose. Either way the step counts as done, so the verification
+        looks at the entry.
+        """
+        if not reload_info(self.hass, action["object_id"]).get("can_reload"):
+            raise StepAbort("now_blocked")
+        task = self.hass.async_create_task(
+            self.hass.config_entries.async_reload(action["object_id"]),
+            f"{DOMAIN} reload of {action['object_id']}",
+        )
+        _, pending = await asyncio.wait({task}, timeout=RELOAD_TIMEOUT)
+        if pending:
+            task.add_done_callback(
+                lambda t: t.cancelled() or t.exception()
+            )  # nobody awaits it any more
+            raise StepAbort("integration_reload_timeout", {"irreversible": True})
+        if task.exception() is not None:  # whatever the integration raises ends the plan
+            raise StepAbort("integration_reload_failed", {"irreversible": True})
+        return {"irreversible": True}
+
+    def _verify_reload(self, entry_id: str) -> list[dict[str, Any]]:
+        """Is the entry loaded again, and do its entities report values?"""
+        entry = self.hass.config_entries.async_get_entry(entry_id)
+        state = entry.state.value if entry else "gone"
+        checks = [
+            {
+                "check": "entry_loaded",
+                "object_id": entry_id,
+                "ok": state == "loaded",
+                "state": state,
+            }
+        ]
+        if state != "loaded" and entry is not None:
+            wants_login = any(
+                (flow.get("context") or {}).get("source") == "reauth"
+                and (flow.get("context") or {}).get("entry_id") == entry_id
+                for flow in self.hass.config_entries.flow.async_progress_by_handler(entry.domain)
+            )
+            if wants_login:
+                checks.append({"check": "entry_reauth", "object_id": entry_id, "ok": False})
+        if state == "loaded":
+            ids = [
+                e.entity_id
+                for e in er.async_entries_for_config_entry(er.async_get(self.hass), entry_id)
+                if e.disabled_by is None
+            ]
+            live = [
+                i
+                for i in ids
+                if (s := self.hass.states.get(i)) is not None
+                and s.state not in ("unavailable", "unknown")
+            ]
+            checks.append(
+                {
+                    "check": "entities_report",
+                    "object_id": entry_id,
+                    "ok": bool(live) or not ids,
+                    "count": len(live),
+                    "of": len(ids),
+                }
+            )
+        return checks
+
     def _set_entity_state(self, action: dict[str, Any]) -> dict[str, Any]:
         registry = er.async_get(self.hass)
         entry = registry.async_get(action["object_id"])
         if entry is None:
             raise StepAbort("entity_gone")
-        changes = {
+        field_changes: dict[str, Any] = {
             "disable": {"disabled_by": er.RegistryEntryDisabler.USER},
             "enable": {"disabled_by": None},
             "hide": {"hidden_by": er.RegistryEntryHider.USER},
             "unhide": {"hidden_by": None},
-        }[action["target"]]
-        updated = registry.async_update_entity(action["object_id"], **changes)
+        }
+        updated = registry.async_update_entity(
+            action["object_id"], **field_changes[action["target"]]
+        )
         return {
             "before": registry_fingerprint(entry),
             "after": registry_fingerprint(updated),
@@ -2280,6 +2846,11 @@ class CleanupRunner:
                 "hidden_by": _value(entry.hidden_by),
             },
         }
+
+    def _set_exposure(self, action: dict[str, Any]) -> dict[str, Any]:
+        return exposure_edit.apply(
+            self.hass, action["object_id"], action["target"], action["assistants"]
+        )
 
     @staticmethod
     def _undo_entity_state(registry: Any, object_id: str, result: dict[str, Any]) -> str:

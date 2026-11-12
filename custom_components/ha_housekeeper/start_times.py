@@ -44,7 +44,7 @@ def process_started() -> float | None:
 
 def integration_rows(hass: HomeAssistant) -> list[dict[str, Any]]:
     """Every integration with its setup time and the state of its entries, slowest first."""
-    timings = dict(async_get_setup_timings(hass)) if async_get_setup_timings else {}
+    timings = dict(async_get_setup_timings(hass)) if callable(async_get_setup_timings) else {}
     entries: dict[str, list[Any]] = {}
     for entry in hass.config_entries.async_entries():
         entries.setdefault(entry.domain, []).append(entry)

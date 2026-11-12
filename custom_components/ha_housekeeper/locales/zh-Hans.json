@@ -1,0 +1,96 @@
+{
+ "audit_report.TEXTS": {
+  "title": "清理计划审计报告",
+  "overview": "概览",
+  "plan": "计划",
+  "created": "创建时间",
+  "scan": "基于扫描",
+  "status": "状态",
+  "confirmed": "已确认",
+  "by": "确认人",
+  "run": "已执行",
+  "backup": "备份",
+  "no_backup": "无需备份，也未创建备份",
+  "backup_skipped": "已有意跳过",
+  "simulation": "预期最终状态",
+  "actions": "操作",
+  "verification": "验证",
+  "undo": "撤销",
+  "manual": "需手动处理",
+  "followup": "后续检查",
+  "events": "过程",
+  "none": "无",
+  "anonymized": "本报告中的 ID 和名称已替换为占位符。",
+  "removed": "已移除的实体",
+  "disabled": "已禁用的实体",
+  "replaced": "已替换的引用",
+  "remaining_certain": "仍存在的确定使用",
+  "remaining_uncertain": "仍存在的不确定使用",
+  "orphaned": "可能变为孤立的统计",
+  "blocked": "无法执行的操作",
+  "purge_rows": "清除将删除的记录器行数",
+  "history_rows_kept": "保留在数据库中的历史行（状态保留至记录器清除，长期统计永久保留）",
+  "limits": "限制：模板内以及 Home Assistant 之外的引用无法可靠检查；不估算已节省的存储空间。",
+  "state": "状态",
+  "result": "结果",
+  "ok": "正常",
+  "failed": "失败"
+ },
+ "auto_pause.TEXTS": {
+  "paused": [
+   "HA Housekeeper：{title} 已暂停",
+   "{title}（{domain}）已暂停：{why}。Housekeeper 会再尝试 {n} 次，最长 {days} 天。[打开自动暂停](/{url}?view=reliability&tab=autopause)"
+  ],
+  "why_auto": "{hours} 小时内失败 {n} 次",
+  "why_manual": "由你暂停",
+  "back": [
+   "HA Housekeeper：{title} 已恢复",
+   "{title}（{domain}）在 {span} 后已自行重新设置，不再暂停。"
+  ],
+  "ended": [
+   "HA Housekeeper：{title} 的暂停已结束",
+   "{title}（{domain}）不再暂停。"
+  ],
+  "exhausted": [
+   "HA Housekeeper：{title} 已暂停 {days} 天",
+   "{title}（{domain}）在 {days} 天内无法完成设置。请检查：日志、集成更新、来源本身。[打开自动暂停](/{url}?view=reliability&tab=autopause)"
+  ]
+ },
+ "monitor.MONITOR_REASONS": {
+  "missing": "对象缺失",
+  "disabled": "已禁用",
+  "orphaned": "孤立",
+  "unavailable": "不可用",
+  "problem": "集成未加载",
+  "source_unread": "来源未读取",
+  "scan_unverified": "扫描不可靠",
+  "automation.blocked": "自动化被阻止",
+  "automation.dead_actions": "自动化操作含失效引用",
+  "automation.dead_condition": "自动化条件含失效引用",
+  "broken_reference": "失效引用",
+  "stopped": "应用已停止",
+  "rule_stale": "未及时更新",
+  "rule_below_min": "低于最小值",
+  "rule_unavailable_long": "不可用时间过长",
+  "rule_waiting": "宽限期进行中",
+  "rule_no_value": "无数值",
+  "rule_no_timestamp": "更新时间未知"
+ },
+ "monitor.MONITOR_TEXTS": {
+  "uncertain_open": "检查不完整；最近确认的故障（{last_reason}）仍未解决。",
+  "uncertain": "检查不完整。",
+  "impaired": "重要功能受损：{reason}",
+  "link": "打开家庭功能"
+ },
+ "notify.TEXTS": [
+  "HA Housekeeper：新的失效引用",
+  "新增 {count} 个失效引用：{names}。[打开所有失效引用](/{url}?view=findingsNav&filter=broken_reference)"
+ ],
+ "cleanup_exec.LOGBOOK_DEVICE": [
+  "设备“{}”{}",
+  [
+   "已遗忘",
+   "已移除"
+  ]
+ ]
+}

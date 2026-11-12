@@ -29,6 +29,8 @@ def _majority(counter: Counter[str], total: int, share: float) -> str | None:
 
 def suggest(hass: HomeAssistant, object_id: str) -> str | None:
     """The area a device or an entity most likely belongs to, or ``None`` without a safe guess."""
+    from .inventory import _registry_entries
+
     entities, devices = er.async_get(hass), dr.async_get(hass)
     if "." in object_id:
         entry = entities.async_get(object_id)
@@ -53,7 +55,7 @@ def suggest(hass: HomeAssistant, object_id: str) -> str | None:
         return None
     siblings = Counter(
         d.area_id
-        for d in devices.devices.values()
+        for d in _registry_entries(devices.devices)
         if d.id != device.id
         and d.area_id
         and domains & {e.platform for e in er.async_entries_for_device(entities, d.id)}

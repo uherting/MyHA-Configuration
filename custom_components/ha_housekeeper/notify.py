@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
 from .const import DOMAIN, NOTIFY_STORAGE_KEY, PANEL_URL, STORAGE_VERSION
-from .texts import pick
+from .texts import localize, pick
 
 SAVE_DELAY = 10
 SEEN_LIMIT = 500
@@ -29,6 +29,7 @@ TEXTS = {
         "{count} new broken reference(s): {names}. [Open all broken references](/{url}?view=findingsNav&filter=broken_reference)",
     ),
 }
+localize("notify.TEXTS", TEXTS)
 
 
 def broken(findings: list[dict[str, Any]]) -> list[dict[str, Any]]:

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Notification History",
+        "description": "Garde les notifications envoyées par Home Assistant (téléphones, tablettes, enceintes, e-mail…). Les notifications passées encore présentes dans le recorder sont importées une fois.",
+        "data": {
+          "targets": "Cibles enregistrées",
+          "max_days": "Conserver pendant (jours)",
+          "max_count": "Conserver au plus (notifications)",
+          "logbook": "Écrire aussi une ligne dans le journal"
+        },
+        "data_description": {
+          "targets": "Laisser vide pour enregistrer toutes les cibles notify, sauf celles qui écrivent dans un journal ou un fichier."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Notification History est déjà configuré."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Notification History",
+        "data": {
+          "targets": "Cibles enregistrées",
+          "max_days": "Conserver pendant (jours)",
+          "max_count": "Conserver au plus (notifications)",
+          "logbook": "Écrire aussi une ligne dans le journal"
+        },
+        "data_description": {
+          "targets": "Laisser vide pour enregistrer toutes les cibles notify, sauf celles qui écrivent dans un journal ou un fichier."
+        }
+      }
+    }
+  },
+  "services": {
+    "clear": {
+      "name": "Vider l'historique",
+      "description": "Supprime les notifications enregistrées.",
+      "fields": {
+        "target": {
+          "name": "Cible",
+          "description": "Seulement cette cible (par exemple notify.mobile_app_mon_telephone). Laisser vide pour tout effacer."
+        }
+      }
+    }
+  }
+}

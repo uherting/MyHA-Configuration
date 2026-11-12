@@ -16,12 +16,14 @@ from .const import (
     CONF_OUTAGE_LOW_HOURS,
     CONF_OUTAGE_MEDIUM_HOURS,
     CONF_SCAN_INTERVAL_HOURS,
+    CONF_SHOW_IN_SIDEBAR,
     CONF_STALE_HOURS,
     CONF_UNUSED_AUTOMATION_DAYS,
     CONF_WATCH_HOURS,
     DEFAULT_HISTORY_DAYS,
     DEFAULT_LOW_BATTERY_PERCENT,
     DEFAULT_SCAN_INTERVAL_HOURS,
+    DEFAULT_SHOW_IN_SIDEBAR,
     DEFAULT_STALE_HOURS,
     DEFAULT_UNUSED_AUTOMATION_DAYS,
     DEFAULT_WATCH_HOURS,
@@ -65,6 +67,13 @@ class HAHousekeeperOptionsFlow(OptionsFlow):
         schema = vol.Schema(
             dict(
                 [
+                    (
+                        vol.Required(
+                            CONF_SHOW_IN_SIDEBAR,
+                            default=options.get(CONF_SHOW_IN_SIDEBAR, DEFAULT_SHOW_IN_SIDEBAR),
+                        ),
+                        bool,
+                    ),
                     field(CONF_OUTAGE_INFO_MINUTES, options[CONF_OUTAGE_INFO_MINUTES]),
                     field(CONF_OUTAGE_LOW_HOURS, options[CONF_OUTAGE_LOW_HOURS]),
                     field(CONF_OUTAGE_MEDIUM_HOURS, options[CONF_OUTAGE_MEDIUM_HOURS]),

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import copy
 import json
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.components.automation.config import async_validate_config_item
 from homeassistant.core import HomeAssistant
@@ -19,7 +19,14 @@ from homeassistant.helpers.storage import Store
 from .const import REFACTOR_STORAGE_KEY, STORAGE_VERSION
 from .references import MAX_LISTED, SourceError, load_source, text_hash
 
-FIXES = ("add_description", "remove_duplicate_triggers", "set_timeout", "set_mode")
+FIXES = (
+    "add_description",
+    "remove_duplicate_triggers",
+    "set_timeout",
+    "set_mode",
+    "remove_reference",
+    "continue_on_error",
+)
 DESCRIPTION_MAX = 300
 TIMEOUT_MAX = 86400  # seconds
 MODES = ("single", "restart", "queued", "parallel")
@@ -28,6 +35,8 @@ DEFAULT_MAX = 10  # what Home Assistant uses for queued and parallel without a v
 TRIGGER_KEYS = ("triggers", "trigger")
 ACTION_KEYS = ("actions", "action")
 WAITS = ("wait_template", "wait_for_trigger")
+TARGET_KEYS = ("entity_id", "device_id", "area_id", "floor_id", "label_id")
+REFERENCE_MAX = 255
 LONG_DELAY = 300  # seconds; a delay at least this long is lost when Home Assistant restarts
 # Hints name something worth a look but are never written: a change would alter what the automation does.
 HINTS = ("hint_device_trigger", "hint_long_delay", "hint_dead_branch")
@@ -84,7 +93,18 @@ def _walk(steps: Any, prefix: str):
         yield from _walk(step.get("then"), f"{base}/then")
         yield from _walk(step.get("else"), f"{base}/else")
         yield from _walk(step.get("sequence"), f"{base}/sequence")
-        yield from _walk(step.get("parallel"), f"{base}/parallel")
+        for number, option in enumerate(
+            step["parallel"] if isinstance(step.get("parallel"), list) else []
+        ):
+            if not isinstance(option, dict):
+                continue
+            where = f"{base}/parallel/{number}"
+            if isinstance(option.get("sequence"), list):
+                yield where, option
+                yield from _walk(option["sequence"], f"{where}/sequence")
+            else:
+                # A single step: Home Assistant runs it as a sequence of one, and its trace says so.
+                yield from _walk([option], f"{where}/sequence")
         if isinstance(step.get("repeat"), dict):
             yield from _walk(step["repeat"].get("sequence"), f"{base}/repeat/sequence")
 
@@ -185,9 +205,64 @@ def dead_branches(item: dict[str, Any], known: set[str]) -> list[tuple[str, list
     return found
 
 
+def removable_references(item: dict[str, Any], reference: str) -> list[dict[str, Any]]:
+    """Target lists of service calls that name ``reference`` next to at least one other target.
+
+    Only the actions are searched, and only the steps that call a service: a trigger, a condition or a
+    condition step would change when the automation runs. A list that holds nothing but the reference stays,
+    because an empty target would call the service on everything.
+    """
+    key = _action_key(item)
+    found: list[dict[str, Any]] = []
+    for path, step in _walk(item[key] if key else [], key or "action"):
+        if "action" not in step and "service" not in step:
+            continue
+        for where, holder in (
+            ("target", step.get("target")),
+            ("data", step.get("data")),
+            ("", step),
+        ):
+            if not isinstance(holder, dict):
+                continue
+            for name in TARGET_KEYS:
+                value = holder.get(name)
+                if isinstance(value, list):
+                    tokens = value
+                elif isinstance(value, str) and "," in value and "{{" not in value:
+                    tokens = [token.strip() for token in value.split(",")]
+                else:
+                    continue
+                if reference in tokens and any(token != reference for token in tokens):
+                    found.append(
+                        {
+                            "path": "/".join(part for part in (path, where, name) if part),
+                            "holder": holder,
+                            "name": name,
+                            "tokens": tokens,
+                            "as_text": isinstance(value, str),
+                        }
+                    )
+    return found
+
+
+def action_step(item: dict[str, Any], path: str) -> dict[str, Any] | None:
+    """The service call at ``path`` as Home Assistant's trace names it (``action/2``), or None.
+
+    Only a step that calls a service qualifies: a condition, a wait or a delay does not fail the way the
+    option is for.
+    """
+    key = _action_key(item)
+    if key is None:
+        return None
+    for found, step in _walk(item[key], key):
+        if "action" + found[len(key) :] == path and ("action" in step or "service" in step):
+            return step
+    return None
+
+
 def current_mode(item: dict[str, Any]) -> tuple[str, int | None]:
     """The mode of the automation and, for queued and parallel, its limit."""
-    mode = item.get("mode") if item.get("mode") in MODES else "single"
+    mode = cast(str, item["mode"]) if item.get("mode") in MODES else "single"
     return mode, (item.get("max", DEFAULT_MAX) if mode in ("queued", "parallel") else None)
 
 
@@ -249,12 +324,15 @@ def apply(
         ordered.setdefault("description", text)
         return ordered, [{"path": "description", "before": None, "after": text}]
     if fix == "remove_duplicate_triggers":
-        key = _trigger_key(new)
+        trigger_key = _trigger_key(new)
         positions = duplicates(new)
-        if key is None or not positions:
+        if trigger_key is None or not positions:
             raise ValueError("nothing_to_do")
-        diff = [{"path": f"{key}/{i}", "before": new[key][i], "after": None} for i in positions]
-        new[key] = [t for i, t in enumerate(new[key]) if i not in positions]
+        diff = [
+            {"path": f"{trigger_key}/{i}", "before": new[trigger_key][i], "after": None}
+            for i in positions
+        ]
+        new[trigger_key] = [t for i, t in enumerate(new[trigger_key]) if i not in positions]
         return new, diff
     if fix == "set_timeout":
         timeout, keep = values.get("timeout"), values.get("continue_on_timeout", True)
@@ -267,8 +345,9 @@ def apply(
         paths = waits_without_timeout(new)
         if not paths:
             raise ValueError("nothing_to_do")
-        key = _action_key(new)
-        steps = dict(_walk(new[key], key))
+        action_key = _action_key(new)
+        assert action_key is not None  # a wait without a timeout was found in it
+        steps = dict(_walk(new[action_key], action_key))
         diff = []
         for path in paths:
             steps[path]["timeout"] = timeout
@@ -300,13 +379,43 @@ def apply(
                 else []
             ),
         ]
+    if fix == "remove_reference":
+        reference = values.get("reference")
+        if not isinstance(reference, str) or not 1 <= len(reference) <= REFERENCE_MAX:
+            raise ValueError("invalid_fix")
+        found = removable_references(new, reference)
+        if not found:
+            raise ValueError("nothing_to_do")
+        diff = []
+        for place in found:
+            rest = [token for token in place["tokens"] if token != reference]
+            place["holder"][place["name"]] = ", ".join(rest) if place["as_text"] else rest
+            diff.append({"path": place["path"], "before": place["tokens"], "after": rest})
+        return new, diff
+    if fix == "continue_on_error":
+        step_path = values.get("path")
+        step = (
+            action_step(new, step_path)
+            if isinstance(step_path, str) and len(step_path) <= REFERENCE_MAX
+            else None
+        )
+        if step is None:
+            raise ValueError("invalid_fix")
+        if step.get("continue_on_error") is True:
+            raise ValueError("nothing_to_do")
+        was = step.get("continue_on_error")
+        step["continue_on_error"] = True
+        return new, [{"path": f"{step_path}/continue_on_error", "before": was, "after": True}]
     raise ValueError("invalid_fix")
 
 
 def applied(item: dict[str, Any], fix: str, values: dict[str, Any]) -> bool:
     """Whether the edit is in this configuration (checked after it was written)."""
     if fix == "add_description":
-        return str(item.get("description") or "").strip() == values.get("description")
+        return (
+            str(item.get("description") or "").strip()
+            == str(values.get("description") or "").strip()
+        )
     if fix == "remove_duplicate_triggers":
         return not duplicates(item)
     if fix == "set_timeout":
@@ -316,6 +425,11 @@ def applied(item: dict[str, Any], fix: str, values: dict[str, Any]) -> bool:
         return mode == values.get("mode") and (
             mode not in ("queued", "parallel") or limit == values.get("max", DEFAULT_MAX)
         )
+    if fix == "remove_reference":
+        return not removable_references(item, values.get("reference") or "")
+    if fix == "continue_on_error":
+        step = action_step(item, values.get("path") or "")
+        return step is not None and step.get("continue_on_error") is True
     return False
 
 

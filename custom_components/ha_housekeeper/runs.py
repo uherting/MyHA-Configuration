@@ -97,7 +97,7 @@ def aggregate(
         day = days.setdefault(start.date().isoformat(), {"c": [0] * FIELDS})
         counters = day["c"]
         counters[RUNS] += 1
-        outcome = _OUTCOME.get(head.get("script_execution"))
+        outcome = _OUTCOME.get(str(head.get("script_execution")))
         if outcome is not None:
             counters[outcome] += 1
         if head.get("script_execution") == "finished":

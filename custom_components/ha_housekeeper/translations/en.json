@@ -17,6 +17,7 @@
         "title": "HA Housekeeper options",
         "description": "An outage becomes a finding after the first threshold and rises with its duration: info, low, medium, high. The thresholds must rise. Automations that are switched off or never run for the given number of days are reported as unused. Regular scans keep the history and the repair hints current; outages are followed by extra scans.",
         "data": {
+          "show_in_sidebar": "Show sidebar entry",
           "outage_info_minutes": "Report an outage as info after (minutes)",
           "outage_low_hours": "Report an outage as low after (hours)",
           "outage_medium_hours": "Report an outage as medium after (hours)",
@@ -29,6 +30,7 @@
           "watch_hours": "Watch after updates (hours, 0 = off)"
         },
         "data_description": {
+          "show_in_sidebar": "Shows Housekeeper in the sidebar. Off: the panel stays reachable from the integration page and at /ha-housekeeper.",
           "outage_info_minutes": "An entity or integration that is down this long becomes an info finding.",
           "outage_low_hours": "From this duration the outage is a low finding.",
           "outage_medium_hours": "From this duration the outage is a medium finding and counts in the sensors.",
@@ -85,6 +87,10 @@
     "auto_pause_exhausted": {
       "title": "{title} paused for {days} days",
       "description": "Housekeeper paused {title} after repeated failed setups and has tried it again for {days} days without success. It stays paused until you end the pause. [Open Auto-pause]({link})"
+    },
+    "check_flapping": {
+      "title": "A check keeps changing its level",
+      "description": "{count} check(s) changed their level several times in a few hours. That often means a rule is too sharp or something restarts all the time. [Open the history]({link}). Nothing is changed automatically."
     }
   },
   "entity": {
@@ -109,6 +115,9 @@
       },
       "low_batteries": {
         "name": "Low batteries"
+      },
+      "new_findings": {
+        "name": "New findings"
       },
       "last_scan": {
         "name": "Last scan"
@@ -182,6 +191,9 @@
       },
       "hint_orphaned_statistics": {
         "name": "Repair hint: orphaned statistics"
+      },
+      "hint_check_flapping": {
+        "name": "Repair hint: a check keeps changing"
       }
     },
     "number": {
@@ -235,6 +247,10 @@
         "classification": {
           "name": "State",
           "description": "Only this state, e.g. unavailable, unknown, stale or broken_reference."
+        },
+        "topic": {
+          "name": "Topic",
+          "description": "Only this topic: down, broken_references, failing_automations or unneeded."
         },
         "object_type": {
           "name": "Object type",
@@ -290,6 +306,16 @@
         }
       }
     },
+    "finding_fix_options": {
+      "name": "AI access: ways to fix a finding",
+      "description": "Names the ways to fix one finding, the recommended one first (replace a missing target, open the editor, wait, look at the integration and the like). Only names them: nothing is changed, and a way that writes runs in the panel as a plan with preview and confirmation. Needs \"AI access\" to be switched on. Get the key from \"findings\".",
+      "fields": {
+        "key": {
+          "name": "Finding key",
+          "description": "The key of the finding, as listed by \"findings\"."
+        }
+      }
+    },
     "finding_decide": {
       "name": "AI access: decide about a finding",
       "description": "Hides, keeps or puts off one finding in Housekeeper, or shows it again. Only Housekeeper's own list changes, never Home Assistant; the change can be taken back with \"undo\" or in the panel. Needs \"AI access\" and \"Change the list\" to be switched on. Get the key from \"findings\".",
@@ -300,11 +326,11 @@
         },
         "action": {
           "name": "Action",
-          "description": "decide to hide, keep or put off, restore to show it again."
+          "description": "decide to mark as “False alarm”, “Intended” or “Later”, restore to show it again."
         },
         "kind": {
           "name": "Decision",
-          "description": "ignore hides it for good, keep says it is meant to be so (needs a reason), snooze puts it off (needs days)."
+          "description": "ignore says “False alarm”, keep says “Intended” (needs a reason), snooze says “Later” (needs days)."
         },
         "reason": {
           "name": "Reason",
@@ -312,13 +338,13 @@
         },
         "days": {
           "name": "Days",
-          "description": "How long a snooze or another decision holds, 1 to 3650."
+          "description": "How long “Later” or another decision holds, 1 to 3650."
         }
       }
     },
     "mark": {
-      "name": "AI access: mark an object",
-      "description": "Tells Housekeeper what to expect of an object (offline on purpose, seasonal, a spare, keep, replaced), or takes the mark away. Only Housekeeper's own list changes; the change can be taken back. Needs \"AI access\" and \"Change the list\" to be switched on.",
+      "name": "AI access: set an object note",
+      "description": "Tells Housekeeper what to expect of an object (offline on purpose, seasonal, a spare, do not delete, replaced), or takes the object note away. Only Housekeeper's own list changes; the change can be taken back. Needs \"AI access\" and \"Change the list\" to be switched on.",
       "fields": {
         "action": {
           "name": "Action",
@@ -333,7 +359,7 @@
           "description": "The id of the object."
         },
         "kind": {
-          "name": "Mark",
+          "name": "Kind of object note",
           "description": "expected_offline, seasonal, spare, keep or replaced. Integrations and apps accept only the first three."
         },
         "reason": {
@@ -342,7 +368,7 @@
         },
         "days": {
           "name": "Days",
-          "description": "Until when the mark holds, 1 to 3650. Without it the mark has no end."
+          "description": "Until when the object note holds, 1 to 3650. Without it the object note has no end."
         },
         "target": {
           "name": "Replacement",
@@ -383,6 +409,24 @@
         "at": {
           "name": "Time of the entry",
           "description": "The \"at\" of the log entry."
+        }
+      }
+    },
+    "finding_fix_plan": {
+      "name": "AI access: create a plan to fix a finding",
+      "description": "Creates the plan for one way to fix a finding (replace a missing target, remove a reference, catch an error, clean up an unneeded object). The plan is only a preview: it is not run. An administrator reviews and confirms it in the Housekeeper panel. Needs \"AI access\" and \"Fix findings\" to be switched on. Get the key and the ways from \"finding_fix_options\".",
+      "fields": {
+        "key": {
+          "name": "Finding key",
+          "description": "The key of the finding."
+        },
+        "way": {
+          "name": "Way",
+          "description": "The way from \"finding_fix_options\": replace_target, remove_reference, catch_error or cleanup_round."
+        },
+        "target": {
+          "name": "New target",
+          "description": "For replace_target: the entity, area, floor or label that takes the place of the missing one."
         }
       }
     }
@@ -428,19 +472,43 @@
       "message": "A decision needs a reason."
     },
     "days_required": {
-      "message": "Putting a finding off needs a number of days."
+      "message": "“Later” needs a number of days."
+    },
+    "days_required_critical": {
+      "message": "This object is critical: “Intended” needs a number of days after which it is shown again."
     },
     "finding_not_found": {
       "message": "The finding is not in the latest scan. Take the key from \"findings\"."
     },
     "kind_not_allowed": {
-      "message": "This kind of mark is not allowed for this object."
+      "message": "This kind of object note is not allowed for this object."
     },
     "target_unknown": {
       "message": "The replacement is not in the latest scan."
     },
     "too_many": {
       "message": "The list is full."
+    },
+    "fix_disabled": {
+      "message": "Creating plans for fixes is switched off. Switch on “Fix findings” in the Housekeeper settings."
+    },
+    "way_not_offered": {
+      "message": "That way is not offered for this finding. Ask finding_fix_options for the ways."
+    },
+    "target_required": {
+      "message": "This way needs the new target in \"target\"."
+    },
+    "refactor_disabled": {
+      "message": "This way needs “Improve” to be switched on in the Housekeeper panel."
+    },
+    "no_last_failure": {
+      "message": "There is no failed run in the trace buffer of Home Assistant to take the step from."
+    },
+    "way_not_plannable": {
+      "message": "This way cannot be made a plan; it is for the panel."
+    },
+    "plan_blocked": {
+      "message": "The plan is blocked: {detail}."
     }
   }
 }

@@ -82,3 +82,11 @@ def retryable_gaps(report: list[dict[str, Any]]) -> list[str]:
         for item in report
         if item["state"] in GAPS and item.get("reason") not in PERMANENT_REASONS
     ]
+
+
+def picture_complete(unchecked: set[str], report: list[dict[str, Any]]) -> bool:
+    """Whether a scan saw everything it can see, so what it did not find is really gone.
+
+    Sources that were not set up at all (absent) or are known to be out of reach for good do not count.
+    """
+    return not unchecked and not retryable_gaps(report)

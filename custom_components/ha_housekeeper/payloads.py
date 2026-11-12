@@ -183,6 +183,16 @@ class StatisticsLastResult(TypedDict):
     rows: dict[str, int]  # statistic_id -> number of hourly rows
 
 
+class StatisticDetailResult(TypedDict):
+    available: bool
+    busy: bool
+    meta: (
+        dict[str, Any] | None
+    )  # source, unit, unit_class, has_sum, has_mean; None without a metadata row
+    tables: dict[str, Any]  # statistics, short_term, states -> rows, first, last (epoch seconds)
+    origin: dict[str, Any]  # kind (entity_removed, integration_removed, unknown), platform, since
+
+
 class PolicyItem(TypedDict):
     object_type: str
     object_id: str
@@ -190,6 +200,10 @@ class PolicyItem(TypedDict):
     key: str  # the key for the ignore list
     ignored: bool
     by: str | None  # "label", "rule", "user" or None
+    ignore_info: NotRequired[
+        dict[str, Any] | None
+    ]  # the decision that hides it (kind, reason, until, ...)
+    resurfaced: NotRequired[bool]  # a decision ran out, so it is back and wants a new look
     also: NotRequired[list[str]]  # duplicate_name: the other entities with the same name
     expected: NotRequired[str]  # naming_scheme: the prefix the id should start with
     rate: NotRequired[int]  # state_rate: state changes per day
@@ -251,7 +265,7 @@ class Note(TypedDict):
     at: str  # ISO time with zone
     target: str
     note: str
-    source: str  # "me" or "housekeeper" (suggested after an action, accepted by the person)
+    source: str  # "me", "housekeeper" (suggested after an action, accepted by the person) or "agent" (the service)
     ref: str  # the plan an entry of source "housekeeper" came from
 
 

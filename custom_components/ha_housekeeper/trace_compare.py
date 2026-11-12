@@ -30,7 +30,7 @@ async def list_runs(hass: HomeAssistant, key: str) -> list[dict[str, Any]]:
     """The runs Home Assistant still has of one automation, newest first (short heads only)."""
     from homeassistant.components.trace.util import async_list_traces  # noqa: PLC0415
 
-    heads = await async_list_traces(hass, "automation", key.split(".", 1)[1])
+    heads = await async_list_traces(hass, "automation", key)
     runs = []
     for head in heads:
         if head.get("not_triggered") or head.get("state") != "stopped":

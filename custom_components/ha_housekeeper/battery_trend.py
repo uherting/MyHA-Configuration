@@ -137,7 +137,7 @@ def read_series(
     result: dict[str, list[tuple[float, float]]] = {}
     for entity_id, rows in raw.items():
         points = [
-            (float(row["start"]), float(row["mean"]))
+            (float(row["start"] or 0), float(row["mean"] or 0))
             for row in rows
             if row.get("mean") is not None and row.get("start") is not None
         ]

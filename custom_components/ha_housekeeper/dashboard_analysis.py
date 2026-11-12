@@ -10,6 +10,11 @@ from typing import Any
 
 ENTITY_ID = re.compile(r"^[a-z0-9_]+\.[a-z0-9_]+$")
 ENTITY_IN_TEXT = re.compile(r"\b([a-z0-9_]+\.[a-z0-9_]+)\b")
+# An entity a template names unmistakably: as the first argument of a state function or as `states.domain.name`.
+TEMPLATE_CALL = re.compile(
+    r"""\b(?:states|is_state|state_attr|is_state_attr|has_value|state_translated)\(\s*['"]([a-z0-9_]+\.[a-z0-9_]+)['"]"""
+    r"""|\bstates\.([a-z0-9_]+\.[a-z0-9_]+)\b"""
+)
 # Keys whose string values (or lists of strings) name entities in standard cards.
 ENTITY_KEYS = frozenset({"entity", "entities", "entity_id", "camera_image", "badges"})
 
@@ -26,8 +31,12 @@ def extract_entity_references(
     known_entities: set[str],
     keys: frozenset[str],
     relation: str,
+    named_in_templates: bool = False,
 ) -> list[dict[str, str]]:
     """Return entity references found under ``keys`` with their location.
+
+    With ``named_in_templates`` an entity a template names unmistakably (``states('x.y')``,
+    ``states.x.y``) is also reported when it does not exist, as ``probable``.
 
     Explicit entity keys are ``certain``. Entity IDs inside templates are only
     reported as ``probable`` and only when the entity exists, so free text can
@@ -67,6 +76,11 @@ def extract_entity_references(
                 for match in ENTITY_IN_TEXT.findall(value):
                     if match in known_entities:
                         add(match, path, "probable")
+                if named_in_templates:
+                    for call in TEMPLATE_CALL.findall(value):
+                        named = call[0] or call[1]
+                        if named not in known_entities:
+                            add(named, path, "probable")
 
     walk(config, "", None)
     return found
@@ -78,6 +92,7 @@ HELPER_DOMAINS = frozenset(
         "template", "derivative", "integration", "min_max", "threshold", "utility_meter",
         "statistics", "trend", "filter", "history_stats", "switch_as_x", "compensation",
         "generic_hygrostat", "generic_thermostat", "bayesian", "mold_indicator",
+        "group", "random", "tod",
     }
 )  # fmt: skip
 HELPER_KEYS = frozenset(
@@ -101,7 +116,9 @@ def extract_helper_references(
     options: Mapping[str, Any] | None, known_entities: set[str]
 ) -> list[dict[str, str]]:
     """Return the entities a helper config entry is built on."""
-    return extract_entity_references(options, known_entities, HELPER_KEYS, "REFERENCES")
+    return extract_entity_references(
+        options, known_entities, HELPER_KEYS, "REFERENCES", named_in_templates=True
+    )
 
 
 CARD_LISTS = ("cards", "card", "elements")

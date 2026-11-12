@@ -6,6 +6,7 @@ objects that break the rule. Several rules are heuristics; their texts in the pa
 
 from __future__ import annotations
 
+import json
 import re
 from collections.abc import Iterable
 from datetime import datetime
@@ -13,6 +14,7 @@ from ipaddress import ip_address, ip_network
 from typing import Any
 from urllib.parse import urlsplit
 
+from .dashboard_analysis import HELPER_DOMAINS
 from .exposure import SENSITIVE_COVERS, SENSITIVE_DOMAINS
 from .hygiene import low_battery_ids
 
@@ -160,6 +162,266 @@ def label_unused(labels: list[dict[str, Any]], used: set[str], ignore_label: str
             yield item
 
 
+ALSO_LIMIT = 3
+INPUT_PLATFORMS = frozenset(
+    {
+        "input_boolean", "input_button", "input_datetime", "input_number", "input_select",
+        "input_text", "counter", "timer", "schedule",
+    }
+)  # fmt: skip
+READ_RELATIONS = frozenset({"TRIGGERS_ON", "USES_AS_CONDITION", "REFERENCES", "SHOWS", "INCLUDES"})
+
+
+def helper_write_only(entities: dict[str, dict[str, Any]], edges: list[dict[str, Any]]):
+    """Input helpers that something sets but nothing reads (a hint: the value goes nowhere)."""
+    written: set[str] = set()
+    read: set[str] = set()
+    for edge in edges:
+        target = str(edge.get("target", ""))
+        if not target.startswith("entity:"):
+            continue
+        entity_id = target.split(":", 1)[1]
+        if edge.get("relation") == "TARGETS":
+            written.add(entity_id)
+        elif edge.get("relation") in READ_RELATIONS:
+            read.add(entity_id)
+    for entity_id in sorted(written - read):
+        item = entities.get(entity_id)
+        if item is not None and item.get("platform") in INPUT_PLATFORMS:
+            yield item
+
+
+def helper_cycle(
+    integrations: list[dict[str, Any]],
+    entities: dict[str, dict[str, Any]],
+    edges: list[dict[str, Any]],
+):
+    """Helper entries that read their own entities, directly or through other helpers (a hint)."""
+    owner = {
+        i["object_id"]: i["config_entry_id"] for i in entities.values() if i.get("config_entry_id")
+    }
+    follows: dict[str, set[str]] = {}
+    for edge in edges:
+        source, target = str(edge.get("source", "")), str(edge.get("target", ""))
+        if source.startswith("config_entry:") and target.startswith("entity:"):
+            other = owner.get(target.split(":", 1)[1])
+            if other:
+                follows.setdefault(source.split(":", 1)[1], set()).add(other)
+
+    def reaches_itself(start: str) -> bool:
+        seen: set[str] = set()
+        todo = list(follows.get(start, ()))
+        while todo:
+            node = todo.pop()
+            if node == start:
+                return True
+            if node not in seen:
+                seen.add(node)
+                todo.extend(follows.get(node, ()))
+        return False
+
+    for item in integrations:
+        if item.get("domain") in HELPER_DOMAINS and reaches_itself(item["object_id"]):
+            yield item
+
+
+def _nodes(value: Any) -> Iterable[dict[str, Any]]:
+    """Every dict of nested dicts and lists."""
+    if isinstance(value, dict):
+        yield value
+        for inner in value.values():
+            yield from _nodes(inner)
+    elif isinstance(value, list):
+        for inner in value:
+            yield from _nodes(inner)
+
+
+def _ids(value: Any) -> list[str]:
+    """Entity ids from a string or a list of strings."""
+    if isinstance(value, str):
+        return [part.strip() for part in value.split(",") if part.strip()]
+    if isinstance(value, list):
+        return [part for part in value if isinstance(part, str)]
+    return []
+
+
+def _values(value: Any) -> list[str]:
+    """Plain text values; a template or anything that is no text is left out."""
+    found = [value] if isinstance(value, str) else value if isinstance(value, list) else []
+    return [v for v in found if isinstance(v, str) and "{{" not in v and "{%" not in v]
+
+
+def _select_values(automations: list[dict[str, Any]]) -> dict[str, set[str]]:
+    """The option each automation compares with or selects, per input_select."""
+    found: dict[str, set[str]] = {}
+    for item in _config_automations(automations):
+        for block in ("triggers", "conditions", "actions"):
+            for entry in _nodes(item.get(block) or []):
+                kind = entry.get("trigger") or entry.get("platform") or entry.get("condition")
+                values: list[str] = []
+                if kind == "state":
+                    values = _values(entry.get("to")) + _values(entry.get("from"))
+                    values += _values(entry.get("state"))
+                elif (entry.get("action") or entry.get("service")) == "input_select.select_option":
+                    values = _values((entry.get("data") or {}).get("option"))
+                if not values:
+                    continue
+                target = entry.get("target") or {}
+                holder = target.get("entity_id") if isinstance(target, dict) else None
+                for entity_id in _ids(entry.get("entity_id") or holder):
+                    if entity_id.startswith("input_select."):
+                        found.setdefault(entity_id, set()).update(values)
+    return found
+
+
+def input_select_options(entities: dict[str, dict[str, Any]], automations: list[dict[str, Any]]):
+    """``input_select`` helpers that an automation compares with or sets to an option they do not have."""
+    wanted = _select_values(automations)
+    for entity_id, values in sorted(wanted.items()):
+        item = entities.get(entity_id)
+        options = (item or {}).get("attributes", {}).get("options")
+        if item is None or not isinstance(options, list) or item.get("disabled_by"):
+            continue
+        missing = sorted(
+            v for v in values if v not in options and v not in ("unavailable", "unknown")
+        )
+        if missing:
+            yield {**item, "also": missing[:ALSO_LIMIT]}
+
+
+STATISTIC_HELPERS = frozenset({"utility_meter", "integration", "derivative"})
+
+
+def statistic_helper_source(helpers: list[dict[str, Any]], entities: dict[str, dict[str, Any]]):
+    """Meter, integration and derivative helpers over a source that does not suit them (a hint)."""
+    for helper in helpers:
+        source = entities.get(str(helper.get("source") or ""))
+        if source is None or source.get("state") in (None, "unavailable", "unknown"):
+            continue
+        problems = []
+        if helper.get("domain") == "utility_meter" and source.get("state_class") not in (
+            "total",
+            "total_increasing",
+        ):
+            problems.append("state_class")
+        if helper.get("domain") in {"integration", "derivative"} and not source.get("unit"):
+            problems.append("unit")
+        if problems:
+            yield {**helper, "also": problems}
+
+
+DUPLICATE_IGNORED = frozenset({"name", "hide_members"})
+
+
+def helper_duplicate(helpers: list[dict[str, Any]]):
+    """Helper entries of one type with exactly the same settings, apart from the name (a hint)."""
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for helper in helpers:
+        options = {
+            k: v for k, v in (helper.get("options") or {}).items() if k not in DUPLICATE_IGNORED
+        }
+        if options:
+            key = json.dumps([helper.get("domain"), options], sort_keys=True, default=str)
+            groups.setdefault(key, []).append(helper)
+    for twins in groups.values():
+        if len(twins) > 1:
+            for helper in twins:
+                yield {
+                    **{k: v for k, v in helper.items() if k != "options"},
+                    "also": [t["object_id"] for t in twins if t is not helper][:5],
+                }
+
+
+def group_members(helpers: list[dict[str, Any]], entities: dict[str, dict[str, Any]]):
+    """Groups with a single member or with members that no longer exist (a hint)."""
+    for helper in helpers:
+        if helper.get("domain") != "group":
+            continue
+        members = _ids((helper.get("options") or {}).get("entities"))
+        missing = [m for m in members if m not in entities]
+        if len(members) == 1 or missing:
+            yield {
+                **{k: v for k, v in helper.items() if k != "options"},
+                "also": missing[:5] if missing else members,
+            }
+
+
+def helper_area(entities: dict[str, dict[str, Any]], devices: dict[str, dict[str, Any]]):
+    """Helpers (input helpers, counters, timers, helper entries) that belong to no area (a hint)."""
+    for item in entities.values():
+        if item.get("disabled_by") or item.get("area_id"):
+            continue
+        helper = item.get("platform") in INPUT_PLATFORMS or item.get("platform") in HELPER_DOMAINS
+        device = devices.get(item.get("device_id") or "")
+        if helper and not (device and device.get("area_id")):
+            yield item
+
+
+def _number(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def input_number_config(entities: dict[str, dict[str, Any]]):
+    """``input_number`` helpers whose range does not hold together or whose value is outside it."""
+    for item in entities.values():
+        if item.get("platform") != "input_number" or item.get("disabled_by"):
+            continue
+        attrs = item.get("attributes") or {}
+        low, high, step = (
+            _number(attrs.get("min")),
+            _number(attrs.get("max")),
+            _number(attrs.get("step")),
+        )
+        value = _number(item.get("state"))
+        problems: list[str] = []
+        if low is not None and high is not None:
+            if low >= high:
+                problems.append("min ≥ max")
+            elif step is not None and step > high - low:
+                problems.append("step > max − min")
+            if value is not None and not low <= value <= high:
+                problems.append("value outside min/max")
+        if problems:
+            yield {**item, "also": problems}
+
+
+def template_unused(
+    integrations: list[dict[str, Any]], entities: dict[str, dict[str, Any]], used: set[str]
+):
+    """Template helpers whose entities nothing refers to (a hint: the helper may be a leftover)."""
+    members: dict[str, list[str]] = {}
+    for item in entities.values():
+        if item.get("config_entry_id"):
+            members.setdefault(item["config_entry_id"], []).append(item["object_id"])
+    for item in integrations:
+        if item.get("domain") != "template":
+            continue
+        own = members.get(item["object_id"], [])
+        if own and not any(entity_id in used for entity_id in own):
+            yield item
+
+
+# `| float` or `| int` without a default raises an error when the source has no number.
+UNGUARDED_NUMBER = re.compile(r"\|\s*(?:float|int)\b(?!\s*\()")
+NUMBER_GUARDS = ("is_number", "has_value", "unavailable", "unknown", "default", "availability")
+
+
+def template_guard(templates: list[dict[str, Any]]):
+    """Template helpers that turn a value into a number without a default or a check (a hint)."""
+    for item in templates:
+        text = str(item.get("state") or "")
+        if UNGUARDED_NUMBER.search(text) and not any(word in text for word in NUMBER_GUARDS):
+            yield item
+
+
+def template_no_unique_id(entities: list[dict[str, Any]]):
+    """Template entities without a ``unique_id``: the interface cannot rename or disable them."""
+    yield from entities
+
+
 def automation_error_handling(automations: list[dict[str, Any]]):
     """Two or more actions, no condition and nothing that handles a failing step (a hint)."""
     for item in _config_automations(automations):
@@ -231,9 +493,9 @@ def turn_on_only(
             elif service.endswith((".turn_off", ".toggle")) or service.startswith("scene."):
                 off |= ids
     for entity_id in sorted(on - off):
-        item = entities.get(entity_id)
-        if item is not None and entity_id.split(".", 1)[0] in SWITCHABLE:
-            yield item
+        found = entities.get(entity_id)
+        if found is not None and entity_id.split(".", 1)[0] in SWITCHABLE:
+            yield found
 
 
 def referenced(edges: list[dict[str, Any]]) -> set[str]:

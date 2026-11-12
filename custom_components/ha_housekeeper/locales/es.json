@@ -1,0 +1,96 @@
+{
+ "audit_report.TEXTS": {
+  "title": "Informe de auditoría del plan de limpieza",
+  "overview": "Resumen",
+  "plan": "Plan",
+  "created": "Creado",
+  "scan": "Basado en el análisis",
+  "status": "Estado",
+  "confirmed": "Confirmado",
+  "by": "por",
+  "run": "Ejecutado",
+  "backup": "Copia de seguridad",
+  "no_backup": "no hizo falta copia de seguridad o no se hizo",
+  "backup_skipped": "omitida a propósito",
+  "simulation": "Estado final esperado",
+  "actions": "Acciones",
+  "verification": "Verificación",
+  "undo": "Deshacer",
+  "manual": "Por hacer a mano",
+  "followup": "Seguimiento",
+  "events": "Secuencia",
+  "none": "ninguno",
+  "anonymized": "Los ID y nombres de este informe se han sustituido por marcadores.",
+  "removed": "Entidades eliminadas",
+  "disabled": "Entidades desactivadas",
+  "replaced": "Referencias sustituidas",
+  "remaining_certain": "Usos seguros restantes",
+  "remaining_uncertain": "Usos inciertos restantes",
+  "orphaned": "Estadísticas que probablemente quedarán huérfanas",
+  "blocked": "Acciones que no se pueden ejecutar",
+  "purge_rows": "Filas del Recorder que elimina la purga",
+  "history_rows_kept": "Filas del historial que permanecen en la base de datos (estados hasta que el Recorder los purgue, estadísticas a largo plazo de forma permanente)",
+  "limits": "Límites: las referencias dentro de plantillas y fuera de Home Assistant no se pueden comprobar con certeza; no se estima el almacenamiento guardado.",
+  "state": "Estado",
+  "result": "Resultado",
+  "ok": "correcto",
+  "failed": "fallido"
+ },
+ "auto_pause.TEXTS": {
+  "paused": [
+   "HA Housekeeper: {title} en pausa",
+   "{title} ({domain}) está en pausa: {why}. Housekeeper lo reintenta (reintentos: {n}) durante un máximo de {days} días. [Abrir Pausa automática](/{url}?view=reliability&tab=autopause)"
+  ],
+  "why_auto": "intentos fallidos: {n} en {hours} h",
+  "why_manual": "pausado por ti",
+  "back": [
+   "HA Housekeeper: {title} ha vuelto",
+   "{title} ({domain}) se ha configurado de nuevo tras {span} y ya no está en pausa."
+  ],
+  "ended": [
+   "HA Housekeeper: ha terminado la pausa de {title}",
+   "{title} ({domain}) ya no está en pausa."
+  ],
+  "exhausted": [
+   "HA Housekeeper: {title} en pausa durante {days} días",
+   "{title} ({domain}) no se pudo configurar en {days} días. Echa un vistazo: el registro, una actualización de la integración, la propia fuente. [Abrir Pausa automática](/{url}?view=reliability&tab=autopause)"
+  ]
+ },
+ "monitor.MONITOR_REASONS": {
+  "missing": "objeto no encontrado",
+  "disabled": "desactivado",
+  "orphaned": "huérfano",
+  "unavailable": "no disponible",
+  "problem": "integración no cargada",
+  "source_unread": "fuente no leída",
+  "scan_unverified": "análisis no fiable",
+  "automation.blocked": "automatización bloqueada",
+  "automation.dead_actions": "una acción de la automatización tiene una referencia rota",
+  "automation.dead_condition": "una condición de la automatización tiene una referencia rota",
+  "broken_reference": "referencia rota",
+  "stopped": "aplicación detenida",
+  "rule_stale": "valor no actualizado a tiempo",
+  "rule_below_min": "por debajo del valor mínimo",
+  "rule_unavailable_long": "no disponible durante demasiado tiempo",
+  "rule_waiting": "período de gracia en curso",
+  "rule_no_value": "sin valor numérico",
+  "rule_no_timestamp": "hora de actualización desconocida"
+ },
+ "monitor.MONITOR_TEXTS": {
+  "uncertain_open": "Comprobación incompleta; el último fallo confirmado ({last_reason}) sigue sin resolverse.",
+  "uncertain": "Comprobación incompleta.",
+  "impaired": "Función importante afectada: {reason}",
+  "link": "Abrir funciones del hogar"
+ },
+ "notify.TEXTS": [
+  "HA Housekeeper: nuevas referencias rotas",
+  "{count} referencia(s) rota(s) nueva(s): {names}. [Abrir todas las referencias rotas](/{url}?view=findingsNav&filter=broken_reference)"
+ ],
+ "cleanup_exec.LOGBOOK_DEVICE": [
+  "Dispositivo “{}” {}",
+  [
+   "olvidado",
+   "eliminado"
+  ]
+ ]
+}

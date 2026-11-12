@@ -1,6 +1,7 @@
 """Exposure and privacy: which entities voice assistants and bridges can reach.
 
-Only reads, nothing is stored and nothing is changed. Only metadata leaves this module: entity ids,
+Only reads, nothing is stored and nothing is changed here; the plan steps that take an entity out
+of an assistant live in ``exposure_edit``. Only metadata leaves this module: entity ids,
 names, the assistant and counts. Config entries are read through a whitelist (the entity filter of
 a bridge and nothing else), of Nabu Casa only whether Alexa and Google are switched on, per assistant only whether new entities
 are exposed by themselves, per entity only whether Google may open it without a PIN, of a

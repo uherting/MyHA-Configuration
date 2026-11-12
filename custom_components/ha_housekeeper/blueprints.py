@@ -187,6 +187,7 @@ def user_inputs(
             out.append({"key": key, "state": "default", "value": None})
             continue
         value = given[key]
+        shown: str | None
         state, shown = "set", _shown(value)
         if row["selector"] == "text" and SECRET_INPUT.search(f"{key} {row['name']}"):
             shown = None

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Notification History",
+        "description": "Keeps the notifications sent by Home Assistant (phones, tablets, speakers, e-mail…). Past notifications still in the recorder are imported once.",
+        "data": {
+          "targets": "Recorded targets",
+          "max_days": "Keep for (days)",
+          "max_count": "Keep at most (notifications)",
+          "logbook": "Also write a line to the logbook"
+        },
+        "data_description": {
+          "targets": "Leave empty to record every notify target, except those that write to a log or a file."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Notification History is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Notification History",
+        "data": {
+          "targets": "Recorded targets",
+          "max_days": "Keep for (days)",
+          "max_count": "Keep at most (notifications)",
+          "logbook": "Also write a line to the logbook"
+        },
+        "data_description": {
+          "targets": "Leave empty to record every notify target, except those that write to a log or a file."
+        }
+      }
+    }
+  },
+  "services": {
+    "clear": {
+      "name": "Clear history",
+      "description": "Deletes the recorded notifications.",
+      "fields": {
+        "target": {
+          "name": "Target",
+          "description": "Only this target (for example notify.mobile_app_my_phone). Leave empty to clear everything."
+        }
+      }
+    }
+  }
+}

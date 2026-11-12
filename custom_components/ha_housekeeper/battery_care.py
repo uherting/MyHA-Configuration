@@ -20,7 +20,7 @@ SAVE_DELAY = 5
 MAX_ITEMS = 500
 TYPE_MAX = 30
 ENTITY = re.compile(r"^[a-z0-9_]+\.[a-z0-9_]+$")
-BUILTIN_TYPES = ("2× AAA", "2× AA", "CR2016", "CR2032", "CR2450", "9 V")
+BUILTIN_TYPES = ("2× AAA", "2× AA", "CR2016", "CR2032", "CR2450", "9 V", "Rechargeable")
 
 
 def noted_types(objects: list[dict[str, Any]], entity_ids: Any) -> dict[str, str]:

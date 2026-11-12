@@ -11,6 +11,7 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from .const import DEFAULT_HISTORY_DAYS, HISTORY_STORAGE_KEY, STORAGE_VERSION
+from .finding_topics import topic_of
 from .hygiene import finding_key as _finding_key
 from .outage_levels import is_quiet
 
@@ -117,6 +118,25 @@ def _is_follower(finding: dict[str, Any]) -> bool:
     return bool(finding.get("cause_id")) and finding.get("rule_id") not in CAUSE_OWN_RULES
 
 
+def _is_follow_up(finding: dict[str, Any], causes: dict[str, dict[str, Any]]) -> bool:
+    """A follow-up as the panel counts it: below a real cause, or the own finding of a cause that hangs below another.
+
+    The callers of a missing target (a virtual cause) are no follow-ups: each of them is a job of its own.
+    """
+    cause = causes.get(finding.get("cause_id") or "")
+    if not finding.get("cause_id") or (cause and cause.get("virtual")):
+        return False
+    return finding.get("rule_id") not in CAUSE_OWN_RULES or bool(cause and cause.get("parent_id"))
+
+
+def _owner(finding: dict[str, Any], devices: set[str], entity_device: dict[str, str]) -> str:
+    """The object a finding belongs to in the grouped list: an entity with a device belongs to the device."""
+    kind = str(finding.get("rule_id") or "").split(".")[0]
+    object_id = str(finding.get("object_id") or "")
+    device = entity_device.get(object_id) if kind == "entity" else None
+    return f"device:{device}" if device and device in devices else f"{kind}:{object_id}"
+
+
 def make_checkpoint(snapshot: dict[str, Any]) -> dict[str, Any]:
     """Reduce a snapshot to what a later comparison needs."""
     objects: dict[str, dict[str, str]] = {}
@@ -143,6 +163,50 @@ def make_checkpoint(snapshot: dict[str, Any]) -> dict[str, Any]:
         if not _is_follower(finding):
             name = str(finding.get("classification") or "")
             lead_classes[name] = lead_classes.get(name, 0) + 1
+    # The open findings of each topic, with and without the follow-ups, for the sparklines of the topic tiles.
+    topics: dict[str, int] = {}
+    lead_topics: dict[str, int] = {}
+    for finding in open_findings:
+        name = str(finding.get("topic") or topic_of(finding["rule_id"]))
+        topics[name] = topics.get(name, 0) + 1
+        if not _is_follower(finding):
+            lead_topics[name] = lead_topics.get(name, 0) + 1
+    # The tiles count objects: every object with an open finding, and per topic the objects with a finding of their own
+    # (a follow-up is a consequence, not a site of work), so a curve changes only when a house really gets better or worse.
+    devices = {i["object_id"] for i in snapshot["objects"] if i["object_type"] == "device"}
+    entity_device = {
+        i["object_id"]: i["device_id"]
+        for i in snapshot["objects"]
+        if i["object_type"] == "entity" and i.get("device_id")
+    }
+    causes = {c.get("id"): c for c in snapshot.get("causes", [])}
+    affected: set[str] = set()
+    sites: dict[str, set[str]] = {}
+    for finding in open_findings:
+        owner = _owner(finding, devices, entity_device)
+        name = str(finding.get("topic") or topic_of(finding["rule_id"]))
+        affected.add(owner)
+        site = sites.setdefault(name, set())
+        if not _is_follow_up(finding, causes):
+            site.add(owner)
+            continue
+        # The top of the chain stands for it when that has no finding of its own: a device that is down below an
+        # integration is no job of its own.
+        cause = causes.get(finding.get("cause_id") or "") or {}
+        for _ in range(20):
+            above = causes.get(cause.get("parent_id") or "")
+            if not above:
+                break
+            cause = above
+        if cause and not cause.get("virtual") and not cause.get("finding_key"):
+            site.add(f"{cause['object_type']}:{cause['object_id']}")
+    # The panel lists every real cause as an object of its own, whether or not it has a finding (a virtual one, a missing
+    # target, is no object), so the total counts them as well.
+    affected.update(
+        f"{c['object_type']}:{c['object_id']}" for c in causes.values() if not c.get("virtual")
+    )
+    # A topic with findings is never "none": the objects it names are at least one.
+    lead_object_topics = {name: max(len(site), 1) for name, site in sites.items()}
     health_base, health_load = _health(snapshot)
     return {
         "at": snapshot["meta"]["scanned_at"],
@@ -155,6 +219,10 @@ def make_checkpoint(snapshot: dict[str, Any]) -> dict[str, Any]:
         "lead": sum(lead_classes.values()),
         "lead_classes": lead_classes,
         "reasons": reasons,
+        "topics": topics,
+        "lead_topics": lead_topics,
+        "affected": len(affected),
+        "lead_object_topics": lead_object_topics,
         "health_base": health_base,
         "health_load": health_load,
         # The settings that decide whether some findings exist at all.
@@ -265,6 +333,22 @@ def diff_checkpoints(base: dict[str, Any], snapshot: dict[str, Any]) -> dict[str
         "ended_findings": cut(ended_findings),
         "new_rating": legacy,
     }
+
+
+def _topics_from_keys(checkpoint: dict[str, Any]) -> dict[str, int] | None:
+    """The findings of a point stored before the topics, counted by topic: the rule is the start of each key.
+
+    Hidden findings are among the keys, so the count can be a little high; the line without follow-ups cannot
+    be recounted and starts with the topics.
+    """
+    keys = checkpoint.get("findings")
+    if not isinstance(keys, list):
+        return None
+    counts: dict[str, int] = {}
+    for key in keys:
+        name = topic_of(str(key).split("|", 1)[0])
+        counts[name] = counts.get(name, 0) + 1
+    return counts
 
 
 def checkpoint_counts(checkpoint: dict[str, Any]) -> dict[str, int]:
@@ -422,6 +506,11 @@ class ScanHistory:
                     "lead": cp.get("lead"),
                     "lead_classes": cp.get("lead_classes"),
                     "reasons": cp.get("reasons"),
+                    # A point that stores its topics, even none (a clean house), is not recounted from its keys.
+                    "topics": cp["topics"] if "topics" in cp else _topics_from_keys(cp),
+                    "lead_topics": cp.get("lead_topics"),
+                    "affected": cp.get("affected"),
+                    "lead_object_topics": cp.get("lead_object_topics"),
                     "health": health_percent(cp.get("health_base"), cp.get("health_load")),
                     "rated": cp.get("health_base"),
                     "unavailable": sum(

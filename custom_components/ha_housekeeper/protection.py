@@ -15,11 +15,12 @@ from homeassistant.helpers.storage import Store
 
 from .const import PROTECTION_STORAGE_KEY, STORAGE_KEY, STORAGE_VERSION
 
-# From the strictest: nothing may change, only disabling, anything with a backup, anything at all.
-MODES = ("read_only", "quarantine", "confirmed", "full")
+# From the strictest: nothing may change, anything with a backup, anything at all.
+MODES = ("read_only", "confirmed", "full")
 DEFAULT_MODE = "read_only"
 LEGACY_MODE = "full"
-QUARANTINE_KINDS = frozenset({"disable_entity", "disable_device"})
+# The mode "quarantine" (disabling only) is gone; a saved one is read as the strictest mode, never a looser one.
+RETIRED_MODES = {"quarantine": "read_only"}
 IRREVERSIBLE_KINDS = frozenset({"purge_statistics", "trim_history", "delete_backup"})
 # Rewrites rows of the recorder database: only in the mode that allows anything.
 RECORDER_WRITE_KINDS = frozenset({"repair_counter", "repair_range"})
@@ -27,30 +28,24 @@ RECORDER_WRITE_KINDS = frozenset({"repair_counter", "repair_range"})
 
 def allows(mode: str, action: dict[str, Any]) -> bool:
     """Whether ``mode`` lets this plan action run."""
-    rank = MODES.index(mode)
-    if action["kind"] in QUARANTINE_KINDS:
-        return rank >= 1
+    if mode == "read_only":
+        return False
     if action["kind"] in IRREVERSIBLE_KINDS | RECORDER_WRITE_KINDS or action.get("recorder"):
-        return rank >= 3
-    return rank >= 2
+        return mode == "full"
+    return True
 
 
 def protection_rules() -> dict[str, Any]:
     """The kinds each rank needs, so the panel can warn before a run that the mode would refuse."""
     return {
         "modes": list(MODES),
-        "quarantine": sorted(QUARANTINE_KINDS),
         "full_only": sorted(IRREVERSIBLE_KINDS | RECORDER_WRITE_KINDS),
     }
 
 
-def allows_undo(mode: str, actions: list[dict[str, Any]]) -> bool:
-    """Undo puts things back, so it is allowed wherever the action itself could run, or the mode
-    lets at least quarantine steps through and the steps are only that."""
-    rank = MODES.index(mode)
-    if rank == 0:
-        return False
-    return rank >= 2 or all(a["kind"] in QUARANTINE_KINDS for a in actions)
+def allows_undo(mode: str) -> bool:
+    """Undo puts things back, so it is allowed wherever anything may run."""
+    return mode != "read_only"
 
 
 class ProtectionStore:
@@ -60,20 +55,41 @@ class ProtectionStore:
         self._store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, PROTECTION_STORAGE_KEY)
         self._hass = hass
         self.mode = DEFAULT_MODE
+        # A retired mode was replaced by a stricter one; the panel says so until a mode is chosen.
+        self.migrated_from: str | None = None
 
     async def async_load(self) -> None:
         data = await self._store.async_load()
-        if isinstance(data, dict) and data.get("mode") in MODES:
-            self.mode = data["mode"]
+        if isinstance(data, dict):
+            saved = data.get("mode")
+            if saved in MODES:
+                self.mode = saved
+                self.migrated_from = data.get("migrated_from")
+                return
+            # Anything else that was saved is read as the strictest mode, never as an install that predates the mode.
+            self.mode = RETIRED_MODES.get(str(saved), DEFAULT_MODE)
+            self.migrated_from = saved if saved in RETIRED_MODES else None
+            self._save(0)
             return
         # No mode chosen yet. An install that already has scan data predates the mode and keeps
         # working as before; anything else starts read-only. Saved now so a restart cannot flip it.
-        seen = await Store(self._hass, STORAGE_VERSION, STORAGE_KEY).async_load()
+        legacy: Store[dict[str, Any]] = Store(self._hass, STORAGE_VERSION, STORAGE_KEY)
+        seen = await legacy.async_load()
         self.mode = LEGACY_MODE if seen is not None else DEFAULT_MODE
-        self._store.async_delay_save(lambda: {"mode": self.mode}, 0)
+        self._save(0)
+
+    def _save(self, delay: int) -> None:
+        self._store.async_delay_save(
+            lambda: {
+                "mode": self.mode,
+                **({"migrated_from": self.migrated_from} if self.migrated_from else {}),
+            },
+            delay,
+        )
 
     def set_mode(self, mode: str) -> None:
         if mode not in MODES:
             raise ValueError(mode)
         self.mode = mode
-        self._store.async_delay_save(lambda: {"mode": self.mode}, 2)
+        self.migrated_from = None
+        self._save(2)

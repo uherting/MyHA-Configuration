@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 
 import voluptuous as vol
 from homeassistant.components import websocket_api
@@ -20,6 +20,7 @@ from .meter import recorder_ready
 from .queries import cached_query
 from .reliability import WINDOWS as RELIABILITY_WINDOWS
 from .reliability import reliability
+from .statistics_detail import statistic_detail
 from .statistics_last import statistics_last
 from .storms import WINDOWS as STORMS_WINDOWS
 from .storms import mark_excluded, storms
@@ -88,7 +89,7 @@ async def websocket_reliability(
         connection.send_error(msg["id"], "reliability_failed", f"{type(err).__name__}: {err}")
         return
     now = datetime.now(UTC)
-    for row in result.get("entries", []):
+    for row in cast(list[dict[str, Any]], result.get("entries", [])):
         row["setup"] = scanner.entry_states.summary(row["entry_id"], now)
     result["keep_days"] = keep_days(hass)
     connection.send_result(msg["id"], _versioned(result))
@@ -148,6 +149,28 @@ async def websocket_statistics_last(
             result = await statistics_last(hass, snapshot, msg.get("ids"), refresh=msg["refresh"])
     except Exception as err:
         connection.send_error(msg["id"], "statistics_last_failed", f"{type(err).__name__}: {err}")
+        return
+    connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/statistic_detail",
+        vol.Required("statistic_id"): vol.All(str, vol.Length(max=255)),
+        vol.Optional("refresh", default=False): bool,
+    }
+)
+@websocket_api.async_response
+async def websocket_statistic_detail(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Rows per recorder table, metadata and origin of one statistic. Read-only; kept for two minutes."""
+    try:
+        async with asyncio.timeout(RELIABILITY_TIMEOUT):
+            result = await statistic_detail(hass, msg["statistic_id"], refresh=msg["refresh"])
+    except Exception as err:
+        connection.send_error(msg["id"], "statistic_detail_failed", f"{type(err).__name__}: {err}")
         return
     connection.send_result(msg["id"], _versioned(result))
 
@@ -323,6 +346,7 @@ async def websocket_counter_scan(
             "busy": False,
             "items": items,
             "checked": found.raw["checked"],
+            "cycles": found.raw.get("cycles", []),
             "cached": found.cached,
         }
     connection.send_result(msg["id"], _versioned(result))
@@ -387,6 +411,7 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_storms)
     websocket_api.async_register_command(hass, websocket_db_health)
     websocket_api.async_register_command(hass, websocket_statistics_last)
+    websocket_api.async_register_command(hass, websocket_statistic_detail)
     websocket_api.async_register_command(hass, websocket_database_first)
     websocket_api.async_register_command(hass, websocket_entity_recorder)
     websocket_api.async_register_command(hass, websocket_entity_space)

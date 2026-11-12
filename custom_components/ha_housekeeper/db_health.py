@@ -226,8 +226,20 @@ def integrity_fresh(events: Any, now: datetime) -> bool:
 
 
 def check_running(hass: HomeAssistant) -> bool:
-    task = hass.data.get(DOMAIN, {}).get("integrity_task")
-    return task is not None and not task.done()
+    data = hass.data.get(DOMAIN, {})
+    task = data.get("integrity_task")
+    # After the timeout the task is over but the thread keeps reading: no second check beside it.
+    return (task is not None and not task.done()) or bool(data.get("integrity_thread"))
+
+
+def _run_check(hass: HomeAssistant) -> list[str]:
+    """The check in the recorder's thread; the flag tells while it still reads."""
+    data = hass.data.setdefault(DOMAIN, {})
+    data["integrity_thread"] = True
+    try:
+        return integrity_lines(hass)
+    finally:
+        data["integrity_thread"] = False
 
 
 async def _check(hass: HomeAssistant, events: Any) -> None:
@@ -237,7 +249,7 @@ async def _check(hass: HomeAssistant, events: Any) -> None:
     state, lines = "ok", []
     try:
         async with asyncio.timeout(INTEGRITY_TIMEOUT):
-            lines = await get_instance(hass).async_add_executor_job(integrity_lines, hass)
+            lines = await get_instance(hass).async_add_executor_job(_run_check, hass)
         state = "damaged" if lines else "ok"
     except Exception as err:
         if is_corruption_error(err):
@@ -368,7 +380,9 @@ def query_db(hass: HomeAssistant, now: float) -> dict[str, Any]:
             ).all()
             if h is not None
         )
-        bucket = cast(States.last_updated_ts / 60, Integer)
+        # SQLite cuts the quotient off, MySQL and PostgreSQL round it: half a minute back evens that.
+        rounds = session.get_bind().dialect.name != "sqlite"
+        bucket = cast((States.last_updated_ts - (30 if rounds else 0)) / 60, Integer)
         window = now - STATE_GAP_WINDOW_DAYS * DAY
         result["state_minutes"] = sorted(
             int(minute)
@@ -740,6 +754,9 @@ async def _db_health(
             int(raw["db_bytes"]) + int(raw.get("wal_bytes") or 0),
         )
     result = evaluate(raw, names, events.sizes, events.events, datetime.now(UTC).date())
+    events.observe_findings(
+        "database", result.get("findings") or [], datetime.now(UTC), keep=("integrity",)
+    )
     dialect = str(raw.get("dialect") or "")
     tables = await cached_query(
         hass,

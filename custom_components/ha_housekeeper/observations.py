@@ -18,7 +18,7 @@ class ObservationStore:
 
     def __init__(self, hass: HomeAssistant) -> None:
         self._store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, STORAGE_KEY)
-        self._items: dict[str, dict[str, str]] = {}
+        self._items: dict[str, dict[str, Any]] = {}
 
     async def async_load(self) -> None:
         """Load observations."""
@@ -35,7 +35,7 @@ class ObservationStore:
         for object_id, classification in classifications.items():
             previous = self._items.get(object_id)
             if previous is None or previous.get("classification") != classification:
-                item = {"classification": classification, "since": timestamp}
+                item: dict[str, Any] = {"classification": classification, "since": timestamp}
                 # Without a value now, but with one before: that is what makes "unknown" a problem.
                 if (
                     previous is not None

@@ -6,7 +6,7 @@ tiles of the storage page can draw a line. Nothing here reads more than what the
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
@@ -47,18 +47,18 @@ class LoadStore:
                 and not isinstance(row[0], bool)
             ):
                 self.samples.append([float(row[0]), *(_percent(v) for v in row[1:])])
-        self.samples.sort(key=lambda row: row[0])
+        self.samples.sort(key=lambda row: cast(float, row[0]))
 
     def record(self, now: float, values: dict[str, Any]) -> bool:
         """Add one sample; one that comes sooner than a sample's width after the last is ignored."""
-        if self.samples and now - self.samples[-1][0] < SAMPLE_SECONDS * 0.8:
+        if self.samples and now - cast(float, self.samples[-1][0]) < SAMPLE_SECONDS * 0.8:
             return False
         row = [now, *(_percent(values.get(name)) for name in FIELDS)]
         if all(v is None for v in row[1:]):
             return False
         self.samples.append(row)
         cut = now - KEEP_SECONDS
-        while self.samples and self.samples[0][0] < cut:
+        while self.samples and cast(float, self.samples[0][0]) < cut:
             self.samples.pop(0)
         self._store.async_delay_save(lambda: {"samples": self.samples}, SAVE_DELAY)
         return True
@@ -77,8 +77,8 @@ class LoadStore:
             chunk = rows[start : start + group]
             means: list[float | None] = []
             for column in range(1, 5):
-                known = [r[column] for r in chunk if r[column] is not None]
+                known = [v for v in (r[column] for r in chunk) if v is not None]
                 means.append(round(sum(known) / len(known), 1) if known else None)
-            cpus = [r[3] for r in chunk if r[3] is not None]
+            cpus = [c for c in (r[3] for r in chunk) if c is not None]
             points.append([chunk[-1][0], *means, max(cpus) if cpus else None])
-        return {"points": points, "span": round(rows[-1][0] - rows[0][0])}
+        return {"points": points, "span": round(cast(float, rows[-1][0]) - cast(float, rows[0][0]))}

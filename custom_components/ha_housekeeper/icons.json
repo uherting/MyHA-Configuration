@@ -22,6 +22,9 @@
       "low_batteries": {
         "default": "mdi:battery-alert-variant-outline"
       },
+      "new_findings": {
+        "default": "mdi:alert-decagram-outline"
+      },
       "scan_health": {
         "default": "mdi:heart-pulse"
       },

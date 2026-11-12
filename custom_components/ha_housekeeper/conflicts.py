@@ -133,7 +133,7 @@ def commands_of(item: dict[str, Any]) -> list[tuple[str, str, str, Any]]:
             if isinstance(service, str) and "." in service:
                 domain, name = service.split(".", 1)
                 if domain not in QUIET_DOMAINS:
-                    data = node.get("data") if isinstance(node.get("data"), dict) else {}
+                    data = node["data"] if isinstance(node.get("data"), dict) else {}
                     key = VALUE_KEY.get(name)
                     value = data.get(key) if key else None
                     if isinstance(value, str) and ("{{" in value or "{%" in value):

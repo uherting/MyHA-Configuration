@@ -30,13 +30,19 @@ from homeassistant.helpers.storage import Store
 
 from .const import AUTO_PAUSE_STORAGE_KEY, DOMAIN, PANEL_URL, STORAGE_VERSION
 from .sensitive_fields import reauth_entry_ids
-from .texts import pick
+from .texts import localize, pick
 
 if TYPE_CHECKING:
     from .inventory import InventoryScanner
 
 SAVE_DELAY = 5
 END_HOURS = 168
+AUTO_PAUSE_LEVELS = {  # step -> level before and after, for the central log
+    "paused": ("ok", "note"),
+    "exhausted": ("note", "problem"),
+    "back": ("note", "ok"),
+    "ended": ("note", "ok"),
+}
 GRACE_SECONDS = 60  # how long an enabled entry may take to load before it is paused again
 LOG_MAX = 40
 DATA_DOMAINS = frozenset(
@@ -84,7 +90,7 @@ def _offsets() -> tuple[int, ...]:
 
 OFFSETS = _offsets()
 
-TEXTS = {
+TEXTS: dict[str, dict[str, Any]] = {
     "de": {
         "paused": (
             "HA Housekeeper: {title} pausiert",
@@ -126,6 +132,7 @@ TEXTS = {
         ),
     },
 }
+localize("auto_pause.TEXTS", TEXTS)
 
 
 class AutoPauseError(Exception):
@@ -223,6 +230,27 @@ class AutoPause:
         title = rec.get("title") or (entry.title if entry else entry_id)
         self.log.append([_now().isoformat(), action, str(title)])
         del self.log[:-LOG_MAX]
+        # The central log keeps the domain and the step, never the name.
+        change = AUTO_PAUSE_LEVELS.get(action)
+        events = getattr(self.scanner, "events", None)
+        if change is not None and events is not None:
+            events.record_change(
+                "auto_pause",
+                action,
+                change[0],
+                change[1],
+                _now(),
+                **({"domain": entry.domain} if entry else {}),
+            )
+            # The level of the area follows what is paused now, not the last step: one that came back
+            # does not make the others look fine, and the last one back does not leave a mark behind.
+            states = list(self.paused.values())
+            events.levels["auto_pause/paused"] = (
+                "note" if any(not rec.get("exhausted") for rec in states) else "ok"
+            )
+            events.levels["auto_pause/exhausted"] = (
+                "problem" if any(rec.get("exhausted") for rec in states) else "ok"
+            )
 
     # --- start and stop -------------------------------------------------------------------------
 
@@ -321,6 +349,8 @@ class AutoPause:
             if entry.state is ConfigEntryState.LOADED:
                 self._recovered(entry_id)
                 return
+            if self.paused.get(entry_id) is not rec:
+                return  # resumed while the attempt waited: it stays on
             await self._disable(entry_id)
             if scheduled and entry_id in self.paused:
                 rec["done"] += 1
@@ -348,7 +378,7 @@ class AutoPause:
         began = self.carry.get(entry_id)
         if status == "problem" and began and (since is None or began < since):
             return began
-        if status not in ("problem", "disabled") and self.carry.pop(entry_id, None):
+        if status not in ("problem", "disabled") and self.carry.pop(entry_id, None) is not None:
             self._save()
         return since
 

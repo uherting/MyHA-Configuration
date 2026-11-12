@@ -109,10 +109,10 @@ def query_storms(
             .where(States.last_updated_ts >= day_start, States.last_updated_ts <= end)
             .group_by(States.metadata_id)
         ).all():
-            entity = entities.get(ids.get(metadata_id, ""))
-            if entity is not None:
-                entity["day_rows"] = int(rows)
-                entity["day_bytes"] = int(size or 0)
+            counted = entities.get(ids.get(metadata_id, ""))
+            if counted is not None:
+                counted["day_rows"] = int(rows)
+                counted["day_bytes"] = int(size or 0)
         loudest = sorted(ids, key=lambda i: entities[ids[i]]["rows"], reverse=True)[:PEAK_ENTITIES]
         for metadata_id in loudest:
             if ids[metadata_id] in peaks:

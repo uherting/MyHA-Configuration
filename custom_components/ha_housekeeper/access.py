@@ -465,11 +465,9 @@ def inbound_paths(
     return found
 
 
-async def access_report(
-    hass: HomeAssistant, automations: list[dict[str, Any]] | None = None
-) -> dict[str, Any]:
-    """System access and data flow of every config entry (ignored discoveries left out) and the
-    rights of the installed apps (only with a Supervisor)."""
+async def entry_reports(hass: HomeAssistant) -> list[dict[str, Any]]:
+    """System access and data flow of every config entry (ignored discoveries left out), highest
+    risk first. Reads no app and nothing from the Supervisor."""
     entries = [e for e in hass.config_entries.async_entries() if e.source != "ignore"]
     facts = await _integration_facts(hass, {e.domain for e in entries})
     entity_domains, trackers = _entity_domains(hass)
@@ -493,6 +491,15 @@ async def access_report(
             }
         )
     items.sort(key=lambda i: (RISK_ORDER[i["risk"]], i["domain"], str(i["title"]).lower()))
+    return items
+
+
+async def access_report(
+    hass: HomeAssistant, automations: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
+    """System access and data flow of every config entry and the rights of the installed apps
+    (only with a Supervisor)."""
+    items = await entry_reports(hass)
     apps = await apps_report(hass)
     webhooks = webhook_triggers(automations or [])
     return {

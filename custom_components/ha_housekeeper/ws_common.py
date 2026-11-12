@@ -5,7 +5,7 @@ from __future__ import annotations
 import functools
 import inspect
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from homeassistant.auth.models import TOKEN_TYPE_NORMAL
@@ -93,7 +93,7 @@ def panel_session_only(
     return False
 
 
-def _versioned(result: dict[str, Any]) -> dict[str, Any]:
+def _versioned(result: Mapping[str, object]) -> dict[str, Any]:
     """Mark a reply with the version of the API contract.
 
     Fields may be added without a new version; renaming or removing one needs ``API_SCHEMA`` to

@@ -116,7 +116,8 @@ def _query_costs(hass: HomeAssistant, limit: int) -> dict[str, Any]:
     size = None
     try:
         if instance.dialect_name == "sqlite":
-            path = instance.engine.url.database
+            engine = instance.engine
+            path = engine.url.database if engine is not None else None
             size = os.path.getsize(path) if path else None
     except Exception:
         size = None
@@ -191,7 +192,7 @@ def rank_costs(raw: dict[str, Any], snapshot: dict[str, Any]) -> dict[str, Any]:
                 "used": uses,
                 "has_statistics": has_statistics,
                 "known": item is not None,
-                "excluded": bool(entity_filter) and not entity_filter(entity_id),
+                "excluded": entity_filter is not None and not entity_filter(entity_id),
                 "suggest_exclude": exclusion_suggested(
                     known=item is not None, uses=uses, has_statistics=has_statistics, rate=current
                 ),
@@ -446,7 +447,7 @@ async def collect_preflight(
 
 def judge_preflight(state: dict[str, Any]) -> list[dict[str, Any]]:
     """Turn the collected state into the lines of the page: ``ok``, ``info``, ``warn`` or ``red``."""
-    checks = []
+    checks: list[dict[str, Any]] = []
     backup = state["backup"]
     if not backup.get("available"):
         level = "warn"

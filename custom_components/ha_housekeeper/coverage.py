@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 import re
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
@@ -169,7 +169,7 @@ class CoverageStore:
                 key,
                 {"since": datetime.now(UTC).isoformat(), "runs": 0, "paths": {}, "seen": []},
             )
-            self._count(item, markers((trace.get("trace") or {}).keys()), head)
+            self._count(item, markers(cast(dict[str, Any], trace.get("trace") or {}).keys()), head)
             item["seen"].append(run_id)
             del item["seen"][:-SEEN_CAP]
             counted += 1

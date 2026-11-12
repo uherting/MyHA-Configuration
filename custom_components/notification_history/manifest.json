@@ -1,0 +1,15 @@
+{
+  "domain": "notification_history",
+  "name": "Notification History",
+  "after_dependencies": ["mobile_app", "recorder", "logbook"],
+  "codeowners": ["@Patafoin"],
+  "config_flow": true,
+  "dependencies": ["http", "lovelace", "websocket_api"],
+  "documentation": "https://github.com/Patafoin/ha-notification-history",
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Patafoin/ha-notification-history/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "1.0.1"
+}

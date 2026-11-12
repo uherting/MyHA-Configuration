@@ -24,6 +24,7 @@ HINT_KEYS = (
     "database_damaged",
     "backup_problem",
     "orphaned_statistics",
+    "check_flapping",
 )
 DEFAULT_ON = frozenset({"broken_automations", "scan_health", "database_damaged", "backup_problem"})
 # Shown by every version before the switches; an installation that already ran keeps them.
@@ -68,7 +69,8 @@ class HintStore:
                 }
             return
         # First start with the switches: the observations only exist where Housekeeper ran before.
-        ran_before = await Store(self._hass, STORAGE_VERSION, STORAGE_KEY).async_load() is not None
+        earlier: Store[dict[str, Any]] = Store(self._hass, STORAGE_VERSION, STORAGE_KEY)
+        ran_before = await earlier.async_load() is not None
         self.enabled = DEFAULT_ON | LEGACY_ON if ran_before else DEFAULT_ON
         self._save()
 

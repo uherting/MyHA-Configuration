@@ -99,7 +99,12 @@ def timeline(
         at = result.get("at")
         if action.get("object_id") == device_id and action.get("kind") in DEVICE_STEPS:
             steps.append({"kind": DEVICE_STEPS[action["kind"]], "at": at, "plan_id": plan_id})
-        elif action.get("kind") == "replace_references" and action.get("object_id") in entities:
+        elif (
+            action.get("kind") == "replace_references"
+            or (
+                action.get("kind") == "migrate_meter" and action.get("mode") == "replace_statistics"
+            )
+        ) and action.get("object_id") in entities:
             steps.append(
                 {
                     "kind": "replaced",

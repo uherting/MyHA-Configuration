@@ -1,0 +1,11 @@
+[
+  {"code": "de", "name": "Deutsch", "patterns": ["de"], "quotes": ["„", "“"], "lowerKind": false},
+  {"code": "en", "name": "English", "patterns": ["en"], "quotes": ["“", "”"], "lowerKind": true},
+  {"code": "fr", "name": "Français", "patterns": ["fr"], "quotes": ["« ", " »"], "lowerKind": true, "status": "community"},
+  {"code": "es", "name": "Español", "patterns": ["es"], "quotes": ["“", "”"], "lowerKind": true, "status": "community"},
+  {"code": "pt", "name": "Português", "patterns": ["pt", "pt-pt", "pt-br"], "quotes": ["«", "»"], "lowerKind": true, "status": "community"},
+  {"code": "it", "name": "Italiano", "patterns": ["it"], "quotes": ["«", "»"], "lowerKind": true, "status": "community"},
+  {"code": "sk", "name": "Slovenčina", "patterns": ["sk"], "quotes": ["„", "“"], "lowerKind": false, "status": "community"},
+  {"code": "ru", "name": "Русский", "patterns": ["ru"], "quotes": ["«", "»"], "lowerKind": false, "status": "community"},
+  {"code": "zh-Hans", "name": "简体中文", "patterns": ["zh-hans", "zh-cn", "zh-sg"], "quotes": ["“", "”"], "lowerKind": false, "status": "community"}
+]

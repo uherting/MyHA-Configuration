@@ -21,6 +21,7 @@ from .ws_common import _versioned, panel_session_only, with_scanner
         vol.Required("type"): f"{DOMAIN}/mcp_set",
         vol.Optional("enabled"): bool,
         vol.Optional("write"): bool,
+        vol.Optional("fix"): bool,
         vol.Optional("auto_off_hours"): vol.In(AUTO_OFF_CHOICES),
         vol.Optional("hide_sensitive"): bool,
         vol.Optional("write_limit"): vol.In(WRITE_LIMIT_CHOICES),
@@ -45,6 +46,7 @@ def websocket_mcp_set(
         msg.get("hide_sensitive"),
         msg.get("write_limit"),
         msg.get("read_limit"),
+        msg.get("fix"),
     )
     if scanner.snapshot:
         scanner.snapshot["meta"]["mcp"] = scanner.mcp.meta()

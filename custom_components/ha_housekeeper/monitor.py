@@ -9,7 +9,7 @@ from __future__ import annotations
 import secrets
 from datetime import UTC, datetime, timedelta
 from math import isfinite
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.components import persistent_notification
 from homeassistant.core import HomeAssistant
@@ -27,7 +27,7 @@ from .const import (
     STORAGE_VERSION,
 )
 from .scan_health import stale_after
-from .texts import pick
+from .texts import localize, pick
 
 SAVE_DELAY = 5
 MAX_ITEMS = 30
@@ -100,6 +100,7 @@ REASONS_EN = {
     "rule_no_timestamp": "update time unknown",
 }
 MONITOR_REASONS = {"de": REASONS_DE, "en": REASONS_EN}
+localize("monitor.MONITOR_REASONS", MONITOR_REASONS)
 MONITOR_TEXTS = {
     "de": {
         "uncertain_open": "Prüfung unvollständig; letzter bestätigter Defekt ({last_reason}) bleibt ungeklärt.",
@@ -114,6 +115,7 @@ MONITOR_TEXTS = {
         "link": "Open home functions",
     },
 }
+localize("monitor.MONITOR_TEXTS", MONITOR_TEXTS)
 
 
 AVAILABILITY_DAYS = 30
@@ -197,9 +199,9 @@ def availability(
         "longest_seconds": round(max(problems, default=0)),
         "days": [
             {
-                "date": (day := (first + timedelta(days=i)).isoformat()),
-                "state": worst.get(day),
-                "problem_seconds": round(impaired.get(day, 0)),
+                "date": (label := (first + timedelta(days=i)).isoformat()),
+                "state": worst.get(label),
+                "problem_seconds": round(impaired.get(label, 0)),
             }
             for i in range((dt_util.as_local(now).date() - first).days + 1)
         ],
@@ -285,7 +287,7 @@ def _member_state(
                         state, reason = STATE_PROBLEM, "rule_stale"
                 elif rule["kind"] == "min_value":
                     try:
-                        value = float(item.get("state"))
+                        value = float(cast(Any, item.get("state")))
                     except (TypeError, ValueError):
                         state, reason = STATE_UNVERIFIED, "rule_no_value"
                     else:
@@ -548,7 +550,7 @@ class MonitorStore:
     def _flap(entries: list[dict[str, Any]], entry: dict[str, Any], now: datetime) -> bool:
         """Fold a run of quick state changes into one entry, so a wobbling object cannot fill the history."""
         last = entries[-1] if entries else None
-        latest = {k: entry[k] for k in ("reason", "key") if k in entry}
+        latest: dict[str, Any] = {k: entry[k] for k in ("reason", "key") if k in entry}
         if (
             last
             and last["kind"] == "flapping"
@@ -724,6 +726,7 @@ class MonitorStore:
             item_id = secrets.token_hex(6)
             old = {"id": item_id, "created_at": datetime.now(UTC).isoformat()}
             self.items.append(old)
+        item_id = old["id"]
         old.update(
             name=name.strip(),
             description=description.strip(),
@@ -814,7 +817,8 @@ class MonitorStore:
         reasons = pick(self.hass, MONITOR_REASONS)
         reason = reasons.get(result["reason"], result["reason"])
         last_reason = reasons.get(
-            result.get("last_problem_reason"), result.get("last_problem_reason") or reason
+            cast(str, result.get("last_problem_reason")),
+            result.get("last_problem_reason") or reason,
         )
         title = f"Housekeeper: {result['name']}"
         if uncertain and result["incident_open"]:

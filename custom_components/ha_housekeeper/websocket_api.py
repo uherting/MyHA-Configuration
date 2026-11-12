@@ -15,6 +15,7 @@ from homeassistant.helpers import label_registry as lr
 from . import (
     area_assign,
     counter_repair,
+    exposure_edit,
     rename,
     ws_automations,
     ws_care,
@@ -23,6 +24,7 @@ from . import (
     ws_system,
 )
 from . import refactor as refactor_module
+from .activity import KINDS as ACTIVITY_KINDS
 from .audit_report import build_report
 from .automation_delete import preview as preview_automation_delete
 from .backup_cleanup import KEEP_DAYS, KEEP_LAST, MAX_DAYS, MAX_LAST, list_backups
@@ -31,14 +33,20 @@ from .cleanup import (
     AREA_KINDS,
     DELETE_AUTOMATION_KINDS,
     DELETE_BACKUP_KINDS,
+    EXPOSE_NEW_KINDS,
+    EXPOSURE_KINDS,
+    HELPER_IMPORT_KINDS,
+    HELPER_KINDS,
     LABEL_KINDS,
     MAX_ACTIONS,
     MAX_MERGE,
     METER_KINDS,
     METER_MODES,
+    METER_REFERENCE_MODE,
     RECORDER_CHOICES,
     REFACTOR_KINDS,
     REFERENCE_KINDS,
+    RELOAD_KINDS,
     RENAME_KINDS,
     REPAIR_KINDS,
     STATE_KINDS,
@@ -56,19 +64,32 @@ from .cleanup import (
     registry_fingerprint,
     trim_is_plain,
 )
-from .cleanup_exec import CleanupError, backup_is_local_only, entity_restorable
-from .const import DOMAIN, OPTION_LIMITS
-from .device_pairs import pair_devices
+from .cleanup_exec import (
+    CleanupError,
+    backup_is_local_only,
+    entity_restorable,
+    helper_info,
+    reload_info,
+)
+from .cleanup_round import ROUND_LIMIT, duplicate_rows, needs_first_step, removal_requests, sort_row
+from .const import CONF_SHOW_IN_SIDEBAR, DOMAIN, OPTION_LIMITS
+from .device_pairs import pair_devices, suggest_entities
+from .failure_info import error_hint, item_id_of, last_failure
+from .first_cleanup import BULK_LIMIT, LATER_DAYS, STAGES, stage_keys
+from .fix_ways import ways_for
+from .helper_backup import check_note, export_file, taken_ids
 from .history import PinError
 from .ignored import KINDS as IGNORE_KINDS
 from .ignored import REASON_LIMIT as IGNORE_REASON_LIMIT
 from .inventory import InventoryScanner
 from .lifecycle import removed_objects
+from .live_check import check_finding
 from .meter import prepare_meter
 from .monitor import MonitorError, MonitorStore, evaluate
 from .outage_levels import OUTAGE_KEYS, thresholds_from_options, thresholds_rise
 from .recorder_purge import TRIM_MAX_DAYS, TRIM_TABLES, count_history, count_older, count_trim
 from .references import preview_replacement
+from .texts import LANGUAGE_CODES
 from .writelock import write_holder
 from .ws_common import (
     _scanner,
@@ -111,6 +132,9 @@ async def _send_inventory_result(
         "resting_decisions": scanner.ignored.resting(
             {f["key"] for f in result.get("findings", [])}
         ),
+        "decision_notice": scanner.ignored.notice,
+        # The last visit of this user: the base of "new since your last visit".
+        "visit": scanner.visits.get(connection.user.id if connection.user else None),
     }
     send_sendable(connection, msg["id"], _versioned(result))
 
@@ -267,6 +291,467 @@ async def websocket_compare(
 
 @websocket_api.require_admin
 @websocket_api.websocket_command(
+    {vol.Required("type"): f"{DOMAIN}/fix_ways", vol.Required("finding_key"): str}
+)
+@callback
+@with_scanner
+def websocket_fix_ways(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The ways to fix one finding. Only names them; nothing is changed."""
+    snapshot = scanner.snapshot or {}
+    finding = next(
+        (f for f in snapshot.get("findings", []) if f["key"] == msg["finding_key"]), None
+    )
+    if finding is None:
+        connection.send_error(msg["id"], "not_found", "Finding not found in the latest scan")
+        return
+    connection.send_result(
+        msg["id"],
+        _versioned(
+            {"ways": ways_for(finding, snapshot, refactor_enabled=scanner.refactor.enabled)}
+        ),
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): f"{DOMAIN}/failure_info", vol.Required("finding_key"): str}
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_failure_info(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The last failed run of the automation or script of a finding, with a hint. Reads only."""
+    snapshot = scanner.snapshot or {}
+    finding = next(
+        (f for f in snapshot.get("findings", []) if f["key"] == msg["finding_key"]), None
+    )
+    domain = finding["rule_id"].partition(".")[0] if finding else ""
+    if finding is None or domain not in ("automation", "script"):
+        connection.send_error(msg["id"], "not_found", "Finding not found in the latest scan")
+        return
+    item_id = item_id_of(snapshot, finding)
+    failure = await last_failure(hass, domain, item_id) if item_id else None
+    down = {
+        f["object_id"]: f["key"]
+        for f in snapshot.get("findings", [])
+        if f.get("topic") == "down" and not f.get("ignored") and f["rule_id"].startswith("entity.")
+    }
+    connection.send_result(
+        msg["id"],
+        _versioned({"failure": failure, "hint": error_hint((failure or {}).get("error"), down)}),
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): f"{DOMAIN}/fix_check", vol.Required("finding_key"): str}
+)
+@callback
+@with_scanner
+def websocket_fix_check(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """A quick look at the object of a finding as it is now. Reads only; the next scan decides."""
+    finding = next(
+        (f for f in (scanner.snapshot or {}).get("findings", []) if f["key"] == msg["finding_key"]),
+        None,
+    )
+    if finding is None:
+        connection.send_error(msg["id"], "not_found", "Finding not found in the latest scan")
+        return
+    connection.send_result(msg["id"], check_finding(hass, finding))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/cleanup_round"})
+@websocket_api.async_response
+@with_scanner
+async def websocket_cleanup_round(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Everything unneeded, judged for removal and sorted into groups. Judges only; nothing is changed."""
+    try:
+        snapshot = await scanner.async_get_snapshot()
+    except Exception as err:
+        connection.send_error(msg["id"], "scan_failed", f"{type(err).__name__}: {err}")
+        return
+    if scanner.warming_up:
+        connection.send_error(msg["id"], "warming_up", "Home Assistant is still starting")
+        return
+    everything = removal_requests(snapshot)
+    requests = everything[:ROUND_LIMIT]
+
+    async def judge(batch: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+        found: dict[str, dict[str, Any]] = {}
+        for start in range(0, len(batch), MAX_ACTIONS):
+            plan = await _plan_from_requests(
+                hass, snapshot, batch[start : start + MAX_ACTIONS], with_history=False
+            )
+            found.update({a["object_id"]: a for a in plan["actions"]})
+        return found
+
+    first = await judge(requests)
+    held = [
+        {**r, "kind": "disable_entity"}
+        for r in requests
+        if r["object_id"] in first and needs_first_step(r, first[r["object_id"]])
+    ]
+    second = await judge(held) if held else {}
+    rows = [
+        sort_row(r, first[r["object_id"]], second.get(r["object_id"]))
+        for r in requests
+        if r["object_id"] in first
+    ]
+    connection.send_result(
+        msg["id"],
+        _versioned(
+            {
+                "rows": [*rows, *duplicate_rows(snapshot)],
+                "total": len(everything),
+                "limited": len(everything) > len(requests),
+            }
+        ),
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/work_set",
+        vol.Required("finding_key"): str,
+        vol.Required("active"): bool,
+    }
+)
+@callback
+@with_scanner
+def websocket_work_set(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Note a step on the Fix page of a finding ("In work"), or give up on it. Hides nothing."""
+    finding = next(
+        (f for f in (scanner.snapshot or {}).get("findings", []) if f["key"] == msg["finding_key"]),
+        None,
+    )
+    if finding is None:
+        connection.send_error(msg["id"], "not_found", "Finding not found in the latest scan")
+        return
+    if msg["active"]:
+        scanner.work.start(finding["key"], datetime.now(UTC))
+    else:
+        scanner.work.clear(finding["key"])
+    finding.pop("in_work", None)
+    finding.pop("work_expired", None)
+    scanner._mark_work(finding)
+    connection.send_result(
+        msg["id"], {"in_work": finding.get("in_work"), "work_expired": finding.get("work_expired")}
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/visit_leave"})
+@callback
+@with_scanner
+def websocket_visit_leave(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The user leaves the findings page: note the time and the findings as they stand now."""
+    snapshot = scanner.snapshot
+    if snapshot is None:
+        connection.send_result(msg["id"], None)
+        return
+    user = connection.user.id if connection.user else None
+    connection.send_result(msg["id"], scanner.visits.leave(user, snapshot, datetime.now(UTC)))
+
+
+def _first_cleanup_reply(scanner: InventoryScanner) -> dict[str, Any]:
+    snapshot = scanner.snapshot or {}
+    stages = stage_keys(snapshot)
+    open_count = sum(len(keys) for keys in stages.values())
+    return _versioned(
+        {
+            "state": scanner.first_cleanup.state(),
+            "offered": scanner.first_cleanup.offered(open_count),
+            "open": open_count,
+            "stages": {str(n): keys for n, keys in stages.items()},
+            "later_days": LATER_DAYS,
+        }
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/first_cleanup"})
+@callback
+@with_scanner
+def websocket_first_cleanup(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Where the cleanup stands, whether it is offered, and the findings of each stage. Reads only."""
+    connection.send_result(msg["id"], _first_cleanup_reply(scanner))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/first_cleanup_set",
+        vol.Required("action"): vol.In(
+            ("begin", "dismiss", "reset", "stage", "log_add", "log_remove", "log_unskip")
+        ),
+        vol.Optional("stage"): vol.In(STAGES),
+        vol.Optional("done"): bool,
+        vol.Optional("entry"): dict,
+        vol.Optional("entry_id"): vol.All(str, vol.Length(min=1, max=40)),
+    }
+)
+@callback
+@with_scanner
+def websocket_first_cleanup_set(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Begin the cleanup, decline the offer, start it over, go to a stage, or keep its history. Hides nothing."""
+    store = scanner.first_cleanup
+    now = datetime.now(UTC)
+    if msg["action"] == "begin":
+        store.begin(_first_cleanup_reply(scanner)["open"], now)
+    elif msg["action"] == "dismiss":
+        store.dismiss()
+    elif msg["action"] == "reset":
+        store.reset()
+    elif msg["action"] == "log_add":
+        store.log_add(msg.get("entry"))
+    elif msg["action"] == "log_remove" and "entry_id" in msg:
+        store.log_remove(msg["entry_id"])
+    elif msg["action"] == "log_unskip" and "stage" in msg:
+        store.log_unskip(msg["stage"])
+    elif msg["action"] in ("log_remove", "log_unskip"):
+        connection.send_error(msg["id"], "invalid_format", "An entry or a stage is needed")
+        return
+    elif "stage" not in msg:
+        connection.send_error(msg["id"], "invalid_format", "A stage is needed")
+        return
+    else:
+        store.set_stage(msg["stage"], msg.get("done"), now)
+    connection.send_result(msg["id"], _first_cleanup_reply(scanner))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/first_cleanup_later",
+        vol.Optional("days", default=LATER_DAYS): vol.All(int, vol.Range(min=1, max=3650)),
+        vol.Optional("reason", default=""): vol.All(str, vol.Length(max=IGNORE_REASON_LIMIT)),
+    }
+)
+@callback
+@with_scanner
+def websocket_first_cleanup_later(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Stage 5: put the rest off together ("Later"); it comes back as due. Housekeeper's own list only."""
+    if not scanner.first_cleanup.started:
+        connection.send_error(msg["id"], "not_running", "The cleanup has not begun")
+        return
+    keys = stage_keys(scanner.snapshot or {})[5][:BULK_LIMIT]
+    done = scanner.snooze_many(
+        keys,
+        msg["days"],
+        msg["reason"],
+        connection.user.id if connection.user else None,
+        "cleanup",
+    )
+    connection.send_result(
+        msg["id"], {"put_off": done, "put_off_keys": keys, **_first_cleanup_reply(scanner)}
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/activity",
+        vol.Optional("kinds"): [vol.In(ACTIVITY_KINDS)],
+        vol.Optional("query", default=""): vol.All(str, vol.Length(max=100)),
+        vol.Optional("before"): str,
+        vol.Optional("limit", default=50): vol.All(int, vol.Range(min=1, max=100)),
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_activity(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """What was done, newest first, in pages; the user of an entry is named. Reads only."""
+    page = scanner.activity.view(
+        tuple(msg["kinds"]) if msg.get("kinds") else None,
+        msg["query"],
+        msg.get("before"),
+        msg["limit"],
+    )
+    names: dict[str, str | None] = {}
+    for item in page["items"]:
+        user_id = item.get("by")
+        if user_id and user_id not in names:
+            user = await hass.auth.async_get_user(user_id)
+            names[user_id] = user.name if user else None
+        item["by_name"] = names.get(user_id) if user_id else None
+    connection.send_result(msg["id"], _versioned(page))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): f"{DOMAIN}/activity_undo", vol.Required("entry_id"): str}
+)
+@callback
+@with_scanner
+def websocket_activity_undo(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Put a decision or a mark back as it was before the entry; the entry offers no undo after."""
+    entry = scanner.activity.get(msg["entry_id"])
+    undo = entry["undo"] if entry else None
+    by = connection.user.id if connection.user else None
+    if not undo:
+        connection.send_error(msg["id"], "not_found", "Nothing to undo for this entry")
+        return
+    if undo["type"] == "ignore_many":
+        restored = scanner.restore_decisions(undo["items"], by)
+        if not restored:
+            connection.send_error(
+                msg["id"],
+                "conflict_changed",
+                "It was changed after this action; nothing was undone",
+            )
+            return
+        scanner.activity.drop_undo(msg["entry_id"])
+        connection.send_result(
+            msg["id"],
+            {"undone": True, "restored": restored, "skipped": len(undo["items"]) - restored},
+        )
+        return
+    if undo["type"] in ("ignore", "mark") and not scanner.stands_as_left(undo):
+        connection.send_error(
+            msg["id"], "conflict_changed", "It was changed after this action; nothing was undone"
+        )
+        return
+    if undo["type"] == "ignore":
+        scanner.restore_decision(undo["key"], undo["previous"], by)
+    elif undo["type"] == "mark":
+        object_type, _, object_id = undo["key"].partition(":")
+        scanner.restore_mark(object_type, object_id, undo["previous"], by)
+    else:
+        connection.send_error(msg["id"], "not_found", "Nothing to undo for this entry")
+        return
+    scanner.activity.drop_undo(msg["entry_id"])
+    connection.send_result(msg["id"], {"undone": True})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/often"})
+@callback
+@with_scanner
+def websocket_often(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The suggestions for marks that were answered "no thanks" and still hold."""
+    connection.send_result(
+        msg["id"], _versioned({"skipped": scanner.often.view(datetime.now(UTC))})
+    )
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/often_skip",
+        vol.Required("skip"): bool,
+        vol.Required("keys"): vol.All([str], vol.Length(max=500)),
+        vol.Optional("at"): str,
+        vol.Optional("source"): vol.In(("cleanup", "list")),
+    }
+)
+@callback
+@with_scanner
+def websocket_often_skip(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Answer a suggestion for a mark "no thanks", or ask about it again."""
+    now = datetime.now(UTC)
+    user = connection.user.id if connection.user else None
+    if msg["skip"]:
+        at = msg.get("at") or now.isoformat()
+        scanner.often.skip(dict.fromkeys(msg["keys"], at), now)
+    else:
+        scanner.often.unskip(msg["keys"])
+    for key in (
+        [] if msg.get("at") else msg["keys"]
+    ):  # a time is given for answers brought over from a browser
+        scanner.activity.record(
+            "decision",
+            "nothanks" if msg["skip"] else "undo",
+            now,
+            key=key,
+            by=user,
+            source=msg.get("source"),
+        )
+    connection.send_result(msg["id"], {"skipped": scanner.often.view(now)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/decision_notice_dismiss"})
+@callback
+@with_scanner
+def websocket_decision_notice_dismiss(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """The user has read the note about the review dates added to "meant to be so"."""
+    scanner.ignored.dismiss_notice()
+    connection.send_result(msg["id"], {"dismissed": True})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
     {
         vol.Required("type"): f"{DOMAIN}/ignore",
         vol.Required("finding_key"): str,
@@ -274,6 +759,7 @@ async def websocket_compare(
         vol.Optional("kind", default="ignore"): vol.In(IGNORE_KINDS),
         vol.Optional("reason", default=""): vol.All(str, vol.Length(max=IGNORE_REASON_LIMIT)),
         vol.Optional("days"): vol.All(int, vol.Range(min=1, max=3650)),
+        vol.Optional("source"): vol.In(("cleanup", "list")),
     }
 )
 @callback
@@ -289,8 +775,15 @@ def websocket_ignore(
         if msg["kind"] == "keep" and not msg["reason"].strip():
             connection.send_error(msg["id"], "reason_required", "Keeping a finding needs a reason")
             return
-        if msg["kind"] == "snooze" and "days" not in msg:
-            connection.send_error(msg["id"], "days_required", "Putting a finding off needs days")
+        problem = scanner.decision_problem(msg["finding_key"], msg["kind"], "days" in msg)
+        if problem:
+            connection.send_error(
+                msg["id"],
+                problem,
+                "A critical object needs a review date"
+                if problem == "days_required_critical"
+                else "Putting a finding off needs days",
+            )
             return
     if not scanner.set_finding_ignored(
         msg["finding_key"],
@@ -299,6 +792,7 @@ def websocket_ignore(
         reason=msg["reason"],
         days=msg.get("days"),
         by=connection.user.id if connection.user else None,
+        source=msg.get("source"),
     ):
         connection.send_error(msg["id"], "not_found", "Finding not found in the latest scan")
         return
@@ -313,6 +807,7 @@ def websocket_ignore(
             vol.Optional(key): vol.All(int, vol.Range(min=low, max=high))
             for key, (low, high) in OPTION_LIMITS.items()
         },
+        vol.Optional(CONF_SHOW_IN_SIDEBAR): bool,
     }
 )
 @callback
@@ -328,7 +823,7 @@ def websocket_set_options(
         connection.send_error(msg["id"], "busy", "A plan, undo or purge is running")
         return
     entries = hass.config_entries.async_entries(DOMAIN)
-    changes = {key: msg[key] for key in OPTION_LIMITS if key in msg}
+    changes = {key: msg[key] for key in (*OPTION_LIMITS, CONF_SHOW_IN_SIDEBAR) if key in msg}
     if not entries or not changes:
         connection.send_error(msg["id"], "invalid_format", "Nothing to change")
         return
@@ -349,8 +844,13 @@ async def _plan_from_requests(
     snapshot: dict[str, Any],
     requests: list[dict[str, Any]],
     refactor_enabled: bool = False,
+    with_history: bool = True,
 ) -> dict[str, Any]:
-    """Judge ``requests`` against the snapshot and the live registries: a plan, not yet journaled."""
+    """Judge ``requests`` against the snapshot and the live registries: a plan, not yet journaled.
+
+    ``with_history`` counts the recorder rows a plan is about, for its end state; a judgement that
+    only sorts (the cleanup round) does without that.
+    """
     registry = er.async_get(hass)
 
     def fingerprint(object_id: str) -> str | None:
@@ -366,12 +866,21 @@ async def _plan_from_requests(
         entry = devices.async_get(device_id)
         return (device_fingerprint(entry), device_support(hass, entry)) if entry else (None, {})
 
-    reference_data = {}
+    reference_data: dict[Any, tuple[str | None, list[dict[str, Any]]]] = {}
     for action in requests:
-        if action["kind"] in REFERENCE_KINDS and action.get("target"):
-            pair = (action["object_id"], action["target"])
+        # A meter change in the mode ``replace_statistics`` rewrites the references as well.
+        rewrites = action["kind"] in REFERENCE_KINDS or (
+            action["kind"] in METER_KINDS and action.get("mode") == METER_REFERENCE_MODE
+        )
+        if rewrites and action.get("target"):
+            target_kind = (
+                action.get("target_kind") if action["kind"] in REFERENCE_KINDS else None
+            ) or "entity"
+            pair = (action["object_id"], action["target"], target_kind)
             if pair not in reference_data and pair[0] != pair[1]:
-                reference_data[pair] = await preview_replacement(hass, snapshot, *pair)
+                reference_data[pair] = await preview_replacement(
+                    hass, snapshot, pair[0], pair[1], None, target_kind
+                )
 
     meter_data = {}
     for action in requests:
@@ -380,7 +889,7 @@ async def _plan_from_requests(
             if key not in meter_data and key[0] != key[1]:
                 meter_data[key] = await prepare_meter(hass, key[0], key[1], key[2])
 
-    counter_data = {}
+    counter_data: dict[Any, dict[str, Any]] = {}
     for action in requests:
         if action["kind"] in REPAIR_KINDS:
             key = counter_key(action)
@@ -404,12 +913,26 @@ async def _plan_from_requests(
                 "fingerprint": registry_fingerprint(entry) if entry else None,
             }
 
+    exposure_data = {
+        (action["object_id"], action.get("target") or ""): exposure_edit.prepare(
+            hass, action["object_id"], action.get("target") or "", action.get("assistants") or ()
+        )
+        for action in requests
+        if action["kind"] in EXPOSURE_KINDS
+    }
+
+    expose_new_data = {
+        action["object_id"]: exposure_edit.expose_new(hass, action["object_id"])
+        for action in requests
+        if action["kind"] in EXPOSE_NEW_KINDS
+    }
+
     rename_data = {}
     for action in requests:
         if action["kind"] in RENAME_KINDS:
-            key = (action["object_id"], action.get("target") or "")
-            if key not in rename_data:
-                rename_data[key] = await rename.prepare(hass, snapshot, *key)
+            rename_key = (action["object_id"], action.get("target") or "")
+            if rename_key not in rename_data:
+                rename_data[rename_key] = await rename.prepare(hass, snapshot, *rename_key)
 
     state_data = {}
     for action in requests:
@@ -425,6 +948,24 @@ async def _plan_from_requests(
                 else "",
                 "fingerprint": registry_fingerprint(entry) if entry else None,
             }
+
+    reload_data = {
+        action["object_id"]: reload_info(hass, action["object_id"])
+        for action in requests
+        if action["kind"] in RELOAD_KINDS
+    }
+
+    helper_data = {
+        action["object_id"]: helper_info(hass, action["object_id"])
+        for action in requests
+        if action["kind"] in HELPER_KINDS
+    }
+
+    helper_import_data = {
+        action["object_id"]: taken_ids(hass, action["helper"])
+        for action in requests
+        if action["kind"] in HELPER_IMPORT_KINDS and check_note(action.get("helper")) is None
+    }
 
     area_data = {
         action["object_id"]: area_assign.prepare(
@@ -467,7 +1008,7 @@ async def _plan_from_requests(
             )
 
     def statistic_exists(statistic_id: str) -> bool:
-        return registry.async_get(statistic_id) is not None or hass.states.get(statistic_id)
+        return registry.async_get(statistic_id) is not None or bool(hass.states.get(statistic_id))
 
     refactor_data = {}
     for action in requests:
@@ -499,9 +1040,34 @@ async def _plan_from_requests(
         trim_data=trim_data,
         backup_data=backup_data,
         delete_data=delete_data,
+        reload_data=reload_data,
+        helper_data=helper_data,
+        helper_import_data=helper_import_data,
+        exposure_data=exposure_data,
+        expose_new_data=expose_new_data,
     )
-    await _add_history(hass, snapshot, plan)
+    if with_history:
+        await _add_history(hass, snapshot, plan)
     return plan
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/helper_export",
+        vol.Required("entry_ids"): vol.All([str], vol.Length(min=1, max=200)),
+    }
+)
+@websocket_api.async_response
+async def websocket_helper_export(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """The export file of the given helper entries (options and entity settings)."""
+    file = export_file(hass, msg["entry_ids"], datetime.now(UTC).isoformat())
+    if not file["helpers"]:
+        connection.send_error(msg["id"], "not_helper", "None of the entries is a helper")
+        return
+    connection.send_result(msg["id"], file)
 
 
 @websocket_api.require_admin
@@ -514,7 +1080,14 @@ async def _plan_from_requests(
                     vol.Required("kind"): vol.In(sorted(ACTION_KINDS)),
                     vol.Required("object_id"): str,
                     vol.Optional("target"): str,
+                    vol.Optional("assistants"): vol.All(
+                        [vol.In(exposure_edit.ASSISTANTS)], vol.Length(min=1)
+                    ),
+                    vol.Optional("target_kind"): vol.In(("entity", "area", "floor", "label")),
                     vol.Optional("mode"): vol.In((*METER_MODES, *counter_repair.RANGE_MODES)),
+                    vol.Optional("disable_old"): bool,
+                    vol.Optional("delete_old"): bool,
+                    vol.Optional("helper"): dict,
                     vol.Optional("range"): {
                         vol.Required("from"): vol.Coerce(float),
                         vol.Required("to"): vol.Coerce(float),
@@ -533,6 +1106,12 @@ async def _plan_from_requests(
                             int, vol.Range(min=1, max=refactor_module.TIMEOUT_MAX)
                         ),
                         vol.Optional("continue_on_timeout"): bool,
+                        vol.Optional("path"): vol.All(
+                            str, vol.Length(max=refactor_module.REFERENCE_MAX)
+                        ),
+                        vol.Optional("reference"): vol.All(
+                            str, vol.Length(max=refactor_module.REFERENCE_MAX)
+                        ),
                         vol.Optional("mode"): vol.In(refactor_module.MODES),
                         vol.Optional("max"): vol.All(
                             int, vol.Range(min=2, max=refactor_module.MAX_RUNS)
@@ -592,10 +1171,11 @@ async def websocket_plan_merge(
         connection.send_error(msg["id"], "warming_up", "Home Assistant is still starting")
         return
     ids = list(dict.fromkeys(msg["plan_ids"]))
-    plans = [scanner.journal.get(i) for i in ids]
-    if len(ids) < 2 or any(p is None for p in plans):
+    found_plans = [scanner.journal.get(i) for i in ids]
+    if len(ids) < 2 or any(p is None for p in found_plans):
         connection.send_error(msg["id"], "not_found", "Two or more known plans are needed")
         return
+    plans = [p for p in found_plans if p is not None]
     if any(p.get("executed") or p.get("run") for p in plans):
         connection.send_error(msg["id"], "plan_not_open", "Only open previews can be merged")
         return
@@ -612,6 +1192,13 @@ async def websocket_plan_merge(
         connection.send_error(msg["id"], "scan_failed", f"{type(err).__name__}: {err}")
         return
     plan = await _plan_from_requests(hass, snapshot, requests, scanner.refactor.enabled)
+    # The scan above takes a while: a preview that was run or removed meanwhile ends the merge.
+    if any(
+        (now := scanner.journal.get(i)) is None or now.get("executed") or now.get("run")
+        for i in ids
+    ):
+        connection.send_error(msg["id"], "plan_not_open", "A preview changed while merging")
+        return
     plan["events"].append({"at": datetime.now(UTC).isoformat(), "type": "merged", "plans": ids})
     scanner.journal.add(plan)
     for plan_id in ids:
@@ -677,6 +1264,9 @@ async def websocket_plan_renew(
     if rebuilt is None:
         return
     old, plan = rebuilt
+    if scanner.journal.get(old["plan_id"]) is not old or old.get("executed") or old.get("run"):
+        connection.send_error(msg["id"], "plan_not_open", "The preview changed while renewing")
+        return
     if old.get("full_backup"):
         plan["full_backup"] = True
     if backup_is_local_only(hass):
@@ -772,7 +1362,7 @@ def websocket_plan_detail(
         vol.Required("type"): f"{DOMAIN}/plan_report",
         vol.Required("plan_id"): str,
         vol.Optional("anonymize", default=True): bool,
-        vol.Optional("lang", default="en"): vol.In(["de", "en"]),
+        vol.Optional("lang", default="en"): vol.In(LANGUAGE_CODES),
     }
 )
 @callback
@@ -831,6 +1421,35 @@ async def websocket_device_pairs(
 
 @websocket_api.require_admin
 @websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/entity_pairs",
+        vol.Required("old_entity_ids"): vol.All([str], vol.Length(min=1, max=MAX_ACTIONS)),
+        vol.Optional("device_ids"): [str],
+        vol.Optional("platform"): str,
+    }
+)
+@websocket_api.async_response
+@with_scanner
+async def websocket_entity_pairs(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Suggest a replacement for each chosen entity, from any device. Reads only; nothing is chosen."""
+    try:
+        snapshot = await scanner.async_get_snapshot()
+    except Exception as err:
+        connection.send_error(msg["id"], "scan_failed", f"{type(err).__name__}: {err}")
+        return
+    result = suggest_entities(
+        snapshot, msg["old_entity_ids"], msg.get("device_ids"), msg.get("platform")
+    )
+    connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
     {vol.Required("type"): f"{DOMAIN}/plan_delete", vol.Required("plan_id"): str}
 )
 @callback
@@ -860,6 +1479,8 @@ def _cleanup_error(
         vol.Required("type"): f"{DOMAIN}/plan_confirm",
         vol.Required("plan_id"): str,
         vol.Optional("acknowledged", default=[]): [str],
+        # The person's explicit choice to run without the safety backup; refused for database writes.
+        vol.Optional("skip_backup", default=False): bool,
     }
 )
 @callback
@@ -874,7 +1495,9 @@ def websocket_plan_confirm(
     if panel_session_only(hass, connection, msg):
         return
     try:
-        result = scanner.cleanup.confirm(msg["plan_id"], msg["acknowledged"], connection.user.id)
+        result = scanner.cleanup.confirm(
+            msg["plan_id"], msg["acknowledged"], connection.user.id, msg["skip_backup"]
+        )
     except CleanupError as err:
         _cleanup_error(connection, msg, err)
         return
@@ -965,7 +1588,9 @@ async def websocket_plan_undo(
     if panel_session_only(hass, connection, msg):
         return
     try:
-        result = await scanner.cleanup.undo(msg["plan_id"], msg.get("object_ids"))
+        result = await scanner.cleanup.undo(
+            msg["plan_id"], msg.get("object_ids"), connection.user.id if connection.user else None
+        )
     except CleanupError as err:
         _cleanup_error(connection, msg, err)
         return
@@ -1004,7 +1629,31 @@ async def websocket_backup_cleanup(
     result = await list_backups(
         hass, scanner.journal.plans, datetime.now(UTC), msg["keep_last"], msg["keep_days"]
     )
-    connection.send_result(msg["id"], _versioned(result))
+    connection.send_result(msg["id"], _versioned({**result, "auto": scanner.backup_auto.public()}))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/backup_auto_set",
+        vol.Required("enabled"): bool,
+        vol.Required("keep_last"): vol.All(int, vol.Range(min=0, max=MAX_LAST)),
+        vol.Required("keep_days"): vol.All(int, vol.Range(min=0, max=MAX_DAYS)),
+    }
+)
+@callback
+@with_scanner
+def websocket_backup_auto_set(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Switch the automatic tidy-up of Housekeeper's own backups on or off and set its rule."""
+    if panel_session_only(hass, connection, msg):
+        return
+    scanner.backup_auto.set(msg["enabled"], msg["keep_last"], msg["keep_days"])
+    connection.send_result(msg["id"], scanner.backup_auto.public())
 
 
 @websocket_api.require_admin
@@ -1198,6 +1847,7 @@ def async_register(hass: HomeAssistant) -> None:
     ws_recorder.async_register(hass)
     ws_system.async_register(hass)
     websocket_api.async_register_command(hass, websocket_inventory)
+    websocket_api.async_register_command(hass, websocket_helper_export)
     websocket_api.async_register_command(hass, websocket_scan)
     websocket_api.async_register_command(hass, websocket_status)
     websocket_api.async_register_command(hass, websocket_detail)
@@ -1205,6 +1855,20 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_scan_point)
     websocket_api.async_register_command(hass, websocket_history_series)
     websocket_api.async_register_command(hass, websocket_ignore)
+    websocket_api.async_register_command(hass, websocket_decision_notice_dismiss)
+    websocket_api.async_register_command(hass, websocket_visit_leave)
+    websocket_api.async_register_command(hass, websocket_work_set)
+    websocket_api.async_register_command(hass, websocket_first_cleanup)
+    websocket_api.async_register_command(hass, websocket_first_cleanup_set)
+    websocket_api.async_register_command(hass, websocket_first_cleanup_later)
+    websocket_api.async_register_command(hass, websocket_activity)
+    websocket_api.async_register_command(hass, websocket_activity_undo)
+    websocket_api.async_register_command(hass, websocket_often)
+    websocket_api.async_register_command(hass, websocket_often_skip)
+    websocket_api.async_register_command(hass, websocket_fix_ways)
+    websocket_api.async_register_command(hass, websocket_cleanup_round)
+    websocket_api.async_register_command(hass, websocket_fix_check)
+    websocket_api.async_register_command(hass, websocket_failure_info)
     websocket_api.async_register_command(hass, websocket_set_options)
     websocket_api.async_register_command(hass, websocket_plan_create)
     websocket_api.async_register_command(hass, websocket_plan_merge)
@@ -1215,12 +1879,14 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_plan_delete)
     websocket_api.async_register_command(hass, websocket_plan_report)
     websocket_api.async_register_command(hass, websocket_device_pairs)
+    websocket_api.async_register_command(hass, websocket_entity_pairs)
     websocket_api.async_register_command(hass, websocket_plan_confirm)
     websocket_api.async_register_command(hass, websocket_plan_execute)
     websocket_api.async_register_command(hass, websocket_plan_cancel)
     websocket_api.async_register_command(hass, websocket_plan_status)
     websocket_api.async_register_command(hass, websocket_plan_undo)
     websocket_api.async_register_command(hass, websocket_backup_cleanup)
+    websocket_api.async_register_command(hass, websocket_backup_auto_set)
     websocket_api.async_register_command(hass, websocket_events)
     websocket_api.async_register_command(hass, websocket_monitor_list)
     websocket_api.async_register_command(hass, websocket_monitor_save)

@@ -1,15 +1,19 @@
-"""WebSocket commands for storage and system, and for system access and data flow. Read-only."""
+"""WebSocket commands for storage and system, and for system access and data flow. Read-only, but for
+the notes that an access, or the empty fields of an integration, are meant to be so, which Housekeeper
+keeps in its own storage."""
 
 from __future__ import annotations
 
 import asyncio
+from datetime import UTC, datetime
 from typing import Any
 
 import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
-from .access import access_report
+from .access import access_report, entry_reports
+from .access_state import REASON_LIMIT
 from .const import DOMAIN
 from .hacs import hacs_repositories
 from .inventory import InventoryScanner
@@ -121,7 +125,34 @@ async def websocket_access(
     except Exception as err:
         connection.send_error(msg["id"], "access_failed", f"{type(err).__name__}: {err}")
         return
+    scanner.access_state.annotate(result.get("entries", []), datetime.now(UTC))
     connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/access_known",
+        vol.Required("entry_id"): str,
+        vol.Required("known"): bool,
+        vol.Optional("reason", default=""): vol.All(str, vol.Length(max=REASON_LIMIT)),
+    }
+)
+@callback
+@with_scanner
+def websocket_access_known(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Say that the access of an integration is meant to be so, or take that back. Housekeeper's own data only."""
+    if not scanner.access_state.set_known(
+        msg["entry_id"], msg["known"], msg["reason"], datetime.now(UTC)
+    ):
+        connection.send_error(msg["id"], "not_found", "Unknown integration entry")
+        return
+    connection.send_result(msg["id"], {"entry_id": msg["entry_id"], "known": msg["known"]})
 
 
 @websocket_api.require_admin
@@ -136,7 +167,47 @@ async def websocket_sensitive_fields(
 ) -> None:
     """Which config entries hold credentials, of what kind and whether set, and the accounts.
     Never a value."""
-    connection.send_result(msg["id"], _versioned(await sensitive_fields(hass)))
+    result = await sensitive_fields(hass)
+    scanner.access_state.annotate_secrets(result.get("entries", []), datetime.now(UTC))
+    try:
+        reach = {item["entry_id"]: item for item in await entry_reports(hass)}
+    except Exception:  # noqa: BLE001 - the credentials stay readable without the cross reference
+        reach = {}
+    for item in result.get("entries", []):
+        found = reach.get(item["entry_id"])
+        item["reach"] = (
+            {
+                "cloud": bool(found["external"]),
+                "system": bool(found["access"] or found["gps"] or found["camera"]),
+            }
+            if found
+            else None
+        )
+    connection.send_result(msg["id"], _versioned(result))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/secret_known",
+        vol.Required("entry_id"): str,
+        vol.Required("known"): bool,
+    }
+)
+@callback
+@with_scanner
+def websocket_secret_known(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+    scanner: InventoryScanner,
+) -> None:
+    """Say that the empty credential fields of an integration are meant so, or take that back.
+    Housekeeper's own data only."""
+    if not scanner.access_state.set_secret_known(msg["entry_id"], msg["known"], datetime.now(UTC)):
+        connection.send_error(msg["id"], "not_found", "Unknown integration entry")
+        return
+    connection.send_result(msg["id"], {"entry_id": msg["entry_id"], "known": msg["known"]})
 
 
 @websocket_api.require_admin
@@ -169,6 +240,8 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, websocket_system_light)
     websocket_api.async_register_command(hass, websocket_starts)
     websocket_api.async_register_command(hass, websocket_access)
+    websocket_api.async_register_command(hass, websocket_access_known)
+    websocket_api.async_register_command(hass, websocket_secret_known)
     websocket_api.async_register_command(hass, websocket_sensitive_fields)
     websocket_api.async_register_command(hass, websocket_open_flows)
     websocket_api.async_register_command(hass, websocket_hacs_repositories)

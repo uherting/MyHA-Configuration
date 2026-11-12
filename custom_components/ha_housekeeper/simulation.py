@@ -12,11 +12,16 @@ from typing import Any
 SHOWN = 20
 REMOVING = {"remove_entity", "remove_device", "forget_device"}
 DISABLING = {"disable_entity", "disable_device"}
+REPLACING = {"replace_references", "migrate_meter"}
 # Actions that change nothing the other counters show; each gets a count of its own.
 OTHER_KINDS = {
     "reload_integration": "reloaded",
+    "remove_helper": "helper_removed",
+    "import_helper": "helper_created",
     "add_label": "labeled",
     "set_area": "area_set",
+    "set_exposure": "exposure_set",
+    "set_expose_new": "exposure_set",
     "refactor_automation": "refactored",
 }
 STATE_KEYS = {"enable": "enabled", "hide": "hidden", "unhide": "unhidden"}
@@ -56,11 +61,25 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
         ):
             disabled.update(entities)
             devices["disabled"] += kind == "disable_device"
+        # A replacement can also take the old entity out of the way: disable it, or delete it (the
+        # entity of a helper goes with the helper).
+        deletes_old = kind in REPLACING and bool(action.get("delete_old"))
+        if kind in REPLACING:
+            if deletes_old and action["delete_old"] == "helper":
+                other["helper_removed"] += 1
+            elif deletes_old:
+                removed.add(object_id)
+            elif action.get("disable_old"):
+                disabled.add(object_id)
         if kind in OTHER_KINDS:
             other[OTHER_KINDS[kind]] += 1
         elif kind == "set_entity_state" and action.get("target") in STATE_KEYS:
             other[STATE_KEYS[action["target"]]] += 1
-        if kind in REMOVING and action.get("has_statistics") and not action.get("recorder"):
+        if (
+            (kind in REMOVING or (deletes_old and kind == "replace_references"))
+            and action.get("has_statistics")
+            and not action.get("recorder")
+        ):
             statistics.add(object_id)
         history = action.get("history")
         counted = counted or history is not None
@@ -83,7 +102,7 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
         elif kind == "trim_history":
             trimmed += 1
             purge_rows += (action.get("trim") or {}).get("rows", 0)
-        elif kind in REMOVING and history:
+        elif (kind in REMOVING or deletes_old) and history:
             choice = action.get("recorder")
             if choice:
                 purge_rows += history["statistics"] + (
@@ -99,7 +118,9 @@ def simulate(actions: list[dict[str, Any]]) -> dict[str, Any]:
             meters += 1
         if kind in ("repair_counter", "repair_range"):
             repaired += 1
-        if kind in ("replace_references", "rename_entity"):
+        if kind in ("replace_references", "rename_entity") or (
+            kind == "migrate_meter" and action.get("mode") == "replace_statistics"
+        ):
             for source in action.get("sources") or []:
                 if source.get("writable") and source.get("changes"):
                     key = (source["name"], source["type"])

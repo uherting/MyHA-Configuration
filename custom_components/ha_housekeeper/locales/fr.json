@@ -1,0 +1,96 @@
+{
+ "audit_report.TEXTS": {
+  "title": "Rapport d’audit du plan de nettoyage",
+  "overview": "Vue d’ensemble",
+  "plan": "Plan",
+  "created": "Créé",
+  "scan": "Basé sur l’analyse",
+  "status": "Statut",
+  "confirmed": "Confirmé",
+  "by": "par",
+  "run": "Exécuté",
+  "backup": "Sauvegarde",
+  "no_backup": "aucune sauvegarde nécessaire ou effectuée",
+  "backup_skipped": "ignorée volontairement",
+  "simulation": "État final attendu",
+  "actions": "Actions",
+  "verification": "Vérification",
+  "undo": "Annuler",
+  "manual": "À faire à la main",
+  "followup": "Suivi",
+  "events": "Déroulement",
+  "none": "aucun",
+  "anonymized": "Les ID et les noms de ce rapport sont remplacés par des espaces réservés.",
+  "removed": "Entités supprimées",
+  "disabled": "Entités désactivées",
+  "replaced": "Références remplacées",
+  "remaining_certain": "Utilisations certaines restantes",
+  "remaining_uncertain": "Utilisations incertaines restantes",
+  "orphaned": "Statistiques probablement orphelines",
+  "blocked": "Actions impossibles à exécuter",
+  "purge_rows": "Lignes du Recorder supprimées par la purge",
+  "history_rows_kept": "Lignes d’historique conservées dans la base (états jusqu’à la purge du Recorder, statistiques à long terme définitivement)",
+  "limits": "Limites : les références dans les templates et en dehors de Home Assistant ne peuvent pas être vérifiées avec certitude ; l’espace de stockage économisé n’est pas estimé.",
+  "state": "État",
+  "result": "Résultat",
+  "ok": "ok",
+  "failed": "échec"
+ },
+ "auto_pause.TEXTS": {
+  "paused": [
+   "HA Housekeeper : {title} en pause",
+   "{title} ({domain}) est en pause : {why}. Housekeeper réessaie encore {n} fois, pendant {days} jour(s) au maximum. [Ouvrir Auto-pause](/{url}?view=reliability&tab=autopause)"
+  ],
+  "why_auto": "{n} tentative(s) échouée(s) en {hours} h",
+  "why_manual": "mis en pause par toi",
+  "back": [
+   "HA Housekeeper : {title} est de retour",
+   "{title} ({domain}) s’est de nouveau configuré après {span} et n’est plus en pause."
+  ],
+  "ended": [
+   "HA Housekeeper : pause de {title} terminée",
+   "{title} ({domain}) n’est plus en pause."
+  ],
+  "exhausted": [
+   "HA Housekeeper : {title} en pause pendant {days} jour(s)",
+   "{title} ({domain}) n’a pas pu être configuré en {days} jour(s). Merci de vérifier : le journal, une mise à jour de l’intégration, la source elle-même. [Ouvrir Auto-pause](/{url}?view=reliability&tab=autopause)"
+  ]
+ },
+ "monitor.MONITOR_REASONS": {
+  "missing": "objet manquant",
+  "disabled": "désactivé",
+  "orphaned": "orphelin",
+  "unavailable": "indisponible",
+  "problem": "intégration non chargée",
+  "source_unread": "source non lue",
+  "scan_unverified": "analyse non fiable",
+  "automation.blocked": "automatisation bloquée",
+  "automation.dead_actions": "une action de l’automatisation a une référence rompue",
+  "automation.dead_condition": "une condition de l’automatisation a une référence rompue",
+  "broken_reference": "référence rompue",
+  "stopped": "application arrêtée",
+  "rule_stale": "valeur non mise à jour à temps",
+  "rule_below_min": "en dessous de la valeur minimale",
+  "rule_unavailable_long": "indisponible trop longtemps",
+  "rule_waiting": "délai de grâce en cours",
+  "rule_no_value": "aucune valeur numérique",
+  "rule_no_timestamp": "heure de mise à jour inconnue"
+ },
+ "monitor.MONITOR_TEXTS": {
+  "uncertain_open": "Vérification incomplète ; le dernier défaut confirmé ({last_reason}) reste non résolu.",
+  "uncertain": "Vérification incomplète.",
+  "impaired": "Fonction importante altérée : {reason}",
+  "link": "Ouvrir les fonctions de la maison"
+ },
+ "notify.TEXTS": [
+  "HA Housekeeper : nouvelles références rompues",
+  "{count} nouvelle(s) référence(s) rompue(s) : {names}. [Ouvrir toutes les références rompues](/{url}?view=findingsNav&filter=broken_reference)"
+ ],
+ "cleanup_exec.LOGBOOK_DEVICE": [
+  "Appareil “{}” {}",
+  [
+   "oublié",
+   "supprimé"
+  ]
+ ]
+}

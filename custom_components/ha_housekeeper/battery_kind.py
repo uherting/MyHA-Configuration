@@ -17,6 +17,9 @@ SIGNAL_CLASSES = frozenset(
     {"power", "energy", "energy_storage", "current", "battery_charging", "plug"}
 )
 SIGNAL_DOMAINS = frozenset({"lawn_mower", "vacuum"})
+BATTERY_DOMAINS = frozenset(
+    {"sensor", "binary_sensor"}
+)  # a number or a switch is a setting, never a battery
 NOTES_PLATFORM = "battery_notes"
 CHARGING = frozenset({"battery_charging", "plug"})
 
@@ -61,7 +64,9 @@ def apply_battery_kinds(objects: list[dict[str, Any]], kinds: dict[str, str]) ->
             continue
         item.pop("battery_kind", None)
         item.pop("battery_suggest", None)
+        if item["object_id"].partition(".")[0] not in BATTERY_DOMAINS:
+            continue
         if kind := kinds.get(item["object_id"]):
             item["battery_kind"] = kind
-        elif found := signals.get(item.get("device_id") or ""):
-            item["battery_suggest"] = {"kind": _guess(found), "signals": sorted(found)}
+        elif seen := signals.get(item.get("device_id") or ""):
+            item["battery_suggest"] = {"kind": _guess(seen), "signals": sorted(seen)}
