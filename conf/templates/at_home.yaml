@@ -8,21 +8,21 @@
 
 # who is at home?
 - binary_sensor:
-    # binary_sensor.at_home_uwe_is_here
+    # binary_sensor.at_home_uwe_yn
     - name: "Home: Uwe is here"
-      unique_id: "at home uwe yn"
+      unique_id: "at_home_uwe_yn"
       state: >
         {{ is_state('person.uwe', 'home') }}
 
-    # binary_sensor.home_gillian_is_here
+    # binary_sensor.at_home_gillian_yn
     - name: "Home: Gillian is here"
-      unique_id: "at home gillian yn"
+      unique_id: "at_home_gillian_yn"
       state: >
         {{ is_state('person.gillian', 'home') }}
 
-    # binary_sensor.at_home_someone_is_here
+    # binary_sensor.at_home_someone_yn
     - name: "Home: someone is here"
-      unique_id: "at home someone yn"
+      unique_id: "at_home_someone_yn"
       state: >
         {{
           (is_state('person.uwe', 'home')) or
@@ -30,9 +30,9 @@
           (is_state('binary_sensor.at_home_someone_presence_yn', 'on'))
         }}
 
-    # binary_sensor.at_home_all_are_here
+    # binary_sensor.at_home_all_yn
     - name: "Home: all are here"
-      unique_id: "at home all yn"
+      unique_id: "at_home_all_yn"
       state: >
         {{
           (
@@ -44,7 +44,7 @@
 
     # binary_sensor.at_home_all_are_gone
     - name: "Home: all are gone"
-      unique_id: "at_home all gone"
+      unique_id: "at_home_all_are_gone"
       state: >
         {{
           (
@@ -56,7 +56,7 @@
 
     # binary_sensor.at_home_someone_presence_yn
     - name: "Home: someone is here with presence"
-      unique_id: "at home someone presence yn"
+      unique_id: "at_home_someone_presence_yn"
       state: >
         {{ (is_state('group.zb_l2_presence', 'on')) }}
 
