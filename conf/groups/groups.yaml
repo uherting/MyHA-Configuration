@@ -12,6 +12,18 @@ family:
     - person.gillian
 
 # =========================================================================
+# group the presence detectors for L2
+# =========================================================================
+ZB_L2_presence:
+  entities:
+    # - binary_sensor.zb_humanpresence_l2_bathroom_01_presence
+    - binary_sensor.zb_humanpresence_l2_bedroom_01_presence
+    - binary_sensor.zb_humanpresence_l2_corridor_01_presence
+    - binary_sensor.zb_humanpresence_l2_kitchen_01_presence
+    - binary_sensor.zb_humanpresence_l2_lounge_01_presence
+    - binary_sensor.zb_humanpresence_l2_storage_01_presence
+
+# =========================================================================
 # group the DW sensors in L2 kitchen
 # =========================================================================
 ZB_DW_L2_kitchen_contacts:

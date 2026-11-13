@@ -84,9 +84,14 @@ resources:
   - url: /local/community/versatile-thermostat-ui-card/versatile-thermostat-ui-card.js?v=3.5.1
     type: module
 
+  # notification_history
+  - url: /local/community/notification_history/notification-history-card.js?v=0.1.1
+    type: module
+
   # Advanced Area Card
   - url: /local/community/advanced-area-card/advanced-area-card.js?v=v1.0.2
     type: module
+
   # Zigbee map card
   # - url: /local/community/homed-zigbee-networkmap/homed-zigbee-networkmap.js
   #   type: module

@@ -50,6 +50,12 @@
           (not is_state('person.gillian', 'home'))
         }}
 
+    # binary_sensor.home_someone_is_here_with presence
+    - name: "Home: someone is here with presence"
+      unique_id: "at home someone presence_yn"
+      state: >
+        {{ (is_state('group.zb_l2_presence', 'on')) }}
+
 ####################################################################
 # EOF
 ####################################################################
