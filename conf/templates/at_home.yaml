@@ -8,55 +8,55 @@
 
 # who is at home?
 - binary_sensor:
-    # binary_sensor.at_home_uwe_yn
+    # binary_sensor.home_uwe_is_here
     - name: "Home: Uwe is here"
-      unique_id: "at_home_uwe_yn"
+      unique_id: "home_uwe_is_here"
       state: >
         {{ is_state('person.uwe', 'home') }}
 
-    # binary_sensor.at_home_gillian_yn
+    # binary_sensor.home_gillian_is_here
     - name: "Home: Gillian is here"
-      unique_id: "at_home_gillian_yn"
+      unique_id: "home_gillian_is_here"
       state: >
         {{ is_state('person.gillian', 'home') }}
 
-    # binary_sensor.at_home_someone_yn
+    # binary_sensor.home_someone_is_here
     - name: "Home: someone is here"
-      unique_id: "at_home_someone_yn"
+      unique_id: "home_someone_is_here"
       state: >
         {{
           (is_state('person.uwe', 'home')) or
           (is_state('person.gillian', 'home')) or
-          (is_state('binary_sensor.at_home_someone_presence_yn', 'on'))
+          (is_state('binary_sensor.home_someone_is_here_with_presence_only', 'on'))
         }}
 
-    # binary_sensor.at_home_all_yn
+    # binary_sensor.home_all_are_here
     - name: "Home: all are here"
-      unique_id: "at_home_all_yn"
+      unique_id: "home_all_are_here"
       state: >
         {{
           (
             (is_state('person.uwe', 'home')) and
             (is_state('person.gillian', 'home'))
           ) or
-          (is_state('binary_sensor.at_home_someone_presence_yn', 'on'))
+          (is_state('binary_sensor.home_someone_is_here_with_presence_only', 'on'))
         }}
 
-    # binary_sensor.at_home_all_are_gone
+    # binary_sensor.home_all_are_gone
     - name: "Home: all are gone"
-      unique_id: "at_home_all_are_gone"
+      unique_id: "home_all_are_gone"
       state: >
         {{
           (
             (not is_state('person.uwe', 'home')) and
             (not is_state('person.gillian', 'home'))
           ) or
-          (is_state('binary_sensor.at_home_someone_presence_yn', 'off'))
+          (is_state('binary_sensor.home_someone_is_here_with_presence_only', 'off'))
         }}
 
-    # binary_sensor.at_home_someone_presence_yn
-    - name: "Home: someone is here with presence"
-      unique_id: "at_home_someone_presence_yn"
+    # binary_sensor.home_someone_is_here_with_presence_only
+    - name: "Home: someone is here with presence only"
+      unique_id: "home_someone_is_here_with_presence_only"
       state: >
         {{ (is_state('group.zb_l2_presence', 'on')) }}
 
