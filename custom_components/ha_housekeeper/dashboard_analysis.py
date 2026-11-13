@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from typing import Any
 
 ENTITY_ID = re.compile(r"^[a-z0-9_]+\.[a-z0-9_]+$")
@@ -119,6 +119,49 @@ def extract_helper_references(
     return extract_entity_references(
         options, known_entities, HELPER_KEYS, "REFERENCES", named_in_templates=True
     )
+
+
+def extract_entry_references(
+    parts: Iterable[tuple[str, Any]], known_entities: set[str], own: set[str] | None = None
+) -> list[dict[str, str]]:
+    """Return the existing entities a config entry names in its data, options or sub-entries.
+
+    ``parts`` are ``(label, data)`` pairs; the label starts the location (a sub-entry's title).
+    Only a value that is exactly the ID of an existing entity counts, whatever its key is called,
+    so free text and secrets never produce a reference and no missing target can be guessed. A
+    value that is exactly an entity ID is no coincidence, so the reference is ``certain``. Entities
+    the entry provides itself (``own``) are left out.
+    """
+    found: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+
+    def walk(value: Any, path: str) -> None:
+        if isinstance(value, Mapping):
+            for child_key, child in value.items():
+                walk(child, f"{path}/{child_key}" if path else str(child_key))
+        elif isinstance(value, (list, tuple)):
+            for index, child in enumerate(value):
+                walk(child, f"{path}/{index}")
+        elif (
+            isinstance(value, str)
+            and value in known_entities
+            and value not in (own or ())
+            and (value, path) not in seen
+        ):
+            seen.add((value, path))
+            found.append(
+                {
+                    "kind": "entity",
+                    "object_id": value,
+                    "relation": "REFERENCES",
+                    "location": path,
+                    "confidence": "certain",
+                }
+            )
+
+    for label, data in parts:
+        walk(data, label)
+    return found
 
 
 CARD_LISTS = ("cards", "card", "elements")

@@ -6,6 +6,7 @@ For valves: passthrough mode that calls set_valve_open_percent() directly
 without temporal scheduling.
 """
 
+import inspect
 import logging
 import time
 from vtherm_api.command_receipt import (
@@ -14,6 +15,7 @@ from vtherm_api.command_receipt import (
     CommandReceiptCallback,
     CommandReceiptKind,
 )
+from vtherm_api import PowerCommandKind, UnderlyingPowerCommand
 from vtherm_api.log_collector import get_vtherm_logger
 from typing import Any, Callable, NamedTuple
 
@@ -29,6 +31,7 @@ from .cycle_tick_logic import (
     compute_target_state,
     evaluate_need_on,
     evaluate_need_off,
+    keep_on_duration_when_postponed,
     compute_e_eff,
 )
 _LOGGER = get_vtherm_logger(__name__)
@@ -395,7 +398,8 @@ class CycleScheduler:
                 self._thermostat,
             )
 
-        await self._cancel_cycle_impl()
+        # The cancellation is internal: the CYCLE_START notification follows, no STOP is sent
+        await self._cancel_cycle_impl(_restarting=True)
 
         # Store current cycle parameters for repeat
         self._set_pending_cycle(hvac_mode, on_time_sec, off_time_sec, realized_on_percent, request)
@@ -422,8 +426,29 @@ class CycleScheduler:
 
             if self._is_valve_mode:
                 await self._start_cycle_valve(hvac_mode)
+                await self._fire_underlying_power(
+                    PowerCommandKind.CYCLE_START,
+                    hvac_mode,
+                    request.requested_on_percent,
+                    realized_on_percent,
+                    on_time_sec,
+                    off_time_sec,
+                    _from_cycle_end,
+                )
             else:
                 await self._start_cycle_switch(hvac_mode, on_time_sec, off_time_sec, realized_on_percent)
+                # Offsets only exist for a real tick cycle (not for the 0% and 100% branches)
+                offsets = {state.underlying: state.offset for state in self._states}
+                await self._fire_underlying_power(
+                    PowerCommandKind.CYCLE_START,
+                    hvac_mode,
+                    request.requested_on_percent,
+                    realized_on_percent,
+                    on_time_sec,
+                    off_time_sec,
+                    _from_cycle_end,
+                    offsets,
+                )
         finally:
             self._is_starting = False
 
@@ -471,6 +496,14 @@ class CycleScheduler:
 
         self._set_active_cycle(hvac_mode, on_time_sec, off_time_sec, realized_on_percent)
         await self._apply_valve_command(hvac_mode, on_time_sec, off_time_sec)
+        await self._fire_underlying_power(
+            PowerCommandKind.UPDATE,
+            hvac_mode,
+            request.requested_on_percent,
+            realized_on_percent,
+            on_time_sec,
+            off_time_sec,
+        )
         await self._fire_command_receipt(
             CommandReceiptKind.UPDATE,
             hvac_mode,
@@ -493,6 +526,14 @@ class CycleScheduler:
         self._set_active_cycle(hvac_mode, on_time_sec, off_time_sec, on_percent)
         await self._apply_valve_command(hvac_mode, on_time_sec, off_time_sec)
         self._append_valve_cycle_trace(on_percent)
+        await self._fire_underlying_power(
+            PowerCommandKind.UPDATE,
+            hvac_mode,
+            request.requested_on_percent,
+            on_percent,
+            on_time_sec,
+            off_time_sec,
+        )
         await self._fire_command_receipt(
             CommandReceiptKind.UPDATE,
             hvac_mode,
@@ -577,7 +618,7 @@ class CycleScheduler:
         if hvac_mode == VThermHvacMode_OFF or on_time_sec <= 0:
             # Turn off all underlyings
             for under in self._underlyings:
-                if under.is_device_active:
+                if under.is_device_active is True or under.is_on_part_running is True:
                     await under.turn_off()
                 under._should_be_on = False
             # Keep a real master-cycle start time so the next automatic restart
@@ -685,6 +726,12 @@ class CycleScheduler:
                         except Exception as err:
                             _LOGGER.error("%s - tick turn_on failed: %s", under, err)
                     elif action == 'skip' and new_on_t is not None:
+                        if under_dt < self.min_deactivation_delay and state_duration > self.min_activation_delay:
+                            # Only the minimal deactivation delay holds this ON phase back:
+                            # start it later, but do not shorten it.
+                            state.off_t, pen_delta = keep_on_duration_when_postponed(
+                                state.on_t, state.off_t, new_on_t, self._cycle_duration_sec, pen_delta
+                            )
                         _LOGGER.debug(
                             "%s - tick skip turn_on (racollage), on_t shifted %.1f -> %.1f, penalty=%.1f",
                             under, state.on_t, new_on_t, pen_delta
@@ -787,8 +834,12 @@ class CycleScheduler:
         """Cancel the current cycle if one is running."""
         await self._cancel_cycle_impl()
 
-    async def _cancel_cycle_impl(self):
-        """Internal cancel logic, shared by cancel_cycle() and start_cycle()."""
+    async def _cancel_cycle_impl(self, _restarting: bool = False):
+        """Internal cancel logic, shared by cancel_cycle() and start_cycle().
+
+        _restarting is True when start_cycle() cancels the running cycle to start a new one:
+        the CYCLE_START notification follows, so no STOP notification is sent.
+        """
         was_running = self.is_cycle_running
 
         # Set before unsubscribing so that is_cycle_running stays True
@@ -822,6 +873,15 @@ class CycleScheduler:
         self._set_active_cycle(None, 0, 0, 0.0)
         self._cycle_start_time = 0.0
         self._cycle_start_monotonic = None
+        if was_running and not _restarting:
+            await self._fire_underlying_power(
+                PowerCommandKind.STOP,
+                getattr(self._thermostat, "vtherm_hvac_mode", None),
+                0.0,
+                0.0,
+                0.0,
+                self._cycle_duration_sec,
+            )
         # Reset only after all state is cleared so the guard stays active until fully done.
         self._is_cancelling = False
         _LOGGER.debug("%s - Cycle cancelled", self._thermostat)
@@ -893,6 +953,66 @@ class CycleScheduler:
                     callback,
                     ex,
                 )
+
+    async def _fire_underlying_power(
+        self,
+        kind: PowerCommandKind,
+        hvac_mode: VThermHvacMode | None,
+        requested_on_percent: float,
+        applied_on_percent: float,
+        on_time_sec: float,
+        off_time_sec: float,
+        is_repeat: bool = False,
+        offsets: dict | None = None,
+    ) -> None:
+        """Issue #2181 - notify the external feature managers of the power of each underlying.
+
+        offsets maps an underlying to its start offset in the cycle (switch only).
+        The command carries the monotonic time of the cycle start (like the receipts) because the
+        notification can reach a manager late: the managers are awaited one after the other.
+        """
+        # Cheap exit without any external manager (the common case)
+        if not getattr(self._thermostat, "_external_managers", True):
+            return
+        hook = getattr(self._thermostat, "async_on_underlying_power", None)
+        # Test doubles of the thermostat may not implement the hook
+        if hook is None or not inspect.iscoroutinefunction(hook):
+            return
+        if getattr(self._thermostat, "is_inhibited", False) is True:
+            # The inhibition command gate drops every underlying command: nothing is applied
+            _LOGGER.debug("%s - underlying power hook not called (kind=%s): the thermostat is inhibited", self._thermostat, kind)
+            return
+        for under in self._underlyings:
+            _LOGGER.debug(
+                "%s - underlying power hook for %s: kind=%s requested_on_percent=%s applied_on_percent=%s repeat=%s",
+                self._thermostat,
+                under.entity_id,
+                kind,
+                requested_on_percent,
+                applied_on_percent,
+                is_repeat,
+            )
+            climate_entity_id = getattr(under, "climate_entity_id", None)
+            offset = offsets.get(under) if offsets else None
+            command = UnderlyingPowerCommand(
+                underlying_entity_id=under.entity_id,
+                underlying_type=str(under.entity_type),
+                climate_entity_id=climate_entity_id if isinstance(climate_entity_id, str) else None,
+                hvac_mode=str(hvac_mode if hvac_mode is not None else VThermHvacMode_OFF),
+                kind=kind,
+                requested_on_percent=requested_on_percent,
+                applied_on_percent=applied_on_percent,
+                on_time_sec=float(on_time_sec),
+                off_time_sec=float(off_time_sec),
+                cycle_duration_sec=float(self._cycle_duration_sec),
+                start_offset_sec=offset,
+                is_repeat=is_repeat,
+                # Same time origin as the applied-command receipts: None outside a running cycle
+                # (always the case for STOP, the cycle start being cleared before the notification)
+                cycle_start_monotonic=self._cycle_start_monotonic,
+                monotonic=time.monotonic(),
+            )
+            await hook(command)
 
     async def _fire_command_receipt(
         self,

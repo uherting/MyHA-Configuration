@@ -405,10 +405,16 @@ def run_findings(
 ) -> list[dict[str, Any]]:
     """The two judgements of the run counts that are a finding: failing again and again, never ending well.
 
-    Computed from the numbers the daily collection kept, without any query. ``run_level`` is the colour of
+    Computed from the numbers the daily collection kept, without any query. The action trees of
+    ``objects`` let a run that ended on a condition count as such, as in the runs view. ``run_level`` is the colour of
     the judgement: red becomes a high impact, yellow a medium one.
     """
-    result = evaluate(items, objects, {}, set(), [], now, None)
+    actions = {
+        obj["object_id"]: obj.get("actions")
+        for obj in objects
+        if obj["object_type"] in ("automation", "script")
+    }
+    result = evaluate(items, objects, actions, set(), [], now, None)
     return [
         {
             "rule_id": f"{row['object_type']}.{RUN_RULES[found['kind']]}",

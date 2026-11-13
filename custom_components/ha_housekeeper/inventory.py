@@ -86,6 +86,7 @@ from .dashboard_analysis import (
     dashboard_health,
     extract_dashboard_references,
     extract_entity_references,
+    extract_entry_references,
     extract_helper_references,
     suggest_replacements,
     view_keys,
@@ -2815,26 +2816,69 @@ class InventoryScanner:
             all_findings,
         )
 
+    def _subentry_devices(self) -> dict[tuple[str, str], list[str]]:
+        """Map (config entry, sub-entry) to the IDs of the devices that belong to the sub-entry."""
+        found: dict[tuple[str, str], list[str]] = {}
+        for device in dr.async_get(self.hass).devices.values():
+            pairs = getattr(device, "config_entries_subentries", None) or {}
+            for entry_id, subentry_ids in pairs.items():
+                for subentry_id in subentry_ids:
+                    if subentry_id:
+                        found.setdefault((entry_id, subentry_id), []).append(device.id)
+        return found
+
     def _helper_inventory(
         self, existing: dict[str, set[str]]
     ) -> tuple[list[dict[str, str]], list[dict[str, Any]]]:
         """Link helper config entries (template, derivative, ...) to the entities they use."""
         edges: list[dict[str, str]] = []
         findings: list[dict[str, Any]] = []
+        registry = er.async_get(self.hass)
+        subentry_devices = self._subentry_devices()
         for entry in self.hass.config_entries.async_entries():
-            if entry.domain not in HELPER_DOMAINS:
+            sources: list[tuple[str, list[dict[str, str]]]] = []
+            if entry.domain in HELPER_DOMAINS:
+                references = extract_helper_references(dict(entry.options), existing["entity"])
+                sources.append((f"config_entry:{entry.entry_id}", references))
+            elif entry.domain == DOMAIN or entry.source == SOURCE_IGNORE:
                 continue
-            references = extract_helper_references(dict(entry.options), existing["entity"])
-            edges.extend(
-                {
-                    "source": f"config_entry:{entry.entry_id}",
-                    "target": f"entity:{reference['object_id']}",
-                    "relation": reference["relation"],
-                    "confidence": reference["confidence"],
-                    "location": reference["location"],
+            else:
+                # Any other integration may keep entities in its settings, a sub-entry (a device
+                # with a thermostat, say) included; an exact entity ID there is a use. A sub-entry
+                # that has exactly one device speaks for it, so the graph goes integration, device,
+                # entity; otherwise the integration is named, with the sub-entry in the place.
+                own = {
+                    e.entity_id for e in er.async_entries_for_config_entry(registry, entry.entry_id)
                 }
-                for reference in references
-            )
+                own_parts = [("data", dict(entry.data)), ("options", dict(entry.options))]
+                references = extract_entry_references(own_parts, existing["entity"], own)
+                sources.append((f"config_entry:{entry.entry_id}", references))
+                for sub in getattr(entry, "subentries", {}).values():
+                    devices = subentry_devices.get((entry.entry_id, sub.subentry_id), [])
+                    if len(devices) == 1:
+                        found = extract_entry_references(
+                            [("", dict(sub.data))], existing["entity"], own
+                        )
+                        for ref in found:
+                            ref["location"] = ref["location"].lstrip("/")
+                        sources.append((f"device:{devices[0]}", found))
+                    else:
+                        found = extract_entry_references(
+                            [(str(sub.title), dict(sub.data))], existing["entity"], own
+                        )
+                        sources.append((f"config_entry:{entry.entry_id}", found))
+            for source, references in sources:
+                edges.extend(
+                    {
+                        "source": source,
+                        "target": f"entity:{reference['object_id']}",
+                        "relation": reference["relation"],
+                        "confidence": reference["confidence"],
+                        "location": reference["location"],
+                    }
+                    for reference in references
+                )
+            references = [ref for _, refs in sources for ref in refs]
             findings.extend(
                 _missing_findings(
                     "config_entry",

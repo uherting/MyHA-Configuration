@@ -1,6 +1,6 @@
 // GENERATED FILE - do not edit. Edit panel-src/*.js and run: node scripts/build_panel.mjs
 
-const LANGUAGES = [{"code":"de","name":"Deutsch","patterns":["de"],"quotes":["„","“"],"lowerKind":false},{"code":"en","name":"English","patterns":["en"],"quotes":["“","”"],"lowerKind":true},{"code":"fr","name":"Français","patterns":["fr"],"quotes":["« "," »"],"lowerKind":true,"status":"community","v":"95ff61519c"},{"code":"es","name":"Español","patterns":["es"],"quotes":["“","”"],"lowerKind":true,"status":"community","v":"a112251980"},{"code":"pt","name":"Português","patterns":["pt","pt-pt","pt-br"],"quotes":["«","»"],"lowerKind":true,"status":"community","v":"42cc641a27"},{"code":"it","name":"Italiano","patterns":["it"],"quotes":["«","»"],"lowerKind":true,"status":"community","v":"50cc332537"},{"code":"sk","name":"Slovenčina","patterns":["sk"],"quotes":["„","“"],"lowerKind":false,"status":"community","v":"8d84b7ef3d"},{"code":"ru","name":"Русский","patterns":["ru"],"quotes":["«","»"],"lowerKind":false,"status":"community","v":"14152885d9"},{"code":"zh-Hans","name":"简体中文","patterns":["zh-hans","zh-cn","zh-sg"],"quotes":["“","”"],"lowerKind":false,"status":"community","v":"f5b045cf1a"}];
+const LANGUAGES = [{"code":"de","name":"Deutsch","patterns":["de"],"quotes":["„","“"],"lowerKind":false},{"code":"en","name":"English","patterns":["en"],"quotes":["“","”"],"lowerKind":true},{"code":"fr","name":"Français","patterns":["fr"],"quotes":["« "," »"],"lowerKind":true,"status":"community","v":"806229ee65"},{"code":"es","name":"Español","patterns":["es"],"quotes":["“","”"],"lowerKind":true,"status":"community","v":"2f15a53161"},{"code":"pt","name":"Português","patterns":["pt","pt-pt","pt-br"],"quotes":["«","»"],"lowerKind":true,"status":"community","v":"604d734098"},{"code":"it","name":"Italiano","patterns":["it"],"quotes":["«","»"],"lowerKind":true,"status":"community","v":"d8e3370906"},{"code":"sk","name":"Slovenčina","patterns":["sk"],"quotes":["„","“"],"lowerKind":false,"status":"community","v":"7fe630f34c"},{"code":"ru","name":"Русский","patterns":["ru"],"quotes":["«","»"],"lowerKind":false,"status":"community","v":"f0ff5d4e7a"},{"code":"zh-Hans","name":"简体中文","patterns":["zh-hans","zh-cn","zh-sg"],"quotes":["“","”"],"lowerKind":false,"status":"community","v":"ac98212d7c"}];
 
 const TEXT = {
   de: {
@@ -19,7 +19,7 @@ const TEXT = {
     noResults: "Keine passenden Objekte gefunden.",
     lastScan: "Letzter Scan", evidence: "Nachweis", registry: "Registry",
     state: "Zustand & Attribute", incoming: "Eingehend", outgoing: "Ausgehend",
-    graphMode: "Darstellung", graphList: "Liste", graphGraph: "Graph", graphDepth: "Ebenen", graphRelation: "Beziehungstyp", graphAllRelations: "Alle Beziehungen", graphConfidence: "Sicherheit", graphAllConf: "Alle Sicherheiten", graphCertainOnly: "Nur sichere",
+    graphMode: "Darstellung", graphList: "Liste", graphGraph: "Graph", graphDepth: "Ebenen", graphRelation: "Beziehungstyp", graphAllRelations: "Alle Beziehungen", graphConfidence: "Gewissheit", graphAllConf: "Alle Gewissheiten", graphCertainOnly: "Nur sichere",
     graphGroup: "{n} × {type}", graphGroupOpen: "Zum Aufklappen anklicken", graphRegroup: "Wieder zusammenfassen", graphImpact: "Was bricht beim Entfernen?", graphBreaks: "bricht", graphLabel: "Abhängigkeitsgraph von {name}", graphNodes: "Objekte: {n}", graphMore: "Mehr anzeigen",
     graphLegendTitle: "Legende", graphPhone: "Auf dem Handy als Liste; der Graph braucht mehr Platz.",
     graphLegend: "Durchgezogen: sicher · Gestrichelt: wahrscheinlich · Rot gepunktet: Zyklus · Roter Rahmen: bricht beim Entfernen · Gestrichelter Rahmen: Objekt fehlt.",
@@ -104,7 +104,7 @@ const TEXT = {
     saveOptions: "Speichern", optionsSaved: "Gespeichert. Housekeeper lädt neu …", optionsBusy: "Gerade läuft ein Plan, ein Rückgängigmachen oder eine Löschung. Die Einstellungen lassen sich danach speichern.", optionsInvalid: "Bitte Werte im erlaubten Bereich eingeben.",
     cleanupSubtitle: "Erst deaktivieren, nach der Quarantäne entfernen; Reste in der Datenbank löschen.",
     cleanupCandidates: "Kandidaten", cleanupCandidatesHint: "Verwaiste und lange nicht verfügbare Entitäten.", cleanupNone: "Keine Kandidaten gefunden.",
-    selectPage: "Seite auswählen", successorHint: "Mögliche Nachfolger (nur ein Vorschlag):", purgeOpen: "Vorschau erstellen", purgeTitle: "Statistiken aus dem Recorder löschen", purgeWarn: "{n} Statistik-Reihen werden mit Lang- und Kurzzeitwerten gelöscht. Vorher legt Housekeeper ein Home-Assistant-Backup an und löscht nur, wenn es gelingt. Danach geht es nur noch aus dem Backup zurück. Reihen im Energie-Dashboard sind ausgenommen.", purgeStates: "Auch die gespeicherten Zustände dieser IDs löschen", purgeWord: "LÖSCHEN", purgeRun: "Jetzt löschen", purgeRunning: "Läuft (Backup, dann Löschen) …", purgeDone: "{n} Reihen gelöscht, {skipped} übersprungen.", purgeReason_backup_unavailable: "Backup nicht verfügbar", purgeReason_no_backup_agent: "kein Backup-Ziel eingerichtet", purgeReason_backup_failed: "Backup fehlgeschlagen", purgeReason_failed: "Fehler beim Löschen", purgeReason_busy: "ein Löschvorgang läuft schon", bpTab: "Blueprints", bpMissing: "Blueprint-Datei fehlt", bpBroken: "Blueprint lädt nicht", bpUnused: "wird nicht benutzt", bpFiles: "Dateien", bpNone: "Nichts auffällig.", notifyTitle: "Benachrichtigung", notifyHint: "Das Einzige, was Housekeeper von sich aus tut. Standardmäßig aus.", notifyLabel: "Bei neuen defekten Referenzen melden", notifyDetail: "Eine Benachrichtigung in Home Assistant, sobald eine Automation oder ein Skript auf etwas zeigt, das nicht existiert. Jeder Fund wird einmal gemeldet; beim Einschalten wird nichts Altes gemeldet.", diagDownload: "Diagnose-Datei herunterladen", diagCopy: "Angaben für eine Fehlermeldung kopieren", diagCopyHint: "Versionen, Browser oder App und die letzten Fehler im Panel, zum Einfügen in ein GitHub-Issue.", diagCopied: "Kopiert", diagHint: "Nur Zahlen und Versionen, keine Namen, IDs oder Attribute. Passend für eine Fehlermeldung auf GitHub.", weeklyBtn: "Wochenbericht", weeklyHint: "Lädt den Vergleich mit dem Stand von vor etwa einer Woche und speichert ihn als Markdown-Datei.", weeklyTitle: "Housekeeper-Bericht", weeklyRecorder: "Lauteste Entitäten im Recorder", clearSelection: "Auswahl leeren", createPlan: "Vorschau erstellen ({count})", prepareDelete: "Vorschau erstellen ({count})", selectedCount: "{count} ausgewählt",
+    selectPage: "Seite auswählen", successorHint: "Mögliche Nachfolger (nur ein Vorschlag):", purgeOpen: "Vorschau erstellen", purgeTitle: "Statistiken aus dem Recorder löschen", purgeWarn: "{n} Statistik-Reihen werden mit Lang- und Kurzzeitwerten gelöscht. Vorher legt Housekeeper ein Home-Assistant-Backup an und löscht nur, wenn es gelingt. Danach geht es nur noch aus dem Backup zurück. Reihen im Energie-Dashboard sind ausgenommen.", purgeStates: "Auch die gespeicherten Zustände dieser IDs löschen", purgeWord: "LÖSCHEN", purgeRun: "Jetzt löschen", purgeRunning: "Läuft (Backup, dann Löschen) …", purgeDone: "{n} Reihen gelöscht, {skipped} übersprungen.", purgeReason_backup_unavailable: "Backup nicht verfügbar", purgeReason_no_backup_agent: "kein Backup-Ziel eingerichtet", purgeReason_backup_failed: "Backup fehlgeschlagen", purgeReason_failed: "Fehler beim Löschen", purgeReason_busy: "ein Löschvorgang läuft schon", bpTab: "Blueprints", bpMissing: "Blueprint-Datei fehlt", bpBroken: "Blueprint lädt nicht", bpUnused: "wird nicht benutzt", bpFiles: "Dateien", bpNone: "Nichts auffällig.", notifyTitle: "Benachrichtigung", notifyHint: "Das Einzige, was Housekeeper von sich aus tut. Standardmäßig aus.", notifyLabel: "Bei neuen defekten Referenzen melden", notifyDetail: "Eine Benachrichtigung in Home Assistant, sobald eine Automation oder ein Skript auf etwas zeigt, das nicht existiert. Jeder Fund wird einmal gemeldet; beim Einschalten wird nichts Altes gemeldet.", diagDownload: "Diagnose-Datei herunterladen", diagCopy: "Angaben für eine Fehlermeldung kopieren", diagCopyHint: "Versionen, Browser oder App und die letzten Fehler im Panel, zum Einfügen in ein GitHub-Issue.", diagCopied: "Kopiert", diagHint: "Nur Zahlen und Versionen, keine Namen, IDs oder Attribute. Passend für eine Fehlermeldung auf GitHub.", weeklyBtn: "Wochenbericht", weeklyHint: "Lädt den Vergleich mit dem Stand von vor etwa einer Woche und speichert ihn als Markdown-Datei.", weeklyTitle: "Housekeeper-Bericht", weeklyRecorder: "Lauteste Entitäten im Recorder", clearSelection: "Auswahl aufheben", createPlan: "Vorschau erstellen ({count})", prepareDelete: "Vorschau erstellen ({count})", selectedCount: "{count} ausgewählt",
     stepsLabel: "Ablauf des Plans", stepSelect: "Auswahl", stepAnalysis: "Auswirkungsanalyse", stepConfirm: "Bestätigung", stepBackup: "Backup", stepRun: "Ausführung", stepVerify: "Verifikation",
     stepDone: "erledigt", stepCurrent: "aktuell", stepTodo: "ausstehend", stepSkipped: "entfällt", stepFailed: "fehlgeschlagen",
     stepAnalysisBlocked: "Keine ausführbare Aktion", stepBackupSkipped: "Nicht nötig: alles lässt sich per Housekeeper zurücknehmen", stepBackupDone: "Erstellt am {date}{name}{job}", stepBackupName: " · „{name}“ in der Backup-Liste", stepBackupJob: " · Job {id}",
@@ -1640,7 +1640,7 @@ class StylesMixin {
       .optgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;padding:6px 16px 14px}.optgrid4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.optgroup{padding:14px 16px 0}.optgroup h3{margin:0;font-size:calc(14px*var(--hk-fs,1));color:var(--hk-muted);font-weight:600}.optgroup p{margin:4px 0 0;color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.optcard{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:1px solid var(--hk-border);border-radius:12px;min-width:0}.optcard p{margin:0;flex:1;color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1));line-height:1.45}.unitrow{display:flex;align-items:center;gap:8px;margin-top:6px}.unitrow input{width:92px}.unitrow span,.unitrow em{color:var(--hk-muted);font-size:calc(13px*var(--hk-fs,1))}.unitrow em{font-style:normal;margin-left:auto}.optfoot{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--hk-border);padding-top:6px;color:var(--hk-muted);font-size:calc(11.5px*var(--hk-fs,1))}.optreset{border:0;background:none;padding:0;color:var(--hk-blue-solid);font:inherit;cursor:pointer}.optreset[hidden]{display:none}@media(min-width:1000px){.optgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.optgrid4{grid-template-columns:repeat(4,minmax(0,1fr))}}.savebar{border-bottom:0;border-top:1px solid var(--hk-border)}.quietreset{grid-template-columns:1fr auto}a.row{text-decoration:none}
       .sharebar{display:block;height:6px;border-radius:3px;background:var(--hk-soft);overflow:hidden;margin-top:4px}.sharebar i{display:block;height:100%;background:var(--hk-blue-solid)}
       .recchoice{display:inline-flex;align-items:center;gap:6px;font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.recwarn{flex:1 1 100%;color:var(--hk-muted)}
-      .selcount{display:inline-flex;align-items:center;min-height:30px;box-sizing:border-box;padding:4px 10px;border:1px solid color-mix(in srgb,var(--hk-blue-solid) 28%,var(--hk-border));border-radius:999px;background:color-mix(in srgb,var(--hk-blue-solid) 10%,var(--hk-surface));color:var(--hk-blue-text);font-size:calc(12px*var(--hk-fs,1));font-weight:700;white-space:nowrap}
+      .selcount{display:inline-flex;align-items:center;min-height:30px;box-sizing:border-box;padding:4px 10px;border:1px solid color-mix(in srgb,var(--hk-blue-solid) 28%,var(--hk-border));border-radius:999px;background:color-mix(in srgb,var(--hk-blue-solid) 10%,var(--hk-surface));color:var(--hk-blue-text);font-size:calc(12px*var(--hk-fs,1));font-weight:700;white-space:nowrap}.selpill{cursor:pointer;gap:6px;font-family:inherit}.selpill ha-icon{--mdc-icon-size:15px}.selpill:hover{border-color:var(--hk-blue-solid)}.selpill[aria-pressed="true"]{background:var(--hk-blue-solid);border-color:var(--hk-blue-solid);color:var(--hk-on,#fff)}.selpill.over{border-color:var(--hk-red,#b3261e);background:color-mix(in srgb,var(--hk-red,#b3261e) 10%,var(--hk-surface));color:var(--hk-red,#b3261e)}.selpill:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}
       .rem-editor .remgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:16px}.rem-editor .remfield.wide,.rem-editor .remfield.full{grid-column:1/-1}.rem-editor .remfield input{box-sizing:border-box;width:100%;height:40px;padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:var(--hk-text);font:inherit}.rem-editor .remfield:focus-within>span:first-child{color:var(--hk-blue-text)}@media(max-width:700px){.rem-editor .remgrid{grid-template-columns:1fr}}
       .exbar{border-top:1px solid var(--hk-border)}.exblock{margin:0;max-height:none;border-radius:0}.exsteps{padding:10px 16px 12px;border-bottom:1px solid var(--hk-border);color:var(--hk-muted);font-size:calc(12.5px*var(--hk-fs,1))}.exsteps ol{margin:4px 0 0;padding-left:20px}.exsteps li{margin:2px 0}.exdone{opacity:.6}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--hk-border)}.toolgap{flex:1}.btn.quiet{box-shadow:none;border-color:transparent;background:none;color:var(--hk-blue-text);padding:8px 10px}.btn.quiet:hover{background:var(--hk-soft)}.btn.quiet[disabled]{color:var(--hk-muted);opacity:.7;cursor:default}
       .btn.primary{border-color:var(--hk-blue-solid);color:var(--hk-on,#fff);background:var(--hk-blue-solid)}.btn.primary:hover{background:#0a8ccf}.btn[disabled]{opacity:.6;cursor:not-allowed}.btn[aria-busy="true"]{cursor:wait}
@@ -1665,7 +1665,7 @@ class StylesMixin {
       .dot.ok,.bar .ok{background:var(--hk-green)}.dot.warn,.bar .warn{background:var(--hk-amber)}.dot.red,.bar .red{background:var(--hk-red)}.dot.mute,.bar .mute{background:var(--hk-gray)}.dot.violet,.bar .violet{background:var(--hk-violet)}
       .types{display:grid}.type{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 16px;border:0;border-top:1px solid var(--hk-border);background:transparent;text-align:left;font-size:calc(13px*var(--hk-fs,1))}.type:hover{background:var(--hk-soft)}.type .tile{width:30px;height:30px}.type b{font-weight:600}
       .mobsort,.msince{display:none}
-      .rowwrap .row.politem{padding-left:12px}.row.politem{padding-left:44px;background:color-mix(in srgb,var(--hk-soft) 45%,transparent)}.row.politem .tile{width:28px;height:28px}.tablewrap.lt td:not(:first-child){white-space:nowrap}.tablewrap.lt tr.static{cursor:default}.searchpanel{margin-bottom:14px;overflow:visible}.link-label.flat{margin:0;border:0;padding:0 0 4px}.emptyrel{padding:6px 16px;color:var(--hk-muted)}.emptyrel.sm{font-size:calc(12px*var(--hk-fs,1))}.chips.bare{padding:0;border:0}.propicon{--mdc-icon-size:18px;vertical-align:-3px;margin-right:6px;color:var(--hk-muted)}.w460{max-width:460px}.dim7{display:block;opacity:.7}.refactext{width:100%;max-width:520px}.errpad{padding:6px 16px;display:block}.bar.mt4{margin-top:4px}.evtable{width:100%;border-collapse:collapse}.evtable td{padding:9px 16px;border-top:1px solid var(--hk-border)}.evtable code{white-space:nowrap}.evtable .evcopy{width:1%;text-align:right}.evtable th:first-child,.evtable td:first-child{width:1%;white-space:nowrap}.tablewrap.lt tr[data-plan-open],.tablewrap.lt tr[data-rem-row],.tablewrap.lt tr[data-note-edit]{cursor:pointer}.tablewrap.lt .jsum{display:block;white-space:normal;min-width:180px;max-width:300px}.selhead{padding:6px 16px;min-height:44px}.selclear{color:var(--hk-muted);font-weight:400}.selall{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--hk-muted);cursor:pointer}.tablewrap.lt th.selcol,.tablewrap.lt td.selcol,.tablewrap.lt td.selcol:first-child{box-sizing:border-box;width:44px;min-width:44px;max-width:44px;padding-left:12px;padding-right:0;text-align:center}.lt th.selcol ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}.tablewrap.lt tr.static:hover{background:transparent}.tablewrap.lt td .id{display:block;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));font-family:var(--hk-mono,monospace);margin-top:2px}.tablewrap.lt td small{display:block;margin-top:2px;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.tablewrap.lt td:first-child{min-width:220px}.tip{position:fixed;z-index:50;display:grid;width:max-content;gap:2px;max-width:min(520px,calc(100vw - 16px));padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18);font-size:calc(12px*var(--hk-fs,1));pointer-events:none;overflow-wrap:anywhere}.tip[hidden]{display:none}.tip strong{font-weight:700}.tip span{font-family:ui-monospace,SFMono-Regular,monospace;color:var(--hk-muted)}.tip em{font-style:normal;line-height:1.4}.infotip{display:inline-flex;align-items:center;justify-content:center;line-height:0;width:24px;height:24px;margin:-4px 0 -4px 6px;padding:0;border:0;border-radius:50%;background:none;color:var(--hk-muted);vertical-align:middle;cursor:help}.infotip.warn{color:color-mix(in srgb,var(--hk-amber) 75%,var(--hk-text))}.infotip:hover,.infotip:focus-visible{background:var(--hk-soft);color:inherit}.infotip ha-icon{--mdc-icon-size:18px;display:flex}.fflow{padding:6px 14px 12px}.fstep{margin:6px 0;padding:8px 10px;border:1px solid var(--hk-border);border-left:3px solid var(--hk-blue);border-radius:8px;background:var(--hk-surface)}.fstep.broken{border-left-color:var(--hk-red,#b3261e);background:color-mix(in srgb,var(--hk-red,#b3261e) 6%,var(--hk-surface))}.fstep>summary{cursor:pointer;list-style-position:inside}.fhead{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 8px;max-width:calc(100% - 20px);vertical-align:middle}.fhead ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}.ffacts{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.fpath{margin-left:auto;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.fkids{margin:8px 0 2px 14px;padding-left:10px;border-left:1px dashed var(--hk-border)}.fgroup>small{display:block;margin:6px 0 2px;color:var(--hk-muted);text-transform:uppercase;letter-spacing:.05em;font-size:calc(10px*var(--hk-fs,1))}.fbranch{margin:6px 0}.chip.flowref{cursor:pointer;padding:2px 8px;font-size:calc(12px*var(--hk-fs,1))}.chip.flowref.missing{border-color:var(--hk-red,#b3261e);color:var(--hk-red,#b3261e);cursor:default}.listtools{display:flex;gap:8px;justify-content:flex-end;align-items:stretch;padding:10px 14px}.listtools .btn,.listtools .dirbtn{height:40px;min-height:40px;box-sizing:border-box;border:1px solid var(--hk-border);border-radius:8px;box-shadow:none}.listtools .btn:hover{border-color:var(--hk-blue)}.listtools .colwrap{display:flex}.colwrap{position:relative;display:inline-flex}.colpop{position:absolute;right:0;top:calc(100% + 4px);z-index:20;display:grid;justify-items:stretch;gap:2px;min-width:180px;max-width:calc(100vw - 32px);width:max-content;box-sizing:border-box;padding:6px;text-align:left;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18)}.colpop label{display:flex;gap:16px;align-items:center;justify-content:space-between;text-align:left;min-height:36px;padding:0 10px;border-radius:6px;white-space:nowrap;font-size:calc(13px*var(--hk-fs,1));cursor:pointer}.colpop label:hover,.colpop label:focus-within{background:var(--hk-soft)}.colpop label input{flex:0 0 auto;width:16px;min-width:0;max-width:none;margin:0}.dirbtn.on{border-color:var(--hk-blue);color:var(--hk-blue)}.namecell{display:block;min-width:0;max-width:280px}.namecell .cut{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:860px){.namecell{max-width:none}.namecell .cut{white-space:normal;overflow:visible}}@media(min-width:861px){}.tablewrap.dense-list td{padding-top:4px;padding-bottom:4px}.tablewrap.dense-list .namecell .id,.dense-list .statsucc,.dense-list .agestamp{display:none}.tablewrap.lt .muted{color:var(--hk-muted)}.polform{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.polform input{flex:1 1 140px;min-width:0;padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:inherit;font:inherit}.policyswitch{appearance:none;-webkit-appearance:none;position:relative;width:38px;height:22px;margin:0;border:1px solid var(--hk-border);border-radius:11px;background:var(--hk-soft);flex:none;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}.policyswitch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--hk-muted);transition:transform .15s ease,background-color .15s ease}.policyswitch:checked{border-color:var(--hk-blue);background:var(--hk-blue)}.policyswitch:checked::after{background:#fff;transform:translateX(16px)}.policyswitch:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+      .rowwrap .row.politem{padding-left:12px}.row.politem{padding-left:44px;background:color-mix(in srgb,var(--hk-soft) 45%,transparent)}.row.politem .tile{width:28px;height:28px}.tablewrap.lt td:not(:first-child){white-space:nowrap}.tablewrap.lt tr.static{cursor:default}.searchpanel{margin-bottom:14px;overflow:visible}.link-label.flat{margin:0;border:0;padding:0 0 4px}.depcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.depcol{min-width:0}.depcol+.depcol{border-left:1px solid var(--hk-border)}.dephead{display:flex;align-items:center;gap:8px;padding:12px 16px 6px;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));font-weight:600;letter-spacing:.06em;text-transform:uppercase}.dephead span{margin-left:auto;font-weight:400}.deprow{display:flex;align-items:center;gap:12px;padding:9px 16px;border-top:1px solid var(--hk-border);cursor:pointer}.deprow.static{cursor:default}.deprow:hover:not(.static){background:color-mix(in srgb,var(--hk-blue) 6%,var(--hk-soft))}.deprow .tile{width:30px;height:30px;flex:none}.deptext{min-width:0;display:grid;gap:1px}.deptext strong{font-size:calc(13px*var(--hk-fs,1));font-weight:600;overflow-wrap:anywhere}.deptext span{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.deppath{color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));overflow-wrap:anywhere}.depchip{margin-left:6px;padding:1px 6px;border-radius:6px;background:var(--hk-soft);color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));font-weight:400}.deprow{position:relative}.deprow.ind1{padding-left:44px}.deprow.ind2{padding-left:72px}.deprow.ind3{padding-left:100px}.deprow.ind1:before,.deprow.ind2:before,.deprow.ind3:before{content:"";position:absolute;top:-9px;height:calc(50% + 9px);width:13px;border-left:2px solid var(--hk-border);border-bottom:2px solid var(--hk-border);border-bottom-left-radius:6px;box-sizing:border-box}.deprow.ind1:before{left:29px}.deprow.ind2:before{left:57px}.deprow.ind3:before{left:85px}.dephead.sub{margin-top:6px;border-top:1px solid var(--hk-border);padding-top:12px}.depcol .deprow.ind1,.depcol .deprow.ind2,.depcol .deprow.ind3{border-top-color:transparent}.depdot{margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--hk-green);flex:none;display:inline-block}.depdot.prob{background:transparent;border:1.5px dashed var(--hk-amber);box-sizing:border-box}.deplegend{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--hk-border);color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.deplegend span{display:inline-flex;align-items:center;gap:6px}.deplegend .depdot{margin-left:0}.deplink{position:relative;min-height:30px;padding:4px 0 4px 48px;display:flex;align-items:center;gap:6px;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.deplink:before{content:"";position:absolute;left:30px;top:0;bottom:0;border-left:2px solid var(--hk-border)}.deplink.label{font-weight:600;letter-spacing:.06em;text-transform:uppercase}.deptree{margin:0 0 0 30px;display:grid;gap:8px}.depbranch{position:relative;padding-left:22px}.depbranch:before{content:"";position:absolute;left:0;top:50%;width:22px;border-top:2px solid var(--hk-border)}.depbranch:after{content:"";position:absolute;left:0;top:-8px;bottom:-8px;border-left:2px solid var(--hk-border)}.depbranch:first-child:after{top:0}.depbranch:last-child:after{bottom:50%}.depplace{display:flex;align-items:center;gap:6px;margin-top:4px;color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.depplace .linkbtn{font-size:inherit}.node .sent{display:block;color:var(--hk-text);font-size:calc(12px*var(--hk-fs,1))}.emptyrel{padding:6px 16px;color:var(--hk-muted)}.emptyrel.sm{font-size:calc(12px*var(--hk-fs,1))}.chips.bare{padding:0;border:0}.propicon{--mdc-icon-size:18px;vertical-align:-3px;margin-right:6px;color:var(--hk-muted)}.w460{max-width:460px}.dim7{display:block;opacity:.7}.refactext{width:100%;max-width:520px}.errpad{padding:6px 16px;display:block}.bar.mt4{margin-top:4px}.evtable{width:100%;border-collapse:collapse}.evtable td{padding:9px 16px;border-top:1px solid var(--hk-border)}.evtable code{white-space:nowrap}.evtable .evcopy{width:1%;text-align:right}.evtable th:first-child,.evtable td:first-child{width:1%;white-space:nowrap}.tablewrap.lt tr[data-plan-open],.tablewrap.lt tr[data-rem-row],.tablewrap.lt tr[data-note-edit]{cursor:pointer}.tablewrap.lt .jsum{display:block;white-space:normal;min-width:180px;max-width:300px}.selhead{padding:6px 16px;min-height:44px}.selclear{color:var(--hk-muted);font-weight:400}.selall{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--hk-muted);cursor:pointer}.tablewrap.lt th.selcol,.tablewrap.lt td.selcol,.tablewrap.lt td.selcol:first-child{box-sizing:border-box;width:44px;min-width:44px;max-width:44px;padding-left:12px;padding-right:0;text-align:center}.lt th.selcol ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}.tablewrap.lt tr.static:hover{background:transparent}.tablewrap.lt td .id{display:block;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));font-family:var(--hk-mono,monospace);margin-top:2px}.tablewrap.lt td small{display:block;margin-top:2px;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.tablewrap.lt td:first-child{min-width:220px}.tip{position:fixed;z-index:50;display:grid;width:max-content;gap:2px;max-width:min(520px,calc(100vw - 16px));padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18);font-size:calc(12px*var(--hk-fs,1));pointer-events:none;overflow-wrap:anywhere}.tip[hidden]{display:none}.tip strong{font-weight:700}.tip span{font-family:ui-monospace,SFMono-Regular,monospace;color:var(--hk-muted)}.tip em{font-style:normal;line-height:1.4}.infotip{display:inline-flex;align-items:center;justify-content:center;line-height:0;width:24px;height:24px;margin:-4px 0 -4px 6px;padding:0;border:0;border-radius:50%;background:none;color:var(--hk-muted);vertical-align:middle;cursor:help}.infotip.warn{color:color-mix(in srgb,var(--hk-amber) 75%,var(--hk-text))}.infotip:hover,.infotip:focus-visible{background:var(--hk-soft);color:inherit}.infotip ha-icon{--mdc-icon-size:18px;display:flex}.fflow{padding:6px 14px 12px}.fstep{margin:6px 0;padding:8px 10px;border:1px solid var(--hk-border);border-left:3px solid var(--hk-blue);border-radius:8px;background:var(--hk-surface)}.fstep.broken{border-left-color:var(--hk-red,#b3261e);background:color-mix(in srgb,var(--hk-red,#b3261e) 6%,var(--hk-surface))}.fstep>summary{cursor:pointer;list-style-position:inside}.fhead{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 8px;max-width:calc(100% - 20px);vertical-align:middle}.fhead ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}.ffacts{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.fpath{margin-left:auto;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.fkids{margin:8px 0 2px 14px;padding-left:10px;border-left:1px dashed var(--hk-border)}.fgroup>small{display:block;margin:6px 0 2px;color:var(--hk-muted);text-transform:uppercase;letter-spacing:.05em;font-size:calc(10px*var(--hk-fs,1))}.fbranch{margin:6px 0}.chip.flowref{cursor:pointer;padding:2px 8px;font-size:calc(12px*var(--hk-fs,1))}.chip.flowref.missing{border-color:var(--hk-red,#b3261e);color:var(--hk-red,#b3261e);cursor:default}.listtools{display:flex;gap:8px;justify-content:flex-end;align-items:stretch;padding:10px 14px}.listtools .btn,.listtools .dirbtn{height:40px;min-height:40px;box-sizing:border-box;border:1px solid var(--hk-border);border-radius:8px;box-shadow:none}.listtools .btn:hover{border-color:var(--hk-blue)}.listtools .colwrap{display:flex}.colwrap{position:relative;display:inline-flex}.colpop{position:absolute;right:0;top:calc(100% + 4px);z-index:20;display:grid;justify-items:stretch;gap:2px;min-width:180px;max-width:calc(100vw - 32px);width:max-content;box-sizing:border-box;padding:6px;text-align:left;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18)}.colpop label{display:flex;gap:16px;align-items:center;justify-content:space-between;text-align:left;min-height:36px;padding:0 10px;border-radius:6px;white-space:nowrap;font-size:calc(13px*var(--hk-fs,1));cursor:pointer}.colpop label:hover,.colpop label:focus-within{background:var(--hk-soft)}.colpop label input{flex:0 0 auto;width:16px;min-width:0;max-width:none;margin:0}.dirbtn.on{border-color:var(--hk-blue);color:var(--hk-blue)}.namecell{display:block;min-width:0;max-width:280px}.namecell .cut{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:860px){.namecell{max-width:none}.namecell .cut{white-space:normal;overflow:visible}}@media(min-width:861px){}.tablewrap.dense-list td{padding-top:4px;padding-bottom:4px}.tablewrap.dense-list .namecell .id,.dense-list .statsucc,.dense-list .agestamp{display:none}.tablewrap.lt .muted{color:var(--hk-muted)}.polform{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.polform input{flex:1 1 140px;min-width:0;padding:8px 10px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:inherit;font:inherit}.policyswitch{appearance:none;-webkit-appearance:none;position:relative;width:38px;height:22px;margin:0;border:1px solid var(--hk-border);border-radius:11px;background:var(--hk-soft);flex:none;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}.policyswitch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--hk-muted);transition:transform .15s ease,background-color .15s ease}.policyswitch:checked{border-color:var(--hk-blue);background:var(--hk-blue)}.policyswitch:checked::after{background:#fff;transform:translateX(16px)}.policyswitch:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
       .exppop{min-width:280px;max-width:calc(100vw - 32px)}.expitem{display:grid;gap:2px;justify-items:start;width:100%;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}.expitem small{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.expitem:hover,.expitem:focus-visible{background:var(--hk-soft)}.listbar-actions .expbtn{height:40px;min-height:40px;gap:6px;white-space:nowrap}.expbtn.on{border-color:var(--hk-blue)}
       .markform{display:grid;gap:12px}.markform .mrow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}.markform .mfield{display:grid;gap:4px;min-width:150px;flex:0 1 190px;font-size:calc(12px*var(--hk-fs,1));font-weight:600;color:var(--hk-muted)}.markform .mfield.grow{flex:1 1 260px}.markform .mfield select,.markform .mfield input:not([type=radio]):not([type=checkbox]){width:100%;min-height:40px;font-weight:400;color:var(--hk-text)}.markform .mfield:focus-within>span{color:var(--hk-blue-text)}.markform .mbtns{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--hk-border)}.markform .factnote{display:block}
       @media(max-width:600px){.markform .mfield,.markform .mfield.grow{flex:1 1 100%}.markform .mbtns .btn{flex:1}}
@@ -1687,12 +1687,12 @@ class StylesMixin {
       .bh .row-text small{overflow:visible;white-space:normal;text-overflow:clip}
       .bhguide{padding:12px 16px;border-top:1px solid var(--hk-border)}.bhguide summary{font-size:calc(12px*var(--hk-fs,1))}.bhguide .factnote{padding:8px 0 0;border:0}
       .graphbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:10px 14px;margin-bottom:14px}.graphctl{display:flex;align-items:center;gap:8px}.graphctl small{color:var(--hk-muted)}.graphwrap{overflow:auto;padding:14px;min-height:360px;display:grid;align-content:center;justify-items:start}.graphphone{margin:0 0 14px;border:0;padding:0 2px}@media(max-width:600px){.node strong{white-space:normal;overflow-wrap:anywhere}.node span.meta{overflow-wrap:anywhere}}.graphsvg{display:block;max-width:none}
-      .gedge{fill:none;stroke:var(--hk-muted);stroke-width:1.5}.gedge.prob{stroke-dasharray:7 4}.gedge.cycle{stroke:var(--hk-red);stroke-dasharray:2 3}.gedge.hit{stroke:var(--hk-red);stroke-width:2.5}.garrow{fill:var(--hk-muted)}.gdim{opacity:.3}
+      .graphlegend{padding:12px 16px 14px;border-top:1px solid var(--hk-border);display:grid;gap:8px;color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.graphlegend strong{color:var(--hk-text);font-size:calc(12px*var(--hk-fs,1));letter-spacing:.06em;text-transform:uppercase}.graphlegend p{margin:0;line-height:1.5}.glegend{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 22px}.glegend li{display:inline-flex;align-items:center;gap:8px}.glegend svg{flex:none}.glegend .lgl{fill:none;stroke:var(--hk-muted);stroke-width:1.5}.glegend .lgl.prob{stroke-dasharray:7 4}.glegend .lgl.cycle{stroke:var(--hk-red);stroke-dasharray:2 3}.glegend .gnode rect{fill:var(--hk-surface);stroke:var(--hk-border);stroke-width:1.5}.glegend .gnode rect.hit{stroke:var(--hk-red);stroke-width:2}.glegend .gnode.missing rect{stroke-dasharray:4 3}.gedge{fill:none;stroke:var(--hk-muted);stroke-width:1.5}.gedge.prob{stroke-dasharray:7 4}.gedge.cycle{stroke:var(--hk-red);stroke-dasharray:2 3}.gedge.hit{stroke:var(--hk-red);stroke-width:2.5}.garrow{fill:var(--hk-muted)}.gdim{opacity:.3}
       .gnode{cursor:pointer}.gnode.center{cursor:default}.gnode rect{fill:var(--hk-surface);stroke:var(--hk-border);stroke-width:1.5}.gnode.center rect{stroke:var(--hk-blue);stroke-width:2.5}.gnode.missing rect{stroke:var(--hk-red);stroke-dasharray:4 3}.gnode.ggroup rect{stroke-dasharray:2 3}.gnode.hit rect{stroke:var(--hk-red);stroke-width:2.5}.gnode rect.bar{stroke:none;fill:var(--hk-blue)}.gnode rect.bar.ok{fill:var(--hk-green)}.gnode rect.bar.warn{fill:var(--hk-amber)}.gnode rect.bar.red{fill:var(--hk-red)}.gnode rect.bar.mute{fill:var(--hk-gray)}.gnode rect.bar.violet{fill:var(--hk-violet)}
-      .gnode text{fill:var(--hk-text);font-size:calc(12px*var(--hk-fs,1));font-weight:600}.gnode text.t1{fill:var(--hk-muted);font-size:calc(10px*var(--hk-fs,1));font-weight:400}.gnode:focus-visible{outline:none}.gnode:focus-visible rect:first-of-type{stroke:var(--hk-blue);stroke-width:3.5}.gnode:hover rect:first-of-type{stroke:var(--hk-blue)}
+      .graphsvg text.gcol{fill:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));font-weight:500}.gnode text{fill:var(--hk-text);font-size:calc(12px*var(--hk-fs,1));font-weight:600}.gnode text.t1{fill:var(--hk-muted);font-size:calc(10px*var(--hk-fs,1));font-weight:400}.gnode:focus-visible{outline:none}.gnode:focus-visible rect:first-of-type{stroke:var(--hk-blue);stroke-width:3.5}.gnode:hover rect:first-of-type{stroke:var(--hk-blue)}
       .pathcard{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:16px;margin-bottom:14px}.pathcard h2{font-size:calc(17px*var(--hk-fs,1));font-weight:600}
       .path{padding:16px;display:grid;gap:0}.node{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--hk-border);border-radius:10px;background:var(--hk-surface);color:inherit;text-align:left;width:100%}button.node:hover{border-color:var(--hk-blue)}
-      .node.current{border:2px solid var(--hk-blue);background:color-mix(in srgb,var(--hk-blue) 8%,var(--hk-surface))}.node .tile{width:34px;height:34px}.node small{display:block;color:var(--hk-blue-text);font-size:calc(11px*var(--hk-fs,1));font-weight:600;letter-spacing:.06em;text-transform:uppercase}.node strong{display:block;font-size:calc(13px*var(--hk-fs,1));font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.node span.meta{display:block;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}
+      .node.current{padding-left:12px;border:2px solid var(--hk-blue);background:color-mix(in srgb,var(--hk-blue) 8%,var(--hk-surface))}.node .tile{width:34px;height:34px}.node small{display:block;color:var(--hk-blue-text);font-size:calc(11px*var(--hk-fs,1));font-weight:600;letter-spacing:.06em;text-transform:uppercase}.node strong{display:block;font-size:calc(13px*var(--hk-fs,1));font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.node span.meta{display:block;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}
       .link-label{margin:0 0 0 22px;padding:3px 0 3px 14px;border-left:2px solid var(--hk-border);color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1));min-height:26px;display:flex;align-items:center;gap:8px}
       .branch{margin:0 0 0 22px;padding:6px 0 0 18px;border-left:2px solid var(--hk-border);display:grid;gap:8px}
       .updact{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px}.verchip{display:inline-block;margin-right:4px;padding:1px 8px;border-radius:999px;background:var(--hk-soft);border:1px solid var(--hk-border);color:var(--hk-text);font-variant-numeric:tabular-nums}.tablewrap.upds .statcell strong{display:block}.tablewrap.upds .statcell small{display:block;color:var(--hk-muted);font-size:calc(11px*var(--hk-fs,1))}.tablewrap.upds td:last-child{text-align:right}
@@ -1845,10 +1845,10 @@ class StylesMixin {
       .xpclose{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
       button.ring{border:0;padding:0;cursor:pointer;color:inherit;font:inherit}button.ring:focus-visible{outline:2px solid var(--hk-blue);outline-offset:3px}.healthwhy{display:grid;gap:6px;max-width:560px;margin:-4px 0 14px;padding:14px 16px;border:1px solid var(--hk-border);border-radius:12px;background:var(--hk-soft)}.healthwhy .row{display:flex;justify-content:space-between;gap:16px;padding:0;border:0;background:transparent}.healthwhy .row.minus{color:var(--hk-muted)}.healthwhy .row.total{border-top:1px solid var(--hk-border);padding-top:6px;font-weight:700}.healthwhy small{color:var(--hk-muted)}.healthwhy .btn{justify-self:start}
       .btn.small{padding:5px 11px;font-size:calc(13px*var(--hk-fs,1))}.notehint{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px}.notehint small{display:block;color:var(--hk-muted)}.row.seeall{justify-content:flex-start;color:var(--hk-blue-text);font-weight:600}.logsuggest{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:12px 16px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--hk-blue) 9%,transparent)}
-      .hamenu{display:grid;place-items:center;flex:none;width:40px;height:40px;margin:0 -10px 0 -6px;padding:0;border:0;border-radius:50%;background:none;color:inherit}.hamenu:hover{background:var(--hk-soft)}.hamenu:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}.hamenu ha-icon{--mdc-icon-size:24px}.sysmeter{display:block;height:6px;margin-top:6px;border-radius:99px;background:var(--hk-soft);overflow:hidden}.sysmeter i{display:block;height:100%;border-radius:99px;background:var(--hk-green)}.sysmeter.warn i{background:var(--hk-amber)}.sysmeter.red i{background:var(--hk-red)}.sysmeter.mute i{background:var(--hk-gray)}.sysshare{display:block;width:100%;min-width:120px;height:8px;margin-top:2px;border-radius:99px;background:var(--hk-soft);overflow:hidden}.sysshare i{display:block;height:100%;border-radius:99px;background:var(--hk-green)}.tablewrap.lt.acc td{white-space:normal}.pills{display:flex;flex-wrap:wrap;gap:4px}@media(min-width:641px){.sysnav .navtiles{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(min-width:1300px){.sysnav .navtiles{grid-template-columns:repeat(6,minmax(0,1fr))}}
+      .hamenu{display:grid;place-items:center;flex:none;width:40px;height:40px;margin:0 -10px 0 -6px;padding:0;border:0;border-radius:50%;background:none;color:inherit}.hamenu:hover{background:var(--hk-soft)}.hamenu:focus-visible{outline:2px solid var(--hk-blue);outline-offset:2px}.hamenu ha-icon{--mdc-icon-size:24px}.sysmeter{display:block;height:6px;margin-top:6px;border-radius:99px;background:var(--hk-soft);overflow:hidden}.sysmeter i{display:block;height:100%;border-radius:99px;background:var(--hk-green)}.sysmeter.warn i{background:var(--hk-amber)}.sysmeter.red i{background:var(--hk-red)}.sysmeter.mute i{background:var(--hk-gray)}.sysshare{display:block;width:100%;min-width:120px;height:8px;margin-top:2px;border-radius:99px;background:var(--hk-soft);overflow:hidden}.sysshare i{display:block;height:100%;border-radius:99px;background:var(--hk-green)}.tablewrap.lt.acc td{white-space:normal}@media(min-width:641px){.tablewrap.lt.rel table{table-layout:fixed;width:100%}.tablewrap.lt.rel th:nth-child(1){width:36%}.tablewrap.lt.rel th:nth-child(2){width:14%}.tablewrap.lt.rel th:nth-child(4){width:12%}.tablewrap.lt.rel td{overflow-wrap:anywhere}}.pills{display:flex;flex-wrap:wrap;gap:4px}@media(min-width:641px){.sysnav .navtiles{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(min-width:1300px){.sysnav .navtiles{grid-template-columns:repeat(6,minmax(0,1fr))}}
       .intentry{margin:4px 2px 0;font-size:15px}.syssec{margin:18px 16px 6px;font-size:15px}.syssec:first-child{margin-top:12px}
       .pill.kind{background:none;border:1px solid var(--hk-border);color:var(--hk-muted)}.rowmenu{position:relative;flex:none;margin:0 10px 0 0}.rowmenu>summary{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;list-style:none;cursor:pointer;color:var(--hk-muted)}.rowmenu>summary::-webkit-details-marker{display:none}.rowmenu>summary:hover,.rowmenu[open]>summary{background:var(--hk-soft);color:inherit}.markform .mfield.wide{flex:1 1 100%}.markform .statusopt{font-size:calc(14px*var(--hk-fs,1));font-weight:400;color:var(--hk-text)}.markform .statusopt b{font-weight:700}.markform .statusopt small{font-size:calc(12.5px*var(--hk-fs,1));font-weight:400;color:var(--hk-muted)}.markform .chips.bare{display:flex;flex-wrap:wrap;gap:8px}.markform label.chip{white-space:nowrap}label.chip{cursor:pointer}label.chip:has(:focus-visible){outline:2px solid var(--hk-blue);outline-offset:1px}.markkinds .statusopt small{display:block}@media(max-width:600px){.markkinds .statusopt small{display:none}}
-.actmenu{margin:0}.fbtns>.actmenu{display:grid}.actmenu>summary.btn{display:flex;box-sizing:border-box;width:100%;height:auto;min-height:44px;border-radius:10px;gap:6px;align-items:center;justify-content:center;padding:8px 12px;line-height:1.2;color:var(--hk-on)}.actmenu .menupop{min-width:min(340px,86vw)}.actmenu .menuitem{white-space:normal}.menusep{height:0;margin:4px 0;border:0;border-top:1px solid var(--hk-border)}.menupop{position:absolute;right:0;top:100%;z-index:20;display:grid;min-width:260px;padding:4px 0;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18)}.menuitem{white-space:nowrap;display:flex;gap:10px;align-items:center;padding:8px 14px;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}.menuitem:hover{background:var(--hk-soft)}.menuitem ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}
+.actmenu{margin:0}.fbtns>.actmenu{display:grid}.actmenu>summary.btn{display:flex;box-sizing:border-box;width:100%;height:auto;min-height:44px;border-radius:10px;gap:6px;align-items:center;justify-content:center;padding:8px 12px;line-height:1.2;color:var(--hk-on)}.actmenu>summary.btn:not(.primary){color:var(--hk-text)}.actmenu .menupop{min-width:min(340px,86vw)}.actmenu .menuitem{white-space:normal}.menusep{height:0;margin:4px 0;border:0;border-top:1px solid var(--hk-border)}.menupop{position:absolute;right:0;top:100%;z-index:20;display:grid;min-width:260px;padding:4px 0;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);box-shadow:0 6px 20px rgba(0,0,0,.18)}.menuitem{white-space:nowrap;display:flex;gap:10px;align-items:center;padding:8px 14px;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}.menuitem:hover{background:var(--hk-soft)}.menuitem ha-icon{--mdc-icon-size:18px;color:var(--hk-muted)}
       .row[data-object]{cursor:pointer}.monitor-meta{margin-top:2px}.monitor-sec{display:flex;align-items:baseline;gap:8px;padding:16px 16px 8px;border-top:1px solid var(--hk-border);margin-top:14px}.monitor-sec h3{margin:0;font-size:calc(14px*var(--hk-fs,1));font-weight:600}.monitor-sec small{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.avail-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px 16px 4px}.avail-tile{background:var(--hk-soft);border-radius:10px;padding:10px 14px}.avail-tile b{display:block;font-size:calc(22px*var(--hk-fs,1));font-weight:600;line-height:1.25}.avail-tile b.ok{color:var(--hk-green)}.avail-tile span{font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.avail-info{--mdc-icon-size:16px;color:var(--hk-muted);vertical-align:-2px;cursor:help}.monitor-axis{display:flex;justify-content:space-between;padding:6px 16px 0;font-size:calc(11px*var(--hk-fs,1));color:var(--hk-muted)}.avail-since{padding:8px 16px 0;font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.monitor-days{display:flex;gap:3px;padding:14px 16px 0}.monitor-days i{flex:1;min-width:3px;height:34px;border-radius:3px;background:repeating-linear-gradient(135deg,var(--hk-soft) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1px var(--hk-border)}.monitor-days i.ok,.monitor-days i.problem,.monitor-days i.unverified,.monitor-days i.flapping{box-shadow:none}.monitor-days i.problem.short{background:var(--hk-amber)}.monitor-legend{display:flex;flex-wrap:wrap;gap:6px 16px;padding:10px 16px 0;font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.monitor-legend span{display:inline-flex;align-items:center;gap:6px}.monitor-legend i{width:10px;height:10px;border-radius:2px;background:var(--hk-soft);box-shadow:inset 0 0 0 1px var(--hk-border)}.monitor-legend i.ok{background:var(--hk-green);box-shadow:none}.monitor-legend i.problem{background:var(--hk-red);box-shadow:none}.monitor-legend i.problem.short{background:var(--hk-amber)}.monitor-days i.ok{background:var(--hk-green)}.monitor-days i.problem{background:var(--hk-red)}.monitor-days i.unverified,.monitor-days i.flapping{background:var(--hk-amber)}.page-editor{max-width:960px;margin:0 auto}.monitor-fields{display:grid;gap:14px;padding:16px}.monitor-twocol{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}@media(max-width:560px){.monitor-twocol{grid-template-columns:1fr}}.monitor-add{display:grid;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--hk-border)}.monitor-add>input[type=search]{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:inherit;font:inherit}.monitor-suggest{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.chip{font:inherit;font-size:calc(12px*var(--hk-fs,1));padding:3px 10px;border-radius:999px;border:1px solid var(--hk-border);background:none;color:var(--hk-muted);cursor:pointer}.chip.dashed{border-style:dashed}.chip:hover{color:var(--hk-text);border-color:var(--hk-muted)}.iconbtn{border:0;background:none;color:var(--hk-muted);cursor:pointer;padding:4px;border-radius:6px}.iconbtn:hover{background:var(--hk-soft);color:var(--hk-text)}.monitor-fields label{display:grid;gap:6px;font-weight:600}.monitor-fields input,.monitor-fields textarea{width:100%;padding:10px 12px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:inherit;font:inherit}.monitor-fields textarea{min-height:0;box-sizing:border-box;resize:none;overflow-y:hidden}.monitor-check{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.monitor-check input{width:18px;height:18px}.row.monitor-member{grid-template-columns:auto minmax(0,1fr) auto auto}.row.monitor-choice{grid-template-columns:auto minmax(0,1fr) auto}.monitor-choice .btn,.monitor-member .btn{justify-self:end;width:auto;white-space:nowrap}.row.monitor-notify{grid-template-columns:minmax(0,1fr) auto;cursor:pointer}.monitor-notify .policyswitch{justify-self:end}.monitor-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 14px;border-bottom:1px solid var(--hk-border)}.monitor-group h3{display:flex;gap:8px;align-items:center;margin:0;padding:10px 16px;background:var(--hk-soft);font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.monitor-group h3 span{font-weight:400}.monitor-group .row{border-bottom:1px solid var(--hk-border)}.monitor-choice .btn:disabled{opacity:.65}.monitor-results{max-height:420px;overflow:auto}.monitor-search-note{padding:0 16px 18px;color:var(--hk-muted)}.page-editor .savebar{border:1px solid var(--hk-border);border-radius:12px;background:var(--hk-surface)}@media(max-width:600px){.row.monitor-member{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;grid-auto-flow:row;gap:8px}.monitor-member .tile{grid-column:1;grid-row:1}.monitor-member .row-text{grid-column:2;grid-row:1}.monitor-member .monitor-check{grid-column:2;grid-row:2}.monitor-member .btn{grid-column:3;grid-row:1/3}}
       .note-editor{min-width:0}.note-fields{display:grid;gap:14px;padding:16px}.note-fields>div{min-width:0}.note-fields h3{margin:0;font-size:calc(15px*var(--hk-fs,1))}.note-fields label{display:block;margin-bottom:6px;color:var(--hk-muted);font-size:calc(12.5px*var(--hk-fs,1));font-weight:600}.note-fields input,.note-fields textarea{box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:var(--hk-text);font:inherit}.note-fields textarea{resize:vertical}.note-fields .picker{max-width:none}.note-fields .notetwo{grid-template-columns:repeat(2,minmax(0,1fr))}.note-fields .notetwo>div{min-width:0}.note-fields .notemeta{display:flex;align-items:center;align-self:end;gap:8px;flex-wrap:wrap;min-height:42px;color:var(--hk-muted);font-size:calc(13px*var(--hk-fs,1));overflow-wrap:anywhere}.note-fields .notemeta strong{color:var(--hk-text)}.note-fields .notehint2{color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.page-editor .note-editor .note-actions,.note-editor .note-actions{border:0;border-top:1px solid var(--hk-border);border-radius:0;background:var(--hk-soft)}.note-editor .danger-t{color:var(--hk-red)}.note-editor.inline .notetwo{grid-template-columns:1fr}@media(max-width:700px){.note-fields .notetwo{grid-template-columns:1fr}}
       .monitor-member-wrap{border-bottom:1px solid var(--hk-border)}.monitor-member-wrap:last-child{border-bottom:0}.monitor-member-wrap .row{border-bottom:0}.monitor-rules{padding:0 16px 12px 62px}.monitor-rules summary{color:var(--hk-blue-text);cursor:pointer;font-size:calc(12px*var(--hk-fs,1));font-weight:600}.monitor-rules p{margin:8px 0;color:var(--hk-muted);font-size:calc(12px*var(--hk-fs,1))}.monitor-rule{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;font-size:calc(13px*var(--hk-fs,1))}.monitor-rule label{display:inline-flex;align-items:center;gap:8px;min-width:210px;cursor:pointer}.monitor-rule input[type=number]{width:100px;padding:7px 9px;border:1px solid var(--hk-border);border-radius:8px;background:var(--hk-surface);color:inherit;font:inherit}.monitor-rule input[type=number]:disabled{opacity:.45}.monitor-preview-body{padding:12px 16px}.monitor-preview-body>p{margin:0;color:var(--hk-muted)}.monitor-preview-body>strong{display:block;margin-bottom:4px}.monitor-preview-body>small{display:block;margin-bottom:8px;color:var(--hk-muted)}.monitor-preview-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:7px 0;border-top:1px solid var(--hk-border)}.monitor-preview-row small{grid-column:1/-1;color:var(--hk-muted)}@media(max-width:600px){.monitor-rules{padding-left:16px}.monitor-rule label{min-width:0;flex:1 1 100%}.monitor-rule input[type=number]{width:90px}}
@@ -1881,7 +1881,7 @@ class StylesMixin {
       .statusopt input{margin:3px 0 0;flex:none}.statusopt .stico{display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:10px;background:var(--hk-soft);color:var(--hk-muted);font-style:normal}.statusopt.green .stico{background:color-mix(in srgb,var(--hk-green) 14%,var(--hk-surface));color:var(--hk-green)}.statusopt.amber .stico{background:color-mix(in srgb,var(--hk-amber) 18%,var(--hk-surface));color:var(--hk-amber)}.statusopt.green.on{border-color:var(--hk-green);box-shadow:0 0 0 1px var(--hk-green)}.statusopt.amber.on{border-color:var(--hk-amber);box-shadow:0 0 0 1px var(--hk-amber)}.statusopt span{display:grid;gap:2px;min-width:0}.statusopt small{color:var(--hk-muted);font-size:12.5px;white-space:normal}.statusform{display:grid;gap:10px}.statusrow{display:flex;gap:8px;flex-wrap:wrap}.statusrow input{flex:1 1 220px;min-width:0}.reasonchips{display:flex;gap:6px;flex-wrap:wrap}.reasonchips .btn{font-size:12.5px;padding:2px 10px}.statusform .mbtns{display:flex;gap:8px;justify-content:flex-end}.finding .polform.statusform{grid-template-columns:minmax(0,1fr);align-items:stretch}.menuitem span{display:grid;text-align:left}.menuitem small{color:var(--hk-muted);font-size:12px}.fbtns .btn.ha{background:none;box-shadow:none;border-color:var(--hk-border)}
       .statustext h2 .headlink{text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:color-mix(in srgb,currentColor 25%,transparent);text-underline-offset:5px}.statustext p .link{font-size:inherit}.todogrp{display:flex;gap:8px;align-items:center}.foldhd small{text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px}.todogrp.red{color:var(--hk-red)}.relpills{display:flex;flex-wrap:wrap;gap:4px;max-width:240px}.btctl .btn.miss,.btn.quiet.miss{border:1px dashed color-mix(in srgb,var(--hk-amber) 60%,var(--hk-border));padding:2px 8px;gap:4px}@media(max-width:560px){.listbar{gap:8px}.listbar>input{flex:1 1 100%}.listbar .sortgroup{flex:1 1 calc(100% - 120px);min-width:0;margin-left:0}.listbar .sortgroup select{flex:1 1 auto}.listbar-actions{flex:none;margin-left:0}}@media(max-width:640px){.tablewrap.lt.objs tr{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:10px 12px}.tablewrap.lt.objs td{display:block;padding:0;border:0;margin:0}.tablewrap.lt.objs td.selcol{flex:0 0 24px;width:24px;min-width:24px;max-width:24px}.tablewrap.lt.objs td:nth-child(2){flex:1 1 calc(100% - 44px);min-width:0}.tablewrap.lt.objs td:nth-child(n+3){display:inline-flex;align-items:center;gap:6px;font-size:calc(12px*var(--hk-fs,1));color:var(--hk-muted)}.tablewrap.lt.objs td:nth-child(3){margin-left:32px}.tablewrap.lt.objs td[data-label]::before{display:none}.tablewrap.lt.objs .agestamp{display:none}}.levelsrow .row-text small{white-space:normal;overflow:visible;text-overflow:clip}.row.zero{opacity:.55;cursor:default}.row.zero:hover{background:none}.todogrp .todofold{display:inline-flex;align-items:center;gap:8px;padding:0;border:0;background:none;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}.todogrp .todofold ha-icon{--mdc-icon-size:16px;margin-left:-2px}.todogrp.care{margin-top:18px;margin-bottom:10px;padding-top:12px;border-top:1px solid var(--hk-border)}.whygroups{display:grid;gap:4px;margin-bottom:10px}.whygroups p{margin:0}.why-red{color:var(--hk-red)}.why-open{color:var(--hk-amber)}.why-care{color:var(--hk-muted)}
       .decbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}.decbar .kpi{text-align:left}.decbar .warntext{color:var(--hk-amber)}@media(max-width:640px){.decbar{grid-template-columns:repeat(2,minmax(0,1fr))}}.row.duerow{background:color-mix(in srgb,var(--hk-amber) 7%,transparent)}.rowacts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.link.strong{font-weight:600;color:inherit;text-align:left}
-      .findsum{display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:10px 14px;align-items:start;margin-bottom:12px}.sumall{display:grid;gap:4px;margin-top:22px}.sumrows{display:grid;gap:8px;min-width:0}.findsum .sumgroup{display:grid;gap:4px}.findsum .sumgrouphead{margin:0 0 0 2px;font-weight:600}.sumtile.zero{background:transparent;border-style:dashed;border-left-style:solid;box-shadow:none}.sumtile.zero .sumvalue{color:var(--hk-muted);font-weight:500}.findsum .sumgrouphead.zero{color:var(--hk-muted)}.dbfold{display:grid;gap:6px;padding:8px 16px 12px}.dbfold .sectionlabel{margin-top:4px}.dbshare{display:flex;align-items:center;gap:10px;min-width:140px}.foldhead .dbshare{width:260px}.dbshare .sysshare{flex:1}.dbshare b{min-width:3.2em;text-align:right;font-weight:500}.findsum{grid-template-columns:repeat(calc(var(--k,5) + 1),minmax(0,1fr));grid-template-rows:auto 1fr auto 1fr;gap:6px 8px;align-items:stretch}.findsum .sumall{grid-column:1;grid-row:2/5;margin-top:0;display:grid}.findsum .sumhead{grid-column:2/-1;display:flex;align-items:end}.findsum .sumrow{display:contents}.findsum .sumrow>.sumtile{grid-row:var(--r)}.findsum .sumtile{grid-template-rows:auto auto 1fr 12px auto}.findsum .sumtile>.ibar{grid-row:4;align-self:end;margin-top:0}.findsum .sumtile>.spark-row{grid-row:5}.findsum .sumtile .sumlabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sumtotal{position:relative}.sumtotal .sumstretch{position:absolute;inset:0;border:0;border-radius:inherit;background:none;cursor:pointer;padding:0}.sumtotal:hover{background:var(--hk-soft)}.sumtotal>.sumsubs{grid-row:3;align-self:start;display:grid;gap:2px;justify-items:start;position:relative;z-index:1;pointer-events:none}.sumtotal>.sumsubs .sumfollow{pointer-events:auto;text-align:left;padding:0;margin:0}@media(max-width:760px){.findsum{display:block}.findsum .sumall{margin-bottom:8px}.findsum .sumhead{margin:8px 0 4px}.findsum .sumrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:6px}.findsum .sumrow>.sumtile{grid-row:auto}}.findsum button.sumgrouphead{justify-self:start;display:inline-flex;align-items:center;gap:4px;padding:1px 9px 1px 7px;border:1px solid var(--hk-border);border-radius:999px;background:var(--hk-surface);box-shadow:var(--hk-sh1);font:inherit;font-size:calc(12px*var(--hk-fs,1));font-weight:600;cursor:pointer;margin-left:0}.findsum button.sumgrouphead:hover{background:var(--hk-soft)}.findsum button.sumgrouphead[aria-pressed=true]{border-color:var(--hk-blue);color:var(--hk-blue-text);background:color-mix(in srgb,var(--hk-blue) 9%,var(--hk-surface))}.findsum button.sumgrouphead ha-icon{--mdc-icon-size:14px}.findsum button.sumgrouphead[aria-pressed=true] ha-icon{display:none}.findsum button.sumgrouphead[aria-pressed=true]:before{content:"\\2713";margin-right:.2em}.findsum .sumgrouphead.red{color:color-mix(in srgb,var(--hk-red) 75%,var(--hk-muted))}.findsum .sumgrouphead.warn{color:color-mix(in srgb,var(--hk-amber) 75%,var(--hk-muted))}.sumtiles.compact{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.sumtiles.compact .sumtile{padding:8px 10px;gap:0}.sumtiles.compact .sumvalue{font-size:calc(19px*var(--hk-fs,1))}.sumtiles.compact .spark{height:24px}.sumtiles.compact .spark-row{padding-top:2px}.sumtiles.compact small{font-size:calc(11.5px*var(--hk-fs,1))}/* Every tile of a row shares four lines: title, figure, the text that may run over several lines, and the curve at the bottom; the free space sits between text and curve. */.sumtiles,.sumtiles.even{grid-auto-rows:auto}.sumtile{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:2px;align-content:start}.sumtiles.compact .sumtile{row-gap:0}.sumtile>.sumlabel{grid-row:1}.sumtile>.sumvalue{grid-row:2}.sumtile>small{grid-row:3;align-self:start}.sumtile>.spark-row{grid-row:4;align-self:end;margin-top:0}.kpis{grid-auto-rows:auto}.kpis>.kpi{display:grid;grid-row:span 5;grid-template-rows:subgrid;row-gap:2px;align-content:start}.kpis>.kpi>.kpilabel{grid-row:1}.kpis>.kpi>strong{grid-row:2}.kpis>.kpi>.kpisub{grid-row:3;align-self:start}.kpis>.kpi>.ibar{grid-row:4;align-self:end}.kpis>.kpi>.spark-row{grid-row:5;align-self:end;margin-top:0}.navtiles.compact{grid-auto-rows:auto}.navtiles.compact .taskcard{grid-row:span 4;grid-template-rows:subgrid;align-content:start;align-items:start}.navtiles.compact .taskcard>ha-icon{align-self:center}.navtiles.compact .taskcard>strong{grid-row:1}.navtiles.compact .taskcard>.setpill{grid-row:2}.navtiles.compact .taskcard>small{grid-row:3}.navtiles.compact .taskcard>.navfacts{grid-row:4;align-self:end}.navtiles.compact.equal{grid-auto-rows:1fr}.navtiles.compact.equal .taskcard{grid-row:auto;grid-template-rows:auto auto auto auto;align-content:start;align-items:start}.sumfollow{justify-self:start;font-size:calc(12.5px*var(--hk-fs,1))}.sumfollow.on{text-decoration:underline}@media(max-width:700px){.findsum{grid-template-columns:1fr}.sumall{margin-top:0}}.hintrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;margin-bottom:0}.hintbtn .hshort{display:none}@media(max-width:600px){.hintrow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}.hintrow::-webkit-scrollbar{display:none}.hintlabel{display:none}.hintbtn{flex:none}.hintbtn .hlong{display:none}.hintbtn .hshort{display:inline}}.hintlabel{font-size:calc(12px*var(--hk-fs,1));font-weight:600;color:var(--hk-muted);text-transform:uppercase;letter-spacing:.04em}.hintbtn{display:inline-flex;gap:6px;align-items:center;padding:5px 12px;border-radius:99px;border:1px solid var(--hk-border);background:var(--hk-soft);font:inherit;color:inherit;cursor:pointer}.hintbtn.warn{background:color-mix(in srgb,var(--hk-amber) 14%,var(--hk-surface))}.hintbtn.act{border-color:var(--hk-blue-solid);background:var(--hk-blue-solid);color:var(--hk-on);font-weight:600}.hintbtn.on{border-color:var(--hk-blue-solid)}.hintbtn ha-icon{--mdc-icon-size:18px}.chip.sub{border-style:dashed}
+      .findsum{display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:10px 14px;align-items:start;margin-bottom:12px}.sumall{display:grid;gap:4px;margin-top:22px}.sumrows{display:grid;gap:8px;min-width:0}.findsum .sumgroup{display:grid;gap:4px}.findsum .sumgrouphead{margin:0 0 0 2px;font-weight:600}.sumtile.zero{background:transparent;border-style:dashed;border-left-style:solid;box-shadow:none}.sumtile.zero .sumvalue{color:var(--hk-muted);font-weight:500}.findsum .sumgrouphead.zero{color:var(--hk-muted)}.dbfold{display:grid;gap:6px;padding:8px 16px 12px}.dbfold .sectionlabel{margin-top:4px}.dbshare{display:flex;align-items:center;gap:10px;min-width:140px}.foldhead .dbshare{width:260px}.dbshare .sysshare{flex:1}.dbshare b{min-width:3.2em;text-align:right;font-weight:500}.findsum{grid-template-columns:repeat(calc(var(--k,5) + 1),minmax(0,1fr));grid-template-rows:auto 1fr auto 1fr;gap:6px 8px;align-items:stretch}.findsum .sumall{grid-column:1;grid-row:2/5;margin-top:0;display:grid}.findsum .sumhead{grid-column:2/-1;display:flex;align-items:end}.findsum .sumrow{display:contents}.findsum .sumrow>.sumtile{grid-row:var(--r)}.findsum .sumtile{grid-template-rows:auto auto 1fr 12px auto}.findsum .sumtile>.ibar{grid-row:4;align-self:end;margin-top:0}.findsum .sumtile>.spark-row{grid-row:5}.findsum .sumtile .sumlabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sumtotal{position:relative}.sumtotal .sumstretch{position:absolute;inset:0;border:0;border-radius:inherit;background:none;cursor:pointer;padding:0}.sumtotal:hover{background:var(--hk-soft)}.sumtotal>.sumsubs{grid-row:3;align-self:start;display:grid;gap:2px;justify-items:start;position:relative;z-index:1;pointer-events:none}.sumtotal>.sumsubs .sumfollow{pointer-events:auto;text-align:left;padding:0;margin:0}@media(max-width:760px){.findsum{display:block}.findsum .sumall{margin-bottom:8px}.findsum .sumhead{margin:8px 0 4px}.findsum .sumrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:6px}.findsum .sumrow>.sumtile{grid-row:auto}}.findsum button.sumgrouphead{justify-self:start;display:inline-flex;align-items:center;gap:4px;padding:1px 9px 1px 7px;border:1px solid var(--hk-border);border-radius:999px;background:var(--hk-surface);box-shadow:var(--hk-sh1);font:inherit;font-size:calc(12px*var(--hk-fs,1));font-weight:600;cursor:pointer;margin-left:0}.findsum button.sumgrouphead:hover{background:var(--hk-soft)}.findsum button.sumgrouphead[aria-pressed=true]{border-color:var(--hk-blue);color:var(--hk-blue-text);background:color-mix(in srgb,var(--hk-blue) 9%,var(--hk-surface))}.findsum button.sumgrouphead ha-icon{--mdc-icon-size:14px}.findsum button.sumgrouphead[aria-pressed=true] ha-icon{display:none}.findsum button.sumgrouphead[aria-pressed=true]:before{content:"\\2713";margin-right:.2em}.findsum .sumgrouphead.red{color:color-mix(in srgb,var(--hk-red) 75%,var(--hk-muted))}.findsum .sumgrouphead.warn{color:color-mix(in srgb,var(--hk-amber) 75%,var(--hk-muted))}.sumtiles.compact{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.sumtiles.compact .sumtile{padding:8px 10px;gap:0}.sumtiles.compact .sumvalue{font-size:calc(19px*var(--hk-fs,1))}.sumtiles.compact .spark{height:24px}.sumtiles.compact .spark-row{padding-top:2px}.sumtiles.compact small{font-size:calc(11.5px*var(--hk-fs,1))}/* Every tile of a row shares four lines: title, figure, the text that may run over several lines, and the curve at the bottom; the free space sits between text and curve. */.sumtiles,.sumtiles.even{grid-auto-rows:auto}.sumtile{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:2px;align-content:start}.sumtiles.compact .sumtile{row-gap:0}.sumtile>.sumlabel{grid-row:1}.sumtile>.sumvalue{grid-row:2}.sumtile>small{grid-row:3;align-self:start}.sumtile>.spark-row{grid-row:4;align-self:end;margin-top:0}.kpis{grid-auto-rows:auto}.kpis>.kpi{display:grid;grid-row:span 5;grid-template-rows:subgrid;row-gap:2px;align-content:start}.kpis>.kpi>.kpilabel{grid-row:1}.kpis>.kpi>strong{grid-row:2}.kpis>.kpi>.kpisub{grid-row:3;align-self:start}.kpis>.kpi>.ibar{grid-row:4;align-self:end}.kpis>.kpi>.spark-row{grid-row:5;align-self:end;margin-top:0}.navtiles.compact{grid-auto-rows:auto}.navtiles.compact .taskcard{grid-row:span 4;grid-template-rows:subgrid;align-content:start;align-items:start}.navtiles.compact .taskcard>ha-icon{align-self:center}.navtiles.compact .taskcard>strong{grid-row:1}.navtiles.compact .taskcard>.setpill{grid-row:2}.navtiles.compact .taskcard>small{grid-row:3}.navtiles.compact .taskcard>.navfacts{grid-row:4;align-self:end}.navtiles.compact.equal{grid-auto-rows:1fr}.navtiles.compact.equal .taskcard{grid-row:auto;grid-template-rows:auto auto auto auto;align-content:start;align-items:start}.sumfollow{justify-self:start;font-size:calc(12.5px*var(--hk-fs,1))}.sumfollow.on{text-decoration:underline}@media(max-width:700px){.findsum{grid-template-columns:1fr}.sumall{margin-top:0}}.hintrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;margin-bottom:0}.hintbtn .hshort{display:none}@media(max-width:600px){.hintrow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}.hintrow::-webkit-scrollbar{display:none}.hintlabel{display:none}.hintbtn{flex:none}.hintbtn .hlong{display:none}.hintbtn .hshort{display:inline}}.hintlabel{font-size:calc(12px*var(--hk-fs,1));font-weight:600;color:var(--hk-muted);text-transform:uppercase;letter-spacing:.04em}.hintbtn{display:inline-flex;gap:6px;align-items:center;padding:5px 12px;border-radius:99px;border:1px solid var(--hk-border);background:var(--hk-soft);font:inherit;color:inherit;cursor:pointer}.hintbtn.warn{background:color-mix(in srgb,var(--hk-amber) 14%,var(--hk-surface))}.hintbtn.act{border-color:var(--hk-blue-solid);background:var(--hk-blue-solid);color:var(--hk-on);font-weight:600}.hintbtn.on{border-color:var(--hk-blue-solid)}.hintbtn ha-icon{--mdc-icon-size:18px}.chip.sub{border-style:dashed}.chip.sub:not(.active){color:var(--hk-text)}
       .chip.warn:not(.active){border-color:var(--hk-amber)}
       .ibar{display:flex;gap:2px;height:6px;margin-top:6px;border-radius:3px;overflow:hidden}.ibar i{display:block;min-width:4px;border-radius:2px;background:var(--hk-muted)}.ibar .high{background:var(--hk-red)}.ibar .medium{background:var(--hk-amber)}.ibar .low{background:var(--hk-blue)}
       .findsum.topics{grid-template-rows:auto}.findsum.topics .sumall{grid-row:1;margin-top:0}.findsum.topics .sumrow>.sumtile{grid-row:1}@media(max-width:760px){.findsum.topics .sumall,.findsum.topics .sumrow>.sumtile{grid-row:auto}}.chipsep{width:1px;align-self:stretch;background:var(--hk-border);margin:0 4px}.fnotes{flex-wrap:wrap;gap:6px}.fchip{display:inline-flex;gap:4px;align-items:center}.fchip ha-icon{--mdc-icon-size:14px}
@@ -2077,14 +2077,24 @@ class ListsMixin {
     return `<details class="rowmenu"><summary aria-label="${this.esc(this.t("rowMenu"))}"><ha-icon icon="mdi:dots-vertical"></ha-icon></summary><div class="menupop">${list.map(e => (!e ? '<hr class="menusep">' : e[2].startsWith("href=") ? `<a class="menuitem${e[3] ? " tech" : ""}" ${e[2]} target="_blank" rel="noopener noreferrer"><ha-icon icon="${e[0]}"></ha-icon>${this.t(e[1])}</a>` : `<button type="button" class="menuitem${e[3] ? " tech" : ""}" ${e[2]}><ha-icon icon="${e[0]}"></ha-icon>${this.t(e[1])}</button>`)).join("")}</div></details>`;
   }
 
-  selTools(id, count, clearAttr) {
-    if (!count) return this.selOnly?.[id] ? this.selOnlyButton(id, count) : "";
-    return `<button class="btn quiet" ${clearAttr}>${this.t("clearSelection")}</button>${this.selOnlyButton(id, count)}<span class="selcount" role="status">${this.t("selectedCount", { count })}</span>`;
+  // Whether "show only the picked" narrows the list: only while something is picked, so clearing the pick shows everything again.
+  selOnlyOn(id, count) {
+    return Boolean(this.selOnly?.[id]) && count > 0;
   }
 
-  selOnlyButton(id, count) {
+  // The left part of the bar over a list with picks: chips to pick everything and to clear, and the pill that counts the picks and shows only them.
+  // `all` is { attr, label } for a list that can pick everything it shows.
+  // `pill` may bring its own text and mark the picks as too many ({ label, over }).
+  selTools(id, count, clearAttr, all = null, pill = {}) {
+    if (!count && this.selOnly?.[id]) this.selOnly[id] = false;
+    const allChip = all ? `<button type="button" class="chip" ${all.attr} ${all.disabled ? "disabled" : ""}>${all.label}</button>` : "";
+    if (!count) return allChip;
+    return `${allChip}<button type="button" class="chip" ${clearAttr}>${this.t("clearSelection")}</button>${this.selPill(id, count, pill)}`;
+  }
+
+  selPill(id, count, { label = "", over = false } = {}) {
     const on = Boolean(this.selOnly?.[id]);
-    return `<button class="btn quiet" data-sel-only="${this.esc(id)}" aria-pressed="${on}" ${count || on ? "" : "disabled"}>${this.t(on ? "showAll" : "showSelectedOnly")}</button>`;
+    return `<button type="button" class="selcount selpill${over ? " over" : ""}" data-sel-only="${this.esc(id)}" aria-pressed="${on}" title="${this.esc(this.t(on ? "showAll" : "showSelectedOnly"))}"><ha-icon icon="${on ? "mdi:eye-off-outline" : "mdi:eye-outline"}"></ha-icon>${label || this.t("selectedCount", { count: this.formatNumber(count) })}</button>`;
   }
 
   // A range of ticks with Shift-click: from the last ticked row to this one, within the shown page.
@@ -3100,7 +3110,7 @@ class FindingsMixin {
       return `<th scope="col"${cls ? ` class="${cls}"` : ""} aria-sort="${on ? (st.dir === "desc" ? "descending" : "ascending") : "none"}"><button type="button" class="thbtn" data-lsort="findings|${key}|${dir}">${this.t(label)}${on ? ` <span aria-hidden="true">${st.dir === "desc" ? "↓" : "↑"}</span>` : ""}</button></th>`;
     };
     const idSort = `<button type="button" class="thbtn th-alt tech" data-lsort="findings|id|asc">${this.t("sortId")}${st.sort === "id" ? ` <span aria-hidden="true">${st.dir === "desc" ? "↓" : "↑"}</span>` : ""}</button>`;
-    const head = `<thead><tr><th scope="col" class="selcol"><span class="sr-only">${this.t("selectPage")}</span></th><th scope="col" aria-sort="${["name", "id"].includes(st.sort) ? (st.dir === "desc" ? "descending" : "ascending") : "none"}"><button type="button" class="thbtn" data-lsort="findings|name|asc">${this.t("sortName")}${st.sort === "name" ? ` <span aria-hidden="true">${st.dir === "desc" ? "↓" : "↑"}</span>` : ""}</button>${idSort}</th>${header("topic", "sortTopic")}${header("impact", "sortImpact", "desc")}${header("certainty", "sortCertainty", "desc", "tech")}${header("since", "sortSince", "desc")}${header("rule", "sortRuleGrouped")}<th scope="col"><span class="sr-only">${this.t("rowMenu")}</span></th></tr></thead>`;
+    const head = `<thead><tr><th scope="col" class="selcol">${this.findHeadBox()}</th><th scope="col" aria-sort="${["name", "id"].includes(st.sort) ? (st.dir === "desc" ? "descending" : "ascending") : "none"}"><button type="button" class="thbtn" data-lsort="findings|name|asc">${this.t("sortName")}${st.sort === "name" ? ` <span aria-hidden="true">${st.dir === "desc" ? "↓" : "↑"}</span>` : ""}</button>${idSort}</th>${header("topic", "sortTopic")}${header("impact", "sortImpact", "desc")}${header("certainty", "sortCertainty", "desc", "tech")}${header("since", "sortSince", "desc")}${header("rule", "sortRuleGrouped")}<th scope="col"><span class="sr-only">${this.t("rowMenu")}</span></th></tr></thead>`;
     // In the grouped view every row is a head of an object; in the flat one every row is a finding.
     const rows = body ?? items.map(item => (item.findings ? this.nodeRows(item) : this.findingTableRow(item))).join("");
     return `<div class="tablewrap lt findings-table${this.isDenseList("findings") ? " dense-list" : ""}"><table>${head}<tbody>${rows}</tbody></table></div>${this.showTech() ? "" : `<p class="factnote moreline"><button type="button" class="btn quiet" data-pref="details|true"><ha-icon icon="mdi:unfold-more-horizontal"></ha-icon>${this.t("showMore")}</button><span>${this.t("showMoreHint")}</span></p>`}`;
@@ -3247,7 +3257,9 @@ class FindingsMixin {
     const wiz = this.fcWizOn();
     if (this._impactOnce) { this.visibleFindings(); if (this.lv.findings) { this.lv.findings.f.impact = this._impactOnce; this.persistLv("findings"); } this._impactOnce = ""; }
     const all = this.sortedFindings(true).filter(f => this.statusMatch(f));
-    const sorted = this.visibleFindings();
+    const visible = this.visibleFindings();
+    this._findAll = visible.map(f => f.key);
+    const sorted = this.selOnlyOn("findings", this.findSel.size) ? visible.filter(f => this.findSel.has(f.key)) : visible;
     const st = this.lv.findings;
     const open = ["", "all"].includes(this.findingStatus) && !this.findingFilter && !this.findingFollowers && !this.findingAfter && !this.findingOutages && !this.findingHeld && !this.findingStage && !this.findingCause && !this.findingCorr && !st.q && !Object.values(st.f || {}).some(Boolean);
     const grouped = !this.showFollowers;
@@ -3361,36 +3373,40 @@ class FindingsMixin {
     const total = `<span class="viewcount" role="status">${this.esc(count)}</span>`;
     const facts = this.selectionFacts(), picked = facts.picked;
     const labels = picked.filter(f => LABEL_TYPES.includes(this.findObject(this.findingKey(f))?.object_type) && f.classification !== "broken_reference").length, marks = this.markTargets().size;
-    const part = k => (k < n ? ` (${this.t("fselPart", { n: this.formatNumber(k), m: this.formatNumber(n) })})` : "");
     const excs = picked.filter(f => { const o = this.findObject(this.findingKey(f)); return o && this.excTargetOf(o); }).length;
-    // The same actions in the same order as the menu of a row: first about the findings, then about their objects.
-    const btn = (icon, label, attr, extra = "") => `<button ${attr.includes("class=") ? "" : 'class="btn" '}${attr}><ha-icon icon="${FSEL_ICONS[icon] || icon}"></ha-icon>${this.t(label)}${extra}</button>`;
     const exc = this.excForm?.here && this.exc ? this.excFormHtml(this.excForm) : "";
     if (!pageRows.length && !n) return exc;
-    // Nothing picked: only the box that picks the page. The actions appear with the first pick.
-    const onPage = this._findPage.filter(key => this.findSel.has(key)).length, whole = this._findPage.length;
-    const pageBox = `<label class="selall"><input type="checkbox" class="selbox" data-fsel-page ${whole && onPage === whole ? "checked" : ""} ${onPage && onPage < whole ? "data-partial" : ""}> ${this.t("selectPage")}</label>`;
-    if (!n) return `<div class="toolbar selhead">${pageBox}<span class="toolgap"></span>${total}</div>${exc}`;
+    // The page box sits in the column head; the bar has the chips, the pill of the picks and, from the first pick on, one menu.
+    const nf = k => this.formatNumber(k), every = this._findAll || [];
+    const tools = this.selTools("findings", n, "data-fsel-clear", { attr: "data-fsel-all", label: this.t("selAllOfList", { count: nf(every.length) }), disabled: !every.length });
+    if (!n) return `<div class="toolbar selhead">${tools}<span class="toolgap"></span>${total}</div>${exc}`;
     const decidable = facts.open.length + facts.user.length, one = set => [...set][0];
-    // The three ways to settle findings sit in one menu, each with what it reaches; the forms behind them are unchanged.
-    const item = (icon, label, attr, sub) => `<button type="button" class="menuitem" ${attr}><ha-icon icon="${FSEL_ICONS[icon] || icon}"></ha-icon><span>${this.t(label)}<small>${sub}</small></span></button>`;
-    const nf = k => this.formatNumber(k);
-    const actions = [
-      decidable ? item("status", facts.open.length ? "actDecide" : "fselStatusChange", 'data-fsel-state="status"', this.t("actDecideSub", { n: nf(decidable) })) : "",
-      marks ? item("mark", "actMark", 'data-fsel-state="mark"', this.t("actMarkSub", { n: nf(marks) })) : "",
-      excs ? `${decidable || marks ? '<hr class="menusep">' : ""}${item("exc", "actRule", "data-fsel-exc", this.t("actRuleSub", { n: nf(excs) }))}` : "",
-    ].join("");
-    const menu = actions ? `<details class="rowmenu actmenu"><summary class="btn primary">${this.t("actMenu")}<ha-icon icon="mdi:chevron-down"></ha-icon></summary><div class="menupop">${actions}</div></details>` : "";
-    const buttons = [
-      facts.user.length ? btn("mdi:eye-outline", "findUnhide", `class="btn${facts.open.length ? "" : " accent"}" data-fsel-unhide`, part(facts.user.length)) : "",
-      facts.mark.length ? btn("mdi:bookmark-remove-outline", "fselMarkClear", "data-fsel-markclear", part(facts.mark.length)) : "",
-      facts.owners.size === 1 ? btn("mark", "hiddenMarkOpen", `data-object="${this.esc(one(facts.owners))}"`) : "",
-      facts.rules.size === 1 ? btn("exc", "hiddenRuleOpen", `data-exc-goto="${this.esc(one(facts.rules))}"`) : "",
-      facts.objects.size === 1 ? btn("mdi:open-in-new", "hiddenObjectOpen", `data-object="${this.esc(one(facts.objects))}"`) : "",
-      labels ? btn("label", "fselLabel", 'data-fsel-state="label" class="btn ha"', part(labels)) : "",
-      menu,
-    ].join("");
-    return `<div class="toolbar selhead">${pageBox}<span class="selcount" role="status">${this.t("selectedCount", { count: n })}</span><button class="btn quiet selclear" data-fsel-clear>${this.t("clearSelection")}</button><span class="toolgap"></span><div class="fbtns">${buttons || `<small class="muted">${this.t("fselNothing")}</small>`}</div>${total}</div>${this.bulkForm()}${exc}`;
+    // Every action sits in the menu, each with what it reaches; the forms behind them are unchanged.
+    const item = (icon, label, attr, sub = "") => `<button type="button" class="menuitem" ${attr}><ha-icon icon="${FSEL_ICONS[icon] || icon}"></ha-icon><span>${this.t(label)}${sub ? `<small>${sub}</small>` : ""}</span></button>`;
+    const some = k => (k < n ? this.t("fselPart", { n: nf(k), m: nf(n) }) : "");
+    const groups = [
+      [
+        decidable ? item("status", facts.open.length ? "actDecide" : "fselStatusChange", 'data-fsel-state="status"', this.t("actDecideSub", { n: nf(decidable) })) : "",
+        marks ? item("mark", "actMark", 'data-fsel-state="mark"', this.t("actMarkSub", { n: nf(marks) })) : "",
+        labels ? item("label", "fselLabel", 'data-fsel-state="label"', some(labels)) : "",
+        facts.user.length ? item("mdi:eye-outline", "findUnhide", "data-fsel-unhide", some(facts.user.length)) : "",
+        facts.mark.length ? item("mdi:bookmark-remove-outline", "fselMarkClear", "data-fsel-markclear", some(facts.mark.length)) : "",
+      ],
+      [excs ? item("exc", "actRule", "data-fsel-exc", this.t("actRuleSub", { n: nf(excs) })) : ""],
+      [
+        facts.owners.size === 1 ? item("mark", "hiddenMarkOpen", `data-object="${this.esc(one(facts.owners))}"`) : "",
+        facts.rules.size === 1 ? item("exc", "hiddenRuleOpen", `data-exc-goto="${this.esc(one(facts.rules))}"`) : "",
+        facts.objects.size === 1 ? item("mdi:open-in-new", "hiddenObjectOpen", `data-object="${this.esc(one(facts.objects))}"`) : "",
+      ],
+    ].map(g => g.filter(Boolean).join("")).filter(Boolean).join('<hr class="menusep">');
+    const menu = groups ? `<details class="rowmenu actmenu"><summary class="btn primary">${this.t("actMenu")}<ha-icon icon="mdi:chevron-down"></ha-icon></summary><div class="menupop">${groups}</div></details>` : "";
+    return `<div class="toolbar selhead">${tools}<span class="toolgap"></span><div class="fbtns">${menu || `<small class="muted">${this.t("fselNothing")}</small>`}</div>${total}</div>${this.bulkForm()}${exc}`;
+  }
+
+  // The box of the column head: ticks every finding of the shown page, half-ticked when only some are picked.
+  findHeadBox() {
+    const page = this._findPage || [], on = page.filter(key => this.findSel.has(key)).length;
+    return page.length ? `<input type="checkbox" class="selbox" data-fsel-page ${on === page.length ? "checked" : ""} ${on && on < page.length ? "data-partial" : ""} aria-label="${this.esc(this.t("selectPage"))}">` : "";
   }
 
   // Takes the selected findings that the person had hidden, marked as known or snoozed back into the open list.
@@ -3583,8 +3599,18 @@ class FindingsMixin {
     // The step that answers a finding comes first in its row, as the primary button.
     const fixes = item ? this.fixItems(item, key).items : [];
     const steps = f => fixes.filter(it => it.finding === f.key).map(it => `<button class="btn primary" ${it.attr} title="${this.esc(this.t(it.hint))}"><ha-icon icon="${it.icon}"></ha-icon>${it.label}</button>`).join("");
+    // The step that answers the finding stays a button of its own; what else can be done sits in one menu, from two actions on.
+    const others = f => [
+      ...(f.rule_id === "entity.possible_duplicate" ? [{ icon: "mdi:check-circle-outline", label: "notDuplicate", attr: `data-notdup="${this.esc(f.key)}"` }, { icon: "mdi:open-in-new", label: "openTwin", attr: `data-object="entity:${this.esc(f.affected_object)}"` }] : []),
+      { icon: FSEL_ICONS.status, label: "fselStatus", attr: `data-decide-open="${this.esc(f.key)}" data-decide-preset="keep"` },
+    ];
+    const more = f => {
+      const list = others(f);
+      if (list.length === 1) return `<button class="btn" ${list[0].attr}><ha-icon icon="${list[0].icon}"></ha-icon>${this.t(list[0].label)}</button>`;
+      return `<details class="rowmenu actmenu"><summary class="btn">${this.t("actMenu")}<ha-icon icon="mdi:chevron-down"></ha-icon></summary><div class="menupop">${list.map(o => `<button type="button" class="menuitem" ${o.attr}><ha-icon icon="${o.icon}"></ha-icon><span>${this.t(o.label)}</span></button>`).join("")}</div></details>`;
+    };
     const hideButton = f => this.decide && this.decide.key === f.key ? `${this.decideTabs(f, "status")}${this.decideForm(f)}`
-      : `<div class="fbtns">${steps(f)}${f.rule_id === "entity.possible_duplicate" ? `<button class="btn" data-notdup="${this.esc(f.key)}"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${this.t("notDuplicate")}</button><button class="btn" data-object="entity:${this.esc(f.affected_object)}"><ha-icon icon="mdi:open-in-new"></ha-icon>${this.t("openTwin")}</button>` : ""}<button class="btn" data-decide-open="${this.esc(f.key)}" data-decide-preset="keep"><ha-icon icon="${FSEL_ICONS.status}"></ha-icon>${this.t("fselStatus")}</button></div>`;
+      : `<div class="fbtns">${steps(f)}${more(f)}</div>`;
     const rows = list.map(f => `<div class="finding"><div><strong>${this.esc(this.findingTitle(f))}</strong><small class="fmeta">${this.pill(f.classification)}<span class="nw">${this.t("certainty")}: ${Math.round(f.confidence * 100)} %</span>${f.ignored ? ` · ${this.esc(f.mark ? this.markLine(f.mark) : this.decisionLabel(f))}` : ""}${f.resurfaced ? ` · ${this.t("dueLabel")}` : ""}</small>${f.impact ? `<small>${this.esc(this.impactLine(f))}</small>` : ""}${this.corrLine(f.key) ? `<small>${this.corrLine(f.key)}</small>` : ""}${f.ignored_by === "label" ? `<small>${this.t("ignoredByLabel")}</small>` : ""}${f.ignore_rule ? `<small>${this.esc(this.findingRuleLine(f))}</small>` : ""}</div>${f.ignored_by === "label" || f.ignored_by === "mark" || f.ignored_by === "rule" ? "" : f.ignored ? `<button class="btn" data-ignore="${this.esc(f.key)}" data-ignore-value="0"><ha-icon icon="mdi:eye-outline"></ha-icon>${this.t("showFinding")}</button>` : hideButton(f)}</div>`).join("");
     return rows;
   }
@@ -4052,7 +4078,7 @@ class SettingsMixin {
     const st = this.lvState("decided", "name", "asc");
     this.setExporter("decided", "finding-status", [this.t("hidColObject"), "ID", this.t("hidColFinding"), this.t("decColStatus"), this.t("decideReason"), this.t("decColUntil"), this.t("decColNow")], () => refined.map(f => [objectName(f), f.object_id, this.findingTitle(f), this.t(state(f) === "due" ? "dueLabel" : `state_${state(f)}`), f.ignore_info?.reason || "", until(f), nowText(f)]));
     const bar = list.length >= 6 || st.q || Object.values(st.f).some(Boolean) ? this.listBar("decided", { sorts, filters }) : "";
-    const sorted = this.refine("decided", this.selOnly?.decided ? list.filter(f => sel.has(f.key)) : list, { text: f => [objectName(f), f.object_id, this.findingTitle(f), f.ignore_info?.reason].join(" "), filters: { state: (f, v) => state(f) === v, now: (f, v) => now(f) === v }, sorts, tie: f => f.key });
+    const sorted = this.refine("decided", this.selOnlyOn("decided", sel.size) ? list.filter(f => sel.has(f.key)) : list, { text: f => [objectName(f), f.object_id, this.findingTitle(f), f.ignore_info?.reason].join(" "), filters: { state: (f, v) => state(f) === v, now: (f, v) => now(f) === v }, sorts, tie: f => f.key });
     const refined = [...sorted.filter(f => !f.ignored), ...sorted.filter(f => f.ignored && !f.resting), ...sorted.filter(f => f.resting)];
     const pg = this.paginate("decided", refined);
     st.shown = refined.length;
@@ -4081,7 +4107,7 @@ class SettingsMixin {
     // The resting ones stand under a head of their own: they do nothing right now.
     table = table.replace(/<tr class="static restrow/, `<tr class="static grprow"><td colspan="${columns.length}">${this.t("decRestHead", { n: this.formatNumber(restN) })}</td></tr>$&`);
     const n = sel.size;
-    const tools = list.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("decided", n, "data-dec-clear")}<span class="toolgap"></span><button type="button" class="btn" data-dec-remove ${n ? "" : "disabled"}><ha-icon icon="mdi:delete-outline"></ha-icon>${this.t("decRemoveN", { n: this.formatNumber(n) })}</button></div>` : "";
+    const tools = list.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("decided", n, "data-dec-clear")}<span class="toolgap"></span>${n ? `<button type="button" class="btn" data-dec-remove><ha-icon icon="mdi:delete-outline"></ha-icon>${this.t("decRemoveN", { n: this.formatNumber(n) })}</button>` : ""}</div>` : "";
     const body = refined.length ? table : `<div class="emptymsg">${list.length ? this.noMatches("decided") : `<ha-icon icon="mdi:check-circle-outline"></ha-icon>${this.t("decStatusNone")}`}</div>`;
     return `<section class="panel" id="hk-sec-status"><div class="panelhead"><div><h2>${this.t("decStatusTitle")} (${this.formatNumber(list.length)})</h2><p>${this.t("decStatusHint")}</p></div></div>${bar}${tools}${body}${pg.footer}</section>`;
   }
@@ -4100,7 +4126,7 @@ class SettingsMixin {
     const st = this.lvState("marks", "name", "asc");
     this.setExporter("marks", "marks", [this.t("hidColObject"), "ID", this.t("type"), this.t("markKind"), this.t("markReason"), this.t("markReview"), this.t("decColEffect")], () => refined.map(o => [o.name || o.object_id, o.object_id, this.t(o.object_type), this.t(`mark_${o.mark.kind}`), o.mark.reason || "", o.mark.until ? this.formatDate(o.mark.until) : "", effect(o)]));
     const bar = list.length >= 6 || st.q || Object.values(st.f).some(Boolean) ? this.listBar("marks", { sorts, filters }) : "";
-    const sorted = this.refine("marks", this.selOnly?.marks ? list.filter(o => (this.markSel ||= new Set()).has(keyOf(o))) : list, { text: o => [o.name, o.object_id, o.mark.reason, this.t(`mark_${o.mark.kind}`)].join(" "), filters: { kind: (o, v) => (v === "due" ? Boolean(o.mark_due) : v === "quiet" ? isQuiet(o) : o.mark.kind === v) }, sorts, tie: o => keyOf(o) });
+    const sorted = this.refine("marks", this.selOnlyOn("marks", (this.markSel ||= new Set()).size) ? list.filter(o => (this.markSel ||= new Set()).has(keyOf(o))) : list, { text: o => [o.name, o.object_id, o.mark.reason, this.t(`mark_${o.mark.kind}`)].join(" "), filters: { kind: (o, v) => (v === "due" ? Boolean(o.mark_due) : v === "quiet" ? isQuiet(o) : o.mark.kind === v) }, sorts, tie: o => keyOf(o) });
     const refined = [...sorted.filter(o => o.mark_due), ...sorted.filter(o => !o.mark_due && isQuiet(o)), ...sorted.filter(o => !o.mark_due && !isQuiet(o))];
     const pg = this.paginate("marks", refined);
     st.shown = refined.length;
@@ -4124,10 +4150,9 @@ class SettingsMixin {
     ];
     const table = refined.length ? this.listTable("marks", columns, pg.rows, { cls: "objs", rowAttrs: o => `class="static${o.mark_due ? " duerow" : ""}"` }) : "";
     const n = sel.size, bulk = this.markBulk;
-    const tools = list.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("marks", n, "data-mark-selclear")}<span class="toolgap"></span>
-      <button type="button" class="btn" data-mark-bulk="review" ${n ? "" : "disabled"}><ha-icon icon="mdi:calendar-refresh-outline"></ha-icon>${this.t("marksReviewN", { n: this.formatNumber(n) })}</button>
-      <button type="button" class="btn" data-mark-bulk="kind" ${n ? "" : "disabled"}><ha-icon icon="mdi:swap-horizontal"></ha-icon>${this.t("marksKindN", { n: this.formatNumber(n) })}</button>
-      <button type="button" class="btn" data-mark-bulk-remove ${n ? "" : "disabled"}><ha-icon icon="mdi:bookmark-remove-outline"></ha-icon>${this.t("marksRemoveN", { n: this.formatNumber(n) })}</button></div>${n && bulk ? this.markBulkForm(bulk, n) : ""}` : "";
+    const bulkItem = (icon, label, attr) => `<button type="button" class="menuitem" ${attr}><ha-icon icon="${icon}"></ha-icon><span>${this.t(label, { n: this.formatNumber(n) })}</span></button>`;
+    const bulkMenu = n ? `<div class="fbtns"><details class="rowmenu actmenu"><summary class="btn primary">${this.t("actMenu")}<ha-icon icon="mdi:chevron-down"></ha-icon></summary><div class="menupop">${bulkItem("mdi:calendar-refresh-outline", "marksReviewN", 'data-mark-bulk="review"')}${bulkItem("mdi:swap-horizontal", "marksKindN", 'data-mark-bulk="kind"')}${bulkItem("mdi:bookmark-remove-outline", "marksRemoveN", "data-mark-bulk-remove")}</div></details></div>` : "";
+    const tools = list.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("marks", n, "data-mark-selclear")}<span class="toolgap"></span>${bulkMenu}</div>${n && bulk ? this.markBulkForm(bulk, n) : ""}` : "";
     const body = refined.length ? table : `<div class="emptymsg">${list.length ? this.noMatches("marks") : `<ha-icon icon="mdi:bookmark-outline"></ha-icon>${this.t("decMarksNone")}`}</div>`;
     const pickerOpen = this._picker?.name === "markadd" && this._picker.open;
     return `<section class="panel${pickerOpen ? " ovvis" : ""}" id="hk-sec-marks"><div class="panelhead"><div><h2>${this.t("decMarksTitle")} (${this.formatNumber(list.length)})</h2><p>${this.t("decMarksHint")}</p></div><div class="apmanual">${this.pickerBox("markadd", this.t("marksSet"))}</div></div>${bar}${tools}${body}${pg.footer}</section>`;
@@ -5080,7 +5105,7 @@ class CleanupMixin {
       text: r => [r.item.name, r.item.object_id, r.item.platform, r.item.manufacturer, r.item.model].join(" "),
       filters: { classification: (r, v) => r.finding && r.finding.classification === v, readiness: (r, v) => (v === "ready") === ready(r) }, sorts, tie: r => r.item.object_id,
     });
-    const shownList = this.selOnly?.cleanup ? list.filter(r => this.cleanupSel.has(r.item.object_id)) : list;
+    const shownList = this.selOnlyOn("cleanup", this.cleanupSel.size) ? list.filter(r => this.cleanupSel.has(r.item.object_id)) : list;
     const pg = this.paginate("cleanup", shownList);
     this._cleanupVisible = pg.rows.filter(ready).map(r => r.item.object_id);
     const badge = r => {
@@ -5266,7 +5291,7 @@ class CleanupMixin {
       { key: "follow", label: "journalColFollow", sortable: false, cell: plan => (fuState(plan) ? `<span class="pill ${this.followupTone(fuState(plan))}">${this.t(`fu_${fuState(plan)}`)}</span>` : "–") },
       { key: "act", label: "journalColAct", sortable: false, cell: plan => `<span class="jbtns">${this.planStale(plan) ? `<button type="button" class="btn small" data-plan-renew="${this.esc(plan.plan_id)}" ${this.cleanupBusy ? "disabled" : ""}><ha-icon icon="mdi:refresh"></ha-icon>${this.t("renewPlan")}</button>` : ""}${plan.executed || plan.run ? "" : this.rowMenuHtml([["mdi:delete-outline", "deletePlan", `data-plan-delete="${this.esc(plan.plan_id)}"`]])}</span>` },
     ];
-    const table = plans.length ? this.sysList("journal", plans, {
+    const table = plans.length ? this.sysList("journal", this.selOnlyOn("journal", this.mergeSel?.size || 0) ? plans.filter(p => this.mergeSel.has(p.plan_id)) : plans, {
       sort: "date", dir: "desc", columns, cls: "journal", empty: "journalEmpty",
       rowAttrs: plan => `data-plan-open="${this.esc(plan.plan_id)}" tabindex="0" role="button" aria-label="${this.esc(`${this.t("openPlan")}: ${this.formatDate(plan.created_at)}`)}"`,
       sorts: [
@@ -5282,7 +5307,7 @@ class CleanupMixin {
       text: p => `${this.formatDate(p.created_at)} ${this.t(`plan_status_${statusOf(p)}`)}`, tie: p => p.created_at,
     }) : `<div class="emptymsg mute"><ha-icon icon="mdi:clipboard-text-outline"></ha-icon><strong>${this.t("journalEmpty")}</strong>${this.t("journalEmptyNext")}<button class="btn" data-jump="repair">${this.t("repair")}</button></div>`;
     const picked = this.mergeSel?.size || 0;
-    const tools = plans.some(p => this.mergeable(p)) ? `<div class="toolbar${picked ? "" : " nosel"}"><button class="btn" data-merge ${picked >= 2 && picked <= 10 && !this.cleanupBusy ? "" : "disabled"}${picked > 10 ? ` title="${this.esc(this.t("mergeTooMany"))}"` : ""}>${this.t("mergeButton", { count: picked })}</button><button class="btn dangersoft" data-merge-delete ${picked && !this.cleanupBusy ? "" : "disabled"}>${this.t("deleteSelectedPlans", { count: picked })}</button><span class="selcount" aria-live="polite">${this.t("selectedCount", { count: picked })}</span>${this.viewCount(this.lv.journal?.shown ?? plans.length)}</div>` : "";
+    const tools = plans.some(p => this.mergeable(p)) ? `<div class="toolbar${picked ? "" : " nosel"}">${this.selTools("journal", picked, "data-merge-clear")}<span class="toolgap"></span>${picked ? `<button class="btn" data-merge ${picked >= 2 && picked <= 10 && !this.cleanupBusy ? "" : "disabled"}${picked > 10 ? ` title="${this.esc(this.t("mergeTooMany"))}"` : ""}>${this.t("mergeButton", { count: picked })}</button><button class="btn dangersoft" data-merge-delete ${this.cleanupBusy ? "disabled" : ""}>${this.t("deleteSelectedPlans", { count: picked })}</button>` : ""}${this.viewCount(this.lv.journal?.shown ?? plans.length)}</div>` : "";
     const journalCard = `<div class="panel"><div class="panelhead"><div><h2>${this.t("journalPlans")}</h2><p>${this.t("journalHint")}</p></div></div>${this.mergeNote ? `<div class="pad"><small role="status">${this.esc(this.mergeNote)}</small></div>` : ""}${tools}${table}</div>`;
     const removed = this.removed || [], purges = this.purges || [];
     const tabs = [
@@ -5539,7 +5564,8 @@ class InventoryMixin {
   inventory() {
     if (this.xp?.open) return this.xpView();
     const st = this.invState();
-    const rows = this.filtered();
+    const filteredRows = this.filtered();
+    const rows = this.selOnlyOn("inventory", this.invSel?.size || 0) ? filteredRows.filter(r => this.invSel.has(r.object_id)) : filteredRows;
     const pg = this.paginate("inventory", rows);
     this._invPage = pg.rows.filter(item => this.invSelectable(item)).map(item => item.object_id);
     const { types, statuses, labels } = this.memo("facets", [], () => ({
@@ -5582,7 +5608,7 @@ class InventoryMixin {
       { key: "menu", label: "rowMenu", menu: true, narrow: true, sortable: false, cell: item => this.rowMenuHtml(this.objectRowMenu({ key: this.objectKey(item) })) },
     ];
     const table = rows.length ? this.listTable("inventory", columns, pg.rows, { cls: "inv", rowAttrs: item => `data-object="${this.esc(this.objectKey(item))}" tabindex="0" role="button" aria-label="${this.esc(item.name)}"${this.tone(item.status) === "red" ? ' data-rowtone="red"' : ""}` }) : `<div class="emptymsg">${this.t("noResults")}</div>`;
-    return `<div class="stack">${tiles}<div class="panel">${bar}${idleHint}${helperMode ? this.helperIoBar(rows) : ""}${this.invSelBar(rows)}${table}${pg.footer || `<div class="tablefoot"><span>${this.formatNumber(rows.length)} ${this.t("of_total")} ${this.formatNumber(all.length)} ${this.t("shown")}</span></div>`}</div></div>`;
+    return `<div class="stack">${tiles}<div class="panel">${bar}${idleHint}${helperMode ? this.helperIoBar(rows) : ""}${this.invSelBar(rows, filteredRows)}${table}${pg.footer || `<div class="tablefoot"><span>${this.formatNumber(rows.length)} ${this.t("of_total")} ${this.formatNumber(all.length)} ${this.t("shown")}</span></div>`}</div></div>`;
   }
 
   // The types as a ring with a table beside it: the largest few, the rest behind a button. A row filters the list below (a
@@ -5631,11 +5657,54 @@ class InventoryMixin {
     return `<div class="panel">${this.fold("inv_types", { title: this.esc(this.t("byType")), pill: filtered ? this.t("invOfAll", { n: this.formatNumber(shown), total: this.formatNumber(all.length) }) : "" }, `<div class="invbody">${donut}<div class="tablewrap">${table}</div></div>`, true)}</div>`;
   }
 
-  nodeButton(key, label, tone = "") {
+  // Where an object stands: the floor and area that contain it, or those of the device it comes from. Not part of the origin chain.
+  locationPath(key) {
+    const above = k => this.edgesTo(k).filter(e => e.relation === "CONTAINS").map(e => e.source);
+    let start = key, via = null;
+    if (!above(start).length) {
+      const device = this.originParents(key).map(e => e.source).find(k => k.startsWith("device:") && above(k).length);
+      if (device) { start = device; via = device; }
+    }
+    const path = [];
+    for (let cur = start, i = 0; i < 3; i++) {
+      const next = above(cur)[0];
+      if (!next) break;
+      path.unshift(next);
+      cur = next;
+    }
+    return { path, via };
+  }
+
+  // The origin of an object is a chain: integration, device, entity. A parent that is also reached through
+  // another parent (the integration that provides the entity and owns its device) is dropped, so the chain is not drawn twice.
+  originParents(k) {
+    const parentsOf = x => this.edgesTo(x).filter(e => !USAGE_RELATIONS.includes(e.relation) && e.relation !== "CONTAINS");
+    const reach = (x, seen = new Set()) => { for (const e of parentsOf(x)) if (!seen.has(e.source)) { seen.add(e.source); reach(e.source, seen); } return seen; };
+    const edges = parentsOf(k), via = new Set(edges.flatMap(e => [...reach(e.source)]));
+    return [...new Map(edges.filter(e => !via.has(e.source)).map(e => [e.source, e])).values()];
+  }
+
+  // The chain as a list from the top down: every entry with its edge to what stands below it and its distance (up) from the object.
+  originChain(key) {
+    const found = new Map();
+    const walk = (k, up) => {
+      if (up > 4) return;
+      for (const edge of this.originParents(k)) {
+        const known = found.get(edge.source);
+        if (!known || known.up < up) found.set(edge.source, { key: edge.source, edge, up, below: k });
+        walk(edge.source, up + 1);
+      }
+    };
+    walk(key, 1);
+    const top = Math.max(0, ...[...found.values()].map(c => c.up));
+    return [...found.values()].sort((p, q) => q.up - p.up).map(c => ({ ...c, indent: Math.min(top - c.up, 3) }));
+  }
+
+  nodeButton(key, label, tone = "", sentence = "", tip = "") {
     const obj = this.findObject(key);
     const [type, ...rest] = key.split(":");
     const id = rest.join(":");
-    return `<button class="node" data-graph="${this.esc(key)}">${this.tile(type, tone)}<span><small>${this.t(type)}</small><strong>${this.esc(obj?.name || id)}</strong><span class="meta">${this.esc(label || (obj ? obj.object_id : this.t("missing")))}</span></span>${obj ? this.pill(obj.status) : `<span class="pill red">${this.t("missing")}</span>`}</button>`;
+    return `<button class="node" data-graph="${this.esc(key)}"${tip ? ` title="${this.esc(tip)}"` : ""}>${this.tile(type, tone)}<span><small>${this.t(type)}</small><strong>${this.esc(obj?.name || id)}</strong>${sentence ? `<span class="sent">${this.esc(sentence)}</span>` : ""}<span class="meta">${this.esc(label || (obj ? obj.object_id : this.t("missing")))}</span></span>${obj ? this.pill(obj.status) : `<span class="pill red">${this.t("missing")}</span>`}</button>`;
   }
 
   graph() {
@@ -5648,25 +5717,35 @@ class InventoryMixin {
     if (this.useGraph()) return `${search}${head}${this.graphBar(item, key)}${this.graphPanel(item, key)}`;
     const USAGE = USAGE_RELATIONS;
     const incoming = this.edgesTo(key), outgoing = this.edgesFrom(key);
-    const originEdges = incoming.filter(e => !USAGE.includes(e.relation));
-    const usageEntries = [
-      ...incoming.filter(e => USAGE.includes(e.relation)).map(e => ({ key: e.source, edge: e, label: `${this.t("usedBy")} · ${this.t(e.relation)}` })),
-      ...outgoing.map(e => ({ key: e.target, edge: e, label: this.t(e.relation) })),
-    ];
-    const edgeNote = edge => `${this.t(edge.confidence)}${edge.location && edge.location !== "runtime_extraction" ? ` · ${edge.location}` : ""}`;
-    const origin = originEdges.map(e => `${this.nodeButton(e.source, edgeNote(e))}<div class="link-label"><ha-icon icon="mdi:arrow-down" class="u-ic14"></ha-icon>${this.t(e.relation)}</div>`).join("");
-    const usage = usageEntries.length
-      ? `<div class="branch">${usageEntries.map(u => `<div><div class="link-label flat">${u.label}</div>${this.nodeButton(u.key, edgeNote(u.edge))}</div>`).join("")}</div>`
-      : `<p class="emptyrel sm">${this.t("noRelations")}</p>`;
+    const chainNode = edge => `${this.nodeButton(edge.source, `${this.t(edge.confidence)}${edge.location && edge.location !== "runtime_extraction" ? ` · ${edge.location}` : ""}`)}<div class="deplink"><ha-icon icon="mdi:arrow-down" class="u-ic14"></ha-icon>${this.t(edge.relation)}</div>`;
+    const chain = (k, depth) => {
+      if (depth > 4) return "";
+      const edges = this.originParents(k);
+      const parts = edges.map(e => `${chain(e.source, depth + 1)}${chainNode(e)}`);
+      return parts.length > 1 ? `<div class="deptree">${parts.map(h => `<div class="depbranch">${h}</div>`).join("")}</div>` : parts.join("");
+    };
+    const originHtml = chain(key, 1);
+    const originCount = this.originChain(key).length;
+    const usageEntries = this.mergePlaces([
+      ...incoming.filter(e => USAGE.includes(e.relation)).map(e => ({ other: e.source, label: this.t(`relIn_${e.relation}`), edge: e })),
+      ...outgoing.map(e => ({ other: e.target, label: this.t(`relOut_${e.relation}`), edge: e })),
+    ]);
+    const note = u => (u.places.length > 1 ? `${this.t(u.edge.confidence)} · ${this.t("relPlaces", { n: u.places.length })}` : `${this.t(u.edge.confidence)}${u.places[0] ? ` · ${u.places[0]}` : ""}`);
+    const branches = list => `<div class="deptree">${list.map(u => `<div class="depbranch">${this.nodeButton(u.other, note(u), "", u.label, u.places.length > 1 ? u.places.filter(Boolean).join("\n") : "")}</div>`).join("")}</div>`;
+    const group = (title, list) => (list.length ? `<div class="deplink label"><ha-icon icon="mdi:arrow-down" class="u-ic14"></ha-icon>${title}</div>${branches(list)}` : "");
+    const place = this.locationPath(key);
+    const where = place.path.length ? `<span class="depplace"><ha-icon icon="mdi:map-marker-outline" class="u-ic14"></ha-icon>${this.t("relPlace")}: ${place.path.map(k => `<button type="button" class="linkbtn" data-graph="${this.esc(k)}">${this.esc(this.findObject(k)?.name || k.split(":").slice(1).join(":"))}</button>`).join(" › ")}</span>` : "";
+    const current = `<div class="node current">${this.tile(item.object_type, this.tone(item.status) === "ok" ? "" : this.tone(item.status))}<span><small>${this.t(item.object_type)}</small><strong>${this.esc(item.name)}</strong><span class="meta">${this.esc(item.object_id)}</span>${where}</span>${this.pill(item.status)}</div>`;
+    const none = originCount + usageEntries.length ? "" : `<p class="emptyrel sm">${this.t("noRelations")}</p>`;
     return `${search}${head}${this.graphBar(item, key)}
-      <div class="panel"><div class="panelhead"><h2>${this.t("origin")} → ${this.t("usage")}</h2><span class="date">${this.t("origin")} ${originEdges.length} · ${this.t("usage")} ${usageEntries.length}</span></div>
-      <div class="path">${origin}<div class="node current">${this.tile(item.object_type, this.tone(item.status) === "ok" ? "" : this.tone(item.status))}<span><small>${this.t(item.object_type)}</small><strong>${this.esc(item.name)}</strong><span class="meta">${this.esc(item.object_id)}</span></span>${this.pill(item.status)}</div>${usage}</div></div>`;
+      <div class="panel"><div class="panelhead"><h2>${this.t("origin")} → ${this.t("usage")}</h2><span class="date">${this.t("origin")} ${originCount} · ${this.t("usage")} ${usageEntries.length}</span></div>
+      <div class="path">${originHtml}${current}${group(this.t("relGroupUsage"), usageEntries)}${none}</div></div>`;
   }
 }
 
 // GraphMixin: methods of the panel element, mixed into the class in 99-register.js.
 // The graph is a second view of the dependency list: origin on the left, the object in the middle,
-// what uses it on the right, up to three levels deep. The list stays the default and the fallback.
+// what uses it on the right, up to four levels deep. The list stays the default and the fallback.
 class GraphMixin {
   // The graph needs room; on a narrow screen only the list is offered.
   canGraph() {
@@ -5679,14 +5758,15 @@ class GraphMixin {
   // edges pointing at it). Right: what uses it (usage edges pointing at it) and what it uses
   // (edges leaving it). Returns nodes per level, the edges between included nodes and the notes.
   graphModel(item, key, { depth = 1, relation = "", certainOnly = false, limit = GRAPH_NODE_STEP, group = true, open = new Set() } = {}) {
-    const keep = e => (!relation || e.relation === relation) && (!certainOnly || e.confidence === "certain");
+    const matches = r => !relation || (relation === "@origin" ? !USAGE_RELATIONS.includes(r) : relation === "@usage" ? USAGE_RELATIONS.includes(r) : r === relation);
+    const keep = e => matches(e.relation) && (!certainOnly || e.confidence === "certain");
     const sides = {
       left: { levels: [], seen: new Map(), next: node => this.edgesTo(node).filter(e => !USAGE_RELATIONS.includes(e.relation) && keep(e)).map(e => [e.source, e]) },
       right: { levels: [], seen: new Map(), next: (node, via) => (via === "out"
         ? this.edgesFrom(node).filter(keep).map(e => [e.target, e])
         : this.edgesTo(node).filter(e => USAGE_RELATIONS.includes(e.relation) && keep(e)).map(e => [e.source, e])) },
     };
-    const edges = [], cycles = new Set();
+    const edges = [], cycles = new Set(), loops = new Map();
     let hidden = 0;
     const record = (from, to, edge, cycle) => {
       edges.push({ from, to, edge, cycle });
@@ -5703,9 +5783,8 @@ class GraphMixin {
           for (const [other, edge, via] of candidates) {
             const known = side.seen.get(other);
             const opposite = (name === "left" ? sides.right : sides.left).seen.has(other);
-            // Back to the object, to an earlier level or to the other side closes a loop.
-            if (other === key || opposite || (known && known.level <= level - 1)) { record(other, parent.key, edge, true); continue; }
-            if (known) { record(other, parent.key, edge, false); continue; } // a second way to a node of this level
+            // A node that is known already is a second way to it; whether the edges form a loop is decided afterwards.
+            if (other === key || opposite || known) { record(other, parent.key, edge, false); continue; }
             if (side.seen.size >= limit) { hidden++; continue; }
             const node = { key: other, level, via, parent: parent.key };
             side.seen.set(other, node);
@@ -5716,6 +5795,29 @@ class GraphMixin {
         if (found.length) side.levels.push(found);
         frontier = found;
       }
+    }
+    // A loop is a group of nodes that reach each other along the edges. A second way to a node (the integration that provides
+    // the entity and also owns its device) is no loop.
+    const out = new Map();
+    for (const r of edges) (out.get(r.edge.source) || out.set(r.edge.source, []).get(r.edge.source)).push(r.edge.target);
+    const index = new Map(), low = new Map(), stack = [], onStack = new Set(), comp = new Map(), sizes = new Map();
+    let counter = 0, groups = 0;
+    const visit = v => {
+      index.set(v, counter); low.set(v, counter); counter++; stack.push(v); onStack.add(v);
+      for (const w of out.get(v) || []) {
+        if (!index.has(w)) { visit(w); low.set(v, Math.min(low.get(v), low.get(w))); }
+        else if (onStack.has(w)) low.set(v, Math.min(low.get(v), index.get(w)));
+      }
+      if (low.get(v) === index.get(v)) {
+        let size = 0, w;
+        do { w = stack.pop(); onStack.delete(w); comp.set(w, groups); size++; } while (w !== v);
+        sizes.set(groups++, size);
+      }
+    };
+    for (const v of out.keys()) if (!index.has(v)) visit(v);
+    for (const r of edges) {
+      r.cycle = r.edge.source === r.edge.target || (comp.has(r.edge.source) && comp.get(r.edge.source) === comp.get(r.edge.target) && sizes.get(comp.get(r.edge.source)) > 1);
+      if (r.cycle) { cycles.add(r.edge); loops.set(r.edge, comp.get(r.edge.source)); }
     }
     // Leaf nodes of one type that hang on the same node, five or more of them, become one node ("12 × Sensor") until it is opened.
     const repl = new Map();
@@ -5754,7 +5856,7 @@ class GraphMixin {
     const all = [...sides.left.seen.values(), ...sides.right.seen.values()];
     return {
       key, left: sides.left.levels, right: sides.right.levels, edges: shown,
-      hidden, cycles: [...cycles].filter(e => shown.some(s => s.edge === e)).length,
+      hidden, cycles: new Set([...cycles].filter(e => shown.some(s => s.edge === e)).map(e => loops.get(e))).size, // one per group of nodes that reach each other
       missing: all.filter(n => !this.findObject(n.key)).length,
       probable: shown.filter(e => e.edge.confidence !== "certain").length,
       count: all.length,
@@ -5776,14 +5878,15 @@ class GraphMixin {
     };
     const columns = [...order(model.left).reverse(), [{ key: model.key, center: true }], ...order(model.right)];
     const tallest = Math.max(...columns.map(c => c.length));
-    const height = tallest * H + (tallest - 1) * GAPY;
+    const HEAD = 24, bodyHeight = tallest * H + (tallest - 1) * GAPY, height = bodyHeight + HEAD;
+    const nl = model.left.length, heads = columns.map((_, i) => (i < nl ? { side: "left", level: nl - i } : i === nl ? { side: "center" } : { side: "right", level: i - nl }));
     const at = new Map();
     columns.forEach((column, i) => {
-      const top = (height - (column.length * H + (column.length - 1) * GAPY)) / 2;
+      const top = HEAD + (bodyHeight - (column.length * H + (column.length - 1) * GAPY)) / 2;
       column.forEach((node, j) => at.set(node.key, { x: i * (W + GAPX), y: top + j * (H + GAPY), node }));
     });
     // Room on the right for the arcs between nodes of one column.
-    return { W, H, width: columns.length * W + (columns.length - 1) * GAPX + 48, height, at };
+    return { W, H, width: columns.length * W + (columns.length - 1) * GAPX + 48, height, at, heads, step: W + GAPX };
   }
 
   graphClip(text, max) { const s = String(text ?? ""); return s.length > max ? `${s.slice(0, max - 1)}…` : s; }
@@ -5813,12 +5916,15 @@ class GraphMixin {
       // Arcs between nodes of one column bulge out further the more rows they span, so nested arcs do not coincide.
       const rows = Math.round(Math.abs(y2 - y1) / (H + 14));
       const dx = sameColumn ? Math.min(14 + 10 * rows, 44) : (x2 - x1) / 2;
-      const forward = edge.source === (l === a ? from : to); // the data direction runs from the first to the second end
+      // The arrow follows the flow of the value, from what provides to what uses it: along the stored direction for provision and ownership, against it for usage.
+      const flowFrom = USAGE_RELATIONS.includes(edge.relation) ? edge.target : edge.source;
+      const forward = flowFrom === (l === a ? from : to); // the flow runs from the first to the second end
       const hit = hitKeys && (hitKeys.has(edge.source) && (hitKeys.has(edge.target) || edge.target === model.key));
       const cls = ["gedge", edge.confidence === "certain" ? "" : "prob", cycle ? "cycle" : "", hit ? "hit" : "", hitKeys && !hit ? "gdim" : ""].filter(Boolean).join(" ");
       const mark = forward ? 'marker-end="url(#hk-arrow)"' : 'marker-start="url(#hk-arrow)"';
-      return `<path class="${cls}" d="M${x1},${y1} C${x1 + dx},${y1} ${sameColumn ? x2 + dx : x2 - dx},${y2} ${x2},${y2}" ${mark}><title>${this.esc(`${edge.source} → ${edge.target}: ${this.t(edge.relation)} (${this.t(edge.confidence)})`)}</title></path>`;
+      return `<path class="${cls}" d="M${x1},${y1} C${x1 + dx},${y1} ${sameColumn ? x2 + dx : x2 - dx},${y2} ${x2},${y2}" ${mark}><title>${this.esc(`${edge.source} → ${edge.target}: ${this.t(edge.relation)} (${this.t(edge.confidence)})${edge.location && edge.location !== "runtime_extraction" ? ` · ${edge.location}` : ""}`)}</title></path>`;
     }).join("");
+    const headSvg = layout.heads.map((h, i) => `<text class="gcol" x="${i * layout.step}" y="12">${this.esc(h.side === "center" ? this.t("graphColCenter") : this.t(h.side === "left" ? "graphColLeft" : "graphColRight", { n: h.level }))}</text>`).join("");
     const nodeSvg = [...at.entries()].map(([key, { x, y, node }]) => {
       if (node.group) {
         const type = node.group[0].split(":")[0], hit = hitKeys && node.group.some(k => hitKeys.has(k));
@@ -5838,7 +5944,7 @@ class GraphMixin {
         <text x="14" y="36">${this.esc(this.graphClip(name, 27))}</text></g>`;
     }).join("");
     return `<div class="graphwrap"><svg class="graphsvg" role="group" aria-label="${this.esc(this.t("graphLabel", { name: item.name }))}" width="${layout.width}" height="${layout.height}" viewBox="0 0 ${layout.width} ${layout.height}">
-      <defs><marker id="hk-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="garrow" d="M0,0 L8,4 L0,8z"></path></marker></defs>${edgeSvg}${nodeSvg}</svg></div>`;
+      <defs><marker id="hk-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="garrow" d="M0,0 L8,4 L0,8z"></path></marker></defs>${headSvg}${edgeSvg}${nodeSvg}</svg></div>`;
   }
 
   // The switch between list and graph, and for the graph the depth, filters and the removal highlight.
@@ -5846,13 +5952,27 @@ class GraphMixin {
     const canGraph = this.canGraph(), graph = this.useGraph();
     const toggle = canGraph ? `<div class="seg" role="group" aria-label="${this.esc(this.t("graphMode"))}">${[["list", "graphList"], ["graph", "graphGraph"]].map(([mode, label]) => `<button class="btn ${(graph ? "graph" : "list") === mode ? "primary" : ""}" data-pref="graphMode|${mode}" aria-pressed="${(graph ? "graph" : "list") === mode}">${this.t(label)}</button>`).join("")}</div>` : "";
     if (!graph) return toggle ? `<div class="panel graphbar">${toggle}</div>` : `<p class="factnote graphphone">${this.t("graphPhone")}</p>`;
-    const depth = [1, 2, 3].map(n => `<button class="btn ${this.graphDepth === n ? "primary" : ""}" data-graph-depth="${n}" aria-pressed="${this.graphDepth === n}">${n}</button>`).join("");
+    const depth = [1, 2, 3, 4].map(n => `<button class="btn ${this.graphDepth === n ? "primary" : ""}" data-graph-depth="${n}" aria-pressed="${this.graphDepth === n}">${n}</button>`).join("");
     const relations = [...new Set(this.graphModel(item, key, { depth: this.graphDepth, limit: 400 }).edges.map(e => e.edge.relation))].sort();
-    const relSelect = `<select id="graphRel" aria-label="${this.esc(this.t("graphRelation"))}"><option value="">${this.t("graphAllRelations")}</option>${relations.map(r => `<option value="${r}" ${this.graphRel === r ? "selected" : ""}>${this.t(r)}</option>`).join("")}</select>`;
+    const relSelect = `<select id="graphRel" aria-label="${this.esc(this.t("graphRelation"))}"><option value="">${this.t("graphAllRelations")}</option><option value="@origin" ${this.graphRel === "@origin" ? "selected" : ""}>${this.t("graphRelOrigin")}</option><option value="@usage" ${this.graphRel === "@usage" ? "selected" : ""}>${this.t("graphRelUsage")}</option>${relations.map(r => `<option value="${r}" ${this.graphRel === r ? "selected" : ""}>${this.t(r)}</option>`).join("")}</select>`;
     const confSelect = `<select id="graphConf" aria-label="${this.esc(this.t("graphConfidence"))}"><option value="all" ${this.graphConf === "all" ? "selected" : ""}>${this.t("graphAllConf")}</option><option value="certain" ${this.graphConf === "certain" ? "selected" : ""}>${this.t("graphCertainOnly")}</option></select>`;
     const impact = this.impact(item, key);
     const impactBtn = impact ? `<button class="btn ${this.graphImpact ? "primary" : ""}" data-graph-impact aria-pressed="${this.graphImpact}">${this.t("graphImpact")}</button>` : "";
     return `<div class="panel graphbar">${toggle}<span class="graphctl"><small>${this.t("graphDepth")}</small><span class="seg" role="group" aria-label="${this.esc(this.t("graphDepth"))}">${depth}</span></span>${relSelect}${confSelect}${impactBtn}</div>`;
+  }
+
+  // The legend under the graph, always shown: a small sample of each line and frame, then how to read arrows and levels.
+  graphLegendBlock() {
+    const parts = this.t("graphLegend").split(" · ").map(x => x.trim().replace(/[.。]$/, ""));
+    const sample = [
+      '<svg width="30" height="12" aria-hidden="true"><path class="lgl" d="M1,6 H29"></path></svg>',
+      '<svg width="30" height="12" aria-hidden="true"><path class="lgl prob" d="M1,6 H29"></path></svg>',
+      '<svg width="30" height="12" aria-hidden="true"><path class="lgl cycle" d="M1,6 H29"></path></svg>',
+      '<svg width="30" height="16" aria-hidden="true" class="gnode"><rect class="hit" x="2" y="2" width="26" height="12" rx="3"></rect></svg>',
+      '<svg width="30" height="16" aria-hidden="true" class="gnode missing"><rect x="2" y="2" width="26" height="12" rx="3"></rect></svg>',
+    ];
+    const items = parts.length === sample.length ? `<ul class="glegend">${parts.map((text, i) => `<li>${sample[i]}<span>${this.esc(text)}</span></li>`).join("")}</ul>` : `<p>${this.esc(this.t("graphLegend"))}</p>`;
+    return `<div class="graphlegend"><strong>${this.t("graphLegendTitle")}</strong>${items}<p>${this.esc(this.t("graphLegendDir"))}</p></div>`;
   }
 
   graphPanel(item, key) {
@@ -5869,7 +5989,7 @@ class GraphMixin {
     const more = (model.hidden ? `<button class="btn" data-graph-more>${this.t("graphMore")}</button>` : "") + (this.graphOpen.size ? ` <button class="btn" data-graph-regroup>${this.t("graphRegroup")}</button>` : "");
     return `<div class="panel"><div class="panelhead"><h2>${this.t("origin")} → ${this.t("usage")}</h2><span class="date">${this.t("graphNodes", { n: model.count })}</span></div>
       ${nothing ? `<p class="emptyrel">${this.t("noRelations")}</p>` : this.graphSvg(model, item, hitKeys)}
-      ${notes || more.trim() ? `<p class="factnote">${this.esc(notes)} ${more}</p>` : ""}${this.fold("graph_legend", { title: this.t("graphLegendTitle") }, `<p class="factnote">${this.t("graphLegend")}</p>`, false)}</div>`;
+      ${notes || more.trim() ? `<p class="factnote">${this.esc(notes)} ${more}</p>` : ""}${this.graphLegendBlock()}</div>`;
   }
 }
 
@@ -6053,7 +6173,7 @@ class UnusedMixin {
       kind: (o, v) => kind(o) === v, unit: (o, v) => o.unit === v,
       age: (o, v) => { const ts = lastOf(o); return typeof ts === "number" && Date.now() - ts * 1000 > Number(v) * 864e5; },
     }, sorts, tie: o => o.statistic_id });
-    const rows = this.selOnly?.orphanstats ? refined.filter(o => this.purgeSel.has(o.statistic_id)) : refined;
+    const rows = this.selOnlyOn("orphanstats", this.purgeSel.size) ? refined.filter(o => this.purgeSel.has(o.statistic_id)) : refined;
     const pg = this.paginate("orphanstats", rows);
     this._purgeTotal = rows.length;
     this._purgePage = pg.rows.filter(o => !o.in_energy).map(o => o.statistic_id);
@@ -6103,7 +6223,7 @@ class UnusedMixin {
     const n = this.purgeSel.size, r = this.purgeResult;
     const result = r ? `<p class="${r.error ? "error" : "factnote"}">${this.esc(r.error ? this.t("purgeNotDeleted", { reason: `${this.t(`purgeReason_${r.error}`)}${r.detail ? ` (${r.detail})` : ""}` }) : this.t("purgeDone", { n: r.removed.length, skipped: r.skipped.length }))}</p>` : "";
     const over = n > MAX_PLAN_ACTIONS;
-    return `${result}<div class="toolbar">${this.selTools("orphanstats", n, "data-purge-clear")}<span class="toolgap"></span><button class="btn dangersoft" data-purge-run ${n && !this.purgeBusy ? "" : "disabled"}><ha-icon icon="mdi:delete-outline"></ha-icon>${n ? this.t("purgeOpenCount", { n: this.formatNumber(n) }) : this.t("purgeOpen")}</button>${this.viewCount(this._purgeTotal || 0)}</div>${over ? `<p class="factnote">${this.t("purgeChunk", { max: MAX_PLAN_ACTIONS, n, rest: n - MAX_PLAN_ACTIONS })}</p>` : ""}`;
+    return `${result}<div class="toolbar">${this.selTools("orphanstats", n, "data-purge-clear")}<span class="toolgap"></span>${n ? `<button class="btn dangersoft" data-purge-run ${this.purgeBusy ? "disabled" : ""}><ha-icon icon="mdi:delete-outline"></ha-icon>${this.t("purgeOpenCount", { n: this.formatNumber(n) })}</button>` : ""}${this.viewCount(this._purgeTotal || 0)}</div>${over ? `<p class="factnote">${this.t("purgeChunk", { max: MAX_PLAN_ACTIONS, n, rest: n - MAX_PLAN_ACTIONS })}</p>` : ""}`;
   }
 
   async purgeRun() {
@@ -6151,7 +6271,7 @@ class UnusedMixin {
     ] });
     const sel = (this.unrefSel ||= new Set());
     for (const id of [...sel]) if (!all.some(o => o.object_id === id)) sel.delete(id);
-    const rows = this.refine("unreferenced", this.selOnly?.unreferenced ? all.filter(o => sel.has(o.object_id)) : all, {
+    const rows = this.refine("unreferenced", this.selOnlyOn("unreferenced", sel.size) ? all.filter(o => sel.has(o.object_id)) : all, {
       text: o => [o.name, o.object_id, this.areaName(o), deviceName(o), o.platform].join(" "),
       filters: { domain: (o, v) => domainOf(o) === v, area: (o, v) => this.areaName(o) === v, platform: (o, v) => o.platform === v }, sorts, tie: o => o.object_id,
     });
@@ -6175,7 +6295,7 @@ class UnusedMixin {
     ];
     const table = rows.length ? this.listTable("unreferenced", columns, pg.rows, { cls: "unref", rowAttrs: o => `data-object="${this.esc(this.objectKey(o))}" tabindex="0" role="button" aria-label="${this.esc(o.name)}"` }) : `<div class="emptymsg"><ha-icon icon="mdi:link-variant"></ha-icon>${all.length ? this.noMatches("unreferenced") : this.t("noUnreferenced")}</div>`;
     const n = sel.size, form = this.unrefBulk;
-    const tools = all.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("unreferenced", n, "data-unref-clear")}<span class="toolgap"></span><button type="button" class="btn" data-unref-bulk ${n ? "" : "disabled"}><ha-icon icon="mdi:bookmark-plus-outline"></ha-icon>${this.t("marksSetN", { n: this.formatNumber(n) })}</button></div>${n && form ? this.unrefBulkForm(form, n) : ""}` : "";
+    const tools = all.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("unreferenced", n, "data-unref-clear")}<span class="toolgap"></span>${n ? `<button type="button" class="btn" data-unref-bulk><ha-icon icon="mdi:bookmark-plus-outline"></ha-icon>${this.t("marksSetN", { n: this.formatNumber(n) })}</button>` : ""}</div>${n && form ? this.unrefBulkForm(form, n) : ""}` : "";
     return `<div class="stack">${this._embedUnref ? "" : this.unrefTiles()}${this.unrefTabs()}<div class="panel"><p class="factnote">${this.t("unreferencedHint")}</p>${bar}${tools}${table}${pg.footer}</div></div>`;
   }
 
@@ -6512,38 +6632,44 @@ class DiagnosisMixin {
   relationsCard(key) {
     const USAGE = USAGE_RELATIONS;
     const incoming = this.edgesTo(key), outgoing = this.edgesFrom(key);
+    // The text of a row says who does what to this object, so the direction is readable without arrows.
+    const into = e => this.t(`relIn_${e.relation}`), from = e => this.t(`relOut_${e.relation}`);
+    const place = this.locationPath(key);
     const groups = [
-      [this.t("origin"), incoming.filter(e => !USAGE.includes(e.relation)).map(e => ({ other: e.source, label: this.t(e.relation), edge: e }))],
-      [this.t("usage"), [
-        ...incoming.filter(e => USAGE.includes(e.relation)).map(e => ({ other: e.source, label: `${this.t("usedBy")} · ${this.t(e.relation)}`, edge: e })),
-        ...outgoing.map(e => ({ other: e.target, label: this.t(e.relation), edge: e })),
+      ["origin", this.t("relGroupOrigin"), this.originChain(key).map(c => ({ other: c.key, edge: c.edge, indent: c.indent, places: c.edge.location && c.edge.location !== "runtime_extraction" ? [c.edge.location] : [], label: c.up === 1 ? into(c.edge) : `${this.t(c.edge.relation)} ${this.findObject(c.below)?.name || c.below.split(":").slice(1).join(":")}` }))],
+      ["usage", this.t("relGroupUsage"), [
+        ...incoming.filter(e => USAGE.includes(e.relation)).map(e => ({ other: e.source, label: into(e), edge: e })),
+        ...outgoing.map(e => ({ other: e.target, label: from(e), edge: e })),
       ]],
-    ].map(([title, list]) => [title, this.mergePlaces(list)]).filter(([, list]) => list.length);
+    ].map(([id, title, list]) => [id, title, id === "origin" ? list : this.mergePlaces(list)]).filter(([id, , list]) => list.length || (id === "origin" && place.path.length));
     // A target without an inventory object is missing only where a finding says so; helpers and
     // built-in entities such as sun.sun exist without a registry entry.
     const gone = new Set((this.data.findings || []).filter(f => f.classification === "broken_reference").map(f => f.affected_object));
-    const items = groups.flatMap(([title, list], i) => list.map(x => ({ ...x, group: i ? "usage" : "origin", groupName: title })));
     const nameOf = x => this.findObject(x.other)?.name || x.other.split(":").slice(1).join(":");
     const typeOf = x => this.findObject(x.other)?.object_type || x.other.split(":")[0];
     const note = x => (x.places.length > 1 ? `${x.label} · ${this.t("relPlaces", { n: x.places.length })}` : `${x.label}${x.places[0] ? ` · ${x.places[0]}` : ""}`);
     const goneLabel = x => (gone.has(x.other.split(":").slice(1).join(":")) ? this.t("missing") : this.t("notInInventory"));
-    const table = items.length ? this.sysList("relations", items, {
-      sort: "name", dir: "asc", cls: "rel", tie: x => `${x.other}|${x.label}`, exportName: "relations",
-      sorts: [{ key: "name", label: "relColObject", dir: "asc", get: nameOf }, { key: "type", label: "relColType", dir: "asc", get: typeOf }, { key: "relation", label: "relColRelation", dir: "asc", get: x => x.label }],
-      text: x => `${nameOf(x)} ${x.other} ${x.label}`,
-      filters: [{ name: "group", all: this.t("relAllGroups"), options: [["origin", this.t("origin")], ["usage", this.t("usage")]] }],
-      filterFns: { group: (x, v) => x.group === v },
-      rowAttrs: x => (this.findObject(x.other) ? `data-object="${this.esc(x.other)}" tabindex="0" role="button" aria-label="${this.esc(nameOf(x))}"${x.places.length > 1 ? ` title="${this.esc(x.places.filter(Boolean).join("\n"))}"` : ""}` : 'class="static"'),
-      columns: [
-        { key: "name", label: "relColObject", dir: "asc", cell: x => { const obj = this.findObject(x.other); return `<div class="statcell">${this.tile(typeOf(x), obj ? (this.tone(obj.status) === "ok" ? "" : this.tone(obj.status)) : gone.has(x.other.split(":").slice(1).join(":")) ? "red" : "")}<div>${this.nameCell(nameOf(x), x.other)}</div></div>`; } },
-        { key: "type", label: "relColType", dir: "asc", cell: x => this.esc(this.t(typeOf(x))) },
-        { key: "relation", label: "relColRelation", dir: "asc", cell: x => this.esc(note(x)) },
-        { key: "group", label: "relColKind", sortable: false, cell: x => this.esc(x.groupName) },
-        { key: "status", label: "relColStatus", sortable: false, cell: x => { const obj = this.findObject(x.other); return obj ? this.pill(obj.status) : `<span class="pill ${gone.has(x.other.split(":").slice(1).join(":")) ? "red" : ""}">${this.esc(goneLabel(x))}</span>`; } },
-      ],
-      header: [this.t("relColObject"), "ID", this.t("relColType"), this.t("relColRelation"), this.t("relColKind")], rows: x => [nameOf(x), x.other, this.t(typeOf(x)), note(x), x.groupName],
-    }) : "";
-    return `<section class="panel"><div class="panelhead"><h2>${this.t("relations")} (${incoming.length + outgoing.length})</h2></div>${table || `<p class="factnote">${this.t("noRelations")}</p>`}</section>`;
+    // Two columns, origin and usage, of quiet rows: the object, its type and what it does to this one, and a dot for how sure the link is.
+    const row = x => {
+      const obj = this.findObject(x.other), isGone = !obj && gone.has(x.other.split(":").slice(1).join(":"));
+      const shown = obj && this.tone(obj.status) !== "ok" ? this.pill(obj.status) : !obj ? `<span class="pill ${isGone ? "red" : ""}">${this.esc(goneLabel(x))}</span>` : "";
+      const where = x.places.length > 1 ? `<span class="depchip">${this.esc(this.t("relPlaces", { n: x.places.length }))}</span>` : "";
+      const place = x.places.length === 1 && x.places[0] ? `<small class="deppath">${this.esc(x.places[0])}</small>` : "";
+      const attrs = obj ? `data-object="${this.esc(x.other)}" tabindex="0" role="button" aria-label="${this.esc(nameOf(x))}"` : 'class="static"';
+      const tip = x.places.length > 1 ? ` title="${this.esc(x.places.filter(Boolean).join("\n"))}"` : "";
+      return `<div class="deprow${x.indent ? ` ind${x.indent}` : ""}" ${attrs}${tip}>${this.tile(typeOf(x), obj ? (this.tone(obj.status) === "ok" ? "" : this.tone(obj.status)) : isGone ? "red" : "")}<div class="deptext"><strong>${this.esc(nameOf(x))}${where}</strong><span>${this.esc(this.t(typeOf(x)))} · ${this.esc(x.label)}</span>${place}</div>${shown}<span class="depdot ${x.edge.confidence === "certain" ? "" : "prob"}" title="${this.esc(this.t(x.edge.confidence))}" aria-label="${this.esc(this.t(x.edge.confidence))}"></span></div>`;
+    };
+    const placeBlock = () => {
+      if (!place.path.length) return "";
+      const names = place.path.map(k => this.findObject(k)?.name || k.split(":").slice(1).join(":")), last = place.path[place.path.length - 1];
+      const via = place.via ? `${this.t("CONTAINS")} ${this.findObject(place.via)?.name || place.via.split(":").slice(1).join(":")}` : this.t(`relIn_CONTAINS`);
+      const obj = this.findObject(last);
+      return `<div class="dephead sub"><ha-icon icon="mdi:map-marker-outline" class="u-ic14"></ha-icon>${this.t("relGroupPlace")}</div><div class="deprow" ${obj ? `data-object="${this.esc(last)}" tabindex="0" role="button" aria-label="${this.esc(names.join(" › "))}"` : 'class="static"'}>${this.tile(last.split(":")[0], "")}<div class="deptext"><strong>${this.esc(names.join(" › "))}</strong><span>${this.esc(place.path.map(k => this.t(k.split(":")[0])).join(" › "))} · ${this.esc(via)}</span></div><span class="depdot"></span></div>`;
+    };
+    const column = ([id, title, list]) => `<div class="depcol"><div class="dephead"><ha-icon icon="mdi:arrow-right-bold-outline" class="u-ic14"></ha-icon>${title}<span>${list.length}</span></div>${(list.some(x => x.indent !== undefined) ? list : [...list].sort((p, q) => nameOf(p).localeCompare(nameOf(q)))).map(row).join("")}${id === "origin" ? placeBlock() : ""}</div>`;
+    const legend = `<div class="deplegend"><span><i class="depdot"></i>${this.t("certain")}</span><span><i class="depdot prob"></i>${this.t("probable")}</span></div>`;
+    const blocks = groups.length ? `<div class="depcols">${groups.map(column).join("")}</div>${legend}` : "";
+    return `<section class="panel"><div class="panelhead"><h2>${this.t("relations")} (${incoming.length + outgoing.length})</h2><button class="btn" data-graph-open="${this.esc(key)}"><ha-icon icon="mdi:source-fork"></ha-icon>${this.t("showInGraph")}</button></div>${blocks || `<p class="factnote">${this.t("noRelations")}</p>`}</section>`;
   }
 
   entrySourceLabel(source) {
@@ -7519,15 +7645,16 @@ class AutoPauseMixin {
       <div class="row"><span class="tile ${s.enabled ? "ok" : "mute"}"><ha-icon icon="mdi:pause-circle-outline"></ha-icon></span><span class="row-text"><strong>${this.t("apSwitch")}</strong><small>${this.t(s.enabled ? "apStatusOn" : "apStatusOff", { n: this.formatNumber(watched.length) })}</small></span><input class="policyswitch" type="checkbox" role="switch" aria-label="${this.esc(this.t("apSwitch"))}" data-ap-setting="enabled" ${s.enabled ? "checked" : ""}></div>`;
     const apSel = (this.apSel ||= new Set());
     for (const id of [...apSel]) if (!a.paused.some(p => p.entry_id === id)) apSel.delete(id);
-    const pausedRows = a.paused.map(p => {
+    const pausedRows = (this.selOnlyOn("autopause", apSel.size) ? a.paused.filter(p => apSel.has(p.entry_id)) : a.paused).map(p => {
       const due = p.next ? new Date(p.next).getTime() - now : null;
       const sub = [p.exhausted ? this.t("apExhausted") : due !== null ? `${this.t("apTry", { n: Math.min(p.done + 1, a.schedule.offsets.length), total: a.schedule.offsets.length })}, ${this.t("apNext", { span: this.apSpan(Math.max(due, 0)) })}` : "",
         p.reason === "manual" ? this.t("apReasonManual") : this.t("apReasonAuto", { n: this.formatNumber(p.failures || 0) })].filter(Boolean).join(" · ");
       return `<div class="row aprow"><input type="checkbox" class="selbox" data-ap-sel="${this.esc(p.entry_id)}" ${apSel.has(p.entry_id) ? "checked" : ""} aria-label="${this.esc(p.title || p.domain)}"><span class="tile warn"><ha-icon icon="mdi:pause-circle-outline"></ha-icon></span><span class="row-text"><strong>${this.apName(p.entry_id, p.title || p.domain)}</strong><small>${this.esc(p.domain)} · ${this.esc(this.t("apSince", { span: this.apSpan(now - new Date(p.since).getTime()) }))}</small><small>${this.esc(sub)}</small></span>
         <span class="apbtns">${menu(p.entry_id, ["apTryNow", "data-ap-try", "mdi:refresh"], ["apEnd", "data-ap-end", "mdi:play-circle-outline"], ["apNever", "data-ap-never", "mdi:cancel"])}</span></div>`;
     }).join("");
-    const apN = apSel.size, apCount = this.formatNumber(apN), apBtn = (mode, icon, label) => `<button type="button" class="btn" data-ap-bulk="${mode}" ${apN ? "" : "disabled"}><ha-icon icon="${icon}"></ha-icon>${this.t(label, { n: apCount })}</button>`;
-    const apTools = a.paused.length > 1 ? `<div class="toolbar${apN ? "" : " nosel"}"><label class="nw"><input type="checkbox" class="selbox" data-ap-selall ${apN === a.paused.length ? "checked" : ""} ${apN && apN < a.paused.length ? "data-partial" : ""} aria-label="${this.esc(this.t("selectPage"))}"> ${this.t("selectPage")}</label>${apN ? `<button class="btn quiet" data-ap-selclear>${this.t("clearSelection")}</button><span class="selcount" role="status">${this.t("selectedCount", { count: apN })}</span>` : ""}<span class="toolgap"></span>${apBtn("try", "mdi:refresh", "apTryNowN")}${apBtn("resume", "mdi:play-circle-outline", "apEndN")}${apBtn("never", "mdi:cancel", "apNeverN")}</div>` : "";
+    const apN = apSel.size, apCount = this.formatNumber(apN), apItem = (mode, icon, label) => `<button type="button" class="menuitem" data-ap-bulk="${mode}"><ha-icon icon="${icon}"></ha-icon><span>${this.t(label, { n: apCount })}</span></button>`;
+    const apMenu = apN ? `<div class="fbtns"><details class="rowmenu actmenu"><summary class="btn primary">${this.t("actMenu")}<ha-icon icon="mdi:chevron-down"></ha-icon></summary><div class="menupop">${apItem("try", "mdi:refresh", "apTryNowN")}${apItem("resume", "mdi:play-circle-outline", "apEndN")}${apItem("never", "mdi:cancel", "apNeverN")}</div></details></div>` : "";
+    const apTools = a.paused.length > 1 ? `<div class="toolbar${apN ? "" : " nosel"}">${this.selTools("autopause", apN, "data-ap-selclear", { attr: "data-ap-selall", label: this.t("selAllOfList", { count: this.formatNumber(a.paused.length) }) })}<span class="toolgap"></span>${apMenu}</div>` : "";
     const paused = a.paused.length ? `<section class="panel"><div class="panelhead"><div><h2>${this.t("apPaused")} <span class="pill warn">${this.formatNumber(a.paused.length)}</span></h2></div></div>${apTools}${pausedRows}</section>` : "";
     const failing = c => !c.excluded && (c.window > 0 || c.state !== "loaded");
     const filters = [["all", "apFAll", () => true], ["failing", "apFFailing", failing], ["never", "apNever", c => c.excluded], ["house", "apHousePill", c => c.house_function]];
@@ -7564,7 +7691,7 @@ class AutoPauseMixin {
     root.querySelectorAll("[data-ap-end]").forEach(el => el.onclick = () => this.apCall({ action: "resume", entry_id: el.dataset.apEnd }));
     const apSel = () => (this.apSel ||= new Set());
     root.querySelectorAll("[data-ap-sel]").forEach(el => el.onchange = () => { (el.checked ? apSel().add(el.dataset.apSel) : apSel().delete(el.dataset.apSel)); this.render(); });
-    root.querySelectorAll("[data-ap-selall]").forEach(box => { box.indeterminate = box.hasAttribute("data-partial"); box.onchange = ev => { (this.autoPause?.paused || []).forEach(p => (ev.target.checked ? apSel().add(p.entry_id) : apSel().delete(p.entry_id))); this.render(); }; });
+    root.querySelectorAll("[data-ap-selall]").forEach(el => el.onclick = () => { (this.autoPause?.paused || []).forEach(p => apSel().add(p.entry_id)); this.render(); });
     root.querySelectorAll("[data-ap-selclear]").forEach(el => el.onclick = () => { apSel().clear(); this.render(); });
     root.querySelectorAll("[data-ap-bulk]").forEach(el => el.onclick = async () => {
       const mode = el.dataset.apBulk, ids = [...apSel()];
@@ -8987,11 +9114,13 @@ class ExposureMixin {
     return ids.length ? `<input type="checkbox" class="selbox" data-expo-sel-page="${this.esc(sourceId)}" ${n === ids.length ? "checked" : ""} ${n && n < ids.length ? "data-partial" : ""} aria-label="${this.esc(this.t("selectPage"))}">` : "";
   }
 
-  // The bar over the table, as over the inventory: how many are ticked and what can be done with them.
-  expoSelBar(source, rows) {
+  // The bar over the table, as over the inventory: the chips, the pill of the picks and the one action.
+  // `rows` are the rows shown, `all` the rows the filters leave.
+  expoSelBar(source, rows, all = rows) {
     const sel = this.expoSelOf(source.id), n = sel.size, over = n > MAX_PLAN_ACTIONS, busy = this.planBusy ? 'disabled aria-busy="true"' : "";
-    const btn = `<button class="btn" data-expo-sel-plan="${this.esc(source.id)}" ${n ? busy : "disabled"}><ha-icon icon="mdi:shield-off-outline"></ha-icon>${this.t("expoActRemoveFrom", { name: this.esc(source.label) })}</button>`;
-    return `<div class="toolbar${n ? "" : " nosel"}"><button class="btn quiet" data-expo-sel-all="${this.esc(source.id)}" ${rows.length ? "" : "disabled"}>${this.t("stateAllFiltered", { count: this.formatNumber(rows.length) })}</button><button class="btn quiet" data-expo-sel-clear="${this.esc(source.id)}" ${n ? "" : "disabled"}>${this.t("stateClear")}</button><span class="selcount" role="status">${this.t("stateSel", { count: n })}</span><span class="toolgap"></span><div class="fbtns">${btn}</div>${this.viewCount(rows.length)}</div>${over ? `<p class="factnote">${this.t("purgeChunk", { max: MAX_PLAN_ACTIONS, n, rest: n - MAX_PLAN_ACTIONS })}</p>` : ""}`;
+    const tools = this.selTools(`expo:${source.id}`, n, `data-expo-sel-clear="${this.esc(source.id)}"`, { attr: `data-expo-sel-all="${this.esc(source.id)}"`, label: this.t("stateAllFiltered", { count: this.formatNumber(all.length) }), disabled: !all.length }, over ? { label: this.t("selOverMax", { n: this.formatNumber(n), max: MAX_PLAN_ACTIONS }), over: true } : {});
+    const btn = n ? `<div class="fbtns"><button class="btn" data-expo-sel-plan="${this.esc(source.id)}" ${busy}><ha-icon icon="mdi:shield-off-outline"></ha-icon>${this.t("expoActRemoveFrom", { name: this.esc(source.label) })}</button></div>` : "";
+    return `<div class="toolbar${n ? "" : " nosel"}">${tools}<span class="toolgap"></span>${btn}${this.viewCount(rows.length)}</div>${over ? `<p class="factnote">${this.t("purgeChunk", { max: MAX_PLAN_ACTIONS, n, rest: n - MAX_PLAN_ACTIONS })}</p>` : ""}`;
   }
 
   bindExpoSel(root) {
@@ -9161,10 +9290,11 @@ class ExposureMixin {
       { name: "domain", all: this.t("expoAllDomains"), options: domains.map(d => [d, d]) },
       ...(others.length ? [{ name: "also", all: this.t("expoAllAlso"), options: others.map(o => [o, this.expoAssistantName(o)]) }] : []),
     ] }) : "";
-    const rows = all.length ? this.refine(id, all, { text: e => [e.name, e.entity_id, e.area].join(" "), filters: { domain: (e, v) => e.domain === v, also: (e, v) => e.others.includes(v) }, sorts, tie: e => e.entity_id }) : [];
+    const refined = all.length ? this.refine(id, all, { text: e => [e.name, e.entity_id, e.area].join(" "), filters: { domain: (e, v) => e.domain === v, also: (e, v) => e.others.includes(v) }, sorts, tie: e => e.entity_id }) : [];
+    const picks = this.expoSelOf(source.id), rows = this.selOnlyOn(`expo:${source.id}`, picks.size) ? refined.filter(e => picks.has(e.entity_id)) : refined;
     const pg = this.paginate(id, rows);
     const editable = EXPO_ASSISTANTS.includes(source.id);
-    (this._expoRows ||= {})[source.id] = rows.map(e => e.entity_id);
+    (this._expoRows ||= {})[source.id] = refined.map(e => e.entity_id);
     (this._expoPage ||= {})[source.id] = pg.rows.map(e => e.entity_id);
     const columns = [
       ...(editable ? [{ key: "sel", label: "selectPage", narrow: true, sortable: false, allBox: () => this.expoHeadBox(source.id, pg.rows), cell: e => this.expoSelBox(source.id, e) }] : []),
@@ -9179,7 +9309,7 @@ class ExposureMixin {
     const where = source.titles?.length ? ` (${this.esc(source.titles.join(", "))})` : "";
     const capped = r.exposed_total > (r.exposed_entities || []).length ? `<p class="factnote">${this.t("expoCapped", { n: this.formatNumber(r.exposed_entities.length) })}</p>` : "";
     const empty = all.length ? "" : `<div class="emptymsg">${this.t(source.status === "inactive" ? "expoInactiveText" : "expoNoneFor")}</div>`;
-    return `<div class="panel"><div class="panelhead"><div><h2>${this.esc(source.label)}${where}</h2><p>${this.t("expoSourceHint", { n: this.formatNumber(source.count), name: this.esc(source.label) })}</p></div></div>${bar}${none}${empty}${editable && rows.length ? this.expoSelBar(source, rows) : ""}${table}${pg.footer}${capped}</div>`;
+    return `<div class="panel"><div class="panelhead"><div><h2>${this.esc(source.label)}${where}</h2><p>${this.t("expoSourceHint", { n: this.formatNumber(source.count), name: this.esc(source.label) })}</p></div></div>${bar}${none}${empty}${editable && rows.length ? this.expoSelBar(source, rows, refined) : ""}${table}${pg.footer}${capped}</div>`;
   }
 
   exposureView() {
@@ -9551,7 +9681,8 @@ class PoliciesMixin {
     ];
     const bar = this.listBar(id, { table: true, dense: true, sorts, filters: [{ name: "rule", all: this.t("polAllRules"), options: on.map(rule => [rule.id, `${this.t(`polRule_${rule.id}`)} (${this.formatNumber(rule.count)})`]) }] });
     const items = on.flatMap(rule => rule.items.map(item => ({ ...item, rule: rule.id }))).filter(item => this.policyShowHidden || !item.ignored);
-    const shown = this.refine(id, items, { text: item => [item.name, item.object_id, ...(item.also || [])].join(" "), filters: { rule: (item, v) => item.rule === v }, sorts, tie: item => item.key });
+    const refined = this.refine(id, items, { text: item => [item.name, item.object_id, ...(item.also || [])].join(" "), filters: { rule: (item, v) => item.rule === v }, sorts, tie: item => item.key });
+    const shown = this.selOnlyOn("areaassign", this.polSel?.size || 0) ? refined.filter(item => this.polSel.has(item.key)) : refined;
     const pg = this.paginate(id, shown);
     this._polPage = pg.rows.filter(i => !i.ignored && ["entity", "device"].includes(i.object_type)).map(i => i.key);
     const columns = [
@@ -10661,7 +10792,7 @@ class OftenMixin {
   // rows are marked or left out from the selection bar; one row alone through its menu. A click on a row opens the object.
   // The picked suggestions: what to do with them, in the bar of the list beside the search.
   oftenTools(n) {
-    return `${this.selTools("often", n, "data-often-clear")}<button type="button" class="btn quiet" data-often-skip-picked ${n ? "" : "disabled"}>${this.t("oftenSkip")}</button><button type="button" class="btn primary" data-often-picked ${n ? "" : "disabled"}>${this.t("oftenTakeN", { n: this.formatNumber(n) })}</button>`;
+    return `${this.selTools("often", n, "data-often-clear")}${n ? `<button type="button" class="btn quiet" data-often-skip-picked>${this.t("oftenSkip")}</button><button type="button" class="btn primary" data-often-picked>${this.t("oftenTakeN", { n: this.formatNumber(n) })}</button>` : ""}`;
   }
 
   oftenCard() {
@@ -10672,7 +10803,7 @@ class OftenMixin {
     for (const key of [...sel]) if (!items.some(s => s.key === key)) sel.delete(key);
     const rows = items.map(s => this.oftenRowOf(s));
     const menu = r => `<details class="rowmenu"><summary aria-label="${this.esc(this.t("rowMenu"))}"><ha-icon icon="mdi:dots-vertical"></ha-icon></summary><div class="menupop"><button type="button" class="menuitem" data-often-take="${this.esc(r.key)}"><ha-icon icon="mdi:bookmark-plus-outline"></ha-icon>${this.t("oftenTake")}</button><button type="button" class="menuitem" data-often-skip="${this.esc(r.key)}"><ha-icon icon="mdi:close"></ha-icon>${this.t("oftenSkip")}</button></div></details>`;
-    const shown = this.selOnly?.often ? rows.filter(r => sel.has(r.key)) : rows;
+    const shown = this.selOnlyOn("often", sel.size) ? rows.filter(r => sel.has(r.key)) : rows;
     const list = this.sysList("often", shown, {
       lead: this.oftenTools(sel.size), sort: "hides", dir: "desc", tie: r => r.key, empty: "oftenNone", text: r => `${r.title} ${r.id} ${r.pattern}`,
       sorts: [{ key: "name", label: "sortName", dir: "asc", get: r => r.title }, { key: "pattern", label: "oftenColPattern", dir: "asc", get: r => r.pattern }, { key: "hides", label: "oftenColFindings", dir: "desc", get: r => r.hides }],
@@ -12480,12 +12611,12 @@ class BatteryCareMixin {
     const bar = items.length ? this.listBar("reminders", { table: true, dense: true, sorts, filters: [{ name: "state", all: this.t("remAllStates"), options: [["due", this.t("remStateDue")], ["soon", this.t("remStateSoon")], ["ok", this.t("remStateOk")]] }] }) : "";
     const sel = (this.remSel ||= new Set());
     for (const id of [...sel]) if (!items.some(r => r.id === id)) sel.delete(id);
-    const rows = this.refine("reminders", this.selOnly?.reminders ? items.filter(r => sel.has(r.id)) : items, { text: r => [r.name, r.note].join(" "), filters: { state: (r, v) => r.state === v }, sorts, tie: r => r.id });
+    const rows = this.refine("reminders", this.selOnlyOn("reminders", sel.size) ? items.filter(r => sel.has(r.id)) : items, { text: r => [r.name, r.note].join(" "), filters: { state: (r, v) => r.state === v }, sorts, tie: r => r.id });
     const pg = this.paginate("reminders", rows);
     this._remVisible = pg.rows.map(r => r.id);
     // Several reminders done at once: tick them, then one button.
     const n = sel.size;
-    const tools = items.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("reminders", n, "data-rem-clear")}<span class="toolgap"></span><button type="button" class="btn" data-rem-done-picked ${n ? "" : "disabled"}><ha-icon icon="mdi:check"></ha-icon>${this.t("remDoneN", { n: this.formatNumber(n) })}</button></div>` : "";
+    const tools = items.length ? `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("reminders", n, "data-rem-clear")}<span class="toolgap"></span>${n ? `<button type="button" class="btn" data-rem-done-picked><ha-icon icon="mdi:check"></ha-icon>${this.t("remDoneN", { n: this.formatNumber(n) })}</button>` : ""}</div>` : "";
     const table = !items.length ? `<div class="emptymsg"><ha-icon icon="mdi:calendar-clock-outline"></ha-icon>${this.t("remEmpty")}</div>`
       : rows.length ? this.listTable("reminders", this.reminderColumns(pg.rows), pg.rows, { cls: "rem", rowAttrs: r => `data-rem-row="${this.esc(r.id)}" tabindex="0" role="button" aria-expanded="${(this.remOpen || []).includes(r.id)}"`, after: r => this.reminderHistory(r) }) : `<div class="emptymsg">${this.noMatches("reminders")}</div>`;
     return `${tiles}<div class="panel">${head}${bar}${tools}${table}${pg.footer}</div>`;
@@ -13557,7 +13688,7 @@ class FindingStatusMixin {
   }
 }
 Object.assign(TEXT.de, {
-  workExpired: "angefangen am {date}", stateOpen: "Offen", freshNew: "Neu seit dem letzten Besuch", stateWorse: "Schlechter geworden", visitNothing: "Nichts Neues seit {date}.", visitSummary: "{fresh} neu · {worse} schlechter geworden seit {date}.", stateDue: "Fällig", freshInwork: "In Arbeit", state_fixed: "Erledigt", stateNew: "Neu", stateInwork: "In Arbeit", state_new: "Neu", state_inwork: "In Arbeit", state_known: "Ist so gewollt", state_snoozed: "Später", state_hidden: "Nicht gezeigt",
+  workExpired: "angefangen am {date}", stateOpen: "Offen", freshNew: "Neu seit letztem Besuch", stateWorse: "Schlechter geworden", visitNothing: "Nichts Neues seit {date}.", visitSummary: "{fresh} neu · {worse} schlechter geworden seit {date}.", stateDue: "Fällig", freshInwork: "In Arbeit", state_fixed: "Erledigt", stateNew: "Neu", stateInwork: "In Arbeit", state_new: "Neu", state_inwork: "In Arbeit", state_known: "Ist so gewollt", state_snoozed: "Später", state_hidden: "Nicht gezeigt",
   doneNone: "In den letzten {days} Tagen wurde nichts erledigt.", donePeriod: "Zeitraum", doneDays: "{n} Tage", doneByPlan: "Durch einen Plan behoben", doneBack: "Von selbst wieder in Ordnung", doneRemoved: "Objekt entfernt (nicht behoben)", doneUnread: "Quelle nicht gelesen (nicht behoben)", doneOther: "Grund unbekannt (nicht behoben)", donePlan: "Plan", doneObjects: "{n} Objekte", doneUndoYes: "rückgängig möglich: ja", doneUndoNo: "rückgängig möglich: nein", doneSince: "Verglichen mit dem Scan vom {date}.", actKind_add_label: "Label ergänzt", actKind_delete_automation: "Automation gelöscht", actKind_delete_backup: "Backup gelöscht", actKind_migrate_meter: "Zähler gewechselt", actKind_purge_statistics: "Statistiken bereinigt", actKind_trim_history: "Verlauf gekürzt", actKind_refactor_automation: "Automation umgebaut", actKind_rename_entity: "Entität umbenannt", actKind_replace_references: "Verweise ersetzt", actKind_set_area: "Bereich gesetzt", actKind_disable_entity: "Entität deaktiviert", actKind_remove_entity: "Entität entfernt", actKind_disable_device: "Gerät deaktiviert", actKind_remove_device: "Gerät entfernt", actKind_forget_device: "Gerät vergessen", actKind_repair_range: "Zählerbereich repariert", actKind_quarantine: "In Quarantäne gelegt", excCreate: "Regel für dieses Objekt …", fselStatus: "Befund entscheiden …", fselStatusChange: "Status ändern …", outageStatusHint: "Ein Status beendet den Ausfall: Die {n} Entitäten dahinter zählen dann einzeln als nicht verfügbar. Ist das Objekt absichtlich aus, passt eine Objekt-Notiz besser; sie blendet den Ausfall samt Folgen aus und greift auch beim nächsten Mal.", outageStatusHint1: "Ein Status beendet den Ausfall: Die Entität dahinter zählt dann einzeln als nicht verfügbar. Ist das Objekt absichtlich aus, passt eine Objekt-Notiz besser; sie blendet den Ausfall samt Folge aus und greift auch beim nächsten Mal.", outageMarkInstead: "Stattdessen Objekt-Notiz setzen", statusTitle: "Befund entscheiden · {n} Befunde",
   decideKindHint_keep: "Das ist bei mir normal. Bleibt still, bis du es änderst. Begründung nötig.", decideKindHint_snooze: "Stimmt, aber nicht jetzt. Kommt nach der Frist als „fällig“ zurück.", decideKindHint_ignore: "Die Regel irrt sich hier. Begründung freiwillig.",
   overviewDue: "{n} fällig", overviewNew: "{n} neu", dueSince: "seit {date}", dueExpired: "Frist abgelaufen am {date}", dueWorse: "schlechter geworden", dueWorseImpact: "Wirkung von {from} auf {to}", dueWorseFollowers: "mehr Folgen", dueKeepOn: "Weiter so gewollt", dueLater: "Noch später", dueKeepReason: "Weiter so gewollt",
@@ -13942,7 +14073,7 @@ Object.assign(TEXT.de, {
   backupFailHint: "Prüfe unter Einstellungen → System → Backups, ob ein Backup-Ziel erreichbar ist, und lies das Protokoll unter Einstellungen → System → Protokolle.", previewReady: "Vorschau erstellt", toast_verified: "Plan abgeschlossen und geprüft", toast_executed: "Plan ausgeführt", toast_partial: "Plan nur teilweise ausgeführt", toast_aborted: "Plan abgebrochen", planStatusLost: "Der Planstatus lässt sich gerade nicht abrufen. Der Plan läuft weiter, Housekeeper versucht es erneut.", planCancelFailed: "Der Abbruch ist nicht bestätigt. Der Plan läuft möglicherweise weiter. Bereits ausgeführte Schritte werden durch einen Abbruch nicht zurückgenommen.",
   backupAgo: "vor {age}", backupOpen: "Details", bhResult: "Prüfungen",
   visitSince: "Seit deinem letzten Besuch ({ago})", visitAdded: "{n} neue Befunde", visitGone: "{n} erledigt",
-  loadingShort: "lädt …", resetFilters: "Filter zurücksetzen", showSelectedOnly: "Nur Ausgewählte zeigen", showAll: "Alle zeigen",
+  loadingShort: "lädt …", resetFilters: "Filter zurücksetzen", showSelectedOnly: "Nur Ausgewählte zeigen", selAllOfList: "Alle {count} der Liste", selOverMax: "{n} von max. {max}", showAll: "Alle zeigen",
   verdictIrreversible: "Nicht umkehrbar",
   acknowledgeAll: "Ich habe die {count} zu prüfenden Einträge gesehen und führe sie mit aus", acknowledgeAllHint: "Ohne Haken laufen nur die unbedenklichen Einträge; zu prüfende werden übersprungen.",
   outcomeDone: "Erfolgreich abgeschlossen: {done} von {total} erledigt, Prüfung bestanden.", outcomeVerifying: "Ausgeführt: {done} von {total} erledigt. Die Prüfung läuft noch …", outcomeCheckFailed: "{done} von {total} erledigt, aber die Prüfung hat etwas gefunden. Siehe unten.", outcomePartial: "Nur teilweise ausgeführt: {done} von {total} erledigt.", backupLocalPlanned: "Kein Backup-Ziel eingerichtet: Das Backup liegt im lokalen Speicher von Home Assistant (Ordner /backup, unverschlüsselt). Eine Kopie außerhalb von Home Assistant, etwa dein Google-Drive-Backup, bleibt sinnvoll.", backupLocalDone: "lokal, unverschlüsselt", outcomeAborted: "Abgebrochen. Es wurde nichts gelöscht und nichts geändert.",
@@ -13995,7 +14126,7 @@ Object.assign(TEXT.en, {
   backupFailHint: "Check under Settings → System → Backups that a backup location is reachable, and read the log under Settings → System → Logs.", previewReady: "Preview created", toast_verified: "Plan completed and verified", toast_executed: "Plan executed", toast_partial: "Plan only partly executed", toast_aborted: "Plan aborted", planStatusLost: "The plan status cannot be read right now. The plan keeps running, Housekeeper will try again.", planCancelFailed: "The cancellation is not confirmed. The plan may still be running. Steps that already ran are not undone by cancelling.",
   backupAgo: "{age} ago", backupOpen: "Details", bhResult: "Checks",
   visitSince: "Since your last visit ({ago})", visitAdded: "{n} new findings", visitGone: "{n} resolved",
-  loadingShort: "loading …", resetFilters: "Reset filters", showSelectedOnly: "Show selected only", showAll: "Show all",
+  loadingShort: "loading …", resetFilters: "Reset filters", showSelectedOnly: "Show selected only", selAllOfList: "All {count} in the list", selOverMax: "{n} of max. {max}", showAll: "Show all",
   verdictIrreversible: "Not reversible",
   acknowledgeAll: "I have seen the {count} entries to review and run them too", acknowledgeAllHint: "Without the tick only the unproblematic entries run; entries to review are skipped.",
   outcomeDone: "Completed successfully: {done} of {total} done, check passed.", outcomeVerifying: "Executed: {done} of {total} done. The check is still running …", outcomeCheckFailed: "{done} of {total} done, but the check found something. See below.", outcomePartial: "Only partly executed: {done} of {total} done.", backupLocalPlanned: "No backup location is set up: the backup stays in the local storage of Home Assistant (folder /backup, not encrypted). A copy outside Home Assistant, such as your Google Drive backup, is still worth having.", backupLocalDone: "local, not encrypted", outcomeAborted: "Aborted. Nothing was deleted and nothing was changed.",
@@ -15070,7 +15201,7 @@ class ExcludeMixin {
     const leftNote = left.ids.length && left.ids.some(id => !this.excludeSel.has(id))
       ? `<span class="date">${this.t("exLeft", { count: this.formatNumber(left.ids.length), rows: this.formatNumber(left.rows) })}</span><button class="btn quiet" data-ex-left>${this.t("exLeftPick")}</button>` : "";
     const any = n || trim;
-    const bar = `<div class="toolbar exbar${any ? "" : " nosel"}">${only && (sug || this.exOnlySug) ? `<button class="btn quiet${this.exOnlySug ? " on" : ""}" data-ex-only aria-pressed="${Boolean(this.exOnlySug)}">${this.t("exOnlySug")}</button>` : ""}${sug ? `<button class="btn quiet" data-ex-suggested>${this.t("exPickSuggested")}</button>` : ""}${any ? `<button class="btn quiet" data-ex-clear>${this.t("exClear")}</button>` : ""}${label ? `<span class="selcount" role="status" title="${this.esc(this.t("exclHint"))}">${label}</span>` : ""}<span class="toolgap"></span>${n ? `<button class="btn primary" data-copy-snippet title="${this.esc(this.t("exclHint"))}">${this.snippetCopied ? this.t("recorderCopied") : this.t("exCopy")}</button>` : ""}${leftNote}</div>`;
+    const bar = `<div class="toolbar exbar${any ? "" : " nosel"}">${only && (sug || this.exOnlySug) ? `<button type="button" class="chip${this.exOnlySug ? " active" : ""}" data-ex-only aria-pressed="${Boolean(this.exOnlySug)}">${this.t("exOnlySug")}</button>` : ""}${sug ? `<button type="button" class="chip" data-ex-suggested>${this.t("exPickSuggested")}</button>` : ""}${any ? `<button type="button" class="chip" data-ex-clear>${this.t("clearSelection")}</button>` : ""}${label ? `<span class="selcount" role="status" title="${this.esc(this.t("exclHint"))}">${label}</span>` : ""}<span class="toolgap"></span>${n ? `<button class="btn primary" data-copy-snippet title="${this.esc(this.t("exclHint"))}">${this.snippetCopied ? this.t("recorderCopied") : this.t("exCopy")}</button>` : ""}${leftNote}</div>`;
     const steps = `<div class="exsteps"><strong>${this.t("exStepsTitle")}</strong><ol><li>${this.t("exStep1")}</li><li>${this.t("exStep2")}</li><li>${this.t("exStep3")}</li></ol></div>`;
     const rule = `<p class="factnote exrule">${this.t("exRule", { min: EXCLUDE_MIN_PER_DAY })}</p>`;
     return `${bar}${rule}${n ? `<pre class="code exblock">${this.esc(this.excludeSnippet())}</pre>${steps}` : ""}${any ? this.trimBlock() : ""}`;
@@ -15998,10 +16129,10 @@ class ExportMixin {
     const options = (label, values) => `<option value="">${this.esc(label)}</option>${values.map(([v, text]) => `<option value="${this.esc(v)}">${this.esc(text)}</option>`).join("")}`;
     const byName = (a, b) => a[1].localeCompare(b[1]);
     const filtered = this.filtered().filter(o => o.object_type === "entity");
-    const pickRows = hits.map(o => `<label class="row xprow"><input type="checkbox" class="selbox" data-xp-pick="${this.esc(o.object_id)}" ${x.sel.has(o.object_id) ? "checked" : ""}><span class="row-text"><strong>${this.esc(o.name)}</strong>${this.rowId(o.object_id, this.areaName(o) || "")}</span></label>`);
+    const pickRows = (this.selOnlyOn("export", x.sel.size) ? hits.filter(o => x.sel.has(o.object_id)) : hits).map(o => `<label class="row xprow"><input type="checkbox" class="selbox" data-xp-pick="${this.esc(o.object_id)}" ${x.sel.has(o.object_id) ? "checked" : ""}><span class="row-text"><strong>${this.esc(o.name)}</strong>${this.rowId(o.object_id, this.areaName(o) || "")}</span></label>`);
     const pickPage = this.paginate("xppick", pickRows), rows = pickPage.rows.join("") + pickPage.footer;
     return `<h3>${this.t("xpSelTitle")}</h3><p class="factnote">${this.t("xpSelHint")}</p>
-      <div class="chips"><button class="chip" data-xp-quick="all">${this.t("xpQuickAll", { n: this.formatNumber(all.length) })}</button><button class="chip" data-xp-quick="filtered">${this.t("xpQuickFiltered", { n: this.formatNumber(filtered.length) })}</button>${q ? `<button class="chip" data-xp-quick="shown">${this.t("xpQuickShown", { n: this.formatNumber(hits.length) })}</button>` : ""}<button class="chip" data-xp-quick="clear">${this.t("xpQuickClear")}</button><span class="pill xpcount ${x.sel.size ? "ok" : "mute"}" role="status"><ha-icon icon="mdi:check-circle-outline" class="u-ic14"></ha-icon>${this.t("xpSelected", { n: this.formatNumber(x.sel.size) })}</span></div>
+      <div class="chips"><button class="chip" data-xp-quick="all">${this.t("xpQuickAll", { n: this.formatNumber(all.length) })}</button><button class="chip" data-xp-quick="filtered">${this.t("xpQuickFiltered", { n: this.formatNumber(filtered.length) })}</button>${q ? `<button class="chip" data-xp-quick="shown">${this.t("xpQuickShown", { n: this.formatNumber(hits.length) })}</button>` : ""}${this.selTools("export", x.sel.size, 'data-xp-quick="clear"')}</div>
       <div class="filters"><select data-xp-add="area" aria-label="${this.esc(this.t("xpPickArea"))}">${options(this.t("xpPickArea"), [...areas].sort(byName))}</select><select data-xp-add="domain" aria-label="${this.esc(this.t("xpPickDomain"))}">${options(this.t("xpPickDomain"), [...domains].sort().map(d => [d, d]))}</select><select data-xp-add="platform" aria-label="${this.esc(this.t("xpPickPlatform"))}">${options(this.t("xpPickPlatform"), [...platforms].sort().map(p => [p, p]))}</select></div>
       <input type="search" data-xp-q value="${this.esc(x.q)}" placeholder="${this.esc(this.t("xpSearch"))}">
       ${rows ? `<div class="xplist">${rows}</div>` : `<div class="emptymsg">${this.t("xpNone")}</div>`}`;
@@ -17276,7 +17407,7 @@ class AreaAssignMixin {
   // The bar over the policy list: how many are ticked and what can be done with them, both from the first tick on.
   polSelBar(total = 0) {
     const n = this.polSel?.size || 0;
-    return `<div class="toolbar${n ? "" : " nosel"}">${n ? `<button class="btn quiet" data-pol-sel-clear>${this.t("clearSelection")}</button><span class="selcount" role="status">${this.t("selectedCount", { count: n })}</span>` : ""}<span class="toolgap"></span>${n ? `<div class="fbtns"><button class="btn" data-pol-bulk="area">${this.t("fselArea")}</button></div>` : ""}${this.viewCount(total)}</div>${this.bulk && this.bulk.kind === "area" ? this.bulkForm() : ""}`;
+    return `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("areaassign", n, "data-pol-sel-clear")}<span class="toolgap"></span>${n ? `<div class="fbtns"><button class="btn" data-pol-bulk="area">${this.t("fselArea")}</button></div>` : ""}${this.viewCount(total)}</div>${this.bulk && this.bulk.kind === "area" ? this.bulkForm() : ""}`;
   }
 
   // Only entities and devices can be ticked: the action for several at once assigns an area. A greyed box says why.
@@ -17510,8 +17641,8 @@ class BatteryKindMixin {
       ],
     });
     const n = sel.size;
-    const tools = `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("bk_proposed", n, "data-bk-clear")}<span class="toolgap"></span><button type="button" class="btn" data-bk-take ${n ? "" : "disabled"}><ha-icon icon="mdi:check"></ha-icon>${this.t("bkTakeN", { n: this.formatNumber(n) })}</button></div>`;
-    const shown = this.selOnly?.bk_proposed ? proposed.filter(o => sel.has(o.object_id)) : proposed;
+    const tools = `<div class="toolbar${n ? "" : " nosel"}">${this.selTools("bk_proposed", n, "data-bk-clear")}<span class="toolgap"></span>${n ? `<button type="button" class="btn" data-bk-take><ha-icon icon="mdi:check"></ha-icon>${this.t("bkTakeN", { n: this.formatNumber(n) })}</button>` : ""}</div>`;
+    const shown = this.selOnlyOn("bk_proposed", sel.size) ? proposed.filter(o => sel.has(o.object_id)) : proposed;
     const parts = [];
     if (proposed.length) parts.push(this.fold("bk_proposed", { tone: "warn", title: this.t("bkProposed"), sub: this.t("bkProposedHint"), pill: this.formatNumber(proposed.length) }, `${tools}${table("bk_proposed", shown, o => this.bkPick?.[o.object_id] || o.battery_suggest?.kind || "other", false)}`, true));
     if (mine.length) parts.push(this.fold("bk_mine", { tone: "mute", title: this.t("bkMine"), sub: this.t("bkMineHint"), pill: this.formatNumber(mine.length) }, table("bk_mine", mine, o => o.battery_kind, true), false));
@@ -19204,6 +19335,76 @@ class ConfirmMixin {
   }
 }
 
+// Texts for the direction of relations (relation table groups, graph column heads); merged into TEXT.
+Object.assign(TEXT.de, {
+  relGroupPlace: "Wo steht es?",
+  relPlace: "Standort",
+  relGroupOrigin: "Woher kommt es?",
+  relGroupUsage: "Wo wird es verwendet?",
+  graphColLeft: "Herkunft · Ebene {n}",
+  graphColCenter: "Dieses Objekt",
+  graphColRight: "Verwendung · Ebene {n}",
+  graphLegendDir: "Pfeile zeigen in Richtung des Datenflusses: von dem, was liefert, zu dem, was nutzt („Gerät → Entität → Dashboard“). Links steht, woher das Objekt kommt, rechts, wo es verwendet wird. Eine Ebene ist ein Schritt vom gewählten Objekt weg.",
+  graphRelOrigin: "Herkunft (stellt bereit, besitzt, enthält)",
+  graphRelUsage: "Verwendung (steuert, zeigt an, reagiert auf)",
+  relIn_PROVIDES: "stellt dieses Objekt bereit",
+  relOut_PROVIDES: "wird von diesem Objekt bereitgestellt",
+  relIn_CONNECTED: "ist vermutlich mit diesem Objekt verbunden",
+  relOut_CONNECTED: "ist vermutlich mit diesem Objekt verbunden",
+  relIn_OWNS: "besitzt dieses Objekt",
+  relOut_OWNS: "gehört zu diesem Objekt",
+  relIn_CONTAINS: "enthält dieses Objekt",
+  relOut_CONTAINS: "ist in diesem Objekt enthalten",
+  relIn_VIA_DEVICE: "ist das übergeordnete Gerät dieses Geräts",
+  relOut_VIA_DEVICE: "ist über dieses Gerät angebunden",
+  relIn_TRIGGERS_ON: "reagiert auf dieses Objekt",
+  relOut_TRIGGERS_ON: "löst dieses Objekt aus",
+  relIn_USES_AS_CONDITION: "prüft dieses Objekt als Bedingung",
+  relOut_USES_AS_CONDITION: "ist Bedingung für dieses Objekt",
+  relIn_TARGETS: "steuert dieses Objekt",
+  relOut_TARGETS: "wird von diesem Objekt gesteuert",
+  relIn_REFERENCES: "verweist auf dieses Objekt",
+  relOut_REFERENCES: "wird von diesem Objekt referenziert",
+  relIn_SHOWS: "zeigt dieses Objekt an",
+  relOut_SHOWS: "wird von diesem Objekt angezeigt",
+  relIn_INCLUDES: "bindet dieses Objekt ein",
+  relOut_INCLUDES: "ist in diesem Objekt eingebunden",
+});
+Object.assign(TEXT.en, {
+  relGroupPlace: "Where is it?",
+  relPlace: "Location",
+  relGroupOrigin: "Where does it come from?",
+  relGroupUsage: "Where is it used?",
+  graphColLeft: "Origin · level {n}",
+  graphColCenter: "This object",
+  graphColRight: "Usage · level {n}",
+  graphLegendDir: "Arrows point in the direction of the data flow: from what provides to what uses (“device → entity → dashboard”). The left shows where the object comes from, the right where it is used. A level is one step away from the chosen object.",
+  graphRelOrigin: "Origin (provides, owns, contains)",
+  graphRelUsage: "Usage (controls, shows, triggers on)",
+  relIn_PROVIDES: "provides this object",
+  relOut_PROVIDES: "is provided by this object",
+  relIn_CONNECTED: "is probably connected to this object",
+  relOut_CONNECTED: "is probably connected to this object",
+  relIn_OWNS: "owns this object",
+  relOut_OWNS: "belongs to this object",
+  relIn_CONTAINS: "contains this object",
+  relOut_CONTAINS: "is contained in this object",
+  relIn_VIA_DEVICE: "is the parent device of this one",
+  relOut_VIA_DEVICE: "is connected through this device",
+  relIn_TRIGGERS_ON: "reacts to this object",
+  relOut_TRIGGERS_ON: "triggers this object",
+  relIn_USES_AS_CONDITION: "checks this object as a condition",
+  relOut_USES_AS_CONDITION: "is a condition of this object",
+  relIn_TARGETS: "controls this object",
+  relOut_TARGETS: "is controlled by this object",
+  relIn_REFERENCES: "refers to this object",
+  relOut_REFERENCES: "is referenced by this object",
+  relIn_SHOWS: "shows this object",
+  relOut_SHOWS: "is shown by this object",
+  relIn_INCLUDES: "includes this object",
+  relOut_INCLUDES: "is included in this object",
+});
+
 // BrokenCardsMixin: where a broken dashboard reference sits (tab and card instead of a raw path), the close names that
 // do exist, and one row per card instead of one per reference. Mixed into the panel in 99-register.js.
 Object.assign(TEXT.de, {
@@ -19720,14 +19921,17 @@ Object.assign(TEXT.en, {
 });
 
 class EntityStateMixin {
-  // The bar over the inventory table: how many entities are ticked and what can be done with them.
-  invSelBar(rows) {
+  // The bar over the inventory table: the chips to pick, the pill of the picks and, from the first pick on, one menu of what can be done.
+  // `rows` are the rows shown, `all` the rows the filters leave (they differ while only the picks are shown).
+  invSelBar(rows, all = rows) {
     const sel = this.invSel ||= new Set(), n = sel.size;
-    const entities = rows.filter(r => this.invSelectable(r));
+    const entities = all.filter(r => this.invSelectable(r));
     if (!n && !entities.length) return rows.length ? `<div class="toolbar nosel"><span class="toolgap"></span>${this.viewCount(rows.length)}</div>` : "";
     const over = n > MAX_PLAN_ACTIONS, busy = this.planBusy ? 'disabled aria-busy="true"' : "";
-    const btn = (target, icon) => `<button class="btn" data-inv-state="${target}" ${n ? busy : "disabled"}><ha-icon icon="${icon}"></ha-icon>${this.t(`state${target[0].toUpperCase()}${target.slice(1)}`)}</button>`;
-    return `<div class="toolbar${n ? "" : " nosel"}"><button class="btn quiet" data-inv-sel-all ${entities.length ? "" : "disabled"}>${this.t("stateAllFiltered", { count: this.formatNumber(entities.length) })}</button><button class="btn quiet" data-inv-sel-clear ${n ? "" : "disabled"}>${this.t("stateClear")}</button><span class="selcount" role="status">${this.t("stateSel", { count: n })}</span><span class="toolgap"></span><div class="fbtns">${btn("disable", "mdi:cancel")}${btn("enable", "mdi:check-circle-outline")}${btn("hide", "mdi:eye-off-outline")}${btn("unhide", "mdi:eye-outline")}</div>${this.viewCount(rows.length)}</div>${over ? `<p class="factnote">${this.t("purgeChunk", { max: MAX_PLAN_ACTIONS, n, rest: n - MAX_PLAN_ACTIONS })}</p>` : ""}`;
+    const item = (target, icon) => `<button type="button" class="menuitem" data-inv-state="${target}" ${busy}><ha-icon icon="${icon}"></ha-icon><span>${this.t(`state${target[0].toUpperCase()}${target.slice(1)}`)}</span></button>`;
+    const tools = this.selTools("inventory", n, "data-inv-sel-clear", { attr: "data-inv-sel-all", label: this.t("stateAllFiltered", { count: this.formatNumber(entities.length) }), disabled: !entities.length }, over ? { label: this.t("selOverMax", { n: this.formatNumber(n), max: MAX_PLAN_ACTIONS }), over: true } : {});
+    const menu = n ? `<details class="rowmenu actmenu"><summary class="btn primary">${this.t("actMenu")}<ha-icon icon="mdi:chevron-down"></ha-icon></summary><div class="menupop">${item("disable", "mdi:cancel")}${item("enable", "mdi:check-circle-outline")}${item("hide", "mdi:eye-off-outline")}${item("unhide", "mdi:eye-outline")}</div></details>` : "";
+    return `<div class="toolbar${n ? "" : " nosel"}">${tools}<span class="toolgap"></span>${menu ? `<div class="fbtns">${menu}</div>` : ""}${this.viewCount(rows.length)}</div>${over ? `<p class="factnote">${this.t("purgeChunk", { max: MAX_PLAN_ACTIONS, n, rest: n - MAX_PLAN_ACTIONS })}</p>` : ""}`;
   }
 
   // The inventory lists an automation, script or scene instead of its entity, so these rows switch that entity.
@@ -24106,6 +24310,7 @@ class HAHousekeeperPanel extends HTMLElement {
     const findPage = root.querySelector("[data-fsel-page]");
     if (findPage) { findPage.indeterminate = findPage.hasAttribute("data-partial"); findPage.onchange = ev => { (this._findPage || []).forEach(key => (ev.target.checked ? this.findSel.add(key) : this.findSel.delete(key))); this.render(); }; }
     root.querySelector("[data-fsel-clear]")?.addEventListener("click", () => { this.findSel.clear(); this.render(); });
+    root.querySelector("[data-fsel-all]")?.addEventListener("click", () => { (this._findAll || []).forEach(key => this.findSel.add(key)); this.render(); });
     root.querySelector("[data-fsel-unhide]")?.addEventListener("click", () => this.unhideSelectedFindings());
     root.querySelector("[data-fsel-markclear]")?.addEventListener("click", () => this.confirmAsk(this.t("confirmMarksRemove", { count: this.selectionFacts().mark.length }), () => this.clearSelectedMarks()));
     root.querySelector("[data-fsel-hide]")?.addEventListener("click", () => this.hideSelectedFindings());
@@ -24253,6 +24458,7 @@ class HAHousekeeperPanel extends HTMLElement {
     root.querySelectorAll("[data-plan-open]").forEach(el => el.onclick = ev => { if (el.tagName === "BUTTON") ev?.stopPropagation?.(); const inner = ev?.target?.closest?.("button, select, input, a, label"); if (inner && inner !== el && el.contains(inner)) return; this.openPlan(el.dataset.planOpen); });
     root.querySelectorAll("[data-merge-sel]").forEach(el => el.onchange = () => { this.mergeSel = new Set(this.mergeSel || []); el.checked ? this.mergeSel.add(el.dataset.mergeSel) : this.mergeSel.delete(el.dataset.mergeSel); this.render(); });
     root.querySelector("[data-merge]")?.addEventListener("click", () => this.mergePlans());
+    root.querySelector("[data-merge-clear]")?.addEventListener("click", () => { this.mergeSel = new Set(); this.render(); });
     root.querySelector("[data-merge-delete]")?.addEventListener("click", () => { const n = this.mergeSel?.size || 0; if (n) this.confirmAsk(this.t("confirmPlansDelete", { count: n }), () => this.deletePlans()); });
     root.querySelectorAll("[data-merge-page]").forEach(el => { el.indeterminate = el.hasAttribute("data-partial"); el.onchange = () => { this.mergeSel = new Set(this.mergeSel || []); el.dataset.mergePage.split(",").forEach(id => (el.checked ? this.mergeSel.add(id) : this.mergeSel.delete(id))); this.render(); }; });
     root.querySelectorAll("[data-err-close]").forEach(el => el.onclick = () => { this.cleanupError = ""; this.render(); });

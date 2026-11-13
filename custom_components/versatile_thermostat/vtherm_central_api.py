@@ -149,6 +149,7 @@ class VersatileThermostatAPI(VThermAPI):
         if not entry_id:
             await self.central_power_manager.start_listening()
             await self.central_boiler_manager.start_listening()
+            await self.central_boiler_manager.notify_vtherms_started()
 
     async def init_vtherm_preset_with_central(self):
         """Init all VTherm presets when the VTherm uses central temperature"""
@@ -198,9 +199,15 @@ class VersatileThermostatAPI(VThermAPI):
         self.hass.data[DOMAIN].pop(entry.entry_id)
         # If not more entries are preset, remove the API
         if len([val for val in self.hass.data[DOMAIN].values() if isinstance(val, ConfigEntry)]) == 0:
-            _LOGGER.debug("No more entries-> Remove the API from DOMAIN")
-            if DOMAIN in self.hass.data:
-                self.hass.data.pop(DOMAIN)
+            # The plugin registrations live in the API instance: keep it while plugins are registered
+            # (else a reload of the last entry would lose them until the next HA restart)
+            registrations = len(self.list_feature_managers()) + len(self.list_prop_algorithms())
+            if registrations > 0:
+                _LOGGER.debug("No more entries but %d plugin registration(s) -> Keep the API in DOMAIN", registrations)
+            else:
+                _LOGGER.debug("No more entries-> Remove the API from DOMAIN")
+                if DOMAIN in self.hass.data:
+                    self.hass.data.pop(DOMAIN)
 
     @property
     def self_regulation_expert(self):
