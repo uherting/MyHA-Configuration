@@ -8,7 +8,7 @@
 
 # who is at home?
 - binary_sensor:
-    # binary_sensor.home_uwe_is_here
+    # binary_sensor.at_home_uwe_is_here
     - name: "Home: Uwe is here"
       unique_id: "at home uwe yn"
       state: >
@@ -20,39 +20,43 @@
       state: >
         {{ is_state('person.gillian', 'home') }}
 
-    # binary_sensor.home_someone_is_here
+    # binary_sensor.at_home_someone_is_here
     - name: "Home: someone is here"
       unique_id: "at home someone yn"
       state: >
         {{
-          (is_state('person.uwe', 'home'))
-          or
-          (is_state('person.gillian', 'home'))
+          (is_state('person.uwe', 'home')) or
+          (is_state('person.gillian', 'home')) or
+          (is_state('binary_sensor.at_home_someone_presence_yn', 'on'))
         }}
 
-    # binary_sensor.home_all_are_here
+    # binary_sensor.at_home_all_are_here
     - name: "Home: all are here"
       unique_id: "at home all yn"
       state: >
         {{
-          (is_state('person.uwe', 'home'))
-          and
-          (is_state('person.gillian', 'home'))
+          (
+            (is_state('person.uwe', 'home')) and
+            (is_state('person.gillian', 'home'))
+          ) or
+          (is_state('binary_sensor.at_home_someone_presence_yn', 'on'))
         }}
 
-    # binary_sensor.home_all_are_gone
+    # binary_sensor.at_home_all_are_gone
     - name: "Home: all are gone"
-      unique_id: "at home all gone"
+      unique_id: "at_home all gone"
       state: >
         {{
-          (not is_state('person.uwe', 'home'))
-          and
-          (not is_state('person.gillian', 'home'))
+          (
+            (not is_state('person.uwe', 'home')) and
+            (not is_state('person.gillian', 'home'))
+          ) or
+          (is_state('binary_sensor.at_home_someone_presence_yn', 'off'))
         }}
 
-    # binary_sensor.home_someone_is_here_with presence
+    # binary_sensor.at_home_someone_presence_yn
     - name: "Home: someone is here with presence"
-      unique_id: "at home someone presence_yn"
+      unique_id: "at home someone presence yn"
       state: >
         {{ (is_state('group.zb_l2_presence', 'on')) }}
 

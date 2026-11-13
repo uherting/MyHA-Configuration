@@ -85,7 +85,7 @@ resources:
     type: module
 
   # notification_history
-  - url: /local/community/notification_history/notification-history-card.js?v=0.1.1
+  - url: /notification_history/notification-history-card.js?v=0.1.1
     type: module
 
   # Advanced Area Card
