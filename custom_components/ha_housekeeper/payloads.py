@@ -277,6 +277,7 @@ class PlanSummary(TypedDict):
     status: str | None
     executed: bool
     run: bool
+    via: str | None  # "mcp" for a plan an agent made through AI access
     finished_at: str | None
     undoable: bool
     summary: dict[str, Any] | None

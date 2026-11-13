@@ -23,6 +23,8 @@ ENTRY_LIMIT = 2000
 KEEP_DAYS = 90
 MERGE_SECONDS = 60  # reads of one caller within this time are one line
 PARAM_TEXT = 60
+PARAM_KEYS = 12  # keys of a call the log keeps; the functions have fewer
+PARAM_KEY_TEXT = 40
 READ_WINDOW_SECONDS = 60  # the window the read limit counts in
 KINDS = ("read", "write", "denied")
 WRITE_LIMIT_CHOICES = (50, 100, 200, 500)  # changes allowed in five minutes
@@ -33,7 +35,13 @@ AUTO_OFF_CHOICES = (0, 1, 8, 24)  # hours until AI access switches itself off; 0
 def short_params(params: dict[str, Any]) -> dict[str, Any]:
     """The parameters of a call as the log keeps them: short texts, only the size of lists."""
     result: dict[str, Any] = {}
-    for key, value in params.items():
+    for position, (raw_key, value) in enumerate(params.items()):
+        if position >= PARAM_KEYS:
+            # A caller can send any number of keys, even where the function is switched off:
+            # the log keeps a count of the rest, not the keys.
+            result["…"] = len(params) - PARAM_KEYS
+            break
+        key = str(raw_key)[:PARAM_KEY_TEXT]
         if isinstance(value, str):
             result[key] = value[:PARAM_TEXT]
         elif isinstance(value, bool | int | float) or value is None:
@@ -61,6 +69,9 @@ class McpStore:
         self.write = False
         # The time of each read, for the limit: the log merges reads, so it cannot tell when they were.
         self._read_times: deque[datetime] = deque(maxlen=max(READ_LIMIT_CHOICES) * 2)
+        # The same for the changes: the limit must not depend on the log, which pushes old lines out
+        # (a flood of refused calls would otherwise push the changes out and start the limit again).
+        self._write_times: deque[datetime] = deque(maxlen=max(WRITE_LIMIT_CHOICES) * 2)
         self.fix = False
         self.hide_sensitive = True
         self.auto_off_hours = 0
@@ -90,6 +101,11 @@ class McpStore:
             self.entries = [
                 e for e in entries if isinstance(e, dict) and _time(e.get("at")) is not None
             ][-ENTRY_LIMIT:]
+            self._write_times.extend(
+                seen
+                for e in self.entries
+                if e.get("kind") == "write" and (seen := _time(e["at"])) is not None
+            )
 
     @property
     def can_write(self) -> bool:
@@ -182,6 +198,8 @@ class McpStore:
         now = now or datetime.now(UTC)
         if kind == "read":
             self._read_times.append(now)
+        elif kind == "write":
+            self._write_times.append(now)
         last = self.entries[-1] if self.entries else None
         if (
             last is not None
@@ -228,6 +246,11 @@ class McpStore:
         """How many reads came in the last seconds, counted one by one (after a restart from zero)."""
         start = (now or datetime.now(UTC)) - timedelta(seconds=seconds)
         return sum(1 for seen in self._read_times if seen >= start)
+
+    def recent_writes(self, minutes: int, now: datetime | None = None) -> int:
+        """How many changes came in the last minutes, for the limit; the log's lines do not matter."""
+        start = (now or datetime.now(UTC)) - timedelta(minutes=minutes)
+        return sum(1 for seen in self._write_times if seen >= start)
 
     def writes_since(self, minutes: int, now: datetime | None = None) -> int:
         """How many changes the log holds from the last minutes (an undo is a change too)."""

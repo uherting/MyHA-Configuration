@@ -116,6 +116,50 @@
       "low_batteries": {
         "name": "Schwache Batterien"
       },
+      "battery_weakest": {
+        "name": "Schwächste Batterie"
+      },
+      "battery_next_change": {
+        "name": "Nächster Batteriewechsel"
+      },
+      "auto_pause": {
+        "name": "Pausierte Integrationen"
+      },
+      "update_watch": {
+        "name": "Nach dem Update",
+        "state": {
+          "none": "Kein Update",
+          "pending": "Wird geprüft",
+          "stable": "Unauffällig",
+          "transient": "Kurz gestört",
+          "worse": "Schlechter als vorher",
+          "unknown": "Nicht sicher"
+        }
+      },
+      "start_time": {
+        "name": "Startdauer"
+      },
+      "database_size": {
+        "name": "Größe der Datenbank"
+      },
+      "backup": {
+        "name": "Backup-Schutz",
+        "state": {
+          "ok": "In Ordnung",
+          "warn": "Hinweis",
+          "bad": "Schutz fehlt",
+          "unclear": "Unbekannt"
+        }
+      },
+      "vacation": {
+        "name": "Urlaubsmodus",
+        "state": {
+          "off": "Aus",
+          "on": "An",
+          "after": "Nachfrist",
+          "unset": "Nicht eingerichtet"
+        }
+      },
       "new_findings": {
         "name": "Neue Befunde"
       },
@@ -138,6 +182,14 @@
           "scanning": "Scan läuft",
           "cleanup": "Plan läuft",
           "starting": "Wartet auf Start"
+        }
+      },
+      "house_health": {
+        "name": "Zustand des Hauses",
+        "state": {
+          "ok": "In Ordnung",
+          "attention": "Braucht Aufmerksamkeit",
+          "urgent": "Dringend"
         }
       },
       "monitor": {
@@ -427,6 +479,42 @@
         "target": {
           "name": "Neues Ziel",
           "description": "Für replace_target: die Entität, der Bereich, die Etage oder das Label, das an die Stelle des fehlenden tritt."
+        }
+      }
+    },
+    "replacement_candidates": {
+      "name": "KI-Zugriff: Entitäten für einen Wechsel auflisten",
+      "description": "Listet die Entitäten, die weg sind (verwaist oder nicht verfügbar), und die, die da sind, mit Name, Geräteklasse, Einheit, Bereich und wie viel sie benutzt, damit man sie nach einem Wechsel der Integration zuordnen kann. Nur lesend. Braucht den eingeschalteten „KI-Zugriff“.",
+      "fields": {
+        "old_platform": {
+          "name": "Alte Integration",
+          "description": "Die Plattform der Entitäten, die weg sind, zum Beispiel hue."
+        },
+        "new_platform": {
+          "name": "Neue Integration",
+          "description": "Die Plattform der Entitäten, die da sind."
+        },
+        "search": {
+          "name": "Suche",
+          "description": "Ein Teil der ID oder des Namens."
+        },
+        "limit": {
+          "name": "Grenze",
+          "description": "Wie viele Entitäten je Liste, höchstens 150."
+        }
+      }
+    },
+    "replacement_plan": {
+      "name": "KI-Zugriff: Plan zum Ersetzen mehrerer Entitäten anlegen",
+      "description": "Legt einen Plan an, der die Verwendungen mehrerer alter Entitäten auf neue umstellt (Automationen, Skripte, Dashboards). Der Plan ist nur eine Vorschau: Er läuft nicht. Ein Administrator prüft jedes Paar und bestätigt ihn im Housekeeper-Panel. Braucht den eingeschalteten „KI-Zugriff“ und „Befunde beheben“. Die Paare liefert „replacement_candidates“.",
+      "fields": {
+        "pairs": {
+          "name": "Paare",
+          "description": "Eine Liste aus alt und neu, höchstens 50, zum Beispiel [{old: sensor.a, new: sensor.b}]. Jede Entität darf einmal vorkommen."
+        },
+        "disable_old": {
+          "name": "Alte Entitäten abschalten",
+          "description": "Schaltet die alten Entitäten nach dem Ersetzen ab. Sie werden nie gelöscht."
         }
       }
     }

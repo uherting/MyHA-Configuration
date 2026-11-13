@@ -384,8 +384,12 @@ def evaluate(
             key = f"{str(finding.get('rule_id', '')).split('.')[0]}:{finding.get('object_id')}"
             findings.setdefault(key, []).append(finding)
         coverage = {item["source"]: item["state"] for item in meta.get("coverage", ())}
+        # The timestamps in the snapshot are as of the scan: age rules (fresh, unavailable for)
+        # are measured against the scan, not against now, or they fire again every hour
+        # until the next scan brings the new timestamps.
+        as_of = scanned or now
         members = [
-            _member_state(m, objects, findings, coverage, now) for m in definition["members"]
+            _member_state(m, objects, findings, coverage, as_of) for m in definition["members"]
         ]
     required = [m for m in members if m["required"]]
     if any(m["state"] == STATE_PROBLEM for m in required):

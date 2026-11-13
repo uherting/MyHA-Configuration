@@ -125,7 +125,7 @@ from .db_health import (
 )
 from .helper_backup import HelperError, create_helper, export_helper, taken_ids
 from .issues import async_sync_database_issue
-from .meter import analyse, prepare_meter, read_series, recorder_ready
+from .meter import analyse, existing_statistics, prepare_meter, read_series, recorder_ready
 from .notes import NoteError
 from .protection import allows, allows_undo
 from .recorder_purge import (
@@ -343,8 +343,22 @@ def _put_helper_entities_back(
     differ: list[str] = []
     for twin in old:
         domain = twin["entity_id"].partition(".")[0]
-        match = next((e for e in new if e.entity_id == twin["entity_id"]), None) or next(
-            (e for e in new if e.entity_id.partition(".")[0] == domain), None
+        # By ID first; then by what follows the entry id in the unique id (the tariff of a meter),
+        # which the new entry keeps; only then by domain, which can swap twins that differ.
+        suffix = str(twin.get("unique_id") or "").partition("_")[2]
+        match = (
+            next((e for e in new if e.entity_id == twin["entity_id"]), None)
+            or next(
+                (
+                    e
+                    for e in new
+                    if suffix
+                    and e.entity_id.partition(".")[0] == domain
+                    and str(e.unique_id or "").partition("_")[2] == suffix
+                ),
+                None,
+            )
+            or next((e for e in new if e.entity_id.partition(".")[0] == domain), None)
         )
         if match is None:
             continue
@@ -752,6 +766,7 @@ class CleanupRunner:
                     )
             plan["status"] = "partial" if plan["executed"] else "aborted"
         finally:
+            plan["run"].pop("in_step", None)
             plan["run"]["finished_at"] = _now().isoformat()
             self.scanner.paused = False
             self.status = {
@@ -963,6 +978,9 @@ class CleanupRunner:
                     continue
                 self._abort(plan, reason, object_ids[index:], object_id)
                 return
+            # If the run is cut off in the step, the journal says so instead of "did not run".
+            plan["run"]["in_step"] = object_id
+            self.scanner.journal.save()
             try:
                 result, event = await self._perform(plan, action)
             except StepAbort as stop:
@@ -989,9 +1007,13 @@ class CleanupRunner:
                 self._abort(plan, stop.reason, object_ids[index + 1 :], object_id)
                 return
             action["result"] = {"state": "done", "at": _now().isoformat(), **result}
+            plan["executed"] = True
             _event(plan, event, object_id=object_id)
             if action["kind"] in LOGBOOK_KINDS:
                 self._write_logbook(plan, action)
+            if action.get("recorder"):
+                # The purge after it can take minutes: what an undo needs must be on disk before.
+                await self._keep_undo_data(action["result"])
             if action.get("recorder") and (
                 action["kind"] not in METER_KINDS | REFERENCE_KINDS
                 or action["result"].get("deleted_old")
@@ -1119,8 +1141,19 @@ class CleanupRunner:
     async def _old_after(self, action: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
         """What happens to the old entity once its replacement went through: deleted or disabled."""
         if action.get("delete_old") and not result.get("stopped"):
+            if action["delete_old"] == "entity" and self._comes_back(action["object_id"]):
+                # Its integration provides it again since the preview: a deletion would not last,
+                # so it is switched off instead, as for any entity that is still provided.
+                result["delete_old_skipped"] = "provided"
+                action = {**action, "disable_old": True, "delete_old": None}
+                return self._disable_old(action, result)
             return await self._delete_old(action, result)
         return self._disable_old(action, result)
+
+    def _comes_back(self, entity_id: str) -> bool:
+        """Whether the entity has a live state: one that is provided is created again at a reload."""
+        state = self.hass.states.get(entity_id)
+        return state is not None and not state.attributes.get("restored")
 
     async def _delete_old(self, action: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
         """Delete the old entity (or its helper); the journal keeps what is needed to restore it."""
@@ -1644,7 +1677,11 @@ class CleanupRunner:
         old_entry, new_entry = registry.async_get(old), registry.async_get(new)
         if old_entry is None or new_entry is None:
             raise StepAbort("entity_gone")
-        if registry.async_get(alt) is not None or self.hass.states.get(alt) is not None:
+        if (
+            registry.async_get(alt) is not None
+            or self.hass.states.get(alt) is not None
+            or alt in await existing_statistics(self.hass, [alt])
+        ):
             raise StepAbort("alt_id_taken")
         try:
             registry.async_update_entity(old, new_entity_id=alt)

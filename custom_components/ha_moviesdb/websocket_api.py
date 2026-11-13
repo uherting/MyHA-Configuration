@@ -25,6 +25,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from .api import TMDBError
 from .const import (
+    CONF_PERSON_IDS,
     CONF_PROVIDER_IDS,
     CONF_REGION,
     DEFAULT_REGION,
@@ -51,6 +52,26 @@ def _configured_provider_ids(entry_data: dict) -> set[int]:
     if entry is None:
         return set()
     return set(entry.options.get(CONF_PROVIDER_IDS, []))
+
+
+def _configured_persons(hass: HomeAssistant, entry_data: dict) -> list[dict]:
+    """Die im Options-Flow gewählten Personen mit Name und Foto (nur wenn vorhanden)."""
+    entry = entry_data.get("entry")
+    if entry is None:
+        return []
+    persons = []
+    for entity_id in entry.options.get(CONF_PERSON_IDS, []):
+        state = hass.states.get(entity_id)
+        if state is None:
+            continue
+        persons.append(
+            {
+                "entity_id": entity_id,
+                "name": state.attributes.get("friendly_name") or entity_id,
+                "picture": state.attributes.get("entity_picture"),
+            }
+        )
+    return persons
 
 
 def _available_on(movie: dict, provider_ids: set[int]) -> list[str]:
@@ -180,11 +201,13 @@ async def ws_list_tracked(hass: HomeAssistant, connection: websocket_api.ActiveC
             {
                 "movie_id": movie_id,
                 "title": movie.get("title"),
+                "overview": movie.get("overview"),
                 "image": movie.get("image"),
                 "release_year": movie.get("release_year"),
                 "runtime": movie.get("runtime"),
                 "archived": movie.get("archived", False),
                 "watched_at": movie.get("watched_at"),
+                "persons": movie.get("persons", []),
                 "available_on": _available_on(movie, provider_ids),
             }
         )
@@ -216,6 +239,7 @@ async def ws_get_movie(hass: HomeAssistant, connection: websocket_api.ActiveConn
             "runtime": movie.get("runtime"),
             "archived": movie.get("archived", False),
             "watched_at": movie.get("watched_at"),
+            "persons": movie.get("persons", []),
             "watch_providers": movie.get("watch_providers"),
         },
     )
@@ -323,12 +347,36 @@ async def ws_set_archived(hass: HomeAssistant, connection: websocket_api.ActiveC
     connection.send_result(msg["id"], {"ok": True})
 
 
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): f"{DOMAIN}/set_persons",
+        vol.Required("movie_id"): str,
+        vol.Required("persons"): [str],
+    }
+)
+@websocket_api.async_response
+async def ws_set_persons(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
+    entry_data = _get_entry_data(hass)
+    if entry_data is None:
+        connection.send_error(msg["id"], "not_configured", "Integration ist nicht eingerichtet.")
+        return
+    store = entry_data["store"]
+    if not store.is_tracked(msg["movie_id"]):
+        connection.send_error(msg["id"], "not_found", "Film wird nicht verfolgt.")
+        return
+    allowed = {p["entity_id"] for p in _configured_persons(hass, entry_data)}
+    persons = [p for p in msg["persons"] if p in allowed]
+    await store.async_set_persons(msg["movie_id"], persons)
+    entry_data["coordinator"].async_update_listeners()
+    connection.send_result(msg["id"], {"persons": store.get_movie(msg["movie_id"])["persons"]})
+
+
 @websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/get_settings"})
 @websocket_api.async_response
 async def ws_get_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
     entry_data = _get_entry_data(hass)
     if entry_data is None:
-        connection.send_result(msg["id"], {"region": DEFAULT_REGION, "providers": []})
+        connection.send_result(msg["id"], {"region": DEFAULT_REGION, "providers": [], "persons": []})
         return
     entry = entry_data["entry"]
     region = entry.options.get(CONF_REGION, DEFAULT_REGION)
@@ -347,7 +395,10 @@ async def ws_get_settings(hass: HomeAssistant, connection: websocket_api.ActiveC
                 by_id.get(provider_id, {"provider_id": provider_id, "provider_name": str(provider_id), "logo_path": ""})
             )
 
-    connection.send_result(msg["id"], {"region": region, "providers": providers})
+    connection.send_result(
+        msg["id"],
+        {"region": region, "providers": providers, "persons": _configured_persons(hass, entry_data)},
+    )
 
 
 def async_register_commands(hass: HomeAssistant) -> None:
@@ -363,4 +414,5 @@ def async_register_commands(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, ws_remove_movie)
     websocket_api.async_register_command(hass, ws_set_watched)
     websocket_api.async_register_command(hass, ws_set_archived)
+    websocket_api.async_register_command(hass, ws_set_persons)
     websocket_api.async_register_command(hass, ws_get_settings)

@@ -1438,12 +1438,51 @@ def judge_entity_action(
     return action
 
 
+def _judge_helper_siblings(
+    action: dict[str, Any],
+    item: dict[str, Any],
+    objects: dict[str, dict[str, Any]],
+    edges: list[dict[str, Any]],
+) -> None:
+    """Deleting a helper takes all its entities with it: look at the others as well as the old one.
+
+    A meter with tariffs has one entity per tariff. What certainly uses one of them blocks the plan,
+    what probably does needs a look, and a marked or critical one is not deleted on the side.
+    """
+    entry_id = item.get("config_entry_id")
+    old_id = action["object_id"]
+    siblings = [
+        other
+        for other in objects.values()
+        if other.get("config_entry_id") == entry_id
+        and other.get("object_id") != old_id
+        and other.get("object_type", "entity") == "entity"
+    ]
+    used_by = [
+        use
+        for other in siblings
+        for use in _used_by(edges, f"entity:{other['object_id']}")
+        if not str(use["source"]).startswith(f"config_entry:{entry_id}")
+    ]
+    reasons = action["reasons"]
+    found = ["used_certain"] if any(u["confidence"] == "certain" for u in used_by) else []
+    found += ["used_probable"] if used_by and not found else []
+    found += ["marked_keep"] if any(o.get("marked_keep") for o in siblings) else []
+    found += ["critical_object"] if any(o.get("critical") for o in siblings) else []
+    reasons.extend(reason for reason in found if reason not in reasons)
+    if siblings:
+        action["siblings"] = [o["object_id"] for o in siblings][:20]
+    if used_by:
+        action["used_by"] = used_by
+
+
 def _judge_delete_old(
     action: dict[str, Any],
     request: dict[str, Any],
     objects: dict[str, dict[str, Any]],
     possible: bool,
     recorder: bool | None = None,
+    edges: list[dict[str, Any]] | None = None,
 ) -> None:
     """Deleting the old entity after a replacement: only where it does not come back.
 
@@ -1455,9 +1494,14 @@ def _judge_delete_old(
         return
     item = objects.get(action["object_id"]) or {}
     helper = bool(item.get("config_entry_id")) and item.get("platform") in HELPER_DOMAINS
+    # What the person marked as to keep, or as critical, is not removed or switched off on the side.
+    for reason, field in (("marked_keep", "marked_keep"), ("critical_object", "critical")):
+        if item.get(field) and reason not in action["reasons"]:
+            action["reasons"].append(reason)
     if helper:
         action["delete_old"] = "helper"
         action["reasons"].append("delete_old_helper")
+        _judge_helper_siblings(action, item, objects, edges or [])
     elif item.get("reason") == NOT_PROVIDED:
         action["delete_old"] = "entity"
         action["reasons"].append("delete_old")
@@ -1693,7 +1737,9 @@ def build_plan(
             )
             action["fingerprint"] = meter.get("fingerprint")
             action["disable_old"] = bool(request.get("disable_old")) and mode not in {"both", "id"}
-            _judge_delete_old(action, request, objects, mode not in {"both", "id"})
+            _judge_delete_old(
+                action, request, objects, mode not in {"both", "id"}, edges=snapshot["edges"]
+            )
             if mode == METER_REFERENCE_MODE:
                 action["reference_fingerprint"] = reference_print
         elif kind in RENAME_KINDS:
@@ -1735,6 +1781,7 @@ def build_plan(
                 objects,
                 target_kind == "entity",
                 bool(snapshot["meta"].get("recorder_available")),
+                snapshot["edges"],
             )
         else:
             action = judge_action(
@@ -1895,6 +1942,7 @@ def plan_summary(plan: dict[str, Any]) -> dict[str, Any]:
         "status": plan.get("status"),
         "executed": bool(plan.get("executed")),
         "run": bool(plan.get("run")),
+        "via": "mcp" if plan.get("via") == "mcp" else None,
         "finished_at": (plan.get("run") or {}).get("finished_at"),
         "undoable": not plan.get("file_snapshot_dropped")
         and any((a.get("result") or {}).get("state") == "done" for a in plan.get("actions", [])),
@@ -1941,15 +1989,20 @@ RUN_STATES = ("backup", "running")  # a plan in one of these has a run going rig
 def end_interrupted(plan: dict[str, Any], at: str) -> None:
     """End a run that was stopped from outside (restart, crash): partial or aborted, never running.
 
-    Steps without a result did not run; the done ones keep their restore data for an undo.
+    Steps without a result did not run, except the one the run was in: it may have changed
+    something and has no restore data, so it says so. The done ones keep their restore data.
     """
     plan["status"] = "partial" if plan.get("executed") else "aborted"
     run = plan.get("run")
-    if isinstance(run, dict) and not run.get("finished_at"):
-        run["finished_at"] = at
+    in_step = None
+    if isinstance(run, dict):
+        in_step = run.pop("in_step", None)
+        if not run.get("finished_at"):
+            run["finished_at"] = at
     plan.setdefault("events", []).append({"at": at, "type": "interrupted"})
     for action in plan.get("actions", []):
-        action.setdefault("result", {"state": "not_run", "at": at, "reason": "interrupted"})
+        reason = "interrupted_mid" if action.get("object_id") == in_step else "interrupted"
+        action.setdefault("result", {"state": "not_run", "at": at, "reason": reason})
 
 
 class JournalStore:
@@ -1964,7 +2017,15 @@ class JournalStore:
         """Load the journal."""
         data = await self._store.async_load()
         if isinstance(data, dict) and isinstance(data.get("plans"), list):
-            self._plans = data["plans"]
+            # A line without an id or without a list of actions (a damaged or hand-edited file)
+            # would make every plan command fail with a KeyError: it is left out.
+            self._plans = [
+                plan
+                for plan in data["plans"]
+                if isinstance(plan, dict)
+                and isinstance(plan.get("plan_id"), str)
+                and isinstance(plan.get("actions", []), list)
+            ]
         if isinstance(data, dict) and isinstance(data.get("purges"), list):
             self.purges = [p for p in data["purges"] if isinstance(p, dict)][:MAX_PURGES]
         # Nothing runs right after loading: a plan still marked as running was cut off.

@@ -28,6 +28,7 @@ from .ws_common import (
     RELIABILITY_TIMEOUT,
     STATISTICS_LAST_IDS,
     _versioned,
+    finite_float,
     with_scanner,
 )
 
@@ -267,8 +268,8 @@ async def websocket_entity_attributes(
     {
         vol.Required("type"): f"{DOMAIN}/range_series",
         vol.Required("statistic_id"): str,
-        vol.Required("from"): vol.Coerce(float),
-        vol.Required("to"): vol.Coerce(float),
+        vol.Required("from"): finite_float,
+        vol.Required("to"): finite_float,
     }
 )
 @websocket_api.async_response

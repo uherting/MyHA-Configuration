@@ -116,6 +116,50 @@
       "low_batteries": {
         "name": "Baterias fracas"
       },
+      "battery_weakest": {
+        "name": "Bateria mais fraca"
+      },
+      "battery_next_change": {
+        "name": "Próxima troca de bateria"
+      },
+      "auto_pause": {
+        "name": "Integrações em pausa"
+      },
+      "update_watch": {
+        "name": "Depois da atualização",
+        "state": {
+          "none": "Sem atualização",
+          "pending": "A verificar",
+          "stable": "Sem alterações",
+          "transient": "Perturbado por momentos",
+          "worse": "Pior do que antes",
+          "unknown": "Incerto"
+        }
+      },
+      "start_time": {
+        "name": "Duração do arranque"
+      },
+      "database_size": {
+        "name": "Tamanho da base de dados"
+      },
+      "backup": {
+        "name": "Proteção das cópias de segurança",
+        "state": {
+          "ok": "Em ordem",
+          "warn": "Convém verificar",
+          "bad": "Falta proteção",
+          "unclear": "Desconhecido"
+        }
+      },
+      "vacation": {
+        "name": "Modo de férias",
+        "state": {
+          "off": "Desativado",
+          "on": "Ativo",
+          "after": "Período de tolerância",
+          "unset": "Não configurado"
+        }
+      },
       "new_findings": {
         "name": "Novas ocorrências"
       },
@@ -138,6 +182,14 @@
           "scanning": "A analisar",
           "cleanup": "Plano em execução",
           "starting": "A aguardar o arranque"
+        }
+      },
+      "house_health": {
+        "name": "Estado da casa",
+        "state": {
+          "ok": "Em ordem",
+          "attention": "Precisa de atenção",
+          "urgent": "Urgente"
         }
       },
       "monitor": {
@@ -425,6 +477,42 @@
         "target": {
           "name": "Novo destino",
           "description": "Para replace_target: a entidade, área, piso ou etiqueta que ocupa o lugar da que está em falta."
+        }
+      }
+    },
+    "replacement_candidates": {
+      "name": "Acesso IA: listar entidades a emparelhar após uma mudança",
+      "description": "Lista as entidades que desapareceram (órfãs ou indisponíveis) e as que existem, com nome, classe de dispositivo, unidade, área e quanto são usadas, para as emparelhar após uma mudança de integração. Só leitura. Precisa de «Acesso IA» ligado.",
+      "fields": {
+        "old_platform": {
+          "name": "Integração antiga",
+          "description": "A plataforma das entidades que desapareceram, por exemplo hue."
+        },
+        "new_platform": {
+          "name": "Integração nova",
+          "description": "A plataforma das entidades que existem."
+        },
+        "search": {
+          "name": "Pesquisa",
+          "description": "Parte do ID ou do nome."
+        },
+        "limit": {
+          "name": "Limite",
+          "description": "Quantas entidades por lista, no máximo 150."
+        }
+      }
+    },
+    "replacement_plan": {
+      "name": "Acesso IA: criar um plano para substituir várias entidades",
+      "description": "Cria um plano que passa os usos de várias entidades antigas para novas (automações, scripts, painéis). O plano é só uma pré-visualização: não é executado. Um administrador revê cada par e confirma-o no painel do Housekeeper. Precisa de «Acesso IA» e «Corrigir achados» ligados. Os pares vêm de «replacement_candidates».",
+      "fields": {
+        "pairs": {
+          "name": "Pares",
+          "description": "Uma lista de antigas e novas, no máximo 50, por exemplo [{old: sensor.a, new: sensor.b}]. Cada entidade pode aparecer uma vez."
+        },
+        "disable_old": {
+          "name": "Desligar as entidades antigas",
+          "description": "Desliga as entidades antigas depois da substituição. Nunca são apagadas."
         }
       }
     }

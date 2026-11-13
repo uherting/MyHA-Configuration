@@ -21,6 +21,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.event import async_track_point_in_utc_time
 from homeassistant.util import dt as dt_util
 
+from .const import IGNORE_LABEL
 from .scan_trigger import SCAN_MIN_GAP, ScanRefused
 
 if TYPE_CHECKING:
@@ -49,7 +50,10 @@ def state_filter(data: Any) -> bool:
         return False
     old = data.get("old_state")
     if new.state in BAD_STATES:
-        return old is None or old.state != new.state
+        if old is None:
+            # A new entity that starts without a value ("unknown") is nothing that went bad.
+            return new.state != "unknown"
+        return old.state != new.state
     return old is not None and old.state in BAD_STATES
 
 
@@ -126,6 +130,8 @@ class OutageScans:
         self._due: datetime | None = None
         self._last_run: datetime | None = None
         self._started = False
+        self._muted_for: dict[str, Any] | None = None  # the snapshot the muted ids come from
+        self._muted: frozenset[str] = frozenset()
 
     @property
     def due(self) -> datetime | None:
@@ -151,7 +157,32 @@ class OutageScans:
     @callback
     def _state(self, event: Any) -> None:
         new = event.data["new_state"]
+        if self._is_muted(event.data.get("entity_id")):
+            return
         self._note(recovered=new.state not in BAD_STATES)
+
+    def _is_muted(self, entity_id: Any) -> bool:
+        """An entity the person turned off the findings for does not call for a scan of its own.
+
+        Without this a television or a phone that goes and comes all day keeps a full scan going
+        every pause. The ids come from the last snapshot and are read again when it changes.
+        """
+        snapshot = self._scanner.snapshot
+        if snapshot is None or not isinstance(entity_id, str):
+            return False
+        if snapshot is not self._muted_for:
+            ignored = {f["object_id"] for f in snapshot.get("findings", ()) if f.get("ignored")}
+            self._muted = frozenset(
+                ignored
+                | {
+                    item["object_id"]
+                    for item in snapshot.get("objects", ())
+                    if item.get("object_type") == "entity"
+                    and IGNORE_LABEL in (item.get("labels") or [])
+                }
+            )
+            self._muted_for = snapshot
+        return entity_id in self._muted
 
     @callback
     def _entry(self, change: Any, entry: Any) -> None:

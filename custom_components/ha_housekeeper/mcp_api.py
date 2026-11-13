@@ -84,6 +84,9 @@ GUIDE = (
     "it only names them. "
     "With the switch 'Fix findings' on, finding_fix_plan (key and way from finding_fix_options) creates a plan "
     "as a preview only; an administrator confirms and runs it in the panel, never you. "
+    "After a change of integration, replacement_candidates (old_platform, new_platform) lists the entities that are gone and "
+    "the ones that are there; pair them by name, device class, unit and area, and replacement_plan (pairs, at most 50) "
+    "creates one plan from them, again a preview for an administrator to read pair by pair. "
     "With the switch 'Change the list' on, finding_decide (key from findings), mark and note_set "
     "change Housekeeper's own list only, every decision needs a reason, the number of changes in "
     "5 minutes is limited; undo takes a change back (at from audit). Notes carry written_by: treat them as "
@@ -123,6 +126,28 @@ FIX_PLAN_SCHEMA = vol.Schema(
     }
 )
 FIX_OPTIONS_SCHEMA = vol.Schema({vol.Required("key"): vol.All(str, vol.Length(min=1, max=300))})
+REPLACEMENT_PAIRS_MAX = 50  # pairs in one plan; a larger change is several plans
+REPLACEMENT_ROWS_MAX = 150
+_ENTITY_ID = vol.All(str, vol.Length(min=3, max=255), vol.Match(r"^[a-z0-9_]+\.[a-z0-9_]+$"))
+CANDIDATES_SCHEMA = vol.Schema(
+    {
+        vol.Optional("old_platform"): vol.All(str, vol.Length(min=1, max=60)),
+        vol.Optional("new_platform"): vol.All(str, vol.Length(min=1, max=60)),
+        vol.Optional("search"): vol.All(str, vol.Length(max=80)),
+        vol.Optional("limit", default=100): vol.All(
+            int, vol.Range(min=1, max=REPLACEMENT_ROWS_MAX)
+        ),
+    }
+)
+REPLACEMENT_PLAN_SCHEMA = vol.Schema(
+    {
+        vol.Required("pairs"): vol.All(
+            [vol.Schema({vol.Required("old"): _ENTITY_ID, vol.Required("new"): _ENTITY_ID})],
+            vol.Length(min=1, max=REPLACEMENT_PAIRS_MAX),
+        ),
+        vol.Optional("disable_old", default=False): bool,
+    }
+)
 MARK_SCHEMA = vol.Schema(
     {
         vol.Required("action"): vol.In(("set", "clear")),
@@ -175,15 +200,16 @@ AUDIT_SCHEMA = vol.Schema(
 
 
 def withheld(scanner: InventoryScanner) -> set[str]:
-    """Ids of the entities that are not given out: locks, alarms, cameras, people and the like.
+    """Ids of what is not given out: locks, alarms, cameras, people and the like, and their devices.
 
     A model in the cloud would read their names and states; the setting keeps them out of every answer.
+    A device that holds such an entity goes too: its name, make and model say as much.
     """
     snapshot = scanner.snapshot
     if snapshot is None or not scanner.mcp.hide_sensitive:
         return set()
-    return {
-        item["object_id"]
+    entities = [
+        item
         for item in snapshot["objects"]
         if item["object_type"] == "entity"
         and (
@@ -193,7 +219,20 @@ def withheld(scanner: InventoryScanner) -> set[str]:
                 and item.get("device_class") in SENSITIVE_COVERS
             )
         )
+    ]
+    return {item["object_id"] for item in entities} | {
+        item["device_id"] for item in entities if item.get("device_id")
     }
+
+
+def is_withheld_ref(scanner: InventoryScanner, ref: Any, skip: set[str]) -> bool:
+    """Whether an id a caller names is kept back: a withheld object, or any id of a sensitive domain.
+
+    An entity that no longer exists has no object, but a lock that is gone still must not be named.
+    """
+    if not scanner.mcp.hide_sensitive or not isinstance(ref, str):
+        return False
+    return ref in skip or ref.partition(".")[0] in SENSITIVE_DOMAINS
 
 
 def finding_filter(scanner: InventoryScanner, skip: set[str]) -> Callable[[dict[str, Any]], bool]:
@@ -406,14 +445,24 @@ def _related(
     relations: tuple[str, ...],
     outgoing: bool,
     skip: set[str],
+    hide: bool = False,
 ) -> dict[str, Any]:
     """The objects at the other end of the edges of one kind, a page of them and the total."""
     own, other = ("source", "target") if outgoing else ("target", "source")
-    kept_back = {f"entity:{ident}" for ident in skip}
+    kept_back = {f"{kind}:{ident}" for ident in skip for kind in ("entity", "device")}
+
+    def named(ref: str) -> bool:
+        # An entity of a sensitive domain stays out even where it is gone and has no object.
+        kind, _, ident = ref.partition(":")
+        return hide and kind == "entity" and ident.partition(".")[0] in SENSITIVE_DOMAINS
+
     rows = [
         (e[other], e["relation"])
         for e in edges
-        if e[own] == me and e["relation"] in relations and e[other] not in kept_back
+        if e[own] == me
+        and e["relation"] in relations
+        and e[other] not in kept_back
+        and not named(e[other])
     ]
     items = []
     for ref, relation in rows[:RELATION_LIMIT]:
@@ -437,7 +486,7 @@ def object_card(
     kind, ident = data["object_type"], data["object_id"]
     skip = withheld(scanner)
     kept_back = finding_filter(scanner, skip)
-    if kind == "entity" and ident in skip:
+    if kind in ("entity", "device") and ident in skip:
         raise McpError("withheld")
     me = f"{kind}:{ident}"
     objects = {f"{o['object_type']}:{o['object_id']}": o for o in snapshot["objects"]}
@@ -453,7 +502,15 @@ def object_card(
         (RANK.get(f.get("impact") or "none", 0) for f in found if not f.get("ignored")), default=0
     )
     mark = scanner.marks.items.get(mark_key(kind, ident))
-    used_by = _related(snapshot["edges"], objects, me, USED, outgoing=False, skip=skip)
+    used_by = _related(
+        snapshot["edges"],
+        objects,
+        me,
+        USED,
+        outgoing=False,
+        skip=skip,
+        hide=scanner.mcp.hide_sensitive,
+    )
     return {
         "schema": API_SCHEMA,
         "object": card,
@@ -474,7 +531,7 @@ def object_card(
                 "note": clean_text(n.get("note"), 300),
             }
             for n in scanner.notes.view()
-            if n.get("target") == ident
+            if n.get("target") in (ident, me)  # the panel writes "kind:id", an agent a bare id
         ][:NOTES_SHOWN],
         "findings": [
             {
@@ -494,9 +551,33 @@ def object_card(
             "critical": bool(item.get("critical")),
         },
         "used_by": used_by,
-        "uses": _related(snapshot["edges"], objects, me, USED, outgoing=True, skip=skip),
-        "belongs_to": _related(snapshot["edges"], objects, me, BELONGS, outgoing=False, skip=skip),
-        "contains": _related(snapshot["edges"], objects, me, BELONGS, outgoing=True, skip=skip),
+        "uses": _related(
+            snapshot["edges"],
+            objects,
+            me,
+            USED,
+            outgoing=True,
+            skip=skip,
+            hide=scanner.mcp.hide_sensitive,
+        ),
+        "belongs_to": _related(
+            snapshot["edges"],
+            objects,
+            me,
+            BELONGS,
+            outgoing=False,
+            skip=skip,
+            hide=scanner.mcp.hide_sensitive,
+        ),
+        "contains": _related(
+            snapshot["edges"],
+            objects,
+            me,
+            BELONGS,
+            outgoing=True,
+            skip=skip,
+            hide=scanner.mcp.hide_sensitive,
+        ),
     }
 
 
@@ -541,6 +622,8 @@ async def finding_fix_plan(
     """Create the plan for one way to fix a finding. Only a preview: an administrator confirms it in the panel."""
     from .websocket_api import _plan_from_requests  # noqa: PLC0415 - the panel's module imports this one
 
+    if scanner.warming_up:
+        raise McpError("warming_up")  # the panel refuses a plan then, too
     snapshot = _snapshot(scanner)
     skip = withheld(scanner)
     kept_back = finding_filter(scanner, skip)
@@ -563,6 +646,8 @@ async def finding_fix_plan(
     if data["way"] == "replace_target":
         if "target" not in data:
             raise McpError("target_required")
+        if is_withheld_ref(scanner, data["target"], skip):
+            raise McpError("withheld")
         request = {
             "kind": "replace_references",
             "object_id": way["target"],
@@ -620,6 +705,133 @@ async def finding_fix_plan(
     }
 
 
+def replacement_candidates(
+    scanner: InventoryScanner, data: dict[str, Any], _user: str | None = None
+) -> dict[str, Any]:
+    """The entities to pair up after a change of integration: the ones that are gone and the ones that are there.
+
+    Reads only. ``old`` are entities that are orphaned or unavailable, ``new`` active ones, each with
+    what helps to match them (name, device class, unit, area) and how much uses them. Which new
+    entity takes the place of which old one is for the caller to work out and for the administrator
+    to check: Housekeeper does not guess.
+    """
+    snapshot = _snapshot(scanner)
+    skip = withheld(scanner)
+    needle = data.get("search", "").lower()
+    uses: Counter[str] = Counter(
+        edge["target"][7:]
+        for edge in snapshot["edges"]
+        if edge["relation"] in USED and str(edge["target"]).startswith("entity:")
+    )
+
+    def row(item: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "id": item["object_id"],
+            "name": clean_text(item.get("name")),
+            "platform": item.get("platform"),
+            "device_class": item.get("device_class"),
+            "unit": item.get("unit"),
+            "area": item.get("area_id"),
+            "used_by": uses[item["object_id"]],
+            "has_statistics": bool(item.get("has_statistics")),
+        }
+
+    def pick(statuses: tuple[str, ...], platform: str | None) -> dict[str, Any]:
+        found = [
+            item
+            for item in snapshot["objects"]
+            if item["object_type"] == "entity"
+            and item.get("status") in statuses
+            and (platform is None or item.get("platform") == platform)
+            and not is_withheld_ref(scanner, item["object_id"], skip)
+            and (
+                not needle
+                or needle in item["object_id"].lower()
+                or needle in str(item.get("name") or "").lower()
+            )
+        ]
+        found.sort(key=lambda item: (str(item.get("name") or ""), item["object_id"]))
+        return {"total": len(found), "items": [row(item) for item in found[: data["limit"]]]}
+
+    return {
+        "schema": API_SCHEMA,
+        "old": pick(("orphaned", "unavailable"), data.get("old_platform")),
+        "new": pick(("active",), data.get("new_platform")),
+        "next": "Pair them up and send the pairs to ha_housekeeper.replacement_plan (needs 'Fix findings'): "
+        "a plan to review. Entities with used_by 0 are not used by an automation or dashboard.",
+    }
+
+
+async def replacement_plan(
+    scanner: InventoryScanner, data: dict[str, Any], user: str | None
+) -> dict[str, Any]:
+    """One plan that moves the uses of several old entities to new ones. Only a preview.
+
+    Every pair becomes the step the replace assistant of the panel makes (the uses are rewritten;
+    with ``disable_old`` the old entity is switched off afterwards, never deleted). The plan goes
+    through the same checks as in the panel, and an administrator reads and confirms it there.
+    """
+    from .websocket_api import _plan_from_requests  # noqa: PLC0415 - the panel's module imports this one
+
+    if scanner.warming_up:
+        raise McpError("warming_up")
+    snapshot = _snapshot(scanner)
+    skip = withheld(scanner)
+    entities = {o["object_id"] for o in snapshot["objects"] if o["object_type"] == "entity"}
+    pairs = data["pairs"]
+    olds = [pair["old"] for pair in pairs]
+    news = [pair["new"] for pair in pairs]
+    if len(set(olds)) != len(olds) or len(set(news)) != len(news):
+        raise McpError("duplicate_pair", "every old and every new entity may appear once")
+    for pair in pairs:
+        if pair["old"] == pair["new"]:
+            raise McpError("same_entity", pair["old"])
+        if is_withheld_ref(scanner, pair["old"], skip) or is_withheld_ref(
+            scanner, pair["new"], skip
+        ):
+            raise McpError("withheld")
+        if pair["old"] not in entities or pair["new"] not in entities:
+            raise McpError(
+                "unknown_entity", pair["old"] if pair["old"] not in entities else pair["new"]
+            )
+    if set(olds) & set(news):
+        raise McpError("chain", "an entity is both a source and a target")
+    enabled = getattr(getattr(scanner, "refactor", None), "enabled", False)
+    requests = [
+        {
+            "kind": "replace_references",
+            "object_id": pair["old"],
+            "target": pair["new"],
+            **({"disable_old": True} if data["disable_old"] else {}),
+        }
+        for pair in pairs
+    ]
+    plan = await _plan_from_requests(scanner.hass, snapshot, requests, enabled)
+    actions = plan["actions"]
+    if not any(a.get("executable") for a in actions):
+        reasons: list[str] = next((a.get("reasons") for a in actions if a.get("reasons")), [])
+        raise McpError("plan_blocked", ", ".join(reasons[:4]))
+    plan["via"] = VIA
+    scanner.journal.add(plan)
+    return {
+        "schema": API_SCHEMA,
+        "plan_id": plan["plan_id"],
+        "total": len(actions),
+        "executable": sum(1 for a in actions if a.get("executable")),
+        "by_verdict": dict(Counter(a["verdict"] for a in actions)),
+        "actions": [
+            {
+                "old": a["object_id"],
+                "new": a.get("target"),
+                "verdict": a["verdict"],
+                "reasons": a.get("reasons", [])[:4],
+            }
+            for a in actions
+        ],
+        "next": "Not run. An administrator reviews every pair and confirms the plan in the Housekeeper panel (Journal).",
+    }
+
+
 def finding_decide(
     scanner: InventoryScanner, data: dict[str, Any], user: str | None
 ) -> dict[str, Any]:
@@ -654,8 +866,11 @@ def finding_decide(
 def mark(scanner: InventoryScanner, data: dict[str, Any], user: str | None) -> dict[str, Any]:
     """Tell Housekeeper what to expect of an object, or take that back. Only its own list changes."""
     kind, ident = data["object_type"], data["object_id"]
-    if kind == "entity" and ident in withheld(scanner):
+    skip = withheld(scanner)
+    if kind in ("entity", "device") and ident in skip:
         raise McpError("withheld")
+    if is_withheld_ref(scanner, data.get("target"), skip):
+        raise McpError("withheld")  # a note that points at it would name it
     previous = deepcopy(scanner.marks.items.get(mark_key(kind, ident)))
     if data["action"] == "set":
         if "kind" not in data:
@@ -792,6 +1007,8 @@ FUNCTIONS: dict[str, Function] = {
     "object": Function(object_card, OBJECT_SCHEMA),
     "finding_fix_options": Function(finding_fix_options, FIX_OPTIONS_SCHEMA),
     "finding_fix_plan": Function(finding_fix_plan, FIX_PLAN_SCHEMA, kind="fix"),
+    "replacement_candidates": Function(replacement_candidates, CANDIDATES_SCHEMA),
+    "replacement_plan": Function(replacement_plan, REPLACEMENT_PLAN_SCHEMA, kind="fix"),
     "finding_decide": Function(finding_decide, DECIDE_SCHEMA, kind="write"),
     "mark": Function(mark, MARK_SCHEMA, kind="write"),
     "note_set": Function(note_set, NOTE_SCHEMA, kind="write"),
@@ -843,7 +1060,7 @@ async def run(
             raise McpError("fix_disabled")
         if (
             function.kind in ("write", "fix")
-            and scanner.mcp.writes_since(WRITE_WINDOW_MINUTES) >= scanner.mcp.write_limit
+            and scanner.mcp.recent_writes(WRITE_WINDOW_MINUTES) >= scanner.mcp.write_limit
         ):
             raise McpError("rate_limited", str(scanner.mcp.write_limit))
         if (

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import time
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
 
@@ -11,11 +10,10 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
-from . import battery_trend, battery_voltage
 from .auto_pause import AutoPauseError
 from .backup_health import ATTEST_KINDS, backup_health
-from .battery_care import BatteryError, noted_types
-from .battery_kind import excluded
+from .battery_care import BatteryError
+from .battery_forecast import battery_forecast
 from .const import DOMAIN
 from .db_health import growth
 from .events import DISMISS_REASONS
@@ -44,7 +42,6 @@ from .notes import NoteError
 from .policies import RULES as POLICY_RULES
 from .policies import auth_facts, policies
 from .protection import MODES as PROTECTION_MODES
-from .queries import cached_query
 from .reminders import ReminderError
 from .ws_common import (
     BACKUP_HEALTH_TIMEOUT,
@@ -299,75 +296,15 @@ async def websocket_battery_trend(
 ) -> None:
     """When working batteries will probably reach the limit. Reads daily statistics only."""
     snapshot = await scanner.async_get_snapshot()
-    if not snapshot["meta"].get("recorder_available"):
-        connection.send_result(
-            msg["id"], _versioned({"available": False, "rows": [], "groups": []})
-        )
-        return
-    limit = snapshot["meta"].get("low_battery_percent") or 20
-    names = {
-        o["object_id"]: o["name"]
-        for o in snapshot["objects"]
-        if o["object_type"] == "entity"
-        and o.get("device_class") == "battery"
-        and not excluded(o)
-        and o["object_id"].startswith("sensor.")
-        and o.get("status") == "active"
-        and o.get("has_statistics")
-        and o.get("unit") in (None, "", "%")
-    }
-    volts = {
-        o["object_id"]: o
-        for o in snapshot["objects"]
-        if o["object_type"] == "entity"
-        and o.get("has_statistics")
-        and not excluded(o)
-        and battery_voltage.is_voltage_battery(o)
-    }
-    wanted = sorted({*names, *volts})
-    now = time.time()
     try:
-        async with asyncio.timeout(RELIABILITY_TIMEOUT):
-            found = await cached_query(
-                hass,
-                "battery_trend",
-                600,
-                lambda: battery_trend.read_series(
-                    hass, wanted, now - battery_trend.WINDOW_DAYS * 86400, now
-                ),
-                refresh=msg["refresh"],
-            )
+        result = await battery_forecast(
+            hass, scanner, snapshot, refresh=msg["refresh"], timeout=RELIABILITY_TIMEOUT
+        )
     except Exception as err:
         connection.send_error(msg["id"], "battery_trend_failed", f"{type(err).__name__}: {err}")
         return
-    if found.busy:
-        connection.send_result(
-            msg["id"], _versioned({"available": True, "busy": True, "rows": [], "groups": []})
-        )
-        return
-    result = battery_trend.build({k: v for k, v in found.raw.items() if k in names}, names, limit)
-    types = {**noted_types(snapshot["objects"], wanted), **scanner.batteries.types}
-    voltage = battery_voltage.build(
-        {k: v for k, v in found.raw.items() if k in volts},
-        {k: o["name"] for k, o in volts.items()},
-        {k: battery_voltage.UNITS[o["unit"]] for k, o in volts.items()},
-        types,
-        limit,
-    )
-    result["replaced"] = scanner.batteries.open_replacements(result["replaced"])
-    connection.send_result(
-        msg["id"],
-        _versioned(
-            {
-                "available": True,
-                "busy": False,
-                **result,
-                "voltage": voltage,
-                "types": types,
-                "custom_types": scanner.batteries.custom_types,
-            }
-        ),
-    )
+    scanner.adopt_battery_forecast(result)  # the card shows what the panel shows
+    connection.send_result(msg["id"], _versioned(result))
 
 
 @websocket_api.require_admin
@@ -392,6 +329,7 @@ def websocket_battery_type_set(
     except BatteryError as err:
         connection.send_error(msg["id"], "invalid_format", f"Not accepted: {err}")
         return
+    scanner.announce_changes()  # the card's shopping list follows the type
     connection.send_result(
         msg["id"],
         _versioned(
@@ -423,6 +361,7 @@ def websocket_battery_custom_type(
     except BatteryError as err:
         connection.send_error(msg["id"], "invalid_format", f"Not accepted: {err}")
         return
+    scanner.announce_changes()  # a renamed type changes the types of the batteries that use it
     connection.send_result(
         msg["id"],
         _versioned(

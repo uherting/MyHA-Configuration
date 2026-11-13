@@ -11,6 +11,9 @@ from homeassistant.helpers.storage import Store
 from .const import STORAGE_KEY, STORAGE_VERSION
 
 SAVE_DELAY = 10  # seconds; coalesces writes and is flushed when Home Assistant stops
+# Keys of groups that are followed on their own (see ``async_track_group``): the update of the
+# classifications leaves them alone.
+GROUP_PREFIXES = ("orphan_stat:",)
 
 
 class ObservationStore:
@@ -47,9 +50,29 @@ class ObservationStore:
                 changed = True
 
         for object_id in set(self._items) - active_ids:
+            if object_id.startswith(GROUP_PREFIXES):
+                continue
             del self._items[object_id]
             changed = True
 
+        if changed:
+            self._store.async_delay_save(lambda: {"items": self._items}, SAVE_DELAY)
+
+    async def async_track_group(self, prefix: str, ids: set[str], observed_at: datetime) -> None:
+        """Follow how long each id of a group has been there without a break.
+
+        An id seen for the first time starts a period, an id that is gone ends it, so the period of
+        one that disappears and comes back starts again.
+        """
+        timestamp = observed_at.isoformat()
+        changed = False
+        for object_id in ids:
+            if f"{prefix}{object_id}" not in self._items:
+                self._items[f"{prefix}{object_id}"] = {"classification": "seen", "since": timestamp}
+                changed = True
+        for key in [k for k in self._items if k.startswith(prefix) and k[len(prefix) :] not in ids]:
+            del self._items[key]
+            changed = True
         if changed:
             self._store.async_delay_save(lambda: {"items": self._items}, SAVE_DELAY)
 

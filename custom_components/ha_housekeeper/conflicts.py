@@ -213,6 +213,26 @@ def _meet(one: Any, other: Any) -> bool:
     return one == other or isinstance(one, tuple) != isinstance(other, tuple)
 
 
+def _mirrored(
+    first: dict[str, Any],
+    second: dict[str, Any],
+    first_tos: dict[str, list[Any]],
+    second_tos: dict[str, list[Any]],
+) -> bool:
+    """Two automations that react to the same entities only, and never to the same change.
+
+    The usual pair: motion ``on`` turns the light on, motion ``off`` turns it off. A time window
+    they share says nothing then, they cannot fire at the same moment.
+    """
+    if not first_tos or set(first_tos) != set(second_tos):
+        return False
+    return all(
+        isinstance(t, dict) and _kind(t) in TRIGGER_KINDS
+        for item in (first, second)
+        for t in item.get("triggers") or []
+    )
+
+
 def opposing(autos: list[dict[str, Any]], days: dict[str, dict[str, Any]], today: date):
     """Pairs that command one entity in opposite ways while they can fire together."""
     by_entity: dict[str, list[tuple[dict[str, Any], tuple]]] = {}
@@ -237,6 +257,8 @@ def opposing(autos: list[dict[str, Any]], days: dict[str, dict[str, Any]], today
                 )
                 if shared:
                     reason = {"reason": "trigger", "detail": shared[0]}
+                elif _mirrored(first, second, first_tos, second_tos):
+                    continue  # "on" starts the one, "off" the other: a pair, not a conflict
                 else:
                     window = _overlap(_windows(first), _windows(second))
                     if window:
@@ -366,8 +388,12 @@ def find(
     edges: list[dict[str, Any]],
     runs: dict[str, dict[str, Any]],
     today: date,
+    limit: int | None = LIMIT,
 ) -> dict[str, Any]:
-    """Possible conflicts and loops among enabled automations, strongest evidence first."""
+    """Possible conflicts and loops among enabled automations, strongest evidence first.
+
+    ``limit`` caps the items sent on; ``None`` keeps all of them for a caller that rates them.
+    """
     live = [a for a in autos if a.get("status") not in ("disabled", "unavailable")]
     days = {key: (value.get("days") or {}) for key, value in runs.items()}
     items = [*opposing(live, days, today), *loops(live, edges, days, today)]
@@ -375,4 +401,4 @@ def find(
     for item in items:
         item["key"] = key_of(item)
     items.sort(key=lambda i: (rank[i["stage"]], i["kind"], i["automations"][0]["name"]))
-    return {"checked": len(live), "total": len(items), "items": items[:LIMIT]}
+    return {"checked": len(live), "total": len(items), "items": items[:limit]}

@@ -294,6 +294,7 @@ def apply_marks(
     for item in objects:
         item.pop("mark", None)
         item.pop("mark_due", None)
+        item.pop("mark_hides", None)
         item.pop("marked_keep", None)
         if item["object_type"] == "entity":
             device_of[item["object_id"]] = item.get("device_id")
@@ -321,8 +322,11 @@ def apply_marks(
         item["mark"] = mark
         if due(mark, now):
             item["mark_due"] = True
-        elif mark["kind"] in PROTECTING_KINDS:
-            item["marked_keep"] = True
+        else:
+            if mark["kind"] in PROTECTING_KINDS:
+                item["marked_keep"] = True
+            if mark["kind"] in HIDING_KINDS and window_active(mark, local_now, sun):
+                item["mark_hides"] = True  # an outage cause needs no finding to be hidden
     for item in objects:  # an entity of a device that is to be kept is kept as well
         device = devices.get(item.get("device_id") or "")
         if item["object_type"] == "entity" and device and device.get("marked_keep"):

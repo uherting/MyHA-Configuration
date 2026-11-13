@@ -5,9 +5,11 @@ from __future__ import annotations
 import functools
 import inspect
 import logging
+import math
 from collections.abc import Callable, Mapping
 from typing import Any
 
+import voluptuous as vol
 from homeassistant.auth.models import TOKEN_TYPE_NORMAL
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant
@@ -24,7 +26,20 @@ EXPOSURE_TIMEOUT = 20  # seconds
 STATISTICS_LAST_IDS = 50
 RELIABILITY_TIMEOUT = 120  # seconds; the recorder query is slow on a large database
 
+
+def finite_float(value: Any) -> float:
+    """A number the person typed: ``"nan"`` and ``"inf"`` are floats, but no reading a range can hold."""
+    try:
+        number = float(value)
+    except (TypeError, ValueError) as err:
+        raise vol.Invalid("expected a number") from err
+    if not math.isfinite(number):
+        raise vol.Invalid("expected a finite number")
+    return number
+
+
 _LOGGER = logging.getLogger(__name__)
+_WARNED_MAX = 200  # a reply that changes its shape on every call must not grow the set for ever
 _WARNED: set[str] = set()  # cleaned paths already in the log; the panel asks again on every view
 
 
@@ -117,7 +132,7 @@ def sendable(result: dict[str, Any]) -> dict[str, Any]:
         cleaned = json_safe(result, "", bad)
         json_bytes(cleaned)
         paths = ", ".join(bad) or "unknown path"
-        if paths not in _WARNED:
+        if paths not in _WARNED and len(_WARNED) < _WARNED_MAX:
             _WARNED.add(paths)
             _LOGGER.warning(
                 "The reply held values JSON cannot carry and was cleaned before sending: %s",

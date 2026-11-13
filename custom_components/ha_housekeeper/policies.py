@@ -53,6 +53,7 @@ RULES = (
     "group_members",
     "input_number_config",
     "template_guard",
+    "template_attribute",
     "template_no_unique_id",
     "automation_self_trigger",
     "turn_on_only",
@@ -330,6 +331,9 @@ def evaluate(
         ),
         "template_unused": lambda: rules_more.template_unused(integrations, entities, used),
         "template_guard": lambda: rules_more.template_guard(extra.get("templates") or []),
+        "template_attribute": lambda: rules_more.template_attribute(
+            extra.get("templates") or [], extra.get("template_attributes") or {}
+        ),
         "template_no_unique_id": lambda: rules_more.template_no_unique_id(
             extra.get("template_no_unique_id") or []
         ),
@@ -573,7 +577,7 @@ def _extra(
             for domain in ("utility_meter", "integration", "derivative")
             for entry in hass.config_entries.async_entries(domain)
         ]
-    if store.enabled & {"template_guard", "template_no_unique_id"}:
+    if store.enabled & {"template_guard", "template_attribute", "template_no_unique_id"}:
         extra.update(template_facts(hass, store.enabled))
     if store.enabled & {"http_trusted_networks", "http_external_url", "http_proxies"}:
         extra["http"] = http_facts(hass)
@@ -583,19 +587,51 @@ def _extra(
     return extra
 
 
+def _template_strings(value: Any) -> list[str]:
+    """Every string of the options of a template helper that holds a template."""
+    if isinstance(value, str):
+        return [value] if "{{" in value or "{%" in value else []
+    if isinstance(value, dict):
+        value = list(value.values())
+    if isinstance(value, list):
+        return [text for part in value for text in _template_strings(part)]
+    return []
+
+
+def _live_attributes(hass: HomeAssistant, templates: list[dict[str, Any]]) -> dict[str, set[str]]:
+    """The attribute names of the entities the templates read an attribute of.
+
+    Left out: an entity that is off, unavailable, unknown or missing, and one with nothing besides its
+    name; their attributes may only be absent for the moment.
+    """
+    found: dict[str, set[str]] = {}
+    for item in templates:
+        for entity_id, _ in rules_more.attribute_refs(item.get("text") or ""):
+            state = hass.states.get(entity_id)
+            if state is None or state.state in ("off", "unavailable", "unknown"):
+                continue
+            names = set(state.attributes) - {"friendly_name"}
+            if names:
+                found[entity_id] = names
+    return found
+
+
 def template_facts(hass: HomeAssistant, enabled: Any) -> dict[str, Any]:
     """The state templates of template helpers and the template entities that have no unique id."""
     facts: dict[str, Any] = {}
-    if "template_guard" in enabled:
+    if enabled & {"template_guard", "template_attribute"}:
         facts["templates"] = [
             {
                 "object_type": "config_entry",
                 "object_id": entry.entry_id,
                 "name": entry.title,
                 "state": entry.options.get("state"),
+                "text": "\n".join(_template_strings(entry.options)),
             }
             for entry in hass.config_entries.async_entries("template")
         ]
+    if "template_attribute" in enabled:
+        facts["template_attributes"] = _live_attributes(hass, facts.get("templates") or [])
     if "template_no_unique_id" in enabled:
         from homeassistant.helpers import entity_platform
 

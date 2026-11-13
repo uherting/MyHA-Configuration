@@ -68,3 +68,21 @@ refresh_watch_providers:
       required: false
       selector:
         text:
+
+set_persons:
+  name: Personen setzen
+  description: Legt fest, für welche Personen ein Film vorgemerkt ist.
+  fields:
+    movie_id:
+      name: Film-ID
+      required: true
+      selector:
+        text:
+    persons:
+      name: Personen
+      description: Die Personen-Entitäten (max. 4, wie im Options-Dialog gewählt).
+      required: true
+      selector:
+        entity:
+          domain: person
+          multiple: true

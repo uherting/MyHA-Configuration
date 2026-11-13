@@ -116,6 +116,50 @@
       "low_batteries": {
         "name": "Low batteries"
       },
+      "battery_weakest": {
+        "name": "Weakest battery"
+      },
+      "battery_next_change": {
+        "name": "Next battery change"
+      },
+      "auto_pause": {
+        "name": "Paused integrations"
+      },
+      "update_watch": {
+        "name": "After the update",
+        "state": {
+          "none": "No update",
+          "pending": "Being checked",
+          "stable": "Fine",
+          "transient": "Briefly disturbed",
+          "worse": "Worse than before",
+          "unknown": "Not sure"
+        }
+      },
+      "start_time": {
+        "name": "Start time"
+      },
+      "database_size": {
+        "name": "Database size"
+      },
+      "backup": {
+        "name": "Backup protection",
+        "state": {
+          "ok": "Fine",
+          "warn": "Needs a look",
+          "bad": "Protection missing",
+          "unclear": "Unknown"
+        }
+      },
+      "vacation": {
+        "name": "Vacation mode",
+        "state": {
+          "off": "Off",
+          "on": "On",
+          "after": "Grace period",
+          "unset": "Not set up"
+        }
+      },
       "new_findings": {
         "name": "New findings"
       },
@@ -138,6 +182,14 @@
           "scanning": "Scanning",
           "cleanup": "Plan running",
           "starting": "Waiting for startup"
+        }
+      },
+      "house_health": {
+        "name": "House health",
+        "state": {
+          "ok": "OK",
+          "attention": "Needs attention",
+          "urgent": "Urgent"
         }
       },
       "monitor": {
@@ -427,6 +479,42 @@
         "target": {
           "name": "New target",
           "description": "For replace_target: the entity, area, floor or label that takes the place of the missing one."
+        }
+      }
+    },
+    "replacement_candidates": {
+      "name": "AI access: list entities to pair after a change",
+      "description": "Lists the entities that are gone (orphaned or unavailable) and the ones that are there, with name, device class, unit, area and how much uses them, to pair up after a change of integration. Reads only. Needs \"AI access\" to be switched on.",
+      "fields": {
+        "old_platform": {
+          "name": "Old integration",
+          "description": "The platform of the entities that are gone, for example hue."
+        },
+        "new_platform": {
+          "name": "New integration",
+          "description": "The platform of the entities that are there."
+        },
+        "search": {
+          "name": "Search",
+          "description": "Part of the ID or the name."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "How many entities per list, at most 150."
+        }
+      }
+    },
+    "replacement_plan": {
+      "name": "AI access: create a plan to replace several entities",
+      "description": "Creates one plan that moves the uses of several old entities to new ones (automations, scripts, dashboards). The plan is only a preview: it is not run. An administrator reads every pair and confirms it in the Housekeeper panel. Needs \"AI access\" and \"Fix findings\" to be switched on. The pairs come from \"replacement_candidates\".",
+      "fields": {
+        "pairs": {
+          "name": "Pairs",
+          "description": "A list of old and new, at most 50, for example [{old: sensor.a, new: sensor.b}]. Each entity may appear once."
+        },
+        "disable_old": {
+          "name": "Switch off the old entities",
+          "description": "Switch the old entities off after the replacement. They are never deleted."
         }
       }
     }

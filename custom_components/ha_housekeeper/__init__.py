@@ -31,6 +31,7 @@ from . import storms as storms_module
 from .backup_auto import async_auto_clean
 from .central_log import log_tick
 from .const import (
+    CARDS_URL,
     CONF_HISTORY_DAYS,
     CONF_LOW_BATTERY_PERCENT,
     CONF_OUTAGE_HIGH_HOURS,
@@ -140,21 +141,32 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
 
     frontend_dir = Path(__file__).parent / "frontend"
     bundle = frontend_dir / "ha-housekeeper-panel.js"
+    cards_bundle = frontend_dir / "ha-housekeeper-cards.js"
     # The URL names the content: browsers may cache the bundle for good and still load every
     # new build at once, also a local one without a new version number.
-    digest = await hass.async_add_executor_job(
-        lambda: hashlib.sha256(bundle.read_bytes()).hexdigest()[:12]
+    digest, cards_digest = await hass.async_add_executor_job(
+        lambda: (
+            hashlib.sha256(bundle.read_bytes()).hexdigest()[:12],
+            hashlib.sha256(cards_bundle.read_bytes()).hexdigest()[:12],
+        )
     )
     if not hass.data[DOMAIN].get("static_path_registered"):
         await hass.http.async_register_static_paths(
             [
                 StaticPathConfig(FRONTEND_URL, str(bundle), True),
+                StaticPathConfig(CARDS_URL, str(cards_bundle), True),
                 StaticPathConfig(LOGO_URL, str(Path(__file__).parent / "brand" / "logo.png"), True),
                 StaticPathConfig(FONTS_URL, str(Path(__file__).parent / "fonts"), True),
                 StaticPathConfig(I18N_URL, str(frontend_dir / "i18n"), True),
             ]
         )
         hass.data[DOMAIN]["static_path_registered"] = True
+    # The Lovelace cards load on every dashboard of every user, not only in the panel for administrators.
+    cards_url = f"{CARDS_URL}?v={cards_digest}"
+    if (earlier := hass.data[DOMAIN].get("cards_url")) and earlier != cards_url:
+        frontend.remove_extra_js_url(hass, earlier)  # a reload after an update: not two bundles
+    frontend.add_extra_js_url(hass, cards_url)
+    hass.data[DOMAIN]["cards_url"] = cards_url
     # A reload for new options keeps the panel: removing it makes Home Assistant leave the open page.
     # The sidebar entry follows the option; a changed choice registers the panel anew.
     show_sidebar = entry.options.get(CONF_SHOW_IN_SIDEBAR, DEFAULT_SHOW_IN_SIDEBAR)
@@ -501,6 +513,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
     @callback
     def _check_scan_health(_: Any) -> None:
         scanner.async_check_health()
+        scanner.check_battery_forecast()
 
     entry.async_on_unload(async_track_time_interval(hass, _check_scan_health, timedelta(hours=1)))
 
@@ -540,6 +553,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry)
     if unloaded:
         if not hass.data[DOMAIN].pop("keep_panel", False):
             frontend.async_remove_panel(hass, PANEL_URL)
+            if cards_url := hass.data[DOMAIN].pop("cards_url", None):
+                frontend.remove_extra_js_url(hass, cards_url)
         await scanner.cleanup.flush_journal()
+        await scanner.async_shutdown()
         async_clear_issues(hass)
     return unloaded

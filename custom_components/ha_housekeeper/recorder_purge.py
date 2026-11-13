@@ -236,6 +236,16 @@ async def count_older(
             lock.release()
 
 
+async def _delete_old_states(
+    hass: HomeAssistant, entity_id: str, keep_days: int, at: float | None
+) -> None:
+    from .counter_repair import run_in_recorder
+
+    await run_in_recorder(
+        hass, lambda instance: _delete_trim(instance, entity_id, keep_days, None, ["states"], at)
+    )
+
+
 async def trim_states(
     hass: HomeAssistant, entity_id: str, keep_days: int, at: float | None = None
 ) -> tuple[int | None, str | None]:
@@ -255,12 +265,9 @@ async def trim_states(
     except TimeoutError:
         return None, "recorder_busy"
     try:
-        await hass.services.async_call(
-            "recorder",
-            "purge_entities",
-            {"entity_id": [entity_id], "keep_days": keep_days},
-            blocking=True,
-        )
+        # Not the recorder.purge_entities service: it expands a group into its members and would
+        # delete their history instead of the group's own rows.
+        await _delete_old_states(hass, entity_id, keep_days, at)
 
         async def remaining() -> int | None:
             found = await count_older(hass, [entity_id], keep_days, at=at, locked=True)
@@ -475,12 +482,20 @@ def _delete_trim(
                             )
                         ).scalars()
                     )
-                    if unused := attribute_ids - still_used:
+                    unused = attribute_ids - still_used
+                    if unused:
                         session.execute(
                             delete(StateAttributes).where(StateAttributes.attributes_id.in_(unused))
                         )
+                else:
+                    unused = set()
                 deleted["states"] += len(ids)
                 session.commit()
+                # The same for the attribute rows: a deleted id left in the cache would be handed
+                # to the next row that has these attributes, and its insert fails (foreign key).
+                attributes_manager = getattr(instance, "state_attributes_manager", None)
+                if unused and attributes_manager is not None:
+                    attributes_manager.evict_purged(unused)
                 # The recorder remembers the newest state id of each entity for the next row's
                 # old_state_id; a deleted id left there fails the foreign key of that insert.
                 manager = getattr(instance, "states_manager", None)

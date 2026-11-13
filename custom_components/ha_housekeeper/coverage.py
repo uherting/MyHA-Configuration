@@ -97,6 +97,7 @@ class CoverageStore:
         self._store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, COVERAGE_STORAGE_KEY)
         self.enabled = False
         self.items: dict[str, dict[str, Any]] = {}
+        self._cursor = 0  # where the next collection starts in the list of traces
 
     async def async_load(self) -> None:
         data = await self._store.async_load()
@@ -145,7 +146,12 @@ class CoverageStore:
             _LOGGER.debug("Trace heads unavailable", exc_info=True)
             return 0
         counted = 0
-        for head in heads:
+        examined = 0
+        # Start where the last collection stopped: with the cap per round, the same automations
+        # at the head of the list would otherwise be counted every time and the others never.
+        start = self._cursor % len(heads) if heads else 0
+        for head in [*heads[start:], *heads[:start]]:
+            examined += 1
             key = f"automation.{head.get('item_id')}"
             run_id = head.get("run_id")
             item = self.items.get(key)
@@ -173,10 +179,13 @@ class CoverageStore:
             item["seen"].append(run_id)
             del item["seen"][:-SEEN_CAP]
             counted += 1
+        self._cursor = (start + examined) % len(heads) if heads else 0
+        removed = False
         if present is not None:
             for key in [k for k in self.items if k not in present]:
                 del self.items[key]
-        if counted:
+                removed = True
+        if counted or removed:
             self._store.async_delay_save(self._data, SAVE_DELAY)
         return counted
 

@@ -27,12 +27,13 @@ CACHE_MAX = 200  # cached answers kept; per-entity queries would otherwise add o
 class QueryResult:
     """What ``cached_query`` found: the raw rows, whether they came from the cache, or ``busy``."""
 
-    __slots__ = ("busy", "cached", "raw")
+    __slots__ = ("age", "busy", "cached", "raw")
 
-    def __init__(self, raw: Any, *, cached: bool, busy: bool) -> None:
+    def __init__(self, raw: Any, *, cached: bool, busy: bool, age: float = 0.0) -> None:
         self.raw = raw
         self.cached = cached
         self.busy = busy
+        self.age = age  # seconds since the rows were read: 0 for a run just now
 
 
 def _consume(task: asyncio.Task[Any]) -> None:
@@ -62,7 +63,7 @@ async def cached_query(
     lock: asyncio.Lock = store.setdefault("reliability_lock", asyncio.Lock())
     kept = cache.get(name)
     if kept and not refresh and time.monotonic() - kept[0] < ttl:
-        return QueryResult(kept[1], cached=True, busy=False)
+        return QueryResult(kept[1], cached=True, busy=False, age=time.monotonic() - kept[0])
     task = inflight.get(name)
     if task is not None and task.done():
         # Finished, but its done callback has not cleared it yet.
@@ -71,7 +72,8 @@ async def cached_query(
     if task is None:
         if lock.locked():
             if kept:
-                return QueryResult(kept[1], cached=True, busy=False)
+                # Whatever age it has, also past the ttl: the caller must not call it fresh.
+                return QueryResult(kept[1], cached=True, busy=False, age=time.monotonic() - kept[0])
             return QueryResult(None, cached=False, busy=True)
 
         async def run() -> Any:

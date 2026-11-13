@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 import time
 from collections import Counter
@@ -41,6 +42,7 @@ from .automation_blocked import blocked_automation_findings, dead_effect_finding
 from .backup_auto import BackupAutoStore
 from .backup_health import AttestStore, backup_health
 from .battery_care import BatteryStore
+from .battery_forecast import battery_forecast
 from .battery_kind import apply_battery_kinds
 from .blueprints import async_available, blueprint_path, missing_blueprint_findings
 from .causes import apply_causes, device_down_findings
@@ -178,10 +180,16 @@ from .watch import WATCH_KINDS, WatchStore, evaluate, make_before, next_due
 from .work import WorkStore
 
 _LOGGER = logging.getLogger(__name__)
+
+BATTERY_FORECAST_EVERY = timedelta(
+    hours=20
+)  # the forecast rests on daily means: a new reading each day is enough
 SUGGEST_LIMIT = 200
 # An entity not provided for this long may be removed without quarantine: one that stays so for a
 # day of scans, restarts included, is no integration still waiting for its first data.
 NOT_PROVIDED_SETTLED = timedelta(hours=24)
+ORPHAN_STAT_GRACE = timedelta(days=2)  # a statistic without an entity is offered after this long
+ORPHAN_STAT_KEY = "orphan_stat:"
 NOT_PROVIDED_KEY = "not_provided:"  # observation key of that period, next to "entity:<id>"
 
 # Keys of the Energy dashboard preferences that name statistics, which are entity IDs.
@@ -1021,6 +1029,10 @@ class InventoryScanner:
         self.backup_auto = BackupAutoStore(hass)
         hass.data.setdefault(DOMAIN, {})["hints"] = self.hints
         self.backup_report: dict[str, Any] | None = None  # the last one that could be read
+        # The forecast of the batteries is read from the statistics about once a day, for the dashboard card.
+        self.battery_forecast: dict[str, Any] | None = None
+        self.battery_forecast_at: datetime | None = None
+        self._battery_forecast_running = False
         self.mcp = McpStore(hass)
         self.monitor = MonitorStore(hass)
         self.runs = RunStore(hass)
@@ -1049,6 +1061,10 @@ class InventoryScanner:
         self._unchecked: set[str] = set()
         self.scan_coverage = ScanCoverage()
         self._lock = asyncio.Lock()
+        self._marks_generation = 0  # counts the changes of decisions and notes
+        self.orphan_grace = ORPHAN_STAT_GRACE
+        self._values_generation = 0  # counts what the sensors have to read again
+        self._first_scan_lock = asyncio.Lock()  # one first scan for all that wait for a snapshot
         self._scan_task: asyncio.Task[None] | None = None  # a scan the service or button started
         self._last_scan_end: float | None = None
         self._snapshot: dict[str, Any] | None = None
@@ -1234,9 +1250,14 @@ class InventoryScanner:
                 # Decided before the states are read: a scan that began during the warm-up stays
                 # preliminary even if the warm-up ends while it runs.
                 preliminary = self.warming_up
+                decided = self._marks_generation
                 snapshot = await self._async_build_snapshot(preliminary)
                 self._details = _split_details(snapshot["objects"])
                 self._snapshot = snapshot
+                if self._marks_generation != decided:
+                    # A decision or a note came in while the snapshot was built: the old snapshot
+                    # took it, the new one was built from the lists as they were before.
+                    self._refresh_marks()
                 if not preliminary:
                     self._sync_issues(snapshot)
                     async_announce(self.hass, self.notify.new(snapshot["findings"]))
@@ -1281,10 +1302,15 @@ class InventoryScanner:
                     snapshot["regressions"] = followup.regressions(
                         self.journal.plans, datetime.now(UTC)
                     )
-                    snapshot["criteria_alerts"] = self.criteria.alerts(datetime.now(UTC).date())
+                    snapshot["criteria_alerts"] = self.criteria.alerts(dt_util.now().date())
                     self.hass.async_create_background_task(
                         self._announce(snapshot), "HA Housekeeper events"
                     )
+                    if self._battery_forecast_due():
+                        self.hass.async_create_background_task(
+                            self.async_refresh_battery_forecast(snapshot),
+                            "HA Housekeeper battery forecast",
+                        )
                 self.last_scan_seconds = time.monotonic() - began
                 self.health.succeeded(datetime.now(UTC), self.last_scan_seconds, preliminary)
                 if not preliminary:
@@ -1295,7 +1321,9 @@ class InventoryScanner:
                 self.async_check_health()
                 self._last_scan_end = time.monotonic()
                 return snapshot
-            except Exception as err:
+            except (Exception, asyncio.CancelledError) as err:
+                # A scan cut off from outside (a command that timed out, an unload) ends like a failed
+                # one, or "running" stays set and every later request is turned away as "join".
                 # The traceback only at debug level: it names the line, which the error text lacks.
                 _LOGGER.debug(
                     "The scan failed in phase %s", self.status.get("phase"), exc_info=True
@@ -1308,6 +1336,30 @@ class InventoryScanner:
                 )
                 self.async_check_health()
                 raise
+
+    async def async_shutdown(self) -> None:
+        """End a scan the service started and write what the stores still hold back.
+
+        A reload makes a new scanner that reads the files again. The stores save with a delay of up
+        to minutes, so without this the new one starts from the older file, and the old one's
+        late write or the new one's next save puts the old state back (the AI access switched
+        off a moment ago is on again).
+        """
+        task = self._scan_task
+        if task is not None and not task.done():
+            task.cancel()
+            with contextlib.suppress(asyncio.CancelledError, Exception):
+                await task
+        for name in STORE_NAMES:
+            owner = getattr(self, name, None)
+            store = getattr(owner, "_store", None) or getattr(owner, "store", None)
+            write = getattr(store, "_async_handle_write_data", None)  # writes only what is pending
+            if write is None:
+                continue
+            try:
+                await write()
+            except Exception:
+                _LOGGER.exception("The saved data of %s could not be written on unload", name)
 
     async def async_request_scan(self, wait: bool = False, record: bool = True) -> dict[str, Any]:
         """Start a scan for the service or the button; many requests make one scan.
@@ -1400,7 +1452,56 @@ class InventoryScanner:
         async_sync_scan_issue(self.hass, self.health_report())
         async_sync_database_issue(self.hass, self.events.integrity)
         self.monitor.refresh(self._snapshot, self.health_report(), new_scan=False)
-        async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
+        self.announce_changes()
+
+    def _battery_forecast_due(self) -> bool:
+        """Whether the forecast is to be read again: never read yet, or the last reading is a day old."""
+        at = self.battery_forecast_at
+        return not self._battery_forecast_running and (
+            at is None or datetime.now(UTC) - at >= BATTERY_FORECAST_EVERY
+        )
+
+    async def async_refresh_battery_forecast(self, snapshot: dict[str, Any]) -> None:
+        """Read the battery forecast and tell the sensors. A failure or a busy recorder is tried again by the next scan."""
+        self._battery_forecast_running = True
+        try:
+            result = await battery_forecast(self.hass, self, snapshot)
+        except Exception:  # noqa: BLE001 - without a forecast the card shows the levels only
+            _LOGGER.debug("The battery forecast could not be read", exc_info=True)
+            return
+        finally:
+            self._battery_forecast_running = False
+        self.adopt_battery_forecast(result)
+
+    def adopt_battery_forecast(self, result: dict[str, Any]) -> None:
+        """Take a forecast that was read, by the daily run or by the panel, as the one the card shows.
+
+        One that could not be read (busy, no recorder) is not taken: the stamp would hold the card
+        back for a day. It is dated as it was read, which can be earlier than now.
+        """
+        if result.get("busy") or not result.get("available"):
+            return
+        read = result.get("computed_at")
+        try:
+            at = datetime.fromisoformat(read) if isinstance(read, str) else None
+        except ValueError:
+            at = None
+        self.battery_forecast = result
+        self.battery_forecast_at = at if at is not None and at.tzinfo else datetime.now(UTC)
+        self.announce_changes()
+
+    def check_battery_forecast(self) -> None:
+        """Read the forecast when it is a day old, whether or not a scan comes: scans can be far apart or off."""
+        snapshot = self._snapshot
+        if (
+            snapshot is None
+            or snapshot["meta"].get("preliminary")
+            or not self._battery_forecast_due()
+        ):
+            return
+        self.hass.async_create_background_task(
+            self.async_refresh_battery_forecast(snapshot), "HA Housekeeper battery forecast"
+        )
 
     async def _announce(self, snapshot: dict[str, Any]) -> None:
         """Fire the events for situations that are new since the last scan."""
@@ -1450,7 +1551,11 @@ class InventoryScanner:
         ]  # integrations run on the usual findings
         if found and self.watch_hours > 0:
             # The restart is the moment of the update; the scan that notices it comes minutes later.
-            started = self.events.last_start(now, timedelta(hours=24)) or now
+            # A Supervisor update does not restart Core: the last start says nothing about it.
+            restarts = any(e["kind"] in ("ha_version", "os_version") for e in found)
+            started = (
+                self.events.last_start(now, timedelta(hours=24)) if restarts else None
+            ) or now
             triggers = [{k: v for k, v in e.items() if k != "at"} for e in found]
             self.watch.start(
                 started, now, self.watch_hours, triggers, make_before(self.history.previous)
@@ -1486,6 +1591,8 @@ class InventoryScanner:
         ended = self.watch.end(datetime.now(UTC))
         if ended and self._snapshot is not None:
             self._snapshot["meta"]["watch"] = None
+        if ended:
+            self.announce_changes()  # the card after the update follows
         return ended
 
     async def async_update_changed(self, old: Any, new: Any) -> None:
@@ -1551,10 +1658,16 @@ class InventoryScanner:
             self._snapshot["meta"].update(fields)
 
     async def async_get_snapshot(self) -> dict[str, Any]:
-        """Return the latest snapshot, scanning on first access."""
+        """Return the latest snapshot, scanning on first access.
+
+        Callers that come while the first scan runs wait for it and take its snapshot, each one
+        does not scan again (many panel commands ask at once when it opens during the start).
+        """
         if self._snapshot is None:
-            return await self.async_scan()
-        return self._snapshot
+            async with self._first_scan_lock:
+                if self._snapshot is None:
+                    return await self.async_scan()
+        return cast(dict[str, Any], self._snapshot)
 
     def get_details(self, object_type: str, object_id: str) -> dict[str, Any] | None:
         """Return bulky fields of one object from the latest snapshot."""
@@ -1858,6 +1971,9 @@ class InventoryScanner:
             existing_objects["entity"],
             {edge["target"][7:] for edge in energy_edges},
         )
+        orphaned_statistics = await self._settled_orphan_statistics(
+            orphaned_statistics, preliminary, observed_at
+        )
 
         entity_registry_entries = er.async_get(self.hass)
         for finding in findings:
@@ -2028,7 +2144,9 @@ class InventoryScanner:
             "edges": edges,
             "findings": findings,
             "causes": causes,
-            "reminders": self.reminders.view(datetime.now(UTC).date()),
+            "reminders": self.reminders.view(
+                dt_util.now().date()
+            ),  # the day of the person, not UTC
             "notes": self.notes.view(),
             "regressions": [],
             "criteria_alerts": [],
@@ -2379,7 +2497,7 @@ class InventoryScanner:
             self._snapshot["objects"], self._snapshot["edges"], self._snapshot["findings"]
         )
         self._sync_issues(self._snapshot)
-        async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
+        self.announce_changes()
 
     def snooze_many(
         self, keys: list[str], days: int, reason: str, by: str | None, source: str | None = None
@@ -2578,7 +2696,7 @@ class InventoryScanner:
         self.hass.data.get(DOMAIN, {}).get("query_cache", {}).pop("battery_trend", None)
         entities = [o for o in snapshot["objects"] if o["object_type"] == "entity"]
         snapshot["meta"]["low_batteries"] = len(low_battery_ids(entities, self.low_battery_percent))
-        async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
+        self.announce_changes()
 
     def _sun(self) -> tuple[bool, datetime] | None:
         """``(below the horizon, since)`` from ``sun.sun``; None when it is missing or unknown."""
@@ -2634,8 +2752,37 @@ class InventoryScanner:
         self._refresh_marks()
         return closed
 
+    async def _settled_orphan_statistics(
+        self, orphans: list[dict[str, Any]], preliminary: bool, observed_at: datetime
+    ) -> list[dict[str, Any]]:
+        """Only statistics that stood without an entity for days are offered for clearing up.
+
+        A platform that cannot load for a while (the device is off, the service is down) leaves its
+        entities out of the registry and the states, and its history looks abandoned for that time.
+        """
+        if preliminary:
+            return []  # the states are not all there yet
+        await self.observations.async_track_group(
+            ORPHAN_STAT_KEY, {orphan["statistic_id"] for orphan in orphans}, observed_at
+        )
+        settled = []
+        for orphan in orphans:
+            since = self.observations.since(f"{ORPHAN_STAT_KEY}{orphan['statistic_id']}", "seen")
+            if (
+                since is not None
+                and observed_at - datetime.fromisoformat(since) >= self.orphan_grace
+            ):
+                settled.append({**orphan, "since": since})
+        return settled
+
+    def announce_changes(self) -> None:
+        """Tell the sensors that what they read has changed: they work it out again, once for all."""
+        self._values_generation += 1
+        async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
+
     def _refresh_marks(self) -> None:
         """Bring the objects and findings of the cached snapshot up to date with the marks."""
+        self._marks_generation += 1
         snapshot = self._snapshot
         if not snapshot:
             return
@@ -2649,7 +2796,7 @@ class InventoryScanner:
             snapshot["objects"], snapshot["edges"], snapshot["findings"]
         )
         self._sync_issues(snapshot)
-        async_dispatcher_send(self.hass, SIGNAL_SCAN_COMPLETE)
+        self.announce_changes()
 
     def _existing_objects(self) -> dict[str, set[str]]:
         """Collect the IDs a reference may legitimately point to."""

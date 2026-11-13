@@ -106,6 +106,7 @@ class TMDBMovieSensor(CoordinatorEntity[TMDBCoordinator], SensorEntity):
             "image": movie.get("image"),
             "archived": movie.get("archived", False),
             "watched_at": movie.get("watched_at"),
+            "persons": movie.get("persons", []),
             "available_on": self._available_on(movie),
         }
 

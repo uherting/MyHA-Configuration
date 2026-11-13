@@ -86,6 +86,7 @@ class TMDBStore:
             "added_at": existing.get("added_at", _now()),
             "watched_at": existing.get("watched_at"),
             "archived": existing.get("archived", False),
+            "persons": existing.get("persons", []),
             "watch_providers": existing.get("watch_providers"),
         }
         await self._async_save()
@@ -108,6 +109,14 @@ class TMDBStore:
         if movie is None:
             return
         movie["archived"] = bool(archived)
+        await self._async_save()
+
+    async def async_set_persons(self, movie_id: str, persons: list[str]) -> None:
+        """Speichert die `person.*`-Entitäten, für die der Film vorgemerkt ist."""
+        movie = self._data["movies"].get(str(movie_id))
+        if movie is None:
+            return
+        movie["persons"] = list(dict.fromkeys(persons))
         await self._async_save()
 
     # -- Watch-Provider-Cache ----------------------------------------------

@@ -60,10 +60,10 @@ def apply_battery_kinds(objects: list[dict[str, Any]], kinds: dict[str, str]) ->
         if item["object_type"] != "entity":
             continue
         # A volt sensor named like a battery has the class voltage; once you decided about it, it counts too.
-        if item.get("device_class") != "battery" and item["object_id"] not in kinds:
-            continue
         item.pop("battery_kind", None)
         item.pop("battery_suggest", None)
+        if item.get("device_class") != "battery" and item["object_id"] not in kinds:
+            continue
         if item["object_id"].partition(".")[0] not in BATTERY_DOMAINS:
             continue
         if kind := kinds.get(item["object_id"]):

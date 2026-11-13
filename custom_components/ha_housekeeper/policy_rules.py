@@ -417,6 +417,48 @@ def template_guard(templates: list[dict[str, Any]]):
             yield item
 
 
+# `state_attr('sensor.x', 'a')`, `is_state_attr('sensor.x', 'a', ...)` and `states.sensor.x.attributes.a`: the entity
+# and the attribute are written out, so the pair can be checked. Names built from variables are left alone.
+ATTRIBUTE_CALL = re.compile(
+    r"""\b(?:state_attr|is_state_attr)\(\s*['"]([a-z0-9_]+\.[a-z0-9_]+)['"]\s*,\s*['"]([A-Za-z0-9_]+)['"]"""
+    r"""|\bstates\.([a-z0-9_]+\.[a-z0-9_]+)\.attributes\.([A-Za-z0-9_]+)"""
+)
+ATTRIBUTE_GUARDS = ("is defined", "default", "is none", "is not none", "has_value", "availability")
+# Attributes of these come and go with what is playing.
+ATTRIBUTE_SKIP_DOMAINS = ("media_player",)
+
+
+def attribute_refs(text: str) -> list[tuple[str, str]]:
+    """The (entity id, attribute) pairs a template names, each once, in order."""
+    found: list[tuple[str, str]] = []
+    for match in ATTRIBUTE_CALL.finditer(text):
+        pair = (match.group(1) or match.group(3), match.group(2) or match.group(4))
+        if pair not in found:
+            found.append(pair)
+    return found
+
+
+def template_attribute(templates: list[dict[str, Any]], attributes: dict[str, set[str]]):
+    """Template helpers that read an attribute their entity does not have (a hint).
+
+    ``attributes`` holds, per entity id, its attribute names; an entity whose state cannot be read, or
+    that has nothing besides its name, is not in it, because its attributes may only be missing for now.
+    """
+    for item in templates:
+        text = str(item.get("text") or item.get("state") or "")
+        if any(word in text for word in ATTRIBUTE_GUARDS):
+            continue
+        missing = [
+            f"{entity_id}.{attribute}"
+            for entity_id, attribute in attribute_refs(text)
+            if entity_id in attributes
+            and attribute not in attributes[entity_id]
+            and entity_id.split(".", 1)[0] not in ATTRIBUTE_SKIP_DOMAINS
+        ]
+        if missing:
+            yield {**item, "also": missing[:3]}
+
+
 def template_no_unique_id(entities: list[dict[str, Any]]):
     """Template entities without a ``unique_id``: the interface cannot rename or disable them."""
     yield from entities

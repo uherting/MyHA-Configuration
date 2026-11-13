@@ -279,6 +279,7 @@ def evaluate(
     now: datetime,
     since: str | None,
     changes: dict[str, dict[str, Any]] | None = None,
+    limit: int | None = LIMIT,
 ) -> RunsResult:
     """Rate every automation and script that has numbers or a structural reason to look.
 
@@ -392,7 +393,7 @@ def evaluate(
         "since": since,
         "total": len(rows),
         "excluded": {"ignored": left_out},
-        "items": rows[:LIMIT],  # type: ignore[typeddict-item]
+        "items": rows[:limit],  # type: ignore[typeddict-item]
     }
 
 
@@ -439,12 +440,16 @@ def run_findings(
     ]
 
 
-async def report(scanner: Any, snapshot: dict[str, Any] | None = None) -> RunsResult:
+async def report(
+    scanner: Any, snapshot: dict[str, Any] | None = None, *, full: bool = False
+) -> RunsResult:
     """Collect the newest runs, then rate everything; reads traces and the snapshot only.
 
     With a ``snapshot`` (the scan that has just built it) nothing is collected or awaited: the
-    runs are those the daily collection kept.
+    runs are those the daily collection kept. With ``full`` the rows and conflicts are not cut to
+    the length of the lists sent to the panel, for a caller that rates all of them.
     """
+    limit = None if full else LIMIT
     if snapshot is None:
         await scanner.runs.async_collect()
         snapshot = await scanner.async_get_snapshot()
@@ -480,12 +485,14 @@ async def report(scanner: Any, snapshot: dict[str, Any] | None = None) -> RunsRe
         datetime.now(UTC),
         scanner.runs.since,
         scanner.config_changes.items,
+        limit,
     )
     found = conflicts.find(
         [a for a in autos if a["source"] != "state_fallback"],
         snapshot["edges"],
         scanner.runs.items,
         datetime.now(UTC).date(),
+        None if full else conflicts.LIMIT,
     )
     now = datetime.now(UTC)
     for item in found["items"]:

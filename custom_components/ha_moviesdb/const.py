@@ -5,6 +5,11 @@ DOMAIN = "ha_moviesdb"
 CONF_API_KEY = "api_key"
 CONF_REGION = "region"
 CONF_PROVIDER_IDS = "provider_ids"
+CONF_PERSON_IDS = "person_ids"
+
+# Höchstzahl der Personen, für die ein Film vorgemerkt werden kann (die Avatare
+# müssen auf ein Poster passen).
+MAX_PERSONS = 4
 
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
 TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/"
@@ -37,7 +42,7 @@ STATIC_BASE_PATH = f"/{DOMAIN}"
 # Lovelace-Ressource wird automatisch auf diese Version aktualisiert (siehe
 # frontend.py) - ein manuelles Nachtragen der URL ist dadurch nicht mehr
 # nötig.
-CARD_VERSION = "7"
+CARD_VERSION = "11"
 
 STORAGE_VERSION = 1
 STORAGE_KEY = f"{DOMAIN}_data"
@@ -65,9 +70,11 @@ SERVICE_ADD_MOVIE = "add_movie"
 SERVICE_REMOVE_MOVIE = "remove_movie"
 SERVICE_SET_WATCHED = "set_watched"
 SERVICE_SET_ARCHIVED = "set_archived"
+SERVICE_SET_PERSONS = "set_persons"
 SERVICE_REFRESH = "refresh"
 SERVICE_REFRESH_WATCH_PROVIDERS = "refresh_watch_providers"
 
 ATTR_MOVIE_ID = "movie_id"
 ATTR_WATCHED = "watched"
 ATTR_ARCHIVED = "archived"
+ATTR_PERSONS = "persons"

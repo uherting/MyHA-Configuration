@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from datetime import datetime, timedelta
 from typing import Any
@@ -171,9 +172,11 @@ def battery_level(item: dict[str, Any]) -> tuple[float | None, bool]:
         if item.get("unit") not in (None, "", "%"):
             return None, False
         try:
-            return float(item["state"]), False
+            level = float(item["state"])
         except (TypeError, ValueError):
             return None, False
+        # "nan" and "inf" are floats too, but no level: the card rounds it and would fail on it.
+        return (level, False) if math.isfinite(level) else (None, False)
     return None, False
 
 

@@ -116,6 +116,50 @@
       "low_batteries": {
         "name": "Piles faibles"
       },
+      "battery_weakest": {
+        "name": "Pile la plus faible"
+      },
+      "battery_next_change": {
+        "name": "Prochain changement de pile"
+      },
+      "auto_pause": {
+        "name": "Intégrations en pause"
+      },
+      "update_watch": {
+        "name": "Après la mise à jour",
+        "state": {
+          "none": "Aucune mise à jour",
+          "pending": "En cours de vérification",
+          "stable": "Rien à signaler",
+          "transient": "Brièvement perturbé",
+          "worse": "Pire qu’avant",
+          "unknown": "Incertain"
+        }
+      },
+      "start_time": {
+        "name": "Durée du démarrage"
+      },
+      "database_size": {
+        "name": "Taille de la base de données"
+      },
+      "backup": {
+        "name": "Protection des sauvegardes",
+        "state": {
+          "ok": "En ordre",
+          "warn": "À vérifier",
+          "bad": "Protection absente",
+          "unclear": "Inconnu"
+        }
+      },
+      "vacation": {
+        "name": "Mode vacances",
+        "state": {
+          "off": "Inactif",
+          "on": "Actif",
+          "after": "Délai de grâce",
+          "unset": "Non configuré"
+        }
+      },
       "new_findings": {
         "name": "Nouveaux constats"
       },
@@ -138,6 +182,14 @@
           "scanning": "Scan en cours",
           "cleanup": "Plan en cours",
           "starting": "En attente du démarrage"
+        }
+      },
+      "house_health": {
+        "name": "État de la maison",
+        "state": {
+          "ok": "En ordre",
+          "attention": "À surveiller",
+          "urgent": "Urgent"
         }
       },
       "monitor": {
@@ -425,6 +477,42 @@
         "target": {
           "name": "Nouvelle cible",
           "description": "Pour replace_target : l’entité, la zone, l’étage ou l’étiquette qui prend la place de celle qui manque."
+        }
+      }
+    },
+    "replacement_candidates": {
+      "name": "Accès IA : lister les entités à associer après un changement",
+      "description": "Liste les entités qui ont disparu (orphelines ou indisponibles) et celles qui sont là, avec le nom, la classe d’appareil, l’unité, la zone et leur utilisation, pour les associer après un changement d’intégration. Lecture seule. Nécessite « Accès IA » activé.",
+      "fields": {
+        "old_platform": {
+          "name": "Ancienne intégration",
+          "description": "La plateforme des entités qui ont disparu, par exemple hue."
+        },
+        "new_platform": {
+          "name": "Nouvelle intégration",
+          "description": "La plateforme des entités qui sont là."
+        },
+        "search": {
+          "name": "Recherche",
+          "description": "Une partie de l’ID ou du nom."
+        },
+        "limit": {
+          "name": "Limite",
+          "description": "Combien d’entités par liste, au plus 150."
+        }
+      }
+    },
+    "replacement_plan": {
+      "name": "Accès IA : créer un plan pour remplacer plusieurs entités",
+      "description": "Crée un plan qui reporte les usages de plusieurs anciennes entités sur de nouvelles (automatisations, scripts, tableaux de bord). Le plan n’est qu’un aperçu : il n’est pas exécuté. Un administrateur lit chaque paire et le confirme dans le panneau Housekeeper. Nécessite « Accès IA » et « Corriger les constats » activés. Les paires viennent de « replacement_candidates ».",
+      "fields": {
+        "pairs": {
+          "name": "Paires",
+          "description": "Une liste d’anciennes et de nouvelles, au plus 50, par exemple [{old: sensor.a, new: sensor.b}]. Chaque entité ne peut apparaître qu’une fois."
+        },
+        "disable_old": {
+          "name": "Désactiver les anciennes entités",
+          "description": "Désactive les anciennes entités après le remplacement. Elles ne sont jamais supprimées."
         }
       }
     }

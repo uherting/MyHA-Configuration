@@ -116,6 +116,50 @@
       "low_batteries": {
         "name": "低电量电池"
       },
+      "battery_weakest": {
+        "name": "电量最低的电池"
+      },
+      "battery_next_change": {
+        "name": "下次更换电池"
+      },
+      "auto_pause": {
+        "name": "已暂停的集成"
+      },
+      "update_watch": {
+        "name": "更新之后",
+        "state": {
+          "none": "无更新",
+          "pending": "检查中",
+          "stable": "无异常",
+          "transient": "曾短暂异常",
+          "worse": "比之前更差",
+          "unknown": "不确定"
+        }
+      },
+      "start_time": {
+        "name": "启动用时"
+      },
+      "database_size": {
+        "name": "数据库大小"
+      },
+      "backup": {
+        "name": "备份保护",
+        "state": {
+          "ok": "正常",
+          "warn": "需要留意",
+          "bad": "缺少保护",
+          "unclear": "未知"
+        }
+      },
+      "vacation": {
+        "name": "度假模式",
+        "state": {
+          "off": "关闭",
+          "on": "开启",
+          "after": "宽限期",
+          "unset": "未设置"
+        }
+      },
       "new_findings": {
         "name": "新发现项"
       },
@@ -138,6 +182,14 @@
           "scanning": "正在扫描",
           "cleanup": "计划运行中",
           "starting": "等待启动"
+        }
+      },
+      "house_health": {
+        "name": "住宅状况",
+        "state": {
+          "ok": "正常",
+          "attention": "需要关注",
+          "urgent": "紧急"
         }
       },
       "monitor": {
@@ -425,6 +477,42 @@
         "target": {
           "name": "新目标",
           "description": "对于 replace_target：取代缺失对象的实体、区域、楼层或标签。"
+        }
+      }
+    },
+    "replacement_candidates": {
+      "name": "AI 访问：列出更换后需配对的实体",
+      "description": "列出已消失的实体（孤立或不可用）和现有的实体，附带名称、设备类别、单位、区域以及被使用的情况，以便在更换集成后进行配对。仅读取。需要开启“AI 访问”。",
+      "fields": {
+        "old_platform": {
+          "name": "旧集成",
+          "description": "已消失实体的平台，例如 hue。"
+        },
+        "new_platform": {
+          "name": "新集成",
+          "description": "现有实体的平台。"
+        },
+        "search": {
+          "name": "搜索",
+          "description": "ID 或名称的一部分。"
+        },
+        "limit": {
+          "name": "上限",
+          "description": "每个列表的实体数，最多 150。"
+        }
+      }
+    },
+    "replacement_plan": {
+      "name": "AI 访问：创建替换多个实体的计划",
+      "description": "创建一个计划，把多个旧实体的使用（自动化、脚本、仪表板）转到新实体上。计划只是预览：不会执行。管理员逐对检查并在 Housekeeper 面板中确认。需要开启“AI 访问”和“修复发现”。配对来自“replacement_candidates”。",
+      "fields": {
+        "pairs": {
+          "name": "配对",
+          "description": "旧与新的列表，最多 50 对，例如 [{old: sensor.a, new: sensor.b}]。每个实体只能出现一次。"
+        },
+        "disable_old": {
+          "name": "停用旧实体",
+          "description": "替换后停用旧实体。它们不会被删除。"
         }
       }
     }

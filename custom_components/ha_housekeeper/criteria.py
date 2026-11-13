@@ -14,6 +14,7 @@ from __future__ import annotations
 import builtins
 import re
 import secrets
+import time
 from collections.abc import Callable
 from datetime import UTC, date, datetime, timedelta
 from functools import partial
@@ -113,6 +114,7 @@ class CriteriaStore:
         self.items: dict[str, list[dict[str, Any]]] = {}
         self.days: dict[str, dict[str, list[int]]] = {}
         self.recent: dict[str, list[dict[str, Any]]] = {}
+        self._write_due = 0.0  # when the write that is planned happens (monotonic)
         self._pending: dict[int, CALLBACK_TYPE] = {}
         self._watches: dict[str, list[dict[str, Any]]] = {}  # context ID -> open call checks
         self._counter = 0
@@ -148,8 +150,14 @@ class CriteriaStore:
     def _data(self) -> dict[str, Any]:
         return {"items": self.items, "days": self.days, "recent": self.recent}
 
-    def _save(self) -> None:
-        self._store.async_delay_save(self._data, SAVE_DELAY)
+    def _save(self, delay: float = SAVE_DELAY) -> None:
+        # Each call to async_delay_save moves a planned write further out: an automation that runs
+        # more often than the delay would never be written. A write that is planned stays.
+        due = time.monotonic() + delay
+        if self._write_due > time.monotonic() and self._write_due <= due:
+            return
+        self._write_due = due
+        self._store.async_delay_save(self._data, delay)
 
     @property
     def total(self) -> int:
@@ -167,7 +175,7 @@ class CriteriaStore:
         else:  # without criteria the outcomes mean nothing any more
             for part in (self.items, self.days, self.recent):
                 part.pop(entity_id, None)
-        self._save()
+        self._save(10)  # a criterion the person just set is not held back for minutes
         return clean
 
     # -- watching -----------------------------------------------------------------------------

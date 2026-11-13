@@ -461,8 +461,8 @@ async def storms(
         "busy": False,
         "cached": found.cached,
         "stale": False,
-        "age_seconds": 0,
-        "computed_at": now,
+        "age_seconds": round(found.age),
+        "computed_at": now - found.age,
         "thresholds": THRESHOLDS,
         **result,
     }

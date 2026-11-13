@@ -16,6 +16,7 @@ from .api import TMDBAuthError, TMDBClient, TMDBError, tmdb_language
 from .const import (
     ATTR_ARCHIVED,
     ATTR_MOVIE_ID,
+    ATTR_PERSONS,
     ATTR_WATCHED,
     CARD_FILENAME,
     CARD_VERSION,
@@ -29,6 +30,7 @@ from .const import (
     SERVICE_REFRESH_WATCH_PROVIDERS,
     SERVICE_REMOVE_MOVIE,
     SERVICE_SET_ARCHIVED,
+    SERVICE_SET_PERSONS,
     SERVICE_SET_WATCHED,
     SIGNAL_MOVIE_ADDED,
     SIGNAL_MOVIE_REMOVED,
@@ -153,6 +155,13 @@ def _async_register_services(hass: HomeAssistant) -> None:
             str(call.data[ATTR_MOVIE_ID]), bool(call.data.get(ATTR_ARCHIVED, True))
         )
 
+    async def _handle_set_persons(call: ServiceCall) -> None:
+        data = _entry_data()
+        await data["store"].async_set_persons(
+            str(call.data[ATTR_MOVIE_ID]), list(call.data[ATTR_PERSONS])
+        )
+        data["coordinator"].async_update_listeners()
+
     async def _handle_refresh(call: ServiceCall) -> None:
         await _entry_data()["coordinator"].async_request_refresh()
 
@@ -195,6 +204,17 @@ def _async_register_services(hass: HomeAssistant) -> None:
             {
                 vol.Required(ATTR_MOVIE_ID): cv.string,
                 vol.Optional(ATTR_ARCHIVED, default=True): cv.boolean,
+            }
+        ),
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_PERSONS,
+        _handle_set_persons,
+        schema=vol.Schema(
+            {
+                vol.Required(ATTR_MOVIE_ID): cv.string,
+                vol.Required(ATTR_PERSONS): vol.All(cv.ensure_list, [cv.entity_id]),
             }
         ),
     )

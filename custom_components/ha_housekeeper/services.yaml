@@ -212,3 +212,35 @@ undo:
       required: true
       selector:
         text:
+
+replacement_candidates:
+  fields:
+    old_platform:
+      required: false
+      selector:
+        text:
+    new_platform:
+      required: false
+      selector:
+        text:
+    search:
+      required: false
+      selector:
+        text:
+    limit:
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 150
+
+replacement_plan:
+  fields:
+    pairs:
+      required: true
+      selector:
+        object:
+    disable_old:
+      required: false
+      selector:
+        boolean:

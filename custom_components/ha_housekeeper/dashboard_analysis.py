@@ -319,8 +319,10 @@ def dashboard_health(
         if isinstance(value, Mapping):
             if key in CARD_LISTS and isinstance(value.get("type"), str):
                 cards += 1
-                if value["type"].startswith("custom:"):
-                    custom.add(value["type"][7:])
+            # Not only cards: row plugins in an entities list, view layouts, badges and features
+            # name their resource the same way.
+            if isinstance(value.get("type"), str) and value["type"].startswith("custom:"):
+                custom.add(value["type"][7:])
             for child_key, child in value.items():
                 if child_key == "navigation_path" and isinstance(child, str):
                     targets.append(child)

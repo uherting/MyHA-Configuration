@@ -107,9 +107,9 @@ def _inside(path: str, base: str) -> bool:
 
 
 OTHER_LIMIT = 25  # the largest unlisted entries are named; the remainder is one line
-_DB_PREFIX = (
-    "home-assistant_v2.db"  # the database and its journal are counted with the known places
-)
+# The database and its journal are counted with the known places; a copy set aside as damaged
+# (home-assistant_v2.db.corrupt.…) is not, it is one of the large unlisted entries.
+_DB_NAMES = ("home-assistant_v2.db", "home-assistant_v2.db-wal", "home-assistant_v2.db-shm")
 
 
 def other_entries(
@@ -123,7 +123,7 @@ def other_entries(
     found: list[dict[str, Any]] = []
     try:
         for entry in os.scandir(config_dir):
-            if entry.name in known or entry.name.startswith(_DB_PREFIX) or entry.is_symlink():
+            if entry.name in known or entry.name in _DB_NAMES or entry.is_symlink():
                 continue
             if budget and budget.spent():
                 break

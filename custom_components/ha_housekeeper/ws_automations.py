@@ -66,7 +66,7 @@ async def websocket_automation_quality(
     """Seven separate quality dimensions per automation; reads only."""
     try:
         async with asyncio.timeout(RUNS_TIMEOUT):
-            runs = await runs_report(scanner)
+            runs = await runs_report(scanner, full=True)
             snapshot = await scanner.async_get_snapshot()
     except Exception as err:
         connection.send_error(msg["id"], "quality_failed", f"{type(err).__name__}: {err}")

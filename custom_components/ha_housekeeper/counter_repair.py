@@ -335,7 +335,7 @@ def stats_changes(
             new[row["id"]] = {"state": state, "sum": total}
         offset = (e["sum"] - b["sum"]) - (e["state"] - b["state"])
         if abs(offset) > tolerance(b["sum"], e["sum"]):
-            tails.append({"from": e["ts"], "offset": offset, "probe": e["id"]})
+            tails.append({"from": e["ts"], "offset": offset, "probe": e["id"], "finding": index})
             shift += offset
     by_id = {row["id"]: row for row in rows}
     changed = [
@@ -388,6 +388,7 @@ def build_changes(
         "short_term": stats_changes(short_rows, "short_term", findings, mode),
         "long_term": stats_changes(long_rows, "long_term", findings, mode),
     }
+    _carry_offsets_to_short_term(changes, short_rows, findings)
     changes["counts"] = {
         "states": len(changes["states"]),
         "short_term": len(changes["short_term"]["rows"]),
@@ -396,6 +397,44 @@ def build_changes(
         "tail_long_term": _tail_rows(long_rows, changes["long_term"]["tails"]),
     }
     return changes
+
+
+def _carry_offsets_to_short_term(
+    changes: dict[str, Any], short_rows: list[dict[str, Any]], findings: list[dict[str, Any]]
+) -> None:
+    """Take the offset of a finding older than the 5-minute rows off those rows as well.
+
+    The 5-minute table has no good row before such a finding, so it cannot work out the offset
+    itself. If the hourly table did, the 5-minute sums must drop by the same amount: Home Assistant
+    builds the next hourly sum from the last 5-minute sum, so left alone the offset would come back
+    in the hour of the repair.
+    """
+    short = changes["short_term"]
+    long_tails = {tail["finding"]: tail for tail in changes["long_term"]["tails"]}
+    ref = REF["short_term"]
+    kept = []
+    for skip in short["skipped"]:
+        tail = long_tails.get(skip["finding"])
+        if skip["reason"] != "no_before" or tail is None:
+            kept.append(skip)
+            continue
+        after = [
+            r
+            for r in sorted(short_rows, key=lambda row: row["ts"])
+            if r["ts"] + ref > findings[skip["finding"]]["bad_last"] and r.get("sum") is not None
+        ]
+        if not after:
+            kept.append(skip)
+            continue
+        short["tails"].append(
+            {
+                "from": after[0]["ts"],
+                "offset": tail["offset"],
+                "probe": after[0]["id"],
+                "finding": skip["finding"],
+            }
+        )
+    short["skipped"] = kept
 
 
 def _tail_rows(rows: list[dict[str, Any]], tails: list[dict[str, Any]]) -> int:
@@ -1220,17 +1259,32 @@ def undo_blocking(instance: Any, written: dict[str, Any]) -> str:
                         )
                     ).all()
                 }
+            # The five-minute rows are purged after about ten days: a row of the repair that is gone
+            # from that table was purged, it is not a change somebody made. Nothing is left to put back.
+            purged = table == "short_term"
             fine = [
                 row
                 for row in rows
                 if (now := current.get(row["id"])) is not None
                 and all(_same(a, b) for a, b in zip(now, row["new"], strict=True))
             ]
-            kept = [row for row in rows if row not in fine]
+            kept = [
+                row for row in rows if row not in fine and not (purged and row["id"] not in current)
+            ]
             tails_fine: list[dict[str, Any]] = []
             tails_kept: list[dict[str, Any]] = []
             for tail in block.get("tails", []):
                 probe = session.execute(select(model.sum).where(model.id == tail["probe"])).scalar()
+                if probe is None and purged:
+                    # Its probe row is gone: if every older row is gone too, it was purged, and the
+                    # rows after it still carry the offset and must lose it with the hourly ones.
+                    older = session.execute(
+                        select(model.id)
+                        .where(model.metadata_id == meta[0], model.start_ts <= tail["from"])
+                        .limit(1)
+                    ).scalar()
+                    (tails_fine if older is None else tails_kept).append(tail)
+                    continue
                 (
                     tails_fine if probe is not None and _same(probe, tail["after"]) else tails_kept
                 ).append(tail)

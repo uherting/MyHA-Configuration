@@ -404,39 +404,49 @@ def query_db(hass: HomeAssistant, now: float) -> dict[str, Any]:
 def growth(sizes: dict[str, int], today: date) -> dict[str, Any]:
     """Growth of the last week against the weeks before, from the daily sizes."""
 
-    def at(offset: int) -> int | None:
-        """The latest sample on or before ``today - offset`` days within three days of it."""
+    def at(offset: int) -> tuple[int, int] | None:
+        """The latest sample on or before ``today - offset`` days within three days of it: (days back, size)."""
         for step in range(offset, offset + 4):
             value = sizes.get((today.fromordinal(today.toordinal() - step)).isoformat())
             if value is not None:
-                return value
+                return step, value
         return None
 
     latest, week_ago = at(0), at(GROWTH_RECENT_DAYS)
     base_start = at(GROWTH_RECENT_DAYS + GROWTH_BASE_DAYS)
-    if latest is None or week_ago is None:
+    if latest is None or week_ago is None or week_ago[0] <= latest[0]:
         return {"known": False, "samples": len(sizes)}
-    recent = latest - week_ago
+    recent = latest[1] - week_ago[1]
+    span = week_ago[0] - latest[0]  # the days really between the two samples
     result: dict[str, Any] = {
         "known": True,
         "samples": len(sizes),
         "recent_bytes": recent,
-        "per_day": round(recent / GROWTH_RECENT_DAYS),
+        "per_day": round(recent / span),
     }
-    if base_start is not None:
-        base = (week_ago - base_start) / (GROWTH_BASE_DAYS / GROWTH_RECENT_DAYS)
+    if base_start is not None and base_start[0] > week_ago[0]:
+        # The size over the weeks before, per recent period, by the days that really lie between.
+        base = (week_ago[1] - base_start[1]) / ((base_start[0] - week_ago[0]) / span)
         result["base_bytes"] = round(base)
     return result
 
 
 def state_gaps(
-    minutes: list[int], now: float, down: list[tuple[float, float]]
+    minutes: list[int],
+    now: float,
+    down: list[tuple[float, float]],
+    window_start: float | None = None,
 ) -> list[dict[str, Any]]:
-    """Stretches of STATE_GAP_MINUTES or more without any row, told apart from restarts."""
+    """Stretches of STATE_GAP_MINUTES or more without any row, told apart from restarts.
+
+    With ``window_start`` an empty list means no row in the whole window: one gap from its start.
+    """
     gaps = []
     pairs = list(zip(minutes, minutes[1:], strict=False))
     if minutes:
         pairs.append((minutes[-1], int(now // 60)))
+    elif window_start is not None:
+        pairs.append((int(window_start // 60) - 1, int(now // 60)))
     for a, b in pairs:
         if b - a < STATE_GAP_MINUTES:
             continue
@@ -514,6 +524,8 @@ def evaluate(
         grown.get("known")
         and grown["recent_bytes"] >= GROWTH_MIN_BYTES
         and grown.get("base_bytes") is not None
+        # A database that shrank before (a repack, a purge) has no pace to compare with.
+        and grown["base_bytes"] >= 0
         and grown["recent_bytes"] >= GROWTH_FACTOR * max(grown["base_bytes"], 1)
     ):
         findings.append(
@@ -615,7 +627,13 @@ def evaluate(
                 ],
             }
         )
-    gaps = state_gaps(raw.get("state_minutes", []), raw["now"], down_periods(events))
+    gaps = state_gaps(
+        raw.get("state_minutes", []),
+        raw["now"],
+        down_periods(events),
+        # A recorder that wrote nothing for the whole window is a gap, not a clean bill.
+        raw["now"] - STATE_GAP_WINDOW_DAYS * DAY if "state_minutes" in raw else None,
+    )
     recorder_gaps = [g for g in gaps if g["cause"] == "recorder"]
     if recorder_gaps:
         findings.append(

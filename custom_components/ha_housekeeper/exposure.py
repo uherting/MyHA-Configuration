@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import unicodedata
 from collections.abc import Mapping
+from fnmatch import fnmatchcase
 from typing import Any
 
 from homeassistant.core import HomeAssistant
@@ -235,14 +236,39 @@ def collect(hass: HomeAssistant, entity_ids: list[str]) -> dict[str, Any]:
     }
 
 
-def _bridge_exposed(bridge_filter: dict[str, list[str]], entity_ids: list[str]) -> list[str]:
+def _bridge_exposed(
+    bridge_filter: dict[str, list[str]],
+    entity_ids: list[str],
+    entities: dict[str, dict[str, Any]] | None = None,
+) -> list[str]:
+    """The entities a HomeKit bridge reaches: the filter, but only what has a state.
+
+    The bridge reads the states, so an entity that is disabled or gone is not on it. It also skips
+    entities with an entity category (diagnostic, config) or hidden ones unless the filter names
+    them by id or glob.
+    """
     from homeassistant.helpers.entityfilter import convert_filter
 
     try:
         accepts = convert_filter({key: bridge_filter.get(key, []) for key in FILTER_KEYS})
     except Exception:  # noqa: BLE001
         return []
-    return [eid for eid in entity_ids if accepts(eid)]
+    named = set(bridge_filter.get("include_entities", []))
+    globs = bridge_filter.get("include_entity_globs", [])
+
+    def reaches(entity_id: str) -> bool:
+        if not accepts(entity_id):
+            return False
+        info = (entities or {}).get(entity_id)
+        if info is None:
+            return True
+        if info.get("status") in STALE_STATUSES:
+            return False
+        if info.get("entity_category") is None and not info.get("hidden_by"):
+            return True
+        return entity_id in named or any(fnmatchcase(entity_id, glob) for glob in globs)
+
+    return [eid for eid in entity_ids if reaches(eid)]
 
 
 def _sensitive(info: dict[str, Any]) -> bool:
@@ -275,7 +301,7 @@ def evaluate(
         assistants.append({"id": name, "status": item["status"], "exposed": len(exposed)})
     bridges = []
     for bridge in raw["bridges"]:
-        exposed = _bridge_exposed(bridge["filter"], known)
+        exposed = _bridge_exposed(bridge["filter"], known, entities)
         for eid in exposed:
             by_entity.setdefault(eid, set()).add(bridge["kind"])
         bridges.append({"kind": bridge["kind"], "title": bridge["title"], "exposed": len(exposed)})

@@ -223,7 +223,7 @@ def apply_causes(
         if item["object_type"] != "config_entry" or item["status"] != "problem":
             continue
         own = outage.get(item["object_id"])
-        if own is not None and own.get("ignored"):
+        if item.get("mark_hides") or (own is not None and own.get("ignored")):
             continue  # known, snoozed, hidden or marked: the outage is no longer news
         ids = provided.get(item["object_id"], [])
         followers = [by_object[i] for i in ids if i in by_object and "cause_id" not in by_object[i]]

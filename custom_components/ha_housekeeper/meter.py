@@ -229,17 +229,53 @@ def _public_meta(meta: dict[str, Any] | None) -> dict[str, Any] | None:
     }
 
 
-def free_alt_id(hass: HomeAssistant, entity_id: str) -> tuple[str, bool]:
-    """The ID the old entity moves to (``_alt``, then ``_alt_2``…) and whether one was free."""
+def alt_candidates(entity_id: str) -> list[str]:
+    """The IDs the old entity may move to, in the order they are tried: ``_alt``, ``_alt_2``…"""
+    domain, _, name = entity_id.partition(".")
+    return [f"{domain}.{name}_alt" + (f"_{index}" if index > 1 else "") for index in range(1, 20)]
+
+
+async def existing_statistics(hass: HomeAssistant, statistic_ids: list[str]) -> set[str]:
+    """Which of these IDs still have a statistics series, whether or not an entity belongs to it.
+
+    A series left behind by a removed entity blocks the rename of a statistic ID to it: Home
+    Assistant drops that error, and the history would stay under the old ID.
+    """
+    try:
+        from homeassistant.components.recorder import get_instance
+        from homeassistant.components.recorder.statistics import get_metadata
+
+        instance = get_instance(hass)
+        wanted = set(statistic_ids)
+        return set(
+            await instance.async_add_executor_job(
+                lambda: set(get_metadata(hass, statistic_ids=wanted))
+            )
+        )
+    except Exception:  # noqa: BLE001 - without a recorder there is no series to collide with
+        return set()
+
+
+def free_alt_id(
+    hass: HomeAssistant, entity_id: str, with_statistics: set[str] | None = None
+) -> tuple[str, bool]:
+    """The ID the old entity moves to (``_alt``, then ``_alt_2``…) and whether one was free.
+
+    ``with_statistics`` are the candidates that still have a statistics series: they are taken too.
+    """
     from homeassistant.helpers import entity_registry as er
 
     registry = er.async_get(hass)
-    domain, _, name = entity_id.partition(".")
-    for index in range(1, 20):
-        candidate = f"{domain}.{name}_alt" + (f"_{index}" if index > 1 else "")
-        if registry.async_get(candidate) is None and hass.states.get(candidate) is None:
+    taken = with_statistics or set()
+    candidates = alt_candidates(entity_id)
+    for candidate in candidates:
+        if (
+            registry.async_get(candidate) is None
+            and hass.states.get(candidate) is None
+            and candidate not in taken
+        ):
             return candidate, False
-    return f"{domain}.{name}_alt", True
+    return candidates[0], True
 
 
 async def prepare_meter(hass: HomeAssistant, old_id: str, new_id: str, mode: str) -> dict[str, Any]:
@@ -258,7 +294,9 @@ async def prepare_meter(hass: HomeAssistant, old_id: str, new_id: str, mode: str
     analysis: dict[str, Any] = {}
     if mode in METER_STATISTICS_MODES:
         analysis = await analyse_pair(hass, old_id, new_id)
-    alt_id, alt_taken = free_alt_id(hass, old_id)
+    alt_id, alt_taken = free_alt_id(
+        hass, old_id, await existing_statistics(hass, alt_candidates(old_id))
+    )
     parts = [
         mode,
         registry_fingerprint(old_entry) if old_entry else "gone",
