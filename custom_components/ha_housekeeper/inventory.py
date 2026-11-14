@@ -978,6 +978,10 @@ STORE_NAMES = (
 )
 
 
+# Objects handled between two looks of the event loop in a scan.
+YIELD_EVERY = 200
+
+
 class InventoryScanner:
     """Build and cache a normalized, read-only inventory."""
 
@@ -1718,25 +1722,30 @@ class InventoryScanner:
                 devices_by_id[entry.device_id] = resolved
         observed_at = datetime.now(UTC)
 
-        entities = [
-            _entity_item(
-                entry,
-                self.hass.states.get(entry.entity_id),
-                config_entries_by_id,
-                devices_by_id,
-                self.hass.config.components,
+        entities = []
+        for number, entry in enumerate(_registry_entries(entity_registry.entities)):
+            entities.append(
+                _entity_item(
+                    entry,
+                    self.hass.states.get(entry.entity_id),
+                    config_entries_by_id,
+                    devices_by_id,
+                    self.hass.config.components,
+                )
             )
-            for entry in _registry_entries(entity_registry.entities)
-        ]
+            if number % YIELD_EVERY == YIELD_EVERY - 1:
+                await asyncio.sleep(0)  # let the loop breathe on weak hardware
         lap("entities")
         self.status.update(phase="devices", progress=30)
         await asyncio.sleep(0)
 
         entity_counts = Counter(item["device_id"] for item in entities if item["device_id"])
         devices = [_device_item(device, entity_counts[device.id]) for device in device_entries]
-        for item, device in zip(devices, device_entries, strict=True):
+        for number, (item, device) in enumerate(zip(devices, device_entries, strict=True)):
             # Tells the panel whether a removal asks the integration or has to be forced.
             item["removal_supported"] = device_support(self.hass, device)["removal_supported"]
+            if number % YIELD_EVERY == YIELD_EVERY - 1:
+                await asyncio.sleep(0)
         areas = [_area_item(area) for area in _registry_entries(area_registry.areas)]
         floors = [_floor_item(floor) for floor in _registry_entries(floor_registry.floors)]
         labels = [_label_item(label) for label in _registry_entries(label_registry.labels)]

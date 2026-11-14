@@ -273,6 +273,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
             entry.async_on_unload(
                 async_track_time_interval(hass, _watch_warmup, timedelta(seconds=5))
             )
+            # No scan now: the final one follows the warm-up, and a full scan while slow integrations
+            # are still being set up starves them on weak hardware (timeouts at the start).
+            return
         entry.async_create_background_task(hass, _scan(), "HA Housekeeper initial inventory scan")
 
     # Changed thresholds only affect the findings, so a reload with a fresh scan suffices.
