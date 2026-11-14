@@ -44,11 +44,29 @@ homeassistant:
   external_url: !secret HA_EXTERNAL_URL
   internal_url: !secret HA_INTERNAL_URL
   # packages: !include_dir_named packages
+  # not quite sure whether the white listing of directories inside
+  # /media is neccessary, rumours say no
   allowlist_external_dirs:
+    - /media/l9cam3201
+    - /media/l9cam3201/archive
     - /media/l9cam3202
     - /media/l9cam3202/archive
+    - /media/l9cam3203
+    - /media/l9cam3203/archive
+    - /media/l9cam3204
+    - /media/l9cam3204/archive
+    - /media/l9cam3205
+    - /media/l9cam3205/archive
+    - /media/l9cam3206
+    - /media/l9cam3206/archive
+    - /media/l9cam3207
+    - /media/l9cam3207/archive
     - /media/rworld1
     - /media/rworld1/archive
+    - /media/rworld2
+    - /media/rworld2/archive
+    - /media/rworld3
+    - /media/rworld3/archive
   packages: !include_dir_named conf/packages
   auth_providers:
     - type: homeassistant
@@ -60,15 +78,8 @@ homeassistant:
         192.168.178.32: !secret AUTHPROVIDER_USERID_EDMIN
         192.168.178.52: !secret AUTHPROVIDER_USERID_UWE
         192.168.178.53: !secret AUTHPROVIDER_USERID_GILLIAN
-        192.168.178.54: !secret AUTHPROVIDER_USERID_3DP
-        192.168.178.69: !secret AUTHPROVIDER_USERID_TABBY
-
-# imported by HA v2026.8.0, see Settings > System > Network for those settings
-# http:
-#   # for cloudflare.com / freenom.com:
-#   use_x_forwarded_for: true
-#   trusted_proxies:
-#     - 172.30.33.0/24
+        192.168.178.58: !secret AUTHPROVIDER_USERID_UWE
+        # 192.168.178.54: !secret AUTHPROVIDER_USERID_3DP
 
 # # additional icons on the side bar
 # panel_custom:
@@ -110,13 +121,6 @@ frontend:
   # themes installed via HACS
   themes: !include_dir_merge_named themes
 
-# does not work after updating to HA 2021.10.x
-# stream:
-#   stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif1"
-#   filename: /config/var/opt/theworld.mp4
-#   # stream_source: "rtsp://admin:H431LifeTec1234@192.168.178.97:554/onvif2"
-#   # # stream_source: "http://admin:H431LifeTec1234@192.168.178.97:5000/"
-
 # for the ONVIF integration
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
@@ -156,30 +160,11 @@ zone: !include conf/zones/zones.yaml
 # script: !include conf/scripts/notifications.yaml
 script: !include_dir_merge_named conf/scripts
 
-# not required as the add-on is installed
-# see https://www.home-assistant.io/integrations/duckdns/
-#duckdns: !include conf/duckdns.yaml
-
-# device tracking and presence detection
-# attn: configured as an integration in the config ui so the following is no longer required
-# device_tracker: !include conf/device_tracker/device_tracker_nmap.yaml
-# ping is also available via the GUI only:device_tracker: !include_dir_merge_list conf/device_tracker
-
-# life360: !include conf/life360.yaml
-
-# owntracks: !include conf/owntracks.yaml
-
 # group: !include_dir_merge_list conf/groups
 group: !include conf/groups/groups.yaml
 
 # telegram_bot: !include conf/telegram_bot.yaml
 # notify: !include conf/notify.yaml
-
-# should be done in the UI from some pre 2023.1 releases onwards
-# tankerkoenig: !include conf/tankerkoenig.yaml
-
-# should be done in the UI from 2023.1 release onwards
-# pi_hole: !include conf/pi_holes/pi_holes.yaml
 
 # uncommenting results in error while checking the configuration.
 # rest_command: !include conf/rest_command.yaml
@@ -204,37 +189,15 @@ template: !include_dir_merge_list conf/templates
 # python_script:
 
 switch: !include_dir_merge_list conf/switches
+
 # sensors for the database size of MariaDB and (theoretically) InfluxDB
 sql: !include conf/sql/mariadb_db_size.yaml
+
 # DOODS
 #image_processing: !include conf/doods/image_processing.yaml
 
 # MQTT
 # The MQTT broker is set up in the GUI
-#
-# Before the broker was set up in the GUI there was a problems
-# as the editor put the key words in column 1 on saving the
-# file which was not exactly helpful.
-#
-# did not work (see above):
-# mqtt: !include conf/mqtt.yaml
-#
-# Nice, but as there is only one MQTT broker allowed. So this does not either:
-# mqtt:
-#   broker: !secret MQTT_HIVEMQ_BROKER_01_HOSTNAME
-#   port: !secret MQTT_HIVEMQ_BROKER_01_PORT
-#   username: !secret MQTT_HIVEMQ_BROKER_01_MQTT_USERNAME
-#   password: !secret MQTT_HIVEMQ_BROKER_01_PASSWORD
-#   # HIVEMQ does not offer certificates in free plans at the moment, use Let’s Encrypt certificate https://letsencrypt.org/certs/isrgrootx1.pem
-#   # certificate: !secret
-
-# config of the battery_notes integration was moved by the update to UI:
-# battery_notes:
-#   enable_autodiscovery: true
-#   default_battery_low_threshold: 10
-#   battery_increase_threshold: 25
-#   hide_battery: false
-#   round_battery: true
 ####################################################################
 # EOF
 ####################################################################
