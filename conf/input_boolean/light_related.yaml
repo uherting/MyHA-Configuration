@@ -1,0 +1,21 @@
+# ############################################################
+#
+#  Input boolean
+#
+# ############################################################
+
+#input_boolean:
+light_l2_kitchen_main_light_on_with_presence_any_time:
+  name: Main L2 kitchen light follows other lights
+  icon: mdi:light-flood-down
+  # no need to define an initial value as it will be reloaded
+  # initial: off
+
+light_l2_corridor_major_light_on_with_presence_any_time:
+  name: Major L2 corridor light on with presene any time
+  icon: mdi:light-flood-down
+  # no need to define an initial value as it will be reloaded
+  # initial: off
+# ############################################################
+#  END OF FILE
+# ############################################################

@@ -211,7 +211,7 @@
   action:
     - action: climate.set_preset_mode
       target:
-        entity_id: climate.zb_trv_bedroom_l2
+        entity_id: climate.zb_trv_lounge_l2
       data:
         preset_mode: away
     - action: climate.set_preset_mode
@@ -221,7 +221,7 @@
         preset_mode: away
     - action: climate.set_preset_mode
       target:
-        entity_id: climate.zb_trv_lounge_l2
+        entity_id: climate.zb_trv_bedroom_l2
       data:
         preset_mode: away
 
@@ -252,6 +252,16 @@
         entity_id: climate.zb_trv_lounge_l2
       data:
         preset_mode: comfort
+    - action: climate.set_preset_mode
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+      data:
+        preset_mode: eco
+    - action: climate.set_preset_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+      data:
+        preset_mode: eco
 ############################################################
 #  END OF FILE
 # ############################################################
