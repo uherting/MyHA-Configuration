@@ -1037,6 +1037,7 @@ class InventoryScanner:
         self.battery_forecast: dict[str, Any] | None = None
         self.battery_forecast_at: datetime | None = None
         self._battery_forecast_running = False
+        self._health_seen: tuple[Any, ...] | None = None  # what the last hourly check announced
         self.mcp = McpStore(hass)
         self.monitor = MonitorStore(hass)
         self.runs = RunStore(hass)
@@ -1061,6 +1062,7 @@ class InventoryScanner:
         )
         self.integrations_total = 0
         self._recorder_available = False
+        self._statistics_readable = True  # false when a scan could not read the list
         # What the scan in progress could not read: "dashboard", "dashboard:<id>" or "app".
         self._unchecked: set[str] = set()
         self.scan_coverage = ScanCoverage()
@@ -1453,10 +1455,21 @@ class InventoryScanner:
 
     def async_check_health(self) -> None:
         """Raise or clear the repair hint for a scan that keeps failing, and tell the sensor."""
-        async_sync_scan_issue(self.hass, self.health_report())
+        report = self.health_report()
+        async_sync_scan_issue(self.hass, report)
         async_sync_database_issue(self.hass, self.events.integrity)
-        self.monitor.refresh(self._snapshot, self.health_report(), new_scan=False)
-        self.announce_changes()
+        self.monitor.refresh(self._snapshot, report, new_scan=False)
+        # The sensors read everything again on an announcement: only when this hour changed something.
+        seen = (
+            report["state"],
+            report["last_success_at"],
+            report["consecutive_failures"],
+            repr(self.events.integrity),
+            tuple((r["id"], r["state"]) for r in self.monitor.results),
+        )
+        if seen != self._health_seen:
+            self._health_seen = seen
+            self.announce_changes()
 
     def _battery_forecast_due(self) -> bool:
         """Whether the forecast is to be read again: never read yet, or the last reading is a day old."""
@@ -2771,6 +2784,9 @@ class InventoryScanner:
         """
         if preliminary:
             return []  # the states are not all there yet
+        if not self._statistics_readable:
+            # No list read is no list of orphans: the waiting times must not read it as "all back".
+            return []
         await self.observations.async_track_group(
             ORPHAN_STAT_KEY, {orphan["statistic_id"] for orphan in orphans}, observed_at
         )
@@ -3102,6 +3118,7 @@ class InventoryScanner:
     async def _statistics(self) -> list[dict[str, Any]]:
         """Long-term statistics known to the recorder; empty without a recorder."""
         self._recorder_available = False
+        self._statistics_readable = False
         if "recorder" not in self.hass.config.components:
             self.scan_coverage.absent("statistics", "no_recorder")
             return []
@@ -3113,6 +3130,7 @@ class InventoryScanner:
             self.scan_coverage.skipped("statistics", "not_ready")
             return []
         self._recorder_available = True
+        self._statistics_readable = True
         self.scan_coverage.checked("statistics")
         return list(statistics)
 

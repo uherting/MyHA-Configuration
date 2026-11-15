@@ -127,7 +127,8 @@ HOUSE_DESCRIPTION = SensorEntityDescription(
 BATTERY_WEAKEST_DESCRIPTION = SensorEntityDescription(
     key="battery_weakest",
     translation_key="battery_weakest",
-    device_class=SensorDeviceClass.BATTERY,
+    # No device class battery: the scan would list this sensor itself among the batteries.
+    icon="mdi:battery-heart-variant",
     native_unit_of_measurement=PERCENTAGE,
 )
 
@@ -518,7 +519,7 @@ class VacationSensor(HousekeeperSensor):
         if self._attr_native_value == "after" and view.get("after_until") and self.hass:
             self._grace_timer = async_track_point_in_utc_time(
                 self.hass,
-                lambda _now: self._handle_update(),
+                callback(lambda _now: self._handle_update()),
                 datetime.fromisoformat(view["after_until"]),
             )
 

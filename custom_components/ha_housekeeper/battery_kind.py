@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .const import DOMAIN
+
 KINDS = ("device", "storage", "vehicle", "other")
 KEEP = "keep"  # "it is a battery after all": never proposed again
 ALL_KINDS = (*KINDS, KEEP)
@@ -30,7 +32,8 @@ def excluded(item: dict[str, Any]) -> bool:
     The sensors of Battery Notes (level copy, low flag, last change) repeat the real battery sensor;
     only its battery type is of use (battery_care.noted_types), so they never count.
     """
-    if item.get("platform") == NOTES_PLATFORM:
+    # Our own "weakest battery" sensor repeats the level of the others; it must never be listed as one of them.
+    if item.get("platform") in (NOTES_PLATFORM, DOMAIN):
         return True
     kind = item.get("battery_kind")
     return kind in KINDS or (kind is None and bool(item.get("battery_suggest")))

@@ -42,7 +42,7 @@ STATIC_BASE_PATH = f"/{DOMAIN}"
 # Lovelace-Ressource wird automatisch auf diese Version aktualisiert (siehe
 # frontend.py) - ein manuelles Nachtragen der URL ist dadurch nicht mehr
 # nötig.
-CARD_VERSION = "11"
+CARD_VERSION = "12"
 
 STORAGE_VERSION = 1
 STORAGE_KEY = f"{DOMAIN}_data"

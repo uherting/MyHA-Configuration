@@ -708,7 +708,7 @@ class HaMoviesDbCard extends HTMLElement {
     this._selectedMovieId = null;
     this._detail = null;
     this._settings = { region: "", providers: [], persons: [] };
-    this._personFilter = null;
+    this._personFilter = [];
     this._posterOverlay = false;
     this._columns = null;
     this._error = null;
@@ -1260,9 +1260,11 @@ class HaMoviesDbCard extends HTMLElement {
     if (this._persons().length) {
       toolbar.appendChild(
         this._renderPersonAvatars(
-          this._personFilter ? [this._personFilter] : [],
+          this._personFilter,
           (id) => {
-            this._personFilter = this._personFilter === id ? null : id;
+            this._personFilter = this._personFilter.includes(id)
+              ? this._personFilter.filter((x) => x !== id)
+              : [...this._personFilter, id];
             this._render();
           },
           "persons-filter"
@@ -1276,8 +1278,10 @@ class HaMoviesDbCard extends HTMLElement {
     if (needle) {
       list = list.filter((m) => (m.title || "").toLowerCase().includes(needle));
     }
-    if (this._personFilter) {
-      list = list.filter((m) => (m.persons || []).includes(this._personFilter));
+    if (this._personFilter.length) {
+      list = list.filter((m) =>
+        this._personFilter.every((p) => (m.persons || []).includes(p))
+      );
     }
     if (!list.length) {
       const empty = this._el("div", "empty");

@@ -326,13 +326,30 @@ def _member_state(
     }
 
 
+def snapshot_index(
+    snapshot: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
+    """The objects of a snapshot by key and its findings by the key of their object."""
+    objects = {f"{o['object_type']}:{o['object_id']}": o for o in snapshot.get("objects", ())}
+    findings: dict[str, list[dict[str, Any]]] = {}
+    for finding in snapshot.get("findings", ()):
+        key = f"{str(finding.get('rule_id', '')).split('.')[0]}:{finding.get('object_id')}"
+        findings.setdefault(key, []).append(finding)
+    return objects, findings
+
+
 def evaluate(
     definition: dict[str, Any],
     snapshot: dict[str, Any] | None,
     health: dict[str, Any] | None,
     now: datetime,
+    index: tuple[dict[str, Any], dict[str, list[dict[str, Any]]]] | None = None,
 ) -> dict[str, Any]:
-    """Evaluate one function without changing the stored definition or incident."""
+    """Evaluate one function without changing the stored definition or incident.
+
+    ``index`` is what ``snapshot_index`` made of the snapshot; a caller that evaluates many
+    functions builds it once instead of once per function.
+    """
     meta = (snapshot or {}).get("meta") or {}
     scanned_at = meta.get("scanned_at")
     if definition.get("enabled") is False:
@@ -378,11 +395,7 @@ def evaluate(
             for m in definition["members"]
         ]
     else:
-        objects = {f"{o['object_type']}:{o['object_id']}": o for o in snapshot.get("objects", ())}
-        findings: dict[str, list[dict[str, Any]]] = {}
-        for finding in snapshot.get("findings", ()):
-            key = f"{str(finding.get('rule_id', '')).split('.')[0]}:{finding.get('object_id')}"
-            findings.setdefault(key, []).append(finding)
+        objects, findings = index if index is not None else snapshot_index(snapshot)
         coverage = {item["source"]: item["state"] for item in meta.get("coverage", ())}
         # The timestamps in the snapshot are as of the scan: age rules (fresh, unavailable for)
         # are measured against the scan, not against now, or they fire again every hour
@@ -859,8 +872,9 @@ class MonitorStore:
         now = datetime.now(UTC)
         changed = False
         results = []
+        index = snapshot_index(snapshot) if snapshot and self.items else None
         for item in self.items:
-            result = evaluate(item, snapshot, health, now)
+            result = evaluate(item, snapshot, health, now, index)
             runtime = self.runtime.setdefault(item["id"], {})
             if not item.get("enabled", True):
                 result.update(
