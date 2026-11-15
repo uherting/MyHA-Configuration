@@ -29,14 +29,39 @@
       state: "on"
   # --------------------- ACTIONS ---------------------
   actions:
-    # ------------- TRV GETS SWITCHED OFF / BACK TO AUTO ----------
+    # ------------- TRV GETS SWITCHED OFF ----------
     - action: climate.set_hvac_mode
       target:
         entity_id: climate.zb_trv_kitchen_l2
       data:
         hvac_mode: "off"
-    # 20 minutes delay till return to auto mode
-    - delay: "00:20"
+
+# ############################################################
+#  Closed window detected after it was open (kitchen)
+# ############################################################
+- alias: Closed window detected in the kitchen
+  id: "01a1e006-2e50-714f-868b-2cdfcebc96e2"
+  description: "This automation handles L2 TRV post open window conditions"
+  mode: single
+  max_exceeded: silent
+
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    # if the group ZB_DW_L2_kitchen_contacts goes to "on"
+    - trigger: state
+      id: "ZB_DW_L2_kitchen_contacts"
+      entity_id: group.zb_dw_l2_kitchen_contacts
+      to: "off"
+  # -------------------- CONDITIONS -------------------
+  condition:
+    - alias: "Allowing the switching of trv hvac mode based on enable switch"
+      condition: state
+      entity_id: input_boolean.trv_enable_hvac_mode_switching
+      state: "on"
+  # --------------------- ACTIONS ---------------------
+  actions:
+    # ------------- TRV GETS SWITCHED BACK TO AUTO ----------
     - action: climate.set_hvac_mode
       target:
         entity_id: climate.zb_trv_kitchen_l2

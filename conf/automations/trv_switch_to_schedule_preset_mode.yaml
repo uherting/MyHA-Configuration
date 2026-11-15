@@ -1,0 +1,43 @@
+# ############################################################
+#
+#  Set the preset mode of all TRVs to 'schedule'
+#
+# ############################################################
+
+# ############################################################
+#  Set the preset mode of all TRVs to 'schedule'
+# ############################################################
+- alias: Set the preset mode of all TRVs to 'schedule'
+  id: "01a1e00f-f380-70e3-9f99-10479bb70d5f"
+  description: "This automation sets the preset mode of all TRVs to 'schedule'"
+  mode: single
+  max_exceeded: silent
+
+  initial_state: true
+  # --------------------- TRIGGER ---------------------
+  triggers:
+    - trigger: time
+      at: "20:00:00"
+  # -------------------- CONDITIONS -------------------
+  condition: []
+  # --------------------- ACTIONS ---------------------
+  actions:
+    # ------------- TRV SETTING preset_mode ----------
+    - action: climate.set_preset_mode
+      target:
+        entity_id: climate.zb_trv_bedroom_l2
+      data:
+        preset_mode: "schedule"
+    - action: climate.set_preset_mode
+      target:
+        entity_id: climate.zb_trv_kitchen_l2
+      data:
+        preset_mode: "schedule"
+    - action: climate.set_preset_mode
+      target:
+        entity_id: climate.zb_trv_lounge_l2
+      data:
+        preset_mode: "schedule"
+# ############################################################
+#  END OF FILE
+# ############################################################
