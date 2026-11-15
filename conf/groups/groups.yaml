@@ -12,6 +12,24 @@ family:
     - person.gillian
 
 # =========================================================================
+# group the lights for L2 as parameter for presence
+# =========================================================================
+ZB_L2_lights:
+  entities:
+    - switch.l2kitchen01_ssr_01
+    - switch.l2kitchen01_ssr_02
+    - switch.l2storage01_ssr_01
+    - switch.l2storage01_l2_kitchen01_ssr_09
+    - switch.l2corridor01_ssr_01
+    - switch.zb_plug_l2_kitchen_coffeemachine
+    - switch.zb_plug_l2_kitchen_kettle
+    - switch.zb_plug_l2_kitchen_microwave
+    - switch.zb_plug_l2_lounge_light_corner
+    - switch.zb_plug_l2_lounge_scanner
+    - switch.zb_plug_l2_lounge_tv
+    - switch.zb_plug_l2_bedroom_misc01
+
+# ========================================================================
 # group the presence detectors for L2
 # =========================================================================
 ZB_L2_presence:

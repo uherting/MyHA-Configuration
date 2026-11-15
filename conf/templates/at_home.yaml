@@ -38,8 +38,7 @@
           (
             (is_state('person.uwe', 'home')) and
             (is_state('person.gillian', 'home'))
-          ) or
-          (is_state('binary_sensor.home_someone_is_here_with_presence_only', 'on'))
+          )
         }}
 
     # binary_sensor.home_all_are_gone
@@ -50,7 +49,7 @@
           (
             (not is_state('person.uwe', 'home')) and
             (not is_state('person.gillian', 'home'))
-          ) or
+          ) and
           (is_state('binary_sensor.home_someone_is_here_with_presence_only', 'off'))
         }}
 
@@ -58,7 +57,10 @@
     - name: "Home: someone is here with presence only"
       unique_id: "home_someone_is_here_with_presence_only"
       state: >
-        {{ (is_state('group.zb_l2_presence', 'on')) }}
+        {{ 
+          (is_state('group.zb_l2_presence', 'on')) or
+          (is_state('group.zb_l2_lights', 'on'))
+        }}
 
 ####################################################################
 # EOF
