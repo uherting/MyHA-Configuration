@@ -5,10 +5,14 @@ https://github.com/dolezsa/thermal_comfort
 """
 from __future__ import annotations
 
+import hashlib
 import logging
+from pathlib import Path
 
 import voluptuous as vol
 
+from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, SERVICE_RELOAD
@@ -28,11 +32,16 @@ from .const import DOMAIN, PLATFORMS
 from .sensor import (
     CONF_CUSTOM_ICONS,
     CONF_ENABLED_SENSORS,
+    CONF_HUMIDITY_ATTRIBUTE,
     CONF_HUMIDITY_SENSOR,
+    CONF_OUTDOOR_HUMIDITY_SENSOR,
+    CONF_OUTDOOR_TEMPERATURE_SENSOR,
     CONF_POLL,
     CONF_PRESSURE_SENSOR,
     CONF_SCAN_INTERVAL,
+    CONF_TEMPERATURE_ATTRIBUTE,
     CONF_TEMPERATURE_SENSOR,
+    CONF_WIND_SPEED_SENSOR,
     SENSOR_OPTIONS_SCHEMA,
     SENSOR_SCHEMA,
     LegacySensorType,
@@ -40,6 +49,35 @@ from .sensor import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+ICONS_FILE = Path(__file__).parent / "www" / "thermal_comfort_icons.js"
+ICONS_URL = f"/{DOMAIN}/{ICONS_FILE.name}"
+
+
+def _icons_version() -> str:
+    """Return a short hash of the icon file, used to refresh the browser cache."""
+    return hashlib.sha256(ICONS_FILE.read_bytes()).hexdigest()[:12]
+
+
+async def _async_register_icons(hass: HomeAssistant) -> None:
+    """Serve the `tc:` icon set and load it in the frontend.
+
+    Never raises: without the frontend (tests, headless setups) the sensors only
+    show no `tc:` icon, everything else keeps working.
+    """
+    if hass.http is None or "frontend" not in hass.config.components:
+        _LOGGER.info(
+            "The frontend is not loaded, the custom icons (tc:) are not available"
+        )
+        return
+    try:
+        version = await hass.async_add_executor_job(_icons_version)
+        await hass.http.async_register_static_paths(
+            [StaticPathConfig(ICONS_URL, str(ICONS_FILE), True)]
+        )
+        add_extra_js_url(hass, f"{ICONS_URL}?v={version}")
+    except Exception:  # noqa: BLE001
+        _LOGGER.warning("Could not register the custom icons (tc:)", exc_info=True)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -50,6 +88,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         CONF_TEMPERATURE_SENSOR: get_value(entry, CONF_TEMPERATURE_SENSOR),
         CONF_HUMIDITY_SENSOR: get_value(entry, CONF_HUMIDITY_SENSOR),
         CONF_PRESSURE_SENSOR: get_value(entry, CONF_PRESSURE_SENSOR),
+        CONF_OUTDOOR_TEMPERATURE_SENSOR: get_value(
+            entry, CONF_OUTDOOR_TEMPERATURE_SENSOR
+        ),
+        CONF_OUTDOOR_HUMIDITY_SENSOR: get_value(entry, CONF_OUTDOOR_HUMIDITY_SENSOR),
+        CONF_WIND_SPEED_SENSOR: get_value(entry, CONF_WIND_SPEED_SENSOR),
+        CONF_TEMPERATURE_ATTRIBUTE: get_value(entry, CONF_TEMPERATURE_ATTRIBUTE),
+        CONF_HUMIDITY_ATTRIBUTE: get_value(entry, CONF_HUMIDITY_ATTRIBUTE),
         CONF_POLL: get_value(entry, CONF_POLL),
         CONF_SCAN_INTERVAL: get_value(entry, CONF_SCAN_INTERVAL),
         CONF_CUSTOM_ICONS: get_value(entry, CONF_CUSTOM_ICONS),
@@ -125,6 +170,8 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the thermal_comfort integration."""
+    await _async_register_icons(hass)
+
     if DOMAIN in config:
         await _process_config(hass, config)
 

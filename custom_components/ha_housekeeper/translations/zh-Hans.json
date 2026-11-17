@@ -27,7 +27,9 @@
           "scan_interval_hours": "每隔多少小时自动扫描（小时，0 = 关闭）",
           "stale_hours": "传感器多久没有新值后报告（小时，0 = 关闭）",
           "history_days": "保留历史记录的天数（天）",
-          "watch_hours": "更新后观察多久（小时，0 = 关闭）"
+          "watch_hours": "更新后观察多久（小时，0 = 关闭）",
+          "refresh_recorder_views": "在后台刷新较慢的视图",
+          "outage_scan_mode": "故障后扫描"
         },
         "data_description": {
           "show_in_sidebar": "在侧边栏显示 Housekeeper。关闭后，仍可从集成页面和 /ha-housekeeper 访问面板。",
@@ -40,7 +42,9 @@
           "scan_interval_hours": "Housekeeper 按此间隔自行扫描；故障和更新会追加额外扫描。",
           "stale_hours": "传感器超过此时长没有发送新值时，会被报告为不再上报。",
           "history_days": "扫描历史和家庭功能历史的保留时长。",
-          "watch_hours": "更新后额外扫描的持续时间，用于显示更新导致哪些功能失效。"
+          "watch_hours": "更新后额外扫描的持续时间，用于显示更新导致哪些功能失效。",
+          "refresh_recorder_views": "在可靠性、风暴、数据库健康和成本视图被打开过一次之后，通过在后台查询数据库（每 30 分钟到每天一次）使其保持最新。关闭：打开视图时才刷新，在小型设备上可能需要几秒钟。",
+          "outage_scan_mode": "故障可以多频繁地触发额外扫描。自动：在达到第一级后不久，扫描较慢时间隔更大。每个扫描间隔最多一次：适用于较慢的设备；故障会在下一次扫描时显示为发现项。关闭：故障不会触发单独的扫描。"
         }
       }
     },
@@ -595,6 +599,15 @@
     },
     "plan_blocked": {
       "message": "计划被阻止：{detail}。"
+    }
+  },
+  "selector": {
+    "outage_scan_mode": {
+      "options": {
+        "auto": "自动",
+        "interval": "每个扫描间隔最多一次",
+        "off": "关闭"
+      }
     }
   }
 }

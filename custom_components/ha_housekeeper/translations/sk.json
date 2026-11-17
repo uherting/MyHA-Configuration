@@ -27,7 +27,9 @@
           "scan_interval_hours": "Automaticky kontrolovať každých (hodiny, 0 = vypnuté)",
           "stale_hours": "Hlásiť senzory bez nových hodnôt po (hodiny, 0 = vypnuté)",
           "history_days": "Uchovávať históriu kontrol (dni)",
-          "watch_hours": "Sledovať po aktualizácii (hodiny, 0 = vypnuté)"
+          "watch_hours": "Sledovať po aktualizácii (hodiny, 0 = vypnuté)",
+          "refresh_recorder_views": "Aktualizovať pomalé zobrazenia na pozadí",
+          "outage_scan_mode": "Kontrola po výpadkoch"
         },
         "data_description": {
           "show_in_sidebar": "Zobrazí Housekeeper v bočnom paneli. Vypnuté: panel zostane dostupný zo stránky integrácie a na /ha-housekeeper.",
@@ -40,7 +42,9 @@
           "scan_interval_hours": "Housekeeper vykonáva pravidelné kontroly v tomto intervale. Výpadky a aktualizácie môžu spustiť ďalšie kontroly.",
           "stale_hours": "Senzor, ktorý takto dlho neposlal novú hodnotu, sa označí ako neaktualizovaný.",
           "history_days": "Ako dlho sa uchováva história kontrol a domácich funkcií.",
-          "watch_hours": "Ako dlho po aktualizácii prebiehajú dodatočné kontroly, aby sa odhalilo, čo po nej prestalo fungovať."
+          "watch_hours": "Ako dlho po aktualizácii prebiehajú dodatočné kontroly, aby sa odhalilo, čo po nej prestalo fungovať.",
+          "refresh_recorder_views": "Udržiava zobrazenia spoľahlivosti, búrok, stavu databázy a nákladov aktuálne dopytovaním databázy na pozadí (od každých 30 minút po raz denne), akonáhle boli raz otvorené. Vypnuté: aktualizujú sa pri otvorení, čo môže na malom zariadení trvať niekoľko sekúnd.",
+          "outage_scan_mode": "Ako často môže výpadok spustiť dodatočnú kontrolu. Automaticky: krátko po dosiahnutí prvej úrovne, s väčším odstupom pri pomalej kontrole. Najviac raz za interval kontroly: pre pomalé zariadenia; výpadky sa zobrazia ako zistenia pri ďalšej kontrole. Vypnuté: výpadky nespúšťajú vlastnú kontrolu."
         }
       }
     },
@@ -595,6 +599,15 @@
     },
     "plan_blocked": {
       "message": "Plán je zablokovaný: {detail}."
+    }
+  },
+  "selector": {
+    "outage_scan_mode": {
+      "options": {
+        "auto": "Automaticky",
+        "interval": "Najviac raz za interval kontroly",
+        "off": "Vypnuté"
+      }
     }
   }
 }

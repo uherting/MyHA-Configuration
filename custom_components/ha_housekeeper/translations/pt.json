@@ -27,7 +27,9 @@
           "scan_interval_hours": "Analisar automaticamente a cada (horas, 0 = desligado)",
           "stale_hours": "Comunicar sensores sem novos valores após (horas, 0 = desligado)",
           "history_days": "Manter os históricos durante (dias)",
-          "watch_hours": "Vigiar após atualizações (horas, 0 = desligado)"
+          "watch_hours": "Vigiar após atualizações (horas, 0 = desligado)",
+          "refresh_recorder_views": "Atualizar as vistas lentas em segundo plano",
+          "outage_scan_mode": "Análise após falhas"
         },
         "data_description": {
           "show_in_sidebar": "Mostra o Housekeeper na barra lateral. Desligado: o painel continua acessível pela página da integração e em /ha-housekeeper.",
@@ -40,7 +42,9 @@
           "scan_interval_hours": "O Housekeeper analisa por si próprio neste intervalo; falhas e atualizações acrescentam análises adicionais.",
           "stale_hours": "Um sensor que não envia um novo valor há este tempo é comunicado como já sem reportar.",
           "history_days": "Durante quanto tempo é mantido o histórico das análises e das funções da casa.",
-          "watch_hours": "Durante quanto tempo são feitas análises adicionais após uma atualização, para mostrar o que deixou de funcionar com ela."
+          "watch_hours": "Durante quanto tempo são feitas análises adicionais após uma atualização, para mostrar o que deixou de funcionar com ela.",
+          "refresh_recorder_views": "Mantém atualizadas as vistas de fiabilidade, tempestades, estado da base de dados e custos, consultando a base de dados em segundo plano (de 30 em 30 minutos até uma vez por dia), depois de terem sido abertas uma vez. Desligado: são atualizadas ao abri-las, o que num dispositivo pequeno pode demorar alguns segundos.",
+          "outage_scan_mode": "Com que frequência uma falha pode iniciar uma análise adicional. Automático: pouco depois de atingir o primeiro nível, com maior intervalo onde uma análise é lenta. No máximo uma vez por intervalo de análise: para dispositivos lentos; as falhas aparecem como deteções com a análise seguinte. Desligado: as falhas não iniciam uma análise própria."
         }
       }
     },
@@ -595,6 +599,15 @@
     },
     "plan_blocked": {
       "message": "O plano está bloqueado: {detail}."
+    }
+  },
+  "selector": {
+    "outage_scan_mode": {
+      "options": {
+        "auto": "Automático",
+        "interval": "No máximo uma vez por intervalo de análise",
+        "off": "Desligado"
+      }
     }
   }
 }

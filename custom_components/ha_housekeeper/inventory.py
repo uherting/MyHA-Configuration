@@ -63,6 +63,8 @@ from .const import (
     DEFAULT_OUTAGE_INFO_MINUTES,
     DEFAULT_OUTAGE_LOW_HOURS,
     DEFAULT_OUTAGE_MEDIUM_HOURS,
+    DEFAULT_OUTAGE_SCANS,
+    DEFAULT_REFRESH_VIEWS,
     DEFAULT_SCAN_INTERVAL_HOURS,
     DEFAULT_STALE_HOURS,
     DEFAULT_UNUSED_AUTOMATION_DAYS,
@@ -1073,6 +1075,7 @@ class InventoryScanner:
         self._first_scan_lock = asyncio.Lock()  # one first scan for all that wait for a snapshot
         self._scan_task: asyncio.Task[None] | None = None  # a scan the service or button started
         self._last_scan_end: float | None = None
+        self._scan_reason = "other"  # what asked for the running scan (debug log only)
         self._snapshot: dict[str, Any] | None = None
         self._details: dict[str, dict[str, Any]] = {}
         self.outage_info_minutes = DEFAULT_OUTAGE_INFO_MINUTES
@@ -1087,6 +1090,8 @@ class InventoryScanner:
         self.scan_interval_hours = DEFAULT_SCAN_INTERVAL_HOURS
         self.watch_hours = DEFAULT_WATCH_HOURS
         self.show_in_sidebar = True
+        self.outage_scan_mode = DEFAULT_OUTAGE_SCANS  # auto, interval or off: scans after outages
+        self.refresh_recorder_views = DEFAULT_REFRESH_VIEWS
         self.version: str | None = None
         self.load_failures: list[str] = []  # stores whose saved data could not be read
         self.status: dict[str, Any] = {
@@ -1242,12 +1247,14 @@ class InventoryScanner:
         """Whether entity states may still be missing because Home Assistant is starting."""
         return self._booting or self.warmup_seconds_left > 0
 
-    async def async_scan(self, record: bool = True) -> dict[str, Any]:
+    async def async_scan(self, record: bool = True, reason: str = "other") -> dict[str, Any]:
         """Scan registries and states. Concurrent callers share serialized work.
 
         ``record`` False is a scan that follows an outage: it is no point of the history.
+        ``reason`` says what asked for it; it only goes to the debug log.
         """
         async with self._lock:
+            self._scan_reason = reason
             self.status.update(running=True, phase="registries", progress=5, last_error=None)
             async_dispatcher_send(self.hass, SIGNAL_SCAN_STARTED)
             began = time.monotonic()
@@ -1367,7 +1374,9 @@ class InventoryScanner:
             except Exception:
                 _LOGGER.exception("The saved data of %s could not be written on unload", name)
 
-    async def async_request_scan(self, wait: bool = False, record: bool = True) -> dict[str, Any]:
+    async def async_request_scan(
+        self, wait: bool = False, record: bool = True, reason: str = "request"
+    ) -> dict[str, Any]:
         """Start a scan for the service or the button; many requests make one scan.
 
         Returns how the request went (``start``, ``join``, ``recent``) and, once there is a
@@ -1385,7 +1394,7 @@ class InventoryScanner:
         )
         if decision == "start":
             task = self._scan_task = self.hass.async_create_background_task(
-                self._requested_scan(record), "HA Housekeeper requested scan"
+                self._requested_scan(record, reason), "HA Housekeeper requested scan"
             )
         if wait and decision != "recent":
             if task is not None:
@@ -1395,9 +1404,9 @@ class InventoryScanner:
                     pass
         return self.scan_summary(decision)
 
-    async def _requested_scan(self, record: bool = True) -> None:
+    async def _requested_scan(self, record: bool = True, reason: str = "request") -> None:
         try:
-            await self.async_scan(record)
+            await self.async_scan(record, reason)
         except Exception as err:  # the status and the scan health keep the reason
             _LOGGER.warning("The requested scan failed: %s", type(err).__name__)
 
@@ -1626,7 +1635,7 @@ class InventoryScanner:
         if self.watch_hours <= 0 or not installing(new) or installing(old):
             return
         try:
-            await self.async_request_scan()
+            await self.async_request_scan(reason="update_watch")
         except ScanRefused:
             return
 
@@ -1642,7 +1651,7 @@ class InventoryScanner:
             return
         self._reauth_asked = time.monotonic()
         try:
-            await self.async_request_scan()
+            await self.async_request_scan(reason="reauth")
         except ScanRefused:  # a plan or the start is in the way: the next look asks again
             return
 
@@ -1655,7 +1664,7 @@ class InventoryScanner:
         if due is None or due > datetime.now(UTC) or self.watch_hours <= 0:
             return
         try:
-            await self.async_request_scan()
+            await self.async_request_scan(reason="watch")
         except ScanRefused:  # a plan or the start is in the way: the next tick asks again
             return
 
@@ -1703,6 +1712,7 @@ class InventoryScanner:
         # Seconds per phase, in the snapshot and the debug log: the scan runs in the event loop,
         # so a slow phase on a large installation shows here first.
         timing: dict[str, float] = {}
+        detail: dict[str, float] = {}  # finer steps, for the debug log only
         self._unchecked = set()
         self.scan_coverage.reset()
         mark = time.monotonic()
@@ -1712,6 +1722,14 @@ class InventoryScanner:
             now = time.monotonic()
             timing[phase] = round(now - mark, 3)
             mark = now
+
+        step_mark = time.monotonic()
+
+        def step(name: str) -> None:
+            nonlocal step_mark
+            now = time.monotonic()
+            detail[name] = round(now - step_mark, 3)
+            step_mark = now
 
         entity_registry = er.async_get(self.hass)
         device_registry = dr.async_get(self.hass)
@@ -1817,8 +1835,10 @@ class InventoryScanner:
         dashboards.extend(energy)
         dashboard_edges.extend(energy_edges)
         lap("dashboards")
+        step("read_sources")
         helper_edges, helper_findings = self._helper_inventory(existing_objects)
         group_edges, group_findings = self._group_inventory(existing_objects)
+        step("helpers_groups")
         known_automation_ids = {item["object_id"] for item in automations}
         automations.extend(
             _fallback_automation_item(state)
@@ -1855,6 +1875,7 @@ class InventoryScanner:
                 },
                 observed_at,
             )
+        step("observations_update")
         for kind, item in tracked:
             item["status_since"] = self.observations.since(
                 f"{kind}:{item['object_id']}", _observed_as(item)
@@ -1884,12 +1905,15 @@ class InventoryScanner:
                 self.stale_hours,
             )
         self.stale.annotate(entities, observed_at, self.stale_hours)
+        step("status_since_stale")
         statistics = await self._statistics()
+        step("statistics_list")
         statistic_ids = {item["statistic_id"] for item in statistics}
         for item in entities:
             item["has_statistics"] = item["object_id"] in statistic_ids
         statistic_issues = statistic_continuity(statistics, entities)
         mark_duplicates(entities)
+        step("statistics_continuity_duplicates")
         lap("tracking")
 
         app_links = app_edges(config_entries, apps)
@@ -1975,6 +1999,7 @@ class InventoryScanner:
         findings += device_down_findings(
             entities, devices, findings, observed_at, self.outage_levels
         )
+        step("findings")
 
         quarantine = quarantine_entries(self.journal.plans, [*entities, *devices])
         recurring = recurring_devices(
@@ -1997,22 +2022,28 @@ class InventoryScanner:
             orphaned_statistics, preliminary, observed_at
         )
 
+        step("quarantine_orphans")
         entity_registry_entries = er.async_get(self.hass)
         for finding in findings:
             finding["key"] = finding_key(finding)
             self._mark_ignored(finding, entity_registry_entries)
+        step("mark_ignored")
         covered = self._apply_marks(objects, findings)
+        step("apply_marks")
         # A preliminary scan misses findings: a mark must not read that as "back".
         if "app" in self._unchecked:  # no answer from Supervisor is no sign of a running app
             covered |= {key for key in self.marks.items if key.startswith("app:")}
         if not preliminary and self.marks.settle(covered, datetime.now(UTC)):
             self._apply_marks(objects, findings)
+        step("marks_settle")
         blocked = blocked_automation_findings(automations, findings)
         blocked += dead_effect_findings(automations, findings)
+        step("blocked_dead_effect")
         for finding in blocked:
             finding["key"] = finding_key(finding)
             self._mark_ignored(finding, entity_registry_entries)
         findings.extend(blocked)
+        step("mark_ignored_blocked")
         # A preliminary scan misses findings: it says nothing about what is away.
         if not preliminary:
             self.ignored.note_seen({f["key"] for f in findings}, datetime.now(UTC))
@@ -2025,9 +2056,11 @@ class InventoryScanner:
         for item in entities:
             if item["object_id"] in stuck:
                 item["blocked_automation"] = True
+        step("note_seen_stuck")
         apply_battery_kinds(objects, self.batteries.kinds)
         apply_topics(findings)
         apply_impact(objects, edges, findings)
+        step("impact")
         # When each finding was first seen; a preliminary scan misses findings and forgets none.
         # A source that could not be read leaves its findings out: what is missing then is not gone.
         complete = picture_complete(self._unchecked, self.scan_coverage.report())
@@ -2044,7 +2077,9 @@ class InventoryScanner:
         for item in objects:
             if item["object_type"] == "config_entry" and item.get("domain") in logged:
                 item["log"] = logged[item["domain"]]
+        step("first_seen_log")
         causes = apply_causes(objects, edges, findings)
+        step("causes")
         if not preliminary:
             causes = self._review_decisions(objects, edges, findings, causes)
         apply_certainty(
@@ -2058,6 +2093,7 @@ class InventoryScanner:
             },
             patterns=self._outage_patterns(),
         )
+        step("decisions_certainty")
 
         lap("analysis")
         self.status.update(phase="finalizing", progress=90)
@@ -2090,7 +2126,13 @@ class InventoryScanner:
 
         registered = {item["object_id"] for item in entities}
         lap("finalizing")
-        _LOGGER.debug("Scan took %.2f s: %s", sum(timing.values()), timing)
+        _LOGGER.debug(
+            "Scan (%s) took %.2f s: %s; steps: %s",
+            self._scan_reason,
+            sum(timing.values()),
+            timing,
+            detail,
+        )
         return {
             "meta": {
                 "scan_timing": timing,
@@ -2150,6 +2192,8 @@ class InventoryScanner:
                 "history_days": self.history.retention_days,
                 "watch_hours": self.watch_hours,
                 "show_in_sidebar": self.show_in_sidebar,
+                "outage_scan_mode": self.outage_scan_mode,
+                "refresh_recorder_views": self.refresh_recorder_views,
                 "watch": self.watch_summary(),
                 "low_batteries": len(low_battery_ids(entities, self.low_battery_percent)),
                 "object_count": len(listed_objects(objects)),
@@ -2682,7 +2726,7 @@ class InventoryScanner:
             return "not_found"
         if not self.stale.set_limit(entity_id, hours):
             return "too_many"
-        await self.async_scan()
+        await self.async_scan(reason="stale_limit")
         return None
 
     def clear_mark(
@@ -2749,10 +2793,19 @@ class InventoryScanner:
     def _apply_marks(
         self, objects: list[dict[str, Any]], findings: list[dict[str, Any]]
     ) -> set[str]:
+        began = time.monotonic()
         sun = self._sun()
         covered = apply_marks(objects, findings, self.marks.items, sun=sun)
+        applied = time.monotonic()
         self._mark_excepted(objects)
+        excepted = time.monotonic()
         self._window_seen = self._window_states(sun)
+        _LOGGER.debug(
+            "Marks: apply %.3f s, excepted %.3f s, windows %.3f s",
+            applied - began,
+            excepted - applied,
+            time.monotonic() - excepted,
+        )
         return covered
 
     @callback
@@ -2991,8 +3044,11 @@ class InventoryScanner:
     def _subentry_devices(self) -> dict[tuple[str, str], list[str]]:
         """Map (config entry, sub-entry) to the IDs of the devices that belong to the sub-entry."""
         found: dict[tuple[str, str], list[str]] = {}
-        for device in dr.async_get(self.hass).devices.values():
-            pairs = getattr(device, "config_entries_subentries", None) or {}
+        for device in _registry_entries(dr.async_get(self.hass).devices):
+            if getattr(device, "config_entry_id", None):
+                pairs = {device.config_entry_id: [getattr(device, "config_subentry_id", None)]}
+            else:  # older Home Assistant: one device may belong to several entries
+                pairs = getattr(device, "config_entries_subentries", None) or {}
             for entry_id, subentry_ids in pairs.items():
                 for subentry_id in subentry_ids:
                     if subentry_id:

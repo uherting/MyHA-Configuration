@@ -6642,5 +6642,15 @@
 "relGroupPlace": "所在位置",
 "relPlace": "位置",
 "selAllOfList": "列表中的全部 {count} 项",
-"selOverMax": "{n} / 最多 {max}"
+"selOverMax": "{n} / 最多 {max}",
+"loadGroupTitle": "小型设备的负载",
+"outageScanTitle": "故障后扫描",
+"outageScanHint": "故障可以多频繁地触发额外扫描。自动：在达到第一级后不久，扫描较慢时间隔更大。每个扫描间隔最多一次：适用于较慢的设备；故障会在下一次扫描时显示为发现项。关闭：故障不会触发单独的扫描。",
+"outageScan_auto": "自动",
+"outageScan_interval": "每个扫描间隔最多一次",
+"outageScan_off": "关闭",
+"refreshViewsTitle": "在后台刷新较慢的视图",
+"refreshViewsHint": "在视图被打开过一次之后，通过在后台查询数据库（每 30 分钟到每天一次）使可靠性、风暴、数据库健康和成本保持最新。关闭：打开视图时才刷新，在小型设备上可能需要几秒钟。",
+"outageScanShort": "故障多频繁地触发额外扫描。",
+"refreshViewsShort": "在后台保持较慢的数据库视图为最新。"
 }

@@ -8,10 +8,12 @@
           "targets": "Recorded targets",
           "max_days": "Keep for (days)",
           "max_count": "Keep at most (notifications)",
-          "logbook": "Also write a line to the logbook"
+          "logbook": "Also write a line to the logbook",
+          "persistent": "Also record persistent notifications (the sidebar bell)"
         },
         "data_description": {
-          "targets": "Leave empty to record every notify target, except those that write to a log or a file."
+          "targets": "Leave empty to record every notify target, except those that write to a log or a file.",
+          "persistent": "Notifications shown in the sidebar bell, from automations or integrations, from now on. Only administrators see them in the card."
         }
       }
     },
@@ -27,10 +29,12 @@
           "targets": "Recorded targets",
           "max_days": "Keep for (days)",
           "max_count": "Keep at most (notifications)",
-          "logbook": "Also write a line to the logbook"
+          "logbook": "Also write a line to the logbook",
+          "persistent": "Also record persistent notifications (the sidebar bell)"
         },
         "data_description": {
-          "targets": "Leave empty to record every notify target, except those that write to a log or a file."
+          "targets": "Leave empty to record every notify target, except those that write to a log or a file.",
+          "persistent": "Notifications shown in the sidebar bell, from automations or integrations, from now on. Only administrators see them in the card."
         }
       }
     }

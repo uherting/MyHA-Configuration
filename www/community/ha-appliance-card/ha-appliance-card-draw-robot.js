@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The robot drawing and its CSS, loaded by the card the first time it shows one.
-export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, esc, ntFlake, t, thsColor, zoneColumns }) {
+export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, esc, ntFlake, ntTint, t, thsColor, zoneColumns }) {
 // The small screen and the air lines the dehumidifier and the two heaters
 // share. Warm air rises; the air a dehumidifier or a fan blows goes the other
 // way along the same lines.
@@ -159,6 +159,21 @@ ${brush(-13.5)}${brush(13.5)}
   const bubbles = [0, 1, 2].map((i) => `<circle class="nta-rise ntd${i + 1}" cx="${-2 + i * 2}" cy="-16" r="${1 - i * .15}" fill="#e1f5fe" opacity="0"/>`).join("");
   const caust = [14, 30, 52, 70, 92].map((x, i) => `<path class="nta-caust ntd${i + 1}" d="M${x} 102 q3 -2 6 0 q3 2 6 0" stroke="#e1f5fe" stroke-width=".8" fill="none"/>`).join("");
   const txt = on ? c.lcd || "" : "";
+  // Put away for the winter: the water lowered under its cover, snow on the
+  // cover and the deck, the robot out of the pool.
+  if (c.winter) return `<defs><pattern id="${tp}" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#8fd0ec"/><path d="M5 0V5M0 5H5" stroke="#6fbbe0" stroke-width=".5"/></pattern>
+${ntV(w, "#4fc3f7", "#0277bd")}${ntV(dk, "#efe5d0", "#d6c7a7")}</defs>
+<rect x="0" y="20" width="120" height="8" fill="url(#${dk})"/><rect x="0" y="27" width="120" height="1.2" fill="#b9a988"/>
+<rect x="6" y="28" width="108" height="80" fill="#cfd8dc"/><rect x="8" y="28" width="104" height="78" fill="url(#${tp})"/>
+<rect x="8" y="52" width="104" height="54" fill="url(#${w})" opacity=".6"/>
+<rect x="6" y="106" width="108" height="3" fill="#90a4ae"/>
+<path d="M4 27 Q60 38 116 27 L116 31 Q60 42 4 31 Z" fill="#2f5446" stroke="#1f3a30" stroke-width=".6"/>
+<path d="M22 30.6 V33.6 M41 33 V36.4 M60 33.8 V37.4 M79 33 V36.4 M98 30.6 V33.6" stroke="#4d7a68" stroke-width=".8"/>
+<path d="M8 28.4 Q60 38.6 112 28.4 Q60 36 8 28.4 Z" fill="#f7fbfd" opacity=".95"/>
+${ntSnowCap(0, 120, 19.6, 2.6)}
+<rect x="86" y="5" width="32" height="16" rx="2" fill="#eceff2" stroke="#aab2bc" stroke-width=".5"/>
+${ntLcd(88.5, 7, 27, 11.6, "", false, "#4fc3f7", 7.8)}
+<circle cx="116" cy="19" r=".9" fill="#9aa1ab"/>${ntSnowCap(86, 118, 4.6, 1.8)}`;
   return `<defs><pattern id="${tp}" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#8fd0ec"/><path d="M5 0V5M0 5H5" stroke="#6fbbe0" stroke-width=".5"/></pattern>
 ${ntV(w, "#4fc3f7", "#0277bd")}${ntV(bd, "#ffffff", "#b0bec5")}${ntV(dk, "#efe5d0", "#d6c7a7")}</defs>
 <rect x="0" y="20" width="120" height="8" fill="url(#${dk})"/><rect x="0" y="27" width="120" height="1.2" fill="#b9a988"/>
@@ -378,7 +393,8 @@ function grillSmoke(c, xs, y) {
   const count = dense ? xs.length : ({ ignite: 2, preheat: 3, cook: 4, cool: 2 }[c.st] || 0);
   return `<g class="nt-run">${xs.slice(0, count).map((x, i) => `<path class="ntg-smoke ntd${(i % 6) + 1}${dense ? " ntg-dense" : ""}" d="M${x} ${y} q-3.4 -4.5 0 -9 q3.4 -4.5 0 -9" stroke="#aab2ba" stroke-width="${dense ? 3.4 : 2.4}" fill="none" stroke-linecap="round" opacity="0"/>`).join("")}</g>`;
 }
-function grillLcd(c, x, y, w, h) {
+function grillLcd(c, x, y, w, h) { const out = grillLcdRaw(c, x, y, w, h); return out ? ntKeep(out) : ""; }
+function grillLcdRaw(c, x, y, w, h) {
   const lit = c.st !== "off" && !c.unav;
   const txt = lit ? c.lcd || "" : "";
   const fs = ntFit(txt, w, 7.6);
@@ -813,7 +829,8 @@ ${presents}`;
 // to the left. The charger's light is red while it charges, green once
 // full; the current runs from the charger to the vehicle.
 // A wheel: tyre, rim, hub; knobs for an off-road tyre, spokes for a bike.
-function mobWheel(cx, cy, r, o = {}) {
+function mobWheel(cx, cy, r, o = {}) { const out = mobWheelRaw(cx, cy, r, o); return out ? ntKeep(out) : ""; }
+function mobWheelRaw(cx, cy, r, o = {}) {
   const t = o.tyre || "#1e2226";
   let s = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${t}"/>`;
   if (o.knobby) {
@@ -1150,7 +1167,7 @@ ${[0, 1, 2].map((i) => `<path d="M${hx - 3.6} ${(sonoff ? 82.4 : 83) + i * 1.8} 
 ${ntIrrWall(wall)}
 <g mask="url(#${gm})"><rect x="-10" y="96" width="140" height="30" fill="url(#${gd})"/><path d="M-10 96.5 H130" stroke="#8d8577" stroke-width="1"/>
 ${[0, 1, 2, 3, 4, 5].map((i) => `<path d="M${-6 + i * 26} 125 L${6 + i * 26} 97" stroke="#9a9283" stroke-width=".7"/>`).join("")}<path d="M-10 110 H130" stroke="#9a9283" stroke-width=".7"/></g>
-${tap}${stand}${box}
+${tap}${stand}${c.winter ? "" : `${box}
 <ellipse cx="88" cy="114" rx="30" ry="4" fill="#000" opacity=".12"/>
 <path d="${hose}" fill="none" stroke="${sonoff ? "#1c1d1f" : "#1b5e20"}" stroke-width="5.6" stroke-linecap="round"/>
 <path d="${hose}" fill="none" stroke="${sonoff ? "#3b3e42" : "#43a047"}" stroke-width="3.8" stroke-linecap="round"/>
@@ -1158,8 +1175,8 @@ ${tap}${stand}${box}
 ${coupler}
 <g transform="rotate(-14 96 108)"><rect x="90" y="105" width="11" height="6" rx="2" fill="${sonoff ? "#ff6d00" : "#ffb300"}"/><path d="M100 105.4 L106 104 V112 L100 110.6 Z" fill="${sonoff ? "#212121" : "#f57c00"}"/></g>
 <g class="nt-run">${[["M106 105 Q114 99 125 101", 0], ["M106 107 Q115 103 125 107", 2], ["M106 109 Q114 108 124 114", 4]].map(([d, i]) => ntJet(d, i)).join("")}
-<path d="M106 107 L126 98 L126 116 Z" fill="#e1f5fe" opacity=".35"/></g>
-${sonoff && c.lcd ? `<rect x="6" y="101" width="30" height="10" rx="5" fill="#1e2328" opacity=".82"/><text x="21" y="108.2" font-size="${ntFit(c.lcd, 28, 6.4).toFixed(1)}" font-weight="700" text-anchor="middle" fill="#b3e5fc" ${NT_FONT}>${esc(c.lcd)}</text>` : ""}`;
+<path d="M106 107 L126 98 L126 116 Z" fill="#e1f5fe" opacity=".35"/></g>`}
+${sonoff && c.lcd && !c.winter ? `<rect x="6" y="101" width="30" height="10" rx="5" fill="#1e2328" opacity=".82"/><text x="21" y="108.2" font-size="${ntFit(c.lcd, 28, 6.4).toFixed(1)}" font-weight="700" text-anchor="middle" fill="#b3e5fc" ${NT_FONT}>${esc(c.lcd)}</text>` : ""}`;
 }
 
 // A vegetable patch: a raised wooden bed in three-quarter view, rows of
@@ -1944,8 +1961,32 @@ ${[-1.5, -.5, .5, 1.5].map((k, i) => `<circle class="${c.on ? `nta-glow ntd${i +
 ${c.on ? `<circle cx="${60 + k * 8}" cy="76" r="1.2" fill="#fff"/>` : ""}`).join("")}
 ${c.st === "paused" ? spkPause(60, 44, "#8d8a83") : ""}${c.muted ? spkMute(96, 52) : ""}`;
 }
+// The apps' logos, from Simple Icons (CC0, simpleicons.org), drawn in the
+// tile on a 24 x 24 grid; an app without one keeps its letters.
+const STR_LOGOS = {
+  netflix: "m5.398 0 8.348 23.602c2.346.059 4.856.398 4.856.398L10.113 0H5.398zm8.489 0v9.172l4.715 13.33V0h-4.715zM5.398 1.5V24c1.873-.225 2.81-.312 4.715-.398V14.83L5.398 1.5z",
+  youtubemusic: "M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.104c-3.924 0-7.104-3.18-7.104-7.104S8.076 4.896 12 4.896s7.104 3.18 7.104 7.104-3.18 7.104-7.104 7.104zm0-13.332c-3.432 0-6.228 2.796-6.228 6.228S8.568 18.228 12 18.228s6.228-2.796 6.228-6.228S15.432 5.772 12 5.772zM9.684 15.54V8.46L15.816 12l-6.132 3.54z",
+  youtube: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z",
+  applemusic: "M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026-.747.043-1.49.123-2.193.4-1.336.53-2.3 1.452-2.865 2.78-.192.448-.292.925-.363 1.408-.056.392-.088.785-.1 1.18 0 .032-.007.062-.01.093v12.223c.01.14.017.283.027.424.05.815.154 1.624.497 2.373.65 1.42 1.738 2.353 3.234 2.801.42.127.856.187 1.293.228.555.053 1.11.06 1.667.06h11.03a12.5 12.5 0 001.57-.1c.822-.106 1.596-.35 2.295-.81a5.046 5.046 0 001.88-2.207c.186-.42.293-.87.37-1.324.113-.675.138-1.358.137-2.04-.002-3.8 0-7.595-.003-11.393zm-6.423 3.99v5.712c0 .417-.058.827-.244 1.206-.29.59-.76.962-1.388 1.14-.35.1-.706.157-1.07.173-.95.045-1.773-.6-1.943-1.536a1.88 1.88 0 011.038-2.022c.323-.16.67-.25 1.018-.324.378-.082.758-.153 1.134-.24.274-.063.457-.23.51-.516a.904.904 0 00.02-.193c0-1.815 0-3.63-.002-5.443a.725.725 0 00-.026-.185c-.04-.15-.15-.243-.304-.234-.16.01-.318.035-.475.066-.76.15-1.52.303-2.28.456l-2.325.47-1.374.278c-.016.003-.032.01-.048.013-.277.077-.377.203-.39.49-.002.042 0 .086 0 .13-.002 2.602 0 5.204-.003 7.805 0 .42-.047.836-.215 1.227-.278.64-.77 1.04-1.434 1.233-.35.1-.71.16-1.075.172-.96.036-1.755-.6-1.92-1.544-.14-.812.23-1.685 1.154-2.075.357-.15.73-.232 1.108-.31.287-.06.575-.116.86-.177.383-.083.583-.323.6-.714v-.15c0-2.96 0-5.922.002-8.882 0-.123.013-.25.042-.37.07-.285.273-.448.546-.518.255-.066.515-.112.774-.165.733-.15 1.466-.296 2.2-.444l2.27-.46c.67-.134 1.34-.27 2.01-.403.22-.043.442-.088.663-.106.31-.025.523.17.554.482.008.073.012.148.012.223.002 1.91.002 3.822 0 5.732z",
+  applepodcasts: "M5.34 0A5.328 5.328 0 000 5.34v13.32A5.328 5.328 0 005.34 24h13.32A5.328 5.328 0 0024 18.66V5.34A5.328 5.328 0 0018.66 0zm6.525 2.568c2.336 0 4.448.902 6.056 2.587 1.224 1.272 1.912 2.619 2.264 4.392.12.59.12 2.2.007 2.864a8.506 8.506 0 01-3.24 5.296c-.608.46-2.096 1.261-2.336 1.261-.088 0-.096-.091-.056-.46.072-.592.144-.715.48-.856.536-.224 1.448-.874 2.008-1.435a7.644 7.644 0 002.008-3.536c.208-.824.184-2.656-.048-3.504-.728-2.696-2.928-4.792-5.624-5.352-.784-.16-2.208-.16-3 0-2.728.56-4.984 2.76-5.672 5.528-.184.752-.184 2.584 0 3.336.456 1.832 1.64 3.512 3.192 4.512.304.2.672.408.824.472.336.144.408.264.472.856.04.36.03.464-.056.464-.056 0-.464-.176-.896-.384l-.04-.03c-2.472-1.216-4.056-3.274-4.632-6.012-.144-.706-.168-2.392-.03-3.04.36-1.74 1.048-3.1 2.192-4.304 1.648-1.737 3.768-2.656 6.128-2.656zm.134 2.81c.409.004.803.04 1.106.106 2.784.62 4.76 3.408 4.376 6.174-.152 1.114-.536 2.03-1.216 2.88-.336.43-1.152 1.15-1.296 1.15-.023 0-.048-.272-.048-.603v-.605l.416-.496c1.568-1.878 1.456-4.502-.256-6.224-.664-.67-1.432-1.064-2.424-1.246-.64-.118-.776-.118-1.448-.008-1.02.167-1.81.562-2.512 1.256-1.72 1.704-1.832 4.342-.264 6.222l.413.496v.608c0 .336-.027.608-.06.608-.03 0-.264-.16-.512-.36l-.034-.011c-.832-.664-1.568-1.842-1.872-2.997-.184-.698-.184-2.024.008-2.72.504-1.878 1.888-3.335 3.808-4.019.41-.145 1.133-.22 1.814-.211zm-.13 2.99c.31 0 .62.06.844.178.488.253.888.745 1.04 1.259.464 1.578-1.208 2.96-2.72 2.254h-.015c-.712-.331-1.096-.956-1.104-1.77 0-.733.408-1.371 1.112-1.745.224-.117.534-.176.844-.176zm-.011 4.728c.988-.004 1.706.349 1.97.97.198.464.124 1.932-.218 4.302-.232 1.656-.36 2.074-.68 2.356-.44.39-1.064.498-1.656.288h-.003c-.716-.257-.87-.605-1.164-2.644-.341-2.37-.416-3.838-.218-4.302.262-.616.974-.966 1.97-.97z",
+  appstore: "M8.8086 14.9194l6.1107-11.0368c.0837-.1513.1682-.302.2437-.4584.0685-.142.1267-.2854.1646-.4403.0803-.3259.0588-.6656-.066-.9767-.1238-.3095-.3417-.5678-.6201-.7355a1.4175 1.4175 0 0 0-.921-.1924c-.3207.043-.6135.1935-.8443.4288-.1094.1118-.1996.2361-.2832.369-.092.1463-.175.2979-.259.4492l-.3864.6979-.3865-.6979c-.0837-.1515-.1667-.303-.2587-.4492-.0837-.1329-.1739-.2572-.2835-.369-.2305-.2353-.5233-.3857-.844-.429a1.4181 1.4181 0 0 0-.921.1926c-.2784.1677-.4964.426-.6203.7355-.1246.311-.1461.6508-.066.9767.038.155.0962.2984.1648.4403.0753.1564.1598.307.2437.4584l1.248 2.2543-4.8625 8.7825H2.0295c-.1676 0-.3351-.0007-.5026.0092-.1522.009-.3004.0284-.448.0714-.3108.0906-.5822.2798-.7783.548-.195.2665-.3006.5929-.3006.9279 0 .3352.1057.6612.3006.9277.196.2683.4675.4575.7782.548.1477.043.296.0623.4481.0715.1675.01.335.009.5026.009h13.0974c.0171-.0357.059-.1294.1-.2697.415-1.4151-.6156-2.843-2.0347-2.843zM3.113 18.5418l-.7922 1.5008c-.0818.1553-.1644.31-.2384.4705-.067.1458-.124.293-.1611.452-.0785.3346-.0576.6834.0645 1.0029.1212.3175.3346.583.607.7549.2727.172.5891.2416.9013.1975.3139-.044.6005-.1986.8263-.4402.1072-.1148.1954-.2424.2772-.3787.0902-.1503.1714-.3059.2535-.4612L6 19.4636c-.0896-.149-.9473-1.4704-2.887-.9218m20.5861-3.0056a1.4707 1.4707 0 0 0-.779-.5407c-.1476-.0425-.2961-.0616-.4483-.0705-.1678-.0099-.3352-.0091-.503-.0091H18.648l-4.3891-7.817c-.6655.7005-.9632 1.485-1.0773 2.1976-.1655 1.0333.0367 2.0934.546 3.0004l5.2741 9.3933c.084.1494.167.299.2591.4435.0837.131.1739.2537.2836.364.231.2323.5238.3809.8449.4232.3192.0424.643-.0244.9217-.1899.2784-.1653.4968-.4204.621-.7257.1246-.3072.146-.6425.0658-.9641-.0381-.1529-.0962-.2945-.165-.4346-.0753-.1543-.1598-.303-.2438-.4524l-1.216-2.1662h1.596c.1677 0 .3351.0009.5029-.009.1522-.009.3007-.028.4483-.0705a1.4707 1.4707 0 0 0 .779-.5407A1.5386 1.5386 0 0 0 24 16.452a1.539 1.539 0 0 0-.3009-.9158Z",
+  applearcade: "M.198 18.24a.966.966 0 0 1-.194-.571v-.955s0-.571.563-.313c0 0 6.919 3.135 8.033 3.626a7.832 7.832 0 0 0 3.408.729 8.216 8.216 0 0 0 3.396-.729l8.037-3.626c.559-.258.559.313.559.313v.955a1.038 1.038 0 0 1-.198.575c-.19.258-.515.539-1.411.959-.713.337-6.23 2.818-6.995 3.17a8.008 8.008 0 0 1-3.4.729 8.336 8.336 0 0 1-3.82-.927c-1.435-.65-5.849-2.631-6.567-2.972-.9-.428-1.153-.654-1.411-.963zm1.411-5.973l6.987-3.17a7.975 7.975 0 0 1 2.164-.634v5.707c0 .396.571.697 1.236.697s1.141-.313 1.141-.697V8.479c.778.105 1.54.313 2.263.618l6.987 3.17c.579.273 1.609.761 1.609 1.538s-1.011 1.236-1.609 1.53l-6.987 3.17a8.2 8.2 0 0 1-3.396.729 7.832 7.832 0 0 1-3.408-.729l-6.987-3.17C1.011 15.042 0 14.574 0 13.801s1.03-1.264 1.609-1.534zm1.807 2.247c.77.396 1.683.396 2.453 0 .682-.396.686-1.026 0-1.419a2.705 2.705 0 0 0-2.453 0c-.68.392-.666 1.02 0 1.419zM12 7.595a3.35 3.35 0 1 1 3.349-3.351v.003c0 1.849-1.5 3.348-3.349 3.348z",
+  appletv: "M20.57 17.735h-1.815l-3.34-9.203h1.633l2.02 5.987c.075.231.273.9.586 2.012l.297-.997.33-1.006 2.094-6.004H24zm-5.344-.066a5.76 5.76 0 0 1-1.55.207c-1.23 0-1.84-.693-1.84-2.087V9.646h-1.063V8.532h1.121V7.081l1.476-.602v2.062h1.707v1.113H13.38v5.805c0 .446.074.75.214.932.14.182.396.264.75.264.207 0 .495-.041.883-.115zm-7.29-5.343c.017 1.764 1.55 2.358 1.567 2.366-.017.042-.248.842-.808 1.658-.487.71-.99 1.418-1.79 1.435-.783.016-1.03-.462-1.93-.462-.89 0-1.17.445-1.913.478-.758.025-1.344-.775-1.838-1.484-.998-1.451-1.765-4.098-.734-5.88.51-.89 1.426-1.451 2.416-1.46.75-.016 1.468.512 1.93.512.461 0 1.327-.627 2.234-.536.38.016 1.452.157 2.136 1.154-.058.033-1.278.743-1.27 2.219M6.468 7.988c.404-.495.685-1.18.61-1.864-.585.025-1.294.388-1.723.883-.38.437-.71 1.138-.619 1.806.652.05 1.328-.338 1.732-.825Z",
+  plex: "M3.987 8.409c-.96 0-1.587.28-2.12.933v-.72H0v8.88s.038.018.127.037c.138.03.821.187 1.331-.249.441-.377.542-.814.542-1.318v-1.283c.533.573 1.147.813 2 .813 1.84 0 3.253-1.493 3.253-3.48 0-2.12-1.36-3.613-3.266-3.613Zm16.748 5.595.406.591c.391.614.894.906 1.492.908.621-.012 1.064-.562 1.226-.755 0 0-.307-.27-.686-.72-.517-.614-1.214-1.755-1.24-1.803l-1.198 1.779Zm-3.205-1.955c0-2.08-1.52-3.64-3.52-3.64s-3.467 1.587-3.467 3.573a3.48 3.48 0 0 0 3.507 3.52c1.413 0 2.626-.84 3.253-2.293h-2.04l-.093.093c-.427.4-.72.533-1.227.533-.787 0-1.373-.506-1.453-1.266h4.986c.04-.214.054-.307.054-.52Zm-7.671-.219c0 .769.11 1.701.868 2.722l.056.069c-.306.526-.742.88-1.248.88-.399 0-.814-.211-1.138-.579a2.177 2.177 0 0 1-.538-1.441V6.409H9.86l-.001 5.421Zm9.283 3.46h-2.39l2.247-3.332-2.247-3.335h2.39l2.248 3.335-2.248 3.332Zm1.593-1.286Zm-17.162-.342c-.933 0-1.68-.773-1.68-1.72s.76-1.666 1.68-1.666c.92 0 1.68.733 1.68 1.68 0 .946-.733 1.706-1.68 1.706Zm18.361-1.974L24 8.622h-2.391l-.87 1.293 1.195 1.773Zm-9.404-.466c.16-.706.72-1.133 1.493-1.133.773 0 1.373.467 1.507 1.133h-3Z",
+  spotify: "M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z",
+  deezer: "M.693 10.024c.381 0 .693-1.256.693-2.807 0-1.55-.312-2.807-.693-2.807C.312 4.41 0 5.666 0 7.217s.312 2.808.693 2.808ZM21.038 1.56c-.364 0-.684.805-.91 2.096C19.765 1.446 19.184 0 18.526 0c-.78 0-1.464 2.036-1.784 5-.312-2.158-.788-3.536-1.325-3.536-.745 0-1.386 2.704-1.62 6.472-.442-1.932-1.083-3.145-1.793-3.145s-1.35 1.213-1.793 3.145c-.242-3.76-.874-6.463-1.628-6.463-.537 0-1.013 1.378-1.325 3.535C6.938 2.036 6.262 0 5.474 0c-.658 0-1.247 1.447-1.602 3.665-.217-1.291-.546-2.105-.91-2.105-.675 0-1.221 2.807-1.221 6.272 0 3.466.546 6.273 1.221 6.273.277 0 .537-.476.736-1.273.32 2.928.996 4.938 1.776 4.938.606 0 1.143-1.204 1.507-3.11.251 3.622.875 6.195 1.602 6.195.46 0 .875-1.023 1.187-2.677C10.142 21.6 11 24 12.004 24c1.005 0 1.863-2.4 2.235-5.822.312 1.654.727 2.677 1.186 2.677.728 0 1.352-2.573 1.603-6.195.364 1.906.9 3.11 1.507 3.11.78 0 1.455-2.01 1.775-4.938.208.797.46 1.273.737 1.273.675 0 1.22-2.807 1.22-6.273-.008-3.457-.553-6.272-1.23-6.272ZM23.307 10.024c.381 0 .693-1.256.693-2.807 0-1.55-.312-2.807-.693-2.807-.381 0-.693 1.256-.693 2.807s.312 2.808.693 2.808Z",
+  twitch: "M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z",
+  crunchyroll: "M2.909 13.436C2.914 7.61 7.642 2.893 13.468 2.898c5.576.005 10.137 4.339 10.51 9.819q.021-.351.022-.706C24.007 5.385 18.64.006 12.012 0S.007 5.36 0 11.988 5.36 23.994 11.988 24q.412 0 .815-.027c-5.526-.338-9.9-4.928-9.894-10.538Zm16.284.155a4.1 4.1 0 0 1-4.095-4.103 4.1 4.1 0 0 1 2.712-3.855 8.95 8.95 0 0 0-4.187-1.037 9.007 9.007 0 1 0 8.997 9.016q-.001-.847-.15-1.651a4.1 4.1 0 0 1-3.278 1.63Z",
+  kodi: "M12.03.047c-.226 0-.452.107-.669.324-.922.922-1.842 1.845-2.763 2.768-.233.233-.455.48-.703.695-.31.267-.405.583-.399.988.02 1.399.008 2.799.008 4.198 0 1.453-.002 2.907 0 4.36 0 .11.002.223.03.327.087.337.303.393.546.15 1.31-1.31 2.618-2.622 3.928-3.933l4.449-4.453c.43-.431.43-.905 0-1.336L12.697.37c-.216-.217-.442-.324-.668-.324zm7.224 7.23c-.223 0-.445.104-.65.309L14.82 11.37c-.428.429-.427.895 0 1.322l3.76 3.766c.44.44.908.44 1.346.002 1.215-1.216 2.427-2.433 3.644-3.647.182-.18.353-.364.43-.615v-.33c-.077-.251-.246-.436-.428-.617-1.224-1.22-2.443-2.445-3.666-3.668-.205-.205-.429-.307-.652-.307zM4.18 7.611c-.086.014-.145.094-.207.157L.209 11.572c-.28.284-.278.677.004.96l2.043 2.046c.59.59 1.177 1.182 1.767 1.772.169.168.33.139.416-.084.044-.114.062-.242.063-.364.004-1.283.004-2.567.004-3.851h-.002V8.184c0-.085-.01-.169-.022-.252-.019-.135-.072-.258-.207-.309a.186.186 0 0 0-.095-.012zm7.908 6.838c-.224 0-.447.106-.656.315L7.66 18.537c-.433.434-.433.899.002 1.334 1.215 1.216 2.43 2.43 3.643 3.649.18.18.361.354.611.433h.33c.244-.069.423-.226.598-.402 1.222-1.23 2.45-2.453 3.676-3.68.43-.43.427-.905-.004-1.338l-3.772-3.773c-.208-.208-.432-.311-.656-.31z",
+  max: "M1.769 0A1.77 1.77 0 0 0 0 1.769V22.23A1.77 1.77 0 0 0 1.769 24H22.23A1.77 1.77 0 0 0 24 22.231V1.77A1.77 1.77 0 0 0 22.231 0zm12.485 3.28a4.301 4.301 0 0 1 4.3 4.302 4.301 4.301 0 0 1-1.993 3.63 6.085 6.085 0 0 1 1.054 3.422 6.085 6.085 0 0 1-6.085 6.085 6.085 6.085 0 0 1-6.085-6.085 6.085 6.085 0 0 1 4.66-5.916 4.301 4.301 0 0 1-.152-1.136 4.301 4.301 0 0 1 4.301-4.301zm0 1.849a2.453 2.453 0 0 0-2.453 2.453 2.453 2.453 0 0 0 2.453 2.453 2.453 2.453 0 0 0 2.453-2.453 2.453 2.453 0 0 0-2.453-2.453zm-2.724 5.268a4.237 4.237 0 0 0-4.237 4.237 4.237 4.237 0 0 0 4.237 4.237 4.237 4.237 0 0 0 4.237-4.237 4.237 4.237 0 0 0-4.237-4.237zm.032 2.54a1.781 1.781 0 1 1 0 3.562 1.781 1.781 0 0 1 0-3.562Z",
+  rakuten: "M23.277 21.3L3.939 24 .722 21.3h22.555zM7.6 19.276H3.939V0h6.052a6.653 6.653 0 0 1 6.65 6.646c0 2.234-1.108 4.204-2.799 5.418l5.418 7.211h-4.585l-4.486-5.979H7.6v5.98zm0-9.64h2.392a2.992 2.992 0 0 0 2.989-2.989 2.994 2.994 0 0 0-2.989-2.986H7.6v5.975z",
+  vlcmediaplayer: "M12.0319 0c-.8823 0-1.0545.136-1.0545.136-.1738.056-.3556.255-.4105.43L9.683 3.3808c.4729.1729 1.3222.4266 2.2337.4266 1.0987 0 2.017-.3494 2.3763-.5075L13.4352.566c-.055-.1755-.237-.3707-.4067-.4374 0 0-.1142-.1286-.9966-.1286zm3.5645 7.455c-.3601.34-1.3276.9373-3.6797.9373-2.2929 0-3.189-.5678-3.5213-.9113l-1.3887 4.4227c.2272.3614 1.2539 1.5594 4.8847 1.5594 3.7569 0 4.8539-1.3467 5.0649-1.6737zm-8.5897 4.4487l-1.0025 3.1922H4.3428c-.2486 0-.5097.1932-.5826.4315l-2.334 7.6317a.3962.3962 0 0 0-.0169.1537c-.0008.0053-.002.0099-.002.016 0 .0839.0233.226.0233.226.0322.2456.2612.4452.5098.4452h20.1192c.2487 0 .4768-.1994.5098-.4453 0 0 .0234-.142.0234-.226a.0245.0245 0 0 0-.0025-.01.3201.3201 0 0 0 .0024-.0313.4096.4096 0 0 0-.019-.1282l-2.3339-7.6318c-.0729-.2383-.334-.4314-.5826-.4314h-1.6636l.2005.6391c-.2407.4854-1.4886 2.38-6.3027 2.38-4.6003 0-5.8288-1.73-6.1107-2.3072z",
+  nordvpn: "M2.2838 21.5414A11.9866 11.9866 0 010 14.4832C0 7.8418 5.3727 2.4586 12 2.4586c6.6279 0 12 5.3832 12 12.0246a11.9853 11.9853 0 01-2.2838 7.0582l-5.7636-9.3783-.5565.9419.5645 2.6186L12 8.9338l-2.45 4.1447.5707 2.6451-2.0764-3.5555-5.7605 9.3733z",
+  retroarch: "M6.84 5.76L8.4 7.68H5.28l-.72 2.88H2.64l.72-2.88H1.44L0 13.44h3.84l-.48 1.92h3.36L4.2 18.24h2.82l2.34-2.88h5.28l2.34 2.88h2.82l-2.52-2.88h3.36l-.48-1.92H24l-1.44-5.76h-1.92l.72 2.88h-1.92l-.72-2.88H15.6l1.56-1.92h-2.04l-1.68 1.92h-2.88L8.88 5.76zm.24 3.84H9v1.92H7.08zm7.925 0h1.92v1.92h-1.92Z",
+};
 // The app's tile above a box while it plays, dimmed with its bars in pause.
-function strTile(c, x, y) {
+function strTile(c, x, y) { const out = strTileRaw(c, x, y); return out ? ntKeep(out) : ""; }
+function strTileRaw(c, x, y) {
   if (c.st !== "playing" && c.st !== "paused") return "";
   const ap = c.app || { bg: "#1e88e5", fg: "#ffffff", mark: "\u25b6" };
   const fs = ap.mark.length > 3 ? 4.6 : ap.mark.length > 2 ? 5.8 : ap.mark.length > 1 ? 7.4 : 10;
@@ -1953,7 +1994,7 @@ function strTile(c, x, y) {
   return `<defs>${ntBlur(gl, 2.4)}</defs><g opacity="${c.st === "paused" ? .5 : 1}">
 ${c.on ? `<rect class="nta-glow" x="${x - 12}" y="${y - 12}" width="24" height="24" rx="6" fill="${ap.bg}" filter="url(#${gl})" opacity=".55"/>` : ""}
 <rect x="${x - 11}" y="${y - 11}" width="22" height="22" rx="5.4" fill="${ap.bg}" stroke="#ffffff" stroke-opacity=".3" stroke-width=".6"/>
-<text x="${x}" y="${(y + fs * .36).toFixed(2)}" text-anchor="middle" font-size="${fs}" font-weight="800" fill="${ap.fg}" ${NT_FONT}>${esc(ap.mark)}</text></g>
+${STR_LOGOS[ap.logo] ? `<path d="${STR_LOGOS[ap.logo]}" transform="translate(${x - 7.2} ${y - 7.2}) scale(.6)" fill="${ap.fg}"/>` : `<text x="${x}" y="${(y + fs * .36).toFixed(2)}" text-anchor="middle" font-size="${fs}" font-weight="800" fill="${ap.fg}" ${NT_FONT}>${esc(ap.mark)}</text>`}</g>
 ${c.st === "paused" ? `<circle cx="${x + 10}" cy="${y + 10}" r="5" fill="#ffffff" stroke="#cfd6dc" stroke-width=".6"/><rect x="${x + 8}" y="${y + 7.6}" width="1.4" height="4.8" rx=".5" fill="#5d6773"/><rect x="${x + 10.6}" y="${y + 7.6}" width="1.4" height="4.8" rx=".5" fill="#5d6773"/>` : ""}`;
 }
 // A small box drawn larger, centred on the field, its foot kept in place.
@@ -1963,6 +2004,7 @@ const strLed = (c, x, y, col = "#ffffff", r = .9) => `<circle class="${c.on ? "n
 const strMute = (c, x, y) => (c.muted ? spkMute(x, y) : "");
 // The apple of an Apple TV.
 const STR_APPLE = "M0 -2.2 C-1.6 -3.4 -4 -2.6 -4 .2 C-4 2.6 -2.2 4.4 -1.2 4.4 C-.6 4.4 -.4 4 0 4 C.4 4 .6 4.4 1.2 4.4 C2.2 4.4 4 2.6 4 .2 C4 -2.6 1.6 -3.4 0 -2.2 Z M.2 -2.8 C.2 -4 1 -4.8 2 -5 C2 -3.8 1.2 -3 .2 -2.8 Z";
+
 // Apple TV 4K: the squircle seen from above at an angle, its matte top with
 // the apple alone, its glossy band, and the silver Siri Remote lying by it.
 function strAppleTv(c) {
@@ -2016,7 +2058,7 @@ function strIsoBox(g, h, topFill, faces, shadow = .28) {
 <path d="${g.top()}" fill="${topFill}"/>`;
 }
 const STR_DARK_FACES = ["#0b0c0e", "#2c2f34", "#3a3e44", "#121417", "#050607"];
-// A mark laid on a box's top, along its A edge; on its left face; on its right face.
+// A mark laid on a box's top, along its A edge; on its left face.
 const strIsoTop = (x, y, inner) => `<g transform="matrix(.9177 .3971 -.9177 .3971 ${x} ${y})">${inner}</g>`;
 const strIsoLeft = (x, y, inner) => `<g transform="matrix(.9177 .3971 0 1 ${x} ${y})">${inner}</g>`;
 // A point on the left face: t along its top edge, d below it.
@@ -2829,7 +2871,7 @@ ${htValve(110, 30, false)}` : "";
   return `<defs>${ntV(bd, "#3b3f44", "#1c1e21")}${ntBlur(gl, 3)}${ntV(pl, "#4a4f55", "#2a2d31")}
 <linearGradient id="${fl}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff6f00"/><stop offset=".6" stop-color="#ff9800"/><stop offset="1" stop-color="#ffd54f" stop-opacity=".2"/></linearGradient>
 <linearGradient id="${fl2}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd54f"/><stop offset="1" stop-color="#fff59d" stop-opacity=".4"/></linearGradient>
-<radialGradient id="${win}" cx=".5" cy=".8" r=".9"><stop offset="0" stop-color="${burning ? "#ff8f00" : embers ? "#8a2d10" : "#2b2f33"}"/><stop offset="1" stop-color="#121416"/></radialGradient>
+<radialGradient id="${win}" cx=".5" cy=".8" r=".9"><stop offset="0" stop-color="${burning ? "#ff8f00" : embers ? "#8a2d10" : "#2B2F33"}"/><stop offset="1" stop-color="#121416"/></radialGradient>
 <clipPath id="${cp}"><rect x="36" y="44" width="40" height="38" rx="3"/></clipPath></defs>
 ${ntShadow(56, 108, 34)}
 ${glow ? `<ellipse class="nta-glow" cx="56" cy="106" rx="30" ry="4" fill="${burning ? "#ffb74d" : "#ff7043"}" opacity=".4" filter="url(#${gl})"/>` : ""}
@@ -2838,7 +2880,7 @@ ${jacket}
 ${htDial(56, 19, 8.6, c.flue, c.max || 400, c.low || 100)}
 <rect x="26" y="32" width="60" height="6" rx="2" fill="#2a2d31"/>
 <rect x="28" y="36" width="56" height="62" rx="2.5" fill="url(#${bd})"/>
-<rect x="33" y="41" width="46" height="44" rx="4" fill="#15171a" stroke="#555b62" stroke-width=".8"/>
+<rect x="33" y="41" width="46" height="44" rx="4" fill="#15171A" stroke="#555B62" stroke-width=".8"/>
 <rect x="36" y="44" width="40" height="38" rx="3" fill="url(#${win})"/>
 <g clip-path="url(#${cp})">${glow ? `<ellipse class="nta-glow" cx="56" cy="80" rx="18" ry="7" fill="${burning ? "#ffab40" : "#ff5722"}" filter="url(#${gl})"/>` : ""}${flames}${logs}
 <path d="M36 82 Q56 76 76 82" fill="${embers ? "#ff7043" : "#3a3d40"}" opacity=".6"/></g>
@@ -3075,10 +3117,79 @@ ${thsFace(X + 2, Y, `<ellipse cx="38" cy="70" rx="24" ry="3.4" fill="#000" opaci
 ${thsDepth(X, Y, shape, 12, `url(#${e})`)}${thsFace(X, Y, `${shape(`url(#${t})`)}<circle cx="35" cy="35" r="28.5" fill="#8f958f"/><circle cx="35" cy="35" r="28" fill="url(#${s})"/>${c.unav ? "" : `${thsSignal(25, 11.5, THS_INK)}${thsBattery(35.5, 11.5, THS_INK, c.b)}${thsNumber(c.t, 35, 18, 15.5, THS_INK, THS_GHOST, c.unit)}<path d="M10 38 H60" stroke="${THS_INK}" stroke-width=".5"/>${thsNumber(c.h, 35, 41, 13, THS_INK, THS_GHOST, "%")}`}`)}`;
 }
 const NT_DRAW = { pellet_grill: ntPelletGrill, ths_disc: ntThsDisc, ths_square: ntThsSquare, ths_cushion: ntThsCushion, ths_stick: ntThsStick, ths_lcd_stand: ntThsLcdStand, ths_lcd_probe: ntThsLcdProbe, ths_lcd_round: ntThsLcdRound, dryer: ntFilamentDryer, humidifier: ntHumidifier, circulator: ntCirculator, irr_sprinkler: ntIrrSprinkler, irr_tap: ntIrrTap, irr_drip: ntIrrDrip, irr_flowers: ntIrrFlowers, lit_globe: ntLitterGlobe, lit_box: ntLitterBox, det_smoke: ntDetSmoke, det_co: ntDetCo, det_leak: ntDetLeak, spk_smart: ntSpkSmart, spk_homepod_mini: ntSpkMini, spk_sonos_one: ntSpkOne, spk_bookshelf: ntSpkShelf, spk_sonos_move: ntSpkMove, spk_soundbar: ntSpkBar, spk_echo_dot: ntSpkDot, spk_echo_dot_max: ntSpkDotMax, spk_nest_mini: ntSpkNest, spk_sonos_era100: ntSpkEra100, spk_sonos_era300: ntSpkEra300, spk_bose_wave: ntSpkWave, spk_bose_500: ntSpkBose500, spk_bose_soundlink: ntSpkFlex, spk_bose_soundbar: ntSpkBoseBar, spk_sonos_five: ntSpkFive, spk_sonos_play: ntSpkPlay, spk_sonos_roam: ntSpkRoam, spk_sonos_ray: ntSpkRay, spk_sonos_amp: ntSpkAmp, spk_sonos_port: ntSpkPort, spk_bose_ultra: ntSpkBoseUltra, spk_bose_portable: ntSpkBosePortable, spk_bose_amp: ntSpkBoseAmp, str_apple_tv: (c) => strZoom(strAppleTv(c), 54, 1.45), str_fire_tv_cube: strFireCube, str_fire_tv_stick: (c) => strStick(c, true), str_google_tv_streamer: strGoogleStreamer, str_chromecast: strChromecast, str_shield: strShield, str_shield_pro: strShieldPro, str_roku: strRoku, str_mi_box: strMiBox, str_freebox: strFreebox, str_decoder: strDecoder, str_box: strBox, str_stick: (c) => strStick(c, false), con_ps1: conPs1, con_ps2: conPs2, con_ps3: conPs3, con_ps4: (c) => conPs4(c, false), con_ps4_pro: (c) => conPs4(c, true), con_ps5: conPs5, con_xbox: conXbox, con_xbox_360: conX360, con_xbox_one: conXone, con_xbox_series_x: conXsx, con_xbox_series_s: conXss, con_switch: (c) => conSwitch(c, false), con_switch_2: (c) => conSwitch(c, true), con_switch_lite: conSwitchLite, con_ps_vita: conVita, con_nes: conNes, con_snes: conSnes, con_n64: conN64, con_gamecube: conGamecube, con_wii: conWii, con_megadrive: conMegadrive, tank: ntTank, fws: ntFresh, solth: ntSolarThermal, wood: ntWoodStove, mob_scooter: mobScooter, mob_offroad: mobOffroad, mob_ebike: mobEbike, mob_gyropode: mobGyropode, mob_motorcycle: mobMotorcycle, meter_box: ntMeterBox, meter_dome: ntMeterDome, meter_gas: ntGas, meter_water: ntWater, booster: ntBooster, sump: ntSump, pool: ntPoolRobot, floor: ntFloor, spa: ntSpa, sauna: ntSauna, aquarium: ntAquarium, linky: ntLinky, tree: ntTree };
+// What a tint leaves alone: a part wrapped by ntKeep (an app's tile, a
+// display, a tyre).
+const ntKeep = (s) => `<!--k-->${s}<!--/k-->`;
+// The drawings a tint applies to: appliances, not the scenes around them
+// (a sump's pit, a floor, a garden, a pool, a roof).
+const NT_TINTED = /^(con_|str_|spk_|lit_|det_|mob_|irr_tap$|dryer$|humidifier$|fws$|wood$|booster$|circulator$|pellet_grill$)/;
+// Winter (dosing-tank-card #3): flakes falling slowly over a drawing, snow
+// lying on what it covers, a cover over a spa, a pool or a grill.
+function ntFlakes(n = 12) {
+  return Array.from({ length: n }, (_, i) => {
+    const x = 4 + ((i * 37) % 112), r = (.7 + (i % 3) * .3).toFixed(1), d = (3.6 + (i % 5) * .6).toFixed(1), b = (-((i * .83) % 4)).toFixed(2);
+    return `<circle cx="${x}" cy="-8" r="${r}" fill="#e3f1fa" stroke="#8fb8d2" stroke-width=".35"><animateTransform attributeName="transform" type="translate" values="0 0;5 130" dur="${d}s" begin="${b}s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;.2" keyTimes="0;.1;.8;1" dur="${d}s" begin="${b}s" repeatCount="indefinite"/></circle>`;
+  }).join("");
+}
+// A lump of snow along a top edge, from x0 to x1 at y, puffing up by h.
+const ntSnowCap = (x0, x1, y, h = 3) => {
+  const n = Math.max(2, Math.round((x1 - x0) / 12)), w = (x1 - x0) / n;
+  let d = `M${x0} ${y + 1}`;
+  for (let i = 0; i < n; i++) d += ` Q${(x0 + w * (i + .5)).toFixed(1)} ${(y - h * (.8 + (i % 2) * .4)).toFixed(1)} ${(x0 + w * (i + 1)).toFixed(1)} ${y + .4}`;
+  return `<path d="${d} L${x1} ${y + 1.6} Q${(x0 + x1) / 2} ${y + 3.2} ${x0} ${y + 1.6} Z" fill="#f7fbfd" stroke="#d6e6ef" stroke-width=".4"/>`;
+};
+// A grill under its cover: the fabric draped down to the ground, its folds,
+// its drawstring, the feet or wheels showing, snow on top.
+function ntGrillCover(layout) {
+  const [W, H] = { timberline: [96, 76], drum: [94, 64], cart: [86, 72], vertical: [56, 94] }[layout] || [90, 70];
+  const x0 = 60 - W / 2, x1 = 60 + W / 2, y1 = 102, y0 = y1 - H, g = ntId();
+  const top = layout === "drum" ? `Q${x0} ${y0 - 6} 60 ${y0 - 8} Q${x1} ${y0 - 6} ${x1} ${y0 + 10}` : `Q${x0} ${y0} ${x0 + 8} ${y0} H${x1 - 8} Q${x1} ${y0} ${x1} ${y0 + 8}`;
+  const folds = [.22, .41, .63, .82].map((k, i) => `<path d="M${(x0 + W * k).toFixed(1)} ${y0 + 6 + (i % 2) * 4} Q${(x0 + W * k + (i % 2 ? 3 : -3)).toFixed(1)} ${y0 + H * .55} ${(x0 + W * k + (i % 2 ? -1 : 1)).toFixed(1)} ${y1 - 3}" stroke="rgba(0,0,0,.28)" stroke-width="1.1" fill="none"/>`).join("");
+  return `<defs>${ntV(g, "#4a5158", "#23272b")}</defs>
+<ellipse cx="60" cy="${y1 + 4}" rx="${W / 2 + 6}" ry="3.4" fill="#000" opacity=".18"/>
+<rect x="${x0 + 6}" y="${y1 - 2}" width="4" height="7" rx="1" fill="#2b3035"/><rect x="${x1 - 10}" y="${y1 - 2}" width="4" height="7" rx="1" fill="#2b3035"/>
+<path d="M${x0 + 2} ${y1} L${x0} ${y0 + 10} ${top} L${x1 - 2} ${y1} Q60 ${y1 + 3} ${x0 + 2} ${y1} Z" fill="url(#${g})" stroke="#1b1e21" stroke-width=".8"/>
+${folds}
+<path d="M${x0 + 2} ${y1 - 3} Q60 ${y1} ${x1 - 2} ${y1 - 3}" stroke="#15181a" stroke-width="1.4" fill="none"/>
+<rect x="${60 - 9}" y="${y0 + H * .3}" width="18" height="7" rx="1.4" fill="#5b636b" stroke="#2b3035" stroke-width=".5"/>
+${ntSnowCap(x0 + 3, x1 - 3, layout === "drum" ? y0 - 5 : y0 + 1, 3.6)}`;
+}
+// A spa under its insulated cover, folded down the middle, snow on it.
+function ntSpaCover() {
+  const P = (u, v) => [30 + 80 * u - 22 * v, 40 + 22 * v], pt = (u, v, dy = 0) => { const [x, y] = P(u, v); return `${x.toFixed(1)} ${(y + dy).toFixed(1)}`; };
+  return `<path d="M${pt(-.03, -.04, -4)} L${pt(1.03, -.04, -4)} L${pt(1.03, 1.05, -4)} L${pt(-.03, 1.05, -4)} Z" fill="#6d7680" stroke="#454c53" stroke-width=".7"/>
+<path d="M${pt(-.03, 1.05, -4)} L${pt(1.03, 1.05, -4)} L${pt(1.03, 1.05, 1)} L${pt(-.03, 1.05, 1)} Z" fill="#4f575f"/>
+<path d="M${pt(.5, -.04, -4)} L${pt(.5, 1.05, -4)}" stroke="#454c53" stroke-width="1"/>
+<path d="M${pt(.02, .05, -4.6)} L${pt(.98, .05, -4.6)} L${pt(.98, .95, -4.6)} L${pt(.02, .95, -4.6)} Z" fill="#f7fbfd" stroke="#d6e6ef" stroke-width=".4" opacity=".92"/>
+<path d="M${pt(.12, 1.05, 1.2)} L${pt(.12, 1.05, 4)} M${pt(.88, 1.05, 1.2)} L${pt(.88, 1.05, 4)}" stroke="#2b3035" stroke-width="1.2"/>`;
+}
+function ntWinter(d, body) {
+  if (/^pellet_grill/.test(d.kind)) return ntGrillCover(d.layout) + ntFlakes();
+  if (d.kind === "spa") return body + ntSpaCover() + ntFlakes();
+  const snow = "#f4f9fc", edge = 'stroke="#d6e6ef" stroke-width=".5"';
+  // The garden: the timer taken in and the tap drained, snow on the ground,
+  // the lawn and the beds.
+  if (d.kind === "irr_tap") return body + `<ellipse cx="56" cy="101" rx="46" ry="7" fill="${snow}" ${edge}/><ellipse cx="40" cy="99.4" rx="14" ry="3" fill="#ffffff" opacity=".8"/>` + ntFlakes();
+  if (d.kind === "irr_sprinkler") return body + `<ellipse cx="60" cy="104" rx="55" ry="15.6" fill="${snow}" ${edge}/><ellipse cx="60" cy="103.4" rx="5" ry="1.5" fill="#37424c" opacity=".7"/>` + ntFlakes();
+  if (d.kind === "irr_flowers") return body + `<ellipse cx="58" cy="97" rx="50" ry="14" fill="${snow}" ${edge} opacity=".9"/>` + ntFlakes();
+  if (d.kind === "irr_drip") return body + `<path d="M9 72.6 L89 72.6 L106 36 L27 36 Z" fill="${snow}" ${edge} opacity=".88"/>${ntSnowCap(6, 92, 73, 2.4)}` + ntFlakes();
+  return body + ntFlakes();
+}
 function ntSvg(d) {
   ntN = 0;
   const draw = NT_DRAW[d && d.kind] || ntLinky;
-  return `<svg class="nt-svg" viewBox="0 -10 120 135">${draw(d || {})}</svg>`;
+  const body = d && d.winter ? ntWinter(d, draw(d)) : draw(d || {});
+  // A speaker sold in the colour asked is drawn in it, and not tinted.
+  let tint = d && d.tint && NT_TINTED.test(d.kind || "") ? d.tint : "";
+  if (tint && /^spk_/.test(d.kind) && d.color) {
+    const n = ntN;
+    ntN = 0;
+    const plain = draw({ ...d, color: "" });
+    ntN = 0;
+    if (plain !== draw(d)) tint = "";
+    ntN = n;
+  }
+  return `<svg class="nt-svg" viewBox="0 -10 120 135">${tint ? ntTint(body, tint) : body}</svg>`;
 }
 function ntHtml(cls, d) {
   const flags = ["nt", `nt-k-${(d && d.kind) || "none"}`, d && /^(irr|lit|det|spk)_/.test(d.kind) ? "nt-c7" : "", d && d.on ? "nt-on" : "", d && d.unav ? "nt-unav" : ""].filter(Boolean).join(" ");
@@ -3525,8 +3636,21 @@ const ROBOT_TOWER_SPILL = `<svg class="rbt-spill" viewBox="0 0 44 44" aria-hidde
 <g class="rbx-fall" fill="#8f7b62"><circle cx="8" cy="24" r=".9" style="--d0: .2s; --dx: -2px"/><circle cx="36" cy="24" r=".9" style="--d0: .7s; --dx: 2px"/><circle cx="18" cy="24" r=".8" style="--d0: 1.1s; --dx: -1px"/></g>
 <g class="rbx-puff" fill="#b8b2aa"><circle cx="14" cy="9" r="3.4"/><circle cx="23" cy="6" r="4" style="--d0: .8s"/><circle cx="31" cy="9" r="3.2" style="--d0: 1.5s"/></g></svg>`;
 
+// What the robot asks for (#104), in a small sign over it: a drop crossed
+// out for its water, a brown drop for the dirty water, a battery nearly
+// flat. The full bag has its own overflowing station.
+const ROBOT_ASK_SVGS = {
+  water: `<path d="M6 1.2 C6 1.2 2.4 5.4 2.4 7.6 A3.6 3.6 0 0 0 9.6 7.6 C9.6 5.4 6 1.2 6 1.2 Z" fill="none" stroke="#29b6f6" stroke-width="1.1"/><path d="M2.2 10.4 L10 2.6" stroke="#ff5722" stroke-width="1.3" stroke-linecap="round"/>`,
+  dirty: `<path d="M6 1.2 C6 1.2 2.4 5.4 2.4 7.6 A3.6 3.6 0 0 0 9.6 7.6 C9.6 5.4 6 1.2 6 1.2 Z" fill="#8d6e4f" stroke="#5d4632" stroke-width=".7"/><path d="M4.4 7.4 Q6 6.4 7.6 7.4" fill="none" stroke="#c9a77f" stroke-width=".7" stroke-linecap="round"/>`,
+  battery: `<rect x="1" y="3.4" width="9" height="5.2" rx="1" fill="none" stroke="#f44336" stroke-width="1"/><rect x="10.2" y="5" width="1.2" height="2" rx=".4" fill="#f44336"/><rect class="rbt-ask-lv" x="2.1" y="4.5" width="1.7" height="3" rx=".4" fill="#f44336"/>`,
+};
+function robotAskHtml(notice) {
+  const svg = ROBOT_ASK_SVGS[notice];
+  return svg ? `<i class="rbt-ask"><svg viewBox="0 0 12 12" aria-hidden="true">${svg}</svg></i>` : "";
+}
+
 function robotHtml(cls, r) {
-  if (r.layout === "pool") return ntHtml(`${cls} rbt rbt-l-pool rbt-m-${r.mode || "docked"}`, { kind: "pool", on: r.mode === "cleaning", lcd: r.poolTime || "" });
+  if (r.layout === "pool") return ntHtml(`${cls} rbt rbt-l-pool rbt-m-${r.mode || "docked"}`, { kind: "pool", on: r.mode === "cleaning", lcd: r.poolTime || "", winter: r.mode === "winter" });
   if (r.layout === "stick" || r.layout === "floor_washer") {
     return `
         <div class="machine ${cls} rbt rbt-l-${r.layout} rbt-m-${r.mode || "docked"}">${r.layout === "stick" ? dysonSvg(r.battery) : washerSvg(r.battery)}</div>`;
@@ -3542,7 +3666,7 @@ function robotHtml(cls, r) {
   const snow = layout === "mower" && mode === "winter"
     ? `<div class="rbt-snow">${Array.from({ length: 20 }, (_, i) => `<b style="left: ${4 + ((i * 29) % 90)}px; --s: ${(1.8 + (i % 3) * .6).toFixed(1)}px; --d: ${(3.2 + (i % 5) * .5).toFixed(1)}s; --d0: ${(-((i * .61) % 4)).toFixed(2)}s"></b>`).join("")}</div>`
     : "";
-  const err = ROBOT_MANGA + ROBOT_ANGER;
+  const err = ROBOT_MANGA + ROBOT_ANGER + robotAskHtml(r.notice);
   // The camera module some robots carry on their bumper (#69).
   const cam = r.camera ? `<i class="rbt-cam"></i><i class="rbt-camb"></i>` : "";
   let inner;
@@ -3581,7 +3705,7 @@ function robotHtml(cls, r) {
           ${wash}`;
   }
   return `
-        <div class="machine ${cls} rbt rbt-l-${layout} rbt-m-${draw}${r.cleanMode ? ` rbt-cm-${r.cleanMode}` : ""}${r.base ? " rbt-base" : ""}${r.bag ? " rbt-bag" : ""}${r.box && layout !== "mower" ? ` rbt-box rbx-${ROBOT_BOX_SKINS[r.boxColor] ? r.boxColor : "white"}` : ""}${r.shelter ? ` rbt-roof rbt-sh-${r.shelter}` : ""}">
+        <div class="machine ${cls} rbt rbt-l-${layout} rbt-m-${draw}${r.cleanMode ? ` rbt-cm-${r.cleanMode}` : ""}${r.base ? " rbt-base" : ""}${r.bag ? " rbt-bag" : ""}${r.notice && r.notice !== "bag" ? ` rbt-n-${r.notice}` : ""}${r.box && layout !== "mower" ? ` rbt-box rbx-${ROBOT_BOX_SKINS[r.boxColor] ? r.boxColor : "white"}` : ""}${r.shelter ? ` rbt-roof rbt-sh-${r.shelter}` : ""}">
           ${inner}
         </div>`;
 }
@@ -3867,6 +3991,20 @@ css: () => `${NT_CSS}${MINI_LCD_CSS}
         .rbt-spill{display:none;left:26px;top:-4px;width:44px;height:44px;overflow:visible}
         .rbt-bag .rbt-spill{display:block}
         .rbt-bag .rbt-dcap{visibility:hidden}
+        .rbt-ask{display:none;position:absolute;z-index:3;width:12px;height:12px;left:20px;top:-15px;padding:1.5px;border-radius:4px;background:rgba(255,255,255,.92);box-shadow:0 1px 3px rgba(0,0,0,.25);animation:rbt-ask 1.6s ease-in-out infinite}
+        .rbt-ask svg{display:block;width:12px;height:12px}
+        .rbt-rm .rbt-ask{left:18px}
+        .rbt-mw .rbt-ask{left:24px;top:-17px}
+        .rbt-n-water .rbt-ask,.rbt-n-dirty .rbt-ask,.rbt-n-battery .rbt-ask{display:block}
+        .rbt-ask-lv{animation:rbt-blink 1s steps(1) infinite}
+        @keyframes rbt-ask{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+        .rbt-n-water .rbx-lv.rbx-c,.rbt-n-dirty .rbx-lv.rbx-d{animation:rbt-blink 1s steps(1) infinite}
+        .rbt-n-water .rbx-lv.rbx-c{fill:#ff5722}
+        .rbt-n-water .rbt-mdock .rbt-tk.rbt-c i{background:#ff5722;animation:rbt-blink 1s steps(1) infinite}
+        .rbt-n-dirty .rbt-mdock .rbt-tk.rbt-d i{animation:rbt-blink 1s steps(1) infinite}
+        .rbt-n-water .rbt-mdock .rbt-tk.rbt-c,.rbt-n-dirty .rbt-mdock .rbt-tk.rbt-d{box-shadow:inset 0 0 0 1px #ff9800}
+        .rbt-n-water .rbt-tank i{background:#ff9800;height:12%}
+        .rbt-n-water .rbx-led,.rbt-n-dirty .rbx-led,.rbt-n-water .rbt-dled,.rbt-n-dirty .rbt-dled{fill:#ff9800;background:#ff9800;box-shadow:0 0 3px #ff9800}
         .rbx-lidup,.rbt-capup{transform-box:fill-box;transform-origin:50% 100%;animation:rbx-lid 1.6s ease-in-out infinite}
         .rbx-fall circle{opacity:0;transform-box:fill-box;animation:rbx-fall 1.4s ease-in infinite;animation-delay:var(--d0,0s)}
         .rbx-puff circle{opacity:0;transform-box:fill-box;transform-origin:center;animation:rbx-puff 2.2s ease-out infinite;animation-delay:var(--d0,0s)}

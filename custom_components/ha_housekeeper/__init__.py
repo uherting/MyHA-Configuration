@@ -38,6 +38,8 @@ from .const import (
     CONF_OUTAGE_INFO_MINUTES,
     CONF_OUTAGE_LOW_HOURS,
     CONF_OUTAGE_MEDIUM_HOURS,
+    CONF_OUTAGE_SCANS,
+    CONF_REFRESH_VIEWS,
     CONF_SCAN_INTERVAL_HOURS,
     CONF_SHOW_IN_SIDEBAR,
     CONF_STALE_HOURS,
@@ -45,6 +47,8 @@ from .const import (
     CONF_WATCH_HOURS,
     DEFAULT_HISTORY_DAYS,
     DEFAULT_LOW_BATTERY_PERCENT,
+    DEFAULT_OUTAGE_SCANS,
+    DEFAULT_REFRESH_VIEWS,
     DEFAULT_SCAN_INTERVAL_HOURS,
     DEFAULT_SHOW_IN_SIDEBAR,
     DEFAULT_STALE_HOURS,
@@ -82,10 +86,10 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 PLATFORMS = [Platform.SENSOR, Platform.EVENT, Platform.BUTTON, Platform.SWITCH, Platform.NUMBER]
 
 
-async def _async_initial_scan(scanner: InventoryScanner) -> None:
+async def _async_initial_scan(scanner: InventoryScanner, reason: str = "other") -> None:
     """Run the initial scan without leaking a background-task exception."""
     try:
-        await scanner.async_scan()
+        await scanner.async_scan(reason=reason)
     except Exception:  # Scanner status retains the user-facing error.
         _LOGGER.exception("Initial HA Housekeeper inventory scan failed")
 
@@ -135,6 +139,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
     scanner.history.retention_days = entry.options.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS)
     scanner.watch_hours = entry.options.get(CONF_WATCH_HOURS, DEFAULT_WATCH_HOURS)
     scanner.show_in_sidebar = entry.options.get(CONF_SHOW_IN_SIDEBAR, DEFAULT_SHOW_IN_SIDEBAR)
+    scanner.outage_scan_mode = entry.options.get(CONF_OUTAGE_SCANS, DEFAULT_OUTAGE_SCANS)
+    scanner.refresh_recorder_views = entry.options.get(CONF_REFRESH_VIEWS, DEFAULT_REFRESH_VIEWS)
     scanner.monitor.retention_days = scanner.history.retention_days
     await scanner.async_initialize()
     entry.runtime_data = scanner
@@ -191,9 +197,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
     # a few minutes later, a few times, instead of waiting for the next regular scan.
     retry: dict[str, Any] = {"cancel": None}
 
-    async def _scan(*, again: bool = False) -> None:
+    async def _scan(*, again: bool = False, reason: str = "other") -> None:
         scanner.retry_runs = scanner.retry_runs + 1 if again else 0
-        await _async_initial_scan(scanner)
+        await _async_initial_scan(scanner, reason)
         if retry["cancel"]:
             retry["cancel"]()
             retry["cancel"] = None
@@ -207,7 +213,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
             retry["cancel"] = async_call_later(hass, RETRY_MINUTES * 60, _retry_scan)
             return
         entry.async_create_background_task(
-            hass, _scan(again=True), "HA Housekeeper rescan after a gap"
+            hass, _scan(again=True, reason="retry_gap"), "HA Housekeeper rescan after a gap"
         )
 
     entry.async_on_unload(lambda: retry["cancel"]() if retry["cancel"] else None)
@@ -225,7 +231,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
         if boot["record"]:
             boot["record"] = False
             _record_start()
-        entry.async_create_background_task(hass, _scan(), "HA Housekeeper final startup scan")
+        entry.async_create_background_task(
+            hass, _scan(reason="startup_final"), "HA Housekeeper final startup scan"
+        )
 
     def _record_start() -> None:
         anchor = boot["process"] or boot["began"]
@@ -276,7 +284,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
             # No scan now: the final one follows the warm-up, and a full scan while slow integrations
             # are still being set up starves them on weak hardware (timeouts at the start).
             return
-        entry.async_create_background_task(hass, _scan(), "HA Housekeeper initial inventory scan")
+        entry.async_create_background_task(
+            hass, _scan(reason="startup"), "HA Housekeeper initial inventory scan"
+        )
 
     # Changed thresholds only affect the findings, so a reload with a fresh scan suffices.
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
@@ -325,7 +335,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
     async def _mark_windows(_: Any) -> None:
         if scanner.refresh_marks_on_window_change():
             try:  # an outage counts from the end of the window: the scan grades it anew
-                await scanner.async_request_scan()
+                await scanner.async_request_scan(reason="mark_window")
             except ScanRefused:  # a plan or the start is in the way
                 return
 
@@ -455,6 +465,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
         # busy recorder leaves the view due for the next tick; a failing one waits for its age.
         if scanner.paused or not scanner.replies.replies:
             return
+        if not entry.options.get(CONF_REFRESH_VIEWS, DEFAULT_REFRESH_VIEWS):
+            return  # the option: the views renew when they are opened
         now = time.time()
         key = next_reply(
             {
@@ -529,7 +541,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HousekeeperConfigEntry) 
             if scanner.paused:  # A cleanup run is in progress and scans itself.
                 return
             entry.async_create_background_task(
-                hass, _scan(), "HA Housekeeper scheduled inventory scan"
+                hass, _scan(reason="scheduled"), "HA Housekeeper scheduled inventory scan"
             )
 
         entry.async_on_unload(

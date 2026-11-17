@@ -6642,5 +6642,15 @@
 "relGroupPlace": "¿Dónde está?",
 "relPlace": "Ubicación",
 "selAllOfList": "Los {count} de la lista",
-"selOverMax": "{n} de máx. {max}"
+"selOverMax": "{n} de máx. {max}",
+"loadGroupTitle": "Carga en dispositivos pequeños",
+"outageScanTitle": "Análisis tras fallos",
+"outageScanHint": "Con qué frecuencia un fallo puede iniciar un análisis adicional. Automático: poco después de alcanzar el primer nivel, con más separación si un análisis es lento. Como máximo una vez por intervalo de análisis: para dispositivos lentos; los fallos aparecen como hallazgos con el siguiente análisis. Desactivado: los fallos no inician ningún análisis propio.",
+"outageScan_auto": "Automático",
+"outageScan_interval": "Como máximo una vez por intervalo de análisis",
+"outageScan_off": "Desactivado",
+"refreshViewsTitle": "Actualizar las vistas lentas en segundo plano",
+"refreshViewsHint": "Mantiene al día fiabilidad, tormentas, estado de la base de datos y costes consultando la base de datos en segundo plano (cada 30 minutos hasta una vez al día), una vez abierta la vista. Desactivado: se actualizan al abrirlas, lo que en un dispositivo pequeño puede tardar unos segundos.",
+"outageScanShort": "Con qué frecuencia un fallo inicia un análisis adicional.",
+"refreshViewsShort": "Mantiene al día en segundo plano las vistas lentas de la base de datos."
 }

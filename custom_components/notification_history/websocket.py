@@ -18,7 +18,7 @@ MAX_LIMIT = 200
 # What the card needs; internal fields (context, sender…) stay on the server.
 PUBLIC_FIELDS = (
     "id", "ts", "target", "target_name", "device_id", "title", "message", "image", "video", "audio",
-    "link", "actions", "tag", "group", "status", "action_title", "action_ts",
+    "link", "actions", "tag", "group", "channel", "camera", "status", "action_title", "action_ts",
 )
 
 
@@ -40,6 +40,10 @@ def _matches(record: dict[str, Any], msg: dict[str, Any]) -> bool:
         return False
     if (devices := msg.get("devices")) and record.get("device_id") not in devices:
         return False
+    if (channels := msg.get("channels")) and record.get("channel") not in channels:
+        return False
+    if (groups := msg.get("groups")) and record.get("group") not in groups:
+        return False
     if search := msg.get("search"):
         needle = search.casefold()
         if not any(needle in (record.get(k) or "").casefold() for k in ("title", "message", "target_name")):
@@ -50,6 +54,8 @@ def _matches(record: dict[str, Any], msg: dict[str, Any]) -> bool:
 FILTERS = {
     vol.Optional("targets"): [str],
     vol.Optional("devices"): [str],
+    vol.Optional("channels"): [str],
+    vol.Optional("groups"): [str],
     vol.Optional("search"): str,
 }
 
@@ -59,6 +65,8 @@ def async_register(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, ws_list)
     websocket_api.async_register_command(hass, ws_subscribe)
     websocket_api.async_register_command(hass, ws_targets)
+    websocket_api.async_register_command(hass, ws_channels)
+    websocket_api.async_register_command(hass, ws_groups)
     websocket_api.async_register_command(hass, ws_run_action)
 
 
@@ -121,6 +129,26 @@ def ws_targets(hass: HomeAssistant, connection: websocket_api.ActiveConnection, 
         if user.is_admin or t["owner"] == user.id
     ]
     connection.send_result(msg["id"], {"targets": out})
+
+
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/channels"})
+@callback
+def ws_channels(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Channels of the notifications this user can see (for the card editor)."""
+    manager = _manager(hass)
+    records = manager.store.records if manager else []
+    channels = {r["channel"] for r in records if r.get("channel") and _visible(r, connection.user)}
+    connection.send_result(msg["id"], {"channels": sorted(channels)})
+
+
+@websocket_api.websocket_command({vol.Required("type"): f"{DOMAIN}/groups"})
+@callback
+def ws_groups(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Groups (data.group) of the notifications this user can see (for the card editor)."""
+    manager = _manager(hass)
+    records = manager.store.records if manager else []
+    groups = {r["group"] for r in records if r.get("group") and _visible(r, connection.user)}
+    connection.send_result(msg["id"], {"groups": sorted(groups)})
 
 
 @websocket_api.websocket_command(

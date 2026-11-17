@@ -36,6 +36,7 @@ from .const import (
     SIGNAL_AUTO_PAUSE,
     STORAGE_VERSION,
 )
+from .exceptions import device_entry_ids
 from .sensitive_fields import reauth_entry_ids
 from .texts import localize, pick
 
@@ -506,7 +507,7 @@ class AutoPause:
                     if reg.config_entry_id:
                         found.add(reg.config_entry_id)
                 elif kind == "device" and (dev := devices.async_get(ident)):
-                    found.update(dev.config_entries)
+                    found.update(device_entry_ids(dev))
         return found
 
     async def _iot_classes(self, entries: list[ConfigEntry]) -> dict[str, str | None]:

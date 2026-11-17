@@ -4,17 +4,25 @@ from __future__ import annotations
 from collections.abc import Callable
 from datetime import timedelta
 import logging
+import time
 from typing import Any
 
+from homeassistant.components.persistent_notification import (
+    Notification,
+    UpdateType,
+    async_register_callback,
+)
 from homeassistant.const import EVENT_CALL_SERVICE
 from homeassistant.core import CoreState, Event, HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.start import async_at_started
 
 from .backfill import async_fetch_past
 from .const import (
     EVENT_ACTION,
     EVENT_CLEARED,
+    PERSISTENT_TARGET,
     SIGNAL_UPDATED,
     STATUS_ACTION,
     STATUS_CLEARED,
@@ -41,11 +49,13 @@ class HistoryManager:
         store: HistoryStore,
         targets: list[str],
         logbook: bool,
+        persistent: bool = False,
     ) -> None:
         self.hass = hass
         self.store = store
         self.targets = set(targets)  # empty: every target that is not excluded
         self.logbook = logbook
+        self.persistent = persistent
         self._unsubs: list[Callable[[], None]] = []
 
     # --- lifecycle -------------------------------------------------------
@@ -55,30 +65,38 @@ class HistoryManager:
         self._refresh_names()
         if hass.state is not CoreState.running:
             # Some notify entities (custom integrations) only exist once HA has fully started.
-            self._unsubs.append(hass.bus.async_listen_once("homeassistant_started", lambda _: self._refresh_names()))
+            # async_at_started, not listen_once: its unsub is safe to call after it fired.
+            self._unsubs.append(async_at_started(hass, self._refresh_names_started))
         self._unsubs.append(hass.bus.async_listen(EVENT_CALL_SERVICE, self._on_call, self._is_notify))
         self._unsubs.append(hass.bus.async_listen(EVENT_ACTION, self._on_action))
         self._unsubs.append(hass.bus.async_listen(EVENT_CLEARED, self._on_cleared))
         self._unsubs.append(async_track_time_interval(hass, self._purge, timedelta(hours=1)))
+        if self.persistent:
+            self._unsubs.append(async_register_callback(hass, self._on_persistent))
         if not self.store.backfilled:
-            if hass.state is CoreState.running:
-                hass.async_create_background_task(self.async_backfill(), "notification_history backfill")
-            else:
-                self._unsubs.append(
-                    hass.bus.async_listen_once(
-                        "homeassistant_started",
-                        lambda _: hass.async_create_background_task(
-                            self.async_backfill(), "notification_history backfill"
-                        ),
-                    )
-                )
+            self._unsubs.append(async_at_started(hass, self._start_backfill))
+        elif not self.store.channels_filled:
+            self._unsubs.append(async_at_started(hass, self._start_fill_channels))
+
+    @callback
+    def _refresh_names_started(self, _hass: HomeAssistant) -> None:
+        self._refresh_names()
+
+    @callback
+    def _start_backfill(self, hass: HomeAssistant) -> None:
+        hass.async_create_background_task(self.async_backfill(), "notification_history backfill")
+
+    @callback
+    def _start_fill_channels(self, hass: HomeAssistant) -> None:
+        hass.async_create_background_task(self.async_fill_channels(), "notification_history channels")
 
     @callback
     def _refresh_names(self) -> None:
         """Names follow renamed devices and entities (they are stored for the WebSocket list)."""
         index = _legacy_index(self.hass)
-        infos = {t: resolve(self.hass, t, index) for t in {r["target"] for r in self.store.records}}
-        for record in self.store.records:
+        records = [r for r in self.store.records if r["target"] != PERSISTENT_TARGET]
+        infos = {t: resolve(self.hass, t, index) for t in {r["target"] for r in records}}
+        for record in records:
             info = infos[record["target"]]
             record["target_name"] = info["name"]
             if info["device_id"] is not None:
@@ -88,10 +106,7 @@ class HistoryManager:
 
     async def async_stop(self) -> None:
         while self._unsubs:
-            try:
-                self._unsubs.pop()()
-            except ValueError:  # listen_once already fired
-                pass
+            self._unsubs.pop()()
         await self.store.async_save()
 
     async def async_backfill(self) -> None:
@@ -111,9 +126,34 @@ class HistoryManager:
             )
         added = len(self.store.records) - before
         self.store.backfilled = True
+        self.store.channels_filled = True  # imported records already have their channel
         self.store.purge()
         await self.store.async_save()
         _LOGGER.info("Imported %s past notifications from the recorder", added)
+        async_dispatcher_send(self.hass, SIGNAL_UPDATED, None)
+
+    async def async_fill_channels(self) -> None:
+        """Once: add the channel to records made before 1.2.0, from the calls still in the recorder."""
+        rows = await async_fetch_past(self.hass, self.store.max_days)
+        filled = 0
+        for ts, context_id, user_id, data in rows:
+            records, _ = normalize_call(
+                data.get("service", ""),
+                data.get("service_data") or {},
+                ts=ts,
+                context_id=context_id or f"past-{ts}",
+                user_id=user_id,
+            )
+            for new in records:
+                old = self.store.get(new["id"])
+                if old is not None and "channel" not in old:
+                    old["channel"] = new["channel"]
+                    filled += 1
+        for record in self.store.records:
+            record.setdefault("channel", None)
+        self.store.channels_filled = True
+        await self.store.async_save()
+        _LOGGER.debug("Added the channel to %s recorded notifications", filled)
         async_dispatcher_send(self.hass, SIGNAL_UPDATED, None)
 
     @callback
@@ -213,6 +253,57 @@ class HistoryManager:
                 {"name": record["target_name"], "message": text, "entity_id": record["target"]},
             )
         )
+
+    # --- persistent notifications (option) ---------------------------------
+
+    @callback
+    def _on_persistent(self, update_type: UpdateType, notifications: dict[str, Notification]) -> None:
+        """A notification was added to the sidebar bell, re-created with the same id, or dismissed.
+
+        Only what happens while the integration is loaded is seen: the bell is not read at startup.
+        """
+        changed: list[dict[str, Any]] = []
+        if update_type in (UpdateType.ADDED, UpdateType.UPDATED):
+            for notification_id, notification in notifications.items():
+                title, message = notification.get("title") or None, notification.get("message") or None
+                if title is None and message is None:
+                    continue
+                ts = round(notification["created_at"].timestamp(), 6)
+                record = {
+                    "id": f"{PERSISTENT_TARGET}:{notification_id}:{ts}",
+                    "ts": ts,
+                    "target": PERSISTENT_TARGET,
+                    "target_name": None,  # the card shows its own translated label
+                    "device_id": None,
+                    "owner": None,  # admins only, like the other targets without a device
+                    "title": title,
+                    "message": message,
+                    "image": None,
+                    "video": None,
+                    "audio": None,
+                    "link": None,
+                    "actions": [],
+                    # Re-creating a notification with the same id replaces it in the bell.
+                    "tag": notification_id,
+                    "group": None,
+                    "channel": None,
+                    "camera": None,
+                    "sub_targets": [],
+                    "context_id": None,
+                    "sent_by": None,
+                    "status": STATUS_SENT,
+                }
+                changed.extend(self.store.add(record))
+        elif update_type is UpdateType.REMOVED:
+            for notification_id in notifications:
+                record = self.store.latest(PERSISTENT_TARGET, notification_id, time.time() - MATCH_WINDOW)
+                if record is not None and record["status"] == STATUS_SENT:
+                    record["status"] = STATUS_CLEARED
+                    changed.append(record)
+        if changed:
+            self.store.schedule_save()
+            for record in changed:
+                async_dispatcher_send(self.hass, SIGNAL_UPDATED, record)
 
     # --- Companion app events ---------------------------------------------
 

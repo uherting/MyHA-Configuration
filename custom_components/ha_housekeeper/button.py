@@ -40,7 +40,7 @@ class ScanButton(ButtonEntity):
 
     async def async_press(self) -> None:
         try:
-            await self.scanner.async_request_scan(False)
+            await self.scanner.async_request_scan(False, reason="button")
         except ScanRefused as err:
             raise ServiceValidationError(
                 translation_domain=DOMAIN, translation_key=err.reason

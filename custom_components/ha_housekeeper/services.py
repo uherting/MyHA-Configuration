@@ -26,7 +26,7 @@ def async_register_services(hass: HomeAssistant) -> None:
         if scanner is None:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_loaded")
         try:
-            return await scanner.async_request_scan(call.data["wait"])
+            return await scanner.async_request_scan(call.data["wait"], reason="service")
         except ScanRefused as err:
             raise ServiceValidationError(
                 translation_domain=DOMAIN, translation_key=err.reason

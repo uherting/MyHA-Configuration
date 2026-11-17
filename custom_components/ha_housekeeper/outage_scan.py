@@ -211,10 +211,14 @@ class OutageScans:
         return timedelta(hours=self._scanner.outage_low_hours)
 
     def _gap(self) -> timedelta:
-        return scan_gap(self._scanner.last_scan_seconds, self._info())
+        gap = scan_gap(self._scanner.last_scan_seconds, self._info())
+        if self._scanner.outage_scan_mode == "interval" and self._scanner.scan_interval_hours > 0:
+            # For slow devices: at most one such scan in the time between two regular ones.
+            return max(gap, timedelta(hours=self._scanner.scan_interval_hours))
+        return gap
 
     def _plan(self, wanted: datetime) -> None:
-        if not self._started:
+        if not self._started or self._scanner.outage_scan_mode == "off":
             return
         now = dt_util.utcnow()
         when = plan_time(wanted, now, self._last_run, self._gap())
@@ -232,7 +236,7 @@ class OutageScans:
     async def _fire(self, _: datetime) -> None:
         self._cancel, self._due = None, None
         try:
-            await self._scanner.async_request_scan(record=False)
+            await self._scanner.async_request_scan(record=False, reason="outage")
         except ScanRefused:  # a plan or the start is in the way: try again soon
             self._plan(dt_util.utcnow() + RETRY_DELAY)
             return

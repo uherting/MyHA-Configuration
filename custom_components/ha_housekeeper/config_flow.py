@@ -7,6 +7,11 @@ from typing import Any
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry, ConfigFlowResult, OptionsFlow
+from homeassistant.helpers.selector import (
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .const import (
     CONF_HISTORY_DAYS,
@@ -15,6 +20,8 @@ from .const import (
     CONF_OUTAGE_INFO_MINUTES,
     CONF_OUTAGE_LOW_HOURS,
     CONF_OUTAGE_MEDIUM_HOURS,
+    CONF_OUTAGE_SCANS,
+    CONF_REFRESH_VIEWS,
     CONF_SCAN_INTERVAL_HOURS,
     CONF_SHOW_IN_SIDEBAR,
     CONF_STALE_HOURS,
@@ -22,6 +29,8 @@ from .const import (
     CONF_WATCH_HOURS,
     DEFAULT_HISTORY_DAYS,
     DEFAULT_LOW_BATTERY_PERCENT,
+    DEFAULT_OUTAGE_SCANS,
+    DEFAULT_REFRESH_VIEWS,
     DEFAULT_SCAN_INTERVAL_HOURS,
     DEFAULT_SHOW_IN_SIDEBAR,
     DEFAULT_STALE_HOURS,
@@ -30,6 +39,7 @@ from .const import (
     DOMAIN,
     NAME,
     OPTION_LIMITS,
+    OUTAGE_SCAN_MODES,
 )
 from .outage_levels import thresholds_from_options, thresholds_rise
 from .runtime import loaded_scanner
@@ -80,10 +90,30 @@ class HAHousekeeperOptionsFlow(OptionsFlow):
                     field(CONF_OUTAGE_HIGH_HOURS, options[CONF_OUTAGE_HIGH_HOURS]),
                     field(CONF_UNUSED_AUTOMATION_DAYS, DEFAULT_UNUSED_AUTOMATION_DAYS),
                     field(CONF_SCAN_INTERVAL_HOURS, DEFAULT_SCAN_INTERVAL_HOURS),
+                    (
+                        vol.Required(
+                            CONF_OUTAGE_SCANS,
+                            default=options.get(CONF_OUTAGE_SCANS, DEFAULT_OUTAGE_SCANS),
+                        ),
+                        SelectSelector(
+                            SelectSelectorConfig(
+                                options=list(OUTAGE_SCAN_MODES),
+                                mode=SelectSelectorMode.DROPDOWN,
+                                translation_key=CONF_OUTAGE_SCANS,
+                            )
+                        ),
+                    ),
                     field(CONF_LOW_BATTERY_PERCENT, DEFAULT_LOW_BATTERY_PERCENT),
                     field(CONF_STALE_HOURS, DEFAULT_STALE_HOURS),
                     field(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS),
                     field(CONF_WATCH_HOURS, DEFAULT_WATCH_HOURS),
+                    (
+                        vol.Required(
+                            CONF_REFRESH_VIEWS,
+                            default=options.get(CONF_REFRESH_VIEWS, DEFAULT_REFRESH_VIEWS),
+                        ),
+                        bool,
+                    ),
                 ]
             )
         )

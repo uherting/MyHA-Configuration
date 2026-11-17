@@ -1,6 +1,7 @@
 """Persistent history, kept in .storage/notification_history."""
 from __future__ import annotations
 
+from collections.abc import Callable
 import time
 from typing import Any
 
@@ -23,15 +24,17 @@ class HistoryStore:
         self.records: list[dict[str, Any]] = []
         self._by_id: dict[str, dict[str, Any]] = {}
         self.backfilled = False
+        self.channels_filled = False  # channel added to records made before 1.2.0
 
     async def async_load(self) -> None:
         data = await self._store.async_load() or {}
         self.records = sorted(data.get("records", []), key=lambda r: r["ts"])
         self._by_id = {r["id"]: r for r in self.records}
         self.backfilled = bool(data.get("backfilled"))
+        self.channels_filled = bool(data.get("channels_filled"))
 
     def _data(self) -> dict[str, Any]:
-        return {"backfilled": self.backfilled, "records": self.records}
+        return {"backfilled": self.backfilled, "channels_filled": self.channels_filled, "records": self.records}
 
     def schedule_save(self) -> None:
         self._store.async_delay_save(self._data, SAVE_DELAY)
@@ -82,6 +85,15 @@ class HistoryStore:
         """Drop records older than max_days, then the oldest beyond max_count."""
         cutoff = (now or time.time()) - self.max_days * 86400
         keep = [r for r in self.records if r["ts"] >= cutoff][-self.max_count :] if self.max_count > 0 else []
+        if len(keep) == len(self.records):
+            return False
+        self.records = keep
+        self._by_id = {r["id"]: r for r in keep}
+        return True
+
+    def drop(self, predicate: Callable[[dict[str, Any]], bool]) -> bool:
+        """Remove the records matching predicate; True if any was removed."""
+        keep = [r for r in self.records if not predicate(r)]
         if len(keep) == len(self.records):
             return False
         self.records = keep

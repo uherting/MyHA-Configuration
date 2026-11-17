@@ -27,7 +27,9 @@
           "scan_interval_hours": "Analizar automáticamente cada (horas, 0 = desactivado)",
           "stale_hours": "Notificar sensores sin valores nuevos tras (horas, 0 = desactivado)",
           "history_days": "Conservar los historiales durante (días)",
-          "watch_hours": "Vigilar tras las actualizaciones (horas, 0 = desactivado)"
+          "watch_hours": "Vigilar tras las actualizaciones (horas, 0 = desactivado)",
+          "refresh_recorder_views": "Actualizar las vistas lentas en segundo plano",
+          "outage_scan_mode": "Análisis tras fallos"
         },
         "data_description": {
           "show_in_sidebar": "Muestra Housekeeper en la barra lateral. Desactivado: el panel sigue accesible desde la página de la integración y en /ha-housekeeper.",
@@ -40,7 +42,9 @@
           "scan_interval_hours": "Housekeeper analiza por sí mismo con este intervalo; las caídas y las actualizaciones añaden análisis adicionales.",
           "stale_hours": "Un sensor que no ha enviado ningún valor nuevo durante este tiempo se notifica como que ya no informa.",
           "history_days": "Cuánto tiempo se conserva el historial de los análisis y de las funciones del hogar.",
-          "watch_hours": "Cuánto tiempo se hacen análisis adicionales tras una actualización, para mostrar qué ha dejado de funcionar con ella."
+          "watch_hours": "Cuánto tiempo se hacen análisis adicionales tras una actualización, para mostrar qué ha dejado de funcionar con ella.",
+          "refresh_recorder_views": "Mantiene al día las vistas de fiabilidad, tormentas, estado de la base de datos y costes consultando la base de datos en segundo plano (cada 30 minutos hasta una vez al día), una vez que se han abierto. Desactivado: se actualizan al abrirlas, lo que en un dispositivo pequeño puede tardar unos segundos.",
+          "outage_scan_mode": "Con qué frecuencia un fallo puede iniciar un análisis adicional. Automático: poco después de alcanzar el primer nivel, con más separación si un análisis es lento. Como máximo una vez por intervalo de análisis: para dispositivos lentos; los fallos aparecen como hallazgos con el siguiente análisis. Desactivado: los fallos no inician ningún análisis propio."
         }
       }
     },
@@ -595,6 +599,15 @@
     },
     "plan_blocked": {
       "message": "El plan está bloqueado: {detail}."
+    }
+  },
+  "selector": {
+    "outage_scan_mode": {
+      "options": {
+        "auto": "Automático",
+        "interval": "Como máximo una vez por intervalo de análisis",
+        "off": "Desactivado"
+      }
     }
   }
 }

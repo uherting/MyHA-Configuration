@@ -1,6 +1,14 @@
 {
   "domain": "thermal_comfort",
   "name": "Thermal Comfort",
+  "after_dependencies": [
+    "frontend",
+    "http"
+  ],
+  "categories": [
+    "helpers.calculate_value",
+    "sensors.temperature_humidity"
+  ],
   "codeowners": [
     "@dolezsa"
   ],
@@ -8,5 +16,5 @@
   "documentation": "https://github.com/dolezsa/thermal_comfort/blob/master/README.md",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/dolezsa/thermal_comfort/issues",
-  "version": "3.1.0"
+  "version": "3.2.0"
 }

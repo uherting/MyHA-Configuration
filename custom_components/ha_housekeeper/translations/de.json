@@ -27,7 +27,9 @@
           "scan_interval_hours": "Automatisch scannen alle (Stunden, 0 = aus)",
           "stale_hours": "Sensoren ohne neue Werte melden nach (Stunden, 0 = aus)",
           "history_days": "Verläufe aufbewahren (Tage)",
-          "watch_hours": "Nach Updates beobachten (Stunden, 0 = aus)"
+          "watch_hours": "Nach Updates beobachten (Stunden, 0 = aus)",
+          "refresh_recorder_views": "Langsame Ansichten im Hintergrund erneuern",
+          "outage_scan_mode": "Scan nach Ausfällen"
         },
         "data_description": {
           "show_in_sidebar": "Zeigt Housekeeper in der Seitenleiste. Aus: das Panel bleibt über die Integrationsseite und /ha-housekeeper erreichbar.",
@@ -40,7 +42,9 @@
           "scan_interval_hours": "Housekeeper scannt in diesem Abstand von selbst; Ausfälle und Updates bringen zusätzliche Scans.",
           "stale_hours": "Ein Sensor, der so lange keinen neuen Wert geschickt hat, wird als nicht mehr meldend gemeldet.",
           "history_days": "Wie lange der Verlauf der Scans und der Hausfunktionen aufbewahrt wird.",
-          "watch_hours": "Wie lange nach einem Update zusätzliche Scans laufen, um zu zeigen, was danach nicht mehr geht."
+          "watch_hours": "Wie lange nach einem Update zusätzliche Scans laufen, um zu zeigen, was danach nicht mehr geht.",
+          "refresh_recorder_views": "Hält die Ansichten Zuverlässigkeit, Störungen, Datenbank-Gesundheit und Kosten aktuell, indem sie die Datenbank im Hintergrund abfragt (alle 30 Minuten bis einmal am Tag), sobald sie einmal geöffnet wurden. Aus: Sie werden beim Öffnen erneuert, was auf einem kleinen Gerät einige Sekunden dauern kann.",
+          "outage_scan_mode": "Wie oft ein Ausfall einen zusätzlichen Scan auslösen darf. Automatisch: bald nach Erreichen der ersten Stufe, bei langsamen Scans mit größerem Abstand. Höchstens einmal je Scan-Intervall: für langsame Geräte; Ausfälle erscheinen erst mit dem nächsten Scan als Befund. Aus: Ausfälle lösen keinen eigenen Scan aus."
         }
       }
     },
@@ -597,6 +601,15 @@
     },
     "plan_blocked": {
       "message": "Der Plan ist gesperrt: {detail}."
+    }
+  },
+  "selector": {
+    "outage_scan_mode": {
+      "options": {
+        "auto": "Automatisch",
+        "interval": "Höchstens einmal je Scan-Intervall",
+        "off": "Aus"
+      }
     }
   }
 }

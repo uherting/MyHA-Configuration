@@ -14,6 +14,7 @@ from .const import (
     CONF_LOGBOOK,
     CONF_MAX_COUNT,
     CONF_MAX_DAYS,
+    CONF_PERSISTENT,
     CONF_TARGETS,
     DEFAULT_MAX_COUNT,
     DEFAULT_MAX_DAYS,
@@ -22,6 +23,7 @@ from .const import (
 )
 from .frontend import async_register_frontend
 from .manager import HistoryManager
+from .normalize import is_command
 from .store import HistoryStore
 from . import websocket
 
@@ -59,7 +61,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     await store.async_load()
     store.purge()
-    manager = HistoryManager(hass, store, list(options.get(CONF_TARGETS, [])), bool(options.get(CONF_LOGBOOK)))
+    # Commands recorded by older versions (TTS before 1.1.1) are not notifications.
+    if store.drop(lambda r: is_command(r.get("message"))):
+        store.schedule_save()
+    manager = HistoryManager(
+        hass,
+        store,
+        list(options.get(CONF_TARGETS, [])),
+        bool(options.get(CONF_LOGBOOK)),
+        bool(options.get(CONF_PERSISTENT)),
+    )
     hass.data[DOMAIN] = manager
     await manager.async_start()
     await async_register_frontend(hass)

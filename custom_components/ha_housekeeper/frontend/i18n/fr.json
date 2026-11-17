@@ -6642,5 +6642,15 @@
 "relGroupPlace": "Où se trouve-t-il ?",
 "relPlace": "Emplacement",
 "selAllOfList": "Tous les {count} de la liste",
-"selOverMax": "{n} sur {max} max."
+"selOverMax": "{n} sur {max} max.",
+"loadGroupTitle": "Charge sur les petits appareils",
+"outageScanTitle": "Scan après les pannes",
+"outageScanHint": "À quelle fréquence une panne peut déclencher un scan supplémentaire. Automatique : peu après l’atteinte du premier niveau, avec un écart plus grand si un scan est lent. Au plus une fois par intervalle de scan : pour les appareils lents ; les pannes apparaissent comme constats au scan suivant. Désactivé : les pannes ne déclenchent aucun scan.",
+"outageScan_auto": "Automatique",
+"outageScan_interval": "Au plus une fois par intervalle de scan",
+"outageScan_off": "Désactivé",
+"refreshViewsTitle": "Actualiser les vues lentes en arrière-plan",
+"refreshViewsHint": "Maintient à jour fiabilité, tempêtes, santé de la base de données et coûts en interrogeant la base en arrière-plan (toutes les 30 minutes jusqu’à une fois par jour), une fois la vue ouverte. Désactivé : elles s’actualisent à l’ouverture, ce qui peut prendre quelques secondes sur un petit appareil.",
+"outageScanShort": "À quelle fréquence une panne déclenche un scan supplémentaire.",
+"refreshViewsShort": "Maintient à jour en arrière-plan les vues lentes de la base de données."
 }

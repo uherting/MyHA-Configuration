@@ -135,6 +135,22 @@ def _review_due(rule: dict[str, Any], now: datetime) -> bool:
         return False
 
 
+_MISSING = object()
+
+
+def device_entry_ids(device: Any) -> tuple[str, ...]:
+    """The config entries of a device.
+
+    Home Assistant 2026.11 gives a device one entry (``config_entry_id``) and reports every read of
+    the old ``config_entries`` as a deprecated use, which costs milliseconds each time (the stack is
+    searched). Only a version without ``config_entry_id`` is asked for ``config_entries``.
+    """
+    entry_id: Any = getattr(device, "config_entry_id", _MISSING)
+    if entry_id is _MISSING:
+        return tuple(getattr(device, "config_entries", None) or ())
+    return (entry_id,) if entry_id else ()
+
+
 def traits(hass: HomeAssistant, object_type: str, object_id: str) -> Traits | None:
     """What counts for an entity or a device; None for anything else."""
     devices = dr.async_get(hass)
@@ -142,7 +158,7 @@ def traits(hass: HomeAssistant, object_type: str, object_id: str) -> Traits | No
         device = devices.async_get(object_id)
         if device is None:
             return None
-        entries = (hass.config_entries.async_get_entry(i) for i in device.config_entries)
+        entries = (hass.config_entries.async_get_entry(i) for i in device_entry_ids(device))
         return Traits(
             device.area_id,
             frozenset(device.labels),

@@ -13,6 +13,7 @@ from .const import (
     CONF_LOGBOOK,
     CONF_MAX_COUNT,
     CONF_MAX_DAYS,
+    CONF_PERSISTENT,
     CONF_TARGETS,
     DEFAULT_MAX_COUNT,
     DEFAULT_MAX_DAYS,
@@ -43,6 +44,7 @@ def _schema(hass: HomeAssistant, current: dict[str, Any]) -> vol.Schema:
                 selector.NumberSelectorConfig(min=10, max=10000, step=10, mode=selector.NumberSelectorMode.BOX)
             ),
             vol.Required(CONF_LOGBOOK, default=current.get(CONF_LOGBOOK, False)): selector.BooleanSelector(),
+            vol.Required(CONF_PERSISTENT, default=current.get(CONF_PERSISTENT, False)): selector.BooleanSelector(),
         }
     )
 
@@ -53,6 +55,7 @@ def _clean(user_input: dict[str, Any]) -> dict[str, Any]:
         CONF_MAX_DAYS: int(user_input[CONF_MAX_DAYS]),
         CONF_MAX_COUNT: int(user_input[CONF_MAX_COUNT]),
         CONF_LOGBOOK: bool(user_input[CONF_LOGBOOK]),
+        CONF_PERSISTENT: bool(user_input.get(CONF_PERSISTENT, False)),
     }
 
 

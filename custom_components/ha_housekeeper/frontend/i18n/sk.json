@@ -7177,5 +7177,15 @@
 "relGroupPlace": "Kde sa nachádza?",
 "relPlace": "Umiestnenie",
 "selAllOfList": "Všetkých {count} v zozname",
-"selOverMax": "{n} z max. {max}"
+"selOverMax": "{n} z max. {max}",
+"loadGroupTitle": "Zaťaženie malých zariadení",
+"outageScanTitle": "Kontrola po výpadkoch",
+"outageScanHint": "Ako často môže výpadok spustiť dodatočnú kontrolu. Automaticky: krátko po dosiahnutí prvej úrovne, s väčším odstupom pri pomalej kontrole. Najviac raz za interval kontroly: pre pomalé zariadenia; výpadky sa zobrazia ako zistenia pri ďalšej kontrole. Vypnuté: výpadky nespúšťajú vlastnú kontrolu.",
+"outageScan_auto": "Automaticky",
+"outageScan_interval": "Najviac raz za interval kontroly",
+"outageScan_off": "Vypnuté",
+"refreshViewsTitle": "Aktualizovať pomalé zobrazenia na pozadí",
+"refreshViewsHint": "Udržiava aktuálne spoľahlivosť, búrky, stav databázy a náklady dopytovaním databázy na pozadí (od každých 30 minút po raz denne), akonáhle bolo zobrazenie otvorené. Vypnuté: aktualizujú sa pri otvorení, čo môže na malom zariadení trvať niekoľko sekúnd.",
+"outageScanShort": "Ako často výpadok spustí dodatočnú kontrolu.",
+"refreshViewsShort": "Udržiava pomalé zobrazenia databázy aktuálne na pozadí."
 }

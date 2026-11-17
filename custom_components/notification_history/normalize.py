@@ -4,12 +4,14 @@ Pure functions, no Home Assistant import: they are tested on real call payloads.
 """
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from .const import COMMAND_MESSAGES, COMMAND_PREFIXES, STATUS_SENT
 
 VIDEO_EXT = (".mp4", ".mov", ".m4v", ".webm")
 AUDIO_EXT = (".mp3", ".m4a", ".wav", ".aac", ".caf")
+CAMERA_RE = re.compile(r"camera\.[a-z0-9_]+")
 
 
 def _str(value: Any) -> str | None:
@@ -50,6 +52,17 @@ def _media(data: dict[str, Any]) -> dict[str, str | None]:
         else:
             image = url
     return {"image": image, "video": video, "audio": audio}
+
+
+def _camera(data: dict[str, Any]) -> str | None:
+    """iOS shows a camera live in the notification with data.entity_id: camera.xxx.
+
+    Only a well-formed camera entity id is kept: the card builds a URL from it.
+    """
+    entity_id = _str(data.get("entity_id"))
+    if entity_id and CAMERA_RE.fullmatch(entity_id):
+        return entity_id
+    return None
 
 
 def _actions(data: dict[str, Any]) -> list[dict[str, str]]:
@@ -106,6 +119,9 @@ def normalize_call(
         "actions": _actions(data),
         "tag": _str(data.get("tag")),
         "group": _str(data.get("group")),
+        # Android notification channel (sound, importance…); iOS has none.
+        "channel": _str(data.get("channel")),
+        "camera": _camera(data),
         "sub_targets": _as_list(service_data.get("target")),
         "context_id": context_id,
         "sent_by": user_id,

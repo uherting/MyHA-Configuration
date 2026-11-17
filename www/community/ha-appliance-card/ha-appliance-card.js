@@ -1,5 +1,5 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
-const CARD_VERSION = "4.23.1";
+const CARD_VERSION = "4.27.0";
 
 console.info(
   "%c HA-APPLIANCE-CARD %c v" + CARD_VERSION + " ",
@@ -24,8 +24,6 @@ const T = {
     connected: "Connected", disconnected: "Disconnected",
     start: "Start", pause: "Pause", resume: "Resume", stop: "Stop",
     name: "Name", icon: "Icon", entity: "Entity",
-    main_settings: "Main entities", display_settings: "Display",
-    action_settings: "Controls",
     group_general: "General settings",
     compact: "Compact mode (hide icon)",
     state_show_raw: "Always show the entity's raw text instead of the translated label",
@@ -78,7 +76,7 @@ const T = {
     power_level: "Power level", child_lock: "Child lock",
     residual_heat: "Residual heat", boost: "Boost",
     light: "Light", filter_reset: "Reset filter",
-    zone: "Zone", zones_active: "active zones",
+    zone: "Zone",
     section_target_temperature: "Target temperature", section_current_temperature: "Current temperature",
     section_light: "Light", section_heating: "Heating indicator",
     section_power_level: "Power level", section_fan: "Fan",
@@ -134,7 +132,7 @@ const T = {
     layout_open: "Open frame (moving bed)", unit_hours: "Hours", p3_nozzle: "Nozzle",
     p3_bed: "Bed", p3_chamber: "Chamber", p3_layer: "Layer",
     p3_file: "File", p3_printing: "Printing", p3_preparing: "Preparing",
-    p3_cancelled: "Cancelled", p3_failed: "Failed", p3_offline: "Offline",
+    p3_cancelled: "Cancelled", p3_failed: "Failed", p3_offline: "Offline", p3_off: "Off",
     p3_attention: "Needs attention", p3_leveling: "Bed levelling", p3_filament: "Changing filament",
     p3_cooling: "Cooling", p3_calibrating: "Calibrating", p3_homing: "Homing",
     section_printed_part: "Printed part", part_cube: "Cube", part_pyramid: "Pyramid", part_duck: "Rubber duck",
@@ -149,9 +147,9 @@ const T = {
     source: "Source", source_plug: "A smart plug", source_integration: "Integration entities", plug_switch: "Smart plug switch",
     type_thermostat: "Thermostat", section_thermostat_layout: "Model", layout_th_square: "Square", layout_th_round: "Round", layout_th_glass: "Black glass", layout_th_valve: "Radiator valve", th_idle: "Target reached", th_eco: "Eco", th_away: "Away", th_frost: "Frost protection", th_window: "Window open", th_line_valve: "Valve", section_thermostat: "Room thermostat",
     compact_lines: "Information", lines_below: "Under the card", lines_beside: "Beside the drawing", lines_toggle: "Hidden, a chevron shows them", lines_show: "Show the information", lines_hide: "Hide the information",
-    type_mobility: "Electric ride", layout_mob_scooter: "Scooter", layout_mob_offroad: "Off-road scooter", layout_mob_ebike: "E-bike", layout_mob_gyropode: "Gyropode", layout_mob_motorcycle: "Electric motorcycle", mob_charging: "Charging", mob_charged: "Charged", mob_unplugged: "Unplugged", mob_plugged: "Plugged in", type_hair_dryer: "Hair dryer", layout_hd_pistol: "Classic", layout_hd_ring: "Ring", hd_cool: "Cool air", hd_hot: "Hot air", hd_heat_threshold: "Hot air above this power (W)", fill_height: "Fill the height of its slot", done_alert: "Flash at the end of the cycle", done_seen: "Seen", no_power_threshold: "No power draw below (W)", group_appearance: "Appearance", show_name: "Show the name", show_state: "Show the state", transparent: "Transparent background", font_scale: "Text size", illustration_size: "Drawing size", compact_mode: "Compact mode", compact_off: "Off", compact_hide: "No drawing", compact_side: "Drawing on the side", group_laundry: "Laundry", group_kitchen: "Kitchen", group_heating: "Heating and hot water", group_air: "Air and climate", group_home: "Home and media", group_pets: "Pets", illustration_frame: "Same drawing height as the cards beside it", section_screen_source: "Input source", screen_source: "Input",
+    type_mobility: "Electric ride", layout_mob_scooter: "Scooter", layout_mob_offroad: "Off-road scooter", layout_mob_ebike: "E-bike", layout_mob_gyropode: "Gyropode", layout_mob_motorcycle: "Electric motorcycle", mob_charging: "Charging", mob_charged: "Charged", mob_unplugged: "Unplugged", mob_plugged: "Plugged in", type_hair_dryer: "Hair dryer", layout_hd_pistol: "Classic", layout_hd_ring: "Ring", hd_cool: "Cool air", hd_hot: "Hot air", hd_heat_threshold: "Hot air above this power (W)", fill_height: "Fill the height of its slot", done_alert: "Flash at the end of the cycle", done_seen: "Seen", no_power_threshold: "No power draw below (W)", group_appearance: "Appearance", show_name: "Show the name", show_state: "Show the state", values_right: "Values on the right", transparent: "Transparent background", font_scale: "Text size", illustration_size: "Drawing size", compact_mode: "Compact mode", compact_off: "Off", compact_hide: "No drawing", compact_side: "Drawing on the side", group_laundry: "Laundry", group_kitchen: "Kitchen", group_heating: "Heating and hot water", group_air: "Air and climate", group_home: "Home and media", group_pets: "Pets", illustration_frame: "Same drawing height as the cards beside it", section_screen_source: "Input source", screen_source: "Input",
     type_network: "Network device (switch, NAS, server)", group_network: "Network and servers", layout_net_switch: "Switch", layout_net_server: "Server", layout_net_nas: "NAS", layout_net_rack: "Rack", net_ports_count: "Ports drawn", net_bays: "NAS bays", net_online: "Online", net_busy: "Busy", net_alert: "Alert", net_warn: "Disk to watch", section_net_cpu: "CPU usage (%)", section_net_memory: "Memory usage (%)", section_net_volume: "Volume used (%)", section_net_download: "Download rate", section_net_upload: "Upload rate", section_net_ports: "Active ports", net_ports_total: "Port count", section_net_poe: "PoE power", section_net_problem: "Problem alert", section_net_temperature: "Temperature", net_temp_alert: "Alert above this temperature (\u00b0C)", net_busy_threshold: "Busy above this rate (Mbit/s)", net_line_rate: "Throughput", net_line_load: "Load", net_line_volume: "Volume", section_net_disk1: "Disk 1", section_net_disk2: "Disk 2", section_net_disk3: "Disk 3", section_net_disk4: "Disk 4",
-    type_robot: "Robot (vacuum, mop, mower)", layout_robot_vacuum: "Robot vacuum", layout_robot_mop: "Mopping robot", layout_robot_combo: "Vacuum and mop robot", layout_robot_mower: "Robot mower", section_robot_station: "Base", robot_station_station: "Emptying or washing station", robot_station_base: "Charging base only", robot_shelter: "Shelter over the base", robot_shelter_style: "Shelter style", mower_style: "Mower style", mower_classic: "Classic", mower_navimow: "Navimow, orange wheels", shelter_lean_to: "Wooden lean-to", shelter_shell: "Shell", shelter_garage: "Garage", robot_shelter_color: "Shell colour", delay_starts_in: "Starts in", section_delay: "Delayed start countdown", state_entity_optional: "State entity (optional)", color_green: "Green", color_orange: "Orange", robot_charging: "Charging", robot_docked: "Docked", robot_cleaning: "Cleaning", robot_mopping: "Mopping", robot_mowing: "Mowing", robot_edgecut: "Edge cutting", robot_returning: "Returning to base", robot_emptying: "Emptying the bin", robot_bin_full: "Bin full", robot_bag_full: "Bag full", robot_washing: "Washing the pads", robot_drying: "Drying the pads", robot_water_empty: "Water tank empty", robot_rain: "Rain delay", robot_idle: "Stopped", section_robot_status: "Detailed status", section_battery: "Battery", section_robot_bin: "Bin full alert", section_robot_water: "Water tank", section_robot_rain: "Rain", section_robot_error: "Error", robot_station_box: "Rectangular station", robot_station_color: "Station colour", color_gold: "Gold", robot_camera: "Camera module on the robot", section_robot_clean_tank: "Clean water", section_robot_dirty_tank: "Dirty water",
+    type_robot: "Robot (vacuum, mop, mower)", layout_robot_vacuum: "Robot vacuum", layout_robot_mop: "Mopping robot", layout_robot_combo: "Vacuum and mop robot", layout_robot_mower: "Robot mower", section_robot_station: "Base", robot_station_station: "Emptying or washing station", robot_station_base: "Charging base only", robot_shelter: "Shelter over the base", robot_shelter_style: "Shelter style", mower_style: "Mower style", mower_classic: "Classic", mower_navimow: "Navimow, orange wheels", shelter_lean_to: "Wooden lean-to", shelter_shell: "Shell", shelter_garage: "Garage", robot_shelter_color: "Shell colour", delay_starts_in: "Starts in", section_delay: "Delayed start countdown", state_entity_optional: "State entity (optional)", color_green: "Green", color_orange: "Orange", robot_charging: "Charging", robot_docked: "Docked", robot_cleaning: "Cleaning", robot_mopping: "Mopping", robot_mowing: "Mowing", robot_edgecut: "Edge cutting", robot_returning: "Returning to base", robot_emptying: "Emptying the bin", robot_bin_full: "Bin full", robot_low_battery: "Low battery", robot_bag_full: "Bag full", robot_washing: "Washing the pads", robot_drying: "Drying the pads", robot_water_empty: "Water tank empty", robot_rain: "Rain delay", robot_idle: "Stopped", section_robot_status: "Detailed status", section_battery: "Battery", section_robot_bin: "Bin full alert", section_robot_water: "Water tank", section_robot_rain: "Rain", section_robot_error: "Error", robot_station_box: "Rectangular station", robot_station_color: "Station colour", color_gold: "Gold", robot_camera: "Camera module on the robot", section_robot_clean_tank: "Clean water", section_robot_dirty_tank: "Dirty water",
     type_pool_pump: "Pool pump", pool_filtering: "Filtering", pool_chlorinating: "Chlorine injection", pool_backwash: "Backwash", pool_frost: "Frost protection", pool_light_on: "light on", section_water_temperature: "Water temperature", section_air_temperature: "Air temperature", section_ph: "pH", section_redox: "RedOx (ORP)", section_filtration_time: "Filtration time today", section_pressure: "Filter pressure", pool_pressure_alert: "Alert above this pressure (bar)", section_pool_mode: "Pump mode", section_chlorine_pump: "Chlorine pump", section_chlorine_level: "Chlorine tank level", section_backwash: "Backwash", section_frost: "Frost protection", section_pool_alert: "Alert", pool_line_water: "Water", pool_line_air: "Air", pool_line_filtered: "Filtered today", pool_line_pressure: "Pressure", pool_line_chlorine: "Chlorine tank", pool_line_mode: "Mode",
     history_last: "Last {h} h", show_history: "Show the history", section_history: "History sensor", history_hours: "Hours of history", history_empty: "No history yet", history_last_days: "Last {d} days", history_chip_h: "{h} h", history_chip_d: "{d} d", history_periods: "History periods", history_total: "Total", delay_set: "Delayed start", delay_none: "None", section_delay_set: "Delayed start setting", hide_when_off: "Show only the state when off", robot_winter: "Winter storage", section_robot_winter: "Winter storage switch",
     type_scale: "Bathroom scale", scale_weighed: "Weighed", scale_goal_reached: "Goal reached", section_weight_goal: "Weight goal", scale_goal_value: "Weight goal, without a sensor", section_fat_ratio: "Body fat (%)", section_fat_mass: "Fat mass", section_muscle_mass: "Muscle mass", section_bone_mass: "Bone mass", scale_line_goal: "Goal", scale_line_fat: "Fat", scale_line_muscle: "Muscle", scale_line_bone: "Bone", scale_to_lose: "to lose", scale_to_gain: "to gain",
@@ -1436,18 +1434,18 @@ const PRINTER_STATES = {
   error: "error", offline_after_error: "error", halted: "error",
   idle: "idle", standby: "idle", operational: "idle", ready: "idle", available: "idle",
   open_serial: "idle", detect_serial: "idle", connecting: "idle",
-  offline: "offline", off: "offline", shutdown: "offline", disconnected: "offline",
+  offline: "offline", disconnected: "offline", off: "off", shutdown: "off",
 };
 // How each of those runs the card: a cancelled job is over without being
 // finished, and a failed one reads as an error.
 const PRINTER_NORMS = {
   printing: "running", preparing: "running", preheating: "preheating", paused: "paused", attention: "paused",
-  done: "done", cancelled: "idle", failed: "error", error: "error", idle: "idle", offline: "idle",
+  done: "done", cancelled: "idle", failed: "error", error: "error", idle: "idle", offline: "idle", off: "idle",
 };
 const PRINTER_LABELS = {
   printing: "p3_printing", preparing: "p3_preparing", preheating: "preheating", paused: "paused",
   attention: "p3_attention", done: "done", cancelled: "p3_cancelled", failed: "p3_failed", error: "error",
-  idle: "idle", offline: "p3_offline", leveling: "p3_leveling", filament: "p3_filament",
+  idle: "idle", offline: "p3_offline", off: "p3_off", leveling: "p3_leveling", filament: "p3_filament",
   cooling: "p3_cooling", calibrating: "p3_calibrating", homing: "p3_homing",
 };
 // The same warm tone as every heater on the card, and the cold blue of the
@@ -2397,12 +2395,16 @@ function programLabel(hass, st, raw, cfg) {
   return cleanProgramName(raw);
 }
 
+// What Home Assistant itself writes in every entity's attributes: never an
+// alert. An entity gone offline keeps only these, restored among them (#105).
+const ALERT_META_ATTRS = ["icon", "friendly_name", "device_class", "unit_of_measurement", "restored", "assumed_state",
+  "supported_features", "editable", "attribution", "entity_picture", "state_class", "options"];
 function activeAlerts(hass, entityId) {
   const st = stateObj(hass, entityId);
-  if (!st) return [];
+  if (!st || String(st.state).toLowerCase() === "unavailable") return [];
   const active = [];
   for (const [key, val] of Object.entries(st.attributes)) {
-    if (["icon", "friendly_name", "device_class", "unit_of_measurement", DEVICE_ATTR].includes(key)) continue;
+    if (ALERT_META_ATTRS.includes(key) || key === DEVICE_ATTR) continue;
     const v = String(val).toLowerCase();
     if (v === "on" || v === "true" || v === "1" || v === "active") active.push(key);
   }
@@ -4286,6 +4288,8 @@ const ROBOT_WORDS = [
   ["charging", /charg|dock|base|home|station/],
   ["idle", /idle|ready|standby|stop|sleep|wait/],
 ];
+// What a robot asks for without being stuck (#104).
+const ROBOT_NOTICE_LABELS = { bag: "robot_bag_full", water: "robot_water_empty", dirty: "fw_dirty_full", battery: "robot_low_battery" };
 const ROBOT_LABELS = {
   charging: "robot_charging", docked: "robot_docked", returning: "robot_returning", paused: "paused", idle: "robot_idle",
   error: "error", emptying: "robot_emptying", full: "robot_bin_full", washing: "robot_washing", drying: "robot_drying",
@@ -4410,23 +4414,63 @@ function robotLayoutOf(cfg, st) {
 // tanks are not a full bag either.
 const ROBOT_BAG_RE = /dust_?bag_?(is_)?full|dustbag_?(\w+_)?full|replace_(the_)?dust_?bag|(^|_)bag_(is_)?full|(^|_)sac(_a_poussiere)?_(est_)?plein|staubbeutel_(ist_)?voll|sacchetto(_\w+)?_pieno|bolsa(_\w+)?_llena|stofzak(_\w+)?_vol($|_)|saco(_\w+)?_cheio|dammpasen(_ar)?_full|st(o|\u00f8)vposen(_er)?_ful|worek(_\w+)?_pe(l|\u0142)ny|sacek(_\w+)?_plny|tele_a_porzsak|porzsak(_\w+)?_tele|\u043c\u0435\u0448\u043e\u043a(_\w+)?_\u043f\u043e\u043b\u043e\u043d|\u5c18\u888b\u5df2\u6ee1|\u96c6\u5c18\u888b\u5df2\u6ee1/;
 const ROBOT_BAG_NOT_RE = /collection_bag|ou_le_conduit|(^|_)(not|pas|nicht|kein|non|no|niet|ikke|inte|nie|ne)_(\w+_)?(full|plein|voll|pieno|llena|vol|cheio|ful|pelny|pe\u0142ny|plny)/;
-function robotBagWord(v) {
-  const s = stripAccents(String(v === undefined || v === null ? "" : v)).trim().toLowerCase().replace(/[\s.,;:!'\u2019()-]+/g, "_");
-  return !!s && ROBOT_BAG_RE.test(s) && !ROBOT_BAG_NOT_RE.test(s);
-}
 const ROBOT_BAG_ATTRS = ["description", "message", "error", "error_message", "last_error_message", "status"];
-// An entity, or the robot itself, that says its bag is full: its state, or
-// the sentence an integration puts beside a code (Ecovacs' description).
-function robotEntityBag(hass, entityId, s) {
-  const st = s || (entityId ? stateObj(hass, entityId) : null);
-  if (!st) return false;
-  if (robotBagWord(st.state)) return true;
-  const a = st.attributes || {};
-  return ROBOT_BAG_ATTRS.some((k) => typeof a[k] === "string" && robotBagWord(a[k]));
+// The other things a robot asks for without being stuck (#104): its water
+// tank empty, the station's dirty water full, its battery low. Worded in a
+// key, a code's description or a sentence, in any language. A dirty tank is
+// never the clean one, and a water box missing or a battery fault are faults.
+const ROBOT_DIRTY_WORD_RE = /dirty|waste|sewage|used_water|(^|_)(sale|sales|usee|usees)($|_)|schmutz|abwasser|vuil|sporc|sucia|sujo|suja|smuts|skitt|snavs|brudn|spinav|szenny|\u0433\u0440\u044f\u0437\u043d|\u6c61/;
+const ROBOT_FULL_WORD_RE = /(^|_)(full|plein|pleine|voll|pieno|piena|lleno|llena|vol|cheio|cheia|fuld|pelny|pe\u0142ny|plny|plna|tele|hoare)($|_)|\u043f\u043e\u043b\u043e\u043d|\u5df2?\u6ee1/;
+const ROBOT_WATER_WORD_RE = /water|wasser|(^|_)(d_)?eau($|_)|(^|_)(agua|acqua|agu|vand|vann|vatten|wody|woda|vody|voda|viz|v\u00edz)|vandtank|vanntank|vattentank|viztartaly|\u0432\u043e\u0434|\u6c34/;
+const ROBOT_EMPTY_WORD_RE = /(^|_)(empty|vide|leer|vacio|vuoto|hoare|leeg|tom|tomt|pusty|pusta|prazdna|prazdny|ures|vazio|vazia)($|_)|insufficient|(^|_)lack|manque|shortage|(^|_)(low|no|kein|pas_d|sans)_(\w+_)?(water|wasser|eau|agua|acqua)($|_)|(water|wasser|eau)_(low|bas|niedrig|insuffisant)|\u043f\u0443\u0441\u0442|\u7f3a\u6c34|\u5df2\u7a7a/;
+const ROBOT_NOT_RE = /emptying|(^|_)(not|pas|nicht|kein|non|no|niet|ikke|inte|nie|ne)_(\w+_)?(full|plein|voll|pieno|llena|lleno|vol|cheio|ful|fuld|pelny|pe\u0142ny|plny|empty|vide|leer|vuoto|vacio|leeg|tom)($|_)|missing|not_installed|absent|(^|_)install/;
+const ROBOT_BATT_RE = /low_?(power|battery|batt)|battery_(is_)?(low|weak)|batt_low|batterie_(est_)?(faible|basse|presque_vide|vide)|niveau_de_batterie_(bas|faible)|akku(stand)?_(ist_)?(schwach|leer|fast_leer|niedrig)|niedriger_akku|bateria_(baja|agotada|fraca|baixa|descargada)|batteria_(scarica|bassa|quasi_scarica)|batterij_(bijna_leeg|laag|leeg)|lage_batterij|(lagt|lavt|lav)_batteri|batteri(et)?_(lavt|lagt|svagt|lav)|niski_poziom_baterii|(slaba|vybita)_bater|alacsony_(akku|toltottseg)|\u043d\u0438\u0437\u043a\w*_\u0437\u0430\u0440\u044f\u0434|\u0440\u0430\u0437\u0440\u044f\u0436|\u7535\u91cf(\u4f4e|\u4e0d\u8db3)|\u7535\u6c60\u7535\u91cf\u4f4e/;
+const ROBOT_BATT_NOT_RE = /battery_(error|fault|abnormal|temperature)|batterie_(defectueuse|en_erreur)|not_low/;
+function robotNoticeWord(v) {
+  const s = stripAccents(String(v === undefined || v === null ? "" : v)).trim().toLowerCase().replace(/[\s.,;:!'\u2019()/-]+/g, "_");
+  if (!s) return "";
+  if (ROBOT_BAG_RE.test(s) && !ROBOT_BAG_NOT_RE.test(s)) return "bag";
+  if (ROBOT_DIRTY_WORD_RE.test(s) && ROBOT_FULL_WORD_RE.test(s) && !ROBOT_NOT_RE.test(s)) return "dirty";
+  if (!ROBOT_DIRTY_WORD_RE.test(s) && ROBOT_WATER_WORD_RE.test(s) && ROBOT_EMPTY_WORD_RE.test(s) && !ROBOT_NOT_RE.test(s)) return "water";
+  if (ROBOT_BATT_RE.test(s) && !ROBOT_BATT_NOT_RE.test(s)) return "battery";
+  return "";
 }
-function robotBagFull(hass, cfg, st) {
-  return [cfg.robot_error_entity, cfg.robot_status_entity, cfg.robot_bin_entity].some((id) => id && robotEntityBag(hass, id))
-    || robotEntityBag(hass, null, st);
+// An entity, or the robot itself, that asks for something: its state, or
+// the sentence an integration puts beside a code (Ecovacs' description).
+function robotEntityNotice(hass, entityId, s) {
+  const st = s || (entityId ? stateObj(hass, entityId) : null);
+  if (!st) return "";
+  const n = robotNoticeWord(st.state);
+  if (n) return n;
+  const a = st.attributes || {};
+  for (const k of ROBOT_BAG_ATTRS) {
+    const w = typeof a[k] === "string" ? robotNoticeWord(a[k]) : "";
+    if (w) return w;
+  }
+  return "";
+}
+function robotEntityBag(hass, entityId, s) {
+  return robotEntityNotice(hass, entityId, s) === "bag";
+}
+// What the robot asks for, the bag first: from its error, its status, its
+// bin entity, then its own state's attributes. A level the card can read
+// says better: a battery back above 30 %, a tank that says otherwise, and
+// the stale word is dropped (#104).
+function robotNoticeOf(hass, cfg, st) {
+  let n = "";
+  for (const id of [cfg.robot_error_entity, cfg.robot_status_entity, cfg.robot_bin_entity]) {
+    n = id ? robotEntityNotice(hass, id) : "";
+    if (n) break;
+  }
+  if (!n) n = robotEntityNotice(hass, null, st);
+  if (n === "battery") {
+    const b = robotBattery(hass, cfg, st);
+    if (b !== null && b >= 30) return "";
+  } else if (n === "water" || n === "dirty") {
+    const tk = robotTank(hass, n === "water" ? cfg.robot_clean_tank_entity : cfg.robot_dirty_tank_entity);
+    if (tk && (tk.pct !== null ? (n === "water" ? tk.pct > 15 : tk.pct < 85) : tk.raised === false)) return "";
+  }
+  return n;
 }
 
 // An entity that raises something: a binary sensor on, a sensor that says
@@ -4451,8 +4495,9 @@ function robotModeOf(hass, cfg, st, layout) {
   let mode = ROBOT_STATES[raw] || robotWord(raw) || "";
   const statusSt = cfg.robot_status_entity ? stateObj(hass, cfg.robot_status_entity) : null;
   const statusText = statusSt ? statusSt.state : st && st.attributes ? st.attributes.status : "";
-  // A full bag worded "full or the vents are blocked" is not an error.
-  const detail = robotBagWord(statusText) ? "" : robotWord(statusText);
+  // A full bag worded "full or the vents are blocked" is not an error, nor
+  // an empty tank or a low battery (#104).
+  const detail = robotNoticeWord(statusText) ? "" : robotWord(statusText);
   if (!mode) mode = detail || "idle";
   const edge = mode === "edgecut" || detail === "edgecut";
   if (mode === "edgecut") mode = "cleaning";
@@ -4464,12 +4509,15 @@ function robotModeOf(hass, cfg, st, layout) {
     else if (["full", "empty", "rain"].includes(detail) && ["charging", "idle", "paused"].includes(mode)) mode = detail;
   }
   if (mode === "rain" && layout !== "mower") mode = "charging";
-  const errorBag = !!cfg.robot_error_entity && robotEntityBag(hass, cfg.robot_error_entity);
-  if (mode !== "error" && cfg.robot_error_entity && !errorBag && robotRaised(hass, cfg.robot_error_entity, /./)) mode = "error";
-  // In error for its full bag alone (#104), the robot is at its station: the
-  // bag is said on its own, the robot is not stuck.
-  else if (mode === "error" && detail !== "error" && robotBagFull(hass, cfg, st)
-    && !(cfg.robot_error_entity && !errorBag && robotRaised(hass, cfg.robot_error_entity, /./))) mode = "charging";
+  const errorNotice = !!cfg.robot_error_entity && !!robotEntityNotice(hass, cfg.robot_error_entity);
+  if (mode !== "error" && cfg.robot_error_entity && !errorNotice && robotRaised(hass, cfg.robot_error_entity, /./)) mode = "error";
+  // In error for its full bag or its water alone (#104), the robot is at its
+  // station; for its low battery, it waits where it stopped. Said on its
+  // own: the robot is not stuck.
+  else if (mode === "error" && detail !== "error" && !(cfg.robot_error_entity && !errorNotice && robotRaised(hass, cfg.robot_error_entity, /./))) {
+    const n = robotNoticeOf(hass, cfg, st);
+    if (n) mode = n === "battery" ? "idle" : "charging";
+  }
   const atRest = ["charging", "idle", "paused"].includes(mode);
   if (atRest && layout === "mower" && cfg.robot_rain_entity && robotRaised(hass, cfg.robot_rain_entity, /rain|pluie|regen|delay/)) mode = "rain";
   if (atRest && cfg.robot_bin_entity && !robotEntityBag(hass, cfg.robot_bin_entity) && robotRaised(hass, cfg.robot_bin_entity, /full|plein|voll/)) mode = "full";
@@ -4591,10 +4639,10 @@ const POOL_WORDS = [
   ["running", /^(on|true|1|running|run|filtering|filtration|filtrage|marche|en.?marche|ein|an|encendid|acceso|aan|boost|eco|manual|manuel)$/],
 ];
 const POOL_LABELS = { off: "ac_off", running: "pool_filtering", chlorinating: "pool_chlorinating", backwash: "pool_backwash",
-  frost: "pool_frost", error: "error", unav: "ev_offline" };
+  frost: "pool_frost", error: "error", unav: "ev_offline", winter: "robot_winter" };
 const POOL_COLORS = {
   off: "var(--disabled-text-color, #9e9e9e)", running: "#1e88e5", chlorinating: "#7cb342", backwash: "#8d6e63",
-  frost: "#03a9f4", error: "#f44336", unav: "var(--disabled-text-color, #9e9e9e)",
+  frost: "#03a9f4", error: "#f44336", unav: "var(--disabled-text-color, #9e9e9e)", winter: "#4fa3d8",
 };
 // A pump draws hundreds of watts: below this one it is off.
 const POOL_POWER_W = 50;
@@ -4627,6 +4675,15 @@ function poolOn(hass, entityId) {
   return Number.isFinite(n) && n > 0;
 }
 
+// An appliance put away for the winter (a pool, a spa, the garden watering,
+// a grill under its cover; dosing-tank-card #3, like the mower's #80):
+// ticked in the card, or switched on from an on and off entity.
+function seasonWinter(hass, cfg) {
+  return cfg.winter === true || (!!cfg.winter_entity && robotRaised(hass, cfg.winter_entity, /winter|hiver/));
+}
+const poolWinter = seasonWinter;
+// The types that can be put away for the winter, beside the robots.
+const WINTER_TYPES = ["pool_pump", "irrigation", "spa", "pellet_grill"];
 // What the pump does, from its own state, then from what raises something.
 function poolModeOf(hass, cfg, st, watts) {
   const raw = st ? String(st.state).trim().toLowerCase() : "";
@@ -5483,31 +5540,46 @@ const SPEAKER_LAYOUTS = ["smart", "homepod_mini", "sonos_one", "sonos_era100", "
 // Streaming boxes (#97). The app a box is in: its colour and its mark, read
 // from the app's name or its package. A launcher is the home screen.
 const STR_APPS = [
-  [/netflix/, "#e50914", "#ffffff", "N"],
-  [/youtube.?music/, "#ff0000", "#ffffff", "\u266b"],
-  [/youtube/, "#ff0000", "#ffffff", "\u25b6"],
-  [/disney/, "#0b2c8f", "#ffffff", "D+"],
+  [/netflix/, "#000000", "#e50914", "N", "netflix"],
+  [/youtube.?music/, "#ff0000", "#ffffff", "\u266b", "youtubemusic"],
+  [/youtube/, "#ffffff", "#ff0000", "\u25b6", "youtube"],
+  [/disney.?(\+|plus)|^disney$/, "#0b2c8f", "#ffffff", "D+"],
   [/prime|amazon.?video|amazonvideo|(^|[^a-z])aiv([^a-z]|$)/, "#00a8e1", "#ffffff", "prime"],
-  [/apple.?music/, "#fa2d48", "#ffffff", "\u266b"],
-  [/apple.?tv|com\.apple\.tv|tv\+/, "#111214", "#ffffff", "tv"],
-  [/plex/, "#282a2d", "#e5a00d", "\u276f"],
-  [/spotify/, "#1db954", "#0b0d0f", "\u266b"],
-  [/deezer/, "#a238ff", "#ffffff", "\u266b"],
-  [/twitch/, "#9146ff", "#ffffff", "T"],
+  [/apple.?music|^(musique|music|musik|musica|muziek)$/, "#fa2d48", "#ffffff", "\u266b", "applemusic"],
+  [/podcast/, "#8e44c9", "#ffffff", "\u25c9", "applepodcasts"],
+  [/^(photos|fotos|foto|bilder)$|com\.apple\.(tv)?photos/, "#ffffff", "#ff9500", "\u2740"],
+  [/^fitness$|com\.apple\.fitness/, "#0b0d0f", "#a6ff00", "\u25ce"],
+  [/^arcade$|apple.?arcade/, "#ff2d55", "#ffffff", "A", "applearcade"],
+  [/app.?store/, "#0d84ff", "#ffffff", "A", "appstore"],
+  [/facetime/, "#34c759", "#ffffff", "FT"],
+  [/^(reglages|settings|einstellungen|ajustes|impostazioni|instellingen)$|com\.apple\.(tv)?settings/, "#8e8e93", "#ffffff", "\u2699"],
+  [/apple.?tv|com\.apple\.tv|tv\+/, "#111214", "#ffffff", "tv", "appletv"],
+  [/plex/, "#282a2d", "#e5a00d", "\u276f", "plex"],
+  [/spotify/, "#121212", "#1db954", "\u266b", "spotify"],
+  [/deezer/, "#a238ff", "#ffffff", "\u266b", "deezer"],
+  [/twitch/, "#9146ff", "#ffffff", "T", "twitch"],
   [/canal/, "#0b0d0f", "#ffffff", "C+"],
   [/molotov/, "#1d1d1b", "#ffffff", "M"],
   [/france.?tv|francetv/, "#1d3fbb", "#ffffff", "f.tv"],
-  [/(^|[^a-z])max([^a-z]|$)|hbo/, "#002be7", "#ffffff", "max"],
-  [/crunchyroll/, "#f47521", "#ffffff", "C"],
-  [/kodi|xbmc/, "#17b2e7", "#ffffff", "K"],
+  [/tfou/, "#ff7a00", "#ffffff", "TFOU"],
+  [/okoo/, "#ff4f9a", "#ffffff", "okoo"],
+  [/red.?bull/, "#001e3c", "#ffcc00", "RB"],
+  [/(^|[^a-z])nhl([^a-z]|$)/, "#000000", "#ffffff", "NHL"],
+  [/(^|[^a-z])fis([^a-z]|$)/, "#003d7c", "#ffffff", "FIS"],
+  [/nordvpn/, "#4687ff", "#ffffff", "VPN", "nordvpn"],
+  [/retroarch/, "#2b2b2b", "#ffffff", "RA", "retroarch"],
+  [/(^|[^a-z])max([^a-z]|$)|hbo/, "#002be7", "#ffffff", "max", "max"],
+  [/crunchyroll/, "#f47521", "#ffffff", "C", "crunchyroll"],
+  [/karafun/, "#7b2cbf", "#ffffff", "\u266a"],
+  [/kodi|xbmc/, "#17b2e7", "#ffffff", "K", "kodi"],
   [/arte/, "#f15a29", "#ffffff", "arte"],
   [/tf1/, "#0b3c8c", "#ffffff", "TF1"],
   [/(^|[^a-z0-9])m6([^a-z0-9]|$)|6play/, "#e4004b", "#ffffff", "M6"],
   [/paramount/, "#0064ff", "#ffffff", "P+"],
   [/dazn/, "#0c161c", "#f8ff13", "DAZN"],
-  [/rakuten/, "#bf0000", "#ffffff", "R"],
+  [/rakuten/, "#bf0000", "#ffffff", "R", "rakuten"],
   [/pluto/, "#2d2d2d", "#fff200", "P"],
-  [/vlc/, "#f48b00", "#ffffff", "\u25b6"],
+  [/vlc/, "#f48b00", "#ffffff", "\u25b6", "vlcmediaplayer"],
   [/orange|tv.?d.?orange/, "#ff7900", "#ffffff", "TV"],
 ];
 const STR_HOME_RE = /launcher|leanback|home.?screen|(^|[^a-z])home([^a-z]|$)|tvlauncher|accueil/;
@@ -5528,7 +5600,7 @@ function strAppLook(name, known = false) {
   const s = stripAccents(String(name || "")).toLowerCase();
   if (!s || STR_HOME_RE.test(s)) return null;
   const hit = STR_APPS.find(([re]) => re.test(s));
-  if (hit) return { bg: hit[1], fg: hit[2], mark: hit[3] };
+  if (hit) return { bg: hit[1], fg: hit[2], mark: hit[3], logo: hit[4] || "" };
   if (known) return null;
   const first = String(name).trim().charAt(0).toUpperCase();
   return { bg: "#455a64", fg: "#ffffff", mark: /[A-Z0-9]/.test(first) ? first : "\u25b6" };
@@ -6043,10 +6115,6 @@ const ntFlake = (x, y, r, color, w = .8) =>
   `<path d="M${x} ${y - r}v${2 * r}M${x - r} ${y}h${2 * r}M${x - r * .7} ${y - r * .7}l${r * 1.4} ${r * 1.4}M${x + r * .7} ${y - r * .7}l${-r * 1.4} ${r * 1.4}" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/>`;
 // A puff of smoke: three soft blobs, light grey.
 const ntPuff = (x, y, r, cls, f) => `<g class="${cls}" filter="url(#${f})"><circle cx="${x}" cy="${y}" r="${r}" fill="#cfd8dc" opacity=".8"/><circle cx="${(x + r * .8).toFixed(1)}" cy="${(y - r * .5).toFixed(1)}" r="${(r * .75).toFixed(1)}" fill="#eceff1" opacity=".85"/><circle cx="${(x - r * .7).toFixed(1)}" cy="${(y - r * .3).toFixed(1)}" r="${(r * .6).toFixed(1)}" fill="#b0bec5" opacity=".75"/></g>`;
-// The smoke as it behaves: it rises from below, swells and thins out, then
-// spreads under the ceiling to both sides of the detector.
-const ntSmoke = (f) => `<g class="nt-run">${[[42, 114, 9, 1], [58, 118, 10, 3], [74, 114, 9, 5], [50, 120, 8, 2], [66, 118, 9, 4], [82, 120, 8, 6], [36, 120, 7, 4], [60, 112, 8, 6]].map(([x, y, r, d]) => ntPuff(x, y, r, `nta-smoke ntd${d}`, f)).join("")}
-${[[48, 50, 7, "nta-spreadL ntd2"], [72, 50, 7, "nta-spreadR ntd4"], [44, 54, 6, "nta-spreadL ntd5"], [76, 54, 6, "nta-spreadR ntd1"], [54, 56, 6, "nta-spreadL ntd3"], [66, 56, 6, "nta-spreadR ntd6"]].map(([x, y, r, cls]) => ntPuff(x, y, r, cls, f)).join("")}</g>`;
 // The colours each speaker comes in, the first one its own when none is set:
 // [highlight, body, shade, top, detail]. A colour a model is not sold in
 // falls back to its first.
@@ -6065,12 +6133,6 @@ function speakerColorOf(cfg, st) {
   if (cfg.illustration_color === "grey") return "silver";
   return "";
 }
-// A mark printed on a box's top, laid on it in the same view as the box.
-const strOnTop = (x, y, inner) => `<g transform="matrix(1 0 -.5 .5 ${x} ${y})">${inner}</g>`;
-// A black box: matte sides, a glossy top.
-const strDark = (f, s, t) => `${ntV(f, "#2b2e33", "#141619")}${ntV(s, "#18191c", "#08090a")}<linearGradient id="${t}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3c4046"/><stop offset=".5" stop-color="#121417"/><stop offset="1" stop-color="#24272c"/></linearGradient>`;
-
-const strIsoRight = (x, y, inner) => `<g transform="matrix(.9177 -.3971 0 1 ${x} ${y})">${inner}</g>`;
 // A tank humidifier (#89), its body a soft squircle seen from just above: a
 // white base with its display and buttons, a smoked tank tapering upwards with
 // its water, its tube and its night light, the mist rising from the nozzle.
@@ -6079,6 +6141,39 @@ function fdLook(cfg) {
   const n = parseInt(cfg.spool_count, 10);
   const list = Array.isArray(cfg.spool_colors) ? cfg.spool_colors.filter((c) => /^#[0-9a-f]{3,8}$/i.test(String(c))) : [];
   return { count: FD_COUNTS.includes(n) ? n : 2, colors: list.length ? list : FD_COLORS };
+}
+// The card's colour on a drawing made after a real product: its shell, the
+// greys, blacks and whites it is drawn in, takes the colour, lightest to
+// darkest as before; what has a colour of its own (a screen's glow, a
+// flame, water, a logo) keeps it, and so does a black shadow. A colour
+// written in capitals is kept too: a screen's glass, which no shell colour
+// should light up.
+const NT_TINTS = { white: [.66, 1, 0, 0], grey: [.34, .86, 0, 0], black: [.07, .42, 0, 0], red: [.12, .58, 356, .58] };
+function ntHsl(hex) {
+  const h = hex.length === 4 ? hex.replace(/[0-9a-f]/g, (x) => x + x) : hex;
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  return { l, s: d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1)) };
+}
+function ntTint(svg, tint) {
+  const T = NT_TINTS[tint];
+  if (!T) return svg;
+  if (svg.includes("<!--k-->")) return svg.split(/(<!--k-->[\s\S]*?<!--\/k-->)/).map((part) => (part.startsWith("<!--k-->") ? part : ntTintRaw(part, svg, T))).join("");
+  return ntTintRaw(svg, svg, T);
+}
+function ntTintRaw(part, svg, T) {
+  const RE = /#(?:[0-9a-f]{6}|[0-9a-f]{3})(?![0-9a-zA-Z])/g;
+  const shell = (x) => { const c = ntHsl(x); return c.s <= .16 && c.l >= .05 ? c : null; };
+  const free = svg.replace(/<!--k-->[\s\S]*?<!--\/k-->/g, "");
+  const ls = (free.match(RE) || []).map(shell).filter(Boolean).map((c) => c.l);
+  if (!ls.length) return part;
+  const lo = Math.min(...ls), hi = Math.max(...ls), span = hi - lo || 1;
+  return part.replace(RE, (x) => {
+    const c = shell(x);
+    if (!c) return x;
+    const l = T[0] + (hi === lo ? .5 : (c.l - lo) / span) * (T[1] - T[0]);
+    return `hsl(${T[2]} ${Math.round(T[3] * 100)}% ${Math.round(l * 1000) / 10}%)`;
+  });
 }
 const NT_COLORS = { off: "var(--disabled-text-color, #9e9e9e)", idle: "var(--secondary-text-color, #727272)", run: "#1e88e5",
   heat: "#f4511e", alarm: "#e53935", lit: "#43a047", high: "#e53935", unav: "var(--disabled-text-color, #9e9e9e)" };
@@ -6376,7 +6471,9 @@ function ntReadOf(type, hass, cfg, st, watts, threshold) {
         value: keepTogether(a.is_volume_muted ? t(hass, "spk_muted") : `${Math.round(vol * 100)} %`), entity: cfg.state_entity });
     }
     // A source is often the app (Android TV); a title never is.
-    const look = app ? strAppLook(app) : strAppLook(a.source, true);
+    // An app named for itself in a word its package says better: Apple's own
+    // is named "TV" (com.apple.TVWatchList), not a T.
+    const look = app ? strAppLook(app, true) || (!appOk && a.app_id ? strAppLook(a.app_id, true) : null) || strAppLook(app) : strAppLook(a.source, true);
     const draw = { kind, on: mode === "playing", st: mode, app: look, muted: !!a.is_volume_muted && live, brand: streamerBrandOf(cfg, st), channel: a.media_channel ? String(a.media_channel) : "" };
     if (mode === "playing") return out("playing", "str_playing", NT_COLORS.run, draw);
     if (mode === "paused") return out("paused", "str_paused", NT_COLORS.idle, draw);
@@ -6389,10 +6486,15 @@ function ntReadOf(type, hass, cfg, st, watts, threshold) {
     const layout = speakerLayoutOf(cfg, st);
     const kind = `spk_${layout}`;
     const a = (st && st.attributes) || {};
-    const playing = raw === "playing" || raw === "buffering";
-    const paused = raw === "paused";
-    const offish = dead || ["off", "standby", "unavailable"].includes(raw);
-    if (!offish) {
+    // On a smart plug alone, what it draws says it: playing from its
+    // threshold (3 W by default), idle below, off when it draws nothing or
+    // its plug is off. A media player says more and keeps the say.
+    const metered = !!cfg.power_entity && watts !== null && isFinite(threshold) && domainOf(cfg.state_entity) !== "media_player";
+    const plugOff = metered && (dead || ["off", "false", "0", "no"].includes(raw) || watts <= SCREEN_OFF_W);
+    const playing = metered ? !plugOff && watts >= threshold : raw === "playing" || raw === "buffering";
+    const paused = !metered && raw === "paused";
+    const offish = metered ? plugOff : dead || ["off", "standby", "unavailable"].includes(raw);
+    if (!offish && !metered) {
       const same = (x, y) => String(x || "").trim().toLowerCase() === String(y || "").trim().toLowerCase();
       const src = a.app_name || a.source;
       const channel = a.media_channel ? String(a.media_channel) : "";
@@ -7832,7 +7934,11 @@ const FR3 = (() => {
     const lit = !s.dark;
     let out = defs(g, lit) + `<defs><linearGradient id="${tub}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${lit ? "#dfeaf2" : "#3a434a"}"/><stop offset="1" stop-color="${lit ? "#b6c8d6" : "#2a3137"}"/></linearGradient>
       <linearGradient id="${lin}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#cfd8de"/><stop offset="1" stop-color="#f4f7f9"/></linearGradient></defs>`;
-    out += `<ellipse cx="${(x0 + x1) / 2 + 9}" cy="${y1 + 3}" rx="${(x1 - x0) / 2 + 16}" ry="3.6" fill="rgba(0,0,0,.14)"/>
+    // Its shadow lies under its whole footprint, deep as it is: a flat
+    // ellipse under the front left the right side standing on bare floor.
+    const foot = (m, d) => `M${x0 - m} ${y1 + d} L${x1 + m} ${y1 + d} L${x1 + KX + m} ${y1 + KY + d * .5} L${x0 + KX - m} ${y1 + KY + d * .5} Z`;
+    out += `<path d="${foot(4, 3.6)}" fill="rgba(0,0,0,.06)" stroke="rgba(0,0,0,.06)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="${foot(1.5, 2.2)}" fill="rgba(0,0,0,.1)" stroke-linejoin="round"/>
       <path d="M${x1} ${y0} L${x1 + KX} ${y0 + KY} V${y1 + KY} L${x1} ${y1} Z" fill="url(#${g.side})"/>
       <rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="2.5" fill="url(#${g.front})" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>
       <rect x="${x0 + 5}" y="${y1 - 11}" width="26" height="6" rx="1.2" fill="#c5ccd3"/>${[0, 1, 2, 3, 4, 5].map((i) => `<rect x="${x0 + 7.5 + i * 3.8}" y="${y1 - 10}" width="1.8" height="4" rx=".6" fill="#6b747e"/>`).join("")}
@@ -7995,7 +8101,6 @@ function mowerStyleOf(cfg, st) {
   const hay = stripAccents(`${cfg.state_entity || ""} ${cfg.name || ""} ${stHay(st)}`).toLowerCase();
   return /navimow|segway/.test(hay) ? "navimow" : "classic";
 }
-const svgShadow = (cx, rx) => `<ellipse cx="${cx}" cy="103" rx="${rx}" ry="3" fill="rgba(0,0,0,.14)"/>`;
 // The shelter over a mower's base, seen three-quarters like the mower: a part
 // behind it (the far posts, the shadow, the inside of a shell) and a part in
 // front (the near posts, the roof). The rain stops on the roof.
@@ -8109,7 +8214,8 @@ function illustrationHtml(type, ctx) {
     .join(" ");
 
   const draw = drawingOf(drawKeyOf(type));
-  return draw ? draw(cls, ctx, type) : "";
+  const html = draw ? draw(cls, ctx, type) : "";
+  return html && ctx.tint ? ntTint(html, ctx.tint) : html;
 }
 
 const DRAW_KEYS = ["dishwasher","laundry","pet_feeder","oven","microwave","hood","nt","fridge","water_heater","thermostat","boiler","air_conditioner","pet_fountain","dehumidifier","space_heater","towel_warmer","air_fryer","ev_charger","pellet_stove","heat_pump","printer_3d","toaster","hair_dryer","network","robot","pool_pump","solar","home_battery","scale","ups","camera","lamp","mailbox","diffuser","hrv","screen","air_purifier","fan","iron","kettle","cooker","coffee","rice_cooker","cooktop"];
@@ -8120,7 +8226,7 @@ function requestDrawing(key) {
   drawState[key] = "loading";
   import(assetUrl(`ha-appliance-card-draw-${key}.js`))
     .then((m) => {
-      if (!drawDeps) drawDeps = { BATTERY_LAYOUTS, CAMERA_LAYOUTS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, esc, ntFlake, t, thsColor, zoneColumns };
+      if (!drawDeps) drawDeps = { BATTERY_LAYOUTS, CAMERA_LAYOUTS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, esc, ntFlake, ntTint, t, thsColor, zoneColumns };
       drawn[key] = m.default(drawDeps);
       drawState[key] = "ready";
       for (const fn of Array.from(langListeners)) {
@@ -8198,6 +8304,8 @@ class ApplianceCard extends HTMLElement {
   }
 
   setConfig(config) {
+    // A new configuration may change what a tap does with the same markup.
+    this._lastCardHtml = undefined;
     if (!config || (!config.state_entity && !stateFreeSource(config))) {
       throw new Error("ha-appliance-card: 'state_entity' is required");
     }
@@ -10326,7 +10434,18 @@ class ApplianceCard extends HTMLElement {
       this._feedSeen = counts;
       feeding = (!!st && ["on", "true", "dispensing", "feeding", "running"].includes(String(rawState).toLowerCase()))
         || Date.now() < (this._feedUntil || 0);
-      norm = errEmpty || ((levelEmpty || levelBEmpty) && !erred) ? "feeder_empty"
+      // Gone offline (#105): its state unavailable, or every entity it was
+      // given at once. Its last level and its last fault are stale then.
+      const fdIds = [cfg.state_entity, cfg.level_entity, cfg.level_b_entity, cfg.error_entity, cfg.portions_today_entity, cfg.weight_today_entity].filter(Boolean);
+      const fdGone = (id) => {
+        const fs = stateObj(hass, id);
+        return !fs || String(fs.state).toLowerCase() === "unavailable";
+      };
+      const feederOffline = (!!st && (String(rawState).toLowerCase() === "unavailable" || /^offline$/i.test(String(rawState).trim())))
+        || (fdIds.length > 0 && fdIds.every(fdGone) && fdIds.some((id) => stateObj(hass, id)));
+      if (feederOffline) feeding = false;
+      norm = feederOffline ? "feeder_offline"
+        : errEmpty || ((levelEmpty || levelBEmpty) && !erred) ? "feeder_empty"
         : erred ? "error"
         : feeding ? "feeder_feeding" : "feeder_ready";
       feederEmpty = norm === "feeder_empty";
@@ -10335,7 +10454,7 @@ class ApplianceCard extends HTMLElement {
       // The screen shows what the real ones show: the time. While it serves it
       // shows the portion being served, when the card knows the serving size.
       const serving = cfg.serving_size_entity ? numericState(hass, cfg.serving_size_entity) : null;
-      feederScreen = feeding && serving !== null ? `P ${Math.round(serving)}` : feederClock(hass);
+      feederScreen = feederOffline ? "" : feeding && serving !== null ? `P ${Math.round(serving)}` : feederClock(hass);
       // A clock has to tick on its own: nothing in the states changes when a
       // minute goes by.
       this._clearClockTimer();
@@ -10363,7 +10482,7 @@ class ApplianceCard extends HTMLElement {
           warn: levelBEmpty,
         });
       }
-      color = STATE_COLORS[norm];
+      color = feederOffline ? FT_COLORS.offline : STATE_COLORS[norm];
       // The heap is drawn from a percentage. A tank counted in grams or in
       // litres only says how full it is once its capacity is known, so without
       // that capacity the drawing stays at its resting height rather than
@@ -10389,7 +10508,8 @@ class ApplianceCard extends HTMLElement {
       const restFill = cfg.feeder_layout !== "dual_split" || feederFillB === null ? feederFill
         : feederFill === null ? feederFillB : Math.min(feederFill, feederFillB);
       if (!cfg.state_show_raw) {
-        stateLabel = norm !== "feeder_ready" ? t(hass, norm)
+        stateLabel = feederOffline ? t(hass, "ev_offline")
+          : norm !== "feeder_ready" ? t(hass, norm)
           : restFill === null ? ""
           : t(hass, "feeder_level").replace("{pct}",
             new Intl.NumberFormat(lang(hass), { style: "percent", maximumFractionDigits: 0 }).format(restFill / 100));
@@ -11481,8 +11601,14 @@ class ApplianceCard extends HTMLElement {
     // against the frost, in error. Its lines give the water, the air, the pH,
     // the RedOx, the time filtered today, the pressure and the pump's mode.
     let pool = null;
+    let poolWintered = false;
     if (cap.poolPump) {
-      const mode = poolModeOf(hass, cfg, st, watts);
+      // Wintered, a pump at rest (or unplugged, its water drained) reads
+      // Winter storage; one running for the frost keeps saying so.
+      const wintered = poolWinter(hass, cfg);
+      const pumpMode = poolModeOf(hass, cfg, st, watts);
+      const mode = wintered && ["off", "unav"].includes(pumpMode) ? "winter" : pumpMode;
+      poolWintered = wintered;
       const chlorine = !!cfg.chlorine_pump_entity;
       const dosing = chlorine && poolOn(hass, cfg.chlorine_pump_entity);
       const shown = dosing && mode === "running" ? "chlorinating" : mode;
@@ -11537,7 +11663,7 @@ class ApplianceCard extends HTMLElement {
       // puts it.
       const needle = pressure !== null && mode !== "unav"
         ? Math.round(-120 + Math.max(0, Math.min(1, pressure / POOL_GAUGE_MAX_BAR)) * 240) : null;
-      pool = { mode, chlorine, dosing, lit, needle, can };
+      pool = { mode, chlorine, dosing, lit, needle, can, winter: wintered };
     }
 
     // Solar panels: they produce, produce little, rest at night or are in
@@ -11876,6 +12002,24 @@ class ApplianceCard extends HTMLElement {
       }
     }
 
+    // Put away for the winter: a spa under its cover, the watering drained, a
+    // grill under its cover. It reads so, whatever its state says.
+    if (ntDraw && ["irrigation", "spa", "pellet_grill"].includes(applianceType) && seasonWinter(hass, cfg)) {
+      ntDraw = { ...ntDraw, winter: true, on: false, ...(applianceType === "pellet_grill" ? { st: "off" } : {}) };
+      if (!cfg.state_show_raw) stateLabel = t(hass, "robot_winter");
+      color = "#4fa3d8";
+    }
+    // The card's colour on the drawings made after a real product (a
+    // Christmas tree's colour is its lights').
+    if (ntDraw && BODY_COLORS[cfg.illustration_color] && applianceType !== "christmas_tree" && !(applianceType === "speaker" && cfg.speaker_color)) ntDraw = { ...ntDraw, tint: cfg.illustration_color };
+    // A smart plug switched off: the appliance on it is off, whatever it
+    // says at rest (a washer's Idle, a heater's Standby, a printer's
+    // Offline). A fridge, a ride or a pump says it in words of its own.
+    if (plugState && ["switch", "input_boolean"].includes(domainOf(cfg.state_entity)) && st && String(st.state).toLowerCase() === "off"
+      && !cfg.state_show_raw && !["fridge", "mobility", "water_pump"].includes(applianceType) && !poolWintered && !(ntDraw && ntDraw.winter)) {
+      stateLabel = t(hass, ["printer_3d", "coffee", "air_fryer", "hood", "cooktop", "litter_box"].includes(applianceType) ? "p3_off" : "ac_off");
+    }
+
     extraLines.push(...optLines(hass, cfg, applianceType));
 
     // A bathroom scale: its state entity is the weight, shown on its screen.
@@ -12002,24 +12146,31 @@ class ApplianceCard extends HTMLElement {
       if (mode === "charging" && (stick ? battery !== null && battery >= 100 : battery === null || battery >= 100)) mode = "docked";
       // Put away for the winter, it reads so whatever its integration says,
       // often nothing at all once it is unplugged (#80).
-      if (layout === "mower" && robotWinter(hass, cfg)) mode = "winter";
+      if (["mower", "pool"].includes(layout) && robotWinter(hass, cfg)) mode = "winter";
       if (!cfg.state_show_raw || mode === "unav") {
         const washer = layout === "floor_washer" ? { washing: "fw_self_cleaning", full: "fw_dirty_full", empty: "fw_clean_empty" } : {};
         stateLabel = t(hass, mode === "cleaning" ? ROBOT_WORK_LABELS[layout] : stick && mode === "docked" ? "stick_charged" : washer[mode] || ROBOT_LABELS[mode]);
       }
       color = ROBOT_COLORS[mode];
-      // The station's bag full (#104): said whatever the robot does, which
-      // goes on working; an error of its own says more.
-      const bag = !stick && !["mower", "pool"].includes(layout) && !["error", "unav", "winter", "off"].includes(mode) && robotBagFull(hass, cfg, st);
-      if (bag) {
-        if (!cfg.state_show_raw) stateLabel = t(hass, "robot_bag_full");
-        color = ROBOT_COLORS.full;
-      }
+      // What the robot asks for (#104): the station's bag full, its water
+      // empty, the dirty water full, its battery low. Said whatever the robot
+      // does, which goes on working; an error of its own says more. A vacuum
+      // alone has no water to run out of.
+      let notice = !stick && layout !== "pool" && !["error", "unav", "winter", "off"].includes(mode) ? robotNoticeOf(hass, cfg, st) : "";
+      if (layout === "mower" && notice !== "battery") notice = "";
+      if (notice === "water" && mode === "empty") notice = "";
+      const bag = notice === "bag";
+      if (notice && !cfg.state_show_raw) stateLabel = t(hass, ROBOT_NOTICE_LABELS[notice]);
+      if (notice) color = notice === "battery" ? ROBOT_COLORS.empty : ROBOT_COLORS.full;
       const water = robotWaterPct(hass, cfg);
       // The station's two water tanks, on the lines and on its front (#69).
+      // A tank the robot says is empty or full shows it, even without its
+      // own sensor.
       const tankOn = ["vacuum", "mop", "combo"].includes(layout);
       const cleanTank = tankOn ? robotTank(hass, cfg.robot_clean_tank_entity) : null;
       const dirtyTank = tankOn ? robotTank(hass, cfg.robot_dirty_tank_entity) : null;
+      const drawClean = notice === "water" && tankOn ? { pct: null, raised: true } : cleanTank;
+      const drawDirty = notice === "dirty" && tankOn ? { pct: null, raised: true } : dirtyTank;
       const cleanMode = layout === "combo" ? robotCleanModeOf(hass, cfg) : null;
       if (mode !== "unav" && mode !== "winter") {
         if (battery !== null && !cfg.battery_corner) {
@@ -12071,9 +12222,9 @@ class ApplianceCard extends HTMLElement {
         const secs = ntRemaining(hass, cfg.remaining_time_entity);
         if (secs !== null) poolTime = formatDuration(secs, hass);
       }
-      robot = { layout, mode, water, cleanMode, battery, poolTime, floor: cfg.robot_floor, base: cfg.robot_station === "base", shelter: cfg.robot_shelter ? (SHELTER_STYLES.includes(cfg.robot_shelter_style) ? cfg.robot_shelter_style : "lean_to") : "",
+      robot = { layout, mode, water: notice === "water" && ["mop", "combo"].includes(layout) ? 0 : water, cleanMode, battery, poolTime, floor: cfg.robot_floor, base: cfg.robot_station === "base", shelter: cfg.robot_shelter ? (SHELTER_STYLES.includes(cfg.robot_shelter_style) ? cfg.robot_shelter_style : "lean_to") : "",
         shelterColor: cfg.robot_shelter_color, mowerStyle: mowerStyleOf(cfg, st),
-        box: cfg.robot_station === "box", boxColor: cfg.robot_station_color, camera: !!cfg.robot_camera, cleanTank, dirtyTank, bag };
+        box: cfg.robot_station === "box", boxColor: cfg.robot_station_color, camera: !!cfg.robot_camera, cleanTank: drawClean, dirtyTank: drawDirty, bag, notice };
     }
 
     // The last cycle, on request: how long it ran and when it ended. Shown
@@ -12176,7 +12327,14 @@ class ApplianceCard extends HTMLElement {
       if (this._dish === undefined || (cooking && !this._dishOn)) this._dish = Math.floor(Math.random() * COOK_DISHES[applianceType]);
       this._dishOn = cooking;
     }
+    // The card's colour on the drawings made after real products that do not
+    // follow it of themselves: printers, Nest and ecobee, a hob, a scale,
+    // the wall tablets (the others take it through their body colour).
+    const tintable = BODY_COLORS[cfg.illustration_color] && ((applianceType === "printer_3d" && !!cfg.printer_style)
+      || (applianceType === "thermostat" && ["th_round", "th_glass"].includes(thermostatLayoutOf(cfg, st)))
+      || ["cooktop", "scale"].includes(applianceType) || (applianceType === "screen" && SCREEN_TABLETS.includes(screenLayoutOf(cfg, st))));
     const illustrationCtx = {
+      tint: tintable ? cfg.illustration_color : "",
       ...(fridgeCtx || {}),
       ...(coffeeCtx || {}),
       speed: mixer.level,
@@ -12477,6 +12635,10 @@ class ApplianceCard extends HTMLElement {
            venting level or a power level is actually changed, and it costs no
            extra height on the card. */
         .info-lines.compact { gap: 4px; }
+        /* Values against the right edge, like Home Assistant's entity rows
+           (#107): the label keeps the left, the value takes the rest. */
+        .info-lines.right .info-line .label + span { margin-left: auto; text-align: right; }
+        .info-lines.right .info-line .label { min-width: 0; }
         .info-lines.compact .info-line { font-size: 0.92em; }
         .info-lines.compact .info-line ha-icon { --mdc-icon-size: 18px; }
         .history-toggle {
@@ -12584,6 +12746,9 @@ class ApplianceCard extends HTMLElement {
         @keyframes ac-armed { to { opacity: 0.65; } }
         @media (prefers-reduced-motion: reduce) { .armed { animation-name: none; } }
         .action-btn ha-icon { --mdc-icon-size: 20px; }
+        /* An icon is an inline box: on a theme with a tall line height it sits
+           on the text's baseline, below the middle of its round button (#106). */
+        .action-btn ha-icon, .light-badge ha-icon { display: flex; align-items: center; justify-content: center; line-height: 0; }
         /* The compact modes. The name's line carries every icon, so none of
            them sits on top of anything. */
         .cmp-head { display: flex; align-items: center; gap: 6px; min-height: 32px; }
@@ -12804,7 +12969,7 @@ class ApplianceCard extends HTMLElement {
       ? `<div class="line-menu" role="listbox">${lineMenu.options.map((o) => `<div class="mode-row${o === lineMenu.current ? " sel" : ""}" role="option" aria-selected="${o === lineMenu.current}" data-line-option="${esc(o)}"><span>${esc(lineMenuLabel(hass, cfg, lineMenu, o))}</span>${o === lineMenu.current ? `<ha-icon icon="mdi:check"></ha-icon>` : ""}</div>`).join("")}</div>`
       : "";
     const linesHtml = lines.length
-      ? `<div class="info-lines${infoEntities.length > INFO_COMPACT_ABOVE ? " compact" : ""}">${lines
+      ? `<div class="info-lines${infoEntities.length > INFO_COMPACT_ABOVE ? " compact" : ""}${cfg.values_right ? " right" : ""}">${lines
           .map((l) => ({ ...l, open: !!l.entity && entityUsable(hass, l.entity) }))
           .map(
             (l) =>
@@ -12960,7 +13125,6 @@ class ApplianceCard extends HTMLElement {
       this._root.appendChild(this._styleEl);
       this._root.appendChild(this._card);
     }
-    this._styleEl.textContent = css;
     // A finished cycle can flash until someone has seen it: the door opening
     // says so, and so does a tap on the badge. Read again after a reload: the
     // door having moved since the cycle ended counts as seen.
@@ -13006,7 +13170,7 @@ class ApplianceCard extends HTMLElement {
     const linesBelow = linesMode === "below" ? linesHtml : "";
     const chevron = compact === "side" && linesMode === "toggle" && linesHtml
       ? `<div class="cmp-more${this._linesOpen ? " open" : ""}" data-lines-toggle role="button" tabindex="0" aria-expanded="${!!this._linesOpen}" title="${esc(t(hass, this._linesOpen ? "lines_hide" : "lines_show"))}"><ha-icon icon="mdi:chevron-down"></ha-icon></div>` : "";
-    this._card.innerHTML = compact === "side" ? `
+    const cardHtml = compact === "side" ? `
         <div class="cmp-wrap">
           <div class="cmp-pic" ${picTap ? 'data-pic-tap="1"' : 'data-tap="1"'}>${iconHtml}</div>
           <div class="cmp-col">
@@ -13045,11 +13209,23 @@ class ApplianceCard extends HTMLElement {
         <div class="fill-gap"></div>
         ${actionsHtml}
     `;
-
+    // Nothing on the card moved (a state it reads changed to what it showed,
+    // a sensor it does not draw ticked): its subtree is left as it is, and so
+    // are its animations, which a rewrite would restart.
     if (this.style && typeof this.style.setProperty === "function") {
       if (cfg.fill_height) this.style.setProperty("height", "100%");
       else this.style.removeProperty("height");
     }
+    const cssKey = css.replace(/--anim-offset: [^;]*;/, "");
+    if (cardHtml === this._lastCardHtml && cssKey === this._lastCssKey) {
+      this._fridgeSwing(applianceType === "fridge" && compact !== "hide" ? illustrationCtx : null);
+      return;
+    }
+    this._lastCardHtml = cardHtml;
+    this._lastCssKey = cssKey;
+    this._styleEl.textContent = css;
+    this._card.innerHTML = cardHtml;
+
     this._fitDrawing();
     const header = this._root.getElementById("header");
     if (header) header.addEventListener("click", () => this._tap(cfg, tapFallback));
@@ -13244,7 +13420,7 @@ function loadEditor() {
   if (customElements.get("ha-appliance-card-editor")) return Promise.resolve();
   if (!editorLoading) {
     editorLoading = import(assetUrl("ha-appliance-card-editor.js"))
-      .then((m) => m.default({ t, onLanguageLoaded, LANGUAGE_NAMES, localizedHass, activationOf, TH_LAYOUTS, EV_POWER_THRESHOLD, stateObj, parseValueMap, stringifyValueMap, alertsArray, entityEntries, LIST_OTHER, ENTITY_LISTS, listCandidates, defaultCardName, stripDeviceName, domainOf, INFO_MAX, autoSuggest, APPLIANCE_TYPES, STATE_DOMAINS, SCREEN_ONLY_FIELDS, illustrationSizeOf, fontScaleOf, compactModeOf, TYPE_GROUPS, caps, detectApplianceType, SCREEN_STANDBY_W, SCREEN_LAYOUTS, SCREEN_IMAGES, screenLayoutOf, screenIsTablet, HD_HEAT_W, PLUG_THRESHOLDS, ZONE_POWER_W, PLUG_SOURCE_TYPES, plugSourceOf, DW_DRY_MIN, WASH_HEAT_W, WASH_SPIN_W, DRYER_HEAT_W, NET_LAYOUTS, SWITCH_PORTS, NET_BAYS, NET_BUSY_MBIT, NET_TEMP_ALERT, netLayoutOf, ROBOT_LAYOUTS, ROBOT_STATIONS, ROBOT_BOX_COLORS, ROBOT_FLOORS, ROBOT_SERVICES, STICK_AWAY_W, robotLayoutOf, PRINTER_STYLES, printerStyleOf, POOL_PRESSURE_ALERT, SOLAR_LAYOUTS, BATTERY_LAYOUTS, BATTERY_IDLE_W, DIFFUSER_LAYOUTS, illustrationTapOf, UNIT_FILTERS, HRV_LAYOUTS, hrvLayoutOf, CAMERA_LAYOUTS, MAILBOX_LAYOUTS, MAILBOX_SIDES, mailboxLayoutOf, MAILBOX_COLORS_3D, LAMP_LAYOUTS, LAMP_SPOTS, lampLayoutOf, FD_COUNTS, CONSOLE_LAYOUTS, IRRIGATION_LAYOUTS, TAP_MODELS, TAP_WALLS, LITTER_LAYOUTS, DETECTOR_LAYOUTS, GRILL_LAYOUTS, SPEAKER_LAYOUTS, STREAMER_LAYOUTS, THS_LAYOUTS, MOBILITY_LAYOUTS, PUMP_LAYOUTS, CIRC_MODELS, FLOOR_LAYOUTS, OPT_LINES, METER_LAYOUTS, meterLayoutOf, irrigationLayoutOf, detectorLayoutOf, TREE_PALETTES, TREE_PRESENTS, pumpLayoutOf, SPK_COLORS, COLLECTOR_STYLES, UPS_BATTERY_LOW, HISTORY_HOURS, BODY_COLORS, esc, MOWER_STYLES, SHELTER_STYLES, SHELTER_COLORS, LAPTOP_COLORS, LAPTOP_STYLES, drawn, stateFreeSource }))
+      .then((m) => m.default({ t, onLanguageLoaded, LANGUAGE_NAMES, localizedHass, activationOf, TH_LAYOUTS, EV_POWER_THRESHOLD, stateObj, parseValueMap, stringifyValueMap, alertsArray, entityEntries, LIST_OTHER, ENTITY_LISTS, listCandidates, defaultCardName, stripDeviceName, domainOf, INFO_MAX, autoSuggest, APPLIANCE_TYPES, STATE_DOMAINS, SCREEN_ONLY_FIELDS, illustrationSizeOf, fontScaleOf, compactModeOf, TYPE_GROUPS, caps, detectApplianceType, SCREEN_STANDBY_W, SCREEN_LAYOUTS, SCREEN_IMAGES, screenLayoutOf, screenIsTablet, HD_HEAT_W, PLUG_THRESHOLDS, ZONE_POWER_W, PLUG_SOURCE_TYPES, plugSourceOf, DW_DRY_MIN, WASH_HEAT_W, WASH_SPIN_W, DRYER_HEAT_W, NET_LAYOUTS, SWITCH_PORTS, NET_BAYS, NET_BUSY_MBIT, NET_TEMP_ALERT, netLayoutOf, ROBOT_LAYOUTS, ROBOT_STATIONS, ROBOT_BOX_COLORS, ROBOT_FLOORS, ROBOT_SERVICES, STICK_AWAY_W, robotLayoutOf, PRINTER_STYLES, printerStyleOf, POOL_PRESSURE_ALERT, WINTER_TYPES, SOLAR_LAYOUTS, BATTERY_LAYOUTS, BATTERY_IDLE_W, DIFFUSER_LAYOUTS, illustrationTapOf, UNIT_FILTERS, HRV_LAYOUTS, hrvLayoutOf, CAMERA_LAYOUTS, MAILBOX_LAYOUTS, MAILBOX_SIDES, mailboxLayoutOf, MAILBOX_COLORS_3D, LAMP_LAYOUTS, LAMP_SPOTS, lampLayoutOf, FD_COUNTS, CONSOLE_LAYOUTS, IRRIGATION_LAYOUTS, TAP_MODELS, TAP_WALLS, LITTER_LAYOUTS, DETECTOR_LAYOUTS, GRILL_LAYOUTS, SPEAKER_LAYOUTS, STREAMER_LAYOUTS, THS_LAYOUTS, MOBILITY_LAYOUTS, PUMP_LAYOUTS, CIRC_MODELS, FLOOR_LAYOUTS, OPT_LINES, METER_LAYOUTS, meterLayoutOf, irrigationLayoutOf, detectorLayoutOf, TREE_PALETTES, TREE_PRESENTS, pumpLayoutOf, SPK_COLORS, COLLECTOR_STYLES, UPS_BATTERY_LOW, HISTORY_HOURS, BODY_COLORS, esc, MOWER_STYLES, SHELTER_STYLES, SHELTER_COLORS, LAPTOP_COLORS, LAPTOP_STYLES, drawn, stateFreeSource }))
       .catch((err) => {
         editorLoading = null;
         throw err;

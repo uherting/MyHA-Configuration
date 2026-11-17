@@ -27,7 +27,9 @@
           "scan_interval_hours": "Scanner automatiquement toutes les (heures, 0 = désactivé)",
           "stale_hours": "Signaler les capteurs sans nouvelle valeur après (heures, 0 = désactivé)",
           "history_days": "Conserver les historiques pendant (jours)",
-          "watch_hours": "Surveiller après une mise à jour (heures, 0 = désactivé)"
+          "watch_hours": "Surveiller après une mise à jour (heures, 0 = désactivé)",
+          "refresh_recorder_views": "Actualiser les vues lentes en arrière-plan",
+          "outage_scan_mode": "Scan après les pannes"
         },
         "data_description": {
           "show_in_sidebar": "Affiche Housekeeper dans la barre latérale. Désactivé : le panneau reste accessible depuis la page de l'intégration et via /ha-housekeeper.",
@@ -40,7 +42,9 @@
           "scan_interval_hours": "Housekeeper scanne de lui-même à cet intervalle ; les indisponibilités et les mises à jour ajoutent des scans supplémentaires.",
           "stale_hours": "Un capteur qui n'a envoyé aucune nouvelle valeur depuis cette durée est signalé comme ne remontant plus.",
           "history_days": "Durée de conservation de l'historique des scans et des fonctions de la maison.",
-          "watch_hours": "Durée des scans supplémentaires après une mise à jour, pour montrer ce qui a cessé de fonctionner."
+          "watch_hours": "Durée des scans supplémentaires après une mise à jour, pour montrer ce qui a cessé de fonctionner.",
+          "refresh_recorder_views": "Maintient à jour les vues de fiabilité, de tempêtes, de santé de la base de données et de coûts en interrogeant la base en arrière-plan (toutes les 30 minutes jusqu'à une fois par jour), une fois qu'elles ont été ouvertes. Désactivé : elles s'actualisent à l'ouverture, ce qui peut prendre quelques secondes sur un petit appareil.",
+          "outage_scan_mode": "À quelle fréquence une panne peut déclencher un scan supplémentaire. Automatique : peu après l'atteinte du premier niveau, avec un écart plus grand si un scan est lent. Au plus une fois par intervalle de scan : pour les appareils lents ; les pannes apparaissent comme constats au scan suivant. Désactivé : les pannes ne déclenchent aucun scan."
         }
       }
     },
@@ -595,6 +599,15 @@
     },
     "plan_blocked": {
       "message": "Le plan est bloqué : {detail}."
+    }
+  },
+  "selector": {
+    "outage_scan_mode": {
+      "options": {
+        "auto": "Automatique",
+        "interval": "Au plus une fois par intervalle de scan",
+        "off": "Désactivé"
+      }
     }
   }
 }
