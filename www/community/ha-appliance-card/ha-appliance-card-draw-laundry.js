@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The laundry drawing and its CSS, loaded by the card the first time it shows one.
-export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_COLORS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, t, thsColor, zoneColumns }) {
+export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_ALERT, CO2_COLORS, CO2_WARN, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, RACK_TRANS_S, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, numberOrNull, shdBlur, t, thsColor, zoneColumns }) {
 const NT_FONT = `font-family="Roboto, 'Segoe UI', Helvetica, Arial, sans-serif"`;
 // The text of a display fits its width: a long reading is drawn smaller.
 const ntFit = (text, width, fs) => Math.min(fs, (width - 3) / Math.max(1, String(text || "").length * .6));
@@ -66,7 +66,8 @@ ${water ? `<path class="ap-water" d="M36 76 Q49 71 60 76 T84 76 V92 H36 Z"/>` : 
 <circle cx="60" cy="68" r="19" fill="url(#${gl})"/>
 <path d="M47 57 Q53 51 62 50" stroke="#fff" stroke-width="2.2" opacity=".35" fill="none" stroke-linecap="round"/>
 <rect x="84" y="62" width="5" height="12" rx="2" fill="url(#${ch})"/>`;
-  return `<svg class="ap-svg ap-${dryer ? "dryer" : "washer"}" viewBox="0 -10 120 135" aria-hidden="true"><defs>${apCabinet(c)}${apChrome(ch)}
+  // Framed close, so a washer stands as tall as the dishwasher beside it.
+  return `<svg class="ap-svg ap-${dryer ? "dryer" : "washer"}" viewBox="12 3 98 110.25" aria-hidden="true"><defs>${apCabinet(c)}${apChrome(ch)}
 <radialGradient id="${gl}" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#9fb4c6" stop-opacity=".18"/><stop offset=".75" stop-color="#1d2a36" stop-opacity=".35"/><stop offset="1" stop-color="#0c1218" stop-opacity=".7"/></radialGradient>
 <radialGradient id="${drum}" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="${dryer ? "#b8c0c8" : "#9aa4ae"}"/><stop offset="1" stop-color="${dryer ? "#4a525b" : "#3a434c"}"/></radialGradient>
 <radialGradient id="${warm}" cx=".5" cy=".5" r=".55"><stop offset="0" stop-color="#ffb74d" stop-opacity=".5"/><stop offset="1" stop-color="#ff7043" stop-opacity="0"/></radialGradient>

@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The fridge drawing and its CSS, loaded by the card the first time it shows one.
-export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_COLORS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, t, thsColor, zoneColumns }) {
+export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_ALERT, CO2_COLORS, CO2_WARN, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, RACK_TRANS_S, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, numberOrNull, shdBlur, t, thsColor, zoneColumns }) {
 // The new drawings' motion: nothing moves until the machine runs (nt-on),
 // except a meter's LED and an alarm's beacon. Each part's stagger is its --d0.
 const NT_CSS = `
@@ -10,6 +10,10 @@ const NT_CSS = `
         .cv-arrow{animation:cv-blink 1s ease-in-out infinite}@keyframes cv-blink{0%,100%{opacity:.35}50%{opacity:1}}
         .cv-sway{animation:cv-sway 1.8s ease-in-out infinite;transform-origin:60px 14px}@keyframes cv-sway{0%,100%{transform:skewX(0)}50%{transform:skewX(.6deg)}}
         .co2-pulse{animation:co2-pulse 1.6s ease-in-out infinite}@keyframes co2-pulse{0%,100%{opacity:.45}50%{opacity:1}}
+        .fb-tap{animation:fb-tap 1.4s ease-in-out infinite}@keyframes fb-tap{0%,12%,100%{transform:rotate(0deg)}34%,56%{transform:rotate(44deg)}}
+        .fb-hit{animation:fb-hit 1.4s ease-in-out infinite}@keyframes fb-hit{0%,30%,62%,100%{opacity:0}36%,54%{opacity:.1}}
+        .fb-blink{animation:fb-blink 1s steps(2) infinite}@keyframes fb-blink{50%{opacity:.15}}
+        .fb-bolt{animation:fb-bolt 1.6s ease-in-out infinite}@keyframes fb-bolt{0%,100%{opacity:.4}50%{opacity:1}}
         svg.nt-svg{position:absolute;left:0;top:0;width:96px;height:108px;overflow:visible}
         .ntfd-h{fill:none;stroke:#ff6d00;stroke-width:1.8;stroke-linecap:round;opacity:0;animation:ntfd-heat 2.4s ease-in-out infinite;animation-delay:calc(var(--d0,0s) + var(--anim-offset,0s))}
         @keyframes ntfd-heat{0%{opacity:0;transform:translateY(4px)}40%{opacity:1}100%{opacity:0;transform:translateY(-7px)}}
@@ -55,6 +59,15 @@ const NT_CSS = `
         @keyframes nt-bar3{0%{opacity:.15}48%,100%{opacity:1}}
         @keyframes nt-bar4{0%{opacity:.15}66%,100%{opacity:1}}
         .nta-blinkfast{animation:nt-blinkfast .45s linear infinite}
+        .vlv-drip{transform-box:fill-box;animation:vlv-drip 1.4s ease-in infinite}.vlv-drip.ntd2{animation-delay:.7s}
+        @keyframes vlv-drip{0%{transform:translateY(0) scale(.4);opacity:0}15%{transform:translateY(0) scale(1);opacity:1}85%{transform:translateY(8px);opacity:1}100%{transform:translateY(9px);opacity:0}}
+        .vlv-splash{transform-box:fill-box;transform-origin:center;animation:vlv-splash 1.4s ease-out infinite;opacity:0}
+        @keyframes vlv-splash{0%,80%{transform:scale(.3);opacity:0}86%{opacity:.9}100%{transform:scale(1.6);opacity:0}}
+        .nt-on .vlv-arrows{animation:vlv-arrows 1.2s linear infinite}
+        @keyframes vlv-arrows{to{transform:translateX(12px)}}
+        .vlv-to-open{animation:vlv-open 2.8s ease-in-out infinite}.vlv-to-close{animation:vlv-close 2.8s ease-in-out infinite}
+        @keyframes vlv-open{0%,15%{transform:rotate(90deg)}75%,100%{transform:rotate(0deg)}}
+        @keyframes vlv-close{0%,15%{transform:rotate(0deg)}75%,100%{transform:rotate(90deg)}}
         .nta-rain{transform-box:fill-box;animation:nt-fall 1.4s ease-in infinite}
         .nta-rdrop{animation:nt-rdrop .6s linear infinite}.nta-rsplash{transform-box:fill-box;transform-origin:center;opacity:0;animation:nt-rsplash .6s ease-out infinite}
         @keyframes nt-rdrop{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(-16px,80px);opacity:1}}

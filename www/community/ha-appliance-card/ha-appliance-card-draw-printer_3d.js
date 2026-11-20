@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The printer_3d drawing and its CSS, loaded by the card the first time it shows one.
-export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_COLORS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, t, thsColor, zoneColumns }) {
+export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_ALERT, CO2_COLORS, CO2_WARN, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, RACK_TRANS_S, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, numberOrNull, shdBlur, t, thsColor, zoneColumns }) {
 // Height of a finished part on the drawing, in pixels.
 const P3_PART_MAX = 40;
 // The printers drawn after real ones (#93). All in one 120 x 135 box, 0.8 px to
@@ -16,10 +16,23 @@ const P3R_DEFS = `<defs>
 <linearGradient id="p3r-lt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4d6" stop-opacity=".5"/><stop offset="1" stop-color="#fff4d6" stop-opacity="0"/></linearGradient>
 <linearGradient id="p3r-sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".4"/><stop offset=".35" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
 </defs>`;
+// The other parts a printer can show, each an outline in a 34 x 40 box
+// standing on its bottom edge: the Benchy tugboat, a little figure, a sitting
+// cat, a spiral vase, a chess knight and a rocket.
+const P3_SHAPES = {
+  benchy: "M1 25 L12 27 V15 Q12 13 14 13 H21 V5 H26 V13 H27 Q29 13 29 15 V28 L33 28 L31 36 Q30 40 26 40 H8 Q4 40 3 36 Z",
+  figure: "M17 1 A8.5 8.5 0 1 1 16.99 1 Z M10 19 H24 Q29 19 30 24 L32 32 H28 L27 27 V40 H7 V27 L6 32 H2 L4 24 Q5 19 10 19 Z",
+  cat: "M8 4 L12 11 H22 L26 4 L28 14 Q29 19 26 21 Q31 26 30 34 Q29 40 23 40 H11 Q5 40 4 34 Q3 26 8 21 Q5 19 6 14 Z M28 36 Q33 35 32 28 L30 28 Q30 33 27 34 Z",
+  vase: "M11 40 H23 Q27 34 27 26 Q27 18 21 12 Q20 8 22 4 H12 Q14 8 13 12 Q7 18 7 26 Q7 34 11 40 Z",
+  knight: "M5 40 H29 V36 H26 L25 31 Q29 24 27 14 Q25 5 16 4 L14 1 L12 6 Q8 8 6 13 L4 18 Q4 21 7 21 L11 19 Q13 18 14 20 Q11 25 9 31 L8 36 H5 Z",
+  rocket: "M17 0 Q27 7 27 20 V27 L33 33 V40 L26 36 H8 L1 40 V33 L7 27 V20 Q7 7 17 0 Z",
+};
 const P3R_MAX = 30;
 function p3rPart(p, cx, bot, h) {
   if (h <= 0) return "";
-  const shape = p.part === "duck"
+  const shape = P3_SHAPES[p.part]
+    ? `<path class="p3r-part" transform="translate(${cx - 12.75} ${bot - P3R_MAX}) scale(.75)" d="${P3_SHAPES[p.part]}"/>`
+    : p.part === "duck"
     ? `<path class="p3r-part" transform="translate(${cx - 12.75} ${bot - P3R_MAX}) scale(.75)" d="M1 20 L10 24 Q13 23 15 20 C12 14 15 5 22 5 C27 5 29 8 29.5 10 L34 12.5 L34 14 L29.5 16 Q28 19 25 21 C31 22 33 26 33 30 C33 37 27 40 17 40 C7 40 2 36 2 31 C2 27 1 24 1 20 Z"/>`
     : p.part === "pyramid"
       ? `<path class="p3r-part" d="M${cx} ${bot - P3R_MAX} L${cx + 14} ${bot} H${cx - 14} Z"/>`
@@ -33,7 +46,18 @@ function p3rBed(cx, y, w, under) {
   return `<path d="M${cx - w / 2} ${y + 7} L${cx - w / 2 + 6} ${y} H${cx + w / 2 - 6} L${cx + w / 2} ${y + 7} Z" fill="url(#p3r-pei)"/><rect class="p3r-glow" x="${cx - w / 2}" y="${y + 7}" width="${w}" height="1.8"/>${under}`;
 }
 function p3rHead(cx, y, c1, c2) {
-  return `<g class="p3r-hd"><path d="M${cx + 3} ${y - 4} C${cx + 3} ${y - 18},${cx + 18} ${y - 14},${cx + 22} ${y - 26}" fill="none" stroke="#dfe3e6" stroke-width="1.3"/><rect x="${cx - 8}" y="${y - 5}" width="16" height="13" rx="2.2" fill="${c1}"/><rect x="${cx - 6}" y="${y - 3}" width="12" height="7.6" rx="1.4" fill="${c2}"/><g class="p3r-fan"><rect x="${cx - .4}" y="${y - 2.4}" width=".8" height="6.4" fill="#888"/><rect x="${cx - 3.2}" y="${y + .4}" width="6.4" height=".8" fill="#888"/></g><path class="p3r-nz" d="M${cx - 2} ${y + 8} H${cx + 2} L${cx} ${y + 11.4} Z"/></g>`;
+  return `<g class="p3r-hd"><rect x="${cx - 8}" y="${y - 5}" width="16" height="13" rx="2.2" fill="${c1}"/><rect x="${cx - 6}" y="${y - 3}" width="12" height="7.6" rx="1.4" fill="${c2}"/><g class="p3r-fan"><rect x="${cx - .4}" y="${y - 2.4}" width=".8" height="6.4" fill="#888"/><rect x="${cx - 3.2}" y="${y + .4}" width="6.4" height=".8" fill="#888"/></g><path class="p3r-nz" d="M${cx - 2} ${y + 8} H${cx + 2} L${cx} ${y + 11.4} Z"/></g>`;
+}
+// The tube that feeds the head: from the printer's filament inlet, fixed on
+// its roof, down to the head. The head slides 16 px each way, so the tube is
+// sheared from its inlet and its lower end follows the head.
+function p3rTube(p, ix, iy, hx, hy) {
+  const dy = hy - iy;
+  if (dy < 4) return "";
+  const k = (16 / dy).toFixed(3), dx = hx - ix;
+  const d = `M0 0 C${(dy * .45).toFixed(1)} ${(dy * .2).toFixed(1)},${(dx + dy * .3).toFixed(1)} ${(dy * .55).toFixed(1)},${dx} ${dy}`;
+  const col = p.ams && p.ams.active ? `<path d="${d}" fill="none" stroke="${esc(p.ams.active.color)}" stroke-width=".6"/>` : "";
+  return `<g transform="translate(${ix} ${iy})"><g class="p3r-tube" style="--p3r-k:${k};--p3r-nk:-${k}"><path d="${d}" fill="none" stroke="#9aa3ab" stroke-width="1.7" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#eef1f3" stroke-width="1.1" stroke-linecap="round"/>${col}</g></g><rect x="${ix - 2.6}" y="${iy - 1.6}" width="5.2" height="3.2" rx=".9" fill="#3a4046"/>`;
 }
 // Enclosed: the head stays up and the bed drops as the part grows.
 function p3rEnclosed(p, h, o) {
@@ -46,7 +70,7 @@ function p3rEnclosed(p, h, o) {
     ${p3rBed(cx, by, ww - 22, `<rect x="${cx - ww / 2 + 14}" y="${by + 9}" width="${ww - 28}" height="2.4" rx="1" fill="#2f3237"/>`)}
     ${p3rPart(p, cx, by + 4.5, h)}
     <rect x="${wx + 6}" y="${gy + 1}" width="${ww - 12}" height="2.6" rx="1" fill="#50555b"/><rect x="${wx + 6}" y="${gy + 1}" width="${ww - 12}" height=".8" fill="#8b9096"/>
-    ${p3rHead(cx, gy, o.hc1, o.hc2)}
+    ${p3rTube(p, cx + 20, o.iy, cx + 3, gy - 4)}${p3rHead(cx, gy, o.hc1, o.hc2)}
     <rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" rx="${wr}" fill="url(#p3r-gl)" stroke="#000" stroke-opacity=".5" stroke-width=".6"/><path d="M${wx + 6} ${wy + wh - 5} L${wx + 30} ${wy + 5} H${wx + 40} L${wx + 16} ${wy + wh - 5} Z" fill="#fff" opacity=".05"/>${o.front}`;
 }
 // Open: the bed goes back and forth, and the gantry climbs with the part.
@@ -58,21 +82,21 @@ function p3rOpen(p, h, o) {
     ${o.topbar}
     <g class="p3r-slide">${p3rBed(cx, bt - 2, 58, `<rect x="${cx - 18}" y="${bt + 7}" width="36" height="2.6" rx="1" fill="#26292d"/>`)}${p3rPart(p, cx, bt + 2.5, h)}</g>
     <rect x="${lx - 1}" y="${gy + 1}" width="${122 - 2 * lx}" height="4.2" rx="1" fill="${o.bar}"/><rect x="${lx - 1}" y="${gy + 1}" width="${122 - 2 * lx}" height="1" fill="#fff" opacity=".18"/>
-    ${p3rHead(cx, gy, o.hc1, o.hc2)}${o.front}`;
+    ${p3rTube(p, o.ix != null && !p.ams ? o.ix : cx + 20, o.iy, cx + 3, gy - 4)}${p3rHead(cx, gy, o.hc1, o.hc2)}${o.front}`;
 }
 const p3rText = (x, y, size, fill, text) => (text ? `<text x="${x}" y="${y}" font-size="${size}" font-family="monospace" fill="${fill}">${esc(text)}</text>` : "");
 const P3R_DRAW = {
-  bambu_x: (p, h, d) => p3rEnclosed(p, h, { wx: 15, wy: 17, ww: 90, wh: 82, wr: 2.5, hc1: "#2a2d31", hc2: "#3d4147",
+  bambu_x: (p, h, d) => p3rEnclosed(p, h, { iy: 6, wx: 15, wy: 17, ww: 90, wh: 82, wr: 2.5, hc1: "#2a2d31", hc2: "#3d4147",
     back: `<rect x="9" y="5" width="102" height="115" rx="4.5" fill="url(#p3r-dk)" stroke="#fff" stroke-opacity=".14" stroke-width=".5"/><path d="M12 5 H108 L106 13 H14 Z" fill="#1a1c1f"/><path d="M14 7 H106 L105 11.5 H15 Z" fill="#fff" opacity=".1"/><rect x="50" y="7.6" width="20" height="1.6" rx=".8" fill="#000" opacity=".5"/><rect x="9" y="120" width="12" height="3" rx="1" fill="#0d0e10"/><rect x="99" y="120" width="12" height="3" rx="1" fill="#0d0e10"/>`,
     front: `<rect x="100" y="52" width="2" height="18" rx="1" fill="#8b9096"/><rect x="18" y="104" width="24" height="11" rx="1.4" fill="#0c0e10" stroke="#3a3e44" stroke-width=".5"/><rect x="20" y="106" width="20" height="7" fill="#113322"/>${p3rText(21.5, 111.5, 5, "#4ade80", d)}<circle cx="50" cy="109.5" r="3.2" fill="#2a2d31" stroke="#55595f" stroke-width=".6"/><rect class="p3r-led" x="88" y="108.4" width="14" height="1.6" rx=".8" fill="#4ade80"/>` }),
-  elegoo_c: (p, h, d) => p3rEnclosed(p, h, { wx: 13, wy: 12, ww: 94, wh: 80, wr: 7, hc1: "#e9ecef", hc2: "#b8bec4",
+  elegoo_c: (p, h, d) => p3rEnclosed(p, h, { iy: 5, wx: 13, wy: 12, ww: 94, wh: 80, wr: 7, hc1: "#e9ecef", hc2: "#b8bec4",
     back: `<rect x="7" y="4" width="106" height="117" rx="7" fill="url(#p3r-dk2)" stroke="#fff" stroke-opacity=".14" stroke-width=".5"/><rect x="7" y="4" width="106" height="4" rx="2" fill="#fff" opacity=".07"/><rect x="12" y="121" width="14" height="2.6" rx="1" fill="#0d0e10"/><rect x="94" y="121" width="14" height="2.6" rx="1" fill="#0d0e10"/>`,
     front: `<rect x="16" y="42" width="1.8" height="20" rx=".9" fill="#c8ccd0"/><rect x="42" y="97" width="36" height="19" rx="2.4" fill="#05070a" stroke="#4b5057" stroke-width=".6"/><rect x="44" y="99" width="32" height="15" rx="1" fill="#0d2238"/><rect x="46" y="101" width="9" height="11" rx="1" fill="#1e88e5"/>${p3rText(57, 108.5, 5.6, "#90caf9", d)}<circle class="p3r-led" cx="20" cy="107" r="1.1" fill="#4fc3f7"/><rect x="88" y="104" width="16" height=".7" fill="#000" opacity=".6"/><rect x="88" y="107" width="16" height=".7" fill="#000" opacity=".6"/><rect x="88" y="110" width="16" height=".7" fill="#000" opacity=".6"/>` }),
-  bambu_a: (p, h, d) => p3rOpen(p, h, { lx: 15, ty: 12, up: "#2b2e33", bar: "#2b2e33", hc1: "#f2f4f5", hc2: "#c9ced2",
+  bambu_a: (p, h, d) => p3rOpen(p, h, { iy: 10, lx: 15, ty: 12, up: "#2b2e33", bar: "#2b2e33", hc1: "#f2f4f5", hc2: "#c9ced2",
     back: `<rect x="17" y="110" width="10" height="3" rx="1" fill="#2a2d31"/><rect x="93" y="110" width="10" height="3" rx="1" fill="#2a2d31"/>`,
     topbar: `<rect x="15" y="9" width="90" height="6" rx="3" fill="#2b2e33"/><rect x="15" y="9" width="90" height="1.4" rx=".7" fill="#fff" opacity=".12"/>`,
     front: `<path d="M10 97 Q10 93 14 93 H106 Q110 93 110 97 V110 Q110 113 106 113 H14 Q10 113 10 110 Z" fill="url(#p3r-wh)" stroke="#aeb4b9" stroke-width=".5"/><rect x="26" y="96" width="68" height="3" rx="1.5" fill="#000" opacity=".08"/><rect x="15" y="100" width="21" height="10" rx="1.2" fill="#0c0e10"/><rect x="16.5" y="101.5" width="18" height="7" fill="#113322"/>${p3rText(17.5, 106.8, 5, "#4ade80", d)}<circle cx="41" cy="105" r="2.6" fill="#e4e7ea" stroke="#9aa1a8" stroke-width=".5"/>` }),
-  elegoo_n: (p, h, d) => p3rOpen(p, h, { lx: 17, ty: 14, up: "#1c1e21", bar: "#26292d", slots: true, hc1: "#1f2226", hc2: "#3f444a",
+  elegoo_n: (p, h, d) => p3rOpen(p, h, { iy: 12, ix: 60, lx: 17, ty: 14, up: "#1c1e21", bar: "#26292d", slots: true, hc1: "#1f2226", hc2: "#3f444a",
     // Its spool sits on top, unless a filament box feeds it.
     back: p.ams ? "" : `<rect x="51" y="-1" width="18" height="11" fill="#1e88e5"/><rect x="51" y="-1" width="18" height="11" fill="url(#p3r-sp)"/><rect x="49.5" y="-3" width="2.6" height="15" rx="1.2" fill="#2b2e33"/><rect x="67.9" y="-3" width="2.6" height="15" rx="1.2" fill="#2b2e33"/><rect x="56" y="10" width="8" height="2" fill="#2b2e33"/>`,
     topbar: `<rect x="15" y="11" width="90" height="5.2" fill="#1c1e21"/><rect x="15" y="13" width="90" height=".9" fill="#000" opacity=".5"/><rect x="15" y="11" width="90" height=".8" fill="#fff" opacity=".12"/>`,
@@ -82,10 +106,10 @@ const P3R_DRAW = {
 const P3_BODY = {
   classic_enclosed: { left: 6, right: 90, top: 2, bottom: 103 },
   classic_open: { left: 12, right: 84, top: 6, bottom: 105 },
-  bambu_x: { left: 7.2, right: 88.8, top: 10.4, bottom: 104.8 },
-  elegoo_c: { left: 5.6, right: 90.4, top: 9.6, bottom: 105 },
-  bambu_a: { left: 8, right: 88, top: 13.6, bottom: 96.8 },
-  elegoo_n: { left: 8, right: 88, top: 15.2, bottom: 98.7 },
+  bambu_x: { left: 7.2, right: 88.8, top: 10.4, bottom: 104.8, inlet: 16 },
+  elegoo_c: { left: 5.6, right: 90.4, top: 9.6, bottom: 105, inlet: 16 },
+  bambu_a: { left: 8, right: 88, top: 13.6, bottom: 96.8, inlet: 16 },
+  elegoo_n: { left: 8, right: 88, top: 15.2, bottom: 98.7, inlet: 16 },
 };
 function p3Spool(cx, cy, r, s) {
   if (s.empty) return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1b1e22" stroke="#59606a" stroke-width=".7" stroke-dasharray="1.8 1.8"/><circle cx="${cx}" cy="${cy}" r="${r * .26}" fill="#3a4046"/>`;
@@ -98,7 +122,7 @@ function p3Spool(cx, cy, r, s) {
 function p3AmsParts(p, body) {
   const a = p.ams;
   if (!a) return { style: "", svg: "" };
-  const n = a.slots.length, cx = (body.left + body.right) / 2;
+  const n = a.slots.length, cx = (body.left + body.right) / 2, ix = cx + (body.inlet || 0);
   const heat = (x, y, w) => (a.drying ? [.2, .5, .8].map((k, i) => `<path class="p3a-h" style="animation-delay:${-i * .8}s" d="M${x + w * k} ${y - 2} q-2.4 -3 0 -6"/>`).join("") : "");
   const box = (x, y, w, h, slots) => `${heat(x, y, w)}<rect x="${x + .5}" y="${y + .5}" width="${w - 1}" height="${h - 1}" rx="4" fill="url(#p3a-b)" stroke="#1d2024"/><rect x="${x + 2.5}" y="${y + 2.5}" width="${w - 5}" height="${h - 8}" rx="2.5" fill="#15181b"/>${slots}<rect x="${x + w / 2 - 6}" y="${y + h - 3.5}" width="12" height="1.4" rx=".7" fill="#6a7178"/>`;
   const defs = `<defs><linearGradient id="p3a-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5058"/><stop offset="1" stop-color="#2a2e33"/></linearGradient></defs>`;
@@ -114,9 +138,9 @@ function p3AmsParts(p, body) {
     const x = body.right + 6, y = body.bottom - h;
     const slots = a.slots.map((s, i) => p3Spool(x + 14 + (i % cols) * 24, y + 14 + Math.floor(i / cols) * 24, r, s)).join("");
     const sx = x + w / 2, cy = body.top - 24;
-    const path = `M${sx} ${y - 2} C${sx} ${cy},${cx + 6} ${cy},${cx} ${body.top - 4}`;
+    const path = `M${sx} ${y - 2} C${sx} ${cy},${ix + 6} ${cy},${ix} ${body.top - 1}`;
     const fil = a.active ? `<path d="${path}" fill="none" stroke="${esc(a.active.color)}" stroke-width="1.2"/><path class="p3a-flow" d="${path}" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round"/>` : "";
-    inner = `<path d="${path}" fill="none" stroke="#9aa3ab" stroke-width="3.2" stroke-linecap="round"/><path d="${path}" fill="none" stroke="#e8ecef" stroke-width="2.4" stroke-linecap="round"/>${fil}<rect x="${cx - 3.5}" y="${body.top - 5}" width="7" height="5.5" rx="1.2" fill="#3a4046"/><rect x="${sx - 3}" y="${y - 3}" width="6" height="4" rx="1" fill="#3a4046"/>${box(x, y, w, h, slots)}`;
+    inner = `<path d="${path}" fill="none" stroke="#9aa3ab" stroke-width="3.2" stroke-linecap="round"/><path d="${path}" fill="none" stroke="#e8ecef" stroke-width="2.4" stroke-linecap="round"/>${fil}<rect x="${ix - 3.5}" y="${body.top - 2.5}" width="7" height="3" rx="1" fill="#3a4046"/><rect x="${sx - 3}" y="${y - 3}" width="6" height="4" rx="1" fill="#3a4046"/>${box(x, y, w, h, slots)}`;
     extra = `border-right:${Math.ceil(x + w - 96)}px solid transparent;border-top:${Math.max(0, Math.ceil(20 - body.top))}px solid transparent;box-sizing:content-box;`;
   }
   return { style: extra, svg: `<svg class="p3a" viewBox="0 0 96 108">${defs}${inner}</svg>` };
@@ -223,6 +247,7 @@ css: (color) => `
           border-radius: 0;
           clip-path: path("M1 20 L10 24 Q13 23 15 20 C12 14 15 5 22 5 C27 5 29 8 29.5 10 L34 12.5 L34 14 L29.5 16 Q28 19 25 21 C31 22 33 26 33 30 C33 37 27 40 17 40 C7 40 2 36 2 31 C2 27 1 24 1 20 Z");
         }
+        ${Object.entries(P3_SHAPES).map(([k, d]) => `.p3-part-${k} .p3-part { width: 34px; margin-left: -17px; } .p3-part-${k} .p3-shape { border-radius: 0; clip-path: path("${d}"); }`).join("\n        ")}
         .p3-eye { position: absolute; left: 22px; top: 9px; width: 3px; height: 3px; border-radius: 50%; background: rgba(0, 0, 0, 0.55); }
         .p3-lcd {
           position: absolute; left: 10px; bottom: 4px; width: 30px; height: 9px; border-radius: 2px;
@@ -261,9 +286,11 @@ css: (color) => `
         .p3r-led { opacity: 0.35; }
         .machine.moving .p3r-led { opacity: 0.9; }
         .machine.moving .p3r-hd { animation: p3r-hd 2.4s ease-in-out infinite; animation-delay: var(--anim-offset, 0s); }
+        .machine.moving .p3r-tube { animation: p3r-tube 2.4s ease-in-out infinite; animation-delay: var(--anim-offset, 0s); transform-origin: 0 0; }
         .machine.moving .p3r-slide { transform-box: fill-box; transform-origin: 50% 100%; animation: p3r-slide 2.4s ease-in-out infinite; animation-delay: var(--anim-offset, 0s); }
         .machine.moving .p3r-fan { transform-box: fill-box; transform-origin: 50% 50%; animation: p3r-fan 0.6s linear infinite; animation-delay: var(--anim-offset, 0s); }
         @keyframes p3r-hd { 0%, 100% { transform: translateX(-16px); } 50% { transform: translateX(16px); } }
+        @keyframes p3r-tube { 0%, 100% { transform: matrix(1, 0, var(--p3r-nk), 1, 0, 0); } 50% { transform: matrix(1, 0, var(--p3r-k), 1, 0, 0); } }
         @keyframes p3r-slide { 0%, 100% { transform: scale(0.965); } 50% { transform: scale(1.03); } }
         @keyframes p3r-fan { to { transform: rotate(360deg); } }
         .p3a-on { fill: #2ecc71; }

@@ -11,5 +11,5 @@
   "issue_tracker": "https://github.com/Patafoin/ha-notification-history/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "1.3.0"
+  "version": "1.4.0"
 }

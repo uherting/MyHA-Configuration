@@ -2,7 +2,7 @@
 // integration, with their image, link and buttons. Data comes from the integration's
 // WebSocket commands (notification_history/list and /subscribe), not from an entity.
 
-const CARD_VERSION = "0.4.0";
+const CARD_VERSION = "0.5.0";
 
 const I18N = {
   en: {
@@ -24,6 +24,7 @@ const I18N = {
     persistent: "Persistent notification",
     f_title: "Title",
     f_limit: "Notifications shown before “Show more”",
+    f_max_height: "Maximum height (px, empty: no limit, then scroll)",
     f_targets: "Targets (empty: all)",
     f_show_target: "Show the target name",
     f_channels: "Android channels (empty: all)",
@@ -51,6 +52,7 @@ const I18N = {
     persistent: "Notification persistante",
     f_title: "Titre",
     f_limit: "Notifications affichées avant « Voir plus »",
+    f_max_height: "Hauteur maximale (px, vide : sans limite, puis défilement)",
     f_targets: "Cibles (vide : toutes)",
     f_show_target: "Afficher le nom de la cible",
     f_channels: "Canaux Android (vide : tous)",
@@ -97,6 +99,7 @@ class NotificationHistoryCard extends HTMLElement {
       schema: [
         { name: "title", selector: { text: {} } },
         { name: "limit", selector: { number: { min: 1, max: 200, mode: "box" } } },
+        { name: "max_height", selector: { number: { min: 100, max: 3000, step: 10, mode: "box", unit_of_measurement: "px" } } },
         { name: "targets", selector: { text: { multiple: true } } },
         { name: "show_target", selector: { boolean: {} } },
         { name: "channels", selector: { text: { multiple: true } } },
@@ -117,6 +120,7 @@ class NotificationHistoryCard extends HTMLElement {
     this._config = { limit: 15, show_target: true, frigate: true, ...config };
     this._items = null;
     this._more = false;
+    this._list = null; // the shell (title, styles) depends on the config: built again
     this._error = null;
     this._signed = this._signed || new Map(); // path -> { url, until } or { pending: true }
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
@@ -132,7 +136,7 @@ class NotificationHistoryCard extends HTMLElement {
   connectedCallback() {
     if (this._hass && !this._unsub) this._resubscribe();
     // Refresh relative dates once a minute.
-    this._timer = setInterval(() => this._items && this._render(), 60000);
+    this._timer = setInterval(() => this._dates(), 60000);
   }
 
   disconnectedCallback() {
@@ -142,6 +146,21 @@ class NotificationHistoryCard extends HTMLElement {
 
   getCardSize() {
     return 6;
+  }
+
+  // Sections view: the height follows the content by default; when the card is given a
+  // fixed number of rows, the list scrolls inside it.
+  getGridOptions() {
+    return { columns: 12, min_columns: 4, rows: "auto", min_rows: 2 };
+  }
+
+  // max_height: a number of pixels, or a CSS length ("60vh", "30em"). Anything else is ignored.
+  _maxHeight() {
+    const v = this._config.max_height;
+    if (typeof v === "number" && v > 0) return `${v}px`;
+    if (typeof v !== "string") return "";
+    const m = v.trim().match(/^(\d+(?:\.\d+)?)\s*(px|vh|dvh|svh|lvh|em|rem)?$/);
+    return m && Number(m[1]) > 0 ? `${m[1]}${m[2] || "px"}` : "";
   }
 
   get _t() {
@@ -369,51 +388,18 @@ class NotificationHistoryCard extends HTMLElement {
     return s[n.status] || "";
   }
 
-  _render() {
-    if (!this.shadowRoot || !this._config) return;
-    const t = this._t;
-    this._btns = [];
-    let body;
-    if (this._error) {
-      body = `<div class="empty">${esc(this._error.code === "not_loaded" || this._error.code === "unknown_command" ? t.not_loaded : this._error.message || this._error)}</div>`;
-    } else if (!this._items) {
-      body = "";
-    } else if (!this._items.length) {
-      body = `<div class="empty">${t.empty}</div>`;
-    } else {
-      body = this._items
-        .map((n) => {
-          const btns = this._buttons(n)
-            .map((b) => {
-              this._btns.push(b);
-              return `<button class="btn" data-b="${this._btns.length - 1}"><ha-icon icon="${b.icon}"></ha-icon>${esc(b.label)}</button>`;
-            })
-            .join("");
-          const status = this._status(n);
-          const head = n.title || n.message || "";
-          const img = this._src(this._local(n.image));
-          return `<div class="item${n.status === "replaced" || n.status === "removed" ? " dim" : ""}">
-            <div class="head">
-              <ha-icon icon="${this._icon(n)}"></ha-icon>
-              <div class="txt">
-                <div class="title">${esc(head)}</div>
-                <div class="meta">${esc(this._when(n.ts))}${this._config.show_target ? ` · ${esc(this._targetName(n))}` : ""}${this._config.show_channel && n.channel ? ` · ${esc(n.channel)}` : ""}${this._config.show_group && n.group ? ` · ${esc(n.group)}` : ""}</div>
-              </div>
-              ${status ? `<span class="status">${esc(status)}</span>` : ""}
-            </div>
-            ${n.title && n.message ? `<div class="msg">${this._linkify(n.message)}</div>` : ""}
-            ${img ? `<img class="img" loading="lazy" src="${esc(img)}" alt="">` : ""}
-            ${btns ? `<div class="btns">${btns}</div>` : ""}
-          </div>`;
-        })
-        .join("");
-      if (this._more) body += `<button class="btn more" data-more>${t.more}</button>`;
-    }
-
+  // The shell (styles, title, list) is built once per config. Then each render only swaps the
+  // list's children and keeps the element of a notification that did not change, so the scroll
+  // position, loaded images and an open viewer survive new notifications and "Show more".
+  _build() {
+    const mh = this._maxHeight();
     this.shadowRoot.innerHTML = `<style>
-        ha-card { padding: 12px; }
-        .title-card { font-size: 20px; font-weight: 500; padding: 4px 4px 12px; color: var(--primary-text-color); }
-        .list { display: flex; flex-direction: column; gap: 8px; }
+        :host { display: block; height: 100%; }
+        ha-card { padding: 12px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
+        .title-card { font-size: 20px; font-weight: 500; padding: 4px 4px 12px; color: var(--primary-text-color); flex: none; }
+        .list { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; overflow-y: auto;
+                overflow-anchor: none; position: relative; scrollbar-width: thin;${mh ? ` max-height: ${mh};` : ""} }
+        .list > * { flex: none; }
         .item { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--divider-color);
                 display: flex; flex-direction: column; gap: 8px; }
         .item.dim { opacity: 0.6; }
@@ -442,25 +428,101 @@ class NotificationHistoryCard extends HTMLElement {
       </style>
       <ha-card>
         ${this._config.title ? `<div class="title-card">${esc(this._config.title)}</div>` : ""}
-        <div class="list">${body}</div>
+        <div class="list"></div>
       </ha-card>`;
+    this._list = this.shadowRoot.querySelector(".list");
+    this._nodes = new Map(); // notification id -> its element
+  }
 
-    const root = this.shadowRoot;
-    root.querySelectorAll("img.img").forEach((im) => {
+  _el(html) {
+    const tpl = document.createElement("template");
+    tpl.innerHTML = html.trim();
+    return tpl.content.firstElementChild;
+  }
+
+  // The HTML of a notification, without its relative date (filled in by _dates()).
+  _itemHtml(n, btns) {
+    const status = this._status(n);
+    const head = n.title || n.message || "";
+    const img = this._src(this._local(n.image));
+    const buttons = btns
+      .map((b, i) => `<button class="btn" data-b="${i}"><ha-icon icon="${b.icon}"></ha-icon>${esc(b.label)}</button>`)
+      .join("");
+    return `<div class="item${n.status === "replaced" || n.status === "removed" ? " dim" : ""}">
+            <div class="head">
+              <ha-icon icon="${this._icon(n)}"></ha-icon>
+              <div class="txt">
+                <div class="title">${esc(head)}</div>
+                <div class="meta"><span data-ts="${Number(n.ts) || 0}"></span>${this._config.show_target ? ` · ${esc(this._targetName(n))}` : ""}${this._config.show_channel && n.channel ? ` · ${esc(n.channel)}` : ""}${this._config.show_group && n.group ? ` · ${esc(n.group)}` : ""}</div>
+              </div>
+              ${status ? `<span class="status">${esc(status)}</span>` : ""}
+            </div>
+            ${n.title && n.message ? `<div class="msg">${this._linkify(n.message)}</div>` : ""}
+            ${img ? `<img class="img" loading="lazy" src="${esc(img)}" alt="">` : ""}
+            ${buttons ? `<div class="btns">${buttons}</div>` : ""}
+          </div>`;
+  }
+
+  _item(html, btns) {
+    const el = this._el(html);
+    el._html = html;
+    el.querySelectorAll("img.img").forEach((im) => {
       // Image gone (e.g. purged camera event): hide it rather than show a broken icon.
       im.addEventListener("error", () => im.classList.add("ko"));
       im.addEventListener("click", () => this._overlay(`<img src="${esc(im.getAttribute("src"))}" alt="">`));
     });
-    root.querySelectorAll("button[data-b]").forEach((el) => el.addEventListener("click", () => this._run(this._btns[Number(el.dataset.b)])));
+    el.querySelectorAll("button[data-b]").forEach((b) => b.addEventListener("click", () => this._run(btns[Number(b.dataset.b)])));
     // Same handling as the link buttons (same-origin paths open in HA, not a new tab).
-    root.querySelectorAll("a[data-l]").forEach((el) =>
-      el.addEventListener("click", (e) => {
+    el.querySelectorAll("a[data-l]").forEach((a) =>
+      a.addEventListener("click", (e) => {
         e.preventDefault();
-        this._run({ url: el.getAttribute("href"), kind: el.dataset.l });
+        this._run({ url: a.getAttribute("href"), kind: a.dataset.l });
       })
     );
-    const more = root.querySelector("[data-more]");
-    if (more) more.addEventListener("click", () => this._load(this._items[this._items.length - 1].id));
+    return el;
+  }
+
+  _dates() {
+    if (!this._list) return;
+    this._list.querySelectorAll("[data-ts]").forEach((s) => (s.textContent = this._when(Number(s.dataset.ts))));
+  }
+
+  _render() {
+    if (!this.shadowRoot || !this._config) return;
+    const t = this._t;
+    if (!this._list) this._build();
+    const list = this._list;
+    const next = new Map();
+    let nodes = [];
+    if (this._error) {
+      nodes = [this._el(`<div class="empty">${esc(this._error.code === "not_loaded" || this._error.code === "unknown_command" ? t.not_loaded : this._error.message || this._error)}</div>`)];
+    } else if (this._items && !this._items.length) {
+      nodes = [this._el(`<div class="empty">${t.empty}</div>`)];
+    } else if (this._items) {
+      nodes = this._items.map((n) => {
+        const btns = this._buttons(n);
+        const html = this._itemHtml(n, btns);
+        let el = this._nodes.get(n.id);
+        if (!el || el._html !== html) el = this._item(html, btns);
+        next.set(n.id, el);
+        return el;
+      });
+      if (this._more) {
+        const more = this._el(`<button class="btn more" data-more>${esc(t.more)}</button>`);
+        more.addEventListener("click", () => this._load(this._items[this._items.length - 1].id));
+        nodes.push(more);
+      }
+    }
+    // Keep what the user is reading in place when the list scrolls: the first visible
+    // notification stays where it was, even if new ones arrive above it.
+    const top = list.scrollTop;
+    const anchor = top > 0 ? [...list.children].find((c) => c.offsetTop + c.offsetHeight > top) : null;
+    const shift = anchor ? anchor.offsetTop - top : 0;
+    list.replaceChildren(...nodes);
+    this._nodes = next;
+    this._dates();
+    if (anchor && anchor.parentNode === list) list.scrollTop = anchor.offsetTop - shift;
+    else if (top > 0) list.scrollTop = top;
   }
 
   _overlay(html) {

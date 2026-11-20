@@ -27,6 +27,11 @@ JSMODULES = [
         "filename": "flightradar24-card.js",
         "version": INTEGRATION_VERSION,
     },
+    {
+        "name": "Flightradar24 Tracking Card",
+        "filename": "flightradar24-tracking-card.js",
+        "version": INTEGRATION_VERSION,
+    },
 ]
 
 CONF_MIN_ALTITUDE = "min_altitude"
@@ -103,9 +108,27 @@ FAILURE_COOLDOWN = 30
 # what kept a rate limited IP from ever getting out of the limit (#330).
 RATE_LIMIT_MAX_COOLDOWN = 900
 
+# A request that timed out has already cost the whole HTTP timeout (about 30 s),
+# so it is not retried inside the same call. It pauses its endpoint for
+# FAILURE_COOLDOWN and the next poll after that tries again (#347).
+CURL_TIMEOUT_CODE = 28
+
+# Airport details (stats and schedule) change slowly and the endpoint is the
+# slowest one, so they are refreshed on their own interval instead of on every
+# area poll. Setting a tracked airport refreshes at once; clearing only drops
+# local data (no HTTP).
+AIRPORT_REFRESH_INTERVAL = 90
+
 # Per-flight position history stored on each flight dict as `coordinates`
 # ([[lat, lon], ...]). Capped so sensor attributes stay bounded.
 COORDINATES_MAX_POINTS = 50
+
+# After landing, a brief ADS-B gap mid-taxi must not mean arrived_gate (BA304 /
+# #317). Require this many consecutive feed misses (after live_attempt grace)
+# before treating absence as gate arrival. Default scan is 20s → ~1 min.
+ARRIVAL_FEED_MISS_THRESHOLD = 3
+# Knots: above this, still taxiing in — need sustained absence before arrival.
+TAXI_ARRIVAL_MAX_SPEED = 5
 
 # Stable English object_ids for entity_id suggestion (#265).
 # Matches historical EN installs: slugify("FlightRadar24" + " " + en.json name).

@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The camera drawing and its CSS, loaded by the card the first time it shows one.
-export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_COLORS, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, t, thsColor, zoneColumns }) {
+export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_ALERT, CO2_COLORS, CO2_WARN, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, RACK_TRANS_S, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, numberOrNull, shdBlur, t, thsColor, zoneColumns }) {
 // The camera, drawn in its colour: the lens, its glint, the blue of a live
 // view, an infrared ring that glows red at night, the status light, the REC
 // tag and the waves of a motion.
@@ -10,6 +10,7 @@ const CAM_DEFS = `<defs>
 <radialGradient id="cam-g-sph" cx=".38" cy=".32" r=".75"><stop offset="0" style="stop-color:var(--ac-body-hi,#fff)"/><stop offset=".6" style="stop-color:var(--ac-body,#eef1f4)"/><stop offset="1" style="stop-color:var(--ac-body-lo,#c9d0d7)"/></radialGradient>
 <radialGradient id="cam-g-glass" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#3a4552"/><stop offset=".55" stop-color="#11161c"/><stop offset="1" stop-color="#05070a"/></radialGradient>
 <radialGradient id="cam-g-lens" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#4f6b8a"/><stop offset=".45" stop-color="#16263a"/><stop offset="1" stop-color="#020407"/></radialGradient>
+<linearGradient id="cam-g-cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3c4" stop-opacity=".85"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></linearGradient>
 <radialGradient id="cam-g-glow" r=".5"><stop offset="0" stop-color="#4fc3f7" stop-opacity=".95"/><stop offset="1" stop-color="#4fc3f7" stop-opacity="0"/></radialGradient>
 <radialGradient id="cam-g-smoke" cx=".4" cy=".25" r=".85"><stop offset="0" stop-color="#56606b" stop-opacity=".85"/><stop offset=".6" stop-color="#1c2228" stop-opacity=".9"/><stop offset="1" stop-color="#0b0e11" stop-opacity=".95"/></radialGradient>
 <linearGradient id="cam-g-al" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="cam-al0"/><stop offset=".32" class="cam-al1"/><stop offset=".7" class="cam-al2"/><stop offset="1" class="cam-al3"/></linearGradient>
@@ -113,6 +114,29 @@ ${camShadow(60, 21, 56, 3.5, .22)}
 <path d="M24 39 A36 37 0 0 0 96 39" fill="none" ${CAM_EDGE} stroke-width=".7"/>
 <circle class="cam-led" cx="40" cy="50" r="1.3"/>
 </g>${camWaves(86, 96)}<g transform="translate(0 92)">${CAM_REC}</g>`,
+  // A dual-lens tracking camera, after the Reolink TrackMix: the wall plate
+  // on top, the fixed white head, and under it the black globe that turns.
+  // Its window holds the two light sensors, the wide and the telephoto
+  // lenses side by side, and the two spotlights. On a motion the globe pans.
+  trackmix: (c) => `${camShadow(62, 112, 24, 3, .2)}
+<rect x="42" y="3" width="36" height="17" rx="2.5" fill="url(#cam-g-shv)" ${CAM_EDGE} stroke-width=".6"/>
+<path d="M45 5.5 H75" stroke="#fff" stroke-width="1.2" opacity=".7" stroke-linecap="round"/>
+<circle cx="48" cy="12" r="1.3" fill="rgba(0,0,0,.3)"/><circle cx="72" cy="12" r="1.3" fill="rgba(0,0,0,.3)"/>
+<path d="M30 26 Q30 19 37 19 H83 Q90 19 90 26 V51 Q60 57 30 51 Z" fill="url(#cam-g-shv)" ${CAM_EDGE} stroke-width=".7"/>
+<path d="M36 23 H84" stroke="#fff" stroke-width="1.6" opacity=".75" stroke-linecap="round"/>
+<path d="M34 27 V49" stroke="#fff" stroke-width="2" opacity=".45" stroke-linecap="round"/>
+<path d="M30 49 Q60 55 90 49 V51 Q60 57 30 51 Z" fill="#000" opacity=".12"/>
+<path d="M33 52 Q60 57.5 87 52 V76 A27 32 0 0 1 33 76 Z" fill="url(#cam-g-blk)" ${CAM_EDGE} stroke-width=".7"/>
+<path d="M36 58 V78 Q37 92 46 100" stroke="#fff" stroke-width="1.6" opacity=".16" fill="none" stroke-linecap="round"/>
+<g transform="translate(${c && c.pan !== null && c.pan !== undefined ? ((c.pan - .5) * 14).toFixed(1) : 0} ${c && c.tilt !== null && c.tilt !== undefined ? ((c.tilt - .5) * 8).toFixed(1) : 0})"><g class="cam-tmx-pan"><rect x="43" y="57" width="34" height="36" rx="7" fill="url(#cam-g-dbglass)" stroke="#000" stroke-width=".6"/>
+<path d="M46 60 Q52 58 60 58" stroke="#fff" stroke-width="1" opacity=".2" fill="none" stroke-linecap="round"/>
+<rect x="49" y="60.5" width="22" height="6" rx="3" fill="#1b2128"/><circle cx="54.5" cy="63.5" r="1.6" fill="#3a4550"/><circle cx="65.5" cy="63.5" r="1.6" fill="#3a4550"/>
+<rect x="45.5" y="68.5" width="29" height="13" rx="2.5" fill="#12171c"/>
+<g class="cam-on">${camLens(53, 75, 4.2, 0)}${camLens(67, 75, 4.2, 0)}<circle class="cam-tmx-spot" cx="54" cy="87" r="3"/><circle class="cam-tmx-spot" cx="66" cy="87" r="3"/></g>
+<g class="cam-off"><circle cx="53" cy="75" r="5" fill="#2a3037"/><circle cx="67" cy="75" r="5" fill="#2a3037"/><circle cx="54" cy="87" r="2.6" fill="#2a3037"/><circle cx="66" cy="87" r="2.6" fill="#2a3037"/></g></g></g>
+<g transform="translate(${c && c.pan !== null && c.pan !== undefined ? ((c.pan - .5) * 14).toFixed(1) : 0} ${c && c.tilt !== null && c.tilt !== undefined ? ((c.tilt - .5) * 8).toFixed(1) : 0})"><path class="cam-spotcone cam-tmx-beam" d="M49 86 L71 86 L102 124 L18 124 Z" fill="url(#cam-g-cone)"/></g>
+<circle class="cam-led" cx="82" cy="58" r="1.2"/>
+${camWaves(92, 76)}${CAM_REC}`,
   // A video doorbell on its wall: the lens at the top, the motion sensor, and
   // the button in its ring of light, which beats when someone rings.
   doorbell: () => `${camShadow(62, 62, 22, 58, .14)}
@@ -136,9 +160,11 @@ ${camWaves(80, 40)}${CAM_REC}`,
 };
 function cameraHtml(cls, c) {
   const layout = CAMERA_LAYOUTS.includes(c.layout) ? c.layout : "indoor";
-  const flags = ["cam", `cam-l-${layout}`, `cam-m-${c.mode || "unav"}`, c.night ? "cam-night" : "", c.dark ? "cam-dark" : ""].filter(Boolean).join(" ");
+  const flags = ["cam", `cam-l-${layout}`, `cam-m-${c.mode || "unav"}`, c.night ? "cam-night" : "", c.dark ? "cam-dark" : "", c.spot ? "cam-spot" : "", c.track ? "cam-track" : ""].filter(Boolean).join(" ");
+  // A siren calls on both sides of the camera, in red.
+  const siren = `<g class="cam-siren-fx"><path d="M14 30 Q6 44 14 58"/><path d="M8 24 Q-3 44 8 64"/><path d="M106 30 Q114 44 106 58"/><path d="M112 24 Q123 44 112 64"/></g>`;
   return `
-        <div class="machine ${cls} ${flags}"><svg class="cam-svg" viewBox="0 -8 120 135">${CAM_DEFS}${CAMERA_SVGS[layout]()}</svg></div>`;
+        <div class="machine ${cls} ${flags}"><svg class="cam-svg" viewBox="0 -8 120 135">${CAM_DEFS}${CAMERA_SVGS[layout](c)}${siren}</svg></div>`;
 }
 
 
@@ -175,6 +201,24 @@ css: () => `
         @keyframes cam-breathe { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
         @keyframes cam-wave { 0% { opacity: 0; transform: scale(.6); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.25); } }
         @keyframes cam-ir { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+        .cam-tmx-spot{fill:#f5f2e6;stroke:#8f8a78;stroke-width:.5}
+        .cam-night .cam-tmx-spot,.cam-m-motion.cam-night .cam-tmx-spot{fill:#fff3c4;filter:drop-shadow(0 0 3px #ffe082)}
+        .cam-tmx-pan{transform-box:fill-box;transform-origin:center}
+        .cam-spotcone{opacity:0}
+        .cam-spot .cam-spotcone{opacity:.7}
+        .cam-spot .cam-tmx-spot{fill:#fffbe6;filter:drop-shadow(0 0 4px #ffe082)}
+        .cam-m-motion.cam-track .cam-tmx-pan{animation-duration:2.2s}
+        .cam-siren-fx{opacity:0}
+        .cam-m-siren .cam-siren-fx{opacity:1}
+        .cam-siren-fx path{fill:none;stroke:#e53935;stroke-width:2.6;stroke-linecap:round;animation:cam-blink .5s steps(1) infinite}
+        .cam-siren-fx path:nth-child(2n){animation-delay:.25s}
+        .cam-m-siren .cam-led{fill:#e53935;animation:cam-blink .5s steps(1) infinite}
+        .cam-m-motion .cam-tmx-pan{animation:cam-pan 3.2s ease-in-out infinite;animation-delay:var(--anim-offset,0s)}
+        .cam-tmx-beam{transform-box:fill-box;transform-origin:50% 0}
+        .cam-m-motion .cam-tmx-beam{animation:cam-beam 3.2s ease-in-out infinite;animation-delay:var(--anim-offset,0s)}
+        .cam-m-motion.cam-track .cam-tmx-beam{animation-duration:2.2s}
+        @keyframes cam-beam { 0%, 100% { transform: translateX(-5px) skewX(-18deg); } 50% { transform: translateX(5px) skewX(18deg); } }
+        @keyframes cam-pan { 0%, 100% { transform: translateX(-5px); } 50% { transform: translateX(5px); } }
         .cam-dbring{fill:none;stroke:#4fc3f7;stroke-width:2.4;opacity:.45}
         .cam-m-ring .cam-dbring{opacity:1;stroke:#29b6f6;animation:cam-dbpulse 1s ease-in-out infinite;animation-delay:var(--anim-offset,0s)}
         .cam-m-off .cam-dbring,.cam-m-unav .cam-dbring{opacity:0}
