@@ -26,6 +26,8 @@
                 else:
                   # - logger.log: "Turning SSR01 on b/c of twilight automation."
                   - switch.turn_on: ${ssr01_id}
+                  - delay: !secret DELAY_60SEC
+                  - switch.turn_off: ${ssr01_id}
 
 ####################################################################
 # EOF
