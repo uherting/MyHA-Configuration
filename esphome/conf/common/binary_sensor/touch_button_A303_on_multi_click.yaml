@@ -15,11 +15,6 @@
   pin:
     mcp23xxx: ${mcp23017_hub01_id}
     number: !secret MCP23017_PIN_A3
-    #
-    # TODO: before installation change settings for mode / inverted
-    # production => inverted: false / mode: INPUT
-    # before installation => inverted: true / mode: INPUT_PULLUP
-    #
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
     mode: INPUT
     # mode: INPUT_PULLUP
@@ -28,24 +23,24 @@
   device_class: power
   on_multi_click:
     - timing:
-        - ON for 0.1s to 0.3s
-        - OFF for at least 1s
+        - ON for at most 0.3s
+        - OFF for at least 0.5s
       then:
-        - logger.log: "ESPHome: Single short clicked. Prior exec script tb_03_click_short."
+        # - logger.log: "ESPHome: Single short clicked. Prior exec script tb_03_click_short."
         - script.execute: tb_03_click_short
     - timing:
-        - ON for 1s to 7s
+        - ON for 1s to 4s
         - OFF for at least 1s
       then:
-        - logger.log: "ESPHome: Single long clicked. Prior exec script tb_03_click_long."
+        # - logger.log: "ESPHome: Single long clicked. Prior exec script tb_03_click_long."
         - script.execute: tb_03_click_long
     - timing:
-        - ON for 0.1s to 0.3s
+        - ON for at most 0.3s
         - OFF for at most 0.4s
-        - ON for 0.1s to 0.3s
+        - ON for at most 0.3s
         - OFF for at least 1s
       then:
-        - logger.log: "ESPHome: Double clicked. Prior exec script tb_03_click_dbl."
+        # - logger.log: "ESPHome: Double clicked. Prior exec script tb_03_click_dbl."
         - script.execute: tb_03_click_dbl
 # ############################################################
 #  END OF FILE

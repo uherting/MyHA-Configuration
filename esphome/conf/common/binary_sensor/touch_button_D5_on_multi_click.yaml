@@ -9,6 +9,9 @@
 - platform: gpio
   name: $touchbutton01_name
   id: ${touchbutton01_id}
+  # filters:
+  #   - delayed_on: 70ms
+  #   - delayed_off: 70ms
   pin:
     number: !secret GPIO_PIN_D5
     # mode can be INPUT, INPUT_PULLUP or OUTPUT
@@ -20,22 +23,23 @@
   on_multi_click:
     - timing:
         - ON for at most 0.3s
-        - OFF for at least 0.2s
+        - OFF for at least 0.5s
       then:
-        # - logger.log: "Single short clicked, no action."
+        # - logger.log: "ESPHome: Single short clicked. Prior exec script tb_d5_click_short."
         - script.execute: tb_d5_click_short
     - timing:
         - ON for 2s to 4s
-        - OFF for at least 0.4s
+        - OFF for at least 0.5s
       then:
-        - logger.log: "Single long clicked, no action."
+        # - logger.log: "ESPHome: Single long clicked. Prior exec script tb_d5_click_long."
+        - script.execute: tb_d5_click_long
     - timing:
         - ON for at most 0.3s
         - OFF for at most 0.4s
         - ON for at most 0.3s
-        - OFF for at least 0.2s
+        - OFF for at least 1s
       then:
-        # - logger.log: "Double clicked, no action."
+        # - logger.log: "ESPHome: Double clicked. Prior exec script tb_d5_click_dbl."
         - script.execute: tb_d5_click_dbl
 # ############################################################
 #  END OF FILE
