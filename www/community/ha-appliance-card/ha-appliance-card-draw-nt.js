@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The nt drawing and its CSS, loaded by the card the first time it shows one.
-export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_ALERT, CO2_COLORS, CO2_WARN, DIFFUSER_LAYOUTS, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, RACK_TRANS_S, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, numberOrNull, shdBlur, t, thsColor, zoneColumns }) {
+export default function defineDrawing({ BATTERY_LAYOUTS, CAMERA_LAYOUTS, CO2_ALERT, CO2_COLORS, CO2_WARN, DIFFUSER_LAYOUTS, DOOR_TRANS_S, EV_FLOW_DEFAULT, FR3, HRV_LAYOUTS, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_WARM, LAPTOP_COLORS, MAILBOX_LAYOUTS, MAILBOX_MAX_LETTERS, MB3_PAL, MW_DISHES, NETATMO_COLORS, NET_LAYOUTS, OVEN_DISHES, RACK_TRANS_S, ROBOT_FLOORS, ROBOT_LAYOUTS, SCREEN_LAYOUTS, SCREEN_LIT, SCREEN_TABLETS, SHELTER_COLORS, SOLAR_LAYOUTS, T, TOASTER_LAYOUTS, TREE_PALETTES, co2LevelOf, esc, ntFlake, ntTint, numberOrNull, shdBlur, t, thsColor, zoneColumns }) {
 const softShadow = (cx, cy, rx, ry, op = .26, b = 1.6) => { const id = `shd-${cx}-${cy}-${rx}`.replace(/\./g, "_"); return `${shdBlur(id, b)}<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#000" opacity="${op}" filter="url(#${id})"/>`; };
 // Drawing helpers
 let ntN = 0;
@@ -1421,51 +1421,182 @@ ${detLed(c, 60, 86, 2)}
 <path class="nta-drip ntd${d}" d="M${x} 78 q-2.6 3.8 0 5.4 q2.6 -1.6 0 -5.4 Z" fill="#4fc3f7" stroke="#0288d1" stroke-width=".3"/>`).join("")}</g>
 ${ntWaves(60, 66, "#e53935", 36)}</g>`;
 }
-// A door and window contact (Sonoff SNZB-04P): the sensor on the frame, its
-// magnet on the door's edge. Open, the door swings in, the magnet leaves the
-// sensor and its light blinks blue.
 function ntDetDoor(c) {
   const wd = ntId(), fr = ntId(), bd = ntId(), dk = ntId();
   // A pulled-off sensor is an alarm, not an open door.
-  const open = c.tamper ? !!c.smoke : c.on;
-  const gw = ntId();
-  // A window: a white sash round its glass instead of a wooden door.
-  const leaf = c.window ? (open
-    ? `<polygon points="10 6 46 13 46 105 10 112" fill="#f3f5f7" stroke="#b7c0c8" stroke-width=".7"/><polygon points="15 14 41 19 41 99 15 104" fill="url(#${gw})" stroke="#b0bcc6" stroke-width=".5"/>
-<rect x="46" y="13" width="26" height="92" fill="url(#${dk})"/>`
-    : `<rect x="10" y="6" width="62" height="106" fill="#f3f5f7" stroke="#b7c0c8" stroke-width=".7"/><rect x="16" y="12" width="50" height="94" fill="url(#${gw})" stroke="#b0bcc6" stroke-width=".5"/>
-<path d="M22 24 L36 18 M22 36 L50 22" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/><rect x="62" y="56" width="3" height="12" rx="1.5" fill="#c9ccd0" stroke="#8e949a" stroke-width=".4"/>`) : (open
-    ? `<polygon points="10 6 46 13 46 105 10 112" fill="url(#${wd})" stroke="#8a6440" stroke-width=".7"/>
-<polygon points="16 18 40 22 40 54 16 54" fill="none" stroke="#9a7350" stroke-width=".8" opacity=".7"/><polygon points="16 64 40 64 40 97 16 101" fill="none" stroke="#9a7350" stroke-width=".8" opacity=".7"/>
-<rect x="46" y="13" width="26" height="92" fill="url(#${dk})"/>`
-    : `<rect x="10" y="6" width="62" height="106" fill="url(#${wd})" stroke="#8a6440" stroke-width=".7"/>
-<rect x="17" y="16" width="48" height="38" rx="1.5" fill="none" stroke="#9a7350" stroke-width=".9" opacity=".75"/><rect x="17" y="62" width="48" height="40" rx="1.5" fill="none" stroke="#9a7350" stroke-width=".9" opacity=".75"/>
-<circle cx="64" cy="62" r="2.2" fill="#c9ccd0" stroke="#8e949a" stroke-width=".5"/>`);
-  const mx = open ? 39 : 62;
-  return `<defs>${ntV(wd, "#d8b48a", "#b48759")}${ntV(fr, "#fbf8f2", "#e8e1d4")}${ntV(bd, "#ffffff", "#dfe4e8")}
-<linearGradient id="${dk}" x1="0" x2="1"><stop offset="0" stop-color="#1f252b"/><stop offset="1" stop-color="#3a434b"/></linearGradient>
-<linearGradient id="${gw}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d4ecf8"/><stop offset="1" stop-color="#8fc7e6"/></linearGradient></defs>
-${leaf}
-<rect x="72" y="2" width="18" height="114" fill="url(#${fr})" stroke="#cfc6b6" stroke-width=".6"/>
-<g${c.tamper ? ` transform="rotate(-24 81 26)"` : ""}>${{
+  const open = !!c.smoke;
+  const gw = ntId(), ex = ntId(), sk = ntId(), al = ntId(), cl = ntId(), pk = ntId(), gc = ntId();
+  const style = c.window ? "" : c.style || "";
+  const anth = c.frame === "anthracite";
+  const sf = anth ? "#4a5259" : "#f3f5f7", ss = anth ? "#262c31" : "#b7c0c8", sg = anth ? "#1e2327" : "#b0bcc6";
+  const F = open ? 1 : 0;
+  const n2 = (v) => +v.toFixed(2);
+  // Just after a change (c.trans, the seconds gone by) the leaf swings, slides
+  // or rises once, from where it was to where it is, the magnet with it.
+  const swing = c.trans ? `dur="${DOOR_TRANS_S}s" begin="0s" fill="freeze" data-swing="${c.trans.toFixed(2)}" calcMode="spline" keyTimes="0;1" keySplines=".45 0 .25 1"` : "";
+  const anim = (attr, from, to) => (c.trans ? `<animate attributeName="${attr}" values="${from};${to}" ${swing}/>` : "");
+  const animT = (from, to) => (c.trans ? `<animateTransform attributeName="transform" type="translate" values="${from};${to}" ${swing}/>` : "");
+  const move = (dxOpen, dyOpen, inner, clip = "") => {
+    const at = (f) => `${n2(dxOpen * f)} ${n2(dyOpen * f)}`;
+    return `<g${clip ? ` clip-path="url(#${clip})"` : ""}><g transform="translate(${at(F)})">${animT(at(1 - F), at(F))}${inner}</g></g>`;
+  };
+  // What only a shut leaf shows (its handle, the light on its glass) fades.
+  const shut = (inner) => (inner ? `<g opacity="${1 - F}">${anim("opacity", F, 1 - F)}${inner}</g>` : "");
+  // A leaf hinged at hx, w wide, from y to y + h, turned in by f (0 shut, 1
+  // open): every point of its face is carried onto the leaf seen at an angle.
+  const leafOf = (hx, w, y, h) => {
+    const P = (px, py, f) => {
+      const u = (px - hx) / w, top = y + h * .066 * u, bot = y + h - h * .066 * u;
+      const ox = hx + w * .58 * u, oy = top + (py - y) / h * (bot - top);
+      return `${n2(px + (ox - px) * f)} ${n2(py + (oy - py) * f)}`;
+    };
+    const pts = (list, f) => list.map(([px, py]) => P(px, py, f)).join(" ");
+    const R = (x0, y0, x1, y1, attrs) => {
+      const list = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+      return `<polygon points="${pts(list, F)}" ${attrs}>${anim("points", pts(list, 1 - F), pts(list, F))}</polygon>`;
+    };
+    const L = (x0, y0, x1, y1, attrs) => `<path d="M${P(x0, y0, F)} L${P(x1, y1, F)}" ${attrs}>${anim("d", `M${P(x0, y0, 1 - F)} L${P(x1, y1, 1 - F)}`, `M${P(x0, y0, F)} L${P(x1, y1, F)}`)}</path>`;
+    return { R, L };
+  };
+  const hdl = (x, y, h = 12) => `<rect x="${x}" y="${y}" width="3" height="${h}" rx="1.5" fill="#c9ccd0" stroke="#8e949a" stroke-width=".4"/>`;
+  const shine = (x, y, w) => `<path d="M${x} ${y + 12} L${x + w * .5} ${y + 6} M${x} ${y + 24} L${x + w} ${y + 10}" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;
+  // A sash seen flat: its frame round its glass.
+  const sash = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${sf}" stroke="${ss}" stroke-width=".7"/><rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" fill="url(#${gw})" stroke="${sg}" stroke-width=".5"/>`;
+  // A sash that turns on its hinge at x, the garden behind it.
+  const turning = (x, y, w, h, extra = "") => {
+    const { R } = leafOf(x, w, y, h);
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${sk})"/>${R(x, y, x + w, y + h, `fill="${sf}" stroke="${ss}" stroke-width=".7"`)}${R(x + 5, y + 5, x + w - 5, y + h - 5, `fill="url(#${gw})" stroke="${sg}" stroke-width=".5"`)}${shut(extra)}`;
+  };
+  const ws = c.window ? c.wstyle || "casement" : "";
+  let stripY = 2, stripH = 114;
+  // Where the magnet goes when it opens: across, or up with a garage door.
+  let mdx = -23, mdy = 0, mclip = "";
+  let leaf = "";
+  if (ws === "double") {
+    // Two sashes; the right one opens, the left one stays shut.
+    leaf = sash(10, 6, 31, 106) + shine(16, 12, 14) + turning(41, 6, 31, 106, shine(47, 12, 14) + hdl(66, 76));
+    mdx = -10;
+  } else if (ws === "sliding") {
+    // Two panes on their rails; the front one runs left over the other and the
+    // garden shows through.
+    mdx = -26;
+    leaf = `<rect x="10" y="8" width="62" height="102" fill="url(#${sk})"/>${sash(10, 8, 34, 102)}${hdl(12.5, 52, 14)}
+${move(-26, 0, sash(38, 8, 34, 102) + shine(44, 14, 18))}
+<rect x="8" y="4" width="66" height="4" fill="${sf}" stroke="${ss}" stroke-width=".5"/><rect x="8" y="110" width="66" height="4" fill="${sf}" stroke="${ss}" stroke-width=".5"/>`;
+  } else if (ws === "small") {
+    // A small window set in the wall, the contact on its frame.
+    stripY = 22; stripH = 76; mdx = -16;
+    leaf = `<rect x="4" y="2" width="90" height="114" fill="#e9e3d8"/><rect x="4" y="2" width="90" height="114" fill="url(#${dk})" opacity=".06"/>
+<rect x="24" y="22" width="48" height="76" fill="${sf}" stroke="${ss}" stroke-width=".5"/>${turning(26, 26, 46, 68, shine(32, 30, 20) + hdl(65, 76, 10))}`;
+  } else if (ws) {
+    // One sash.
+    leaf = turning(10, 6, 62, 106, shine(22, 12, 28) + hdl(62, 56));
+  } else if (style === "garage") {
+    // A sectional garage door, four smooth panels; open, it has gone up into
+    // the ceiling with the magnet, one panel still showing at the top.
+    const pf = anth ? `url(#${ex})` : `url(#${bd})`, ps = anth ? "#1d2226" : "#b7c0c8";
+    const grooves = [32.5, 59, 85.5].map((y) => `<path d="M11 ${y} H71" stroke="${ps}" stroke-width=".8" opacity=".8"/><path d="M11 ${y + 1} H71" stroke="#fff" stroke-width=".5" opacity="${anth ? .12 : .6}"/>`).join("");
+    leaf = `<rect x="10" y="6" width="62" height="106" fill="url(#${dk})"/><rect x="10" y="98" width="62" height="14" fill="#2c3237"/>
+${move(0, -90, `<rect x="10" y="6" width="62" height="106" fill="${pf}" stroke="${ps}" stroke-width=".7"/>${grooves}`, gc)}`;
+    mdx = 0; mdy = -90; mclip = gc;
+  } else if (style === "pocket") {
+    // A pocket door: one big pane that slides into the wall on its left.
+    mdx = -46;
+    const pf = c.frame ? sf : `url(#${al})`, ps = c.frame ? ss : "#3e454c";
+    leaf = `<rect x="10" y="8" width="62" height="104" fill="url(#${sk})"/>
+${move(-46, 0, `<rect x="10" y="8" width="62" height="101" fill="${pf}" stroke="${ps}" stroke-width=".6"/>
+<rect x="14" y="12" width="54" height="93" fill="url(#${gw})" stroke="${ps}" stroke-width=".4"/>${shine(20, 22, 24)}<rect x="65" y="48" width="3" height="22" rx="1.2" fill="#2b3035"/>`, pk)}
+<rect x="2" y="2" width="8" height="114" fill="#e9e3d8" stroke="#cfc6b6" stroke-width=".5"/><rect x="2" y="4" width="72" height="4" fill="${c.frame ? sf : "#7b838b"}"/><rect x="2" y="109" width="72" height="4" fill="${c.frame ? sf : "#7b838b"}"/>`;
+  } else if (style.startsWith("sliding")) {
+    // A sliding door does not swing: its panel runs left on a rail and the
+    // opening shows behind it, daylight for the patio door, the room for the barn door.
+    const glass = style === "sliding_glass";
+    mdx = glass ? -28 : -30;
+    const pane = (x) => `<rect x="${x}" y="8" width="32" height="101" fill="url(#${al})" stroke="#3e454c" stroke-width=".6"/>
+<rect x="${x + 3.5}" y="11.5" width="25" height="94" fill="url(#${gw})" stroke="#4a5158" stroke-width=".4"/>
+<path d="M${x + 7} 30 L${x + 17} 22 M${x + 7} 42 L${x + 24} 28" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".5"/>`;
+    const roller = (x) => `<rect x="${x - .9}" y="5" width="1.8" height="7" fill="#2b2f33"/><circle cx="${x}" cy="5" r="3" fill="#3a3f44" stroke="#1d2024" stroke-width=".5"/>`;
+    const moving = glass
+      ? `${pane(40)}<rect x="66" y="48" width="2.2" height="22" rx="1.1" fill="#2b3035"/>`
+      : `${roller(20)}${roller(62)}<rect x="10" y="10" width="62" height="104" fill="url(#${wd})" stroke="#8a6440" stroke-width=".7"/>
+${[1, 2, 3, 4, 5].map((i) => `<path d="M${(10 + i * 62 / 6).toFixed(1)} 10 V114" stroke="#9a7350" stroke-width=".6" opacity=".7"/>`).join("")}
+<rect x="10" y="10" width="62" height="9" fill="#c09468" stroke="#8a6440" stroke-width=".5"/><rect x="10" y="105" width="62" height="9" fill="#c09468" stroke="#8a6440" stroke-width=".5"/>
+<path d="M16 104 L66 20" stroke="#c09468" stroke-width="7"/><path d="M14 101 L63 19 M19 106 L68 22" stroke="#8a6440" stroke-width=".5"/>
+<rect x="63" y="48" width="2.6" height="30" rx="1.2" fill="#2b2f33"/>`;
+    leaf = `<rect x="10" y="8" width="62" height="104" fill="url(#${glass ? sk : dk})"/>
+${glass ? `${pane(10)}<rect x="8" y="4" width="66" height="4" fill="#7b838b"/><rect x="8" y="109" width="66" height="4" fill="#7b838b"/>` : `<rect x="0" y="2" width="76" height="3" rx="1" fill="#2b2f33"/>`}
+${move(mdx, 0, moving, cl)}`;
+  } else {
+    // A swinging door drawn flat, then turned in: every point of its face is
+    // carried onto the leaf seen at an angle. An entrance door lets the
+    // daylight in, an inside door shows the room.
+    const { R, L } = leafOf(10, 62, 6, 106);
+    const ext = style.startsWith("external");
+    const lite = `stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5"`;
+    leaf = `<rect x="10" y="6" width="62" height="106" fill="url(#${ext ? sk : dk})"/>`
+      + R(10, 6, 72, 112, ext ? `fill="url(#${ex})" stroke="#1d2226" stroke-width=".7"` : `fill="url(#${wd})" stroke="#8a6440" stroke-width=".7"`);
+    if (style === "glass_top") {
+      // The wooden door with its top panel glazed, the bottom one still wood.
+      leaf += R(17, 16, 65, 54, `fill="url(#${gw})" stroke="#9a7350" stroke-width=".9"`) + L(22, 30, 34, 22, lite) + L(22, 42, 44, 26, lite)
+        + R(17, 62, 65, 102, `fill="none" stroke="#9a7350" stroke-width=".9" opacity=".75"`) + R(62, 60, 66, 64, `fill="#c9ccd0" stroke="#8e949a" stroke-width=".5"`);
+    } else if (style === "glass") {
+      // An interior door: a wooden frame round one tall pane of satin glass, a lever.
+      leaf += R(18, 14, 64, 104, `fill="url(#${gw})" stroke="#9a7350" stroke-width=".6"`) + L(24, 32, 40, 22, lite) + L(24, 48, 54, 28, lite)
+        + R(57, 60.6, 66, 63.4, `fill="#c9ccd0" stroke="#8e949a" stroke-width=".4"`);
+    } else if (ext) {
+      // An entrance door in anthracite, seen from inside where the contact is:
+      // a lever and its lock, the back of the letter box, maybe a frosted strip.
+      if (style === "external_glass") leaf += R(24, 16, 38, 100, `fill="url(#${gw})" stroke="#15191c" stroke-width=".8"`)
+        + [44, 72].map((y) => L(24, y, 38, y, `stroke="#15191c" stroke-width=".8"`)).join("");
+      const lx = style === "external" ? 27 : 42;
+      leaf += R(lx, 74, lx + 18, 82, `fill="#3d444b" stroke="#15191c" stroke-width=".5"`)
+        + L(lx + 1.5, 76, lx + 16.5, 76, `stroke="#5d656d" stroke-width=".8"`)
+        + R(62.5, 56, 65.5, 74, `fill="#c9ccd0" stroke="#8e949a" stroke-width=".4"`)
+        + R(55, 59.4, 64.5, 62.4, `fill="#d5d9dd" stroke="#8e949a" stroke-width=".4"`)
+        + R(63.3, 68, 64.7, 71.5, `fill="#5d656d"`);
+    } else {
+      // The wooden door: two panels and its knob.
+      leaf += R(17, 16, 65, 54, `fill="none" stroke="#9a7350" stroke-width=".9" opacity=".75"`) + R(17, 62, 65, 102, `fill="none" stroke="#9a7350" stroke-width=".9" opacity=".75"`)
+        + R(62, 60, 66, 64, `fill="#c9ccd0" stroke="#8e949a" stroke-width=".5"`);
+    }
+  }
+  // Each model: its magnet, drawn at the shut position, then its body.
+  const parts = {
     // Sonoff SNZB-04P: a tall body, its light at the top, a pairing slot.
-    sonoff: `<rect x="${mx}" y="33" width="8" height="24" rx="2" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>
-<rect x="74" y="26" width="14" height="38" rx="3" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
+    sonoff: [`<rect x="62" y="33" width="8" height="24" rx="2" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>`, `<rect x="74" y="26" width="14" height="38" rx="3" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
 <path d="M76 29 Q81 27.6 86 29" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round"/>
 <circle class="${open ? "nta-blinkfast" : ""}" cx="81" cy="33" r="1.2" fill="${open ? "#29b6f6" : "#cfd6dc"}"/>
-<rect x="78.4" y="58" width="5.2" height="2" rx="1" fill="#d5dbe0"/>`,
+<rect x="78.4" y="58" width="5.2" height="2" rx="1" fill="#d5dbe0"/>`],
     // Aqara: a slim stick and a small magnet, the light hidden under the shell.
-    aqara: `<rect x="${mx + 1}" y="38" width="6" height="14" rx="1.6" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>
-<rect x="76" y="30" width="10" height="30" rx="2.4" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
+    aqara: [`<rect x="63" y="38" width="6" height="14" rx="1.6" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>`, `<rect x="76" y="30" width="10" height="30" rx="2.4" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
 <path d="M77.6 32.4 Q81 31.4 84.4 32.4" stroke="#fff" stroke-width="1" fill="none" stroke-linecap="round"/>
-<circle class="${open ? "nta-blinkfast" : ""}" cx="81" cy="35" r=".9" fill="${open ? "#29b6f6" : "#e3e7eb"}"/>`,
+<circle class="${open ? "nta-blinkfast" : ""}" cx="81" cy="35" r=".9" fill="${open ? "#29b6f6" : "#e3e7eb"}"/>`],
     // Philips Hue Secure: a softer, rounder body with its name on it.
-    hue: `<rect x="${mx}" y="34" width="9" height="22" rx="4" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>
-<rect x="73.5" y="25" width="15" height="40" rx="6.5" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
+    hue: [`<rect x="62" y="34" width="9" height="22" rx="4" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>`, `<rect x="73.5" y="25" width="15" height="40" rx="6.5" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
 <path d="M76 29 Q81 27 86 29" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/>
 <text x="81" y="58" font-size="4" font-weight="700" text-anchor="middle" fill="#b9c1c8" ${NT_FONT}>hue</text>
-<circle class="${open ? "nta-blinkfast" : ""}" cx="81" cy="33" r="1" fill="${open ? "#29b6f6" : "#dfe4e8"}"/>`,
-  }[c.model] || ""}</g>
+<circle class="${open ? "nta-blinkfast" : ""}" cx="81" cy="33" r="1" fill="${open ? "#29b6f6" : "#dfe4e8"}"/>`],
+    // Third Reality 3RDS17BZ: a wide, short block with one big rounded corner,
+    // a narrow magnet as tall as it, a short mark on each where they meet.
+    thirdreality: [`<rect x="63" y="33" width="6" height="24" rx="1.2" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>
+<path d="M67.6 42 V48" stroke="#c3cbd2" stroke-width=".7" stroke-linecap="round"/>`, `<path d="M74.5 33 H82 A7 7 0 0 1 89 40 V55.5 A1.5 1.5 0 0 1 87.5 57 H74.5 A1.5 1.5 0 0 1 73 55.5 V34.5 A1.5 1.5 0 0 1 74.5 33 Z" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
+<path d="M75 35 H81.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/>
+<path d="M74.8 42 V48" stroke="#c3cbd2" stroke-width=".7" stroke-linecap="round"/>`],
+    // IKEA PARASOLL: a long slim stick, rounded at both ends, its light a
+    // short slot near the top; the magnet a slimmer stick with the same slot.
+    ikea: [`<rect x="62" y="27" width="8" height="36" rx="4" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".5"/>
+<path d="M64.6 35 H67.4" stroke="#d5dbe0" stroke-width="1" stroke-linecap="round"/>`, `<rect x="75" y="25" width="12" height="42" rx="5.5" fill="url(#${bd})" stroke="#aeb8c1" stroke-width=".6"/>
+<path class="${open ? "nta-blinkfast" : ""}" d="M78.6 34 H83.4" stroke="${open ? "#29b6f6" : "#b9c1c8"}" stroke-width="1.2" stroke-linecap="round"/>`],
+}[c.model] || ["", ""];
+  return `<defs>${ntV(wd, "#d8b48a", "#b48759")}${anth ? ntV(fr, "#5a626a", "#3a4148") : c.frame || c.window ? ntV(fr, "#ffffff", "#e3e7ea") : ntV(fr, "#fbf8f2", "#e8e1d4")}${ntV(bd, "#ffffff", "#dfe4e8")}
+${ntV(ex, "#4d555d", "#2b3136")}${ntV(al, "#7d858d", "#5b636b")}<clipPath id="${cl}"><rect x="0" y="0" width="120" height="120"/></clipPath><clipPath id="${pk}"><rect x="10" y="0" width="110" height="120"/></clipPath><clipPath id="${gc}"><rect x="10" y="6" width="62" height="106"/></clipPath>
+<linearGradient id="${sk}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8eefa"/><stop offset=".58" stop-color="#b5dcf0"/><stop offset=".59" stop-color="#93c47f"/><stop offset="1" stop-color="#6a9f58"/></linearGradient>
+<linearGradient id="${dk}" x1="0" x2="1"><stop offset="0" stop-color="#1f252b"/><stop offset="1" stop-color="#3a434b"/></linearGradient>
+<linearGradient id="${gw}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d4ecf8"/><stop offset="1" stop-color="#8fc7e6"/></linearGradient></defs>
+<g class="${c.vib ? "nta-vib" : ""}">${leaf}${c.cracked ? `<g stroke="#fff" stroke-width=".9" stroke-linecap="round" fill="none" opacity=".95"><path d="M36 46 L26 34 M36 46 L48 36 M36 46 L52 52 M36 46 L44 62 M36 46 L28 60 M36 46 L22 48"/><path d="M30 39 L34 37 M44 39 L46 43 M47 54 L44 57 M31 55 L27 53" stroke-width=".6"/></g><circle cx="36" cy="46" r="1.6" fill="#fff"/>` : ""}</g>
+${c.vib ? [0, 1, 2].map((i) => `<path class="nta-beacon ntd${i + 1}" d="M${6 - i * 3} ${44 - i * 3} q-${2 + i} ${8 + i * 3} 0 ${16 + i * 6}" fill="none" stroke="#ef6c00" stroke-width="1.6" stroke-linecap="round"/>`).join("") : ""}
+<rect x="72" y="${stripY}" width="18" height="${stripH}" fill="url(#${fr})" stroke="${anth ? "#22282d" : c.frame || c.window ? "#c5ccd2" : "#cfc6b6"}" stroke-width=".6"/>
+<g${c.tamper ? ` transform="rotate(-24 81 26)"` : ""}>${move(mdx, mdy, parts[0], mclip)}${parts[1]}</g>
 ${c.tamper ? `<path d="M86 36 l5 -4 M88 42 l6 -1 M85 48 l5 3" stroke="#e53935" stroke-width="1.4" stroke-linecap="round"/>` : ""}
 ${open ? ntWaves(81, 46, "#ef6c00", 20) : ""}`;
 }
@@ -1538,6 +1669,10 @@ const SPK_PALETTES = {
   echo: { black: ["#6f7983", "#3a4249", "#1a1e22", "#2a2f34", "#5d6670"], white: ["#ffffff", "#e4e5e3", "#b9bbb8", "#dfe1df", "#9a9d9a"],
     blue: ["#86a6bf", "#41637f", "#213d53", "#2d4a62", "#5b7c96"] },
   wave: { black: ["#5e636a", "#3a3e44", "#1f2226", "#4a4f55", "#15171a"], silver: ["#eef0f2", "#c9cdd1", "#959ca3", "#dfe2e5", "#6f767d"] },
+  focal: { white: ["#ffffff", "#eef0f1", "#cfd4d8", "#f7f8f9", "#aab1b7"], black: ["#4a4f55", "#2a2d31", "#141619", "#3a3e43", "#0c0d0f"] },
+  wiim: { black: ["#5f6469", "#45494e", "#2c2f33", "#6e7379", "#1b1d20"], silver: ["#e3e5e7", "#c3c7cb", "#8f959b", "#eef0f1", "#6d7379"] },
+  clock: { silver: ["#b8b8b6", "#a3a3a1", "#7f7f7d", "#c6c6c4", "#5d5d5b"], blue: ["#5f7590", "#465b75", "#2e3e52", "#6d83a0", "#1f2b3a"] },
+  denon: { black: ["#3a3f45", "#202327", "#0f1113", "#2a2e33", "#4d545b"], silver: ["#e9ebed", "#c7ccd0", "#959ca3", "#dadde0", "#7b8288"] },
   flex: { black: ["#4b4f55", "#2b2e32", "#151719", "#36393e", "#0f1012"], white: ["#f6f4ee", "#dedbd2", "#b5b1a6", "#ebe8e0", "#8f8b80"],
     blue: ["#8fb1d1", "#4a72a0", "#2b4b71", "#5a82ae", "#1e3550"] },
 };
@@ -1813,6 +1948,140 @@ ${[0, 1, 2, 3].map((i) => { const a = Math.PI / 4 + i * Math.PI / 2; return `<ci
 <circle class="${c.on ? "nta-glow" : ""}" cx="54" cy="108" r="1.6" fill="${c.on ? "#69f0ae" : c.st === "paused" ? "#ffb300" : "#5d6773"}"/>
 ${c.st === "paused" ? spkPause(54, 78) : ""}${c.muted ? spkMute(66, 26) : ""}`;
 }
+// A Focal Bird (HACF #172): a glossy egg tilted on a slim tripod, its front
+// an oval of perforated grille in a silver frame.
+function ntSpkFocalBird(c) {
+  const p = spkPal("focal", c.color);
+  const b = ntId(), h = ntId(), g = ntId();
+  const light = c.color !== "black";
+  return `<defs><radialGradient id="${b}" cx=".72" cy=".3" r=".85"><stop offset="0" stop-color="${p[0]}"/><stop offset=".55" stop-color="${p[1]}"/><stop offset="1" stop-color="${p[2]}"/></radialGradient>
+${spkHoles(h, light ? "#79818a" : "#050607", 1.5, .45)}<linearGradient id="${g}" x1="0" x2="1"><stop offset="0" stop-color="${light ? "#dfe3e6" : "#3a3e43"}"/><stop offset="1" stop-color="${light ? "#c4cacf" : "#22252a"}"/></linearGradient></defs>
+${spkNotes(98, 10)}${ntWaves(88, 30, "var(--primary-color, #03a9f4)", 4)}
+${spkFootShadow(56, 113, 28, 3)}
+<path d="M50 92 L56 104 M56 104 L34 112 M56 104 L78 112 M56 104 L60 114" stroke="${p[light ? 2 : 0]}" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+<path d="M50 92 L56 104" stroke="${p[3]}" stroke-width="1.4" stroke-linecap="round"/>
+${[[34, 112], [78, 112], [60, 114]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="3" ry="1.3" fill="${p[2]}"/>`).join("")}
+<ellipse cx="57" cy="56" rx="33" ry="39" transform="rotate(-28 57 56)" fill="url(#${b})" stroke="${p[4]}" stroke-width=".6"/>
+<path d="M29 42 Q24 64 38 83" stroke="#fff" stroke-width="2.4" fill="none" opacity="${light ? .9 : .25}" stroke-linecap="round"/>
+<g transform="rotate(-24 66 46)"><rect x="47" y="14" width="38" height="66" rx="18" fill="url(#${g})" stroke="${light ? "#a7aeb4" : "#55595f"}" stroke-width="2.2"/>
+<rect x="49.4" y="16.4" width="33.2" height="61.2" rx="16" fill="url(#${h})"/>
+<path d="M54 24 Q60 18 68 18" stroke="#fff" stroke-width="1.4" fill="none" opacity=".55" stroke-linecap="round"/></g>
+${c.st === "paused" ? spkPause(66, 46, light ? "#5d6773" : "#fff") : ""}${c.muted ? spkMute(92, 20) : ""}`;
+}
+// A Focal 100 OD6 (HACF #172): an outdoor box on its U bracket, the grille
+// over its whole front, the badge at its foot.
+function ntSpkFocalOd6(c) {
+  const p = spkPal("focal", c.color);
+  const f = ntId(), sd = ntId(), tp = ntId(), h = ntId();
+  const light = c.color !== "black";
+  return `<defs>${ntV(f, p[0], p[1])}${ntV(sd, p[2], p[4])}${ntV(tp, p[3], p[1])}${spkHoles(h, light ? "#7d858c" : "#050607", 1.6, .5)}</defs>
+${spkNotes(90, 26)}${ntWaves(30, 66, "var(--primary-color, #03a9f4)", 4)}
+<path d="M44 26 V14 Q44 8 50 8 H70 Q76 8 76 14 V26" stroke="${p[2]}" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M44 26 V14 Q44 8 50 8 H70 Q76 8 76 14 V26" stroke="${p[3]}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<rect x="55" y="2" width="10" height="8" rx="1.6" fill="${p[2]}"/>
+${spkBoxShadow(30, 112, 56, 8)}
+${ntRoundBox(30, 22, 56, 90, 8, 8, `url(#${f})`, `url(#${sd})`, `url(#${tp})`, p[4])}
+<rect x="34" y="27" width="48" height="76" rx="5" fill="${light ? "#e1e4e7" : "#1d2024"}"/><rect x="34" y="27" width="48" height="76" rx="5" fill="url(#${h})"/>
+<rect x="34" y="27" width="48" height="76" rx="5" fill="none" stroke="${p[2]}" stroke-width=".8"/>
+<circle cx="44" cy="25.6" r="1.1" fill="${p[2]}"/><circle cx="76" cy="25.6" r="1.1" fill="${p[2]}"/>
+<rect x="53" y="105" width="10" height="3" rx=".6" fill="${light ? "#c4c9cd" : "#55595f"}"/>
+${c.st === "paused" ? spkPause(58, 64, light ? "#5d6773" : "#fff") : ""}${c.muted ? spkMute(80, 20) : ""}`;
+}
+// A Denon AV receiver (HACF #172): the black front in three-quarter view,
+// its two big knobs, the display with the source large and the sound mode
+// under it, the volume knob turned to the volume.
+function ntSpkDenon(c) {
+  const p = spkPal("denon", c.color);
+  const f = ntId(), sd = ntId(), tp = ntId(), k = ntId();
+  const lit = c.st !== "off";
+  const src = lit ? esc(String(c.src || "").slice(0, 10)) : "";
+  const snd = lit ? esc(String(c.sound || "").slice(0, 18)) : "";
+  const turn = (c.vol === null || c.vol === undefined ? .35 : Math.min(1, Math.max(0, c.vol))) * 270 - 135;
+  const knob = (x, y, r, rot) => `<circle cx="${x}" cy="${y}" r="${r + 1.2}" fill="#0b0c0e"/><circle cx="${x}" cy="${y}" r="${r}" fill="url(#${k})"/>
+${Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; return `<path d="M${(x + Math.cos(a) * r * .55).toFixed(1)} ${(y + Math.sin(a) * r * .55).toFixed(1)} L${(x + Math.cos(a) * r * .92).toFixed(1)} ${(y + Math.sin(a) * r * .92).toFixed(1)}" stroke="#fff" stroke-width=".4" opacity=".25"/>`; }).join("")}
+${rot === null ? "" : `<path d="M${x} ${y} L${x} ${y - r * .8}" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".7" transform="rotate(${rot.toFixed(0)} ${x} ${y})"/>`}`;
+  return `<defs>${ntV(f, p[0], p[1])}${ntV(sd, p[2], p[3])}${ntV(tp, p[4], p[1])}<radialGradient id="${k}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d9dde0"/><stop offset=".5" stop-color="#7a8187"/><stop offset="1" stop-color="#2a2e32"/></radialGradient></defs>
+${spkNotes(96, 24)}
+${spkBoxShadow(4, 96, 100, 12)}
+${ntRoundBox(4, 46, 100, 50, 12, 2, `url(#${f})`, `url(#${sd})`, `url(#${tp})`, "#060708")}
+${Array.from({ length: 14 }, (_, i) => `<path d="M${18 + i * 6} 40 L${12 + i * 6} 45" stroke="#000" stroke-width="1.2" opacity=".35"/>`).join("")}
+${c.generic ? "" : `<text x="9" y="53.6" font-size="3.6" font-weight="700" fill="${c.color === "silver" ? "#4a5056" : "#e9ecef"}" ${NT_FONT}>DENON</text>`}
+<rect x="29" y="51" width="50" height="22" rx="1.6" fill="#060708" stroke="#2b2f34" stroke-width=".6"/>
+<text x="54" y="63" font-size="${ntFit(src, 46, 8).toFixed(2)}" font-weight="700" text-anchor="middle" fill="#9fe3ff" class="${lit ? "nta-glow" : ""}" ${NT_FONT}>${src}</text>
+<text x="54" y="69.8" font-size="3.6" text-anchor="middle" fill="#6fc6ea" ${NT_FONT}>${snd}</text>
+${knob(17, 64, 7.4, null)}${knob(91, 64, 8.6, turn)}
+<path d="M29 77 H79 V90 H29 Z" fill="#000" opacity=".22"/>
+<circle cx="17" cy="82" r="2" fill="#1a1d20" stroke="#4a5056" stroke-width=".5"/><circle cx="17" cy="82" r=".9" fill="${c.st === "off" ? "#e53935" : "#7fd7ff"}"/>
+<rect x="10" y="96" width="9" height="3.4" rx="1" fill="#0b0c0e"/><rect x="88" y="96" width="9" height="3.4" rx="1" fill="#0b0c0e"/>
+${c.muted ? spkMute(86, 26) : ""}`;
+}
+// Any other AV receiver (#129), Yamaha, Onkyo, Pioneer...: the same front
+// without a brand on it.
+const ntSpkAvr = (c) => ntSpkDenon({ ...c, generic: true });
+// A WiiM Amp (#129): a low square box, its top a wide flat lid with the
+// logo, a thin line of lights along its front and the big knob that plays
+// and pauses.
+function ntSpkWiim(c) {
+  const p = spkPal("wiim", c.color);
+  const f = ntId(), tp = ntId(), k = ntId(), sh = ntId();
+  const light = c.color === "silver";
+  const lit = c.st !== "off";
+  const ink = light ? "#5d646b" : "#d9dde1";
+  return `<defs>${ntV(f, p[0], p[2])}<linearGradient id="${tp}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p[1]}"/><stop offset="1" stop-color="${p[3]}"/></linearGradient><radialGradient id="${k}" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="${light ? "#f6f7f8" : "#8a9096"}"/><stop offset=".6" stop-color="${p[1]}"/><stop offset="1" stop-color="${p[2]}"/></radialGradient>${ntBlur(sh, 2.4)}</defs>
+${spkNotes(94, 18)}
+${ntFoot("10 95 110 95 113 99 7 99", .28)}
+<path d="M26 40 H94 Q102 40 104 47 L111 66 H9 L16 47 Q18 40 26 40 Z" fill="url(#${tp})"/>
+<path d="M17 45 Q19 41.6 26 41.6 H94 Q101 41.6 103 45" stroke="#fff" stroke-width=".8" fill="none" opacity="${light ? .8 : .25}"/>
+<text x="0" y="0" transform="matrix(1 0 0 .42 60 56)" font-size="11" font-weight="300" letter-spacing="2" text-anchor="middle" fill="${light ? "#a5abb1" : "#8d9399"}" ${NT_FONT}>WiiM</text>
+<path d="M9 66 H111 V88 Q111 96 103 96 H17 Q9 96 9 88 Z" fill="url(#${f})"/>
+<path d="M9 66 H111" stroke="#fff" stroke-width=".7" opacity="${light ? .9 : .3}"/>
+<path d="M15 85 H86" stroke="${light ? "#aab0b5" : "#6b7076"}" stroke-width=".5"/>
+<rect x="15" y="80.6" width="5" height="1.4" rx=".7" fill="${lit ? "#ffffff" : ink}" opacity="${lit ? 1 : .5}"/>
+<text x="23" y="82.2" font-size="2.8" fill="${ink}" ${NT_FONT}>WiiM Amp</text>
+${[0, 1, 2, 3, 4, 5].map((i) => `<circle cx="${71 + i * 2.4}" cy="81.4" r=".45" fill="${lit && c.vol !== null && c.vol !== undefined && i < Math.round(c.vol * 6) ? "#ffffff" : ink}" opacity="${lit ? .9 : .4}"/>`).join("")}
+<circle cx="97" cy="80" r="10.6" fill="${p[2]}"/><circle cx="97" cy="80" r="9.4" fill="url(#${k})"/>
+<circle cx="97" cy="80" r="9.4" fill="none" stroke="#fff" stroke-width=".5" opacity="${light ? .8 : .25}"/>
+${c.st === "playing" ? `<path d="M94.8 76.6 V83.4 M99.2 76.6 V83.4" stroke="${ink}" stroke-width="1.3" stroke-linecap="round"/>` : `<path d="M95.2 76.4 L100.8 80 L95.2 83.6 Z" fill="none" stroke="${ink}" stroke-width="1" stroke-linejoin="round"/>`}
+${c.muted ? spkMute(84, 30) : ""}`;
+}
+// A Lenovo Smart Clock (#128): a little wedge dressed in grey fabric, its
+// screen leaning back, the time on it, or what is playing.
+function ntSpkClock(c) {
+  const p = spkPal("clock", c.color);
+  const fa = ntId(), sd = ntId(), m = ntId(), sc = ntId();
+  const lit = c.st !== "off";
+  const title = esc(String(c.title || "").slice(0, 16));
+  const artist = esc(String(c.artist || "").slice(0, 20));
+  const big = c.st === "playing" || c.st === "paused" ? "" : esc(c.clock || "");
+  // Traced from its product photo: seen from the right, the face leans back
+  // and turns away, nearly all of it screen behind a black bezel; the side is
+  // a big triangle, from the ridge on top down the sloping back to the foot.
+  const round = (pts, fill, sw) => `<polygon points="${pts}" fill="${fill}" stroke="${fill}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+  const face = "20.4 32.2 100.7 26 90.1 98.1 6.3 90.7", side = "100.7 26 113.5 82.9 110.8 90 90.1 98.1";
+  // The screen is a rectangle seen at an angle: a trapezoid, its right edge
+  // taller. Each line of text takes the shape the screen has at its height.
+  const at = (v) => {
+    const lx = 26.1 - 12.2 * v, ly = 38.8 + 44.3 * v, rx = 93.5 - 8.6 * v, ry = 35.5 + 51.2 * v;
+    const n3 = (x) => +x.toFixed(3);
+    return `matrix(${n3((rx - lx) / 60)} ${n3((ry - ly) / 60)} -.217 .995 ${n3(lx)} ${n3(ly)})`;
+  };
+  const line = (v, txt, size, extra = "") => `<text x="30" y="0" transform="${at(v)}" font-size="${size}" ${extra}>${txt}</text>`;
+  return `<defs><linearGradient id="${fa}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${p[3]}"/><stop offset="1" stop-color="${p[1]}"/></linearGradient><linearGradient id="${sd}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${p[0]}"/><stop offset=".55" stop-color="${p[3]}"/><stop offset="1" stop-color="${p[1]}"/></linearGradient>${spkMesh(m, .03)}<linearGradient id="${sc}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a77f96"/><stop offset=".5" stop-color="#8a6e98"/><stop offset="1" stop-color="#6a5a8e"/></linearGradient></defs>
+${spkNotes(104, 8)}
+${ntFoot("6 92 90 100 113 90 100 84", .3)}
+${round(side, `url(#${sd})`, 9)}<polygon points="${side}" fill="url(#${m})"/>
+${round(face, `url(#${fa})`, 9)}<polygon points="${face}" fill="url(#${m})"/>
+${round("23.5 33.5 98.7 28.8 88.2 93.4 7.9 88.4", "#0b0c0e", 6)}
+<polygon points="26.1 38.8 93.5 35.5 84.9 86.7 13.9 83.1" fill="${lit ? `url(#${sc})` : "#141518"}" stroke="${lit ? "#8a6e98" : "#141518"}" stroke-width="1.4" stroke-linejoin="round"/>
+<g ${NT_FONT} text-anchor="middle" fill="#ffffff">
+${big ? `${line(.24, esc(String(c.day || "").slice(0, 26)), 3.6, `opacity="${lit ? .85 : .2}"`)}
+${line(.68, big, ntFit(big, 54, 24).toFixed(2), `font-weight="200" opacity="${lit ? 1 : .22}"`)}` : `${line(.45, title, ntFit(title, 50, 6.6).toFixed(2), 'font-weight="500"')}
+${line(.6, artist, 3.8, 'opacity=".8"')}
+<g transform="${at(.74)}"><rect x="12" y="-1" width="36" height="1.2" rx=".6" opacity=".3"/><rect x="12" y="-1" width="${c.st === "playing" ? 22 : 14}" height="1.2" rx=".6"/></g>`}
+</g>
+<circle cx="27" cy="36.4" r=".6" fill="#2a2c30"/><circle cx="93.6" cy="32.2" r=".6" fill="#2a2c30"/>
+${c.st === "paused" ? spkPause(52, 50, "#ffffff") : ""}${c.muted ? spkMute(96, 14) : ""}`;
+}
 // A mesh of fabric, for the speakers dressed in it.
 const spkMesh = (id, op = .35) => `<pattern id="${id}" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M0 3 L3 0 M-1 1 L1 -1 M2 4 L4 2" stroke="#000" stroke-width=".5" opacity="${op}"/></pattern>`;
 const spkGlowDefs = (r, gl) => `<linearGradient id="${r}" x1="0" x2="1"><stop offset="0" stop-color="#ff4081"/><stop offset=".33" stop-color="#7c4dff"/><stop offset=".66" stop-color="#18ffff"/><stop offset="1" stop-color="#ffab40"/></linearGradient>${ntBlur(gl, 2.2)}`;
@@ -2024,17 +2293,24 @@ ${echoRing(c, "M41.4 63 A18.6 18.6 0 1 1 78.6 63 A18.6 18.6 0 1 1 41.4 63", rg, 
 ${c.st === "paused" ? spkPause(60, 92, light ? "#7d807d" : "#fff") : ""}${c.muted ? spkMute(76, 98) : ""}`;
 }
 // A Nest Mini: a pebble of fabric on the table, four lights under the fabric.
+// The Nest Mini in the colours it is sold in (#127): chalk, charcoal, sky.
+const NEST_PAL = {
+  white: ["#fbfbfa", "#e2e0db", "#c8c5be", "#d9d6d0", "#99958d", "#cbc8c1", .7],
+  black: ["#666a70", "#45494e", "#2e3135", "#3c3f44", "#1b1d20", "#72767b", .25],
+  blue: ["#dbe7ef", "#b8cdda", "#95afbf", "#adc3d1", "#6f8999", "#c4d4de", .6],
+};
 function ntSpkNest(c) {
   const t = ntId(), sd = ntId(), m = ntId(), gl = ntId();
-  return `<defs><radialGradient id="${t}" cx=".42" cy=".3" r=".75"><stop offset="0" stop-color="#fbfbfa"/><stop offset=".7" stop-color="#e2e0db"/><stop offset="1" stop-color="#c8c5be"/></radialGradient>${ntV(sd, "#d9d6d0", "#99958d")}${spkMesh(m, .16)}${ntBlur(gl, 1.4)}</defs>
+  const q = NEST_PAL[c.color] || NEST_PAL.white;
+  return `<defs><radialGradient id="${t}" cx=".42" cy=".3" r=".75"><stop offset="0" stop-color="${q[0]}"/><stop offset=".7" stop-color="${q[1]}"/><stop offset="1" stop-color="${q[2]}"/></radialGradient>${ntV(sd, q[3], q[4])}${spkMesh(m, .16)}${ntBlur(gl, 1.4)}</defs>
 ${spkNotes(60, 26)}${c.on ? ntWaves(60, 76, "var(--primary-color, #03a9f4)", 52) : ""}
 ${spkFootShadow(60, 101.2, 42, 3)}
 <path d="M12 80 Q12 100 60 102 Q108 100 108 80 Z" fill="url(#${sd})"/>
 <path d="M12 80 Q12 100 60 102 Q108 100 108 80 Z" fill="url(#${m})"/>
 <path d="M12 80 Q12 60 60 58 Q108 60 108 80 Q108 92 60 93 Q12 92 12 80 Z" fill="url(#${t})"/>
 <path d="M12 80 Q12 60 60 58 Q108 60 108 80 Q108 92 60 93 Q12 92 12 80 Z" fill="url(#${m})"/>
-<path d="M22 72 Q36 62 58 61" fill="none" stroke="#fff" stroke-width="2.4" opacity=".7" stroke-linecap="round"/>
-${[-1.5, -.5, .5, 1.5].map((k, i) => `<circle class="${c.on ? `nta-glow ntd${i + 1}` : ""}" cx="${60 + k * 8}" cy="76" r="2" fill="${c.on ? "#ffffff" : c.st === "paused" ? "#ffb74d" : "#cbc8c1"}"${c.on ? ` filter="url(#${gl})"` : ""}/>
+<path d="M22 72 Q36 62 58 61" fill="none" stroke="#fff" stroke-width="2.4" opacity="${q[6]}" stroke-linecap="round"/>
+${[-1.5, -.5, .5, 1.5].map((k, i) => `<circle class="${c.on ? `nta-glow ntd${i + 1}` : ""}" cx="${60 + k * 8}" cy="76" r="2" fill="${c.on ? "#ffffff" : c.st === "paused" ? "#ffb74d" : q[5]}"${c.on ? ` filter="url(#${gl})"` : ""}/>
 ${c.on ? `<circle cx="${60 + k * 8}" cy="76" r="1.2" fill="#fff"/>` : ""}`).join("")}
 ${c.st === "paused" ? spkPause(60, 44, "#8d8a83") : ""}${c.muted ? spkMute(96, 52) : ""}`;
 }
@@ -3011,6 +3287,55 @@ ${htDial(56, 19, 8.6, c.flue, c.max || 400, c.low || 100)}
 ${txt ? ntLcd(4, 40, 20, 11, txt, true, burning ? "#ffb74d" : embers ? "#ff8a65" : "#90a4ae", ntFit(txt, 20, 7.4)) : ""}`;
 }
 
+// A gas fireplace (#130), IntelliFire or the like: the firebox behind its
+// glass in a dark surround under a mantel, ceramic logs on a bed of embers.
+// Burning, a row of flames, blue at the root, as tall as the flame setting
+// (1 to 5); the pilot a small blue flame of its own; the lights warm the
+// firebox from the top; the fan blows warm air out of the louvre above.
+function ntGasFireplace(c) {
+  const n1 = (v) => +v.toFixed(1);
+  const sur = ntId(), bk = ntId(), fl = ntId(), fl2 = ntId(), gl = ntId(), cp = ntId(), ac = ntId(), mt = ntId();
+  const flame = !!c.flame, lit = !!c.light;
+  const lvl = Math.min(5, Math.max(1, Math.round(c.level || 3)));
+  const top = 84 - (12 + lvl * 6);
+  const flames = flame ? [[27, 14, 1], [38, 15, 2], [50, 16, 3], [62, 17, 1], [74, 15, 2], [86, 13, 3], [44, 10, 2], [68, 11, 3]].map(([x, w, d], i) => {
+    const h = (84 - top) * (i % 2 ? .82 : 1), y = 84 - h;
+    return `<path class="nta-flick ntd${d}" d="M${x - w / 2} 84 Q${x - w / 2 - 1} ${n1(84 - h * .45)} ${n1(x - w * .1)} ${n1(y + h * .25)} Q${x} ${n1(y + h * .1)} ${x + .5} ${n1(y)} Q${n1(x + w * .3)} ${n1(y + h * .3)} ${n1(x + w * .5)} ${n1(84 - h * .4)} Q${x + w / 2 + 1} 80 ${x + w / 2} 84 Z" fill="url(#${fl})"/>
+<path class="nta-flick ntd${(d % 3) + 1}" d="M${x - w / 4} 84 Q${x - w / 4} ${n1(84 - h * .35)} ${x} ${n1(y + h * .45)} Q${x + w / 4} ${n1(84 - h * .35)} ${x + w / 4} 84 Z" fill="url(#${fl2})"/>`;
+  }).join("") : "";
+  const logs = [[24, 82, 34, -5], [52, 83, 36, 4], [38, 77, 30, 1], [66, 78, 26, -3]].map(([x, y, w, a]) => `<g transform="rotate(${a} ${x + w / 2} ${y})">
+<rect x="${x}" y="${y - 3.4}" width="${w}" height="6.8" rx="3.4" fill="${flame ? "#4e3a32" : lit ? "#6b5348" : "#5a4c46"}"/>
+<path d="M${x + 4} ${y - 1.4} H${x + w - 6} M${x + 7} ${y + 1.4} H${x + w - 4}" stroke="${flame ? "#ff8a50" : "#3b302b"}" stroke-width=".7" ${flame ? 'class="nta-glow"' : ""}/>
+<ellipse cx="${x + w}" cy="${y}" rx="2.4" ry="3.4" fill="${flame ? "#ff9e6a" : "#8a7a72"}" stroke="#3b2a24" stroke-width=".5"/></g>`).join("");
+  const pilot = c.pilot ? `<path class="nta-flick ntd2" d="M58.6 86 Q58.2 82.4 60 79.6 Q61.8 82.4 61.4 86 Z" fill="#64b5f6"/><path d="M59.4 86 Q59.4 84 60 82.6 Q60.6 84 60.6 86 Z" fill="#e3f2fd"/>` : "";
+  const fanDur = c.fan ? n1(2.4 - 1.6 * Math.min(1, Math.max(0, c.fanPct === null || c.fanPct === undefined ? .5 : c.fanPct))) : 0;
+  const air = c.fan ? [0, 1, 2, 3].map((i) => `<path class="nta-rise ntd${i + 1}" style="animation-duration:${fanDur}s" d="M${32 + i * 18} 36 q-3 -5 0 -10 q3 -5 0 -10" stroke="${flame ? "#ffb74d" : "#b0bec5"}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".85"/>`).join("") : "";
+  return `<defs>${ntV(sur, "#3a3d42", "#1f2124")}${ntV(mt, "#e4ddd1", "#bfb5a6")}
+<linearGradient id="${bk}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${flame ? "#5a3020" : lit ? "#4a3428" : "#2b1d18"}"/><stop offset="1" stop-color="${flame ? "#2e1810" : "#1a1210"}"/></linearGradient>
+<linearGradient id="${fl}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#42a5f5"/><stop offset=".14" stop-color="#ff6f00"/><stop offset=".6" stop-color="#ff9800"/><stop offset="1" stop-color="#ffd54f" stop-opacity=".15"/></linearGradient>
+<linearGradient id="${fl2}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#90caf9"/><stop offset=".25" stop-color="#ffe082"/><stop offset="1" stop-color="#fff8e1" stop-opacity=".35"/></linearGradient>
+<radialGradient id="${ac}" cx=".5" cy="0" r=".9"><stop offset="0" stop-color="#ffe0b2" stop-opacity=".75"/><stop offset="1" stop-color="#ffe0b2" stop-opacity="0"/></radialGradient>
+${ntBlur(gl, 3)}<clipPath id="${cp}"><rect x="20" y="46" width="80" height="48" rx="1.5"/></clipPath></defs>
+${ntFoot("8 108 112 108 115 111 5 111", .3)}
+${flame ? `<polygon class="nta-glow" points="12 108 108 108 116 113 4 113" fill="#ffb74d" opacity=".45" filter="url(#${gl})"/>` : ""}
+<g class="nt-run">${air}</g>
+<rect x="2" y="24" width="116" height="8" rx="1.5" fill="url(#${mt})"/><path d="M3 24.6 H117" stroke="#fff" stroke-width=".8" opacity=".7"/>
+<rect x="8" y="32" width="104" height="76" rx="1.5" fill="url(#${sur})"/>
+${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => `<rect x="${23 + i * 6.4}" y="37.4" width="4.2" height="1.6" rx=".6" fill="#0d0e10"/>`).join("")}
+<rect x="16" y="42" width="88" height="56" rx="2" fill="#0b0c0e"/>
+<rect x="20" y="46" width="80" height="48" rx="1.5" fill="url(#${bk})"/>
+<g clip-path="url(#${cp})">
+${[54, 62, 70].map((y) => `<path d="M20 ${y} H100" stroke="#000" stroke-width=".5" opacity=".35"/>`).join("")}${[30, 44, 58, 72, 86].map((x, i) => `<path d="M${x + (i % 2 ? 7 : 0)} 46 V54 M${x} 54 V62 M${x + 7} 62 V70" stroke="#000" stroke-width=".5" opacity=".3"/>`).join("")}
+${lit ? `<rect x="20" y="46" width="80" height="34" fill="url(#${ac})"/>` : ""}
+${flame ? `<ellipse class="nta-glow" cx="60" cy="86" rx="38" ry="9" fill="#ff8f00" opacity=".55" filter="url(#${gl})"/>` : ""}
+${flames}${logs}${pilot}
+<path d="M20 86 Q60 82 100 86 V94 H20 Z" fill="${flame ? "#5d2a18" : "#2a2420"}"/>
+${flame ? [28, 40, 52, 66, 78, 90].map((x, i) => `<circle class="nta-glow ntd${(i % 3) + 1}" cx="${x}" cy="${89 + (i % 2)}" r="1.1" fill="#ff7043"/>`).join("") : ""}
+</g>
+<path d="M22 48 L40 48 L22 80 Z" fill="#fff" opacity=".07"/>
+<rect x="16" y="100" width="88" height="5" rx="1" fill="#141517"/>${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => `<rect x="${21 + i * 8}" y="101.6" width="5" height="1.8" rx=".5" fill="#050506"/>`).join("")}
+${c.error ? `<circle cx="104" cy="16" r="6" fill="#e53935"/><path d="M104 12.4 V16.6 M104 18.8 V19.2" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>` : ""}`;
+}
 // A wet-rotor circulator (#88), seen from the front: its round motor head in
 // the maker's colour with the display and the LED ring, its cast body
 // between two brass unions on the flow pipe, the return running behind.
@@ -3911,7 +4236,7 @@ ${ring(46.5, 10.4, big)}${ring(68.8, 5, smalls[0])}${ring(79.2, 5, smalls[1])}
 </g>
 ${c.heat ? fpSteam(60, 10) : ""}`;
 }
-const NT_DRAW = { fp_tm31: ntFoodTm31, fp_tm6: ntFoodTm6, rack_box: ntRackBox, rack_accordion: ntRackAccordion, rack_frame: ntRackFrame, vlv_aqara: ntValveAqara, vlv_tuya: ntValveTuya,  fb_plus: ntFingerbot, fb_switchbot: ntFingerbot, fb_classic: ntFingerbot, ths_co2_eink: ntCo2Eink, ths_switchbot_co2: (c) => ntSbPro(c, true), ths_switchbot_pro: (c) => ntSbPro(c, false), ths_switchbot_meter: (c) => ntSbMeter(c, false), ths_switchbot_plus: (c) => ntSbMeter(c, true), ths_switchbot_outdoor: ntSbOutdoor, ths_co2_box: ntCo2Box, ths_co2_netatmo: (c) => ntCo2Netatmo(c, false), ths_co2_netatmo_module: (c) => ntCo2Netatmo(c, true), cov_shutter: ntCovShutter, cov_blind: ntCovBlind, cov_venetian: (c) => ntCovVenetian(c, false), cov_raffstore: (c) => ntCovVenetian(c, true), cov_pergola: ntCovPergola, cov_awning: ntCovAwning, pellet_grill: ntPelletGrill, ths_disc: ntThsDisc, ths_square: ntThsSquare, ths_cushion: ntThsCushion, ths_stick: ntThsStick, ths_lcd_stand: ntThsLcdStand, ths_lcd_probe: ntThsLcdProbe, ths_lcd_round: ntThsLcdRound, dryer: ntFilamentDryer, humidifier: ntHumidifier, circulator: ntCirculator, irr_sprinkler: ntIrrSprinkler, irr_tap: ntIrrTap, irr_drip: ntIrrDrip, irr_flowers: ntIrrFlowers, lit_globe: ntLitterGlobe, lit_box: ntLitterBox, det_smoke: ntDetSmoke, det_co: ntDetCo, det_leak: ntDetLeak, det_door: ntDetDoor, det_vibration: ntDetVibration, det_glass: ntDetGlass, spk_smart: ntSpkSmart, spk_homepod_mini: ntSpkMini, spk_sonos_one: ntSpkOne, spk_bookshelf: ntSpkShelf, spk_sonos_move: ntSpkMove, spk_soundbar: ntSpkBar, spk_echo_dot: ntSpkDot, spk_echo_dot_max: ntSpkDotMax, spk_nest_mini: ntSpkNest, spk_sonos_era100: ntSpkEra100, spk_sonos_era300: ntSpkEra300, spk_bose_wave: ntSpkWave, spk_bose_500: ntSpkBose500, spk_bose_soundlink: ntSpkFlex, spk_bose_soundbar: ntSpkBoseBar, spk_sonos_five: ntSpkFive, spk_sonos_play: ntSpkPlay, spk_sonos_roam: ntSpkRoam, spk_sonos_ray: ntSpkRay, spk_sonos_amp: ntSpkAmp, spk_sonos_port: ntSpkPort, spk_bose_ultra: ntSpkBoseUltra, spk_bose_portable: ntSpkBosePortable, spk_bose_amp: ntSpkBoseAmp, str_apple_tv: (c) => strZoom(strAppleTv(c), 54, 1.45), str_fire_tv_cube: strFireCube, str_fire_tv_stick: (c) => strStick(c, true), str_google_tv_streamer: strGoogleStreamer, str_chromecast: strChromecast, str_shield: strShield, str_shield_pro: strShieldPro, str_roku: strRoku, str_mi_box: strMiBox, str_freebox: strFreebox, str_decoder: strDecoder, str_box: strBox, str_stick: (c) => strStick(c, false), con_ps1: conPs1, con_ps2: conPs2, con_ps3: conPs3, con_ps4: (c) => conPs4(c, false), con_ps4_pro: (c) => conPs4(c, true), con_ps5: conPs5, con_xbox: conXbox, con_xbox_360: conX360, con_xbox_one: conXone, con_xbox_series_x: conXsx, con_xbox_series_s: conXss, con_switch: (c) => conSwitch(c, false), con_switch_2: (c) => conSwitch(c, true), con_switch_lite: conSwitchLite, con_ps_vita: conVita, con_nes: conNes, con_snes: conSnes, con_n64: conN64, con_gamecube: conGamecube, con_wii: conWii, con_megadrive: conMegadrive, tank: ntTank, fws: ntFresh, solth: ntSolarThermal, wood: ntWoodStove, mob_scooter: mobScooter, mob_offroad: mobOffroad, mob_ebike: mobEbike, mob_gyropode: mobGyropode, mob_motorcycle: mobMotorcycle, meter_box: ntMeterBox, meter_dome: ntMeterDome, meter_gas: ntGas, meter_water: ntWater, booster: ntBooster, sump: ntSump, pool: ntPoolRobot, floor: ntFloor, spa: ntSpa, sauna: ntSauna, aquarium: ntAquarium, linky: ntLinky, tree: ntTree };
+const NT_DRAW = { gas_fireplace: ntGasFireplace, fp_tm31: ntFoodTm31, fp_tm6: ntFoodTm6, rack_box: ntRackBox, rack_accordion: ntRackAccordion, rack_frame: ntRackFrame, vlv_aqara: ntValveAqara, vlv_tuya: ntValveTuya,  fb_plus: ntFingerbot, fb_switchbot: ntFingerbot, fb_classic: ntFingerbot, ths_co2_eink: ntCo2Eink, ths_switchbot_co2: (c) => ntSbPro(c, true), ths_switchbot_pro: (c) => ntSbPro(c, false), ths_switchbot_meter: (c) => ntSbMeter(c, false), ths_switchbot_plus: (c) => ntSbMeter(c, true), ths_switchbot_outdoor: ntSbOutdoor, ths_co2_box: ntCo2Box, ths_co2_netatmo: (c) => ntCo2Netatmo(c, false), ths_co2_netatmo_module: (c) => ntCo2Netatmo(c, true), cov_shutter: ntCovShutter, cov_blind: ntCovBlind, cov_venetian: (c) => ntCovVenetian(c, false), cov_raffstore: (c) => ntCovVenetian(c, true), cov_pergola: ntCovPergola, cov_awning: ntCovAwning, pellet_grill: ntPelletGrill, ths_disc: ntThsDisc, ths_square: ntThsSquare, ths_cushion: ntThsCushion, ths_stick: ntThsStick, ths_lcd_stand: ntThsLcdStand, ths_lcd_probe: ntThsLcdProbe, ths_lcd_round: ntThsLcdRound, dryer: ntFilamentDryer, humidifier: ntHumidifier, circulator: ntCirculator, irr_sprinkler: ntIrrSprinkler, irr_tap: ntIrrTap, irr_drip: ntIrrDrip, irr_flowers: ntIrrFlowers, lit_globe: ntLitterGlobe, lit_box: ntLitterBox, det_smoke: ntDetSmoke, det_co: ntDetCo, det_leak: ntDetLeak, det_door: ntDetDoor, det_vibration: ntDetVibration, det_glass: ntDetGlass, spk_smart: ntSpkSmart, spk_homepod_mini: ntSpkMini, spk_sonos_one: ntSpkOne, spk_bookshelf: ntSpkShelf, spk_sonos_move: ntSpkMove, spk_soundbar: ntSpkBar, spk_echo_dot: ntSpkDot, spk_echo_dot_max: ntSpkDotMax, spk_nest_mini: ntSpkNest, spk_sonos_era100: ntSpkEra100, spk_sonos_era300: ntSpkEra300, spk_bose_wave: ntSpkWave, spk_bose_500: ntSpkBose500, spk_bose_soundlink: ntSpkFlex, spk_bose_soundbar: ntSpkBoseBar, spk_sonos_five: ntSpkFive, spk_sonos_play: ntSpkPlay, spk_sonos_roam: ntSpkRoam, spk_sonos_ray: ntSpkRay, spk_sonos_amp: ntSpkAmp, spk_sonos_port: ntSpkPort, spk_bose_ultra: ntSpkBoseUltra, spk_bose_portable: ntSpkBosePortable, spk_bose_amp: ntSpkBoseAmp, spk_focal_bird: ntSpkFocalBird, spk_focal_od6: ntSpkFocalOd6, spk_denon_avr: ntSpkDenon, spk_avr: ntSpkAvr, spk_wiim_amp: ntSpkWiim, spk_smart_clock: ntSpkClock, str_apple_tv: (c) => strZoom(strAppleTv(c), 54, 1.45), str_fire_tv_cube: strFireCube, str_fire_tv_stick: (c) => strStick(c, true), str_google_tv_streamer: strGoogleStreamer, str_chromecast: strChromecast, str_shield: strShield, str_shield_pro: strShieldPro, str_roku: strRoku, str_mi_box: strMiBox, str_freebox: strFreebox, str_decoder: strDecoder, str_box: strBox, str_stick: (c) => strStick(c, false), con_ps1: conPs1, con_ps2: conPs2, con_ps3: conPs3, con_ps4: (c) => conPs4(c, false), con_ps4_pro: (c) => conPs4(c, true), con_ps5: conPs5, con_xbox: conXbox, con_xbox_360: conX360, con_xbox_one: conXone, con_xbox_series_x: conXsx, con_xbox_series_s: conXss, con_switch: (c) => conSwitch(c, false), con_switch_2: (c) => conSwitch(c, true), con_switch_lite: conSwitchLite, con_ps_vita: conVita, con_nes: conNes, con_snes: conSnes, con_n64: conN64, con_gamecube: conGamecube, con_wii: conWii, con_megadrive: conMegadrive, tank: ntTank, fws: ntFresh, solth: ntSolarThermal, wood: ntWoodStove, mob_scooter: mobScooter, mob_offroad: mobOffroad, mob_ebike: mobEbike, mob_gyropode: mobGyropode, mob_motorcycle: mobMotorcycle, meter_box: ntMeterBox, meter_dome: ntMeterDome, meter_gas: ntGas, meter_water: ntWater, booster: ntBooster, sump: ntSump, pool: ntPoolRobot, floor: ntFloor, spa: ntSpa, sauna: ntSauna, aquarium: ntAquarium, linky: ntLinky, tree: ntTree };
 // What a tint leaves alone: a part wrapped by ntKeep (an app's tile, a
 // display, a tyre).
 const ntKeep = (s) => `<!--k-->${s}<!--/k-->`;

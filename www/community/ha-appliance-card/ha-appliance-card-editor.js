@@ -1,6 +1,6 @@
 // Built by tools/build.mjs from the files of src/: edit those, not this file.
 // The card's editor, loaded by the card the first time it is edited.
-export default function defineEditor({ t, onLanguageLoaded, LANGUAGE_NAMES, localizedHass, activationOf, TH_LAYOUTS, EV_POWER_THRESHOLD, stateObj, parseValueMap, stringifyValueMap, alertsArray, entityEntries, LIST_OTHER, ENTITY_LISTS, listCandidates, defaultCardName, stripDeviceName, domainOf, INFO_MAX, autoSuggest, APPLIANCE_TYPES, STATE_DOMAINS, SCREEN_ONLY_FIELDS, PRINT_PARTS, illustrationSizeOf, illustrationBackdropOf, fontScaleOf, compactModeOf, TYPE_GROUPS, caps, detectApplianceType, SCREEN_STANDBY_W, SCREEN_LAYOUTS, SCREEN_IMAGES, screenLayoutOf, screenIsTablet, HD_HEAT_W, PLUG_THRESHOLDS, ZONE_POWER_W, PLUG_SOURCE_TYPES, plugSourceOf, DW_DRY_MIN, WASH_HEAT_W, WASH_SPIN_W, DRYER_HEAT_W, NET_LAYOUTS, SWITCH_PORTS, NET_BAYS, NET_BUSY_MBIT, NET_TEMP_ALERT, netLayoutOf, ROBOT_LAYOUTS, ROBOT_STATIONS, ROBOT_BOX_COLORS, ROBOT_FLOORS, ROBOT_SERVICES, STICK_AWAY_W, robotLayoutOf, PRINTER_STYLES, printerStyleOf, POOL_PRESSURE_ALERT, WINTER_TYPES, SOLAR_LAYOUTS, BATTERY_LAYOUTS, BATTERY_IDLE_W, DIFFUSER_LAYOUTS, illustrationTapOf, UNIT_FILTERS, fieldUnits, unitFilterAccepts, HRV_LAYOUTS, hrvLayoutOf, CAMERA_LAYOUTS, cameraLayoutOf, MAILBOX_LAYOUTS, MAILBOX_SIDES, mailboxLayoutOf, MAILBOX_COLORS_3D, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_SPOT_ROWS, lampLayoutOf, FD_COUNTS, CONSOLE_LAYOUTS, IRRIGATION_LAYOUTS, TAP_MODELS, TAP_WALLS, LITTER_LAYOUTS, DETECTOR_LAYOUTS, DETECTOR_MODELS, FINGERBOT_LAYOUTS, VALVE_LAYOUTS, RACK_LAYOUTS, FP_LAYOUTS, FP_COOK_W, VALVE_HANDLE_COLORS, VALVE_FLUIDS, FINGERBOT_COLORS, GRILL_LAYOUTS, SPEAKER_LAYOUTS, STREAMER_LAYOUTS, THS_LAYOUTS, thsLayoutOf, MOBILITY_LAYOUTS, PUMP_LAYOUTS, CIRC_MODELS, FLOOR_LAYOUTS, OPT_LINES, METER_LAYOUTS, meterLayoutOf, irrigationLayoutOf, detectorLayoutOf, TREE_PALETTES, TREE_PRESENTS, pumpLayoutOf, SPK_COLORS, CO2_WARN, CO2_ALERT, NETATMO_COLORS, COVER_LAYOUTS, COVER_COLORS, FABRIC_COLORS, coverLayoutOf, COLLECTOR_STYLES, UPS_BATTERY_LOW, HISTORY_HOURS, BODY_COLORS, esc, MOWER_STYLES, SHELTER_STYLES, SHELTER_COLORS, LAPTOP_COLORS, LAPTOP_STYLES, drawn, stateFreeSource }) {
+export default function defineEditor({ t, onLanguageLoaded, LANGUAGE_NAMES, localizedHass, activationOf, TH_LAYOUTS, EV_POWER_THRESHOLD, stateObj, parseValueMap, stringifyValueMap, alertsArray, entityEntries, LIST_OTHER, ENTITY_LISTS, listCandidates, defaultCardName, stripDeviceName, domainOf, INFO_MAX, autoSuggest, APPLIANCE_TYPES, STATE_DOMAINS, SCREEN_ONLY_FIELDS, PRINT_PARTS, illustrationSizeOf, illustrationBackdropOf, fontScaleOf, compactModeOf, TYPE_GROUPS, caps, detectApplianceType, SCREEN_STANDBY_W, SCREEN_LAYOUTS, SCREEN_IMAGES, screenLayoutOf, screenIsTablet, HD_HEAT_W, PLUG_THRESHOLDS, ZONE_POWER_W, PLUG_SOURCE_TYPES, plugSourceOf, DW_DRY_MIN, WASH_HEAT_W, WASH_SPIN_W, DRYER_HEAT_W, NET_LAYOUTS, SWITCH_PORTS, NET_BAYS, NET_BUSY_MBIT, NET_TEMP_ALERT, netLayoutOf, ROBOT_LAYOUTS, ROBOT_STATIONS, ROBOT_BOX_COLORS, ROBOT_FLOORS, ROBOT_SERVICES, STICK_AWAY_W, robotLayoutOf, PRINTER_STYLES, printerStyleOf, POOL_PRESSURE_ALERT, WINTER_TYPES, SOLAR_LAYOUTS, BATTERY_LAYOUTS, BATTERY_IDLE_W, DIFFUSER_LAYOUTS, illustrationTapOf, UNIT_FILTERS, fieldUnits, unitFilterAccepts, HRV_LAYOUTS, hrvLayoutOf, CAMERA_LAYOUTS, cameraLayoutOf, MAILBOX_LAYOUTS, MAILBOX_SIDES, mailboxLayoutOf, MAILBOX_COLORS_3D, LAMP_LAYOUTS, LAMP_SPOTS, LAMP_SPOT_ROWS, lampLayoutOf, FD_COUNTS, CONSOLE_LAYOUTS, IRRIGATION_LAYOUTS, TAP_MODELS, TAP_WALLS, LITTER_LAYOUTS, DETECTOR_LAYOUTS, DETECTOR_MODELS, DOOR_STYLES, WINDOW_STYLES, FRAME_COLORS, FINGERBOT_LAYOUTS, VALVE_LAYOUTS, RACK_LAYOUTS, FP_LAYOUTS, FP_COOK_W, VALVE_HANDLE_COLORS, VALVE_FLUIDS, FINGERBOT_COLORS, GRILL_LAYOUTS, SPEAKER_LAYOUTS, STREAMER_LAYOUTS, THS_LAYOUTS, thsLayoutOf, MOBILITY_LAYOUTS, PUMP_LAYOUTS, CIRC_MODELS, FLOOR_LAYOUTS, OPT_LINES, METER_LAYOUTS, meterLayoutOf, irrigationLayoutOf, detectorLayoutOf, TREE_PALETTES, TREE_PRESENTS, pumpLayoutOf, SPK_COLORS, CO2_WARN, CO2_ALERT, NETATMO_COLORS, COVER_LAYOUTS, COVER_COLORS, FABRIC_COLORS, coverLayoutOf, COLLECTOR_STYLES, UPS_BATTERY_LOW, HISTORY_HOURS, BODY_COLORS, esc, MOWER_STYLES, SHELTER_STYLES, SHELTER_COLORS, LAPTOP_COLORS, LAPTOP_STYLES, drawn, stateFreeSource }) {
 // ---------------------------------------------------------------------------
 // Editor
 // ---------------------------------------------------------------------------
@@ -199,6 +199,8 @@ const SECTIONS = [
   { field: "active_mode_entity", types: ["hrv"], labelKey: "section_active_mode", includeDomains: ["sensor", "select", "input_select"] },
   // A lamp's timer: a list of durations.
   { field: "timer_entity", types: ["lamp"], labelKey: "lamp_timer", includeDomains: ["select", "input_select"] },
+  // A floodlight's motion sensor (HACF #171).
+  { field: "motion_entity", types: ["lamp"], labelKey: "section_motion", includeDomains: ["binary_sensor"] },
   // A camera: what it sees, whether it records, its night vision, its
   // privacy switch and its signal.
   { field: "motion_entity", types: ["camera"], labelKey: "section_motion", includeDomains: ["binary_sensor", "sensor", "event"] },
@@ -236,7 +238,14 @@ const SECTIONS = [
     when: (c) => pumpLayoutOf(c, null) === "circulator" },
   { field: "fault_entity", types: ["water_pump"], labelKey: "heat_fault", includeDomains: ["binary_sensor", "sensor"],
     when: (c) => pumpLayoutOf(c, null) === "circulator" },
-  { field: "temperature_entity", types: ["floor_heating", "spa", "sauna", "aquarium", "filament_dryer", "pellet_grill"], labelKey: "temperature", includeDomains: ["sensor", "number", "input_number", "climate"] },
+  { field: "flame_entity", types: ["gas_fireplace"], labelKey: "gf_flame", includeDomains: ["binary_sensor", "sensor"] },
+  { field: "flame_height_entity", types: ["gas_fireplace"], labelKey: "gf_flame_height", includeDomains: ["number", "sensor", "input_number"] },
+  { field: "fan_entity", types: ["gas_fireplace"], labelKey: "section_fan", includeDomains: ["fan", "switch", "input_boolean"] },
+  { field: "light_entity", types: ["gas_fireplace"], labelKey: "section_light", includeDomains: ["light", "switch", "input_boolean"] },
+  { field: "thermostat_entity", types: ["gas_fireplace"], labelKey: "type_thermostat", includeDomains: ["climate"] },
+  { field: "pilot_entity", types: ["gas_fireplace"], labelKey: "gf_pilot", includeDomains: ["switch", "binary_sensor", "input_boolean"] },
+  { field: "error_entity", types: ["gas_fireplace"], labelKey: "section_error", includeDomains: ["binary_sensor", "sensor"] },
+  { field: "temperature_entity", types: ["floor_heating", "spa", "sauna", "aquarium", "filament_dryer", "pellet_grill", "gas_fireplace"], labelKey: "temperature", includeDomains: ["sensor", "number", "input_number", "climate"] },
   { field: "humidity_entity", types: ["filament_dryer", "climate_sensor"], labelKey: "ac_line_humidity", includeDomains: ["sensor", "number", "input_number"] },
   // A CO2 monitor (#108): its CO2, the two thresholds that turn it orange
   // then red, and its temperature when its state is the CO2.
@@ -337,6 +346,8 @@ const SECTIONS = [
   { field: "plug_entity", types: ["fingerbot"], labelKey: "section_plug", includeDomains: ["switch", "input_boolean", "binary_sensor"] },
   { field: "charging_entity", types: ["fingerbot"], labelKey: "section_tab_charging", includeDomains: ["binary_sensor", "sensor", "switch", "input_boolean"] },
   { field: "tamper_entity", types: ["detector"], labelKey: "det_sec_tamper", includeDomains: ["binary_sensor", "sensor"] },
+  { field: "vibration_entity", types: ["detector"], labelKey: "layout_det_vibration", includeDomains: ["binary_sensor"] },
+  { field: "glass_break_entity", types: ["detector"], labelKey: "layout_det_glass", includeDomains: ["binary_sensor"] },
   { field: "test_entity", types: ["detector"], labelKey: "sec_test", includeDomains: ["button", "input_button", "script", "switch"] },
   // Optional readings on the older types.
   ...Object.entries(OPT_LINES).flatMap(([ty, list]) => list.flatMap((o) => [{ field: o.field, types: [ty], labelKey: o.label, includeDomains: o.domains }]
@@ -1469,7 +1480,20 @@ class ApplianceCardEditor extends HTMLElement {
           type: "select",
           value: this._config.detector_model || "auto",
           options: [{ value: "auto", label: t(hass, "unit_auto") }].concat(DETECTOR_MODELS[detectorLayoutOf(this._config, stateObj(hass, this._config.state_entity))]
-            .map((v) => ({ value: v, label: { sonoff: "Sonoff", aqara: "Aqara", hue: "Philips Hue", tuya: "Tuya", ring: "Ring", ajax: "Ajax" }[v] }))),
+            .map((v) => ({ value: v, label: { sonoff: "Sonoff", aqara: "Aqara", hue: "Philips Hue", thirdreality: "Third Reality", ikea: "IKEA", tuya: "Tuya", ring: "Ring", ajax: "Ajax" }[v] }))),
+        }) : ""}
+        ${this._type === "detector" && detectorLayoutOf(this._config, stateObj(hass, this._config.state_entity)) === "door" ? this._row("det_door_style", "door_style", {
+          type: "select",
+          value: this._config.door_style || "wood",
+          options: DOOR_STYLES.map((v) => ({ value: v, label: t(hass, `door_style_${v}`) })),
+        }) + this._row("det_window_style", "window_style", {
+          type: "select",
+          value: this._config.window_style || "auto",
+          options: [{ value: "auto", label: t(hass, "unit_auto") }].concat(WINDOW_STYLES.map((v) => ({ value: v, label: t(hass, `window_style_${v}`) }))),
+        }) + this._row("det_frame_color", "frame_color", {
+          type: "select",
+          value: this._config.frame_color || "auto",
+          options: [{ value: "auto", label: t(hass, "unit_auto") }].concat(FRAME_COLORS.map((v) => ({ value: v, label: t(hass, `frame_${v}`) }))),
         }) : ""}
         ${this._type === "irrigation" && irrigationLayoutOf(this._config, stateObj(hass, this._config.state_entity)) === "tap" ? this._row("irr_model", "tap_model", {
           type: "select",
@@ -1903,6 +1927,9 @@ class ApplianceCardEditor extends HTMLElement {
         // Compact is written the way it always was: true for the card without
         // its drawing, nothing at all when it is off.
         if (field === "detector_model" && value === "auto") delete this._config.detector_model;
+        // The wooden door is the default and is not written.
+        if (field === "door_style" && value === "wood") delete this._config.door_style;
+        if ((field === "window_style" || field === "frame_color") && value === "auto") delete this._config[field];
         // No background is the default and is not written.
         if (field === "illustration_backdrop" && !illustrationBackdropOf(value)) delete this._config.illustration_backdrop;
         if (field === "compact") {
