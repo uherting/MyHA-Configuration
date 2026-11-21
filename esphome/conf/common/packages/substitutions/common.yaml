@@ -245,6 +245,8 @@ substitutions:
   ssr02_name: $friendly_name SSR 02
   ssr03_id: ${friendly_id}_SSR03
   ssr03_name: $friendly_name SSR 03
+  ssr07_id: ${friendly_id}_SSR07
+  ssr07_name: $friendly_name SSR 07
   ssr09_id: ${friendly_id}_SSR09
   ssr09_name: $friendly_name SSR 09
 

@@ -10,18 +10,19 @@
   restore_mode: ALWAYS_OFF
   on_turn_on:
     then:
-      - delay: !secret DELAY_30MIN
-      - switch.turn_off: ${template_switch_spy_mode_id}
-  #     - logger.log: "switch ${template_switch_spy_mode_name} switched on."
-  #     # - binary_sensor.template.publish:
-  #     #     id: ${template_binary_sensor_spy_mode_id}
-  #     #     state: true
-  # on_turn_off:
-  #   then:
-  #     - logger.log: "switch ${template_switch_spy_mode_name} switched off."
-  #     # - binary_sensor.template.publish:
-  #     #     id: ${template_binary_sensor_spy_mode_id}
-  #     #     state: false
+    # - logger.log: "switch ${template_switch_spy_mode_name} switched on SSR1/SSR2 will be turned off."
+
+    # turn off SSR01 in case it is on
+    - switch.turn_off: ${ssr01_id}
+
+    # turn off SSR02 (kitchen) in case it is on
+    - switch.turn_off: ${ssr02_id}
+
+    # spy mode is active for 30 minutes, then it is automatically switched off
+    - delay: !secret DELAY_30MIN
+    - switch.turn_off: ${template_switch_spy_mode_id}
+    
+    # - logger.log: "switch ${template_switch_spy_mode_name} switched off."
 
 # ############################################################
 #  END OF FILE
